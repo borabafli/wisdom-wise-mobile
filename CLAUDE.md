@@ -46,11 +46,15 @@ WisdomWise is a mindfulness and mental health support app built around a therape
 - `src/components/ActionPalette.tsx`: Floating menu for starting therapy sessions
 
 ### Styling System
-- **Design Language**: Therapeutic, calming aesthetic with soft colors
-- **Color Palette**: Therapy grays, calm blues, warm oranges, soft neutrals
-- **Typography Hierarchy**: 6 specialized font families for different content types
-- **Spacing**: Extended Tailwind spacing scale with therapy-focused measurements
-- **Border Radius**: Custom "soft", "medium", "large" radius tokens
+- **Architecture**: Modern design system with separated styles and design tokens
+- **Design Tokens**: Centralized design tokens in `src/styles/tokens/` (colors, typography, spacing, shadows)
+- **Component Styles**: Separated style files in `src/styles/components/` for better maintainability
+- **Import Pattern**: Components import styles using `import { componentStyles as styles } from '../styles/components/Component.styles'`
+- **Design Language**: Therapeutic, calming aesthetic with semantic color naming and consistent spacing
+- **Color System**: Comprehensive palette with primary/secondary colors, semantic colors, gradients, and alpha variants
+- **Typography**: Custom font families with predefined text styles for consistent hierarchy
+- **Spacing**: Numeric scale (0-64px) plus component-specific and layout spacing tokens
+- **Shadows**: Elevation system with component-specific shadow presets
 
 ### Configuration Files
 - **tailwind.config.js**: Extensive custom theme with therapeutic design tokens
