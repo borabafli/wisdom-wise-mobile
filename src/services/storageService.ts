@@ -106,7 +106,7 @@ class StorageService {
     }
   }
 
-  // Chat history management (for future use)
+  // Chat history management
   async saveToHistory(): Promise<void> {
     try {
       const currentSession = await this.getCurrentSession();
@@ -114,19 +114,55 @@ class StorageService {
         return;
       }
 
+      // Add session metadata
+      const userMessages = currentSession.messages.filter(msg => msg.type === 'user');
+      const systemMessages = currentSession.messages.filter(msg => msg.type === 'system');
+      
+      const sessionWithMetadata = {
+        ...currentSession,
+        metadata: {
+          messageCount: currentSession.messages.length,
+          userMessageCount: userMessages.length,
+          systemMessageCount: systemMessages.length,
+          duration: this.calculateSessionDuration(currentSession.messages),
+          firstMessage: userMessages[0]?.text?.substring(0, 50) + '...' || 'New session',
+          savedAt: new Date().toISOString()
+        }
+      };
+
       const historyData = await AsyncStorage.getItem(STORAGE_KEYS.CHAT_HISTORY);
-      const history: ChatSession[] = historyData ? JSON.parse(historyData) : [];
+      const history: any[] = historyData ? JSON.parse(historyData) : [];
       
-      history.push(currentSession);
+      history.unshift(sessionWithMetadata); // Add to beginning (most recent first)
       
-      // Keep only last 10 sessions to avoid storage bloat
-      if (history.length > 10) {
-        history.splice(0, history.length - 10);
+      // Keep only last 20 sessions to avoid storage bloat
+      if (history.length > 20) {
+        history.splice(20);
       }
       
       await AsyncStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(history));
     } catch (error) {
       console.error('Error saving to history:', error);
+    }
+  }
+
+  // Calculate session duration from messages
+  private calculateSessionDuration(messages: Message[]): string {
+    if (messages.length < 2) return '< 1 min';
+    
+    const firstMessage = messages[0];
+    const lastMessage = messages[messages.length - 1];
+    
+    // Simple duration calculation based on message timestamps
+    const messageCount = messages.filter(msg => msg.type === 'user').length;
+    const estimatedMinutes = Math.max(1, Math.floor(messageCount * 2)); // ~2 minutes per exchange
+    
+    if (estimatedMinutes < 60) {
+      return `${estimatedMinutes} min`;
+    } else {
+      const hours = Math.floor(estimatedMinutes / 60);
+      const mins = estimatedMinutes % 60;
+      return `${hours}h ${mins}m`;
     }
   }
 
@@ -137,6 +173,31 @@ class StorageService {
     } catch (error) {
       console.error('Error loading chat history:', error);
       return [];
+    }
+  }
+
+  // Delete specific session from history
+  async deleteSessionFromHistory(sessionId: string): Promise<void> {
+    try {
+      const historyData = await AsyncStorage.getItem(STORAGE_KEYS.CHAT_HISTORY);
+      const history: any[] = historyData ? JSON.parse(historyData) : [];
+      
+      const filteredHistory = history.filter(session => session.id !== sessionId);
+      
+      await AsyncStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(filteredHistory));
+    } catch (error) {
+      console.error('Error deleting session from history:', error);
+      throw error;
+    }
+  }
+
+  // Clear all chat history
+  async clearChatHistory(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.CHAT_HISTORY);
+    } catch (error) {
+      console.error('Error clearing chat history:', error);
+      throw error;
     }
   }
 

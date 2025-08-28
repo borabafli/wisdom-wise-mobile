@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet, Dimensions, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet, Dimensions, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle } from 'lucide-react-native';
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -10,6 +10,8 @@ import { storageService, Message } from '../services/storageService';
 import { contextService } from '../services/contextService';
 import { apiService } from '../services/apiService';
 import { rateLimitService } from '../services/rateLimitService';
+import { ttsService } from '../services/ttsService';
+import { sttService } from '../services/sttService';
 import { API_CONFIG } from '../config/constants';
 
 const { width, height } = Dimensions.get('window');
@@ -47,7 +49,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [rateLimitStatus, setRateLimitStatus] = useState({ used: 0, total: 50, percentage: 0, message: '' });
   const [apiError, setApiError] = useState<string | null>(null);
+  const [ttsStatus, setTtsStatus] = useState({ isSpeaking: false, isPaused: false, currentSpeechId: null });
+  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [sttError, setSttError] = useState<string | null>(null);
+  const [partialTranscript, setPartialTranscript] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
+  
+  // Animation values for recording dots
+  const dot1Anim = useRef(new Animated.Value(0.4)).current;
+  const dot2Anim = useRef(new Animated.Value(0.7)).current;
+  const dot3Anim = useRef(new Animated.Value(1)).current;
 
   const exerciseFlows: Record<string, any> = {
     mindfulness: {
@@ -161,29 +173,133 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const loadOrCreateChatSession = async () => {
     try {
-      const existingMessages = await storageService.getMessages();
+      // Always start with a fresh session - don't load existing messages
+      // This ensures each chat starts clean after ending previous sessions
+      await storageService.clearCurrentSession();
       
-      if (existingMessages.length > 0) {
-        // Load existing conversation
-        setMessages(existingMessages);
-        setSuggestions(contextService.generateSuggestions(existingMessages));
-      } else {
-        // Create new conversation with welcome message
-        const welcomeMessage = contextService.createWelcomeMessage();
-        setMessages([welcomeMessage]);
-        setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
-        
-        // Save welcome message to storage
-        await storageService.addMessage(welcomeMessage);
-      }
+      // Create new conversation with welcome message
+      const welcomeMessage = contextService.createWelcomeMessage();
+      setMessages([welcomeMessage]);
+      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
+      
+      // Save welcome message to storage
+      await storageService.addMessage(welcomeMessage);
     } catch (error) {
-      console.error('Error loading chat session:', error);
+      console.error('Error creating fresh chat session:', error);
       // Fallback to local welcome message
       const welcomeMessage = contextService.createWelcomeMessage();
       setMessages([welcomeMessage]);
       setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
     }
   };
+
+  // Handle session end with confirmation
+  const handleEndSession = () => {
+    console.log('handleEndSession called, messages length:', messages.length);
+    
+    // Check if we have any user messages (real conversation)
+    const userMessages = messages.filter(msg => msg.type === 'user');
+    console.log('User messages count:', userMessages.length);
+    
+    if (userMessages.length > 0) {
+      console.log('Showing save dialog');
+      Alert.alert(
+        "End Session?",
+        "Would you like to save this conversation to your history?",
+        [
+          {
+            text: "Don't Save",
+            style: "destructive",
+            onPress: () => {
+              console.log('User chose: Don\'t Save');
+              storageService.clearCurrentSession()
+                .catch(err => console.error('Clear session error:', err))
+                .finally(() => {
+                  console.log('Calling onBack()');
+                  onBack();
+                });
+            }
+          },
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => console.log('User chose: Cancel')
+          },
+          {
+            text: "Save & End",
+            style: "default", 
+            onPress: () => {
+              console.log('User chose: Save & End');
+              saveSessionToHistory()
+                .then(() => storageService.clearCurrentSession())
+                .catch(err => console.error('Save/clear error:', err))
+                .finally(() => {
+                  console.log('Calling onBack() after save');
+                  onBack();
+                });
+            }
+          }
+        ],
+        { cancelable: false } // Prevent dismissing by tapping outside
+      );
+    } else {
+      console.log('No user messages, going back directly');
+      onBack();
+    }
+  };
+
+  // Save current session to history
+  const saveSessionToHistory = async () => {
+    try {
+      await storageService.saveToHistory();
+    } catch (error) {
+      console.error('Error saving session to history:', error);
+    }
+  };
+
+  // TTS Control Functions
+  const handlePlayTTS = async (messageId: string, text: string) => {
+    try {
+      // Stop any current speech
+      await ttsService.stop();
+      
+      // Start speaking with turtle voice settings
+      const speechId = await ttsService.speak(text, ttsService.getTurtleVoiceSettings());
+      
+      if (speechId) {
+        setPlayingMessageId(messageId);
+        setTtsStatus({ isSpeaking: true, isPaused: false, currentSpeechId: speechId });
+      }
+    } catch (error) {
+      console.error('Error starting TTS:', error);
+    }
+  };
+
+  const handleStopTTS = async () => {
+    try {
+      await ttsService.stop();
+      setPlayingMessageId(null);
+      setTtsStatus({ isSpeaking: false, isPaused: false, currentSpeechId: null });
+    } catch (error) {
+      console.error('Error stopping TTS:', error);
+    }
+  };
+
+  // Update TTS status periodically
+  useEffect(() => {
+    const updateTTSStatus = () => {
+      const status = ttsService.getStatus();
+      setTtsStatus(status);
+      
+      // Clear playing message if speech stopped
+      if (!status.isSpeaking && playingMessageId) {
+        setPlayingMessageId(null);
+      }
+    };
+
+    const interval = setInterval(updateTTSStatus, 500); // Check every 500ms
+    return () => clearInterval(interval);
+  }, [playingMessageId]);
 
   const handleSend = async (text = inputText) => {
     if (!text.trim()) return;
@@ -287,6 +403,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setMessages(prev => [...prev, aiResponse]);
         await storageService.addMessage(aiResponse);
 
+        // Auto-play TTS if enabled
+        await ttsService.speakIfAutoPlay(response.message);
+
         // Update suggestions based on conversation
         setSuggestions(contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]));
       } else {
@@ -325,15 +444,71 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  const handleMicToggle = () => {
-    setIsListening(!isListening);
-    // Simulate speech recognition
-    if (!isListening) {
-      setTimeout(() => {
-        setIsListening(false);
-        setInputText("I've been feeling anxious about work lately.");
-      }, 3000);
+  const handleMicToggle = async () => {
+    if (isRecording) {
+      // Stop recording
+      await stopRecording();
+    } else {
+      // Start recording
+      await startRecording();
     }
+  };
+
+  const startRecording = async () => {
+    if (!sttService.isSupported()) {
+      Alert.alert(
+        'Not Supported',
+        'Speech recognition is not supported on this device. Please type your message instead.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    setSttError(null);
+    setPartialTranscript('');
+    
+    const success = await sttService.startRecognition(
+      // On result
+      (result) => {
+        if (result.isFinal) {
+          // Final result - add to input
+          setInputText(prev => prev + result.transcript);
+          setPartialTranscript('');
+          setIsRecording(false);
+          setIsListening(false);
+        } else {
+          // Partial result - show as preview
+          setPartialTranscript(result.transcript);
+        }
+      },
+      // On error
+      (error) => {
+        setSttError(error);
+        setIsRecording(false);
+        setIsListening(false);
+        setPartialTranscript('');
+        
+        Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
+      },
+      // On end
+      () => {
+        setIsRecording(false);
+        setIsListening(false);
+        setPartialTranscript('');
+      }
+    );
+
+    if (success) {
+      setIsRecording(true);
+      setIsListening(true);
+    }
+  };
+
+  const stopRecording = async () => {
+    await sttService.stopRecognition();
+    setIsRecording(false);
+    setIsListening(false);
+    setPartialTranscript('');
   };
 
   const formatMessageContent = (content: string) => {
@@ -377,6 +552,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <Text style={styles.systemMessageText}>
                   {formatMessageContent(message.content || message.text || '')}
                 </Text>
+                
+                {/* TTS Controls */}
+                <View style={styles.ttsControls}>
+                  {playingMessageId === message.id && ttsStatus.isSpeaking ? (
+                    <TouchableOpacity
+                      onPress={handleStopTTS}
+                      style={[styles.ttsButton, styles.ttsButtonActive]}
+                      activeOpacity={0.7}
+                    >
+                      <VolumeX size={16} color="#ef4444" />
+                      <Text style={[styles.ttsButtonText, { color: '#ef4444' }]}>Stop</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => handlePlayTTS(message.id, message.content || message.text || '')}
+                      style={styles.ttsButton}
+                      activeOpacity={0.7}
+                    >
+                      <Volume2 size={16} color="#3b82f6" />
+                      <Text style={styles.ttsButtonText}>Listen</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           </View>
@@ -400,8 +598,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
               <TouchableOpacity 
-                onPress={onBack} 
-                style={styles.backButton}
+                onPress={() => {
+                  console.log('=== BACK BUTTON PRESSED ===');
+                  console.log('Timestamp:', new Date().toISOString());
+                  console.log('onBack function exists:', typeof onBack === 'function');
+                  console.log('onBack function:', onBack.toString().substring(0, 200));
+                  
+                  try {
+                    onBack(); // Just exit, no dialog for now
+                    console.log('onBack called successfully');
+                  } catch (error) {
+                    console.error('Error calling onBack:', error);
+                    Alert.alert('Error', `Back button error: ${error.message}`);
+                  }
+                }}
+                style={[styles.backButton, { backgroundColor: 'rgba(255, 0, 0, 0.1)' }]}
                 activeOpacity={0.7}
               >
                 <ChevronLeft size={20} color="#475569" />
@@ -519,32 +730,60 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <TextInput
                 value={inputText}
                 onChangeText={setInputText}
-                placeholder="Share what's on your mind..."
+                placeholder={isRecording ? "Listening... speak now" : "Share what's on your mind..."}
                 placeholderTextColor="#94a3b8"
                 multiline
                 style={[styles.textInput, { textAlignVertical: 'top' }]}
+                editable={!isRecording}
               />
+              
+              {/* Show partial transcript inline */}
+              {partialTranscript && (
+                <Text style={styles.partialTranscriptOverlay}>
+                  {partialTranscript}
+                </Text>
+              )}
             </View>
             
             <View style={styles.inputActions}>
               <View style={styles.actionsRow}>
-                <TouchableOpacity 
-                  onPress={handleMicToggle}
-                  style={[
-                    styles.micButton,
-                    isListening ? styles.micButtonListening : styles.micButtonIdle
-                  ]}
-                  activeOpacity={0.8}
-                >
-                  {isListening ? (
-                    <MicOff size={20} color="white" />
-                  ) : (
-                    <Mic size={20} color="white" />
-                  )}
-                </TouchableOpacity>
+                {!isRecording ? (
+                  <TouchableOpacity 
+                    onPress={handleMicToggle}
+                    style={styles.micButtonBeautiful}
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={['#3b82f6', '#1d4ed8']}
+                      style={styles.micButtonGradient}
+                    >
+                      <Mic size={24} color="white" />
+                    </LinearGradient>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.recordingControls}>
+                    <View style={styles.recordingIndicator}>
+                      <View style={[styles.recordingDot, { opacity: 1 }]} />
+                      <View style={[styles.recordingDot, { opacity: 0.7 }]} />
+                      <View style={[styles.recordingDot, { opacity: 0.4 }]} />
+                    </View>
+                    <TouchableOpacity 
+                      onPress={stopRecording}
+                      style={styles.stopButtonBeautiful}
+                      activeOpacity={0.8}
+                    >
+                      <LinearGradient
+                        colors={['#ef4444', '#dc2626']}
+                        style={styles.stopButtonGradient}
+                      >
+                        <Square size={20} color="white" />
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                )}
                 
                 <View style={styles.centerActions}>
-                  {isListening && (
+                  {isRecording && (
                     <View style={styles.listeningWaves}>
                       {[...Array(6)].map((_, i) => (
                         <View 
@@ -559,7 +798,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   )}
                   
                   <Text style={styles.actionText}>
-                    {isListening ? 'Listening...' : 'Share through voice or text'}
+                    {isRecording ? 'Listening... Tap mic to stop' : 
+                     sttService.isSupported() ? 'Share through voice or text' : 
+                     'Share your thoughts through text'}
                   </Text>
                 </View>
                 
@@ -746,6 +987,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#374151',
     lineHeight: 22,
+    marginBottom: 12,
+  },
+  ttsControls: {
+    alignItems: 'flex-start',
+  },
+  ttsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.2)',
+  },
+  ttsButtonActive: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+  },
+  ttsButtonText: {
+    fontSize: 12,
+    color: '#3b82f6',
+    fontWeight: '500',
   },
   typingContainer: {
     flexDirection: 'row',
@@ -852,6 +1117,63 @@ const styles = StyleSheet.create({
     minHeight: 60,
     maxHeight: 120,
   },
+  partialTranscriptOverlay: {
+    position: 'absolute',
+    top: 10,
+    left: 0,
+    right: 0,
+    fontSize: 16,
+    color: '#3b82f6',
+    fontStyle: 'italic',
+    opacity: 0.7,
+    pointerEvents: 'none',
+  },
+  micButtonBeautiful: {
+    borderRadius: 50,
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  micButtonGradient: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recordingControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  recordingIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  recordingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ef4444',
+  },
+  stopButtonBeautiful: {
+    borderRadius: 50,
+    shadowColor: '#ef4444',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  stopButtonGradient: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   inputActions: {
     paddingHorizontal: 24,
     paddingVertical: 16,
@@ -876,7 +1198,7 @@ const styles = StyleSheet.create({
   micButtonIdle: {
     backgroundColor: '#0ea5e9',
   },
-  micButtonListening: {
+  micButtonRecording: {
     backgroundColor: '#ef4444',
   },
   centerActions: {

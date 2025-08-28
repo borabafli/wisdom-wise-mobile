@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { DEBUG } from '../config/constants';
 
 export interface AIResponse {
   success: boolean;
@@ -76,6 +77,11 @@ class APIService {
 
   // Main chat completion method
   async getChatCompletion(messages: any[]): Promise<AIResponse> {
+    // Mock responses for testing without API key
+    if (DEBUG.MOCK_API_RESPONSES) {
+      return this.getMockResponse(messages);
+    }
+
     try {
       if (!this.config.apiKey) {
         return {
@@ -199,6 +205,72 @@ class APIService {
   // Check if service is ready
   isReady(): boolean {
     return !!this.config.apiKey;
+  }
+
+  // Mock responses for testing without API key
+  private async getMockResponse(messages: any[]): Promise<AIResponse> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    
+    const lastMessage = messages[messages.length - 1];
+    const userContent = lastMessage?.content?.toLowerCase() || '';
+    
+    const turtleResponses = [
+      {
+        condition: (msg: string) => msg.includes('stress') || msg.includes('anxious'),
+        responses: [
+          "I can feel the weight you're carrying, dear one 🌿\n\nStress moves through us like weather through the sky. Let's breathe together - imagine your breath as gentle waves, washing over the shores of your worries. What feels most heavy right now?",
+          "Your stress is valid, gentle soul 🌊\n\nLike a turtle, I know the wisdom of moving slowly when the world feels fast. Take a moment to feel your feet on the ground. You don't have to carry everything at once.",
+          "Thank you for trusting me with your stress 💚\n\nIn my many years, I've learned that stress is often love with nowhere to go. You care deeply about things. Let's explore what matters most to your heart right now."
+        ]
+      },
+      {
+        condition: (msg: string) => msg.includes('sad') || msg.includes('down') || msg.includes('difficult'),
+        responses: [
+          "I see the tenderness in your heart, dear one 🌸\n\nSadness is like rain - it nourishes even as it falls. Your feelings are welcome here in our peaceful space. What would comfort feel like to you right now?",
+          "Your sadness speaks of your deep capacity to care 💙\n\nLike roots that grow stronger in rich, dark soil, sometimes our hearts need to feel the depths to find new growth. I'm here with you in this.",
+          "Thank you for sharing your heart with me 🌱\n\nIn the gentle rhythm of turtle wisdom, I know that all feelings have their season. This sadness won't stay forever, but right now, let's honor what it's trying to tell you."
+        ]
+      },
+      {
+        condition: (msg: string) => msg.includes('grateful') || msg.includes('good') || msg.includes('happy'),
+        responses: [
+          "Your gratitude warms my old turtle heart 🌟\n\nLike sunlight dancing on water, your appreciation creates ripples of joy. What has touched your heart most deeply today?",
+          "I feel the lightness in your spirit, dear one ✨\n\nGratitude is like the morning dew - it makes everything more beautiful. Tell me more about this gift you've discovered.",
+          "Your joy is a precious pearl 🐚\n\nIn my slow, steady way, I've learned that happiness shared grows larger. What would you like to celebrate in this moment?"
+        ]
+      },
+      {
+        condition: () => true, // Default responses
+        responses: [
+          "I hear you, gentle soul 🐢\n\nYour words settle into my heart like stones into still water, creating gentle ripples of understanding. Take all the time you need - there's no rush in our peaceful space.",
+          "Thank you for trusting me with your thoughts 💚\n\nLike morning light filtering through ancient trees, your sharing brings warmth to our conversation. What feels most important to explore right now?",
+          "I'm listening with my whole being 🌿\n\nIn the patient way of turtles, I hold space for whatever you're experiencing. Your feelings are safe here, and so are you.",
+          "Your heart speaks wisdom, dear one 🌊\n\nEven in uncertainty, there's something beautiful about your willingness to share. What would support feel like to you in this moment?"
+        ]
+      }
+    ];
+    
+    // Find matching response category
+    let selectedResponses = turtleResponses[turtleResponses.length - 1].responses; // default
+    for (const category of turtleResponses) {
+      if (category.condition(userContent)) {
+        selectedResponses = category.responses;
+        break;
+      }
+    }
+    
+    const randomResponse = selectedResponses[Math.floor(Math.random() * selectedResponses.length)];
+    
+    return {
+      success: true,
+      message: randomResponse,
+      usage: {
+        prompt_tokens: 150,
+        completion_tokens: 100,
+        total_tokens: 250
+      }
+    };
   }
 
   // Fallback method for offline/error scenarios
