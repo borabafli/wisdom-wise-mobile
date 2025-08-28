@@ -31,7 +31,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <>
-      <SafeAreaView edges={['bottom']} style={styles.container}>
+      <View style={styles.container}>
         <LinearGradient
           colors={['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)']}
           style={styles.tabBarGradient}
@@ -143,7 +143,8 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
             })}
           </View>
         </LinearGradient>
-      </SafeAreaView>
+      </View>
+      <SafeAreaView edges={['bottom']} style={styles.bottomSafeArea} />
 
       {/* Action Palette */}
       <ActionPalette 
@@ -234,6 +235,14 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 3,
     borderColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  bottomSafeArea: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(239, 246, 255, 0.9)',
+    zIndex: 49,
   },
 });
 

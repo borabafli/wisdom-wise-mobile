@@ -48,7 +48,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.turtleGradient}
               />
               <Image 
-                source={require('../../assets/images/turtle9.png')}
+                source={require('../../assets/images/turtle11.png')}
                 style={styles.turtleImage}
                 contentFit="contain"
               />
@@ -63,22 +63,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             style={styles.ctaButton}
             activeOpacity={0.9}
           >
-            {/* Background Image */}
-            <Image 
-              source={require('../../assets/images/13.png')}
-              style={styles.ctaBackgroundImage}
-              contentFit="cover"
-            />
             <LinearGradient
-              colors={['rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.9)']}
+              colors={['rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.3)']}
               style={styles.ctaGradient}
             >
               <View style={styles.ctaContent}>
-                <Text style={styles.ctaTitle}>Start guided session</Text>
-                <Text style={styles.ctaSubtitle}>Talk with your gentle guide</Text>
-                <View style={styles.micContainer}>
-                  <Mic size={20} color="#0369a1" />
-                  <Text style={styles.micText}>Type or speak</Text>
+                <Text style={styles.ctaTitle}>Begin your journey</Text>
+                <Text style={styles.ctaSubtitle}>Let's start a guided session</Text>
+                
+                {/* Minimalist input area */}
+                <View style={styles.inputContainer}>
+                  <MessageCircle size={18} color="#1e293b" />
+                  <Text style={styles.inputText}>Type or talk to start...</Text>
+                  <View style={styles.micButton}>
+                    <Mic size={16} color="#1e293b" />
+                  </View>
                 </View>
               </View>
             </LinearGradient>
@@ -362,54 +361,75 @@ const styles = StyleSheet.create({
   ctaButton: {
     borderRadius: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
     overflow: 'hidden',
-  },
-  ctaBackgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.3,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    backdropFilter: 'blur(20px)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
   ctaGradient: {
     borderRadius: 24,
-    padding: 24,
+    padding: 32,
   },
   ctaContent: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   ctaTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 8,
+    fontSize: 24,
+    fontWeight: '500',
+    color: '#1e293b',
+    marginBottom: 12,
+    textAlign: 'center',
+    letterSpacing: 0.5,
   },
   ctaSubtitle: {
     fontSize: 16,
-    color: '#475569',
-    fontWeight: '500',
-    marginBottom: 12,
+    color: 'rgba(30, 41, 59, 0.9)',
+    fontWeight: '400',
+    marginBottom: 28,
+    textAlign: 'center',
   },
-  micContainer: {
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(240, 249, 255, 0.8)',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 50,
     borderWidth: 1,
-    borderColor: 'rgba(186, 230, 253, 0.7)',
-    gap: 12,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+    gap: 16,
+    minWidth: 280,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  micText: {
-    fontSize: 16,
-    color: '#075985',
+  inputText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#1e293b',
     fontWeight: '500',
+  },
+  micButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   exercisesSection: {
     paddingHorizontal: 24,
