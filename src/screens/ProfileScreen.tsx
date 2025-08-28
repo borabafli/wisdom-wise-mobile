@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain } from 'lucide-react-native';
+import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import ChatHistory from '../components/ChatHistory';
+import TTSSettings from '../components/TTSSettings';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,7 +16,12 @@ const ProfileScreen: React.FC = () => {
     { label: 'Exercises', value: '31', icon: Calendar }
   ];
 
+  const [showChatHistory, setShowChatHistory] = useState(false);
+  const [showTTSSettings, setShowTTSSettings] = useState(false);
+
   const menuItems = [
+    { icon: History, label: 'Chat History', action: () => setShowChatHistory(true) },
+    { icon: Volume2, label: 'Voice Settings', action: () => setShowTTSSettings(true) },
     { icon: Bell, label: 'Notifications', badge: '3' },
     { icon: Shield, label: 'Privacy & Security' },
     { icon: Moon, label: 'Dark Mode', toggle: true },
@@ -105,6 +112,7 @@ const ProfileScreen: React.FC = () => {
                   item.danger && styles.menuItemDanger
                 ]}
                 activeOpacity={0.7}
+                onPress={item.action}
               >
                 <LinearGradient
                   colors={
@@ -152,6 +160,18 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.versionSubtext}>Made with 💙 for your wellness</Text>
         </View>
       </ScrollView>
+
+      {/* Chat History Modal */}
+      <ChatHistory
+        visible={showChatHistory}
+        onClose={() => setShowChatHistory(false)}
+      />
+
+      {/* TTS Settings Modal */}
+      <TTSSettings
+        visible={showTTSSettings}
+        onClose={() => setShowTTSSettings(false)}
+      />
     </SafeAreaView>
   );
 };

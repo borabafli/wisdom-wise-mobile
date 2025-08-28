@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet, Dimensions, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User } from 'lucide-react-native';
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
+// Import our new services
+import { storageService, Message } from '../services/storageService';
+import { contextService } from '../services/contextService';
+import { apiService } from '../services/apiService';
+import { rateLimitService } from '../services/rateLimitService';
+import { ttsService } from '../services/ttsService';
+import { sttService } from '../services/sttService';
+import { API_CONFIG } from '../config/constants';
+
 const { width, height } = Dimensions.get('window');
 
-interface Message {
-  id: string;
-  type: 'user' | 'system' | 'exercise';
-  text?: string;
-  content?: string;
-  title?: string;
-  exerciseType?: string;
-  color?: string;
-  timestamp: string;
-}
+// Message interface moved to storageService
 
 interface Exercise {
   type: string;
@@ -46,7 +46,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [exerciseStep, setExerciseStep] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [rateLimitStatus, setRateLimitStatus] = useState({ used: 0, total: 50, percentage: 0, message: '' });
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [ttsStatus, setTtsStatus] = useState({ isSpeaking: false, isPaused: false, currentSpeechId: null });
+  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [sttError, setSttError] = useState<string | null>(null);
+  const [partialTranscript, setPartialTranscript] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
+  
+  // Animation values for recording dots
+  const dot1Anim = useRef(new Animated.Value(0.4)).current;
+  const dot2Anim = useRef(new Animated.Value(0.7)).current;
+  const dot3Anim = useRef(new Animated.Value(1)).current;
 
   const exerciseFlows: Record<string, any> = {
     mindfulness: {
@@ -114,109 +127,388 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
+  // Initialize services and load data
   useEffect(() => {
-    if (currentExercise && exerciseFlows[currentExercise.type]) {
-      const flow = exerciseFlows[currentExercise.type];
-      const initialMessage: Message = {
-        id: Date.now().toString(),
-        type: 'exercise',
-        title: flow.steps[0].title,
-        content: flow.steps[0].content,
-        exerciseType: currentExercise.type,
-        color: flow.color,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages([initialMessage]);
-      setSuggestions(flow.steps[0].suggestions);
-      setExerciseStep(0);
-    } else {
-      const welcomeMessage: Message = {
-        id: Date.now().toString(),
-        type: 'system',
-        title: '',
-        content: 'Hello, gentle soul 🐢\n\nI\'m here to listen and support you. What\'s on your mind today?',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      
-      setMessages([welcomeMessage]);
-      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
-    }
+    initializeChatSession();
   }, [currentExercise]);
 
-  const handleSend = (text = inputText) => {
-    if (text.trim()) {
-      const newMessage: Message = {
-        id: (Date.now() + Math.random()).toString(),
-        type: 'user',
-        text: text,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages(prev => [...prev, newMessage]);
-      setInputText('');
+  const initializeChatSession = async () => {
+    try {
+      setIsLoading(true);
       
-      // Handle exercise flow progression
+      // Initialize API service with key
+      apiService.setApiKey(API_CONFIG.OPENROUTER_API_KEY);
+      
+      // Load rate limit status
+      const rateLimitStatus = await rateLimitService.getRateLimitStatus();
+      setRateLimitStatus(rateLimitStatus);
+      
+      // Handle exercise flow vs regular chat
       if (currentExercise && exerciseFlows[currentExercise.type]) {
+        // Exercise flow - use existing logic
         const flow = exerciseFlows[currentExercise.type];
-        if (exerciseStep < flow.steps.length - 1) {
-          const nextStep = exerciseStep + 1;
-          setTimeout(() => {
-            const nextMessage: Message = {
-              id: (Date.now() + Math.random()).toString(),
-              type: 'exercise',
-              title: flow.steps[nextStep].title,
-              content: flow.steps[nextStep].content,
-              exerciseType: currentExercise.type,
-              color: flow.color,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setMessages(prev => [...prev, nextMessage]);
-            setSuggestions(flow.steps[nextStep].suggestions);
-            setExerciseStep(nextStep);
-          }, 1500);
-        }
+        const initialMessage: Message = {
+          id: Date.now().toString(),
+          type: 'exercise',
+          title: flow.steps[0].title,
+          content: flow.steps[0].content,
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages([initialMessage]);
+        setSuggestions(flow.steps[0].suggestions);
+        setExerciseStep(0);
       } else {
-        // Regular AI response
-        setIsTyping(true);
-        setTimeout(() => {
-          setIsTyping(false);
-          const turtleResponses = [
-            {
-              title: 'I feel your heart',
-              content: '**Thank you for trusting me with your words** 💚\n\nLike rings in a pond, your feelings touch me deeply. Let\'s explore this together, one gentle step at a time.'
-            },
-            {
-              title: 'Your turtle friend listens',
-              content: '**I hear the wisdom in your sharing** 🌿\n\nSometimes the most profound truths come quietly, like morning dew. What feels most important about this for you?'
-            },
-            {
-              title: 'Breathing with you',
-              content: '**You are so brave to share this** 🌱\n\nLike a steady rock in flowing water, I\'m here with you. Take all the time you need - there\'s no rush in our peaceful space.'
-            }
-          ];
-          
-          const randomResponse = turtleResponses[Math.floor(Math.random() * turtleResponses.length)];
-          const aiResponse: Message = {
-            id: (messages.length + 2).toString(),
-            type: 'system',
-            title: randomResponse.title,
-            content: randomResponse.content,
-            timestamp: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
-          };
-          setMessages(prev => [...prev, aiResponse]);
-        }, 2000);
+        // Regular chat - load from storage or create welcome
+        await loadOrCreateChatSession();
       }
+    } catch (error) {
+      console.error('Error initializing chat session:', error);
+      setApiError('Failed to initialize chat session');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleMicToggle = () => {
-    setIsListening(!isListening);
-    // Simulate speech recognition
-    if (!isListening) {
-      setTimeout(() => {
-        setIsListening(false);
-        setInputText("I've been feeling anxious about work lately.");
-      }, 3000);
+  const loadOrCreateChatSession = async () => {
+    try {
+      // Always start with a fresh session - don't load existing messages
+      // This ensures each chat starts clean after ending previous sessions
+      await storageService.clearCurrentSession();
+      
+      // Create new conversation with welcome message
+      const welcomeMessage = contextService.createWelcomeMessage();
+      setMessages([welcomeMessage]);
+      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
+      
+      // Save welcome message to storage
+      await storageService.addMessage(welcomeMessage);
+    } catch (error) {
+      console.error('Error creating fresh chat session:', error);
+      // Fallback to local welcome message
+      const welcomeMessage = contextService.createWelcomeMessage();
+      setMessages([welcomeMessage]);
+      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
     }
+  };
+
+  // Handle session end with confirmation
+  const handleEndSession = () => {
+    console.log('handleEndSession called, messages length:', messages.length);
+    
+    // Check if we have any user messages (real conversation)
+    const userMessages = messages.filter(msg => msg.type === 'user');
+    console.log('User messages count:', userMessages.length);
+    
+    if (userMessages.length > 0) {
+      console.log('Showing save dialog');
+      Alert.alert(
+        "End Session?",
+        "Would you like to save this conversation to your history?",
+        [
+          {
+            text: "Don't Save",
+            style: "destructive",
+            onPress: () => {
+              console.log('User chose: Don\'t Save');
+              storageService.clearCurrentSession()
+                .catch(err => console.error('Clear session error:', err))
+                .finally(() => {
+                  console.log('Calling onBack()');
+                  onBack();
+                });
+            }
+          },
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => console.log('User chose: Cancel')
+          },
+          {
+            text: "Save & End",
+            style: "default", 
+            onPress: () => {
+              console.log('User chose: Save & End');
+              saveSessionToHistory()
+                .then(() => storageService.clearCurrentSession())
+                .catch(err => console.error('Save/clear error:', err))
+                .finally(() => {
+                  console.log('Calling onBack() after save');
+                  onBack();
+                });
+            }
+          }
+        ],
+        { cancelable: false } // Prevent dismissing by tapping outside
+      );
+    } else {
+      console.log('No user messages, going back directly');
+      onBack();
+    }
+  };
+
+  // Save current session to history
+  const saveSessionToHistory = async () => {
+    try {
+      await storageService.saveToHistory();
+    } catch (error) {
+      console.error('Error saving session to history:', error);
+    }
+  };
+
+  // TTS Control Functions
+  const handlePlayTTS = async (messageId: string, text: string) => {
+    try {
+      // Stop any current speech
+      await ttsService.stop();
+      
+      // Start speaking with turtle voice settings
+      const speechId = await ttsService.speak(text, ttsService.getTurtleVoiceSettings());
+      
+      if (speechId) {
+        setPlayingMessageId(messageId);
+        setTtsStatus({ isSpeaking: true, isPaused: false, currentSpeechId: speechId });
+      }
+    } catch (error) {
+      console.error('Error starting TTS:', error);
+    }
+  };
+
+  const handleStopTTS = async () => {
+    try {
+      await ttsService.stop();
+      setPlayingMessageId(null);
+      setTtsStatus({ isSpeaking: false, isPaused: false, currentSpeechId: null });
+    } catch (error) {
+      console.error('Error stopping TTS:', error);
+    }
+  };
+
+  // Update TTS status periodically
+  useEffect(() => {
+    const updateTTSStatus = () => {
+      const status = ttsService.getStatus();
+      setTtsStatus(status);
+      
+      // Clear playing message if speech stopped
+      if (!status.isSpeaking && playingMessageId) {
+        setPlayingMessageId(null);
+      }
+    };
+
+    const interval = setInterval(updateTTSStatus, 500); // Check every 500ms
+    return () => clearInterval(interval);
+  }, [playingMessageId]);
+
+  const handleSend = async (text = inputText) => {
+    if (!text.trim()) return;
+
+    // Clear any previous API errors
+    setApiError(null);
+
+    // Create user message
+    const userMessage: Message = {
+      id: (Date.now() + Math.random()).toString(),
+      type: 'user',
+      text: text,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    // Add user message to UI and storage
+    setMessages(prev => [...prev, userMessage]);
+    setInputText('');
+    
+    try {
+      await storageService.addMessage(userMessage);
+    } catch (error) {
+      console.error('Error saving user message:', error);
+    }
+
+    // Handle exercise flow progression
+    if (currentExercise && exerciseFlows[currentExercise.type]) {
+      const flow = exerciseFlows[currentExercise.type];
+      if (exerciseStep < flow.steps.length - 1) {
+        const nextStep = exerciseStep + 1;
+        setTimeout(async () => {
+          const nextMessage: Message = {
+            id: (Date.now() + Math.random()).toString(),
+            type: 'exercise',
+            title: flow.steps[nextStep].title,
+            content: flow.steps[nextStep].content,
+            exerciseType: currentExercise.type,
+            color: flow.color,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+          setMessages(prev => [...prev, nextMessage]);
+          setSuggestions(flow.steps[nextStep].suggestions);
+          setExerciseStep(nextStep);
+          
+          // Save exercise message
+          try {
+            await storageService.addMessage(nextMessage);
+          } catch (error) {
+            console.error('Error saving exercise message:', error);
+          }
+        }, 1500);
+      }
+      return;
+    }
+
+    // Regular AI chat - check rate limit first
+    try {
+      const rateLimit = await rateLimitService.canMakeRequest();
+      
+      if (rateLimit.isLimitReached) {
+        const limitMessage: Message = {
+          id: (Date.now() + Math.random()).toString(),
+          type: 'system',
+          content: rateLimitService.getRateLimitMessage(rateLimit),
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages(prev => [...prev, limitMessage]);
+        await storageService.addMessage(limitMessage);
+        return;
+      }
+
+      // Show typing indicator
+      setIsTyping(true);
+
+      // Get conversation context
+      const recentMessages = await storageService.getLastMessages(20); // Get more for context
+      const context = contextService.assembleContext(recentMessages);
+
+      // Make API call
+      const response = await apiService.getChatCompletion(context);
+
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        // Record successful request for rate limiting
+        await rateLimitService.recordRequest();
+        
+        // Update rate limit status
+        const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
+        setRateLimitStatus(newRateLimitStatus);
+
+        // Create AI response message
+        const aiResponse: Message = {
+          id: (Date.now() + Math.random()).toString(),
+          type: 'system',
+          content: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        // Add to UI and storage
+        setMessages(prev => [...prev, aiResponse]);
+        await storageService.addMessage(aiResponse);
+
+        // Auto-play TTS if enabled
+        await ttsService.speakIfAutoPlay(response.message);
+
+        // Update suggestions based on conversation
+        setSuggestions(contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]));
+      } else {
+        // API error - show fallback response
+        const fallbackContent = response.error || 'I\'m having trouble connecting right now. Please try again in a moment.';
+        const fallbackMessage: Message = {
+          id: (Date.now() + Math.random()).toString(),
+          type: 'system',
+          content: apiService.getFallbackResponse(text),
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setMessages(prev => [...prev, fallbackMessage]);
+        await storageService.addMessage(fallbackMessage);
+        setApiError(response.error || 'Connection failed');
+      }
+    } catch (error) {
+      setIsTyping(false);
+      console.error('Error in handleSend:', error);
+      
+      // Show fallback response for any unexpected errors
+      const fallbackMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'system',
+        content: apiService.getFallbackResponse(text),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages(prev => [...prev, fallbackMessage]);
+      try {
+        await storageService.addMessage(fallbackMessage);
+      } catch (storageError) {
+        console.error('Error saving fallback message:', error);
+      }
+      setApiError('An unexpected error occurred');
+    }
+  };
+
+  const handleMicToggle = async () => {
+    if (isRecording) {
+      // Stop recording
+      await stopRecording();
+    } else {
+      // Start recording
+      await startRecording();
+    }
+  };
+
+  const startRecording = async () => {
+    if (!sttService.isSupported()) {
+      Alert.alert(
+        'Not Supported',
+        'Speech recognition is not supported on this device. Please type your message instead.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    setSttError(null);
+    setPartialTranscript('');
+    
+    const success = await sttService.startRecognition(
+      // On result
+      (result) => {
+        if (result.isFinal) {
+          // Final result - add to input
+          setInputText(prev => prev + result.transcript);
+          setPartialTranscript('');
+          setIsRecording(false);
+          setIsListening(false);
+        } else {
+          // Partial result - show as preview
+          setPartialTranscript(result.transcript);
+        }
+      },
+      // On error
+      (error) => {
+        setSttError(error);
+        setIsRecording(false);
+        setIsListening(false);
+        setPartialTranscript('');
+        
+        Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
+      },
+      // On end
+      () => {
+        setIsRecording(false);
+        setIsListening(false);
+        setPartialTranscript('');
+      }
+    );
+
+    if (success) {
+      setIsRecording(true);
+      setIsListening(true);
+    }
+  };
+
+  const stopRecording = async () => {
+    await sttService.stopRecognition();
+    setIsRecording(false);
+    setIsListening(false);
+    setPartialTranscript('');
   };
 
   const formatMessageContent = (content: string) => {
@@ -260,6 +552,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <Text style={styles.systemMessageText}>
                   {formatMessageContent(message.content || message.text || '')}
                 </Text>
+                
+                {/* TTS Controls */}
+                <View style={styles.ttsControls}>
+                  {playingMessageId === message.id && ttsStatus.isSpeaking ? (
+                    <TouchableOpacity
+                      onPress={handleStopTTS}
+                      style={[styles.ttsButton, styles.ttsButtonActive]}
+                      activeOpacity={0.7}
+                    >
+                      <VolumeX size={16} color="#ef4444" />
+                      <Text style={[styles.ttsButtonText, { color: '#ef4444' }]}>Stop</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => handlePlayTTS(message.id, message.content || message.text || '')}
+                      style={styles.ttsButton}
+                      activeOpacity={0.7}
+                    >
+                      <Volume2 size={16} color="#3b82f6" />
+                      <Text style={styles.ttsButtonText}>Listen</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           </View>
@@ -283,8 +598,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
               <TouchableOpacity 
-                onPress={onBack} 
-                style={styles.backButton}
+                onPress={() => {
+                  console.log('=== BACK BUTTON PRESSED ===');
+                  console.log('Timestamp:', new Date().toISOString());
+                  console.log('onBack function exists:', typeof onBack === 'function');
+                  console.log('onBack function:', onBack.toString().substring(0, 200));
+                  
+                  try {
+                    onBack(); // Just exit, no dialog for now
+                    console.log('onBack called successfully');
+                  } catch (error) {
+                    console.error('Error calling onBack:', error);
+                    Alert.alert('Error', `Back button error: ${error.message}`);
+                  }
+                }}
+                style={[styles.backButton, { backgroundColor: 'rgba(255, 0, 0, 0.1)' }]}
                 activeOpacity={0.7}
               >
                 <ChevronLeft size={20} color="#475569" />
@@ -309,9 +637,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     {currentExercise && exerciseFlows[currentExercise.type] ? (
                       `${currentExercise.duration || '5 min'} • Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length}`
                     ) : (
-                      'Your safe space for mindful reflection and support'
+                      isLoading ? 'Loading your gentle space...' :
+                      apiError ? `Connection issues: ${apiError}` :
+                      `${rateLimitStatus.requestsRemaining} messages remaining today`
                     )}
                   </Text>
+                  
+                  {/* Rate limit warning */}
+                  {!currentExercise && rateLimitStatus.percentage >= 80 && (
+                    <View style={styles.warningContainer}>
+                      <AlertCircle size={14} color="#f59e0b" />
+                      <Text style={styles.warningText}>
+                        {rateLimitStatus.percentage >= 90 
+                          ? `Almost at daily limit! ${rateLimitStatus.requestsRemaining} left.`
+                          : `${rateLimitStatus.percentage}% of daily limit used.`
+                        }
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
@@ -387,32 +730,60 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <TextInput
                 value={inputText}
                 onChangeText={setInputText}
-                placeholder="Share what's on your mind..."
+                placeholder={isRecording ? "Listening... speak now" : "Share what's on your mind..."}
                 placeholderTextColor="#94a3b8"
                 multiline
                 style={[styles.textInput, { textAlignVertical: 'top' }]}
+                editable={!isRecording}
               />
+              
+              {/* Show partial transcript inline */}
+              {partialTranscript && (
+                <Text style={styles.partialTranscriptOverlay}>
+                  {partialTranscript}
+                </Text>
+              )}
             </View>
             
             <View style={styles.inputActions}>
               <View style={styles.actionsRow}>
-                <TouchableOpacity 
-                  onPress={handleMicToggle}
-                  style={[
-                    styles.micButton,
-                    isListening ? styles.micButtonListening : styles.micButtonIdle
-                  ]}
-                  activeOpacity={0.8}
-                >
-                  {isListening ? (
-                    <MicOff size={20} color="white" />
-                  ) : (
-                    <Mic size={20} color="white" />
-                  )}
-                </TouchableOpacity>
+                {!isRecording ? (
+                  <TouchableOpacity 
+                    onPress={handleMicToggle}
+                    style={styles.micButtonBeautiful}
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={['#3b82f6', '#1d4ed8']}
+                      style={styles.micButtonGradient}
+                    >
+                      <Mic size={24} color="white" />
+                    </LinearGradient>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.recordingControls}>
+                    <View style={styles.recordingIndicator}>
+                      <View style={[styles.recordingDot, { opacity: 1 }]} />
+                      <View style={[styles.recordingDot, { opacity: 0.7 }]} />
+                      <View style={[styles.recordingDot, { opacity: 0.4 }]} />
+                    </View>
+                    <TouchableOpacity 
+                      onPress={stopRecording}
+                      style={styles.stopButtonBeautiful}
+                      activeOpacity={0.8}
+                    >
+                      <LinearGradient
+                        colors={['#ef4444', '#dc2626']}
+                        style={styles.stopButtonGradient}
+                      >
+                        <Square size={20} color="white" />
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                )}
                 
                 <View style={styles.centerActions}>
-                  {isListening && (
+                  {isRecording && (
                     <View style={styles.listeningWaves}>
                       {[...Array(6)].map((_, i) => (
                         <View 
@@ -427,7 +798,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   )}
                   
                   <Text style={styles.actionText}>
-                    {isListening ? 'Listening...' : 'Share through voice or text'}
+                    {isRecording ? 'Listening... Tap mic to stop' : 
+                     sttService.isSupported() ? 'Share through voice or text' : 
+                     'Share your thoughts through text'}
                   </Text>
                 </View>
                 
@@ -527,6 +900,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
+  warningContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(251, 191, 36, 0.2)',
+  },
+  warningText: {
+    fontSize: 12,
+    color: '#f59e0b',
+    fontWeight: '500',
+    flex: 1,
+  },
   messagesArea: {
     flex: 1,
     paddingHorizontal: 24,
@@ -596,6 +987,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#374151',
     lineHeight: 22,
+    marginBottom: 12,
+  },
+  ttsControls: {
+    alignItems: 'flex-start',
+  },
+  ttsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.2)',
+  },
+  ttsButtonActive: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+  },
+  ttsButtonText: {
+    fontSize: 12,
+    color: '#3b82f6',
+    fontWeight: '500',
   },
   typingContainer: {
     flexDirection: 'row',
@@ -702,6 +1117,63 @@ const styles = StyleSheet.create({
     minHeight: 60,
     maxHeight: 120,
   },
+  partialTranscriptOverlay: {
+    position: 'absolute',
+    top: 10,
+    left: 0,
+    right: 0,
+    fontSize: 16,
+    color: '#3b82f6',
+    fontStyle: 'italic',
+    opacity: 0.7,
+    pointerEvents: 'none',
+  },
+  micButtonBeautiful: {
+    borderRadius: 50,
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  micButtonGradient: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recordingControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  recordingIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  recordingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ef4444',
+  },
+  stopButtonBeautiful: {
+    borderRadius: 50,
+    shadowColor: '#ef4444',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  stopButtonGradient: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   inputActions: {
     paddingHorizontal: 24,
     paddingVertical: 16,
@@ -726,7 +1198,7 @@ const styles = StyleSheet.create({
   micButtonIdle: {
     backgroundColor: '#0ea5e9',
   },
-  micButtonListening: {
+  micButtonRecording: {
     backgroundColor: '#ef4444',
   },
   centerActions: {
