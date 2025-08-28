@@ -61,9 +61,14 @@ export default function App() {
   };
 
   const handleBackFromChat = () => {
+    console.log('handleBackFromChat called - starting cleanup');
+    console.log('Current state - showChat:', showChat, 'chatWithActionPalette:', chatWithActionPalette, 'currentExercise:', currentExercise);
+    
     setShowChat(false);
     setChatWithActionPalette(false);
     setCurrentExercise(null);
+    
+    console.log('handleBackFromChat completed - should return to main app');
   };
 
   const handleExerciseClick = (exercise?: any) => {
