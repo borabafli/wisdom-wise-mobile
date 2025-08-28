@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet, Dimensions, Alert, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square } from 'lucide-react-native';
 import { Image } from 'expo-image';
@@ -14,7 +14,10 @@ import { ttsService } from '../services/ttsService';
 import { sttService } from '../services/sttService';
 import { API_CONFIG } from '../config/constants';
 
-const { width, height } = Dimensions.get('window');
+// Import separated styles
+import { chatInterfaceStyles as styles } from '../styles/components/ChatInterface.styles';
+import { colors } from '../styles/tokens';
+
 
 // Message interface moved to storageService
 
@@ -48,8 +51,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [rateLimitStatus, setRateLimitStatus] = useState({ used: 0, total: 50, percentage: 0, message: '' });
-  const [apiError, setApiError] = useState<string | null>(null);
-  const [ttsStatus, setTtsStatus] = useState({ isSpeaking: false, isPaused: false, currentSpeechId: null });
+  const [ttsStatus, setTtsStatus] = useState<{ isSpeaking: boolean; isPaused: boolean; currentSpeechId: string | null }>({ isSpeaking: false, isPaused: false, currentSpeechId: null });
   const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
@@ -165,7 +167,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       }
     } catch (error) {
       console.error('Error initializing chat session:', error);
-      setApiError('Failed to initialize chat session');
     } finally {
       setIsLoading(false);
     }
@@ -305,7 +306,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (!text.trim()) return;
 
     // Clear any previous API errors
-    setApiError(null);
 
     // Create user message
     const userMessage: Message = {
@@ -420,7 +420,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         setMessages(prev => [...prev, fallbackMessage]);
         await storageService.addMessage(fallbackMessage);
-        setApiError(response.error || 'Connection failed');
+        // Log API error instead of showing in UI
+        console.error('API Error:', response.error || 'Connection failed');
       }
     } catch (error) {
       setIsTyping(false);
@@ -440,7 +441,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       } catch (storageError) {
         console.error('Error saving fallback message:', error);
       }
-      setApiError('An unexpected error occurred');
+      console.error('Unexpected error occurred');
     }
   };
 
@@ -523,7 +524,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <View key={message.id} style={styles.userMessageContainer}>
           <View style={styles.userMessageWrapper}>
             <LinearGradient
-              colors={['rgba(59, 130, 246, 0.9)', 'rgba(37, 99, 235, 0.9)']}
+              colors={colors.gradients.messageUser}
               style={styles.userMessageBubble}
             >
               <Text style={styles.userMessageText}>
@@ -537,44 +538,42 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     return (
       <View key={message.id} style={styles.systemMessageContainer}>
-        <View style={styles.systemMessageWrapper}>
-          <View style={styles.systemMessageBubble}>
-            <View style={styles.systemMessageContent}>
-              <View style={styles.turtleAvatarContainer}>
-                <Image 
-                  source={require('../../assets/images/turtle9.png')}
-                  style={styles.turtleAvatar}
-                  contentFit="cover"
-                />
-              </View>
+        <View style={styles.systemMessageBubble}>
+          <View style={styles.systemMessageContent}>
+            <View style={styles.turtleAvatarContainer}>
+              <Image 
+                source={require('../../assets/images/turtle9.png')}
+                style={styles.turtleAvatar}
+                contentFit="cover"
+              />
+            </View>
+            
+            <View style={styles.systemMessageTextContainer}>
+              <Text style={styles.systemMessageText}>
+                {formatMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸')}
+              </Text>
               
-              <View style={styles.systemMessageTextContainer}>
-                <Text style={styles.systemMessageText}>
-                  {formatMessageContent(message.content || message.text || '')}
-                </Text>
-                
-                {/* TTS Controls */}
-                <View style={styles.ttsControls}>
-                  {playingMessageId === message.id && ttsStatus.isSpeaking ? (
-                    <TouchableOpacity
-                      onPress={handleStopTTS}
-                      style={[styles.ttsButton, styles.ttsButtonActive]}
-                      activeOpacity={0.7}
-                    >
-                      <VolumeX size={16} color="#ef4444" />
-                      <Text style={[styles.ttsButtonText, { color: '#ef4444' }]}>Stop</Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => handlePlayTTS(message.id, message.content || message.text || '')}
-                      style={styles.ttsButton}
-                      activeOpacity={0.7}
-                    >
-                      <Volume2 size={16} color="#3b82f6" />
-                      <Text style={styles.ttsButtonText}>Listen</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
+              {/* TTS Controls */}
+              <View style={styles.ttsControls}>
+                {playingMessageId === message.id && ttsStatus.isSpeaking ? (
+                  <TouchableOpacity
+                    onPress={handleStopTTS}
+                    style={[styles.ttsButton, styles.ttsButtonActive]}
+                    activeOpacity={0.7}
+                  >
+                    <VolumeX size={16} color="#ef4444" />
+                    <Text style={[styles.ttsButtonText, { color: '#ef4444' }]}>Stop</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => handlePlayTTS(message.id, message.content || message.text || '')}
+                    style={styles.ttsButton}
+                    activeOpacity={0.7}
+                  >
+                    <Volume2 size={16} color="#3b82f6" />
+                    <Text style={styles.ttsButtonText}>Listen</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </View>
@@ -586,7 +585,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#f0f9ff', '#e0f2fe']}
+        colors={colors.gradients.primaryLight}
         style={styles.backgroundGradient}
       />
       <KeyboardAvoidingView 
@@ -607,9 +606,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   try {
                     onBack(); // Just exit, no dialog for now
                     console.log('onBack called successfully');
-                  } catch (error) {
-                    console.error('Error calling onBack:', error);
-                    Alert.alert('Error', `Back button error: ${error.message}`);
+                  } catch (err) {
+                    const message = err instanceof Error ? err.message : String(err);
+                    console.error('Error calling onBack:', err);
+                    Alert.alert('Error', `Back button error: ${message}`);
                   }
                 }}
                 style={[styles.backButton, { backgroundColor: 'rgba(255, 0, 0, 0.1)' }]}
@@ -638,18 +638,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       `${currentExercise.duration || '5 min'} • Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length}`
                     ) : (
                       isLoading ? 'Loading your gentle space...' :
-                      apiError ? `Connection issues: ${apiError}` :
-                      `${rateLimitStatus.requestsRemaining} messages remaining today`
+                      // Don't show API errors in header, just show friendly message
+                      (rateLimitStatus.message || `${Math.max(0, (rateLimitStatus.total || 0) - (rateLimitStatus.used || 0))} messages remaining today`)
                     )}
                   </Text>
                   
                   {/* Rate limit warning */}
-                  {!currentExercise && rateLimitStatus.percentage >= 80 && (
+                  {!currentExercise && typeof rateLimitStatus?.percentage === 'number' && rateLimitStatus.percentage >= 80 && (
                     <View style={styles.warningContainer}>
                       <AlertCircle size={14} color="#f59e0b" />
                       <Text style={styles.warningText}>
                         {rateLimitStatus.percentage >= 90 
-                          ? `Almost at daily limit! ${rateLimitStatus.requestsRemaining} left.`
+                          ? `Almost at daily limit! ${Math.max(0, (rateLimitStatus.total || 0) - (rateLimitStatus.used || 0))} left.`
                           : `${rateLimitStatus.percentage}% of daily limit used.`
                         }
                       </Text>
@@ -665,7 +665,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <ScrollView 
           ref={scrollViewRef}
           style={styles.messagesArea}
+          contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={true}
+          bounces={true}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
           {messages.map(renderMessage)}
@@ -676,7 +679,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <View style={styles.typingBubble}>
                 <View style={styles.typingContent}>
                   <LinearGradient
-                    colors={['rgba(59, 130, 246, 0.8)', 'rgba(37, 99, 235, 0.8)']}
+                    colors={colors.gradients.messageUser}
                     style={styles.typingAvatar}
                   >
                     <User size={16} color="white" />
@@ -735,6 +738,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 multiline
                 style={[styles.textInput, { textAlignVertical: 'top' }]}
                 editable={!isRecording}
+                allowFontScaling={false}
+                selectionColor="#3b82f6"
               />
               
               {/* Show partial transcript inline */}
@@ -754,7 +759,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     activeOpacity={0.8}
                   >
                     <LinearGradient
-                      colors={['#3b82f6', '#1d4ed8']}
+                      colors={colors.gradients.micButton}
                       style={styles.micButtonGradient}
                     >
                       <Mic size={24} color="white" />
@@ -773,7 +778,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       activeOpacity={0.8}
                     >
                       <LinearGradient
-                        colors={['#ef4444', '#dc2626']}
+                        colors={colors.gradients.stopButton}
                         style={styles.stopButtonGradient}
                       >
                         <Square size={20} color="white" />
@@ -837,429 +842,5 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  backgroundGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  header: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(226, 232, 240, 0.6)',
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  backButton: {
-    padding: 12,
-    borderRadius: 24,
-    backgroundColor: '#f1f5f9',
-  },
-  headerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  sessionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.4)',
-  },
-  sessionDetails: {
-    flex: 1,
-  },
-  sessionTitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#1e293b',
-  },
-  sessionSubtitle: {
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  warningContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: 'rgba(251, 191, 36, 0.1)',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(251, 191, 36, 0.2)',
-  },
-  warningText: {
-    fontSize: 12,
-    color: '#f59e0b',
-    fontWeight: '500',
-    flex: 1,
-  },
-  messagesArea: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-  },
-  userMessageContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginBottom: 24,
-  },
-  userMessageWrapper: {
-    maxWidth: width * 0.75,
-  },
-  userMessageBubble: {
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  userMessageText: {
-    fontSize: 16,
-    lineHeight: 22,
-    color: 'white',
-  },
-  systemMessageContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginBottom: 24,
-  },
-  systemMessageWrapper: {
-    maxWidth: width * 0.85,
-  },
-  systemMessageBubble: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.6)',
-    borderRadius: 16,
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  systemMessageContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 16,
-  },
-  turtleAvatarContainer: {
-    marginTop: 4,
-  },
-  turtleAvatar: {
-    width: 48,
-    height: 48,
-  },
-  systemMessageTextContainer: {
-    flex: 1,
-  },
-  systemMessageText: {
-    fontSize: 16,
-    color: '#374151',
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  ttsControls: {
-    alignItems: 'flex-start',
-  },
-  ttsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
-  },
-  ttsButtonActive: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderColor: 'rgba(239, 68, 68, 0.2)',
-  },
-  ttsButtonText: {
-    fontSize: 12,
-    color: '#3b82f6',
-    fontWeight: '500',
-  },
-  typingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  typingBubble: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.4)',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  typingContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 16,
-  },
-  typingAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  typingTextContainer: {
-    flex: 1,
-  },
-  typingDots: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
-  },
-  typingDot: {
-    width: 10,
-    height: 10,
-    backgroundColor: '#3b82f6',
-    borderRadius: 5,
-  },
-  typingText: {
-    fontSize: 12,
-    color: '#6b7280',
-    fontStyle: 'italic',
-  },
-  suggestionsContainer: {
-    paddingHorizontal: 24,
-    paddingBottom: 16,
-  },
-  suggestionsScroll: {
-    gap: 8,
-  },
-  suggestionChip: {
-    backgroundColor: '#f1f5f9',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-  },
-  suggestionText: {
-    color: '#475569',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  inputContainer: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  inputCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.6)',
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  inputHeader: {
-    padding: 24,
-  },
-  inputPrompt: {
-    fontSize: 12,
-    color: '#6b7280',
-    fontWeight: '500',
-    marginBottom: 12,
-  },
-  textInput: {
-    fontSize: 16,
-    color: '#374151',
-    lineHeight: 22,
-    minHeight: 60,
-    maxHeight: 120,
-  },
-  partialTranscriptOverlay: {
-    position: 'absolute',
-    top: 10,
-    left: 0,
-    right: 0,
-    fontSize: 16,
-    color: '#3b82f6',
-    fontStyle: 'italic',
-    opacity: 0.7,
-    pointerEvents: 'none',
-  },
-  micButtonBeautiful: {
-    borderRadius: 50,
-    shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  micButtonGradient: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  recordingControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  recordingIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  recordingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ef4444',
-  },
-  stopButtonBeautiful: {
-    borderRadius: 50,
-    shadowColor: '#ef4444',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  stopButtonGradient: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputActions: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: 'rgba(248, 250, 252, 0.8)',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(241, 245, 249, 0.6)',
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  micButton: {
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  micButtonIdle: {
-    backgroundColor: '#0ea5e9',
-  },
-  micButtonRecording: {
-    backgroundColor: '#ef4444',
-  },
-  centerActions: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  listeningWaves: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginBottom: 8,
-  },
-  waveBar: {
-    width: 4,
-    backgroundColor: '#fca5a5',
-    borderRadius: 2,
-  },
-  actionText: {
-    fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
-  },
-  sendButton: {
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  sendButtonActive: {
-    backgroundColor: '#0ea5e9',
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#e2e8f0',
-  },
-  listeningIndicator: {
-    position: 'absolute',
-    top: 8,
-    left: '50%',
-    transform: [{ translateX: -50 }],
-    zIndex: 30,
-  },
-  listeningBadge: {
-    backgroundColor: '#ef4444',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  listeningBadgeText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: 'white',
-    textAlign: 'center',
-  },
-});
 
 export default ChatInterface;

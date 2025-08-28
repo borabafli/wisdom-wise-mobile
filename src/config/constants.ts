@@ -2,7 +2,7 @@
 export const API_CONFIG = {
   // OpenRouter API Key - Replace with your actual key
   // Get your key at: https://openrouter.ai/keys
-  OPENROUTER_API_KEY: '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', // TODO: Replace with real API key
+  OPENROUTER_API_KEY: 'test1', // TODO: Replace with real API key
   
   // App configuration
   APP_NAME: 'WisdomWise',
