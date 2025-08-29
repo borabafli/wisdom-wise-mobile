@@ -345,27 +345,9 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Recording Controls
   recordingControls: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: spacing.components.cardGap,
-  },
-  recordingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[2],
-    marginBottom: spacing[2],
-  },
-  recordingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.semantic.error,
-  },
-  recordingText: {
-    ...typography.textStyles.caption,
-    color: colors.semantic.error,
-    fontWeight: typography.fontWeight.medium,
-    marginLeft: spacing[2],
+    justifyContent: 'center',
   },
   
   // Modern Recording Actions
@@ -374,20 +356,16 @@ export const chatInterfaceStyles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.components.cardGap,
   },
-  cancelButtonModern: {
-    borderRadius: 50,
-    ...shadows.components.actionButton,
-  },
-  confirmButtonModern: {
-    borderRadius: 50,
-    ...shadows.components.actionButton,
-  },
-  actionButtonGradient: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  // Minimal Action Buttons
+  minimalActionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.background.glass,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   stopButtonBeautiful: {
     borderRadius: 50,
@@ -405,17 +383,30 @@ export const chatInterfaceStyles = StyleSheet.create({
   centerActions: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[4],
   },
-  listeningWaves: {
+  
+  // Modern Sound Wave Visualization
+  modernSoundWave: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[2],
+    justifyContent: 'center',
+    gap: spacing[3],
     marginBottom: spacing[4],
+    height: 48, // Increased height for better wave display
+    paddingVertical: spacing[2],
   },
-  waveBar: {
-    width: 4,
-    backgroundColor: '#fca5a5',
+  modernWaveBar: {
+    width: 4, // Slightly wider for better visibility
+    backgroundColor: colors.primary[400],
     borderRadius: 2,
+    minHeight: 4,
+    shadowColor: colors.primary[500],
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
   actionText: {
     ...typography.textStyles.bodySmall,
@@ -440,25 +431,4 @@ export const chatInterfaceStyles = StyleSheet.create({
     backgroundColor: colors.gray[200],
   },
 
-  // Listening Indicator
-  listeningIndicator: {
-    position: 'absolute',
-    top: 8,
-    left: '50%',
-    transform: [{ translateX: -50 }],
-    zIndex: 30,
-  },
-  listeningBadge: {
-    backgroundColor: colors.semantic.error,
-    paddingHorizontal: spacing.components.cardGap,
-    paddingVertical: spacing[4],
-    borderRadius: spacing.radius.sm,
-    ...shadows.components.floating,
-  },
-  listeningBadgeText: {
-    ...typography.textStyles.bodySmall,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.text.inverse,
-    textAlign: 'center',
-  },
 });
