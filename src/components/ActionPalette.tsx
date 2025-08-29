@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable, GestureResponderEvent } from 'react-native';
 import { MessageCircle, BookOpen, Heart, PenTool } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -51,12 +51,13 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable 
-        style={styles.backdrop} 
-        onPress={onClose}
-      >
+      <View style={styles.backdrop}>
+        <Pressable 
+          style={styles.backdropTouchable}
+          onPress={onClose}
+        />
         <View style={styles.container}>
-          <Pressable style={styles.modalContent}>
+          <View style={styles.modalContent}>
             <LinearGradient
               colors={gradients.card.primary}
               style={styles.gradient}
@@ -104,9 +105,9 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
             </LinearGradient>
-          </Pressable>
+          </View>
         </View>
-      </Pressable>
+      </View>
     </Modal>
   );
 };

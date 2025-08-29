@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart, Brain, BookOpen, Clock, Star, Wind, Eye } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 
 const { width, height } = Dimensions.get('window');
 

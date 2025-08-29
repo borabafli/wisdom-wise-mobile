@@ -29,7 +29,6 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Header - Ultra Modern Glass
   header: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(20px)',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: spacing.layout.screenPadding,
@@ -246,7 +245,6 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   typingBubble: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    backdropFilter: 'blur(15px)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.25)',
@@ -266,6 +264,11 @@ export const chatInterfaceStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.md,
+  },
+  typingTurtleAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
   },
   typingTextContainer: {
     flex: 1,
@@ -322,7 +325,6 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   inputCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    backdropFilter: 'blur(20px)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: spacing.radius.lg,
@@ -369,7 +371,6 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: spacing.components.inputPadding,
     paddingVertical: spacing[7],
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    backdropFilter: 'blur(10px)',
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.15)',
   },
