@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
+
 import { DEBUG, API_CONFIG } from '../config/constants';
+
 
 export interface AIResponse {
   success: boolean;
@@ -24,6 +26,7 @@ export interface APIConfig {
 class APIService {
   private client: AxiosInstance;
   private config: APIConfig = {
+
     apiKey: '', // No longer needed - handled by Edge Function
     baseURL: `${API_CONFIG.SUPABASE_URL}/functions/v1`,
     model: API_CONFIG.AI_MODEL,
@@ -38,10 +41,12 @@ class APIService {
       timeout: this.config.timeout,
       headers: {
         'Content-Type': 'application/json',
+
         'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`,
         'apikey': API_CONFIG.SUPABASE_ANON_KEY
       }
     });
+
 
     // Response interceptor for error handling
     this.client.interceptors.response.use(
@@ -52,6 +57,7 @@ class APIService {
       }
     );
   }
+
 
   // Set API key (no longer needed - kept for compatibility)
   setApiKey(apiKey: string): void {
@@ -68,14 +74,17 @@ class APIService {
     this.client.defaults.baseURL = this.config.baseURL;
   }
 
+
   // Send message with conversation context to AI therapist
   async sendMessageWithContext(messages: any[]): Promise<AIResponse> {
+
     // Mock responses for testing without API key
     if (DEBUG.MOCK_API_RESPONSES) {
       return this.getMockResponse(messages);
     }
 
     try {
+
       const response = await this.client.post('/ai-chat', {
         action: 'chat',
         messages: messages,
@@ -92,6 +101,7 @@ class APIService {
       if (error.response?.data) {
         // Edge Function returns errors in our expected format
         return error.response.data;
+
       } else if (error.code === 'ECONNABORTED') {
         return {
           success: false,
@@ -114,6 +124,7 @@ class APIService {
   // Get available models (for future use)
   async getAvailableModels(): Promise<any[]> {
     try {
+
       const response = await this.client.post('/ai-chat', {
         action: 'getModels'
       });
@@ -124,6 +135,7 @@ class APIService {
         console.error('Error fetching models:', response.data.error);
         return [];
       }
+
     } catch (error) {
       console.error('Error fetching models:', error);
       return [];
@@ -133,6 +145,7 @@ class APIService {
   // Test connection
   async testConnection(): Promise<{ success: boolean; message: string }> {
     try {
+
       const response = await this.client.post('/ai-chat', {
         action: 'healthCheck'
       });
@@ -142,6 +155,7 @@ class APIService {
       if (error.response?.data) {
         return error.response.data;
       }
+
       return {
         success: false,
         message: 'Connection test failed'
@@ -156,7 +170,9 @@ class APIService {
 
   // Check if service is ready
   isReady(): boolean {
+
     return true; // Always ready now - Edge Function handles authentication
+
   }
 
   // Mock responses for testing without API key

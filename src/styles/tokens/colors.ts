@@ -178,19 +178,22 @@ export const gradients = {
   
   // Card gradients
   card: {
-    primary: ['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)'],
-    glass: ['rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.3)'],
-    subtle: ['rgba(59, 130, 246, 0.1)', 'rgba(147, 197, 253, 0.08)', 'transparent'],
+
+    primary: ['rgba(255, 255, 255, 0.98)', 'rgba(248, 250, 252, 0.95)'],
+    glass: ['rgba(255, 255, 255, 0.9)', 'rgba(248, 250, 252, 0.85)'],
+    subtle: ['rgba(186, 230, 253, 0.3)', 'rgba(147, 197, 253, 0.2)'],
+
   },
   
   // Button gradients
   button: {
-    primary: ['rgba(186, 230, 253, 0.5)', 'rgba(59, 130, 246, 0.4)'],
+    primary: ['rgba(186, 230, 253, 0.8)', 'rgba(147, 197, 253, 0.7)'],
     blue: ['#3b82f6', '#1d4ed8'],
     purple: ['#8b5cf6', '#7c3aed'],
     cyan: ['#06b6d4', '#0891b2'],
     emerald: ['#10b981', '#059669'],
-    subtle: ['rgba(59, 130, 246, 0.2)', 'rgba(14, 165, 233, 0.3)'],
+    subtle: ['rgba(186, 230, 253, 0.6)', 'rgba(147, 197, 253, 0.5)'],
+
   },
   
   // Icon gradients

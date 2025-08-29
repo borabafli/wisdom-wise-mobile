@@ -118,10 +118,7 @@ export const homeScreenStyles = StyleSheet.create({
     borderRadius: spacing.radius['2xl'],
     ...shadows.components.floating,
     overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    backdropFilter: 'blur(20px)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
+
   },
   ctaGradient: {
     borderRadius: spacing.radius['2xl'],
@@ -148,12 +145,12 @@ export const homeScreenStyles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+
     gap: spacing.components.cardGap,
     minWidth: 280,
     ...shadows.md,
@@ -168,9 +165,9 @@ export const homeScreenStyles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.components.actionButton,
@@ -214,8 +211,7 @@ export const homeScreenStyles = StyleSheet.create({
   exerciseCardGradient: {
     borderRadius: spacing.radius.lg,
     padding: spacing.components.cardPadding,
-    borderWidth: 1,
-    borderColor: 'rgba(191, 219, 254, 0.6)',
+
   },
   exerciseCardContent: {
     flexDirection: 'row',
@@ -328,8 +324,6 @@ export const homeScreenStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.components.cardGap,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
   },
   quoteSymbol: {
     ...typography.textStyles.h3,

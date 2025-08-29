@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square } from 'lucide-react-native';
+
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
+
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -58,10 +60,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [partialTranscript, setPartialTranscript] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
   
-  // Animation values for recording dots
-  const dot1Anim = useRef(new Animated.Value(0.4)).current;
-  const dot2Anim = useRef(new Animated.Value(0.7)).current;
-  const dot3Anim = useRef(new Animated.Value(1)).current;
+
+  // Audio level state for real sound wave visualization with animation
+  const [audioLevels, setAudioLevels] = useState<number[]>(Array(5).fill(0.3));
+  const waveAnimations = useRef(
+    Array.from({ length: 5 }, () => new Animated.Value(0.3))
+  ).current;
+
 
   const exerciseFlows: Record<string, any> = {
     mindfulness: {
@@ -134,12 +139,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     initializeChatSession();
   }, [currentExercise]);
 
+
   const initializeChatSession = async () => {
     try {
       setIsLoading(true);
       
       // Initialize API service with key
-      apiService.setApiKey(API_CONFIG.OPENROUTER_API_KEY);
+      apiService.setApiKey(API_CONFIG.API_KEY);
       
       // Load rate limit status
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
@@ -379,7 +385,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const context = contextService.assembleContext(recentMessages);
 
       // Make API call
-      const response = await apiService.sendMessageWithContext(context);
+      const response = await apiService.getChatCompletion(context);
 
       setIsTyping(false);
 
@@ -446,17 +452,30 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const handleMicToggle = async () => {
-    if (isRecording) {
-      // Stop recording
-      await stopRecording();
-    } else {
-      // Start recording
-      await startRecording();
+    console.log('=== MIC BUTTON CLICKED ===');
+    console.log('Current recording state:', isRecording);
+    console.log('STT supported:', sttService.isSupported());
+    
+    try {
+      if (isRecording) {
+        console.log('Stopping recording...');
+        await stopRecording();
+      } else {
+        console.log('Starting recording...');
+        await startRecording();
+      }
+    } catch (error) {
+      console.error('Error in handleMicToggle:', error);
+      Alert.alert('Microphone Error', `Failed to toggle microphone: ${error.message}`);
     }
   };
 
   const startRecording = async () => {
+    console.log('startRecording called');
+    console.log('STT service supported:', sttService.isSupported());
+    
     if (!sttService.isSupported()) {
+      console.log('STT not supported, showing alert');
       Alert.alert(
         'Not Supported',
         'Speech recognition is not supported on this device. Please type your message instead.',
@@ -465,6 +484,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       return;
     }
 
+
+    console.log('Starting STT recording...');
+
     setSttError(null);
     setPartialTranscript('');
     
@@ -472,13 +494,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // On result
       (result) => {
         if (result.isFinal) {
-          // Final result - add to input
+
+          // Final result - just update the input text, don't stop recording
           setInputText(prev => prev + result.transcript);
           setPartialTranscript('');
-          setIsRecording(false);
-          setIsListening(false);
         } else {
-          // Partial result - show as preview
+          // Partial result - don't show as preview (removed blue text)
+
           setPartialTranscript(result.transcript);
         }
       },
@@ -491,17 +513,109 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         
         Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
       },
-      // On end
+
+      // On end - only update UI when recording truly ends (not restarts)
       () => {
-        setIsRecording(false);
-        setIsListening(false);
-        setPartialTranscript('');
+        console.log('STT service ended - checking if should update UI');
+        // Only update UI if we're not in continuous recording mode
+        // The service will handle restarts internally
+        if (!isRecording) {
+          console.log('Updating UI - recording ended');
+          setIsListening(false);
+          setPartialTranscript('');
+          resetSoundWaves();
+        }
+      },
+      // On audio level - real-time sound wave data
+      (level, frequencyData) => {
+        updateSoundWaves(level, frequencyData);
+
       }
     );
 
     if (success) {
       setIsRecording(true);
       setIsListening(true);
+
+    }
+  };
+
+  // Update sound waves based on real frequency spectrum data
+  const updateSoundWaves = (audioLevel: number, frequencyData?: number[]) => {
+    if (frequencyData && frequencyData.length >= 5) {
+      // Use real frequency data for each bar - animate smoothly to new values
+      frequencyData.forEach((level, index) => {
+        const targetHeight = Math.max(0.3, Math.min(1, level));
+        
+        // Animate to the new frequency level with smooth transition
+        Animated.timing(waveAnimations[index], {
+          toValue: targetHeight,
+          duration: 80, // Fast response for real-time feel
+          useNativeDriver: false,
+        }).start();
+      });
+      
+      // Also update state for immediate rendering (fallback)
+      setAudioLevels(frequencyData.map(level => Math.max(0.3, Math.min(1, level))));
+    } else {
+      // Fallback to single level distributed across bars with animation
+      const baseLevel = Math.max(0.3, Math.min(1, audioLevel));
+      const newLevels = Array.from({ length: 5 }, (_, i) => {
+        // Create dynamic variation for organic feel
+        const timeOffset = Date.now() / 200 + i;
+        const variation = Math.sin(timeOffset) * 0.15 + (Math.random() - 0.5) * 0.1;
+        return Math.max(0.3, Math.min(1, baseLevel + variation));
+      });
+      
+      // Animate all bars
+      newLevels.forEach((targetLevel, index) => {
+        Animated.timing(waveAnimations[index], {
+          toValue: targetLevel,
+          duration: 80,
+          useNativeDriver: false,
+        }).start();
+      });
+      
+      setAudioLevels(newLevels);
+    }
+  };
+
+  const resetSoundWaves = () => {
+    // Reset all animations to baseline
+    waveAnimations.forEach(anim => {
+      Animated.timing(anim, {
+        toValue: 0.3,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    });
+    
+    setAudioLevels(Array(5).fill(0.3));
+  };
+
+  const stopRecording = async () => {
+    await sttService.stopRecognition();
+    setIsRecording(false);
+    setIsListening(false);
+    setPartialTranscript('');
+    resetSoundWaves();
+  };
+
+  const cancelRecording = async () => {
+    console.log('Cancelling recording...');
+    try {
+      // Cancel the STT service without processing results
+      await sttService.cancelRecognition();
+      setIsRecording(false);
+      setIsListening(false);
+      setPartialTranscript('');
+      setSttError(null);
+      resetSoundWaves();
+      console.log('Recording cancelled successfully');
+    } catch (error) {
+      console.error('Error cancelling recording:', error);
+      setSttError('Failed to cancel recording');
+
     }
   };
 
@@ -598,21 +712,52 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <View style={styles.headerLeft}>
               <TouchableOpacity 
                 onPress={() => {
-                  console.log('=== BACK BUTTON PRESSED ===');
-                  console.log('Timestamp:', new Date().toISOString());
-                  console.log('onBack function exists:', typeof onBack === 'function');
-                  console.log('onBack function:', onBack.toString().substring(0, 200));
-                  
-                  try {
-                    onBack(); // Just exit, no dialog for now
-                    console.log('onBack called successfully');
-                  } catch (err) {
-                    const message = err instanceof Error ? err.message : String(err);
-                    console.error('Error calling onBack:', err);
-                    Alert.alert('Error', `Back button error: ${message}`);
+
+                  if (Platform.OS === 'web') {
+                    // For web, directly call the back handler without confirmation
+                    handleEndSession();
+                  } else {
+                    // Show confirmation dialog before ending session for mobile
+                    Alert.alert(
+                      'End Session?',
+                      'Are you sure you want to end this session? Your conversation will be saved to your chat history.',
+                      [
+                        {
+                          text: 'Cancel',
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'End Session',
+                          style: 'destructive',
+                          onPress: async () => {
+                            console.log('User confirmed session end');
+                            try {
+                              // Save current session to history if there are messages
+                              if (messages.length > 0) {
+                                await storageService.saveToHistory();
+                                console.log('Session saved to history');
+                              }
+                              
+                              // Clear current session
+                              await storageService.clearCurrentSession();
+                              console.log('Current session cleared');
+                              
+                              onBack();
+                              console.log('Session ended successfully');
+                            } catch (err) {
+                              const message = err instanceof Error ? err.message : String(err);
+                              console.error('Error ending session:', err);
+                              Alert.alert('Error', `Failed to end session: ${message}`);
+                            }
+                          },
+                        },
+                      ],
+                      { cancelable: true }
+                    );
                   }
                 }}
-                style={[styles.backButton, { backgroundColor: 'rgba(255, 0, 0, 0.1)' }]}
+                style={styles.backButton}
+
                 activeOpacity={0.7}
               >
                 <ChevronLeft size={20} color="#475569" />
@@ -742,12 +887,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 selectionColor="#3b82f6"
               />
               
-              {/* Show partial transcript inline */}
-              {partialTranscript && (
-                <Text style={styles.partialTranscriptOverlay}>
-                  {partialTranscript}
-                </Text>
-              )}
+
             </View>
             
             <View style={styles.inputActions}>
@@ -767,35 +907,40 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   </TouchableOpacity>
                 ) : (
                   <View style={styles.recordingControls}>
-                    <View style={styles.recordingIndicator}>
-                      <View style={[styles.recordingDot, { opacity: 1 }]} />
-                      <View style={[styles.recordingDot, { opacity: 0.7 }]} />
-                      <View style={[styles.recordingDot, { opacity: 0.4 }]} />
-                    </View>
+
+                    {/* Cancel Button (X) */}
                     <TouchableOpacity 
-                      onPress={stopRecording}
-                      style={styles.stopButtonBeautiful}
-                      activeOpacity={0.8}
+                      onPress={cancelRecording}
+                      style={styles.minimalActionButton}
+                      activeOpacity={0.6}
                     >
-                      <LinearGradient
-                        colors={colors.gradients.stopButton}
-                        style={styles.stopButtonGradient}
-                      >
-                        <Square size={20} color="white" />
-                      </LinearGradient>
+                      <X size={18} color={colors.text.tertiary} />
+
                     </TouchableOpacity>
                   </View>
                 )}
                 
                 <View style={styles.centerActions}>
                   {isRecording && (
-                    <View style={styles.listeningWaves}>
-                      {[...Array(6)].map((_, i) => (
-                        <View 
+
+                    <View style={styles.modernSoundWave}>
+                      {waveAnimations.map((anim, i) => (
+                        <Animated.View 
+
                           key={i}
                           style={[
-                            styles.waveBar,
-                            { height: 12 + (i % 3) * 4 }
+                            styles.modernWaveBar,
+                            {
+                              height: anim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [4, 40], // Wider range for more dramatic effect
+                              }),
+                              opacity: anim.interpolate({
+                                inputRange: [0.2, 1],
+                                outputRange: [0.4, 1],
+                                extrapolate: 'clamp',
+                              }),
+                            }
                           ]}
                         />
                       ))}
@@ -803,40 +948,42 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   )}
                   
                   <Text style={styles.actionText}>
-                    {isRecording ? 'Listening... Tap mic to stop' : 
+
+                    {isRecording ? 'Listening... Tap ✓ when done' : 
+
                      sttService.isSupported() ? 'Share through voice or text' : 
                      'Share your thoughts through text'}
                   </Text>
                 </View>
                 
-                <TouchableOpacity
-                  onPress={() => handleSend()}
-                  disabled={!inputText.trim()}
-                  style={[
-                    styles.sendButton,
-                    inputText.trim() ? styles.sendButtonActive : styles.sendButtonDisabled
-                  ]}
-                  activeOpacity={0.8}
-                >
-                  <Send 
-                    size={20} 
-                    color={inputText.trim() ? 'white' : '#94a3b8'} 
-                  />
-                </TouchableOpacity>
+                {isRecording ? (
+                  <TouchableOpacity 
+                    onPress={stopRecording}
+                    style={styles.minimalActionButton}
+                    activeOpacity={0.6}
+                  >
+                    <Check size={18} color={colors.primary[400]} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => handleSend()}
+                    disabled={!inputText.trim()}
+                    style={[
+                      styles.sendButton,
+                      inputText.trim() ? styles.sendButtonActive : styles.sendButtonDisabled
+                    ]}
+                    activeOpacity={0.8}
+                  >
+                    <Send 
+                      size={20} 
+                      color={inputText.trim() ? 'white' : '#94a3b8'} 
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </View>
           
-          {/* Listening Indicator */}
-          {isListening && (
-            <View style={styles.listeningIndicator}>
-              <View style={styles.listeningBadge}>
-                <Text style={styles.listeningBadgeText}>
-                  Listening...
-                </Text>
-              </View>
-            </View>
-          )}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

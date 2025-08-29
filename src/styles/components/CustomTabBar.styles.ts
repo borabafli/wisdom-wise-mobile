@@ -9,18 +9,15 @@ import { colors, typography, spacing, shadows } from '../tokens';
 export const customTabBarStyles = StyleSheet.create({
   // Container
   container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 50,
+
+    backgroundColor: colors.background.secondary,
   },
   tabBarGradient: {
     borderTopWidth: 1,
-    borderTopColor: colors.border.primary,
+    borderTopColor: colors.border.light,
     ...shadows.components.tabBar,
-    borderTopLeftRadius: spacing.radius['2xl'],
-    borderTopRightRadius: spacing.radius['2xl'],
+    paddingBottom: 20, // Add padding for Android navigation gestures
+
   },
   tabBarContent: {
     flexDirection: 'row',
@@ -41,8 +38,7 @@ export const customTabBarStyles = StyleSheet.create({
   },
   tabButtonActive: {
     backgroundColor: colors.primaryAlpha[10],
-    borderWidth: 1,
-    borderColor: colors.primaryAlpha[20],
+
   },
   tabLabel: {
     ...typography.textStyles.caption,
@@ -54,7 +50,9 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing[4],
-    marginTop: -spacing.layout.screenPadding,
+
+    marginTop: -8,
+
   },
   plusButton: {
     width: 64,
@@ -63,17 +61,8 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.components.floatingActionButton,
-    borderWidth: 3,
-    borderColor: colors.background.glass,
+
   },
 
-  // Bottom Safe Area
-  bottomSafeArea: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.background.secondary,
-    zIndex: 49,
-  },
+
 });
