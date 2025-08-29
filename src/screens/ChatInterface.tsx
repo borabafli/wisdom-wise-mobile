@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
 
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,24 +20,8 @@ import { API_CONFIG } from '../config/constants';
 import { chatInterfaceStyles as styles } from '../styles/components/ChatInterface.styles';
 import { colors } from '../styles/tokens';
 
-
-// Message interface moved to storageService
-
-interface Exercise {
-  type: string;
-  name: string;
-  duration: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-}
-
-interface ChatInterfaceProps {
-  onBack: () => void;
-  currentExercise?: Exercise;
-  startWithActionPalette?: boolean;
-  onActionSelect: (actionId: string) => void;
-}
+// Import types
+import { Exercise, ChatInterfaceProps } from '../types';
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   onBack, 
@@ -144,8 +128,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     try {
       setIsLoading(true);
       
-      // Initialize API service with key
-      apiService.setApiKey(API_CONFIG.API_KEY);
+      // API service is now initialized automatically
       
       // Load rate limit status
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
@@ -187,7 +170,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // Create new conversation with welcome message
       const welcomeMessage = contextService.createWelcomeMessage();
       setMessages([welcomeMessage]);
-      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
+      setSuggestions(contextService.generateSuggestions([])); // Empty array for first message suggestions
       
       // Save welcome message to storage
       await storageService.addMessage(welcomeMessage);
@@ -196,7 +179,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // Fallback to local welcome message
       const welcomeMessage = contextService.createWelcomeMessage();
       setMessages([welcomeMessage]);
-      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
+      setSuggestions(contextService.generateSuggestions([])); // Empty array for first message suggestions
     }
   };
 
@@ -649,7 +632,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <View style={styles.systemMessageContent}>
             <View style={styles.turtleAvatarContainer}>
               <Image 
-                source={require('../../assets/images/turtle9.png')}
+                source={require('../../assets/images/turtle11.png')}
                 style={styles.turtleAvatar}
                 contentFit="cover"
               />
@@ -756,14 +739,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <ChevronLeft size={20} color="#475569" />
               </TouchableOpacity>
               <View style={styles.headerInfo}>
-                {!currentExercise && (
-                  <LinearGradient
-                    colors={['rgba(52, 211, 153, 0.2)', 'rgba(20, 184, 166, 0.2)']}
-                    style={styles.sessionIcon}
-                  >
-                    <Heart size={20} color="#059669" />
-                  </LinearGradient>
-                )}
                 <View style={styles.sessionDetails}>
                   <Text style={styles.sessionTitle}>
                     {currentExercise && exerciseFlows[currentExercise.type] 
@@ -816,12 +791,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <View style={styles.typingContainer}>
               <View style={styles.typingBubble}>
                 <View style={styles.typingContent}>
-                  <LinearGradient
-                    colors={colors.gradients.messageUser}
-                    style={styles.typingAvatar}
-                  >
-                    <User size={16} color="white" />
-                  </LinearGradient>
+                  <View style={styles.typingAvatar}>
+                    <Image 
+                      source={require('../../assets/images/turtle11.png')}
+                      style={styles.typingTurtleAvatar}
+                      contentFit="cover"
+                    />
+                  </View>
                   <View style={styles.typingTextContainer}>
                     <View style={styles.typingDots}>
                       <View style={styles.typingDot} />

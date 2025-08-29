@@ -3,15 +3,16 @@
  * Separated from component for better maintainability
  */
 
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { colors, typography, spacing, shadows } from '../tokens';
 
 const { width } = Dimensions.get('window');
 
 export const chatInterfaceStyles = StyleSheet.create({
-  // Container & Layout
+  // Container & Layout - Ultra Transparent
   container: {
     flex: 1,
+    backgroundColor: 'rgba(248, 250, 252, 0.95)',
   },
   backgroundGradient: {
     position: 'absolute',
@@ -19,16 +20,17 @@ export const chatInterfaceStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    opacity: 0.6,
   },
   keyboardView: {
     flex: 1,
   },
 
-  // Header
+  // Header - Ultra Modern Glass
   header: {
-    backgroundColor: colors.background.glass,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    borderBottomColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.layout.screenPadding,
   },
@@ -65,12 +67,18 @@ export const chatInterfaceStyles = StyleSheet.create({
     flex: 1,
   },
   sessionTitle: {
-    ...typography.textStyles.sessionTitle,
+    fontSize: 20,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Display' : 'Roboto',
+    fontWeight: '600',
     color: colors.text.primary,
+    letterSpacing: 0.2,
   },
   sessionSubtitle: {
-    ...typography.textStyles.sessionSubtitle,
+    fontSize: 15,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '400',
     color: colors.text.tertiary,
+    letterSpacing: 0.1,
   },
   warningContainer: {
     flexDirection: 'row',
@@ -85,10 +93,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderColor: 'rgba(251, 191, 36, 0.2)',
   },
   warningText: {
-    ...typography.textStyles.caption,
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '500',
     color: colors.semantic.warning,
-    fontWeight: typography.fontWeight.medium,
     flex: 1,
+    letterSpacing: 0.1,
   },
 
   // Messages Area
@@ -113,69 +123,91 @@ export const chatInterfaceStyles = StyleSheet.create({
     minWidth: 120,
   },
   userMessageBubble: {
+    backgroundColor: '#3b82f6',
     borderRadius: spacing.radius.lg,
     borderBottomRightRadius: spacing.radius.xs,
+    borderWidth: 0,
     paddingHorizontal: spacing.components.messagePadding,
     paddingVertical: spacing.components.messagePadding,
-    ...shadows.components.messageBubble,
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   userMessageText: {
-    ...typography.textStyles.chatMessage,
+    fontSize: 19,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '400',
     color: colors.text.inverse,
     textAlign: 'left',
     flexWrap: 'wrap',
+    lineHeight: 30,
+    letterSpacing: 0.4,
   },
 
-  // System Messages
+  // System Messages - No Box Style
   systemMessageContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginBottom: spacing.components.messageGap,
+    paddingHorizontal: spacing[2],
   },
   systemMessageBubble: {
-    backgroundColor: colors.background.primary,
-    borderWidth: 1,
-    borderColor: colors.border.dark,
-    borderRadius: spacing.radius.lg,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[3],
-    ...shadows.components.messageBubble,
-    width: '95%',
-    minWidth: 140,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderRadius: 0,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    width: '100%',
+    minWidth: 0,
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   systemMessageContent: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'flex-start',
     flex: 1,
   },
 
-  // Turtle Avatar - FIXED SIZE
+  // Turtle Avatar - EXTRA LARGE, NO CIRCLE, TOP POSITIONED
   turtleAvatarContainer: {
-    width: 32,
-    height: 32,
-    marginRight: spacing[3],
+    width: 64,
+    height: 64,
+    marginBottom: spacing[2],
+    marginRight: 0,
     marginTop: 0,
+    alignSelf: 'flex-start',
     flexShrink: 0,
   },
   turtleAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 64,
+    height: 64,
+    borderRadius: 0,
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
 
-  // Message Text
+  // Message Text - Modern Typography, Full Width
   systemMessageTextContainer: {
     flex: 1,
+    width: '100%',
     minWidth: 0,
     flexShrink: 1,
   },
   systemMessageText: {
-    ...typography.textStyles.chatMessage,
+    fontSize: 19,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '400',
     color: colors.text.primary,
     marginBottom: spacing[2],
     flexWrap: 'wrap',
     textAlign: 'left',
-    lineHeight: 20,
+    lineHeight: 30,
+    letterSpacing: 0.4,
   },
 
   // TTS Controls
@@ -199,21 +231,23 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderColor: 'rgba(239, 68, 68, 0.2)',
   },
   ttsButtonText: {
-    ...typography.textStyles.caption,
+    fontSize: 13,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '500',
     color: colors.primary[400],
-    fontWeight: typography.fontWeight.medium,
+    letterSpacing: 0.1,
   },
 
-  // Typing Indicator
+  // Typing Indicator - Modern Glass
   typingContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
   typingBubble: {
-    backgroundColor: colors.background.glass,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.4)',
+    borderColor: 'rgba(255, 255, 255, 0.25)',
     paddingHorizontal: spacing.components.messagePadding,
     paddingVertical: spacing.components.messagePadding,
     ...shadows.components.floating,
@@ -231,6 +265,11 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'center',
     ...shadows.md,
   },
+  typingTurtleAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+  },
   typingTextContainer: {
     flex: 1,
   },
@@ -247,9 +286,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 5,
   },
   typingText: {
-    ...typography.textStyles.caption,
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '400',
     color: colors.text.tertiary,
     fontStyle: 'italic',
+    letterSpacing: 0.1,
   },
 
   // Suggestions
@@ -269,20 +311,22 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderColor: colors.border.light,
   },
   suggestionText: {
+    fontSize: 16,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '500',
     color: colors.text.secondary,
-    ...typography.textStyles.bodySmall,
-    fontWeight: typography.fontWeight.medium,
+    letterSpacing: 0.2,
   },
 
-  // Input Area
+  // Input Area - Modern Glass
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
   },
   inputCard: {
-    backgroundColor: colors.background.glass,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: spacing.radius.lg,
     ...shadows.components.card,
   },
@@ -291,18 +335,24 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingVertical: spacing.components.cardGap,
   },
   inputPrompt: {
-    ...typography.textStyles.caption,
+    fontSize: 17,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '500',
     color: colors.text.tertiary,
-    fontWeight: typography.fontWeight.medium,
     marginBottom: spacing[6],
+    letterSpacing: 0.3,
   },
   textInput: {
-    ...typography.textStyles.body,
+    fontSize: 19,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '400',
     color: colors.text.primary,
     minHeight: 60,
     maxHeight: 120,
     paddingTop: spacing[4],
     backgroundColor: 'transparent',
+    lineHeight: 30,
+    letterSpacing: 0.4,
   },
   partialTranscriptOverlay: {
     position: 'absolute',
@@ -316,13 +366,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     pointerEvents: 'none',
   },
 
-  // Input Actions
+  // Input Actions - Glass Effect
   inputActions: {
     paddingHorizontal: spacing.components.inputPadding,
     paddingVertical: spacing[7],
-    backgroundColor: 'rgba(248, 250, 252, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(241, 245, 249, 0.6)',
+    borderTopColor: 'rgba(255, 255, 255, 0.15)',
   },
   actionsRow: {
     flexDirection: 'row',
@@ -413,23 +463,25 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   },
   actionText: {
-    ...typography.textStyles.bodySmall,
+    fontSize: 15,
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
+    fontWeight: '400',
     color: colors.text.tertiary,
     textAlign: 'center',
+    letterSpacing: 0.2,
   },
 
-  // Send Button
+  // Send Button - Match Mic Button
   sendButton: {
-    padding: spacing[6],
-    borderRadius: spacing.radius.md,
-    minWidth: 44,
-    minHeight: 44,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.components.actionButton,
   },
   sendButtonActive: {
-    backgroundColor: colors.primary[500],
+    backgroundColor: '#3b82f6',
   },
   sendButtonDisabled: {
     backgroundColor: colors.gray[200],

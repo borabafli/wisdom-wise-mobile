@@ -10,17 +10,28 @@ export const actionPaletteStyles = StyleSheet.create({
   // Modal & Backdrop
   backdrop: {
     flex: 1,
-    backgroundColor: colors.overlay.dark,
-  },
-  container: {
-    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backdropTouchable: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  container: {
     padding: spacing.layout.screenPadding,
+    width: '100%',
+    alignItems: 'center',
   },
   modalContent: {
     width: '100%',
     maxWidth: 400,
+    backgroundColor: colors.white,
+    borderRadius: spacing.radius['2xl'],
+    ...shadows.components.modal,
   },
   gradient: {
     borderRadius: spacing.radius['2xl'],

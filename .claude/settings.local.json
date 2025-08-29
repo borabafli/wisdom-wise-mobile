@@ -12,7 +12,17 @@
       "mcp__supabase__get_anon_key",
       "Bash(supabase secrets:*)",
       "WebSearch",
-      "Bash(npx supabase functions deploy:*)"
+      "Bash(npx supabase functions deploy:*)",
+      "Bash(npx expo install:*)",
+      "Bash(npx expo start:*)",
+      "Bash(eas build:configure)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/**)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/styles/components/**)"
     ],
     "deny": [],
     "ask": []

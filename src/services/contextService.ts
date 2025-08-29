@@ -1,4 +1,5 @@
 import { Message } from './storageService';
+import { generateSuggestions, getFirstMessageSuggestions } from '../utils/suggestionGenerator';
 
 export interface ContextConfig {
   maxTurns: number;
@@ -138,49 +139,23 @@ Remember: You are not just giving advice - you are creating a safe, sacred space
 
   // Helper to create suggestions based on context
   generateSuggestions(recentMessages: Message[]): string[] {
-    const lastMessage = recentMessages[recentMessages.length - 1];
-    
-    // Default suggestions
-    const defaultSuggestions = [
-      'Feeling good today 😊',
-      'A bit stressed 😰', 
-      'Need support 🤗',
-      'Just checking in 👋'
-    ];
-
-    // Context-aware suggestions based on last message
-    if (lastMessage?.type === 'user') {
-      const content = (lastMessage.text || '').toLowerCase();
-      
-      if (content.includes('stress') || content.includes('anxious') || content.includes('worried')) {
-        return [
-          'Need to breathe deeply 🌊',
-          'Feeling overwhelmed 😰',
-          'Want to find calm 🌿',
-          'Could use grounding 🌱'
-        ];
-      }
-      
-      if (content.includes('sad') || content.includes('down') || content.includes('difficult')) {
-        return [
-          'Need gentle comfort 🤗',
-          'Feeling heavy today 💙',
-          'Want understanding 🌸',
-          'Could use kindness ✨'
-        ];
-      }
-      
-      if (content.includes('grateful') || content.includes('thankful') || content.includes('good')) {
-        return [
-          'Appreciating this moment 🙏',
-          'Feeling blessed 🌟',
-          'Grateful for growth 🌱',
-          'Celebrating progress 🎉'
-        ];
-      }
+    if (recentMessages.length === 0) {
+      return getFirstMessageSuggestions();
     }
-    
-    return defaultSuggestions;
+
+    // Find the last AI response to analyze
+    const lastAiMessage = recentMessages
+      .slice()
+      .reverse()
+      .find(msg => msg.type === 'system');
+
+    if (!lastAiMessage) {
+      return getFirstMessageSuggestions();
+    }
+
+    // Use our advanced suggestion generator
+    const aiResponseContent = lastAiMessage.content || lastAiMessage.text || '';
+    return generateSuggestions(aiResponseContent);
   }
 }
 
