@@ -649,7 +649,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <View style={styles.systemMessageContent}>
             <View style={styles.turtleAvatarContainer}>
               <Image 
-                source={require('../../assets/images/turtle9.png')}
+                source={require('../../assets/images/turtle11.png')}
                 style={styles.turtleAvatar}
                 contentFit="cover"
               />
@@ -756,14 +756,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <ChevronLeft size={20} color="#475569" />
               </TouchableOpacity>
               <View style={styles.headerInfo}>
-                {!currentExercise && (
-                  <LinearGradient
-                    colors={['rgba(52, 211, 153, 0.2)', 'rgba(20, 184, 166, 0.2)']}
-                    style={styles.sessionIcon}
-                  >
-                    <Heart size={20} color="#059669" />
-                  </LinearGradient>
-                )}
                 <View style={styles.sessionDetails}>
                   <Text style={styles.sessionTitle}>
                     {currentExercise && exerciseFlows[currentExercise.type] 

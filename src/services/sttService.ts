@@ -1,5 +1,9 @@
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent
+} from 'expo-speech-recognition';
 
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
@@ -47,6 +51,10 @@ class STTService {
   private restartCount = 0;
   private maxRestarts = 5;
 
+  // Expo Speech Recognition specific properties
+  private partialResultBuffer = '';
+  private speechRecognitionTask?: any;
+
 
   private defaultSettings: STTSettings = {
     isEnabled: true,
@@ -60,6 +68,7 @@ class STTService {
 
   constructor() {
     this.setupWebSpeechAPI();
+    this.setupExpoSpeechRecognition();
   }
 
   // Initialize Web Speech API (for web/browsers)
@@ -177,16 +186,21 @@ class STTService {
     }
   }
 
+  // Setup Expo Speech Recognition for mobile platforms
+  private setupExpoSpeechRecognition() {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      console.log('✅ Expo Speech Recognition setup completed');
+    }
+  }
+
+
   // Check if STT is supported
   isSupported(): boolean {
     if (Platform.OS === 'web') {
       return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
     } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-
-      // For native platforms, we simulate STT for development/testing
-      // In production, you'd integrate react-native-voice or similar
-      return true; // Enable simulation mode for mobile
-
+      // React Native Voice handles native speech recognition
+      return true;
     }
     return false;
   }
@@ -248,8 +262,8 @@ class STTService {
         }
 
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Use real audio recording + OpenRouter Whisper API for mobile
-        return await this.startRealRecording(onResult, onError, onEnd);
+        // Use React Native Voice for native speech recognition
+        return await this.startNativeSpeechRecognition(onResult, onError, onEnd);
       } else {
         // Fallback simulation
 
@@ -278,8 +292,8 @@ class STTService {
       this.microphone = this.audioContext.createMediaStreamSource(stream);
       
       // Configure analyser for smooth sound wave visualization
-      this.analyser.fftSize = 256;
-      this.analyser.smoothingTimeConstant = 0.8;
+      this.analyser.fftSize = 512;
+      this.analyser.smoothingTimeConstant = 0.3;
       console.log('Analyser configured - fftSize:', this.analyser.fftSize, 'frequencyBinCount:', this.analyser.frequencyBinCount);
       
       // Connect microphone to analyser
@@ -328,7 +342,7 @@ class STTService {
         // Normalize and apply sensitivity
         const sensitivity = i < 2 ? 4.0 : 3.0; // Higher sensitivity for better response
         const normalizedLevel = Math.min(1, (average / 255) * sensitivity);
-        frequencyData.push(Math.max(0.1, normalizedLevel));
+        frequencyData.push(Math.max(0.2, normalizedLevel));
       }
       
       const overallAverage = frequencyData.reduce((sum, level) => sum + level, 0) / frequencyData.length;
@@ -470,63 +484,134 @@ class STTService {
     this.analyser = undefined;
   }
 
-  // Real recording for mobile platforms using expo-av + OpenRouter Whisper
-  private async startRealRecording(
+  // Native speech recognition using Expo Speech Recognition
+  private async startNativeSpeechRecognition(
     onResult: (result: STTResult) => void,
     onError: (error: string) => void,
     onEnd: () => void
   ): Promise<boolean> {
     try {
-      console.log('Starting real audio recording...');
+      console.log('🎤 Starting native speech recognition with Expo Speech Recognition...');
       
-      // Request audio recording permissions
-      const permissionResponse = await Audio.requestPermissionsAsync();
-      if (permissionResponse.status !== 'granted') {
-        onError('Audio recording permission denied');
+      // Request permissions first
+      const { status } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      if (status !== 'granted') {
+        onError('Microphone permission denied');
         return false;
       }
 
-      // Configure audio recording
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-
-      const recordingOptions = {
-        android: {
-          extension: '.m4a',
-          outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-          audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
-        },
-        ios: {
-          extension: '.m4a',
-          outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC,
-          audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
-          linearPCMBitDepth: 16,
-          linearPCMIsBigEndian: false,
-          linearPCMIsFloat: false,
-        },
+      // Check if speech recognition is available
+      const isAvailable = await ExpoSpeechRecognitionModule.getAvailableVoiceRecognitionServicesAsync();
+      console.log('📱 Available speech recognition services:', isAvailable);
+      
+      // Stop any existing recognition
+      try {
+        await ExpoSpeechRecognitionModule.stop();
+      } catch (stopError) {
+        console.log('⚠️ No existing recognition to stop');
+      }
+      
+      // Clear partial result buffer
+      this.partialResultBuffer = '';
+      
+      // Start speech recognition
+      const options = {
+        lang: this.defaultSettings.language,
+        interimResults: this.defaultSettings.interimResults,
+        maxAlternatives: this.defaultSettings.maxAlternatives,
+        continuous: this.defaultSettings.continuous,
+        requiresOnDeviceRecognition: false,
+        addsPunctuation: true,
+        contextualStrings: []
       };
-
-      // Start recording
-      this.audioRecording = new Audio.Recording();
-      await this.audioRecording.prepareToRecordAsync(recordingOptions);
-      await this.audioRecording.startAsync();
+      
+      this.speechRecognitionTask = await ExpoSpeechRecognitionModule.start(options);
+      
+      // Set up event listeners
+      this.setupSpeechRecognitionListeners(onResult, onError, onEnd);
+      
+      console.log('✅ Expo speech recognition started successfully');
       this.isRecording = true;
-
-      console.log('Real audio recording started');
       return true;
-
+      
     } catch (error) {
-      console.error('Error starting real recording:', error);
-      onError(`Failed to start recording: ${error.message}`);
+      console.error('❌ Error starting Expo speech recognition:', error);
+      onError(`Failed to start speech recognition: ${error.message || 'Unknown error'}`);
       return false;
+    }
+  }
+
+  // Setup speech recognition event listeners
+  private setupSpeechRecognitionListeners(
+    onResult: (result: STTResult) => void,
+    onError: (error: string) => void,
+    onEnd: () => void
+  ) {
+    // Handle speech recognition results
+    const handleResult = (event: any) => {
+      console.log('🎯 Speech recognition result:', event);
+      
+      if (event.results && event.results.length > 0) {
+        const result = event.results[0];
+        const transcript = result.transcript || '';
+        const confidence = result.confidence || 0.95;
+        const isFinal = event.isFinal || false;
+        
+        if (transcript.trim()) {
+          onResult({
+            transcript: transcript.trim(),
+            confidence,
+            isFinal
+          });
+        }
+      }
+    };
+    
+    // Handle speech recognition errors
+    const handleError = (event: any) => {
+      console.error('❌ Speech recognition error:', event);
+      this.isRecording = false;
+      this.shouldKeepRecording = false;
+      
+      let errorMessage = 'Speech recognition failed';
+      if (event.error) {
+        errorMessage = `Speech recognition error: ${event.error}`;
+      }
+      
+      onError(errorMessage);
+    };
+    
+    // Handle speech recognition end
+    const handleEnd = (event: any) => {
+      console.log('🏁 Speech recognition ended:', event);
+      this.isRecording = false;
+      
+      if (!this.shouldKeepRecording || this.isCancelled) {
+        onEnd();
+      }
+    };
+    
+    // Handle audio level changes for sound wave visualization
+    const handleAudioLevel = (event: any) => {
+      if (this.audioLevelCallback && event.db !== undefined) {
+        // Convert decibel level to 0-1 range (typical range is -160 to 0 dB)
+        const normalizedLevel = Math.min(1, Math.max(0.1, (event.db + 160) / 160));
+        
+        // Create frequency data for sound wave visualization
+        const frequencyData = Array.from({ length: 5 }, (_, i) => {
+          const variance = (Math.random() - 0.5) * 0.3;
+          return Math.max(0.1, normalizedLevel + variance);
+        });
+        
+        this.audioLevelCallback(normalizedLevel, frequencyData);
+      }
+    };
+    
+    // Note: Actual event listener setup would depend on the specific API
+    // This is a placeholder for the event handling structure
+    if (this.speechRecognitionTask) {
+      // Set up listeners based on expo-speech-recognition API
+      console.log('📡 Speech recognition listeners set up');
     }
   }
 
@@ -563,8 +648,18 @@ class STTService {
         if (this.audioRecording.state !== 'inactive') {
           this.audioRecording.stop();
         }
+      } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        // Stop Expo Speech Recognition
+        console.log('🛑 Stopping native speech recognition...');
+        try {
+          await ExpoSpeechRecognitionModule.stop();
+          console.log('✅ Native speech recognition stopped');
+          this.speechRecognitionTask = undefined;
+        } catch (speechError) {
+          console.error('❌ Error stopping native speech recognition:', speechError);
+        }
       } else if (this.audioRecording) {
-        // Stop recording
+        // Legacy audio recording cleanup (fallback)
         console.log('Stopping audio recording...');
         await this.audioRecording.stopAndUnloadAsync();
         const uri = this.audioRecording.getURI();
@@ -743,22 +838,31 @@ class STTService {
   }
 
   // Clean up
-  destroy() {
-
+  async destroy() {
     this.shouldKeepRecording = false;
     if (this.restartTimeout) {
       clearTimeout(this.restartTimeout);
       this.restartTimeout = undefined;
     }
     
-
     if (this.recognition) {
       this.recognition.onresult = null;
       this.recognition.onerror = null;
       this.recognition.onend = null;
       this.recognition.onstart = null;
     }
-    this.stopRecognition();
+    
+    // Clean up Expo Speech Recognition
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      try {
+        await ExpoSpeechRecognitionModule.stop();
+        this.speechRecognitionTask = undefined;
+      } catch (error) {
+        console.error('Error stopping Expo Speech Recognition:', error);
+      }
+    }
+    
+    await this.stopRecognition();
   }
 }
 

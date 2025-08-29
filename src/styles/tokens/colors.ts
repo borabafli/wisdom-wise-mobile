@@ -137,22 +137,24 @@ export const colors = {
     disabled: '#d1d5db',
   },
 
-  // Border Colors
+  // Border Colors - Ultra Subtle
   border: {
-    light: 'rgba(226, 232, 240, 0.6)',
-    medium: 'rgba(226, 232, 240, 0.8)', 
-    dark: '#e5e7eb',
-    primary: 'rgba(186, 230, 253, 0.6)',
-    focus: '#3b82f6',
+    light: 'rgba(255, 255, 255, 0.2)',
+    medium: 'rgba(255, 255, 255, 0.25)', 
+    dark: 'rgba(255, 255, 255, 0.3)',
+    primary: 'rgba(59, 130, 246, 0.25)',
+    focus: 'rgba(59, 130, 246, 0.4)',
+    glass: 'rgba(255, 255, 255, 0.15)',
   },
 
-  // Background Colors
+  // Background Colors - Modern Glass Morphism
   background: {
-    primary: '#ffffff',
-    secondary: 'rgba(239, 246, 255, 0.9)',
-    tertiary: '#f1f5f9',
-    glass: 'rgba(255, 255, 255, 0.7)',
-    card: 'rgba(255, 255, 255, 0.95)',
+    primary: 'rgba(255, 255, 255, 0.05)',
+    secondary: 'rgba(255, 255, 255, 0.1)',
+    tertiary: 'rgba(248, 250, 252, 0.08)',
+    glass: 'rgba(255, 255, 255, 0.15)',
+    card: 'rgba(255, 255, 255, 0.12)',
+    blur: 'rgba(255, 255, 255, 0.08)',
   },
 
   // Overlay Colors
@@ -170,19 +172,19 @@ export const colors = {
 
 // Separate gradients for easier access
 export const gradients = {
-  // Background gradients
+  // Background gradients - Ultra Modern
   background: {
-    calm: ['#dbeafe', '#f0f9ff', '#bfdbfe'],
-    primary: ['rgba(255, 255, 255, 0.95)', 'rgba(248, 250, 252, 0.9)'],
+    calm: ['rgba(59, 130, 246, 0.02)', 'rgba(147, 197, 253, 0.03)', 'rgba(186, 230, 253, 0.02)'],
+    primary: ['rgba(255, 255, 255, 0.08)', 'rgba(248, 250, 252, 0.05)'],
+    glass: ['rgba(255, 255, 255, 0.12)', 'rgba(255, 255, 255, 0.08)'],
   },
   
-  // Card gradients
+  // Card gradients - Modern Glass
   card: {
-
-    primary: ['rgba(255, 255, 255, 0.98)', 'rgba(248, 250, 252, 0.95)'],
-    glass: ['rgba(255, 255, 255, 0.9)', 'rgba(248, 250, 252, 0.85)'],
-    subtle: ['rgba(186, 230, 253, 0.3)', 'rgba(147, 197, 253, 0.2)'],
-
+    primary: ['rgba(255, 255, 255, 0.15)', 'rgba(248, 250, 252, 0.12)'],
+    glass: ['rgba(255, 255, 255, 0.18)', 'rgba(255, 255, 255, 0.12)'],
+    subtle: ['rgba(59, 130, 246, 0.08)', 'rgba(147, 197, 253, 0.05)'],
+    message: ['rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.15)'],
   },
   
   // Button gradients
