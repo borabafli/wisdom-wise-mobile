@@ -1,12 +1,8 @@
 // Configuration constants
 export const API_CONFIG = {
 
-  // OpenRouter API Key (set in .env)
-  API_KEY: process.env.OPENROUTER_API_KEY || "DUMMY_KEY",
-  OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || "DUMMY_KEY", // alias
 
   // OpenAI API Key for Whisper transcription (set in .env)
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY || "DUMMY_KEY",
 
   // Supabase configuration
   SUPABASE_URL: 'https://tarwryruagxsoaljzoot.supabase.co',
@@ -18,9 +14,8 @@ export const API_CONFIG = {
   
 
   // AI Model settings
-  AI_MODEL: 'google/gemini-2.0-flash-exp', // Gemini 2.0 Flash (latest experimental)
-  // Alternative: 'google/gemini-flash-1.5' // Stable version
-
+  AI_MODEL: 'google/gemini-flash-1.5', // Stable and available
+  // Alternative: 'google/gemini-2.5-flash' // Latest version (if available)
   // Premium options:
   // AI_MODEL: 'anthropic/claude-3-haiku', // Excellent for therapy conversations
   // AI_MODEL: 'anthropic/claude-3.5-sonnet', // Best quality (more expensive)

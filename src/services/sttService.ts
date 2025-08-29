@@ -2,6 +2,7 @@ import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
 
 import { API_CONFIG } from '../config/constants';
+import { apiService } from './apiService';
 
 
 export interface STTSettings {
@@ -404,67 +405,56 @@ class STTService {
     }
   }
 
-  // Transcribe web audio blob using OpenAI Whisper API
+  // Transcribe web audio blob using Edge Function
   private async transcribeWebAudio(
     audioBlob: Blob,
     onResult: (result: STTResult) => void,
     onError: (error: string) => void
   ): Promise<void> {
     try {
-      console.log('🎤 TRANSCRIBING WITH OPENAI WHISPER API 🎤');
-      console.log('API Endpoint: https://api.openai.com/v1/audio/transcriptions');
+      console.log('🎤 TRANSCRIBING WITH EDGE FUNCTION 🎤');
       
-      const OPENAI_API_KEY = API_CONFIG.OPENAI_API_KEY;
-      console.log('OpenAI API Key present:', !!OPENAI_API_KEY);
+      // Convert blob to base64 for transmission to Edge Function
+      const base64Audio = await this.blobToBase64(audioBlob);
       
-      if (!OPENAI_API_KEY) {
-        console.error('❌ No OpenAI API key found!');
-        onError('No OpenAI API key found. Please add your OpenAI API key to constants.ts');
-        return;
-      }
-      
-      const formData = new FormData();
-      formData.append('file', audioBlob, 'recording.webm');
-      formData.append('model', 'whisper-1');
-      formData.append('language', this.defaultSettings.language.split('-')[0]);
-      formData.append('response_format', 'json');
+      console.log('📡 Sending request to Edge Function...');
+      const result = await apiService.transcribeAudioWithContext(
+        base64Audio,
+        this.defaultSettings.language.split('-')[0],
+        'webm'
+      );
 
-      console.log('📡 Sending request to OpenAI Whisper API...');
-      const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        },
-        body: formData,
-      });
-
-      console.log('📨 OpenAI API Response Status:', response.status);
+      console.log('📨 Edge Function Response:', result);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ OpenAI Whisper API error:', response.status, errorText);
-        throw new Error(`OpenAI Whisper API error: ${response.status} - ${errorText}`);
-      }
-
-      const result = await response.json();
-      const transcript = result.text?.trim() || '';
-      
-      if (transcript) {
-        console.log('✅ OpenAI Whisper transcription SUCCESS:', transcript);
+      if (result.success && result.transcript) {
+        console.log('✅ Whisper transcription SUCCESS:', result.transcript);
         onResult({
-          transcript: transcript,
+          transcript: result.transcript,
           confidence: 0.95,
           isFinal: true
         });
       } else {
-        console.log('⚠️ No speech detected in recording');
-        onError('No speech detected in the recording');
+        console.log('⚠️ Transcription failed:', result.error);
+        onError(result.error || 'No speech detected in the recording');
       }
       
     } catch (error) {
       console.error('Error transcribing web audio:', error);
       onError(`Transcription failed: ${error.message}`);
     }
+  }
+
+  // Convert blob to base64 (React Native compatible)
+  private async blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1]; // Remove data:audio/webm;base64, prefix
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   }
 
   // Cleanup audio monitoring
@@ -582,7 +572,7 @@ class STTService {
         // Only transcribe if not cancelled
         if (uri && this.onResultCallback && !this.isCancelled) {
           console.log('Processing recording...');
-          this.transcribeAudio(uri, this.onResultCallback, this.onErrorCallback || (() => {}));
+          this.transcribeAudioFile(uri, this.onResultCallback, this.onErrorCallback || (() => {}));
         } else if (this.isCancelled) {
           console.log('Recording was cancelled, skipping transcription');
           if (this.onEndCallback) this.onEndCallback();
@@ -598,88 +588,36 @@ class STTService {
   }
 
 
-  // Transcribe audio using OpenAI Whisper API
-  private async transcribeAudio(
+  // Transcribe audio file using Edge Function  
+  private async transcribeAudioFile(
     audioUri: string, 
     onResult: (result: STTResult) => void,
     onError: (error: string) => void
   ): Promise<void> {
     try {
-      console.log('Transcribing audio with OpenAI Whisper API...');
+      console.log('Transcribing audio with Edge Function...');
       console.log('Audio file URI:', audioUri);
       
-      const OPENAI_API_KEY = API_CONFIG.OPENAI_API_KEY;
+      // For mobile platforms, read the file as base64 directly
+      const base64Audio = await this.fileUriToBase64(audioUri);
       
-      if (OPENAI_API_KEY) {
-        // Prepare the audio file for upload
-        const formData = new FormData();
-        
-        // Read the audio file and prepare for upload
-        formData.append('file', {
-          uri: audioUri,
-          type: 'audio/m4a',
-          name: 'recording.m4a',
-        } as any);
-        
-        formData.append('model', 'whisper-1');
-        formData.append('language', this.defaultSettings.language.split('-')[0]);
-        formData.append('response_format', 'json');
-
-        const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          },
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('OpenAI Whisper API error:', response.status, errorText);
-          throw new Error(`OpenAI Whisper API error: ${response.status} - ${errorText}`);
-        }
-
-        const result = await response.json();
-        const transcript = result.text?.trim() || '';
-        
-        if (transcript) {
-          console.log('OpenAI Whisper transcription result:', transcript);
-          onResult({
-            transcript: transcript,
-            confidence: 0.95,
-            isFinal: true
-          });
-        } else {
-          onError('No speech detected in the recording');
-        }
-      } else {
-        // Fallback simulation mode (no OpenAI API key provided)
-        console.log('No OpenAI API key found - using simulation mode');
-        await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
-        
-        const therapyResponses = [
-          "I've been feeling really stressed about work lately and it's affecting my sleep",
-          "I need help managing my anxiety, especially in social situations", 
-          "Can you guide me through a breathing exercise to help me calm down?",
-          "I'm feeling overwhelmed with everything going on in my life right now",
-          "I'd like to talk about my feelings and get some perspective",
-          "Help me find some peace and calm in this chaotic moment",
-          "I want to practice mindfulness to better handle my emotions",
-          "I'm having trouble sleeping because of stress and racing thoughts",
-          "I feel like I'm not good enough and keep comparing myself to others",
-          "Can we work on some coping strategies for dealing with depression?",
-          "I'm struggling with negative thought patterns that keep repeating",
-          "I need guidance on how to set better boundaries with people"
-        ];
-        
-        const transcript = therapyResponses[Math.floor(Math.random() * therapyResponses.length)];
-        console.log('Simulated transcription:', transcript);
-        
+      // Use Edge Function for transcription (mobile uses m4a format)
+      const result = await apiService.transcribeAudioWithContext(
+        base64Audio,
+        this.defaultSettings.language.split('-')[0],
+        'm4a'
+      );
+      
+      if (result.success && result.transcript) {
+        console.log('Edge Function transcription result:', result.transcript);
         onResult({
-          transcript: transcript,
-          confidence: 0.92,
+          transcript: result.transcript,
+          confidence: 0.95,
           isFinal: true
         });
+      } else {
+        console.log('Transcription failed:', result.error);
+        onError(result.error || 'No speech detected in the recording');
       }
 
       if (this.onEndCallback) {
@@ -692,6 +630,18 @@ class STTService {
       if (this.onEndCallback) {
         this.onEndCallback();
       }
+    }
+  }
+
+  // Convert file URI to base64 (for React Native)
+  private async fileUriToBase64(uri: string): Promise<string> {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      return await this.blobToBase64(blob);
+    } catch (error) {
+      console.error('Error converting file to base64:', error);
+      throw new Error('Failed to read audio file');
     }
   }
 

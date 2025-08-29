@@ -385,7 +385,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const context = contextService.assembleContext(recentMessages);
 
       // Make API call
-      const response = await apiService.getChatCompletion(context);
+      const response = await apiService.getChatCompletionWithContext(context);
 
       setIsTyping(false);
 
@@ -617,13 +617,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setSttError('Failed to cancel recording');
 
     }
-  };
-
-  const stopRecording = async () => {
-    await sttService.stopRecognition();
-    setIsRecording(false);
-    setIsListening(false);
-    setPartialTranscript('');
   };
 
   const formatMessageContent = (content: string) => {

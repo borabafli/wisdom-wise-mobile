@@ -4,13 +4,15 @@
       "Bash(cd:*)",
       "Bash(cd:*)",
       "Bash(cd:*)",
-
       "mcp__supabase__get_project_url",
       "mcp__supabase__list_tables",
       "mcp__supabase__list_edge_functions",
       "mcp__supabase__deploy_edge_function",
       "Bash(curl:*)",
-      "mcp__supabase__get_anon_key"
+      "mcp__supabase__get_anon_key",
+      "Bash(supabase secrets:*)",
+      "WebSearch",
+      "Bash(npx supabase functions deploy:*)"
     ],
     "deny": [],
     "ask": []
@@ -19,5 +21,4 @@
   "enabledMcpjsonServers": [
     "supabase"
   ]
-
 }

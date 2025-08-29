@@ -6,8 +6,11 @@ interface ChatMessage {
 }
 
 interface ChatCompletionRequest {
-  action: 'chat' | 'healthCheck' | 'getModels';
+  action: 'chat' | 'transcribe' | 'healthCheck' | 'getModels';
   messages?: ChatMessage[];
+  audioData?: string;
+  language?: string;
+  fileType?: string;
   model?: string;
   maxTokens?: number;
   temperature?: number;
@@ -47,28 +50,26 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // Get OpenRouter API key from environment
+    // Get API keys from environment
     const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'OpenRouter API key not configured in environment' 
-        }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
+    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    
     // Parse request body
     const requestBody: ChatCompletionRequest = await req.json();
-    const { action, messages, model, maxTokens, temperature } = requestBody;
+    const { action, messages, audioData, language, model, maxTokens, temperature } = requestBody;
 
     // Handle different actions
     switch (action) {
       case 'chat':
+        if (!OPENROUTER_API_KEY) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'OpenRouter API key not configured in environment'
+          }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
         return await handleChatCompletion(
           OPENROUTER_API_KEY,
           messages || [],
@@ -76,6 +77,19 @@ Deno.serve(async (req: Request) => {
           maxTokens || 500,
           temperature || 0.7
         );
+
+      case 'transcribe':
+        if (!OPENAI_API_KEY) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'OpenAI API key not configured in environment'
+          }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        const fileType = requestBody.fileType || 'm4a';
+        return await handleWhisperTranscription(OPENAI_API_KEY, audioData || '', language || 'en', fileType);
       
       case 'healthCheck':
         return await handleConnectionTest(OPENROUTER_API_KEY);
@@ -87,7 +101,7 @@ Deno.serve(async (req: Request) => {
         return new Response(
           JSON.stringify({ 
             success: false, 
-            error: 'Invalid action. Use: chat, healthCheck, or getModels' 
+            error: 'Invalid action. Use: chat, transcribe, healthCheck, or getModels' 
           }),
           { 
             status: 400, 
@@ -215,6 +229,77 @@ async function handleChatCompletion(
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
+  }
+}
+
+// Handle Whisper transcription via OpenAI
+async function handleWhisperTranscription(apiKey: string, audioData: string, language: string, fileType: string = 'm4a'): Promise<Response> {
+  try {
+    // Decode base64 audio data
+    const audioBytes = Uint8Array.from(atob(audioData), c => c.charCodeAt(0));
+    
+    // Determine correct MIME type and filename based on file type
+    const mimeType = fileType === 'webm' ? 'audio/webm' : 'audio/m4a';
+    const filename = fileType === 'webm' ? 'recording.webm' : 'recording.m4a';
+    
+    const audioBlob = new Blob([audioBytes], { type: mimeType });
+
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('file', audioBlob, filename);
+    formData.append('model', 'whisper-1');
+    formData.append('language', language);
+    formData.append('response_format', 'json');
+
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return new Response(JSON.stringify({
+        success: false,
+        error: `OpenAI Whisper API error: ${response.status} - ${errorText}`
+      }), {
+        status: response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const result = await response.json();
+    const transcript = result.text?.trim() || '';
+
+    if (!transcript) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'No speech detected in the recording'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      transcript: transcript,
+      confidence: 0.95
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Whisper transcription error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to transcribe audio'
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 }
 

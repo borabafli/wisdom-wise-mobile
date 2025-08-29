@@ -76,7 +76,7 @@ class APIService {
 
 
   // Send message with conversation context to AI therapist
-  async sendMessageWithContext(messages: any[]): Promise<AIResponse> {
+  async getChatCompletionWithContext(messages: any[]): Promise<AIResponse> {
 
     // Mock responses for testing without API key
     if (DEBUG.MOCK_API_RESPONSES) {
@@ -168,11 +168,40 @@ class APIService {
     return { ...this.config, apiKey: this.config.apiKey ? '***' : '' }; // Don't expose API key
   }
 
+  // Transcribe audio using Whisper via Edge Function
+  async transcribeAudioWithContext(audioData: string, language: string = 'en', fileType: string = 'm4a'): Promise<{ success: boolean; transcript?: string; error?: string }> {
+    if (DEBUG.MOCK_API_RESPONSES) {
+      // Mock transcription for testing
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return {
+        success: true,
+        transcript: "I've been feeling stressed about work lately and need some guidance"
+      };
+    }
+
+    try {
+      const response = await this.client.post('/ai-chat', {
+        action: 'transcribe',
+        audioData: audioData,
+        language: language,
+        fileType: fileType
+      });
+
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      return {
+        success: false,
+        error: 'Failed to transcribe audio'
+      };
+    }
+  }
+
   // Check if service is ready
   isReady(): boolean {
-
     return true; // Always ready now - Edge Function handles authentication
-
   }
 
   // Mock responses for testing without API key
