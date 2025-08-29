@@ -3,7 +3,8 @@
     "allow": [
       "Bash(cd:*)",
       "Bash(cd:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

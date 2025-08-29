@@ -345,7 +345,7 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Recording Controls
   recordingControls: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     gap: spacing.components.cardGap,
   },
@@ -353,12 +353,41 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
+    marginBottom: spacing[2],
   },
   recordingDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.semantic.error,
+  },
+  recordingText: {
+    ...typography.textStyles.caption,
+    color: colors.semantic.error,
+    fontWeight: typography.fontWeight.medium,
+    marginLeft: spacing[2],
+  },
+  
+  // Modern Recording Actions
+  recordingActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.components.cardGap,
+  },
+  cancelButtonModern: {
+    borderRadius: 50,
+    ...shadows.components.actionButton,
+  },
+  confirmButtonModern: {
+    borderRadius: 50,
+    ...shadows.components.actionButton,
+  },
+  actionButtonGradient: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   stopButtonBeautiful: {
     borderRadius: 50,

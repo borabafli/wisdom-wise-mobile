@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square } from 'lucide-react-native';
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -139,7 +139,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setIsLoading(true);
       
       // Initialize API service with key
-      apiService.setApiKey(API_CONFIG.OPENROUTER_API_KEY);
+      apiService.setApiKey(API_CONFIG.API_KEY);
       
       // Load rate limit status
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
@@ -446,17 +446,30 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const handleMicToggle = async () => {
-    if (isRecording) {
-      // Stop recording
-      await stopRecording();
-    } else {
-      // Start recording
-      await startRecording();
+    console.log('=== MIC BUTTON CLICKED ===');
+    console.log('Current recording state:', isRecording);
+    console.log('STT supported:', sttService.isSupported());
+    
+    try {
+      if (isRecording) {
+        console.log('Stopping recording...');
+        await stopRecording();
+      } else {
+        console.log('Starting recording...');
+        await startRecording();
+      }
+    } catch (error) {
+      console.error('Error in handleMicToggle:', error);
+      Alert.alert('Microphone Error', `Failed to toggle microphone: ${error.message}`);
     }
   };
 
   const startRecording = async () => {
+    console.log('startRecording called');
+    console.log('STT service supported:', sttService.isSupported());
+    
     if (!sttService.isSupported()) {
+      console.log('STT not supported, showing alert');
       Alert.alert(
         'Not Supported',
         'Speech recognition is not supported on this device. Please type your message instead.',
@@ -465,6 +478,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       return;
     }
 
+    console.log('Starting STT recording...');
     setSttError(null);
     setPartialTranscript('');
     
@@ -510,6 +524,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
+  };
+
+  const cancelRecording = async () => {
+    console.log('Cancelling recording...');
+    try {
+      // Cancel the STT service without processing results
+      await sttService.cancelRecognition();
+      setIsRecording(false);
+      setIsListening(false);
+      setPartialTranscript('');
+      setSttError(null);
+      console.log('Recording cancelled successfully');
+    } catch (error) {
+      console.error('Error cancelling recording:', error);
+      setSttError('Failed to cancel recording');
+    }
   };
 
   const formatMessageContent = (content: string) => {
@@ -598,21 +628,45 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <View style={styles.headerLeft}>
               <TouchableOpacity 
                 onPress={() => {
-                  console.log('=== BACK BUTTON PRESSED ===');
-                  console.log('Timestamp:', new Date().toISOString());
-                  console.log('onBack function exists:', typeof onBack === 'function');
-                  console.log('onBack function:', onBack.toString().substring(0, 200));
-                  
-                  try {
-                    onBack(); // Just exit, no dialog for now
-                    console.log('onBack called successfully');
-                  } catch (err) {
-                    const message = err instanceof Error ? err.message : String(err);
-                    console.error('Error calling onBack:', err);
-                    Alert.alert('Error', `Back button error: ${message}`);
-                  }
+                  // Show confirmation dialog before ending session
+                  Alert.alert(
+                    'End Session?',
+                    'Are you sure you want to end this session? Your conversation will be saved to your chat history.',
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'End Session',
+                        style: 'destructive',
+                        onPress: async () => {
+                          console.log('User confirmed session end');
+                          try {
+                            // Save current session to history if there are messages
+                            if (messages.length > 0) {
+                              await storageService.saveToHistory();
+                              console.log('Session saved to history');
+                            }
+                            
+                            // Clear current session
+                            await storageService.clearCurrentSession();
+                            console.log('Current session cleared');
+                            
+                            onBack();
+                            console.log('Session ended successfully');
+                          } catch (err) {
+                            const message = err instanceof Error ? err.message : String(err);
+                            console.error('Error ending session:', err);
+                            Alert.alert('Error', `Failed to end session: ${message}`);
+                          }
+                        },
+                      },
+                    ],
+                    { cancelable: true }
+                  );
                 }}
-                style={[styles.backButton, { backgroundColor: 'rgba(255, 0, 0, 0.1)' }]}
+                style={styles.backButton}
                 activeOpacity={0.7}
               >
                 <ChevronLeft size={20} color="#475569" />
@@ -771,19 +825,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       <View style={[styles.recordingDot, { opacity: 1 }]} />
                       <View style={[styles.recordingDot, { opacity: 0.7 }]} />
                       <View style={[styles.recordingDot, { opacity: 0.4 }]} />
+                      <Text style={styles.recordingText}>Recording...</Text>
                     </View>
-                    <TouchableOpacity 
-                      onPress={stopRecording}
-                      style={styles.stopButtonBeautiful}
-                      activeOpacity={0.8}
-                    >
-                      <LinearGradient
-                        colors={colors.gradients.stopButton}
-                        style={styles.stopButtonGradient}
+                    
+                    <View style={styles.recordingActions}>
+                      {/* Cancel Button (X) */}
+                      <TouchableOpacity 
+                        onPress={cancelRecording}
+                        style={styles.cancelButtonModern}
+                        activeOpacity={0.8}
                       >
-                        <Square size={20} color="white" />
-                      </LinearGradient>
-                    </TouchableOpacity>
+                        <LinearGradient
+                          colors={['#ef4444', '#dc2626']}
+                          style={styles.actionButtonGradient}
+                        >
+                          <X size={20} color="white" />
+                        </LinearGradient>
+                      </TouchableOpacity>
+                      
+                      {/* Confirm Button (Check) */}
+                      <TouchableOpacity 
+                        onPress={stopRecording}
+                        style={styles.confirmButtonModern}
+                        activeOpacity={0.8}
+                      >
+                        <LinearGradient
+                          colors={['#22c55e', '#16a34a']}
+                          style={styles.actionButtonGradient}
+                        >
+                          <Check size={20} color="white" />
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 )}
                 
