@@ -178,9 +178,11 @@ export const gradients = {
   
   // Card gradients
   card: {
+
     primary: ['rgba(255, 255, 255, 0.98)', 'rgba(248, 250, 252, 0.95)'],
     glass: ['rgba(255, 255, 255, 0.9)', 'rgba(248, 250, 252, 0.85)'],
     subtle: ['rgba(186, 230, 253, 0.3)', 'rgba(147, 197, 253, 0.2)'],
+
   },
   
   // Button gradients
@@ -191,6 +193,7 @@ export const gradients = {
     cyan: ['#06b6d4', '#0891b2'],
     emerald: ['#10b981', '#059669'],
     subtle: ['rgba(186, 230, 253, 0.6)', 'rgba(147, 197, 253, 0.5)'],
+
   },
   
   // Icon gradients

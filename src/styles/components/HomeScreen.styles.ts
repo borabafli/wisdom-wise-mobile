@@ -118,6 +118,7 @@ export const homeScreenStyles = StyleSheet.create({
     borderRadius: spacing.radius['2xl'],
     ...shadows.components.floating,
     overflow: 'hidden',
+
   },
   ctaGradient: {
     borderRadius: spacing.radius['2xl'],
@@ -144,10 +145,12 @@ export const homeScreenStyles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
+
     gap: spacing.components.cardGap,
     minWidth: 280,
     ...shadows.md,
@@ -162,7 +165,9 @@ export const homeScreenStyles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
+
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
+
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.components.actionButton,
@@ -206,6 +211,7 @@ export const homeScreenStyles = StyleSheet.create({
   exerciseCardGradient: {
     borderRadius: spacing.radius.lg,
     padding: spacing.components.cardPadding,
+
   },
   exerciseCardContent: {
     flexDirection: 'row',

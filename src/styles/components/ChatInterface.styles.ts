@@ -347,6 +347,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   recordingControls: {
     flexDirection: 'row',
     alignItems: 'center',
+
     justifyContent: 'center',
   },
   
@@ -366,6 +367,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     backgroundColor: colors.background.glass,
     borderWidth: 1,
     borderColor: colors.border.light,
+
   },
   stopButtonBeautiful: {
     borderRadius: 50,
@@ -383,6 +385,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   centerActions: {
     flex: 1,
     alignItems: 'center',
+
     justifyContent: 'center',
     paddingHorizontal: spacing[4],
   },
@@ -407,6 +410,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 2,
+
   },
   actionText: {
     ...typography.textStyles.bodySmall,
@@ -430,5 +434,6 @@ export const chatInterfaceStyles = StyleSheet.create({
   sendButtonDisabled: {
     backgroundColor: colors.gray[200],
   },
+
 
 });

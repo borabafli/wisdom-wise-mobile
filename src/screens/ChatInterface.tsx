@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
+
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -58,11 +60,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [partialTranscript, setPartialTranscript] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
   
+
   // Audio level state for real sound wave visualization with animation
   const [audioLevels, setAudioLevels] = useState<number[]>(Array(5).fill(0.3));
   const waveAnimations = useRef(
     Array.from({ length: 5 }, () => new Animated.Value(0.3))
   ).current;
+
 
   const exerciseFlows: Record<string, any> = {
     mindfulness: {
@@ -134,6 +138,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   useEffect(() => {
     initializeChatSession();
   }, [currentExercise]);
+
 
   const initializeChatSession = async () => {
     try {
@@ -479,7 +484,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       return;
     }
 
+
     console.log('Starting STT recording...');
+
     setSttError(null);
     setPartialTranscript('');
     
@@ -487,11 +494,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // On result
       (result) => {
         if (result.isFinal) {
+
           // Final result - just update the input text, don't stop recording
           setInputText(prev => prev + result.transcript);
           setPartialTranscript('');
         } else {
           // Partial result - don't show as preview (removed blue text)
+
           setPartialTranscript(result.transcript);
         }
       },
@@ -504,6 +513,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         
         Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
       },
+
       // On end - only update UI when recording truly ends (not restarts)
       () => {
         console.log('STT service ended - checking if should update UI');
@@ -519,12 +529,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // On audio level - real-time sound wave data
       (level, frequencyData) => {
         updateSoundWaves(level, frequencyData);
+
       }
     );
 
     if (success) {
       setIsRecording(true);
       setIsListening(true);
+
     }
   };
 
@@ -603,7 +615,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     } catch (error) {
       console.error('Error cancelling recording:', error);
       setSttError('Failed to cancel recording');
+
     }
+  };
+
+  const stopRecording = async () => {
+    await sttService.stopRecognition();
+    setIsRecording(false);
+    setIsListening(false);
+    setPartialTranscript('');
   };
 
   const formatMessageContent = (content: string) => {
@@ -692,6 +712,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <View style={styles.headerLeft}>
               <TouchableOpacity 
                 onPress={() => {
+
                   if (Platform.OS === 'web') {
                     // For web, directly call the back handler without confirmation
                     handleEndSession();
@@ -736,6 +757,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   }
                 }}
                 style={styles.backButton}
+
                 activeOpacity={0.7}
               >
                 <ChevronLeft size={20} color="#475569" />
@@ -865,7 +887,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 selectionColor="#3b82f6"
               />
               
-              {/* Partial transcript removed - no blue text overlay */}
+
             </View>
             
             <View style={styles.inputActions}>
@@ -885,6 +907,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   </TouchableOpacity>
                 ) : (
                   <View style={styles.recordingControls}>
+
                     {/* Cancel Button (X) */}
                     <TouchableOpacity 
                       onPress={cancelRecording}
@@ -892,15 +915,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       activeOpacity={0.6}
                     >
                       <X size={18} color={colors.text.tertiary} />
+
                     </TouchableOpacity>
                   </View>
                 )}
                 
                 <View style={styles.centerActions}>
                   {isRecording && (
+
                     <View style={styles.modernSoundWave}>
                       {waveAnimations.map((anim, i) => (
                         <Animated.View 
+
                           key={i}
                           style={[
                             styles.modernWaveBar,
@@ -922,7 +948,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   )}
                   
                   <Text style={styles.actionText}>
+
                     {isRecording ? 'Listening... Tap ✓ when done' : 
+
                      sttService.isSupported() ? 'Share through voice or text' : 
                      'Share your thoughts through text'}
                   </Text>

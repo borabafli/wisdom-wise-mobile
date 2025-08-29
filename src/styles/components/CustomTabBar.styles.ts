@@ -9,6 +9,7 @@ import { colors, typography, spacing, shadows } from '../tokens';
 export const customTabBarStyles = StyleSheet.create({
   // Container
   container: {
+
     backgroundColor: colors.background.secondary,
   },
   tabBarGradient: {
@@ -16,6 +17,7 @@ export const customTabBarStyles = StyleSheet.create({
     borderTopColor: colors.border.light,
     ...shadows.components.tabBar,
     paddingBottom: 20, // Add padding for Android navigation gestures
+
   },
   tabBarContent: {
     flexDirection: 'row',
@@ -36,6 +38,7 @@ export const customTabBarStyles = StyleSheet.create({
   },
   tabButtonActive: {
     backgroundColor: colors.primaryAlpha[10],
+
   },
   tabLabel: {
     ...typography.textStyles.caption,
@@ -47,7 +50,9 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing[4],
+
     marginTop: -8,
+
   },
   plusButton: {
     width: 64,
@@ -56,6 +61,8 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.components.floatingActionButton,
+
   },
+
 
 });

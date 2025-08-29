@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
-import { DEBUG } from '../config/constants';
+
+import { DEBUG, API_CONFIG } from '../config/constants';
+
 
 export interface AIResponse {
   success: boolean;
@@ -24,11 +26,12 @@ export interface APIConfig {
 class APIService {
   private client: AxiosInstance;
   private config: APIConfig = {
-    apiKey: '', // Will be set from environment or config
-    baseURL: 'https://openrouter.ai/api/v1',
-    model: 'anthropic/claude-3-haiku', // Fast and cost-effective for chat
-    maxTokens: 500, // Keep responses concise
-    temperature: 0.7, // Warm but not too random
+
+    apiKey: '', // No longer needed - handled by Edge Function
+    baseURL: `${API_CONFIG.SUPABASE_URL}/functions/v1`,
+    model: API_CONFIG.AI_MODEL,
+    maxTokens: API_CONFIG.MAX_TOKENS,
+    temperature: API_CONFIG.TEMPERATURE,
     timeout: 30000 // 30 second timeout
   };
 
@@ -38,18 +41,12 @@ class APIService {
       timeout: this.config.timeout,
       headers: {
         'Content-Type': 'application/json',
+
+        'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`,
+        'apikey': API_CONFIG.SUPABASE_ANON_KEY
       }
     });
 
-    // Request interceptor to add auth
-    this.client.interceptors.request.use((config) => {
-      if (this.config.apiKey) {
-        config.headers.Authorization = `Bearer ${this.config.apiKey}`;
-        config.headers['HTTP-Referer'] = 'https://wisdomwise.app'; // Replace with your app URL
-        config.headers['X-Title'] = 'WisdomWise'; // Your app name
-      }
-      return config;
-    });
 
     // Response interceptor for error handling
     this.client.interceptors.response.use(
@@ -61,9 +58,11 @@ class APIService {
     );
   }
 
-  // Set API key (call this on app startup)
+
+  // Set API key (no longer needed - kept for compatibility)
   setApiKey(apiKey: string): void {
-    this.config.apiKey = apiKey;
+    // API key is now handled securely by Edge Function
+    console.log('API key is now handled securely by Supabase Edge Function');
   }
 
   // Update configuration
@@ -75,70 +74,34 @@ class APIService {
     this.client.defaults.baseURL = this.config.baseURL;
   }
 
-  // Main chat completion method
-  async getChatCompletion(messages: any[]): Promise<AIResponse> {
+
+  // Send message with conversation context to AI therapist
+  async sendMessageWithContext(messages: any[]): Promise<AIResponse> {
+
     // Mock responses for testing without API key
     if (DEBUG.MOCK_API_RESPONSES) {
       return this.getMockResponse(messages);
     }
 
     try {
-      if (!this.config.apiKey) {
-        return {
-          success: false,
-          error: 'API key not configured. Please add your OpenRouter API key.'
-        };
-      }
 
-      const response = await this.client.post('/chat/completions', {
-        model: this.config.model,
+      const response = await this.client.post('/ai-chat', {
+        action: 'chat',
         messages: messages,
-        max_tokens: this.config.maxTokens,
-        temperature: this.config.temperature,
-        stream: false
+        model: this.config.model,
+        maxTokens: this.config.maxTokens,
+        temperature: this.config.temperature
       });
 
-      const choice = response.data.choices?.[0];
-      if (!choice?.message?.content) {
-        return {
-          success: false,
-          error: 'No response content received from AI'
-        };
-      }
-
-      return {
-        success: true,
-        message: choice.message.content.trim(),
-        usage: response.data.usage
-      };
+      // Edge Function returns the response directly in the expected format
+      return response.data;
 
     } catch (error: any) {
       // Handle different types of errors
-      if (error.response) {
-        const status = error.response.status;
-        const data = error.response.data;
-        
-        if (status === 401) {
-          return {
-            success: false,
-            error: 'Invalid API key. Please check your OpenRouter API key.'
-          };
-        } else if (status === 429) {
-          return {
-            success: false,
-            error: 'Rate limit exceeded. Please wait a moment before trying again.'
-          };
-        } else if (status === 402) {
-          return {
-            success: false,
-            error: 'Insufficient credits. Please check your OpenRouter account balance.'
-          };
-        } else {
-          return {
-            success: false,
-            error: data?.error?.message || `API error: ${status}`
-          };
-        }
+      if (error.response?.data) {
+        // Edge Function returns errors in our expected format
+        return error.response.data;
+
       } else if (error.code === 'ECONNABORTED') {
         return {
           success: false,
@@ -161,8 +124,18 @@ class APIService {
   // Get available models (for future use)
   async getAvailableModels(): Promise<any[]> {
     try {
-      const response = await this.client.get('/models');
-      return response.data.data || [];
+
+      const response = await this.client.post('/ai-chat', {
+        action: 'getModels'
+      });
+      
+      if (response.data.success) {
+        return response.data.models || [];
+      } else {
+        console.error('Error fetching models:', response.data.error);
+        return [];
+      }
+
     } catch (error) {
       console.error('Error fetching models:', error);
       return [];
@@ -172,24 +145,17 @@ class APIService {
   // Test connection
   async testConnection(): Promise<{ success: boolean; message: string }> {
     try {
-      const testMessages = [
-        { role: 'user', content: 'Hello, please respond with just "Connection successful"' }
-      ];
+
+      const response = await this.client.post('/ai-chat', {
+        action: 'healthCheck'
+      });
       
-      const result = await this.getChatCompletion(testMessages);
-      
-      if (result.success) {
-        return {
-          success: true,
-          message: 'API connection successful'
-        };
-      } else {
-        return {
-          success: false,
-          message: result.error || 'Connection test failed'
-        };
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        return error.response.data;
       }
-    } catch (error) {
+
       return {
         success: false,
         message: 'Connection test failed'
@@ -204,7 +170,9 @@ class APIService {
 
   // Check if service is ready
   isReady(): boolean {
-    return !!this.config.apiKey;
+
+    return true; // Always ready now - Edge Function handles authentication
+
   }
 
   // Mock responses for testing without API key

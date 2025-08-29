@@ -1,6 +1,8 @@
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
+
 import { API_CONFIG } from '../config/constants';
+
 
 export interface STTSettings {
   isEnabled: boolean;
@@ -27,12 +29,15 @@ declare global {
 class STTService {
   private recognition: any = null;
   private isRecording = false;
+
   private isCancelled = false;
   private shouldKeepRecording = false;
+
   private onResultCallback?: (result: STTResult) => void;
   private onErrorCallback?: (error: string) => void;
   private onEndCallback?: () => void;
   private audioRecording?: Audio.Recording;
+
   private audioContext?: AudioContext;
   private analyser?: AnalyserNode;
   private microphone?: MediaStreamAudioSourceNode;
@@ -41,10 +46,13 @@ class STTService {
   private restartCount = 0;
   private maxRestarts = 5;
 
+
   private defaultSettings: STTSettings = {
     isEnabled: true,
     language: 'en-US',
+
     continuous: true, // Continuous recording - don't stop automatically
+
     interimResults: true, // Show partial results
     maxAlternatives: 1
   };
@@ -83,6 +91,7 @@ class STTService {
 
         this.recognition.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error);
+
           
           // Handle different types of errors
           if (event.error === 'aborted') {
@@ -94,6 +103,7 @@ class STTService {
           // For other errors, stop recording and notify user
           this.isRecording = false;
           this.shouldKeepRecording = false; // Stop restart loop on errors
+
           
           let errorMessage = 'Speech recognition failed';
           switch (event.error) {
@@ -120,6 +130,7 @@ class STTService {
         };
 
         this.recognition.onend = () => {
+
           console.log('Speech recognition ended');
           
           // Only restart if we should keep recording and haven't been cancelled
@@ -150,13 +161,16 @@ class STTService {
             if (this.onEndCallback) {
               this.onEndCallback();
             }
+
           }
         };
 
         this.recognition.onstart = () => {
           this.isRecording = true;
+
           this.restartCount = 0; // Reset restart counter on successful start
           console.log('Speech recognition started successfully');
+
         };
       }
     }
@@ -167,12 +181,15 @@ class STTService {
     if (Platform.OS === 'web') {
       return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
     } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
+
       // For native platforms, we simulate STT for development/testing
       // In production, you'd integrate react-native-voice or similar
       return true; // Enable simulation mode for mobile
+
     }
     return false;
   }
+
 
   // Start speech recognition with optional audio level monitoring
   async startRecognition(
@@ -180,6 +197,7 @@ class STTService {
     onError: (error: string) => void,
     onEnd: () => void,
     onAudioLevel?: (level: number, frequencyData?: number[]) => void
+
   ): Promise<boolean> {
     if (!this.isSupported()) {
       onError('Speech recognition not supported on this device');
@@ -193,6 +211,7 @@ class STTService {
     this.onResultCallback = onResult;
     this.onErrorCallback = onError;
     this.onEndCallback = onEnd;
+
     this.audioLevelCallback = onAudioLevel;
     this.isCancelled = false; // Reset cancellation flag
     this.shouldKeepRecording = true; // Enable continuous recording
@@ -221,15 +240,18 @@ class STTService {
           
           // Start recording audio for transcription (similar to mobile)
           return await this.startWebRecording(stream, onResult, onError, onEnd);
+
         } catch (permissionError) {
           onError('Microphone permission denied. Please enable microphone access.');
           return false;
         }
+
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
         // Use real audio recording + OpenRouter Whisper API for mobile
         return await this.startRealRecording(onResult, onError, onEnd);
       } else {
         // Fallback simulation
+
         this.simulateNativeSTT(onResult, onError, onEnd);
         return true;
       }
@@ -239,6 +261,7 @@ class STTService {
       return false;
     }
   }
+
 
   // Setup audio level monitoring for real-time sound wave visualization
   private async setupAudioLevelMonitoring(stream: MediaStream): Promise<void> {
@@ -574,6 +597,7 @@ class STTService {
     }
   }
 
+
   // Transcribe audio using OpenAI Whisper API
   private async transcribeAudio(
     audioUri: string, 
@@ -671,6 +695,7 @@ class STTService {
     }
   }
 
+
   // Simulate STT for native platforms (placeholder)
   private simulateNativeSTT(
     onResult: (result: STTResult) => void,
@@ -680,6 +705,7 @@ class STTService {
     // This is a placeholder for native STT
     // In a real implementation, we'd use react-native-voice or similar
     
+
     console.log('Starting STT simulation...');
     this.isRecording = true;
     
@@ -719,17 +745,20 @@ class STTService {
         // Final result
         onResult({
           transcript: randomResponse,
+
           confidence: 0.95,
           isFinal: true
         });
         this.isRecording = false;
         onEnd();
+
         console.log('STT simulation completed:', randomResponse);
       }
     };
     
     // Start showing words after a brief delay
     setTimeout(showNextWord, 500);
+
   }
 
   // Get current recording status
@@ -765,12 +794,14 @@ class STTService {
 
   // Clean up
   destroy() {
+
     this.shouldKeepRecording = false;
     if (this.restartTimeout) {
       clearTimeout(this.restartTimeout);
       this.restartTimeout = undefined;
     }
     
+
     if (this.recognition) {
       this.recognition.onresult = null;
       this.recognition.onerror = null;
