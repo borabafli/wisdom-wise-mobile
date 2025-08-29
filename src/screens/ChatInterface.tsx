@@ -379,7 +379,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const context = contextService.assembleContext(recentMessages);
 
       // Make API call
-      const response = await apiService.getChatCompletion(context);
+      const response = await apiService.sendMessageWithContext(context);
 
       setIsTyping(false);
 

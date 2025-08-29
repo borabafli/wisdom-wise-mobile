@@ -1,17 +1,17 @@
 // Configuration constants
 export const API_CONFIG = {
-  // OpenRouter API Key - Replace with your actual key
-  // Get your key at: https://openrouter.ai/keys
-  OPENROUTER_API_KEY: 'test1', // TODO: Replace with real API key
-  
   // App configuration
   APP_NAME: 'WisdomWise',
-  APP_URL: 'https://wisdomwise.app', // Replace with your app URL
+  APP_URL: 'https://wisdomwise.app',
+  
+  // Supabase configuration
+  SUPABASE_URL: 'https://tarwryruagxsoaljzoot.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcndyeXJ1YWd4c29hbGp6b290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MTIwNDIsImV4cCI6MjA3MTk4ODA0Mn0.mCjT32oChZaF1DNAUCYMmU8XP49q4og_IBlHRO3Vdqg',
   
   // Rate limiting
   DEFAULT_DAILY_LIMIT: 50,
   
-  // AI Model settings
+  // AI Model settings - now handled securely by Supabase Edge Function
   AI_MODEL: 'google/gemini-flash-1.5', // Fast, affordable, great for therapy
   // Premium options:
   // AI_MODEL: 'anthropic/claude-3-haiku', // Excellent for therapy conversations
@@ -24,8 +24,8 @@ export const API_CONFIG = {
 };
 
 // Environment check
-export const isDevelopment = __DEV__;
-export const isProduction = !__DEV__;
+export const isDevelopment = process.env.NODE_ENV === 'development';
+export const isProduction = process.env.NODE_ENV === 'production';
 
 // Debug settings
 export const DEBUG = {
