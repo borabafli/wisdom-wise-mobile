@@ -1,9 +1,10 @@
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
-import {
-  ExpoSpeechRecognitionModule,
-  useSpeechRecognitionEvent
-} from 'expo-speech-recognition';
+// TEMPORARILY DISABLED: expo-speech-recognition package causing expo start issues
+// import {
+//   ExpoSpeechRecognitionModule,
+//   useSpeechRecognitionEvent
+// } from 'expo-speech-recognition';
 
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
@@ -493,46 +494,55 @@ class STTService {
     try {
       console.log('🎤 Starting native speech recognition with Expo Speech Recognition...');
       
-      // Request permissions first
-      const { status } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
-      if (status !== 'granted') {
-        onError('Microphone permission denied');
-        return false;
-      }
+      // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
+      // Fallback to simulation for now
+      console.log('⚠️ expo-speech-recognition temporarily disabled, using simulation');
+      this.simulateNativeSTT(onResult, onError, onEnd);
+      return true;
 
-      // Check if speech recognition is available
-      const isAvailable = await ExpoSpeechRecognitionModule.getAvailableVoiceRecognitionServicesAsync();
-      console.log('📱 Available speech recognition services:', isAvailable);
+      // TODO: Re-enable when expo-speech-recognition issues are resolved
+      // // Request permissions first
+      // const { status } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      // if (status !== 'granted') {
+      //   onError('Microphone permission denied');
+      //   return false;
+      // }
+
+      // // Check if speech recognition is available
+      // const isAvailable = await ExpoSpeechRecognitionModule.getAvailableVoiceRecognitionServicesAsync();
+      // console.log('📱 Available speech recognition services:', isAvailable);
       
-      // Stop any existing recognition
-      try {
-        await ExpoSpeechRecognitionModule.stop();
-      } catch (stopError) {
-        console.log('⚠️ No existing recognition to stop');
-      }
+      // // Stop any existing recognition
+      // try {
+      //   await ExpoSpeechRecognitionModule.stop();
+      // } catch (stopError) {
+      //   console.log('⚠️ No existing recognition to stop');
+      // }
       
       // Clear partial result buffer
       this.partialResultBuffer = '';
       
-      // Start speech recognition
-      const options = {
-        lang: this.defaultSettings.language,
-        interimResults: this.defaultSettings.interimResults,
-        maxAlternatives: this.defaultSettings.maxAlternatives,
-        continuous: this.defaultSettings.continuous,
-        requiresOnDeviceRecognition: false,
-        addsPunctuation: true,
-        contextualStrings: []
-      };
+      // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
+      // TODO: Re-enable this block when package issues are resolved
+      // // Start speech recognition
+      // const options = {
+      //   lang: this.defaultSettings.language,
+      //   interimResults: this.defaultSettings.interimResults,
+      //   maxAlternatives: this.defaultSettings.maxAlternatives,
+      //   continuous: this.defaultSettings.continuous,
+      //   requiresOnDeviceRecognition: false,
+      //   addsPunctuation: true,
+      //   contextualStrings: []
+      // };
       
-      this.speechRecognitionTask = await ExpoSpeechRecognitionModule.start(options);
+      // this.speechRecognitionTask = await ExpoSpeechRecognitionModule.start(options);
       
-      // Set up event listeners
-      this.setupSpeechRecognitionListeners(onResult, onError, onEnd);
+      // // Set up event listeners
+      // this.setupSpeechRecognitionListeners(onResult, onError, onEnd);
       
-      console.log('✅ Expo speech recognition started successfully');
-      this.isRecording = true;
-      return true;
+      // console.log('✅ Expo speech recognition started successfully');
+      // this.isRecording = true;
+      // return true;
       
     } catch (error) {
       console.error('❌ Error starting Expo speech recognition:', error);
@@ -649,15 +659,19 @@ class STTService {
           this.audioRecording.stop();
         }
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Stop Expo Speech Recognition
-        console.log('🛑 Stopping native speech recognition...');
-        try {
-          await ExpoSpeechRecognitionModule.stop();
-          console.log('✅ Native speech recognition stopped');
-          this.speechRecognitionTask = undefined;
-        } catch (speechError) {
-          console.error('❌ Error stopping native speech recognition:', speechError);
-        }
+        // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
+        // TODO: Re-enable when package issues are resolved
+        // // Stop Expo Speech Recognition
+        // console.log('🛑 Stopping native speech recognition...');
+        // try {
+        //   await ExpoSpeechRecognitionModule.stop();
+        //   console.log('✅ Native speech recognition stopped');
+        //   this.speechRecognitionTask = undefined;
+        // } catch (speechError) {
+        //   console.error('❌ Error stopping native speech recognition:', speechError);
+        // }
+        console.log('⚠️ expo-speech-recognition temporarily disabled');
+        this.speechRecognitionTask = undefined;
       } else if (this.audioRecording) {
         // Legacy audio recording cleanup (fallback)
         console.log('Stopping audio recording...');
@@ -852,14 +866,21 @@ class STTService {
       this.recognition.onstart = null;
     }
     
-    // Clean up Expo Speech Recognition
+    // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
+    // TODO: Re-enable when package issues are resolved
+    // // Clean up Expo Speech Recognition
+    // if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    //   try {
+    //     await ExpoSpeechRecognitionModule.stop();
+    //     this.speechRecognitionTask = undefined;
+    //   } catch (error) {
+    //     console.error('Error stopping Expo Speech Recognition:', error);
+    //   }
+    // }
+    
+    // Clean up speech recognition task
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      try {
-        await ExpoSpeechRecognitionModule.stop();
-        this.speechRecognitionTask = undefined;
-      } catch (error) {
-        console.error('Error stopping Expo Speech Recognition:', error);
-      }
+      this.speechRecognitionTask = undefined;
     }
     
     await this.stopRecognition();

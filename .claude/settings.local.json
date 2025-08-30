@@ -16,11 +16,13 @@
       "Bash(npx expo install:*)",
       "Bash(npx expo start:*)",
       "Bash(eas build:configure)",
-      "Bash(npm install:*)",
-      "Bash(npx supabase:*)",
-      "Bash(set SUPABASE_ACCESS_TOKEN=sbp_072c9976c63265deefbcd145242e5e1f3edee313)",
-      "Bash(SUPABASE_ACCESS_TOKEN=sbp_072c9976c63265deefbcd145242e5e1f3edee313 npx supabase functions deploy extract-insights)",
-      "Bash(SUPABASE_ACCESS_TOKEN=sbp_072c9976c63265deefbcd145242e5e1f3edee313 npx supabase functions deploy extract-insights --project-ref tarwryruagxsoaljzoot)"
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/**)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/styles/components/**)"
     ],
     "deny": [],
     "ask": []

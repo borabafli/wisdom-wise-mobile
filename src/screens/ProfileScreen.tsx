@@ -252,7 +252,6 @@ const styles = StyleSheet.create({
   },
   userInfoContent: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(20px)',
     borderWidth: 1,
     borderColor: 'rgba(191, 219, 254, 0.6)',
     paddingVertical: 20,

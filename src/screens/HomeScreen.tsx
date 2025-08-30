@@ -6,14 +6,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { homeScreenStyles as styles } from '../styles/components/HomeScreen.styles';
 import { colors, gradients } from '../styles/tokens';
+import { HomeScreenProps } from '../types';
+import { useQuote } from '../hooks/useQuote';
 
-interface HomeScreenProps {
-  onStartSession: (exercise?: any) => void;
-  onExerciseClick: (exercise?: any) => void;
-  onInsightClick: (type: string, insight?: any) => void;
-}
-
-const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
+  const { currentQuote } = useQuote();
   return (
     <SafeAreaView style={styles.container}>
       {/* Background watercolor effects */}
@@ -89,7 +86,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>For You Today</Text>
             <TouchableOpacity 
-              onPress={() => onExerciseClick()}
+              onPress={onNavigateToExercises}
               style={styles.seeAllButton}
             >
               <Text style={styles.seeAllText}>See all</Text>
@@ -196,7 +193,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         <View style={styles.quickActions}>
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
-              onPress={() => onExerciseClick()}
+              onPress={onNavigateToExercises}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
@@ -215,7 +212,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             </TouchableOpacity>
             
             <TouchableOpacity
-              onPress={() => onInsightClick('insights')}
+              onPress={onNavigateToInsights}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
@@ -251,9 +248,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <Text style={styles.quoteSymbol}>"</Text>
               </View>
               <Text style={styles.quoteText}>
-                Progress is progress, no matter how small
+                {currentQuote?.text || 'Progress is progress, no matter how small'}
               </Text>
-              <Text style={styles.quoteAuthor}>— Daily Mindfulness</Text>
+              <Text style={styles.quoteAuthor}>— {currentQuote?.author || 'Daily Mindfulness'}</Text>
             </LinearGradient>
           </View>
         </View>

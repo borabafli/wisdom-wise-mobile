@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, User, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X } from 'lucide-react-native';
 
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -21,24 +21,8 @@ import { API_CONFIG } from '../config/constants';
 import { chatInterfaceStyles as styles } from '../styles/components/ChatInterface.styles';
 import { colors } from '../styles/tokens';
 
-
-// Message interface moved to storageService
-
-interface Exercise {
-  type: string;
-  name: string;
-  duration: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-}
-
-interface ChatInterfaceProps {
-  onBack: () => void;
-  currentExercise?: Exercise;
-  startWithActionPalette?: boolean;
-  onActionSelect: (actionId: string) => void;
-}
+// Import types
+import { Exercise, ChatInterfaceProps } from '../types';
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   onBack, 
@@ -267,8 +251,7 @@ ${flow.initialPrompt}`;
     try {
       setIsLoading(true);
       
-      // Initialize API service with key
-      apiService.setApiKey(API_CONFIG.API_KEY);
+      // API service is now initialized automatically
       
       // Load rate limit status
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
@@ -686,7 +669,7 @@ The user's response needs more detail or clarity before moving to the next step.
       // Create new conversation with welcome message
       const welcomeMessage = contextService.createWelcomeMessage();
       setMessages([welcomeMessage]);
-      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
+      setSuggestions(contextService.generateSuggestions([])); // Empty array for first message suggestions
       
       // Save welcome message to storage
       await storageService.addMessage(welcomeMessage);
@@ -695,7 +678,7 @@ The user's response needs more detail or clarity before moving to the next step.
       // Fallback to local welcome message
       const welcomeMessage = contextService.createWelcomeMessage();
       setMessages([welcomeMessage]);
-      setSuggestions(['Feeling good today 😊', 'A bit stressed 😰', 'Need support 🤗', 'Just checking in 👋']);
+      setSuggestions(contextService.generateSuggestions([])); // Empty array for first message suggestions
     }
   };
 
@@ -1522,12 +1505,13 @@ The user's response needs more detail or clarity before moving to the next step.
             <View style={styles.typingContainer}>
               <View style={styles.typingBubble}>
                 <View style={styles.typingContent}>
-                  <LinearGradient
-                    colors={colors.gradients.messageUser}
-                    style={styles.typingAvatar}
-                  >
-                    <User size={16} color="white" />
-                  </LinearGradient>
+                  <View style={styles.typingAvatar}>
+                    <Image 
+                      source={require('../../assets/images/turtle11.png')}
+                      style={styles.typingTurtleAvatar}
+                      contentFit="cover"
+                    />
+                  </View>
                   <View style={styles.typingTextContainer}>
                     <View style={styles.typingDots}>
                       <View style={styles.typingDot} />
