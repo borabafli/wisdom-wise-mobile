@@ -171,6 +171,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     flex: 1,
+    gap: spacing[3], // Increased gap between turtle and message
   },
 
   // Turtle Avatar - EXTRA LARGE, NO CIRCLE, TOP POSITIONED
@@ -199,15 +200,15 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexShrink: 1,
   },
   systemMessageText: {
-    fontSize: 19,
+    fontSize: 14, // Reduced from 16 to 14
     fontFamily: Platform.OS === 'ios' ? 'SF Pro Text' : 'Roboto',
     fontWeight: '400',
     color: colors.text.primary,
     marginBottom: spacing[2],
     flexWrap: 'wrap',
     textAlign: 'left',
-    lineHeight: 30,
-    letterSpacing: 0.4,
+    lineHeight: 20, // Adjusted line height proportionally
+    letterSpacing: 0.3,
   },
 
   // TTS Controls

@@ -22,6 +22,7 @@ export interface ChatInterfaceProps {
   currentExercise?: Exercise | null;
   startWithActionPalette: boolean;
   onActionSelect: (actionId: string) => void;
+  onExerciseClick?: (exercise: Exercise) => void;
 }
 
 export interface CustomTabBarProps {

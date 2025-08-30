@@ -225,12 +225,12 @@ class StorageService {
       const settingsData = await AsyncStorage.getItem(STORAGE_KEYS.USER_SETTINGS);
       return settingsData ? JSON.parse(settingsData) : {
         dailyRequestCount: 0,
-        dailyRequestLimit: 50, // Default limit
+        dailyRequestLimit: 300, // Default limit
         lastRequestDate: null
       };
     } catch (error) {
       console.error('Error loading user settings:', error);
-      return { dailyRequestCount: 0, dailyRequestLimit: 50, lastRequestDate: null };
+      return { dailyRequestCount: 0, dailyRequestLimit: 300, lastRequestDate: null };
     }
   }
 
