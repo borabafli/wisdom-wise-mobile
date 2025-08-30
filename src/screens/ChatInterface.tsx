@@ -44,6 +44,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
+  const [showExerciseCard, setShowExerciseCard] = useState<any>(null); // Exercise suggestion card
+  const [exerciseMode, setExerciseMode] = useState(false); // Header state for exercise
+  const backgroundAnimation = useRef(new Animated.Value(0)).current; // Background transition
+  const headerAnimation = useRef(new Animated.Value(0)).current; // Header transition
   const scrollViewRef = useRef<ScrollView>(null);
   
 
@@ -118,6 +122,68 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         }
       ]
     },
+    'breathing': {
+      name: '🌬️ 4-7-8 Breathing',
+      color: 'blue',
+      useAI: true,
+      steps: [
+        {
+          title: 'Welcome to Calming Breath',
+          stepNumber: 1,
+          description: 'Learn the 4-7-8 breathing technique for immediate calm',
+          aiPrompt: `Welcome them warmly to this calming practice. Explain that 4-7-8 breathing activates the parasympathetic nervous system for quick stress relief. Ask how they're feeling right now and what brought them to try breathing exercises.`,
+          dataToCapture: 'initial-state',
+          suggestions: ['Feeling anxious', 'Very stressed', 'Can\'t relax', 'Need to calm down']
+        },
+        {
+          title: 'Practice Together',
+          stepNumber: 2,
+          description: 'Guide through several rounds of 4-7-8 breathing',
+          aiPrompt: `Guide them through 4-7-8 breathing: Inhale for 4, hold for 7, exhale for 8. Do 3-4 rounds together. Be encouraging and check in on how they're feeling. Remind them it's normal if it feels awkward at first.`,
+          dataToCapture: 'breathing-experience',
+          suggestions: ['That felt calming', 'Still feeling tense', 'Getting more relaxed', 'Hard to focus']
+        },
+        {
+          title: 'Notice the Change',
+          stepNumber: 3,
+          description: 'Reflect on how you feel after the breathing practice',
+          aiPrompt: `Ask them to notice any changes in their body or mind. Celebrate any shift, however small. Remind them this technique can be used anytime. Ask how they might use this tool in their daily life.`,
+          dataToCapture: 'post-breathing-state',
+          suggestions: ['Feel more relaxed', 'Mind is clearer', 'Still a bit tense', 'Would use this again']
+        }
+      ]
+    },
+    'self-compassion': {
+      name: '💚 Self-Compassion Break',
+      color: 'pink',
+      useAI: true,
+      steps: [
+        {
+          title: 'Recognizing Your Pain',
+          stepNumber: 1,
+          description: 'Acknowledge what you\'re struggling with right now',
+          aiPrompt: `Create a safe space for them to share what's causing them pain or self-criticism. Validate that self-criticism is a common human experience. Ask them to share what's been hard on them lately - be deeply empathetic.`,
+          dataToCapture: 'current-struggle',
+          suggestions: ['I\'m being hard on myself', 'I made a mistake', 'I feel like I\'m failing', 'I\'m disappointed in myself']
+        },
+        {
+          title: 'Understanding Common Humanity',
+          stepNumber: 2,
+          description: 'Recognize that struggle and imperfection are part of being human',
+          aiPrompt: `Help them see that their struggle is part of the shared human experience. Share that everyone faces challenges, makes mistakes, and has difficult moments. Ask them to reflect on how they might comfort a good friend facing the same situation.`,
+          dataToCapture: 'friend-compassion',
+          suggestions: ['I\'d be kind to a friend', 'I\'d listen without judgment', 'I\'d remind them they\'re human', 'I\'d offer comfort']
+        },
+        {
+          title: 'Offering Yourself Kindness',
+          stepNumber: 3,
+          description: 'Practice speaking to yourself with the same kindness you\'d show a friend',
+          aiPrompt: `Guide them to offer themselves the same compassion they'd give a friend. Help them craft kind, supportive words for themselves. Encourage them to speak to themselves like a caring friend would. Practice self-compassionate language together.`,
+          dataToCapture: 'self-kindness',
+          suggestions: ['I\'m learning and growing', 'I deserve compassion', 'I\'m doing my best', 'This is hard, and that\'s okay']
+        }
+      ]
+    },
     'automatic-thoughts': {
       name: '🧠 Recognizing Automatic Thoughts',
       color: 'purple',
@@ -127,31 +193,31 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           title: 'Welcome & Understanding',
           stepNumber: 1,
           description: 'Learn about automatic thoughts and identify the triggering situation',
-          aiPrompt: `Welcome them warmly to the CBT exercise. Explain what automatic thoughts are in simple, relatable terms. Then guide them to describe a specific situation that triggered distressing thoughts - emphasize facts only, no interpretations.`,
+          aiPrompt: `Welcome them warmly to this therapeutic exploration. Explain automatic thoughts in a relatable way - we all have them! Show genuine interest in their experience. Ask about a specific situation that triggered difficult thoughts, emphasizing they should share just the facts. Be curious and supportive.`,
           dataToCapture: 'situation',
-          suggestions: ['At work today...', 'During a conversation...', 'When I was thinking about...', 'Something happened that upset me...']
+          suggestions: ['At work today', 'During a conversation', 'Something happened', 'I was thinking about...']
         },
         {
           title: 'Emotion Recognition',
           stepNumber: 2,
           description: 'Identify and rate the emotional intensity',
-          aiPrompt: `Help them identify the specific emotion they felt in that situation. Explain why emotional awareness matters in CBT. Ask them to rate the intensity on a 0-100 scale and explain what that number means to them.`,
+          aiPrompt: `Respond with empathy to their situation. Help them connect with the emotion they felt - be patient and curious. Explain gently why noticing emotions matters. Ask for a 0-100 intensity rating, but focus on understanding what that feeling was like for them personally.`,
           dataToCapture: 'emotion',
-          suggestions: ['Anxious (80/100)', 'Sad (60/100)', 'Angry (90/100)', 'Overwhelmed (70/100)']
+          suggestions: ['I felt anxious', 'I was really sad', 'I got angry', 'I felt overwhelmed']
         },
         {
           title: 'Capturing Automatic Thoughts',
           stepNumber: 3,
           description: 'Identify the exact unhelpful thoughts',
-          aiPrompt: `Gently guide them to identify the automatic thought that popped up. Explain that these are often fast, fleeting thoughts we barely notice. Ask them to write it exactly as it appeared - no editing or softening.`,
+          aiPrompt: `Show empathy for their emotion, then guide them gently toward the thought that popped up. Explain that automatic thoughts are like mental reflexes - fast and often harsh. Be patient as they try to remember. Encourage them to share the exact thought, even if it feels silly or harsh.`,
           dataToCapture: 'thought',
-          suggestions: ['I always mess up', 'They think I\'m stupid', 'Nothing will work out', 'I can\'t handle this']
+          suggestions: ['I always mess up', 'I\'m not good enough', 'This will go wrong', 'I can\'t do this']
         },
         {
           title: 'Spotting Thinking Patterns',
           stepNumber: 4,
           description: 'Identify cognitive distortions in the thought',
-          aiPrompt: `Educate them about cognitive distortions - common thinking traps we all fall into. Help them identify which distortion(s) might be present in their thought. Be encouraging that everyone has these patterns.`,
+          aiPrompt: `Acknowledge their thought with understanding - normalize that we all have harsh inner voices. Introduce cognitive distortions as common human thinking patterns, not flaws. Help them explore which distortion might fit their thought. Be curious and non-judgmental.`,
           dataToCapture: 'distortion',
           suggestions: ['All-or-Nothing Thinking', 'Catastrophizing', 'Mind Reading', 'Fortune Telling', 'Emotional Reasoning']
         },
@@ -159,7 +225,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           title: 'Examining Evidence',
           stepNumber: 5,
           description: 'Look at facts that support and contradict the thought',
-          aiPrompt: `Guide them through examining evidence like a detective. Ask for facts that support their thought, then facts that contradict it. Help them see this isn't about being right or wrong, but about getting a balanced view.`,
+          aiPrompt: `Respond thoughtfully to their identified distortion. Guide them like a curious detective to examine evidence. Ask what facts support their thought, then what contradicts it. Emphasize this is about understanding, not proving right/wrong. Be patient with their process.`,
           dataToCapture: 'evidence',
           suggestions: ['Evidence for...', 'Evidence against...', 'The facts show...', 'Looking objectively...']
         },
@@ -167,7 +233,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           title: 'Creating Balance',
           stepNumber: 6,
           description: 'Develop a realistic, supportive alternative thought',
-          aiPrompt: `Help them create a more balanced thought based on the evidence. It shouldn't be fake positivity, but realistic and kind. Guide them to find a thought that acknowledges reality while being more supportive.`,
+          aiPrompt: `Acknowledge their evidence exploration thoughtfully. Help them craft a more balanced thought - not fake positivity, but realistic kindness. Guide them to create something that honors reality while being more supportive. Be encouraging about their insight.`,
           dataToCapture: 'reframe',
           suggestions: ['A more balanced view is...', 'Realistically speaking...', 'A kinder thought might be...']
         },
@@ -175,9 +241,48 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           title: 'Measuring Change',
           stepNumber: 7,
           description: 'Re-evaluate emotional intensity after reframing',
-          aiPrompt: `Ask them to re-rate their emotion now (0-100). Celebrate any decrease, normalize if it stayed the same. Explain that even small shifts matter and this skill takes practice.`,
+          aiPrompt: `Celebrate their reframed thought genuinely. Ask them to re-rate their emotion (0-100) with curiosity about any shift. Validate whatever happens - even small changes matter. Reflect on their growth and normalize that this skill develops with practice.`,
           dataToCapture: 'emotion-after',
           suggestions: ['Much better (30/100)', 'Somewhat improved (50/100)', 'About the same', 'I notice a difference']
+        }
+      ]
+    },
+    'values-clarification': {
+      name: '🌱 Living Closer to My Values',
+      color: 'green',
+      useAI: true,
+      steps: [
+        {
+          title: 'Discover Your Values',
+          stepNumber: 1,
+          description: 'Identify what truly matters to you through reflection',
+          aiPrompt: `Start the ACT Values exercise warmly. Ask: "Think of a moment you felt proud, alive, or deeply satisfied. What mattered most to you in that moment?" Help them reflect on a specific proud moment to identify their core values. Be encouraging and guide them to write a short phrase about what mattered.`,
+          dataToCapture: 'values-moment',
+          suggestions: ['Connection with others', 'Personal growth', 'Being helpful', 'Creating something', 'Learning new things']
+        },
+        {
+          title: 'Choose Your Core Values',
+          stepNumber: 2,
+          description: 'Select 1-2 values from common values or add your own',
+          aiPrompt: `Present this list of common values: **Growth, Family, Health, Honesty, Creativity, Connection, Freedom, Justice, Adventure, Security, Achievement, Compassion, Independence, Peace**. Ask them to pick 1-2 that resonate most deeply, or they can add their own. Explain why identifying core values matters for well-being.`,
+          dataToCapture: 'core-values',
+          suggestions: ['Growth', 'Connection', 'Health', 'Creativity', 'Family', 'Add my own value']
+        },
+        {
+          title: 'Rate Your Alignment',
+          stepNumber: 3,
+          description: 'Assess how close your daily life feels to your values (0-100)',
+          aiPrompt: `Ask them: "In your day-to-day life, how close do you feel to living this value? Rate it from 0-100." Be curious about their rating. If it's lower, normalize that - perfect alignment isn't expected. Ask what contributes to that specific number.`,
+          dataToCapture: 'alignment-rating',
+          suggestions: ['85/100 - Pretty aligned', '60/100 - Somewhat close', '40/100 - Not very close', '20/100 - Far from it']
+        },
+        {
+          title: 'Plan One Small Action',
+          stepNumber: 4,
+          description: 'Identify one concrete step you can take today',
+          aiPrompt: `Ask: "What's one small thing you could do today that reflects this value?" Emphasize SMALL and SPECIFIC actions. Help them think of something achievable today. Be encouraging - any step toward values matters. This becomes their Values Action.`,
+          dataToCapture: 'values-action',
+          suggestions: ['Text someone I care about', 'Read for 10 minutes', 'Take a walk outside', 'Write in my journal', 'Try something creative']
         }
       ]
     }
@@ -271,6 +376,7 @@ ${flow.initialPrompt}`;
         if (flow.useAI && flow.steps.length > 0) {
           // AI-guided exercise with step structure
           console.log('Starting AI-guided exercise:', currentExercise.type);
+          enterExerciseMode(); // Add smooth transition for library exercises too
           await startAIGuidedExercise(flow);
         } else if (flow.useAI) {
           // AI-driven exercise - get initial response from AI  
@@ -306,19 +412,34 @@ ${flow.initialPrompt}`;
   const startAIGuidedExercise = async (flow: any) => {
     try {
       console.log('Starting AI-guided exercise with steps:', flow.steps.length);
+      console.log('Ensuring exercise mode is properly set...');
+      
+      // Ensure exercise mode is properly maintained
+      setExerciseMode(true);
       
       // Start with step 0
       setExerciseStep(0);
       const currentStep = flow.steps[0];
       
       // Get AI response for this step
-      const systemPrompt = `You are a warm, compassionate CBT therapist. You're guiding someone through the "${currentExercise.name}" exercise.
+      const systemPrompt = `You are a warm, compassionate CBT therapist starting the "${currentExercise.name}" exercise.
 
-CURRENT STEP: ${currentStep.stepNumber}/7 - ${currentStep.title}
-STEP GOAL: ${currentStep.description}
-GUIDANCE: ${currentStep.aiPrompt}
+**THERAPEUTIC APPROACH:**
+You're beginning a therapeutic conversation that will naturally guide through CBT concepts. This isn't a rigid questionnaire - it's a real therapeutic interaction.
 
-Be friendly, understanding, and therapeutic. Explain concepts clearly and create a safe, supportive environment.`;
+**STARTING FOCUS:**
+Step 1: ${currentStep.title}
+Goal: ${currentStep.description}
+Guidance: ${currentStep.aiPrompt}
+
+**YOUR THERAPEUTIC RESPONSE:**
+- **Welcome them warmly** to this therapeutic space
+- **Explain briefly** what this exercise can help with
+- **Start the conversation naturally** based on the step guidance
+- **Be genuinely interested** in their experience
+- **Ask engaging questions** that invite reflection
+
+**REMEMBER:** You're having a real therapeutic conversation that happens to follow a CBT structure. Focus on building connection and understanding, not just collecting information.`;
 
       setIsTyping(true);
       const response = await apiService.getChatCompletionWithContext([
@@ -339,8 +460,18 @@ Be friendly, understanding, and therapeutic. Explain concepts clearly and create
           isAIGuided: true
         };
         
-        setMessages([aiMessage]);
+        // Load existing messages and add the new AI message
+        const existingMessages = await storageService.getAllMessages();
+        const updatedMessages = [...existingMessages, aiMessage];
+        setMessages(updatedMessages);
         await storageService.addMessage(aiMessage);
+        
+        console.log('Exercise mode state after AI response:', true);
+        console.log('Messages updated, exercise should be visible');
+        console.log('Current exercise type:', currentExercise.type);
+        console.log('Exercise step:', 0);
+        
+        // Extract AI suggestions or use step defaults
         setSuggestions(currentStep.suggestions);
       } else {
         // Fallback to static step content
@@ -354,8 +485,13 @@ Be friendly, understanding, and therapeutic. Explain concepts clearly and create
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isAIGuided: true
         };
-        setMessages([fallbackMessage]);
+        
+        const existingMessages = await storageService.getAllMessages();
+        const updatedMessages = [...existingMessages, fallbackMessage];
+        setMessages(updatedMessages);
         setSuggestions(currentStep.suggestions);
+        
+        console.log('Fallback exercise message created, exercise mode should be active');
       }
     } catch (error) {
       console.error('Error starting AI-guided exercise:', error);
@@ -419,8 +555,18 @@ Respond therapeutically to the user's input. Assess if you need more information
         // Auto-play TTS if enabled
         await ttsService.speakIfAutoPlay(response.message);
 
-        // Generate dynamic suggestions based on conversation
-        setSuggestions(contextService.generateSuggestions([...recentMessages, aiResponse]));
+        // Check for exercise suggestions and generate contextual responses
+        console.log('Checking for exercise suggestions in AI response...');
+        const exerciseSuggestions = detectAndParseExerciseSuggestions(response.message);
+        console.log('Exercise suggestions found:', exerciseSuggestions);
+        const contextualSuggestions = contextService.generateSuggestions([...recentMessages, aiResponse]);
+        
+        // Use exercise suggestions if available, otherwise use contextual suggestions
+        const finalSuggestions = exerciseSuggestions.length > 0 
+          ? exerciseSuggestions
+          : contextualSuggestions;
+        
+        setSuggestions(finalSuggestions);
         
         // Extract any structured data from the AI response for insights
         await extractExerciseDataFromAIResponse(response.message, userText);
@@ -476,14 +622,26 @@ Respond therapeutically to the user's input. Assess if you need more information
         const nextStepIndex = exerciseStep + 1;
         const nextStep = flow.steps[nextStepIndex];
         
-        const systemPrompt = `You are a warm, compassionate CBT therapist. 
+        const systemPrompt = `You are a warm, compassionate CBT therapist. You're having a real therapeutic conversation within the structure of a CBT exercise.
 
-PREVIOUS STEP COMPLETED: "${currentStep.title}" - User provided: "${userText}"
-NOW STARTING: Step ${nextStep.stepNumber}/7 - ${nextStep.title}
-STEP GOAL: ${nextStep.description}
-GUIDANCE: ${nextStep.aiPrompt}
+**THERAPEUTIC CONTEXT:**
+Previous step: "${currentStep.title}" 
+What they shared: "${userText}"
 
-Acknowledge their previous response warmly, then guide them into the next step. Be friendly, understanding, and therapeutic.`;
+**MOVING TO NEXT STEP:**
+Step ${nextStep.stepNumber}/7: ${nextStep.title}
+Goal: ${nextStep.description}
+
+**BE A REAL THERAPIST:**
+1. **Respond authentically** to what they just shared - acknowledge, validate, reflect
+2. **Make meaningful connections** between their sharing and the therapeutic process
+3. **Transition naturally** to the next step when therapeutically appropriate
+4. **Ask engaging questions** that show you're listening and want to understand
+5. **Be genuinely curious** about their experience
+
+**GUIDANCE FOR THIS STEP:** ${nextStep.aiPrompt}
+
+**REMEMBER:** You're not just following a script - you're having a real therapeutic conversation that happens to follow CBT structure. Respond to their emotions, ask follow-ups if needed, and make them feel truly heard.`;
 
         setIsTyping(true);
         const response = await apiService.getChatCompletionWithContext([
@@ -508,6 +666,8 @@ Acknowledge their previous response warmly, then guide them into the next step. 
 
           setMessages(prev => [...prev, aiResponse]);
           await storageService.addMessage(aiResponse);
+          
+          // Extract AI suggestions or use step defaults
           setSuggestions(nextStep.suggestions);
           setExerciseStep(nextStepIndex);
           
@@ -539,17 +699,48 @@ Acknowledge their previous response warmly, then guide them into the next step. 
 
         setMessages(prev => [...prev, completionMessage]);
         await storageService.addMessage(completionMessage);
+        
+        // Exit exercise mode with smooth transition
+        exitExerciseMode();
+        
+        // Show saved insight card after a delay
+        setTimeout(() => {
+          const insightCard: Message = {
+            id: (Date.now() + Math.random()).toString(),
+            type: 'system',
+            content: `**Saved to Insights** ✅\n\nYour thought reframe has been added to your personal patterns. You can review all your insights in the Insights tab.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isAIGuided: true
+          };
+          
+          setMessages(prev => [...prev, insightCard]);
+          storageService.addMessage(insightCard);
+        }, 2000);
+        
         setSuggestions(['That was helpful 😊', 'I learned something new 🌟', 'I want to try again 🔄', 'Thank you 🙏']);
         
       } else {
         // Stay on current step - ask for more clarification
-        const clarificationPrompt = `You are a warm, compassionate CBT therapist.
+        const clarificationPrompt = `You are a warm, compassionate CBT therapist having a real therapeutic conversation.
 
-CURRENT STEP: ${currentStep.stepNumber}/7 - ${currentStep.title}  
-STEP GOAL: ${currentStep.description}
-USER RESPONSE: "${userText}"
+**WHAT THEY SHARED:** "${userText}"
 
-The user's response needs more detail or clarity before moving to the next step. Gently ask follow-up questions or provide guidance to help them complete this step. Be supportive and encouraging.`;
+**CURRENT THERAPEUTIC FOCUS:**
+Step ${currentStep.stepNumber}/7: ${currentStep.title}
+Goal: ${currentStep.description}
+
+**YOUR THERAPEUTIC RESPONSE:**
+You sense this person has more to share or process around this topic. As a skilled therapist, you want to:
+
+1. **Acknowledge what they shared** - validate their experience
+2. **Show genuine curiosity** - what resonates with you about their response?
+3. **Ask thoughtful follow-up questions** that help them go deeper
+4. **Stay present with their emotions** - what do you sense they're feeling?
+5. **Guide gently toward more insight** without rushing
+
+**THERAPEUTIC GUIDANCE:** ${currentStep.aiPrompt}
+
+**BE REAL:** Don't just ask for "more detail" - be a real therapist who's genuinely interested in understanding this person's experience. What would you naturally want to know more about? What therapeutic curiosity do you have?`;
 
         setIsTyping(true);
         const response = await apiService.getChatCompletionWithContext([
@@ -574,6 +765,8 @@ The user's response needs more detail or clarity before moving to the next step.
 
           setMessages(prev => [...prev, aiResponse]);
           await storageService.addMessage(aiResponse);
+          
+          // Extract AI suggestions or use step defaults
           setSuggestions(currentStep.suggestions);
           
           await ttsService.speakIfAutoPlay(response.message);
@@ -585,41 +778,54 @@ The user's response needs more detail or clarity before moving to the next step.
     }
   };
 
-  // Assess if user response is complete enough to advance to next step
+  // AI-powered therapeutic assessment - decides when to move forward vs. explore deeper
   const assessStepCompletion = async (userResponse: string, currentStep: any, conversationHistory: any[]): Promise<boolean> => {
-    // Simple heuristics for now - can be enhanced with AI assessment later
-    const response = userResponse.trim();
-    
-    // Minimum length requirements by step type
-    const minLengths = {
-      'situation': 10,
-      'emotion': 5,
-      'thought': 8,
-      'distortion': 5,
-      'evidence': 15,
-      'reframe': 10,
-      'emotion-after': 3
-    };
-    
-    const requiredLength = minLengths[currentStep.dataToCapture] || 5;
-    
-    // Check if response meets minimum criteria
-    if (response.length < requiredLength) {
-      return false;
-    }
-    
-    // Step-specific validation
-    switch (currentStep.dataToCapture) {
-      case 'emotion':
-        // Should include either emotion name or number
-        return response.includes('/100') || /\b(anxious|sad|angry|frustrated|overwhelmed|worried|happy|calm)\b/i.test(response);
+    try {
+      // Use AI to make therapeutic decision about progression
+      const assessmentPrompt = `You are an expert CBT therapist assessing whether to move forward in an exercise or explore deeper.
+
+**EXERCISE CONTEXT:**
+Step ${currentStep.stepNumber}/7: ${currentStep.title}
+Goal: ${currentStep.description}
+
+**USER'S RESPONSE:** 
+"${userResponse}"
+
+**CONVERSATION HISTORY:**
+${conversationHistory.slice(-4).map(msg => `${msg.role}: ${msg.content}`).join('\n')}
+
+**THERAPEUTIC ASSESSMENT NEEDED:**
+Decide whether this response shows sufficient depth and engagement for this CBT step, or if you should ask follow-up questions to understand better.
+
+**RESPOND WITH ONLY:**
+- "ADVANCE" - if their response shows good self-awareness and completion of this step's goal
+- "EXPLORE" - if you need to ask clarifying questions, probe deeper, or help them process more
+
+**DECISION FACTORS:**
+- Quality of self-reflection, not just length
+- Emotional engagement with the topic  
+- Specificity appropriate for this CBT step
+- Therapeutic readiness to move forward
+
+Your decision:`;
+
+      const response = await apiService.getChatCompletionWithContext([
+        { role: 'system', content: assessmentPrompt }
+      ]);
+
+      if (response.success && response.message) {
+        const decision = response.message.trim().toUpperCase();
+        console.log('AI therapeutic assessment:', decision);
+        return decision.includes('ADVANCE');
+      }
       
-      case 'emotion-after':
-        // Should include number or comparative language  
-        return response.includes('/100') || /\b(better|worse|same|improved|different|lower|higher)\b/i.test(response);
-        
-      default:
-        return true; // Accept other responses if they meet length requirement
+      // Fallback to simple heuristic if AI fails
+      return userResponse.trim().length >= 8;
+      
+    } catch (error) {
+      console.error('Error in AI step assessment:', error);
+      // Fallback to simple heuristic
+      return userResponse.trim().length >= 8;
     }
   };
 
@@ -754,61 +960,76 @@ The user's response needs more detail or clarity before moving to the next step.
     }
   };
 
-  // Extract insights and save session
+  // Extract insights and save session - BACKGROUND PROCESSING
   const extractInsightsAndSaveSession = async () => {
     try {
-      console.log('Saving session and extracting insights...');
+      console.log('Starting background session save and insight extraction...');
       
-      // Process any completed exercise data first
-      if (currentExercise?.type === 'automatic-thoughts' && 
-          exerciseData.situation && exerciseData.thought && exerciseData.reframe) {
-        console.log('Processing completed CBT exercise data...');
-        await processAutomaticThoughtExercise();
-      }
+      // IMMEDIATELY return to main app - don't block the user!
+      onBack();
       
-      // Extract insights from full conversation
-      const patterns = await insightService.extractAtSessionEnd();
-      
-      if (patterns.length > 0) {
-        console.log(`✅ Extracted ${patterns.length} thought patterns from conversation`);
-      }
-      
-      // Then save conversation to history
+      // Continue processing in background
+      // Save conversation to history first (fast operation)
       await saveSessionToHistory();
       await storageService.clearCurrentSession();
+      console.log('Session saved to history and cleared');
       
-      console.log('Session saved and insights extracted successfully');
-      onBack();
+      // Process insights in background (slow AI operations)
+      setTimeout(async () => {
+        try {
+          if (currentExercise?.type === 'automatic-thoughts' && 
+              exerciseData.situation && exerciseData.thought && exerciseData.reframe) {
+            console.log('Background: Processing completed CBT exercise data...');
+            await processAutomaticThoughtExercise();
+          }
+          
+          // Extract insights from full conversation
+          const patterns = await insightService.extractAtSessionEnd();
+          
+          if (patterns.length > 0) {
+            console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
+          }
+        } catch (error) {
+          console.error('Background insight extraction failed:', error);
+        }
+      }, 100); // Small delay to ensure UI transition completes
+      
     } catch (error) {
       console.error('Error in extractInsightsAndSaveSession:', error);
-      // Still try to save and exit even if insights fail
-      saveSessionToHistory()
-        .then(() => storageService.clearCurrentSession())
-        .finally(() => onBack());
+      // Ensure user still gets back to main app
+      onBack();
     }
   };
 
-  // Extract insights but don't save conversation
+  // Extract insights but don't save conversation - BACKGROUND PROCESSING
   const extractInsightsAndEnd = async () => {
     try {
-      console.log('Extracting insights from conversation (not saving)...');
+      console.log('Background insight extraction (not saving conversation)...');
       
-      // Extract insights for user benefit
-      const patterns = await insightService.extractAtSessionEnd();
-      
-      if (patterns.length > 0) {
-        console.log(`✅ Extracted ${patterns.length} thought patterns (conversation not saved)`);
-      }
-      
-      // Clear session and exit
-      await storageService.clearCurrentSession();
-      console.log('Insights extracted, session cleared');
+      // IMMEDIATELY return to main app - don't block the user!
       onBack();
+      
+      // Clear session first (fast operation)
+      await storageService.clearCurrentSession();
+      console.log('Session cleared');
+      
+      // Extract insights in background (slow AI operation)
+      setTimeout(async () => {
+        try {
+          const patterns = await insightService.extractAtSessionEnd();
+          
+          if (patterns.length > 0) {
+            console.log(`✅ Background: Extracted ${patterns.length} thought patterns (conversation not saved)`);
+          }
+        } catch (error) {
+          console.error('Background insight extraction failed:', error);
+        }
+      }, 100); // Small delay to ensure UI transition completes
+      
     } catch (error) {
       console.error('Error in extractInsightsAndEnd:', error);
-      // Still clear and exit even if insights fail
-      storageService.clearCurrentSession()
-        .finally(() => onBack());
+      // Ensure user still gets back to main app
+      onBack();
     }
   };
 
@@ -932,6 +1153,21 @@ The user's response needs more detail or clarity before moving to the next step.
       console.error('Error saving user message:', error);
     }
 
+    // Check if user is accepting an exercise suggestion
+    if (showExerciseCard && (
+      text.toLowerCase().includes('yes') || 
+      text.toLowerCase().includes('let\'s try') ||
+      text.toLowerCase().includes('start') ||
+      text.includes('✨')
+    )) {
+      console.log('=== USER ACCEPTED EXERCISE SUGGESTION ===');
+      console.log('User typed:', text);
+      console.log('Exercise to start:', showExerciseCard);
+      console.log('About to call handleExerciseCardStart...');
+      handleExerciseCardStart(showExerciseCard);
+      return;
+    }
+
     // Handle exercise flow progression
     if (currentExercise && exerciseFlows[currentExercise.type]) {
       const flow = exerciseFlows[currentExercise.type];
@@ -1042,8 +1278,9 @@ The user's response needs more detail or clarity before moving to the next step.
         // Auto-play TTS if enabled
         await ttsService.speakIfAutoPlay(response.message);
 
-        // Update suggestions based on conversation
-        setSuggestions(contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]));
+        // Extract AI-generated suggestions or use contextual fallback
+        const contextualSuggestions = contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]);
+        setSuggestions(contextualSuggestions);
       } else {
         // API error - show fallback response
         const fallbackContent = response.error || 'I\'m having trouble connecting right now. Please try again in a moment.';
@@ -1249,33 +1486,44 @@ The user's response needs more detail or clarity before moving to the next step.
     }
   };
 
-  const formatMessageContent = (content: string) => {
-    // Enhanced formatting for therapeutic responses
-    return content
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove markdown bold for now - we'll handle it in rendering
-      .replace(/\n/g, '\n');
-  };
 
   // Enhanced message content renderer with rich formatting
   const renderFormattedContent = (content: string) => {
-    const parts = content.split(/(\*\*.*?\*\*|• .*?\n|^\d+\. .*$)/gm);
+    // Split by lines first, then process each line
+    const lines = content.split('\n');
     
-    return parts.map((part, index) => {
-      // Bold text
-      if (part.match(/^\*\*(.*)\*\*$/)) {
-        const text = part.replace(/\*\*/g, '');
+    return lines.map((line, lineIndex) => {
+      if (!line.trim()) {
+        return <View key={lineIndex} style={{ height: 8 }} />;
+      }
+      
+      // Check for bold text with **
+      if (line.includes('**')) {
+        const parts = line.split(/(\*\*[^*]+\*\*)/g);
         return (
-          <Text key={index} style={[styles.systemMessageText, { fontWeight: '600', color: '#1e293b' }]}>
-            {text}
-          </Text>
+          <View key={lineIndex} style={{ marginVertical: 2 }}>
+            <Text style={styles.systemMessageText}>
+              {parts.map((part, partIndex) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                  const boldText = part.replace(/\*\*/g, '');
+                  return (
+                    <Text key={partIndex} style={{ fontWeight: '700', color: '#1e293b' }}>
+                      {boldText}
+                    </Text>
+                  );
+                }
+                return part;
+              })}
+            </Text>
+          </View>
         );
       }
       
-      // Bullet points
-      if (part.match(/^• /)) {
-        const text = part.replace(/^• /, '');
+      // Check for bullet points
+      if (line.startsWith('• ')) {
+        const text = line.replace(/^• /, '');
         return (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 4 }}>
+          <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
             <View style={{ 
               width: 6, 
               height: 6, 
@@ -1291,27 +1539,210 @@ The user's response needs more detail or clarity before moving to the next step.
         );
       }
       
-      // Numbered lists
-      if (part.match(/^\d+\. /)) {
-        return (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 4 }}>
-            <Text style={[styles.systemMessageText, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
-              {part.match(/^\d+\./)?.[0]}
-            </Text>
-            <Text style={[styles.systemMessageText, { flex: 1 }]}>
-              {part.replace(/^\d+\. /, '')}
-            </Text>
-          </View>
-        );
+      // Check for numbered lists
+      if (/^\d+\. /.test(line)) {
+        const match = line.match(/^(\d+\.) (.+)$/);
+        if (match) {
+          return (
+            <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
+              <Text style={[styles.systemMessageText, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
+                {match[1]}
+              </Text>
+              <Text style={[styles.systemMessageText, { flex: 1 }]}>
+                {match[2]}
+              </Text>
+            </View>
+          );
+        }
       }
       
       // Regular text
       return (
-        <Text key={index} style={styles.systemMessageText}>
-          {part}
+        <Text key={lineIndex} style={[styles.systemMessageText, { marginVertical: 2 }]}>
+          {line}
         </Text>
       );
     });
+  };
+
+  // Detect and parse exercise suggestions from AI responses
+  const detectAndParseExerciseSuggestions = (aiMessage: string): string[] => {
+    console.log('=== EXERCISE DETECTION ===');
+    console.log('AI Message:', aiMessage);
+    
+    const lower = aiMessage.toLowerCase();
+    
+    // Map of exercise detection keywords to actual exercise types
+    const exerciseMap = {
+      'automatic thoughts': { type: 'automatic-thoughts', name: 'Automatic Thoughts CBT' },
+      'thought challenge': { type: 'automatic-thoughts', name: 'Automatic Thoughts CBT' },
+      'cbt': { type: 'automatic-thoughts', name: 'Automatic Thoughts CBT' },
+      'body scan': { type: 'mindfulness', name: 'Body Scan Mindfulness' },
+      'mindfulness': { type: 'mindfulness', name: 'Body Scan Mindfulness' },
+      'breathing': { type: 'breathing', name: '4-7-8 Breathing' },
+      '4-7-8': { type: 'breathing', name: '4-7-8 Breathing' },
+      'gratitude': { type: 'gratitude', name: 'Gratitude Practice' },
+      'self-compassion': { type: 'self-compassion', name: 'Self-Compassion Break' },
+      'values': { type: 'values-clarification', name: 'Living Closer to My Values' },
+      'purpose': { type: 'values-clarification', name: 'Living Closer to My Values' },
+      'meaning': { type: 'values-clarification', name: 'Living Closer to My Values' }
+    };
+    
+    // Check if AI is suggesting an exercise
+    const isExerciseSuggestion = (lower.includes('exercise') && lower.includes('would you like to try')) || 
+                                lower.includes('would you like to try') ||
+                                lower.includes('shall we try') ||
+                                lower.includes('practice');
+    
+    console.log('Is Exercise Suggestion:', isExerciseSuggestion);
+    
+    if (!isExerciseSuggestion) {
+      console.log('No exercise suggestion detected');
+      return [];
+    }
+    
+    // Find which exercise is being suggested
+    for (const [keyword, exerciseInfo] of Object.entries(exerciseMap)) {
+      if (lower.includes(keyword)) {
+        console.log('Exercise detected:', keyword, exerciseInfo);
+        // Show exercise suggestion card
+        const cardData = {
+          ...exerciseInfo,
+          suggestion: aiMessage,
+          duration: '5-15 min'
+        };
+        setShowExerciseCard(cardData);
+        console.log('Exercise card set:', cardData);
+        console.log('showExerciseCard state should now be:', cardData);
+        return [`✨ Try ${exerciseInfo.name}`, '💭 Tell me more first', '🤔 Not right now'];
+      }
+    }
+    
+    // Generic exercise suggestion
+    if (isExerciseSuggestion) {
+      return ['✨ Yes, let\'s try it', '💭 Tell me more first', '🤔 Maybe later'];
+    }
+    
+    return [];
+  };
+
+  // Smooth transition into exercise mode
+  const enterExerciseMode = () => {
+    console.log('=== ENTERING EXERCISE MODE ===');
+    console.log('Setting exercise mode to true');
+    setExerciseMode(true);
+    
+    console.log('Starting background animation...');
+    // Animate background to calm gradient
+    Animated.timing(backgroundAnimation, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: false,
+    }).start(() => {
+      console.log('Background animation completed');
+    });
+    
+    console.log('Starting header animation...');
+    // Animate header transition
+    Animated.timing(headerAnimation, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: false,
+    }).start(() => {
+      console.log('Header animation completed');
+    });
+  };
+
+  // Smooth transition out of exercise mode
+  const exitExerciseMode = () => {
+    setExerciseMode(false);
+    
+    // Animate background back to normal
+    Animated.timing(backgroundAnimation, {
+      toValue: 0,
+      duration: 600,
+      useNativeDriver: false,
+    }).start();
+    
+    // Animate header back to normal
+    Animated.timing(headerAnimation, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  // Handle exercise card start
+  const handleExerciseCardStart = (exerciseInfo: any) => {
+    console.log('=== EXERCISE CARD START ===');
+    console.log('Exercise info:', exerciseInfo);
+    
+    setShowExerciseCard(null);
+    
+    // Find the exercise in our flows and start it
+    const exercise = {
+      type: exerciseInfo.type,
+      name: exerciseInfo.name,
+      duration: exerciseInfo.duration
+    };
+    
+    console.log('Exercise object created:', exercise);
+    console.log('Setting current exercise...');
+    setCurrentExercise(exercise);
+    
+    // Start smooth transition into exercise mode
+    console.log('Calling enterExerciseMode...');
+    enterExerciseMode();
+    
+    // Start the exercise like if clicked from library
+    if (exerciseFlows[exercise.type]) {
+      console.log('Found matching exercise flow:', exercise.type);
+      const flow = exerciseFlows[exercise.type];
+      
+      if (flow.useAI && flow.steps.length > 0) {
+        console.log('Starting AI-guided exercise with', flow.steps.length, 'steps');
+        console.log('Exercise mode should now be:', true);
+        console.log('Background and header animations should be starting...');
+        
+        // Give a small delay to let the exercise mode state update
+        setTimeout(() => {
+          startAIGuidedExercise(flow);
+        }, 100);
+      } else {
+        console.log('Exercise flow configuration:', flow);
+      }
+    } else {
+      console.log('ERROR: No exercise flow found for type:', exercise.type);
+      console.log('Available flows:', Object.keys(exerciseFlows));
+    }
+  };
+
+  // Extract AI-generated suggestions from response
+  const extractAISuggestions = (aiMessage: string): string[] => {
+    // Look for SUGGESTION_CHIPS: ["option1", "option2", "option3"] pattern
+    const suggestionMatch = aiMessage.match(/SUGGESTION_CHIPS:\s*\[(.*?)\]/);
+    
+    if (suggestionMatch) {
+      try {
+        // Parse the suggestions array
+        const suggestionsStr = suggestionMatch[1];
+        const suggestions = suggestionsStr
+          .split(',')
+          .map(s => s.trim().replace(/['"]/g, ''))
+          .filter(s => s.length > 0 && s.length <= 25); // Reasonable length filter
+        
+        return suggestions.slice(0, 4); // Max 4 suggestions
+      } catch (error) {
+        console.log('Error parsing AI suggestions:', error);
+      }
+    }
+    
+    return []; // Return empty if no suggestions found
+  };
+
+  // Clean AI message content by removing suggestion chips
+  const cleanAIMessageContent = (content: string): string => {
+    return content.replace(/SUGGESTION_CHIPS:\s*\[.*?\]/, '').trim();
   };
 
   const renderMessage = (message: Message) => {
@@ -1345,15 +1776,9 @@ The user's response needs more detail or clarity before moving to the next step.
             </View>
             
             <View style={styles.systemMessageTextContainer}>
-              {message.isAIGuided ? (
-                <View>
-                  {renderFormattedContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸')}
-                </View>
-              ) : (
-                <Text style={styles.systemMessageText}>
-                  {formatMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸')}
-                </Text>
-              )}
+              <View>
+                {renderFormattedContent(cleanAIMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸'))}
+              </View>
               
               {/* TTS Controls */}
               <View style={styles.ttsControls}>
@@ -1384,18 +1809,52 @@ The user's response needs more detail or clarity before moving to the next step.
     );
   };
 
+  // Define animated background gradients
+  const normalGradient = colors.gradients.primaryLight;
+  const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5']; // Calm green gradient
+
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={colors.gradients.primaryLight}
-        style={styles.backgroundGradient}
-      />
+      <Animated.View style={styles.backgroundGradient}>
+        <LinearGradient
+          colors={normalGradient}
+          style={[
+            styles.backgroundGradient,
+            {
+              opacity: backgroundAnimation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              }),
+            }
+          ]}
+        />
+        <LinearGradient
+          colors={exerciseGradient}
+          style={[
+            styles.backgroundGradient,
+            {
+              opacity: backgroundAnimation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1],
+              }),
+            }
+          ]}
+        />
+      </Animated.View>
       <KeyboardAvoidingView 
         style={styles.keyboardView} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <Animated.View style={[
+          styles.header,
+          {
+            backgroundColor: headerAnimation.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['rgba(255, 255, 255, 0)', 'rgba(240, 253, 244, 0.8)'],
+            }),
+          }
+        ]}>
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
               <TouchableOpacity 
@@ -1453,10 +1912,13 @@ The user's response needs more detail or clarity before moving to the next step.
               <View style={styles.headerInfo}>
                 <View style={styles.sessionDetails}>
                   <Text style={styles.sessionTitle}>
-                    {currentExercise && exerciseFlows[currentExercise.type] 
-                      ? exerciseFlows[currentExercise.type].name 
-                      : '🌸 Gentle Session'
-                    }
+                    {exerciseMode && currentExercise ? (
+                      '✨ Exercise in Progress'
+                    ) : currentExercise && exerciseFlows[currentExercise.type] ? (
+                      exerciseFlows[currentExercise.type].name 
+                    ) : (
+                      '🌸 Gentle Session'
+                    )}
                   </Text>
                   <Text style={styles.sessionSubtitle}>
                     {currentExercise && exerciseFlows[currentExercise.type] ? (
@@ -1482,11 +1944,29 @@ The user's response needs more detail or clarity before moving to the next step.
                       </Text>
                     </View>
                   )}
+                  
+                  {/* Exercise Progress Indicator */}
+                  {exerciseMode && currentExercise && exerciseFlows[currentExercise.type] && exerciseFlows[currentExercise.type].steps && (
+                    <View style={styles.exerciseProgressContainer}>
+                      {exerciseFlows[currentExercise.type].steps.map((_, index) => (
+                        <View
+                          key={index}
+                          style={[
+                            styles.progressDot,
+                            {
+                              backgroundColor: index <= exerciseStep ? '#22c55e' : '#d1d5db',
+                              transform: [{ scale: index === exerciseStep ? 1.2 : 1 }],
+                            }
+                          ]}
+                        />
+                      ))}
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Messages Area */}
         <ScrollView 
@@ -1499,6 +1979,48 @@ The user's response needs more detail or clarity before moving to the next step.
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
           {messages.map(renderMessage)}
+          
+          {/* Exercise Suggestion Card */}
+          {showExerciseCard && (
+            <View style={styles.exerciseCardContainer}>
+              <LinearGradient
+                colors={['rgba(255, 255, 255, 0.98)', 'rgba(240, 249, 255, 0.95)']}
+                style={styles.exerciseSuggestionCard}
+              >
+                <View style={styles.exerciseCardHeader}>
+                  <Text style={styles.exerciseCardTitle}>
+                    {showExerciseCard.name}
+                  </Text>
+                  <Text style={styles.exerciseCardSubtitle}>
+                    Takes 3-7 steps • {showExerciseCard.duration}
+                  </Text>
+                </View>
+                
+                <View style={styles.exerciseCardActions}>
+                  <TouchableOpacity
+                    onPress={() => handleExerciseCardStart(showExerciseCard)}
+                    style={styles.exerciseStartButton}
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={['#3b82f6', '#1d4ed8']}
+                      style={styles.exerciseStartButtonGradient}
+                    >
+                      <Text style={styles.exerciseStartButtonText}>Start</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    onPress={() => setShowExerciseCard(null)}
+                    style={styles.exerciseDismissButton}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.exerciseDismissButtonText}>Maybe later</Text>
+                  </TouchableOpacity>
+                </View>
+              </LinearGradient>
+            </View>
+          )}
           
           {/* Typing Indicator */}
           {isTyping && (

@@ -87,7 +87,9 @@ export const AppContent: React.FC = () => {
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Exercises" component={ExerciseLibrary} />
+        <Tab.Screen name="Exercises">
+          {() => <ExerciseLibrary onExerciseClick={handleExerciseClick} />}
+        </Tab.Screen>
         <Tab.Screen name="Insights">
           {() => <InsightsDashboard onInsightClick={handleInsightClick} />}
         </Tab.Screen>

@@ -10,8 +10,11 @@ export const useAppState = () => {
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
 
   const handleStartSession = useCallback((exercise: Exercise | null = null) => {
+    console.log('=== START SESSION ===');
+    console.log('Exercise passed to session:', exercise);
     setCurrentExercise(exercise);
     setShowChat(true);
+    console.log('Session state updated - should show chat with exercise:', exercise?.type);
   }, []);
 
   const handleNewSession = useCallback(() => {
@@ -31,8 +34,13 @@ export const useAppState = () => {
   }, [showChat, chatWithActionPalette, currentExercise]);
 
   const handleExerciseClick = useCallback((exercise?: Exercise) => {
+    console.log('=== EXERCISE CLICK ===');
+    console.log('Exercise clicked:', exercise);
     if (exercise) {
+      console.log('Starting session with exercise:', exercise.type, exercise.name);
       handleStartSession(exercise);
+    } else {
+      console.log('No exercise provided to handleExerciseClick');
     }
   }, [handleStartSession]);
 
