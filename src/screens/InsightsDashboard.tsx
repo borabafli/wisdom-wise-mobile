@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { insightService, ThoughtPattern } from '../services/insightService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -11,35 +12,65 @@ interface InsightsDashboardProps {
 }
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
-  const thinkingPatterns = [
+  const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
+  const [insightStats, setInsightStats] = useState({
+    totalPatterns: 0,
+    commonDistortions: [] as { name: string; count: number }[],
+    recentActivity: 0,
+    confidenceAverage: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadInsightData();
+  }, []);
+
+  const loadInsightData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Load recent thought patterns
+      const recentPatterns = await insightService.getRecentPatterns(10);
+      setThinkingPatterns(recentPatterns);
+      
+      // Load insight statistics
+      const stats = await insightService.getInsightStats();
+      setInsightStats(stats);
+      
+    } catch (error) {
+      console.error('Error loading insight data:', error);
+      // Fallback to mock data if needed
+      setThinkingPatterns([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Mock data for demonstration when no patterns exist
+  const mockPatterns = [
     {
-      id: 1,
-      name: 'All-or-Nothing Thinking',
-      description: 'You identified this pattern 3 days ago',
-      yourThought: 'I completely messed up that presentation, I\'m terrible at public speaking',
+      id: 'mock_1',
+      originalThought: 'I completely messed up that presentation, I\'m terrible at public speaking',
       reframedThought: 'The presentation had some rough spots, but I also had good moments. I\'m learning and improving.',
-      replacement: 'Look for the gray areas and partial successes',
-      color: 'warm'
+      distortionTypes: ['All-or-Nothing Thinking'],
+      confidence: 0.85,
+      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
+      timestamp: new Date().toISOString(),
+      context: 'Identified during conversation about work stress'
     },
     {
-      id: 2,
-      name: 'Catastrophizing',
-      description: 'Pattern recognized during your stress session',
-      yourThought: 'If I don\'t get this job, my career will be ruined',
+      id: 'mock_2', 
+      originalThought: 'If I don\'t get this job, my career will be ruined',
       reframedThought: 'Not getting this particular job would be disappointing, but there are other opportunities out there.',
-      replacement: 'Ask: What\'s the most likely realistic outcome?',
-      color: 'calm'
-    },
-    {
-      id: 3,
-      name: 'Mind Reading',
-      description: 'Noticed during your morning mindfulness',
-      yourThought: 'My friends think I\'m annoying when I share my problems',
-      reframedThought: 'I don\'t actually know what they think. True friends want to support each other.',
-      replacement: 'Focus on facts, not assumptions about others\' thoughts',
-      color: 'therapy'
+      distortionTypes: ['Catastrophizing'],
+      confidence: 0.92,
+      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
+      timestamp: new Date().toISOString(),
+      context: 'Pattern recognized during anxiety session'
     }
   ];
+
+  const displayPatterns = thinkingPatterns.length > 0 ? thinkingPatterns : mockPatterns;
 
   const journeyData = {
     sessionsCompleted: 3,
@@ -56,27 +87,27 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
   const insights = [
     {
       id: 1,
-      title: 'Weekly Progress',
-      value: '+23%',
-      subtitle: 'Mood improvement this week',
-      icon: TrendingUp,
-      trend: 'positive'
-    },
-    {
-      id: 2,
-      title: 'Mindful Minutes',
-      value: '47',
-      subtitle: 'Total minutes practiced',
+      title: 'Patterns Found',
+      value: insightStats.totalPatterns.toString(),
+      subtitle: 'Thought patterns identified',
       icon: Brain,
       trend: 'neutral'
     },
     {
+      id: 2,
+      title: 'Recent Activity',
+      value: insightStats.recentActivity.toString(),
+      subtitle: 'Patterns this week',
+      icon: TrendingUp,
+      trend: insightStats.recentActivity > 0 ? 'positive' : 'neutral'
+    },
+    {
       id: 3,
-      title: 'Goals Met',
-      value: '5/7',
-      subtitle: 'This week\'s wellness goals',
+      title: 'Accuracy Score',
+      value: Math.round(insightStats.confidenceAverage * 100) + '%',
+      subtitle: 'AI confidence average',
       icon: Target,
-      trend: 'positive'
+      trend: insightStats.confidenceAverage > 0.7 ? 'positive' : 'neutral'
     }
   ];
 
@@ -213,41 +244,65 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           </View>
 
           <View style={styles.patternsContainer}>
-            {thinkingPatterns.map((pattern) => (
-              <TouchableOpacity
-                key={pattern.id}
-                onPress={() => onInsightClick('pattern', pattern)}
-                style={styles.patternCard}
-                activeOpacity={0.9}
-              >
-                <View style={styles.patternContent}>
-                  <View style={styles.patternContentLeft}>
-                    <Text style={styles.patternName}>
-                      {pattern.name}
-                    </Text>
-                    <Text style={styles.patternDescription}>
-                      {pattern.description}
-                    </Text>
-                    
-                    <View style={styles.thoughtContainer}>
-                      <View style={styles.originalThought}>
-                        <Text style={styles.thoughtText}>
-                          "{pattern.yourThought}"
-                        </Text>
+            {isLoading ? (
+              <View style={styles.loadingContainer}>
+                <Text style={styles.loadingText}>Loading your insights...</Text>
+              </View>
+            ) : displayPatterns.length > 0 ? (
+              displayPatterns.map((pattern) => (
+                <TouchableOpacity
+                  key={pattern.id}
+                  onPress={() => onInsightClick('pattern', pattern)}
+                  style={styles.patternCard}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.patternContent}>
+                    <View style={styles.patternContentLeft}>
+                      <Text style={styles.patternName}>
+                        {pattern.distortionTypes[0] || 'Thought Pattern'}
+                      </Text>
+                      <Text style={styles.patternDescription}>
+                        {pattern.context || `Confidence: ${Math.round(pattern.confidence * 100)}%`}
+                      </Text>
+                      
+                      <View style={styles.thoughtContainer}>
+                        <View style={styles.originalThought}>
+                          <Text style={styles.thoughtText}>
+                            "{pattern.originalThought}"
+                          </Text>
+                        </View>
+                        <View style={styles.reframedThought}>
+                          <Text style={styles.reframedText}>
+                            "{pattern.reframedThought}"
+                          </Text>
+                        </View>
                       </View>
-                      <View style={styles.reframedThought}>
-                        <Text style={styles.reframedText}>
-                          "{pattern.reframedThought}"
-                        </Text>
-                      </View>
+                      
+                      {pattern.distortionTypes.length > 1 && (
+                        <View style={styles.distortionTags}>
+                          {pattern.distortionTypes.slice(1, 3).map((distortion, index) => (
+                            <View key={index} style={styles.distortionTag}>
+                              <Text style={styles.distortionTagText}>
+                                {distortion}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                    <View style={styles.patternArrow}>
+                      <ArrowRight size={16} color="#1e40af" />
                     </View>
                   </View>
-                  <View style={styles.patternArrow}>
-                    <ArrowRight size={16} color="#1e40af" />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.emptyStateContainer}>
+                <Text style={styles.emptyStateText}>
+                  Start a conversation to discover your thought patterns! 🌱
+                </Text>
+              </View>
+            )}
           </View>
 
           <View style={styles.viewAllContainer}>
@@ -690,6 +745,51 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#374151',
     fontWeight: '500',
+  },
+  loadingContainer: {
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  emptyStateContainer: {
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(239, 246, 255, 0.5)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.1)',
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#64748b',
+    fontWeight: '500',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  distortionTags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+  },
+  distortionTag: {
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.2)',
+  },
+  distortionTagText: {
+    fontSize: 12,
+    color: '#3b82f6',
+    fontWeight: '600',
   },
 });
 

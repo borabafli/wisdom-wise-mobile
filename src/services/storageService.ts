@@ -9,6 +9,21 @@ export interface Message {
   exerciseType?: string;
   color?: string;
   timestamp: string;
+  isAIGuided?: boolean;
+}
+
+export interface ThoughtPattern {
+  id: string;
+  originalThought: string;
+  distortionTypes: string[];
+  reframedThought: string;
+  confidence: number;
+  extractedFrom: {
+    messageId: string;
+    sessionId: string;
+  };
+  timestamp: string;
+  context?: string;
 }
 
 export interface ChatSession {
@@ -16,12 +31,15 @@ export interface ChatSession {
   messages: Message[];
   createdAt: string;
   updatedAt: string;
+  thoughtPatterns?: ThoughtPattern[];
 }
 
 const STORAGE_KEYS = {
   CURRENT_SESSION: 'chat_current_session',
   CHAT_HISTORY: 'chat_history',
-  USER_SETTINGS: 'user_settings'
+  USER_SETTINGS: 'user_settings',
+  THOUGHT_PATTERNS: 'thought_patterns',
+  INSIGHTS_HISTORY: 'insights_history'
 };
 
 class StorageService {
@@ -231,10 +249,84 @@ class StorageService {
       await AsyncStorage.multiRemove([
         STORAGE_KEYS.CURRENT_SESSION,
         STORAGE_KEYS.CHAT_HISTORY,
-        STORAGE_KEYS.USER_SETTINGS
+        STORAGE_KEYS.USER_SETTINGS,
+        STORAGE_KEYS.THOUGHT_PATTERNS,
+        STORAGE_KEYS.INSIGHTS_HISTORY
       ]);
     } catch (error) {
       console.error('Error clearing all data:', error);
+      throw error;
+    }
+  }
+
+  // Thought Patterns Management
+  async addThoughtPattern(pattern: ThoughtPattern): Promise<void> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      patterns.push(pattern);
+      await AsyncStorage.setItem(STORAGE_KEYS.THOUGHT_PATTERNS, JSON.stringify(patterns));
+    } catch (error) {
+      console.error('Error adding thought pattern:', error);
+      throw error;
+    }
+  }
+
+  async getThoughtPatterns(): Promise<ThoughtPattern[]> {
+    try {
+      const patternsData = await AsyncStorage.getItem(STORAGE_KEYS.THOUGHT_PATTERNS);
+      return patternsData ? JSON.parse(patternsData) : [];
+    } catch (error) {
+      console.error('Error loading thought patterns:', error);
+      return [];
+    }
+  }
+
+  async getThoughtPatternsBySession(sessionId: string): Promise<ThoughtPattern[]> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      return patterns.filter(pattern => pattern.extractedFrom.sessionId === sessionId);
+    } catch (error) {
+      console.error('Error loading patterns for session:', error);
+      return [];
+    }
+  }
+
+  async getRecentThoughtPatterns(limit: number = 10): Promise<ThoughtPattern[]> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      return patterns
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, limit);
+    } catch (error) {
+      console.error('Error loading recent patterns:', error);
+      return [];
+    }
+  }
+
+  async saveSessionInsights(sessionId: string, patterns: ThoughtPattern[]): Promise<void> {
+    try {
+      // Add patterns to global storage
+      for (const pattern of patterns) {
+        await this.addThoughtPattern(pattern);
+      }
+
+      // Also save to session
+      const session = await this.getCurrentSession();
+      if (session && session.id === sessionId) {
+        session.thoughtPatterns = (session.thoughtPatterns || []).concat(patterns);
+        await this.saveCurrentSession(session);
+      }
+    } catch (error) {
+      console.error('Error saving session insights:', error);
+      throw error;
+    }
+  }
+
+  async clearThoughtPatterns(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.THOUGHT_PATTERNS);
+    } catch (error) {
+      console.error('Error clearing thought patterns:', error);
       throw error;
     }
   }
@@ -244,11 +336,13 @@ class StorageService {
       const currentSession = await this.getCurrentSession();
       const history = await this.getChatHistory();
       const settings = await this.getUserSettings();
+      const patterns = await this.getThoughtPatterns();
       
       return {
         currentSessionMessages: currentSession?.messages.length || 0,
         historySessions: history.length,
         totalHistoryMessages: history.reduce((acc, session) => acc + session.messages.length, 0),
+        thoughtPatterns: patterns.length,
         settings
       };
     } catch (error) {

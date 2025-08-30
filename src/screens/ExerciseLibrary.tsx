@@ -6,7 +6,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
-const ExerciseLibrary: React.FC = () => {
+interface ExerciseLibraryProps {
+  onExerciseClick: (exercise: any) => void;
+}
+
+const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
   const exercises = [
     {
       id: 1,
@@ -70,6 +74,18 @@ const ExerciseLibrary: React.FC = () => {
     },
     {
       id: 6,
+      type: 'automatic-thoughts',
+      name: 'Recognizing Automatic Thoughts',
+      duration: '15 min',
+      description: 'Notice automatic thoughts, spot distortions, and create balanced alternatives',
+      category: 'CBT',
+      difficulty: 'Intermediate',
+      icon: Brain,
+      color: ['#B5A7C6', '#D4B5D0'],
+      image: require('../../assets/images/4.jpeg')
+    },
+    {
+      id: 7,
       type: 'cbt',
       name: 'Values Clarification',
       duration: '20 min',
@@ -143,6 +159,7 @@ const ExerciseLibrary: React.FC = () => {
                 key={exercise.id}
                 style={styles.exerciseCard}
                 activeOpacity={0.9}
+                onPress={() => onExerciseClick(exercise)}
               >
                 {/* Background Image Section */}
                 <View style={styles.exerciseImageSection}>

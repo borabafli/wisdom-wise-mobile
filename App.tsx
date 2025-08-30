@@ -140,7 +140,9 @@ export default function App() {
               />
             )}
           </Tab.Screen>
-          <Tab.Screen name="Exercises" component={ExerciseLibrary} />
+          <Tab.Screen name="Exercises">
+            {() => <ExerciseLibrary onExerciseClick={handleExerciseClick} />}
+          </Tab.Screen>
           <Tab.Screen name="Insights">
             {() => <InsightsDashboard onInsightClick={handleInsightClick} />}
           </Tab.Screen>

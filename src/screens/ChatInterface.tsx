@@ -14,6 +14,7 @@ import { apiService } from '../services/apiService';
 import { rateLimitService } from '../services/rateLimitService';
 import { ttsService } from '../services/ttsService';
 import { sttService } from '../services/sttService';
+import { insightService } from '../services/insightService';
 import { API_CONFIG } from '../config/constants';
 
 // Import separated styles
@@ -58,6 +59,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isRecording, setIsRecording] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
+  const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
   const scrollViewRef = useRef<ScrollView>(null);
   
 
@@ -131,6 +133,69 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           suggestions: ['To notice the good 👀', 'Gratitude feels powerful 💫', 'I have much to appreciate 🙏', 'This made me happy 😊']
         }
       ]
+    },
+    'automatic-thoughts': {
+      name: '🧠 Recognizing Automatic Thoughts',
+      color: 'purple',
+      useAI: true,
+      steps: [
+        {
+          title: 'Welcome & Understanding',
+          stepNumber: 1,
+          description: 'Learn about automatic thoughts and identify the triggering situation',
+          aiPrompt: `Welcome them warmly to the CBT exercise. Explain what automatic thoughts are in simple, relatable terms. Then guide them to describe a specific situation that triggered distressing thoughts - emphasize facts only, no interpretations.`,
+          dataToCapture: 'situation',
+          suggestions: ['At work today...', 'During a conversation...', 'When I was thinking about...', 'Something happened that upset me...']
+        },
+        {
+          title: 'Emotion Recognition',
+          stepNumber: 2,
+          description: 'Identify and rate the emotional intensity',
+          aiPrompt: `Help them identify the specific emotion they felt in that situation. Explain why emotional awareness matters in CBT. Ask them to rate the intensity on a 0-100 scale and explain what that number means to them.`,
+          dataToCapture: 'emotion',
+          suggestions: ['Anxious (80/100)', 'Sad (60/100)', 'Angry (90/100)', 'Overwhelmed (70/100)']
+        },
+        {
+          title: 'Capturing Automatic Thoughts',
+          stepNumber: 3,
+          description: 'Identify the exact unhelpful thoughts',
+          aiPrompt: `Gently guide them to identify the automatic thought that popped up. Explain that these are often fast, fleeting thoughts we barely notice. Ask them to write it exactly as it appeared - no editing or softening.`,
+          dataToCapture: 'thought',
+          suggestions: ['I always mess up', 'They think I\'m stupid', 'Nothing will work out', 'I can\'t handle this']
+        },
+        {
+          title: 'Spotting Thinking Patterns',
+          stepNumber: 4,
+          description: 'Identify cognitive distortions in the thought',
+          aiPrompt: `Educate them about cognitive distortions - common thinking traps we all fall into. Help them identify which distortion(s) might be present in their thought. Be encouraging that everyone has these patterns.`,
+          dataToCapture: 'distortion',
+          suggestions: ['All-or-Nothing Thinking', 'Catastrophizing', 'Mind Reading', 'Fortune Telling', 'Emotional Reasoning']
+        },
+        {
+          title: 'Examining Evidence',
+          stepNumber: 5,
+          description: 'Look at facts that support and contradict the thought',
+          aiPrompt: `Guide them through examining evidence like a detective. Ask for facts that support their thought, then facts that contradict it. Help them see this isn't about being right or wrong, but about getting a balanced view.`,
+          dataToCapture: 'evidence',
+          suggestions: ['Evidence for...', 'Evidence against...', 'The facts show...', 'Looking objectively...']
+        },
+        {
+          title: 'Creating Balance',
+          stepNumber: 6,
+          description: 'Develop a realistic, supportive alternative thought',
+          aiPrompt: `Help them create a more balanced thought based on the evidence. It shouldn't be fake positivity, but realistic and kind. Guide them to find a thought that acknowledges reality while being more supportive.`,
+          dataToCapture: 'reframe',
+          suggestions: ['A more balanced view is...', 'Realistically speaking...', 'A kinder thought might be...']
+        },
+        {
+          title: 'Measuring Change',
+          stepNumber: 7,
+          description: 'Re-evaluate emotional intensity after reframing',
+          aiPrompt: `Ask them to re-rate their emotion now (0-100). Celebrate any decrease, normalize if it stayed the same. Explain that even small shifts matter and this skill takes practice.`,
+          dataToCapture: 'emotion-after',
+          suggestions: ['Much better (30/100)', 'Somewhat improved (50/100)', 'About the same', 'I notice a difference']
+        }
+      ]
     }
   };
 
@@ -138,6 +203,64 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   useEffect(() => {
     initializeChatSession();
   }, [currentExercise]);
+
+  // Start AI-driven exercise
+  const startAIExercise = async (flow: any) => {
+    try {
+      console.log('Starting AI-driven exercise with prompt:', flow.initialPrompt);
+      
+      // Set up context for AI exercise
+      const exerciseContext = `EXERCISE_MODE: ${currentExercise.type}
+EXERCISE_NAME: ${currentExercise.name}
+EXERCISE_DURATION: ${currentExercise.duration}
+USER_DATA_COLLECTED: {}
+
+${flow.initialPrompt}`;
+
+      // Get initial AI response
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext([
+        { role: 'system', content: flow.initialPrompt },
+        { role: 'user', content: `I want to do the ${currentExercise.name} exercise. Please guide me through it.` }
+      ]);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'exercise',
+          title: `${currentExercise.name}`,
+          content: response.message,
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+        
+        setMessages([aiMessage]);
+        await storageService.addMessage(aiMessage);
+        
+        // Generate contextual suggestions
+        setSuggestions(['I understand', 'Can you explain more?', 'I\'m ready to start', 'I have questions']);
+      } else {
+        // Fallback to welcoming message if API fails
+        const fallbackMessage: Message = {
+          id: Date.now().toString(),
+          type: 'exercise', 
+          title: 'Welcome to CBT Practice',
+          content: 'Welcome to automatic thoughts recognition! This exercise will help you identify and reframe unhelpful thinking patterns. Let\'s start by sharing a situation that caused you distress recently.',
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+        setMessages([fallbackMessage]);
+        setSuggestions(['At work today...', 'During a conversation...', 'When I was thinking about...', 'Something happened that upset me...']);
+      }
+    } catch (error) {
+      console.error('Error starting AI exercise:', error);
+    }
+  };
 
 
   const initializeChatSession = async () => {
@@ -151,22 +274,40 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
       setRateLimitStatus(rateLimitStatus);
       
+      // Debug logging
+      console.log('=== CHAT INITIALIZATION ===');
+      console.log('currentExercise:', currentExercise);
+      console.log('Exercise type:', currentExercise?.type);
+      console.log('Available exercise flows:', Object.keys(exerciseFlows));
+      console.log('Flow found:', exerciseFlows[currentExercise?.type]);
+      
       // Handle exercise flow vs regular chat
       if (currentExercise && exerciseFlows[currentExercise.type]) {
-        // Exercise flow - use existing logic
         const flow = exerciseFlows[currentExercise.type];
-        const initialMessage: Message = {
-          id: Date.now().toString(),
-          type: 'exercise',
-          title: flow.steps[0].title,
-          content: flow.steps[0].content,
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        setMessages([initialMessage]);
-        setSuggestions(flow.steps[0].suggestions);
-        setExerciseStep(0);
+        
+        if (flow.useAI && flow.steps.length > 0) {
+          // AI-guided exercise with step structure
+          console.log('Starting AI-guided exercise:', currentExercise.type);
+          await startAIGuidedExercise(flow);
+        } else if (flow.useAI) {
+          // AI-driven exercise - get initial response from AI  
+          console.log('Starting AI-driven exercise:', currentExercise.type);
+          await startAIExercise(flow);
+        } else {
+          // Static exercise flow - use existing logic
+          const initialMessage: Message = {
+            id: Date.now().toString(),
+            type: 'exercise',
+            title: flow.steps[0].title,
+            content: flow.steps[0].content,
+            exerciseType: currentExercise.type,
+            color: flow.color,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+          setMessages([initialMessage]);
+          setSuggestions(flow.steps[0].suggestions);
+          setExerciseStep(0);
+        }
       } else {
         // Regular chat - load from storage or create welcome
         await loadOrCreateChatSession();
@@ -175,6 +316,364 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       console.error('Error initializing chat session:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Start AI-guided exercise with step structure
+  const startAIGuidedExercise = async (flow: any) => {
+    try {
+      console.log('Starting AI-guided exercise with steps:', flow.steps.length);
+      
+      // Start with step 0
+      setExerciseStep(0);
+      const currentStep = flow.steps[0];
+      
+      // Get AI response for this step
+      const systemPrompt = `You are a warm, compassionate CBT therapist. You're guiding someone through the "${currentExercise.name}" exercise.
+
+CURRENT STEP: ${currentStep.stepNumber}/7 - ${currentStep.title}
+STEP GOAL: ${currentStep.description}
+GUIDANCE: ${currentStep.aiPrompt}
+
+Be friendly, understanding, and therapeutic. Explain concepts clearly and create a safe, supportive environment.`;
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.` }
+      ]);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'exercise',
+          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+          content: response.message,
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+        
+        setMessages([aiMessage]);
+        await storageService.addMessage(aiMessage);
+        setSuggestions(currentStep.suggestions);
+      } else {
+        // Fallback to static step content
+        const fallbackMessage: Message = {
+          id: Date.now().toString(),
+          type: 'exercise', 
+          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+          content: `Welcome to the ${currentExercise.name} exercise! Let's start by describing a situation that triggered some difficult thoughts. Please share just the facts of what happened, without any interpretations.`,
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+        setMessages([fallbackMessage]);
+        setSuggestions(currentStep.suggestions);
+      }
+    } catch (error) {
+      console.error('Error starting AI-guided exercise:', error);
+    }
+  };
+
+  // Handle AI-driven exercise responses
+  const handleAIExerciseResponse = async (userText: string, flow: any) => {
+    try {
+      console.log('Handling AI exercise response for:', currentExercise.type);
+      
+      // Build conversation context for the AI
+      const recentMessages = await storageService.getLastMessages(10);
+      const conversationHistory = recentMessages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.text || msg.content || ''
+      }));
+      
+      // Add current user response
+      conversationHistory.push({ role: 'user', content: userText });
+      
+      // Build exercise context with current data
+      const exerciseContextData = JSON.stringify(exerciseData, null, 2);
+      const systemPrompt = `${flow.initialPrompt}
+
+EXERCISE_MODE: ${currentExercise.type}
+EXERCISE_NAME: ${currentExercise.name} 
+EXERCISE_DURATION: ${currentExercise.duration}
+USER_DATA_COLLECTED: ${exerciseContextData}
+
+Respond therapeutically to the user's input. Assess if you need more information for the current CBT step, or if you can guide them to the next step. Be warm, supportive, and educational.`;
+
+      // Build messages array with system prompt and conversation history
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...conversationHistory
+      ];
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(messages);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        // Record successful request for rate limiting
+        await rateLimitService.recordRequest();
+        
+        const aiResponse: Message = {
+          id: (Date.now() + Math.random()).toString(),
+          type: 'exercise',
+          title: `${currentExercise.name} - AI Guidance`,
+          content: response.message,
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+
+        setMessages(prev => [...prev, aiResponse]);
+        await storageService.addMessage(aiResponse);
+
+        // Auto-play TTS if enabled
+        await ttsService.speakIfAutoPlay(response.message);
+
+        // Generate dynamic suggestions based on conversation
+        setSuggestions(contextService.generateSuggestions([...recentMessages, aiResponse]));
+        
+        // Extract any structured data from the AI response for insights
+        await extractExerciseDataFromAIResponse(response.message, userText);
+        
+      } else {
+        // Fallback response for API errors
+        const fallbackMessage: Message = {
+          id: (Date.now() + Math.random()).toString(),
+          type: 'exercise',
+          content: "I'm here to support you through this exercise. Could you share a bit more about what you're experiencing?",
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+        setMessages(prev => [...prev, fallbackMessage]);
+        setSuggestions(['I need help understanding', 'Let me try again', 'Can you guide me?', 'I\'m feeling stuck']);
+      }
+    } catch (error) {
+      console.error('Error in handleAIExerciseResponse:', error);
+    }
+  };
+
+  // Handle AI-guided exercise with step structure
+  const handleAIGuidedExerciseResponse = async (userText: string, flow: any) => {
+    try {
+      console.log('Handling AI-guided exercise response for step:', exerciseStep + 1);
+      
+      const currentStep = flow.steps[exerciseStep];
+      
+      // Store user response for this step
+      if (currentStep.dataToCapture) {
+        setExerciseData(prev => ({
+          ...prev,
+          [currentStep.dataToCapture]: userText
+        }));
+        console.log(`Captured ${currentStep.dataToCapture}: ${userText}`);
+      }
+      
+      // Build conversation context
+      const recentMessages = await storageService.getLastMessages(5);
+      const conversationHistory = recentMessages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.text || msg.content || ''
+      }));
+      conversationHistory.push({ role: 'user', content: userText });
+      
+      // Check if we should move to next step or stay on current
+      const shouldAdvance = await assessStepCompletion(userText, currentStep, conversationHistory);
+      
+      if (shouldAdvance && exerciseStep < flow.steps.length - 1) {
+        // Move to next step
+        const nextStepIndex = exerciseStep + 1;
+        const nextStep = flow.steps[nextStepIndex];
+        
+        const systemPrompt = `You are a warm, compassionate CBT therapist. 
+
+PREVIOUS STEP COMPLETED: "${currentStep.title}" - User provided: "${userText}"
+NOW STARTING: Step ${nextStep.stepNumber}/7 - ${nextStep.title}
+STEP GOAL: ${nextStep.description}
+GUIDANCE: ${nextStep.aiPrompt}
+
+Acknowledge their previous response warmly, then guide them into the next step. Be friendly, understanding, and therapeutic.`;
+
+        setIsTyping(true);
+        const response = await apiService.getChatCompletionWithContext([
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `I just completed step ${currentStep.stepNumber}. Please guide me to step ${nextStep.stepNumber}.` }
+        ]);
+        setIsTyping(false);
+
+        if (response.success && response.message) {
+          await rateLimitService.recordRequest();
+          
+          const aiResponse: Message = {
+            id: (Date.now() + Math.random()).toString(),
+            type: 'exercise',
+            title: `Step ${nextStep.stepNumber}: ${nextStep.title}`,
+            content: response.message,
+            exerciseType: currentExercise.type,
+            color: flow.color,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isAIGuided: true
+          };
+
+          setMessages(prev => [...prev, aiResponse]);
+          await storageService.addMessage(aiResponse);
+          setSuggestions(nextStep.suggestions);
+          setExerciseStep(nextStepIndex);
+          
+          await ttsService.speakIfAutoPlay(response.message);
+        }
+        
+      } else if (exerciseStep >= flow.steps.length - 1) {
+        // Exercise completed - show completion message, save data for later processing
+        console.log('CBT exercise completed - will process insights when session ends');
+        
+        const completionMessage: Message = {
+          id: (Date.now() + Math.random()).toString(),
+          type: 'exercise',
+          title: '🎉 Exercise Complete!',
+          content: `**Excellent work!** 🌟
+
+**You've completed all 7 CBT steps:**
+• Identified situation & emotions
+• Captured automatic thoughts  
+• Examined evidence & patterns
+• Created balanced alternatives
+
+**Your insights will be saved when you end the session.** Great job practicing this skill! 💪`,
+          exerciseType: currentExercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+
+        setMessages(prev => [...prev, completionMessage]);
+        await storageService.addMessage(completionMessage);
+        setSuggestions(['That was helpful 😊', 'I learned something new 🌟', 'I want to try again 🔄', 'Thank you 🙏']);
+        
+      } else {
+        // Stay on current step - ask for more clarification
+        const clarificationPrompt = `You are a warm, compassionate CBT therapist.
+
+CURRENT STEP: ${currentStep.stepNumber}/7 - ${currentStep.title}  
+STEP GOAL: ${currentStep.description}
+USER RESPONSE: "${userText}"
+
+The user's response needs more detail or clarity before moving to the next step. Gently ask follow-up questions or provide guidance to help them complete this step. Be supportive and encouraging.`;
+
+        setIsTyping(true);
+        const response = await apiService.getChatCompletionWithContext([
+          { role: 'system', content: clarificationPrompt },
+          { role: 'user', content: userText }
+        ]);
+        setIsTyping(false);
+
+        if (response.success && response.message) {
+          await rateLimitService.recordRequest();
+          
+          const aiResponse: Message = {
+            id: (Date.now() + Math.random()).toString(),
+            type: 'exercise',
+            title: `Step ${currentStep.stepNumber}: ${currentStep.title} (continued)`,
+            content: response.message,
+            exerciseType: currentExercise.type,
+            color: flow.color,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isAIGuided: true
+          };
+
+          setMessages(prev => [...prev, aiResponse]);
+          await storageService.addMessage(aiResponse);
+          setSuggestions(currentStep.suggestions);
+          
+          await ttsService.speakIfAutoPlay(response.message);
+        }
+      }
+      
+    } catch (error) {
+      console.error('Error in handleAIGuidedExerciseResponse:', error);
+    }
+  };
+
+  // Assess if user response is complete enough to advance to next step
+  const assessStepCompletion = async (userResponse: string, currentStep: any, conversationHistory: any[]): Promise<boolean> => {
+    // Simple heuristics for now - can be enhanced with AI assessment later
+    const response = userResponse.trim();
+    
+    // Minimum length requirements by step type
+    const minLengths = {
+      'situation': 10,
+      'emotion': 5,
+      'thought': 8,
+      'distortion': 5,
+      'evidence': 15,
+      'reframe': 10,
+      'emotion-after': 3
+    };
+    
+    const requiredLength = minLengths[currentStep.dataToCapture] || 5;
+    
+    // Check if response meets minimum criteria
+    if (response.length < requiredLength) {
+      return false;
+    }
+    
+    // Step-specific validation
+    switch (currentStep.dataToCapture) {
+      case 'emotion':
+        // Should include either emotion name or number
+        return response.includes('/100') || /\b(anxious|sad|angry|frustrated|overwhelmed|worried|happy|calm)\b/i.test(response);
+      
+      case 'emotion-after':
+        // Should include number or comparative language  
+        return response.includes('/100') || /\b(better|worse|same|improved|different|lower|higher)\b/i.test(response);
+        
+      default:
+        return true; // Accept other responses if they meet length requirement
+    }
+  };
+
+  // Extract structured exercise data from AI responses
+  const extractExerciseDataFromAIResponse = async (aiMessage: string, userResponse: string) => {
+    try {
+      // Use simple keyword detection to capture exercise data
+      const lowerAI = aiMessage.toLowerCase();
+      const lowerUser = userResponse.toLowerCase();
+      
+      // Detect which step we might be on based on AI response content
+      if (lowerAI.includes('situation') || lowerAI.includes('what happened')) {
+        setExerciseData(prev => ({ ...prev, situation: userResponse }));
+      } else if (lowerAI.includes('emotion') && lowerAI.includes('rate')) {
+        setExerciseData(prev => ({ ...prev, emotion: userResponse }));
+      } else if (lowerAI.includes('thought') && (lowerAI.includes('automatic') || lowerAI.includes('came to mind'))) {
+        setExerciseData(prev => ({ ...prev, thought: userResponse }));
+      } else if (lowerAI.includes('distortion') || lowerAI.includes('thinking pattern')) {
+        setExerciseData(prev => ({ ...prev, distortion: userResponse }));
+      } else if (lowerAI.includes('evidence')) {
+        setExerciseData(prev => ({ ...prev, evidence: userResponse }));
+      } else if (lowerAI.includes('balanced') || lowerAI.includes('reframe')) {
+        setExerciseData(prev => ({ ...prev, reframe: userResponse }));
+      } else if (lowerAI.includes('re-rate') || lowerAI.includes('now that')) {
+        setExerciseData(prev => ({ ...prev, 'emotion-after': userResponse }));
+      }
+      
+      // Check if exercise seems complete and process insights
+      const hasKey = (key: string) => exerciseData[key] || userResponse;
+      if (hasKey('situation') && hasKey('thought') && hasKey('reframe')) {
+        console.log('CBT exercise data seems complete, processing insights...');
+        setTimeout(() => {
+          processAutomaticThoughtExercise();
+        }, 2000); // Delay to let final AI response process
+      }
+    } catch (error) {
+      console.error('Error extracting exercise data:', error);
     }
   };
 
@@ -210,45 +709,53 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     if (userMessages.length > 0) {
       console.log('Showing save dialog');
-      Alert.alert(
-        "End Session?",
-        "Would you like to save this conversation to your history?",
-        [
-          {
-            text: "Don't Save",
-            style: "destructive",
-            onPress: () => {
-              console.log('User chose: Don\'t Save');
-              storageService.clearCurrentSession()
-                .catch(err => console.error('Clear session error:', err))
-                .finally(() => {
-                  console.log('Calling onBack()');
-                  onBack();
-                });
+      
+      if (Platform.OS === 'web') {
+        // Use browser's native confirm for web
+        const shouldSave = window.confirm(
+          "Would you like to save this conversation to your history?\n\nClick 'OK' to save or 'Cancel' to discard."
+        );
+        
+        if (shouldSave) {
+          console.log('User chose: Save & End (web)');
+          // Extract insights before saving and ending session
+          extractInsightsAndSaveSession();
+        } else {
+          console.log('User chose: Don\'t Save (web)');
+          // Still extract insights for user benefit, but don't save conversation
+          extractInsightsAndEnd();
+        }
+      } else {
+        // Use React Native Alert for mobile
+        Alert.alert(
+          "End Session?",
+          "Would you like to save this conversation to your history?",
+          [
+            {
+              text: "Don't Save",
+              style: "destructive",
+              onPress: () => {
+                console.log('User chose: Don\'t Save');
+                extractInsightsAndEnd();
+              }
+            },
+            {
+              text: "Cancel",
+              style: "cancel",
+              onPress: () => console.log('User chose: Cancel')
+            },
+            {
+              text: "Save & End",
+              style: "default", 
+              onPress: () => {
+                console.log('User chose: Save & End');
+                extractInsightsAndSaveSession();
+              }
             }
-          },
-          {
-            text: "Cancel",
-            style: "cancel",
-            onPress: () => console.log('User chose: Cancel')
-          },
-          {
-            text: "Save & End",
-            style: "default", 
-            onPress: () => {
-              console.log('User chose: Save & End');
-              saveSessionToHistory()
-                .then(() => storageService.clearCurrentSession())
-                .catch(err => console.error('Save/clear error:', err))
-                .finally(() => {
-                  console.log('Calling onBack() after save');
-                  onBack();
-                });
-            }
-          }
-        ],
-        { cancelable: false } // Prevent dismissing by tapping outside
-      );
+          ],
+          { cancelable: false }
+        );
+      }
     } else {
       console.log('No user messages, going back directly');
       onBack();
@@ -261,6 +768,117 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       await storageService.saveToHistory();
     } catch (error) {
       console.error('Error saving session to history:', error);
+    }
+  };
+
+  // Extract insights and save session
+  const extractInsightsAndSaveSession = async () => {
+    try {
+      console.log('Saving session and extracting insights...');
+      
+      // Process any completed exercise data first
+      if (currentExercise?.type === 'automatic-thoughts' && 
+          exerciseData.situation && exerciseData.thought && exerciseData.reframe) {
+        console.log('Processing completed CBT exercise data...');
+        await processAutomaticThoughtExercise();
+      }
+      
+      // Extract insights from full conversation
+      const patterns = await insightService.extractAtSessionEnd();
+      
+      if (patterns.length > 0) {
+        console.log(`✅ Extracted ${patterns.length} thought patterns from conversation`);
+      }
+      
+      // Then save conversation to history
+      await saveSessionToHistory();
+      await storageService.clearCurrentSession();
+      
+      console.log('Session saved and insights extracted successfully');
+      onBack();
+    } catch (error) {
+      console.error('Error in extractInsightsAndSaveSession:', error);
+      // Still try to save and exit even if insights fail
+      saveSessionToHistory()
+        .then(() => storageService.clearCurrentSession())
+        .finally(() => onBack());
+    }
+  };
+
+  // Extract insights but don't save conversation
+  const extractInsightsAndEnd = async () => {
+    try {
+      console.log('Extracting insights from conversation (not saving)...');
+      
+      // Extract insights for user benefit
+      const patterns = await insightService.extractAtSessionEnd();
+      
+      if (patterns.length > 0) {
+        console.log(`✅ Extracted ${patterns.length} thought patterns (conversation not saved)`);
+      }
+      
+      // Clear session and exit
+      await storageService.clearCurrentSession();
+      console.log('Insights extracted, session cleared');
+      onBack();
+    } catch (error) {
+      console.error('Error in extractInsightsAndEnd:', error);
+      // Still clear and exit even if insights fail
+      storageService.clearCurrentSession()
+        .finally(() => onBack());
+    }
+  };
+
+  // Process automatic thought exercise data and save as insights
+  const processAutomaticThoughtExercise = async () => {
+    try {
+      console.log('Processing automatic thought exercise data:', exerciseData);
+      
+      // Validate we have the minimum required data
+      if (!exerciseData.thought || !exerciseData.reframe) {
+        console.log('Incomplete exercise data - skipping insight extraction');
+        return;
+      }
+
+      // Create a thought pattern from the exercise
+      const thoughtPattern = {
+        id: `exercise_${Date.now()}_${Math.random()}`,
+        originalThought: exerciseData.thought,
+        distortionTypes: exerciseData.distortion ? [exerciseData.distortion] : ['Exercise Identified'],
+        reframedThought: exerciseData.reframe,
+        confidence: 0.95, // High confidence since user manually identified
+        extractedFrom: {
+          messageId: 'exercise_completion',
+          sessionId: (await storageService.getCurrentSession())?.id || 'unknown'
+        },
+        timestamp: new Date().toISOString(),
+        context: `CBT Exercise - Situation: ${exerciseData.situation || 'Not specified'}, Emotion: ${exerciseData.emotion || 'Not specified'}`
+      };
+
+      // Save to insights
+      await storageService.addThoughtPattern(thoughtPattern);
+      
+      console.log('✅ Saved automatic thought exercise as insight pattern');
+      
+      // Show completion message
+      const completionMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'exercise',
+        title: '🎉 Exercise Complete!',
+        content: `**Excellent work!** 🌟\n\nYou've successfully:\n• Identified an automatic thought\n• Spotted the thinking pattern\n• Created a balanced alternative\n\n${exerciseData['emotion-after'] ? `Your emotion shifted from the original intensity to ${exerciseData['emotion-after']} - notice how reframing thoughts can change how we feel!` : 'This insight has been saved to help you recognize similar patterns in the future.'}\n\n**Keep practicing this skill!** 💪`,
+        exerciseType: currentExercise?.type,
+        color: 'purple',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages(prev => [...prev, completionMessage]);
+      setSuggestions(['That was helpful 😊', 'I learned something new 🌟', 'I want to try again 🔄', 'Thank you 🙏']);
+      
+      // Save completion message
+      await storageService.addMessage(completionMessage);
+      
+    } catch (error) {
+      console.error('Error processing automatic thought exercise:', error);
     }
   };
 
@@ -334,31 +952,60 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     // Handle exercise flow progression
     if (currentExercise && exerciseFlows[currentExercise.type]) {
       const flow = exerciseFlows[currentExercise.type];
-      if (exerciseStep < flow.steps.length - 1) {
-        const nextStep = exerciseStep + 1;
-        setTimeout(async () => {
-          const nextMessage: Message = {
-            id: (Date.now() + Math.random()).toString(),
-            type: 'exercise',
-            title: flow.steps[nextStep].title,
-            content: flow.steps[nextStep].content,
-            exerciseType: currentExercise.type,
-            color: flow.color,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          };
-          setMessages(prev => [...prev, nextMessage]);
-          setSuggestions(flow.steps[nextStep].suggestions);
-          setExerciseStep(nextStep);
-          
-          // Save exercise message
-          try {
-            await storageService.addMessage(nextMessage);
-          } catch (error) {
-            console.error('Error saving exercise message:', error);
+      
+      if (flow.useAI && flow.steps.length > 0) {
+        // AI-guided exercise with step structure
+        await handleAIGuidedExerciseResponse(text, flow);
+        return;
+      } else if (flow.useAI) {
+        // AI-driven exercise - let AI handle the conversation dynamically
+        await handleAIExerciseResponse(text, flow);
+        return;
+      } else {
+        // Static exercise flow - use existing logic
+        // Store user response if this is an exercise step
+        if (flow.steps[exerciseStep]?.stepType) {
+          const stepType = flow.steps[exerciseStep].stepType;
+          setExerciseData(prev => ({
+            ...prev,
+            [stepType]: text
+          }));
+          console.log(`Captured ${stepType}: ${text}`);
+        }
+        
+        if (exerciseStep < flow.steps.length - 1) {
+          const nextStep = exerciseStep + 1;
+          setTimeout(async () => {
+            const nextMessage: Message = {
+              id: (Date.now() + Math.random()).toString(),
+              type: 'exercise',
+              title: flow.steps[nextStep].title,
+              content: flow.steps[nextStep].content,
+              exerciseType: currentExercise.type,
+              color: flow.color,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setMessages(prev => [...prev, nextMessage]);
+            setSuggestions(flow.steps[nextStep].suggestions);
+            setExerciseStep(nextStep);
+            
+            // Save exercise message
+            try {
+              await storageService.addMessage(nextMessage);
+            } catch (error) {
+              console.error('Error saving exercise message:', error);
+            }
+          }, 1500);
+        } else {
+          // Exercise completed - process the data
+          if (currentExercise.type === 'automatic-thoughts') {
+            setTimeout(() => {
+              processAutomaticThoughtExercise();
+            }, 1000);
           }
-        }, 1500);
+        }
+        return;
       }
-      return;
     }
 
     // Regular AI chat - check rate limit first
@@ -620,9 +1267,68 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const formatMessageContent = (content: string) => {
+    // Enhanced formatting for therapeutic responses
     return content
-      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove markdown bold for now - we'll handle it in rendering
       .replace(/\n/g, '\n');
+  };
+
+  // Enhanced message content renderer with rich formatting
+  const renderFormattedContent = (content: string) => {
+    const parts = content.split(/(\*\*.*?\*\*|• .*?\n|^\d+\. .*$)/gm);
+    
+    return parts.map((part, index) => {
+      // Bold text
+      if (part.match(/^\*\*(.*)\*\*$/)) {
+        const text = part.replace(/\*\*/g, '');
+        return (
+          <Text key={index} style={[styles.systemMessageText, { fontWeight: '600', color: '#1e293b' }]}>
+            {text}
+          </Text>
+        );
+      }
+      
+      // Bullet points
+      if (part.match(/^• /)) {
+        const text = part.replace(/^• /, '');
+        return (
+          <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 4 }}>
+            <View style={{ 
+              width: 6, 
+              height: 6, 
+              borderRadius: 3, 
+              backgroundColor: '#3b82f6', 
+              marginTop: 8, 
+              marginRight: 12 
+            }} />
+            <Text style={[styles.systemMessageText, { flex: 1 }]}>
+              {text}
+            </Text>
+          </View>
+        );
+      }
+      
+      // Numbered lists
+      if (part.match(/^\d+\. /)) {
+        return (
+          <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 4 }}>
+            <Text style={[styles.systemMessageText, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
+              {part.match(/^\d+\./)?.[0]}
+            </Text>
+            <Text style={[styles.systemMessageText, { flex: 1 }]}>
+              {part.replace(/^\d+\. /, '')}
+            </Text>
+          </View>
+        );
+      }
+      
+      // Regular text
+      return (
+        <Text key={index} style={styles.systemMessageText}>
+          {part}
+        </Text>
+      );
+    });
   };
 
   const renderMessage = (message: Message) => {
@@ -656,9 +1362,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </View>
             
             <View style={styles.systemMessageTextContainer}>
-              <Text style={styles.systemMessageText}>
-                {formatMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸')}
-              </Text>
+              {message.isAIGuided ? (
+                <View>
+                  {renderFormattedContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸')}
+                </View>
+              ) : (
+                <Text style={styles.systemMessageText}>
+                  {formatMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸')}
+                </Text>
+              )}
               
               {/* TTS Controls */}
               <View style={styles.ttsControls}>
@@ -765,7 +1477,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   </Text>
                   <Text style={styles.sessionSubtitle}>
                     {currentExercise && exerciseFlows[currentExercise.type] ? (
-                      `${currentExercise.duration || '5 min'} • Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length}`
+                      exerciseFlows[currentExercise.type].useAI && exerciseFlows[currentExercise.type].steps.length > 0 ?
+                        `Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length} • ${exerciseFlows[currentExercise.type].steps[exerciseStep]?.title || currentExercise.duration}` :
+                        `${currentExercise.duration || '5 min'} • Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length}`
                     ) : (
                       isLoading ? 'Loading your gentle space...' :
                       // Don't show API errors in header, just show friendly message
