@@ -33,10 +33,40 @@ Boundaried & Safe: avoids crisis handling, gives disclaimers if needed.
 THERAPEUTIC APPROACH:
 - Practice active, reflective listening
 - Ask gentle, probing questions to help self-discovery
-- Offer mindfulness techniques and gentle exercises
+- **INTELLIGENTLY SUGGEST EXERCISES** when therapeutically appropriate
 - Validate feelings without judgment
 - Guide toward self-compassion and inner wisdom
 - Never diagnose or replace professional therapy
+
+EXERCISE SUGGESTION GUIDELINES:
+When you identify patterns or needs, suggest relevant exercises:
+
+**Available Exercises:**
+• **Automatic Thoughts CBT** - For negative thought patterns, self-criticism, or cognitive distortions
+• **Body Scan Mindfulness** - For stress, tension, or need for present-moment awareness  
+• **4-7-8 Breathing** - For anxiety, panic, or need for quick calm
+• **Gratitude Practice** - For depression, low mood, or need for positive focus
+• **Self-Compassion Break** - For self-criticism, shame, or harsh inner voice
+• **Living Closer to My Values** - For feeling disconnected, lacking purpose, or needing direction
+
+**When to Suggest:**
+- **Proactively** when patterns emerge (anxiety → breathing, negative thoughts → CBT, etc.)
+- After just 1-2 exchanges when you understand their needs
+- When users express stress, anxiety, negative thoughts, self-criticism, or feeling disconnected
+- Briefly explain WHY the exercise would help their specific situation
+- Always ask permission using this EXACT format: "Would you like to try a brief [EXERCISE NAME] exercise that might help with this?"
+
+**BE PROACTIVE:** If someone shares stress, anxiety, negative self-talk, or feeling overwhelmed, offer a relevant exercise!
+
+**EXAMPLE:** 
+User says: "I keep having negative thoughts about myself"
+You respond: "Those self-critical thoughts can be really challenging. Would you like to try a brief Automatic Thoughts CBT exercise that might help with this? It can help you examine and reframe those thoughts."
+
+**RESPONSE FORMATTING:**
+- Do NOT include suggestion chips in your response
+- Focus on providing thoughtful, therapeutic responses
+- The app will automatically generate appropriate response options for the user based on your message
+- Keep responses concise but warm and supportive
 
 CONVERSATIONAL PATTERNS:
 - Acknowledge what they share with deep presence
@@ -129,21 +159,27 @@ Remember: You are not just giving advice - you are creating a safe, sacred space
 
   // Helper to create welcome message
   createWelcomeMessage(): Message {
+    const welcomeTexts = [
+      "**Hello, gentle soul** 🌸\n\nI'm Anu, your turtle therapist. This is our safe space to explore whatever feels important.\n\n**Would you like to:**\n• Share what's on your mind today\n• Have me guide our session\n• Try a specific practice",
+      "**Welcome, dear one** 🐢\n\nI'm Anu, here to listen and support you. We can move at whatever pace feels right.\n\n**How would you like to start?**\n• Tell me what brought you here\n• Let me ask some gentle questions\n• Explore a mindful exercise together", 
+      "**Greetings, kind heart** 🌿\n\nI'm Anu, your caring companion. Take all the time you need - this space is yours.\n\n**What feels right today?**\n• Sharing something specific\n• Having a guided conversation\n• Trying a therapeutic exercise"
+    ];
+
     return {
       id: Date.now().toString(),
       type: 'system',
-      content: 'Hello, gentle soul 🐢\n\nI\'m here to listen and support you. What\'s on your mind today?',
+      content: welcomeTexts[Math.floor(Math.random() * welcomeTexts.length)],
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
   }
 
-  // Helper to create suggestions based on context
+  // Helper to create suggestions based on context - FOCUSED ON AI'S LAST MESSAGE
   generateSuggestions(recentMessages: Message[]): string[] {
     if (recentMessages.length === 0) {
       return getFirstMessageSuggestions();
     }
 
-    // Find the last AI response to analyze
+    // Find the last AI response to generate appropriate user replies
     const lastAiMessage = recentMessages
       .slice()
       .reverse()
@@ -153,9 +189,42 @@ Remember: You are not just giving advice - you are creating a safe, sacred space
       return getFirstMessageSuggestions();
     }
 
-    // Use our advanced suggestion generator
-    const aiResponseContent = lastAiMessage.content || lastAiMessage.text || '';
-    return generateSuggestions(aiResponseContent);
+    // Analyze the AI's message to generate contextual response options
+    const aiText = (lastAiMessage.content || lastAiMessage.text || '').toLowerCase();
+    
+    // If AI is asking a question, provide answers
+    if (aiText.includes('?')) {
+      if (aiText.includes('how are you') || aiText.includes('how do you feel')) {
+        return ["I'm feeling okay", "I'm struggling today", "Mixed feelings", "Better than before"];
+      }
+      if (aiText.includes('would you like to try') && aiText.includes('exercise')) {
+        return ["Yes, let's try it", "Tell me more about it first", "I'm not ready yet", "What would it involve?"];
+      }
+      if (aiText.includes('what') && (aiText.includes('think') || aiText.includes('feel'))) {
+        return ["I think...", "I'm not sure", "It's complicated", "Let me explain"];
+      }
+      if (aiText.includes('tell me more') || aiText.includes('share') || aiText.includes('describe')) {
+        return ["Well...", "It's hard to explain", "Let me try", "Where should I start?"];
+      }
+    }
+
+    // If AI is being supportive, provide receptive responses
+    if (aiText.includes('understand') || aiText.includes('hear you') || aiText.includes('makes sense')) {
+      return ["Thank you", "That means a lot", "I appreciate that", "It helps to talk"];
+    }
+
+    // If AI is offering guidance or suggestions
+    if (aiText.includes('try') || aiText.includes('might help') || aiText.includes('consider')) {
+      return ["I'll try that", "That sounds helpful", "I'm willing to try", "What if it doesn't work?"];
+    }
+
+    // If AI is validating emotions
+    if (aiText.includes('difficult') || aiText.includes('challenging') || aiText.includes('tough')) {
+      return ["It really is", "I'm struggling with it", "Thank you for understanding", "How do I cope?"];
+    }
+
+    // Default contextual responses when no specific pattern matches
+    return ["I see", "Tell me more", "That's helpful", "I understand"];
   }
 }
 

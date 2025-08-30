@@ -487,5 +487,82 @@ export const chatInterfaceStyles = StyleSheet.create({
     backgroundColor: colors.gray[200],
   },
 
+  // Exercise Suggestion Card
+  exerciseCardContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  exerciseSuggestionCard: {
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  exerciseCardHeader: {
+    marginBottom: 12,
+  },
+  exerciseCardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: 4,
+  },
+  exerciseCardSubtitle: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    fontWeight: '500',
+  },
+  exerciseCardActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  exerciseStartButton: {
+    flex: 1,
+  },
+  exerciseStartButtonGradient: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  exerciseStartButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  exerciseDismissButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: 'rgba(148, 163, 184, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  exerciseDismissButtonText: {
+    color: colors.text.tertiary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+
+  // Exercise Progress Indicator
+  exerciseProgressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    gap: 8,
+  },
+  progressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    transition: 'all 0.3s ease',
+  },
+
 
 });

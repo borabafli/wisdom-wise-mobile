@@ -7,14 +7,18 @@ import { Image } from 'expo-image';
 
 const { width, height } = Dimensions.get('window');
 
-const ExerciseLibrary: React.FC = () => {
+interface ExerciseLibraryProps {
+  onExerciseClick: (exercise: any) => void;
+}
+
+const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
   const exercises = [
     {
       id: 1,
-      type: 'cbt',
-      name: 'Thought Challenge',
+      type: 'automatic-thoughts',
+      name: 'Recognizing Automatic Thoughts',
       duration: '15 min',
-      description: 'Identify and reframe negative thought patterns',
+      description: 'Identify and reframe negative thought patterns with CBT',
       category: 'CBT',
       difficulty: 'Intermediate',
       icon: Brain,
@@ -47,11 +51,11 @@ const ExerciseLibrary: React.FC = () => {
     },
     {
       id: 4,
-      type: 'journaling',
-      name: 'Gratitude Journal',
+      type: 'gratitude',
+      name: 'Gratitude Practice',
       duration: '10 min',
-      description: 'Shift focus to positive moments in your day',
-      category: 'Journaling',
+      description: 'Shift focus to positive moments and appreciation',
+      category: 'Mindfulness',
       difficulty: 'Beginner',
       icon: BookOpen,
       color: ['#FFD4BA', '#FFE5D4'],
@@ -71,19 +75,19 @@ const ExerciseLibrary: React.FC = () => {
     },
     {
       id: 6,
-      type: 'cbt',
-      name: 'Values Clarification',
-      duration: '20 min',
-      description: 'Connect with what matters most to you',
-      category: 'CBT',
-      difficulty: 'Advanced',
+      type: 'values-clarification',
+      name: 'Living Closer to My Values',
+      duration: '15 min',
+      description: 'Discover what truly matters to you and align your actions (ACT)',
+      category: 'ACT',
+      difficulty: 'Intermediate',
       icon: Star,
       color: ['#D4C5B9', '#E5E5E5'],
       image: require('../../assets/images/2.jpeg')
     }
   ];
 
-  const categories = ['All', 'CBT', 'Mindfulness', 'Breathing', 'Journaling', 'Self-Care'];
+  const categories = ['All', 'CBT', 'ACT', 'Mindfulness', 'Breathing', 'Journaling', 'Self-Care'];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -144,6 +148,7 @@ const ExerciseLibrary: React.FC = () => {
                 key={exercise.id}
                 style={styles.exerciseCard}
                 activeOpacity={0.9}
+                onPress={() => onExerciseClick(exercise)}
               >
                 {/* Background Image Section */}
                 <View style={styles.exerciseImageSection}>

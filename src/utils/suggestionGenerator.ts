@@ -172,9 +172,9 @@ const suggestionPatterns: SuggestionConfig[] = [
     keywords: ['and', 'the', 'is', 'you', 'me', 'i'], // Common words (fallback)
     suggestions: [
       "I'm feeling okay today",
-      "Tell me more",
-      "I'm listening",
-      "That's interesting",
+      "Can you help me with something?",
+      "I understand",
+      "That makes sense",
       "I need some guidance"
     ],
     priority: 3 // Lowest priority
