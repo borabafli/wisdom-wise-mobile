@@ -56,6 +56,7 @@ export const AppContent: React.FC = () => {
           currentExercise={currentExercise}
           startWithActionPalette={chatWithActionPalette}
           onActionSelect={handleActionSelect}
+          onExerciseClick={handleExerciseClick}
         />
       </>
     );

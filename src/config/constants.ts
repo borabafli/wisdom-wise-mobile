@@ -10,7 +10,7 @@ export const API_CONFIG = {
 
   
   // Rate limiting
-  DEFAULT_DAILY_LIMIT: 50,
+  DEFAULT_DAILY_LIMIT: 300,
   
 
   // AI Model settings
