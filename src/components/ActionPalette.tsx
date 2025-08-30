@@ -59,7 +59,7 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
         <View style={styles.container}>
           <View style={styles.modalContent}>
             <LinearGradient
-              colors={gradients.card.primary}
+              colors={[...gradients.card.primary]}
               style={styles.gradient}
             >
               <Text style={styles.title}>
@@ -78,7 +78,7 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
                     >
                       <View style={styles.actionContent}>
                         <LinearGradient
-                          colors={action.color}
+                          colors={[...action.color]}
                           style={styles.iconContainer}
                         >
                           <Icon size={24} color={colors.text.inverse} />

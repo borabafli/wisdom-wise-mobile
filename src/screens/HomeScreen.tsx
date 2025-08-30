@@ -15,7 +15,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
     <SafeAreaView style={styles.container}>
       {/* Background watercolor effects */}
       <LinearGradient
-        colors={gradients.background.calm}
+        colors={[...gradients.background.calm]}
         style={styles.backgroundGradient}
       />
       
@@ -41,7 +41,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             {/* Turtle Companion */}
             <View style={styles.turtleContainer}>
               <LinearGradient
-                colors={gradients.card.subtle}
+                colors={[...gradients.card.subtle]}
                 style={styles.turtleGradient}
               />
               <Image 
@@ -61,7 +61,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             activeOpacity={0.9}
           >
             <LinearGradient
-              colors={gradients.card.glass}
+              colors={[...gradients.card.glass]}
               style={styles.ctaGradient}
             >
               <View style={styles.ctaContent}>
@@ -102,12 +102,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={gradients.card.primary}
+                colors={[...gradients.card.primary]}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
                   <LinearGradient
-                    colors={gradients.icon.blue}
+                    colors={[...gradients.icon.blue]}
                     style={styles.exerciseIcon}
                   >
                     <Heart size={20} color={colors.blue[700]} />
@@ -121,7 +121,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                   </View>
                   <View style={styles.exerciseAction}>
                     <LinearGradient
-                      colors={gradients.button.subtle}
+                      colors={[...gradients.button.subtle]}
                       style={styles.actionIcon}
                     >
                       <Zap size={14} color={colors.blue[700]} />
@@ -138,12 +138,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={gradients.card.primary}
+                colors={[...gradients.card.primary]}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
                   <LinearGradient
-                    colors={gradients.icon.blue}
+                    colors={[...gradients.icon.blue]}
                     style={styles.exerciseIcon}
                   >
                     <Brain size={20} color={colors.blue[600]} />
@@ -166,12 +166,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={gradients.card.primary}
+                colors={[...gradients.card.primary]}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
                   <LinearGradient
-                    colors={gradients.icon.blue}
+                    colors={[...gradients.icon.blue]}
                     style={styles.exerciseIcon}
                   >
                     <BookOpen size={20} color={colors.blue[700]} />
@@ -203,7 +203,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 contentFit="cover"
               />
               <LinearGradient
-                colors={gradients.button.primary}
+                colors={[...gradients.button.primary]}
                 style={styles.quickActionGradient}
               >
                 <BookOpen size={24} color={colors.blue[600]} />
@@ -222,7 +222,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 contentFit="cover"
               />
               <LinearGradient
-                colors={gradients.button.primary}
+                colors={[...gradients.button.primary]}
                 style={styles.quickActionGradient}
               >
                 <Brain size={24} color={colors.blue[600]} />
@@ -241,7 +241,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               contentFit="cover"
             />
             <LinearGradient
-              colors={gradients.hero.primary}
+              colors={[...gradients.hero.primary]}
               style={styles.quoteGradient}
             >
               <View style={styles.quoteIcon}>
