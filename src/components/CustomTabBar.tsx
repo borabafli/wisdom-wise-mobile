@@ -35,7 +35,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     <>
       <SafeAreaView style={styles.container} edges={['bottom']}>
         <LinearGradient
-          colors={gradients.card.primary}
+          colors={[...gradients.card.primary]}
           style={styles.tabBarGradient}
         >
           <View style={styles.tabBarContent}>
@@ -90,7 +90,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={gradients.button.primary}
+                colors={[...gradients.button.primary]}
                 style={styles.plusButton}
               >
                 <Plus size={24} color={colors.text.inverse} strokeWidth={2.5} />

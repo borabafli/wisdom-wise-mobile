@@ -1751,7 +1751,7 @@ Your decision:`;
         <View key={message.id} style={styles.userMessageContainer}>
           <View style={styles.userMessageWrapper}>
             <LinearGradient
-              colors={colors.gradients.messageUser}
+              colors={[...colors.gradients.messageUser]}
               style={styles.userMessageBubble}
             >
               <Text style={styles.userMessageText}>
@@ -1810,37 +1810,41 @@ Your decision:`;
   };
 
   // Define animated background gradients
-  const normalGradient = colors.gradients.primaryLight;
+  const normalGradient = [...colors.gradients.primaryLight];
   const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5']; // Calm green gradient
 
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View style={styles.backgroundGradient}>
-        <LinearGradient
-          colors={normalGradient}
-          style={[
-            styles.backgroundGradient,
-            {
-              opacity: backgroundAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0],
-              }),
-            }
-          ]}
-        />
-        <LinearGradient
-          colors={exerciseGradient}
-          style={[
-            styles.backgroundGradient,
-            {
-              opacity: backgroundAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 1],
-              }),
-            }
-          ]}
-        />
-      </Animated.View>
+      <View style={styles.backgroundGradient}>
+        <Animated.View style={[
+          styles.backgroundGradient,
+          {
+            opacity: backgroundAnimation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 0],
+            }),
+          }
+        ]}>
+          <LinearGradient
+            colors={normalGradient}
+            style={styles.backgroundGradient}
+          />
+        </Animated.View>
+        <Animated.View style={[
+          styles.backgroundGradient,
+          {
+            opacity: backgroundAnimation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+            }),
+          }
+        ]}>
+          <LinearGradient
+            colors={exerciseGradient}
+            style={styles.backgroundGradient}
+          />
+        </Animated.View>
+      </View>
       <KeyboardAvoidingView 
         style={styles.keyboardView} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -2104,7 +2108,7 @@ Your decision:`;
                     activeOpacity={0.8}
                   >
                     <LinearGradient
-                      colors={colors.gradients.micButton}
+                      colors={[...colors.gradients.micButton]}
                       style={styles.micButtonGradient}
                     >
                       <Mic size={24} color="white" />
