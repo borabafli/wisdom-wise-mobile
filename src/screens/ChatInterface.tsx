@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated, Modal, ImageBackground } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
 
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X, Brain, Wind, Eye, BookOpen, Clock, Star, Copy, ArrowUp } from 'lucide-react-native';
+import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X, Brain, Wind, Eye, BookOpen, Clock, Star, Copy, ArrowUp, Expand } from 'lucide-react-native';
 
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -45,6 +45,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [rateLimitStatus, setRateLimitStatus] = useState({ used: 0, total: 300, percentage: 0, message: '' });
+  const [inputLineCount, setInputLineCount] = useState(1);
+  const [isFullscreenInput, setIsFullscreenInput] = useState(false);
   
   // Typewriter animation states
   const [typewriterText, setTypewriterText] = useState('');
@@ -718,12 +720,15 @@ Respond therapeutically to the user's input. Assess if you need more information
         console.log('Checking for exercise suggestions in AI response...');
         const exerciseSuggestions = detectAndParseExerciseSuggestions(response.message);
         console.log('Exercise suggestions found:', exerciseSuggestions);
+        const aiSuggestions = extractAISuggestions(response.message);
         const contextualSuggestions = contextService.generateSuggestions([...recentMessages, aiResponse]);
         
-        // Use exercise suggestions if available, otherwise use contextual suggestions
-        const finalSuggestions = exerciseSuggestions.length > 0 
-          ? exerciseSuggestions
-          : contextualSuggestions;
+        // Priority: AI suggestions > Exercise suggestions > Contextual suggestions
+        const finalSuggestions = aiSuggestions.length > 0 
+          ? aiSuggestions
+          : exerciseSuggestions.length > 0 
+            ? exerciseSuggestions
+            : contextualSuggestions;
         
         setSuggestions(finalSuggestions);
         
@@ -1287,6 +1292,18 @@ Your decision:`;
     }
   };
 
+  const handleInputTextChange = (text: string) => {
+    setInputText(text);
+    
+    // Count lines by splitting on newlines and adding 1
+    const lines = text.split('\n').length;
+    setInputLineCount(Math.min(lines, 9)); // Max 9 lines as specified
+  };
+
+  const toggleFullscreenInput = () => {
+    setIsFullscreenInput(!isFullscreenInput);
+  };
+
   // Update TTS status periodically
   useEffect(() => {
     const updateTTSStatus = () => {
@@ -1316,8 +1333,12 @@ Your decision:`;
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    // Add user message to UI and storage
-    setMessages(prev => [...prev, userMessage]);
+    // Add user message to UI and storage - remove welcome message if it exists
+    setMessages(prev => {
+      // Filter out welcome message and add user message
+      const filteredMessages = prev.filter(msg => msg.type !== 'welcome');
+      return [...filteredMessages, userMessage];
+    });
     setInputText('');
     
     // Check if user is accepting a previously suggested exercise
@@ -1495,7 +1516,10 @@ Your decision:`;
         await ttsService.speakIfAutoPlay(response.message);
 
         // Extract AI-generated suggestions or use contextual fallback
-        const contextualSuggestions = contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]);
+        const aiSuggestions = extractAISuggestions(response.message);
+        const contextualSuggestions = aiSuggestions.length > 0 
+          ? aiSuggestions 
+          : contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]);
         setSuggestions(contextualSuggestions);
       } else {
         // API error - show fallback response
@@ -1707,7 +1731,8 @@ Your decision:`;
 
 
   // Enhanced message content renderer with rich formatting
-  const renderFormattedContent = (content: string) => {
+  const renderFormattedContent = (content: string, isWelcome = false) => {
+    const textStyle = isWelcome ? styles.welcomeMessageText : styles.systemMessageText;
     // Split by lines first, then process each line
     const lines = content.split('\n');
     
@@ -1721,7 +1746,7 @@ Your decision:`;
         const parts = line.split(/(\*\*[^*]+\*\*)/g);
         return (
           <View key={lineIndex} style={{ marginVertical: 2 }}>
-            <Text style={styles.systemMessageText}>
+            <Text style={textStyle}>
               {parts.map((part, partIndex) => {
                 if (part.startsWith('**') && part.endsWith('**')) {
                   const boldText = part.replace(/\*\*/g, '');
@@ -1751,7 +1776,7 @@ Your decision:`;
               marginTop: 8, 
               marginRight: 12 
             }} />
-            <Text style={[styles.systemMessageText, { flex: 1 }]}>
+            <Text style={[textStyle, { flex: 1 }]}>
               {text}
             </Text>
           </View>
@@ -1764,10 +1789,10 @@ Your decision:`;
         if (match) {
           return (
             <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
-              <Text style={[styles.systemMessageText, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
+              <Text style={[textStyle, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
                 {match[1]}
               </Text>
-              <Text style={[styles.systemMessageText, { flex: 1 }]}>
+              <Text style={[textStyle, { flex: 1 }]}>
                 {match[2]}
               </Text>
             </View>
@@ -1777,7 +1802,7 @@ Your decision:`;
       
       // Regular text
       return (
-        <Text key={lineIndex} style={[styles.systemMessageText, { marginVertical: 2 }]}>
+        <Text key={lineIndex} style={[textStyle, { marginVertical: 2 }]}>
           {line}
         </Text>
       );
@@ -2284,6 +2309,8 @@ Your decision:`;
           <View style={styles.userMessageWrapper}>
             <LinearGradient
               colors={[...colors.gradients.messageUser]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.userMessageBubble}
             >
               <Text style={styles.userMessageText}>
@@ -2295,7 +2322,7 @@ Your decision:`;
       );
     }
 
-    const isWelcomeMessage = messages.length <= 1;
+    const isWelcomeMessage = message.type === 'welcome';
     const turtleContainerStyle = isWelcomeMessage 
       ? styles.turtleAvatarContainer 
       : styles.turtleAvatarContainerSmall;
@@ -2323,23 +2350,24 @@ Your decision:`;
             
             {/* Show Anu name for welcome messages */}
             {isWelcomeMessage && fontsLoaded && (
-              <Text style={styles.therapistName}>
-                Anu
-              </Text>
+              <View style={styles.therapistNameContainer}>
+                <Text style={styles.therapistGreeting}>Hey! I'm </Text>
+                <Text style={styles.therapistName}>Anu</Text>
+              </View>
             )}
             
             <TouchableOpacity 
-              style={styles.systemMessageTextContainer}
+              style={isWelcomeMessage ? styles.welcomeMessageTextContainer : styles.systemMessageTextContainer}
               onPress={isTypewriting && currentTypewriterMessage?.id === message.id ? skipTypewriterAnimation : undefined}
               activeOpacity={isTypewriting && currentTypewriterMessage?.id === message.id ? 0.7 : 1}
             >
               <View>
                 {isTypewriting && currentTypewriterMessage?.id === message.id ? (
                   // Show typewriter text when animation is active for this message
-                  renderFormattedContent(cleanAIMessageContent(typewriterText))
+                  renderFormattedContent(cleanAIMessageContent(typewriterText), isWelcomeMessage)
                 ) : (
                   // Show normal content
-                  renderFormattedContent(cleanAIMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸'))
+                  renderFormattedContent(cleanAIMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸'), isWelcomeMessage)
                 )}
                 {/* Typing cursor for typewriter animation */}
                 {isTypewriting && currentTypewriterMessage?.id === message.id && (
@@ -2385,17 +2413,24 @@ Your decision:`;
               </View>
             )}
             
+            {/* "or" divider for welcome messages */}
+            {isWelcomeMessage && (
+              <View style={styles.orDividerContainer}>
+                <Text style={styles.orText}>or</Text>
+              </View>
+            )}
+            
             {/* Prompt Suggestion Card - Only for welcome messages */}
             {isWelcomeMessage && (
               <TouchableOpacity 
                 style={styles.promptSuggestionCard}
                 onPress={() => {
-                  setInputText("Guide me & suggest");
+                  setInputText("Suggest something & guide me");
                 }}
                 activeOpacity={0.8}
               >
                 <Text style={styles.promptSuggestionText}>
-                  Guide me & suggest
+                  Suggest something & guide me
                 </Text>
               </TouchableOpacity>
             )}
@@ -2410,6 +2445,12 @@ Your decision:`;
 
   return (
     <SafeAreaView style={styles.container}>
+      <ImageBackground
+        source={require('../../assets/images/background1.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.backgroundOverlay} />
       <View style={styles.backgroundGradient}>
         <Animated.View style={[
           styles.backgroundGradient,
@@ -2450,7 +2491,7 @@ Your decision:`;
           {
             backgroundColor: headerAnimation.interpolate({
               inputRange: [0, 1],
-              outputRange: ['rgba(255, 255, 255, 0)', 'rgba(240, 253, 244, 0.8)'],
+              outputRange: ['rgba(255, 255, 255, 0)', 'rgba(248, 250, 252, 0.85)'], // Subtle grey instead of blue
             }),
           }
         ]}>
@@ -2510,9 +2551,12 @@ Your decision:`;
               </TouchableOpacity>
               <View style={styles.headerInfo}>
                 <View style={styles.sessionDetails}>
-                  <Text style={styles.sessionTitle}>
+                  <Text style={[
+                    styles.sessionTitle,
+                    currentExercise && exerciseFlows[currentExercise.type] && styles.exerciseTitle
+                  ]}>
                     {exerciseMode && currentExercise ? (
-                      '✨ Exercise in Progress'
+                      exerciseFlows[currentExercise.type]?.name || 'Exercise in Progress'
                     ) : currentExercise && exerciseFlows[currentExercise.type] ? (
                       exerciseFlows[currentExercise.type].name 
                     ) : (
@@ -2553,7 +2597,7 @@ Your decision:`;
                           style={[
                             styles.progressDot,
                             {
-                              backgroundColor: index <= exerciseStep ? '#22c55e' : '#d1d5db',
+                              backgroundColor: index <= exerciseStep ? '#64748b' : '#d1d5db', // Subtle grey instead of bright blue
                               transform: [{ scale: index === exerciseStep ? 1.2 : 1 }],
                             }
                           ]}
@@ -2720,11 +2764,16 @@ Your decision:`;
               {!isRecording ? (
                 <TextInput
                   value={inputText}
-                  onChangeText={setInputText}
+                  onChangeText={handleInputTextChange}
                   placeholder="Type or speak..."
                   placeholderTextColor="#94a3b8"
                   multiline
-                  style={styles.textInput}
+                  style={[
+                    styles.textInput,
+                    {
+                      height: Math.min(Math.max(48, inputLineCount * 22), 9 * 22),
+                    }
+                  ]}
                   editable={true}
                   allowFontScaling={false}
                   selectionColor="#3b82f6"
@@ -2739,23 +2788,34 @@ Your decision:`;
               )}
               
               {!isRecording ? (
-                inputText.trim() ? (
-                  <TouchableOpacity 
-                    onPress={() => handleSend()}
-                    style={styles.sendButton}
-                    activeOpacity={0.7}
-                  >
-                    <ArrowUp size={20} color="#ffffff" />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity 
-                    onPress={handleMicToggle}
-                    style={styles.micButton}
-                    activeOpacity={0.7}
-                  >
-                    <Mic size={24} color="#6b7280" />
-                  </TouchableOpacity>
-                )
+                <View style={styles.inputButtonsContainer}>
+                  {inputLineCount >= 5 && (
+                    <TouchableOpacity 
+                      onPress={toggleFullscreenInput}
+                      style={styles.expandButton}
+                      activeOpacity={0.7}
+                    >
+                      <Expand size={18} color="#6b7280" />
+                    </TouchableOpacity>
+                  )}
+                  {inputText.trim() ? (
+                    <TouchableOpacity 
+                      onPress={() => handleSend()}
+                      style={styles.sendButton}
+                      activeOpacity={0.7}
+                    >
+                      <ArrowUp size={20} color="#ffffff" />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity 
+                      onPress={handleMicToggle}
+                      style={styles.micButton}
+                      activeOpacity={0.7}
+                    >
+                      <Mic size={24} color="#6b7280" />
+                    </TouchableOpacity>
+                  )}
+                </View>
               ) : (
                 <View style={styles.recordingActions}>
                   <TouchableOpacity 
@@ -2779,6 +2839,52 @@ Your decision:`;
           
         </View>
       </KeyboardAvoidingView>
+
+      {/* Fullscreen Input Modal */}
+      <Modal
+        visible={isFullscreenInput}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setIsFullscreenInput(false)}
+      >
+        <SafeAreaView style={styles.fullscreenInputContainer}>
+          <View style={styles.fullscreenInputHeader}>
+            <TouchableOpacity 
+              onPress={() => setIsFullscreenInput(false)}
+              style={styles.fullscreenCloseButton}
+            >
+              <X size={24} color="#6b7280" />
+            </TouchableOpacity>
+            <Text style={styles.fullscreenInputTitle}>Compose Message</Text>
+            <TouchableOpacity 
+              onPress={() => {
+                handleSend();
+                setIsFullscreenInput(false);
+              }}
+              style={[styles.fullscreenSendButton, !inputText.trim() && styles.fullscreenSendButtonDisabled]}
+              disabled={!inputText.trim()}
+            >
+              <ArrowUp size={20} color={inputText.trim() ? "#ffffff" : "#9ca3af"} />
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.fullscreenInputContent}>
+            <TextInput
+              value={inputText}
+              onChangeText={handleInputTextChange}
+              placeholder="Type your message here..."
+              placeholderTextColor="#94a3b8"
+              multiline
+              style={styles.fullscreenTextInput}
+              autoFocus
+              textAlignVertical="top"
+              selectionColor="#3b82f6"
+            />
+          </View>
+        </SafeAreaView>
+      </Modal>
+
+      </ImageBackground>
     </SafeAreaView>
   );
 };

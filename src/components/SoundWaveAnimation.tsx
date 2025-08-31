@@ -65,9 +65,19 @@ const SoundWaveAnimation: React.FC<SoundWaveAnimationProps> = ({ isRecording, au
     const totalEnergy = levels.reduce((sum, level) => sum + level, 0);
     const avgEnergy = totalEnergy / levels.length;
     
-    // Fine-tuned scaling - close to original but slightly bigger overall
-    const scaledEnergy = Math.pow(avgEnergy, 0.8) * 1.3; // Less aggressive than before
-    const newWaveHeight = Math.max(0.01, Math.min(1, scaledEnergy)); // Lower minimum for silence
+    // Precisely calibrated: silence = 0.24, speech = 0.64 (slightly bigger overall)
+    let scaledEnergy;
+    if (avgEnergy <= 0.24) {
+      // True silence - small but visible
+      scaledEnergy = 0.01;
+    } else if (avgEnergy < 0.35) {
+      // Background noise above silence - small but visible
+      scaledEnergy = 0.01 + (avgEnergy - 0.24) * 0.4;
+    } else {
+      // Speech range (0.35 to 0.64+) - good scaling
+      scaledEnergy = 0.06 + (avgEnergy - 0.35) * 2.2;
+    }
+    const newWaveHeight = Math.max(0.01, Math.min(1, scaledEnergy));
     
     // Scroll the wave history: shift left and add new data on the right
     setWaveHistory(prevHistory => {
