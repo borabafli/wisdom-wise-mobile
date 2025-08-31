@@ -2689,8 +2689,8 @@ Your decision:`;
           )}
         </ScrollView>
 
-        {/* Suggestion Chips */}
-        {suggestions.length > 0 && (
+        {/* Suggestion Chips - Hide for welcome screen */}
+        {suggestions.length > 0 && messages.length > 1 && (
           <View style={styles.suggestionsContainer}>
             <ScrollView 
               horizontal 
