@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart, Brain, BookOpen, Clock, Star, Wind, Eye } from 'lucide-react-native';
@@ -12,6 +12,8 @@ interface ExerciseLibraryProps {
 }
 
 const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  
   const exercises = [
     {
       id: 1,
@@ -89,6 +91,14 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
   const categories = ['All', 'CBT', 'ACT', 'Mindfulness', 'Breathing', 'Journaling', 'Self-Care'];
 
+  // Filter exercises based on selected category
+  const filteredExercises = useMemo(() => {
+    if (selectedCategory === 'All') {
+      return exercises;
+    }
+    return exercises.filter(exercise => exercise.category === selectedCategory);
+  }, [selectedCategory]);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Background */}
@@ -119,18 +129,19 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.categoriesContainer}
           >
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <TouchableOpacity
                 key={category}
                 style={[
                   styles.categoryButton,
-                  index === 0 && styles.categoryButtonActive
+                  selectedCategory === category && styles.categoryButtonActive
                 ]}
                 activeOpacity={0.8}
+                onPress={() => setSelectedCategory(category)}
               >
                 <Text style={[
                   styles.categoryText,
-                  index === 0 && styles.categoryTextActive
+                  selectedCategory === category && styles.categoryTextActive
                 ]}>
                   {category}
                 </Text>
@@ -141,7 +152,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
         {/* Exercises */}
         <View style={styles.exercisesSection}>
-          {exercises.map((exercise) => {
+          {filteredExercises.map((exercise) => {
             const Icon = exercise.icon;
             return (
               <TouchableOpacity

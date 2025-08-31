@@ -2484,6 +2484,7 @@ Your decision:`;
       <KeyboardAvoidingView 
         style={styles.keyboardView} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
       >
         {/* Header */}
         <Animated.View style={[

@@ -27,7 +27,8 @@
       "Bash(npx tsc:*)",
       "Bash(taskkill:*)",
       "Bash(cmd /c:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)"
     ],
     "deny": [],
     "ask": []

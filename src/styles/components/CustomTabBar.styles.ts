@@ -9,15 +9,13 @@ import { colors, typography, spacing, shadows } from '../tokens';
 export const customTabBarStyles = StyleSheet.create({
   // Container
   container: {
-
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.white, // Force white background for container
   },
   tabBarGradient: {
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
     ...shadows.components.tabBar,
-    paddingBottom: 20, // Add padding for Android navigation gestures
-
+    backgroundColor: colors.white, // Force white background to override dark mode
   },
   tabBarContent: {
     flexDirection: 'row',

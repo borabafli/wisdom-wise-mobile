@@ -40,6 +40,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   keyboardView: {
     flex: 1,
     zIndex: 2,
+    justifyContent: 'space-between',
   },
 
   // Header - Ultra Modern Glass
@@ -465,6 +466,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
+    paddingBottom: spacing.components.cardGap + 10, // Extra padding for keyboard
     zIndex: 10,
   },
   inputCard: {
