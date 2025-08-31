@@ -26,6 +26,7 @@ interface AIResponse {
     completion_tokens: number;
     total_tokens: number;
   };
+  suggestions?: string[];
 }
 
 const corsHeaders = {
@@ -110,7 +111,7 @@ Deno.serve(async (req: Request) => {
         }
         return await handleSuggestionGeneration(
           OPENROUTER_API_KEY,
-          aiResponse || '',
+          requestBody.aiResponse || '',
           model || 'google/gemini-flash-1.5'
         );
       
@@ -221,10 +222,15 @@ async function handleChatCompletion(
       );
     }
 
+    // Extract suggestion chips and clean message
+    const originalContent: string = (choice.message.content || '').trim();
+    const { cleanedMessage, suggestions } = extractSuggestionsFromContent(originalContent);
+
     const aiResponse: AIResponse = {
       success: true,
-      message: choice.message.content.trim(),
-      usage: data.usage
+      message: cleanedMessage,
+      usage: data.usage,
+      suggestions: suggestions.length > 0 ? suggestions : undefined
     };
 
     return new Response(
@@ -317,6 +323,30 @@ async function handleWhisperTranscription(apiKey: string, audioData: string, lan
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
+  }
+}
+
+// Utility: Extract SUGGESTION_CHIPS from the tail of content and return cleaned text + suggestions
+function extractSuggestionsFromContent(content: string): { cleanedMessage: string; suggestions: string[] } {
+  try {
+    const match = content.match(/\s*SUGGESTION_CHIPS:\s*(\[[\s\S]*?\])\s*$/i);
+    if (!match) {
+      return { cleanedMessage: content, suggestions: [] };
+    }
+    const jsonPart = match[1];
+    const parsed = JSON.parse(jsonPart);
+    const suggestions = Array.isArray(parsed)
+      ? parsed
+          .filter((s: any) => typeof s === 'string')
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0 && s.length <= 25)
+          .slice(0, 4)
+      : [];
+    const cleanedMessage = content.replace(match[0], '').trim();
+    return { cleanedMessage, suggestions };
+  } catch (_e) {
+    // If parsing fails, return original content
+    return { cleanedMessage: content.replace(/\s*SUGGESTION_CHIPS:\s*\[[\s\S]*?\]\s*$/i, '').trim(), suggestions: [] };
   }
 }
 
@@ -417,6 +447,175 @@ async function handleGetModels(apiKey: string): Promise<Response> {
       }),
       { 
         status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+}
+
+// Handle AI-powered suggestion generation
+async function handleSuggestionGeneration(
+  apiKey: string,
+  aiResponse: string,
+  model: string = 'google/gemini-flash-1.5'
+): Promise<Response> {
+  if (!aiResponse || aiResponse.trim().length === 0) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'AI response is required for suggestion generation'
+      }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+
+  try {
+    // Create specialized prompt for suggestion generation
+    const suggestionPrompt = `You are analyzing an AI therapist's response to generate contextual user reply suggestions.
+
+AI Response: "${aiResponse}"
+
+Generate 4 short, natural user reply suggestions (max 25 chars each) that would be appropriate responses to this therapeutic message. Focus on:
+
+1. Emotional validation responses ("I feel understood", "That helps")
+2. Continuation prompts ("Tell me more", "I want to try that")  
+3. Emotional state responses ("I'm feeling anxious", "That resonates")
+4. Practical responses ("How does that work?", "I'm ready")
+
+Make suggestions authentic, therapeutic, and conversational. Consider the emotional tone and content of the AI response.
+
+Respond with ONLY a JSON array of 4 strings, no other text:
+["suggestion1", "suggestion2", "suggestion3", "suggestion4"]`;
+
+    const messages = [
+      {
+        role: 'user',
+        content: suggestionPrompt
+      }
+    ];
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://wisdomwise.app',
+        'X-Title': 'WisdomWise',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        max_tokens: 200,
+        temperature: 0.8,
+        stream: false
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Suggestion generation API error:', response.status);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Failed to generate suggestions via AI'
+        }),
+        {
+          status: response.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const data = await response.json();
+    const aiSuggestionResponse = data.choices?.[0]?.message?.content?.trim();
+
+    if (!aiSuggestionResponse) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'No suggestion response from AI'
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Parse the AI response as JSON array
+    try {
+      const suggestions = JSON.parse(aiSuggestionResponse);
+      
+      if (!Array.isArray(suggestions)) {
+        throw new Error('Response is not an array');
+      }
+
+      // Validate and filter suggestions
+      const validSuggestions = suggestions
+        .filter((s: any) => typeof s === 'string' && s.length > 0 && s.length <= 25)
+        .slice(0, 4);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          suggestions: validSuggestions,
+          usage: data.usage
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+
+    } catch (parseError) {
+      // Fallback: try to extract suggestions from free-form text
+      console.error('Failed to parse AI suggestions as JSON, attempting extraction:', parseError);
+      
+      // Try to extract quoted strings or bullet points
+      const extractedSuggestions = aiSuggestionResponse
+        .match(/"([^"]{1,25})"/g)?.map((s: string) => s.replace(/"/g, '')) || 
+        aiSuggestionResponse
+          .split('\n')
+          .map((line: string) => line.replace(/^[\d\-\*\•]\s*/, '').trim())
+          .filter((s: string) => s.length > 0 && s.length <= 25)
+          .slice(0, 4);
+
+      if (extractedSuggestions && extractedSuggestions.length > 0) {
+        return new Response(
+          JSON.stringify({
+            success: true,
+            suggestions: extractedSuggestions,
+            usage: data.usage,
+            fallback: true
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      } else {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Could not parse AI suggestions'
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+    }
+
+  } catch (error) {
+    console.error('Suggestion generation error:', error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to generate contextual suggestions'
+      }),
+      {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );

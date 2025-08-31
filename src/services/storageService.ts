@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Message {
   id: string;
-  type: 'user' | 'system' | 'exercise';
+  type: 'user' | 'system' | 'exercise' | 'welcome';
   text?: string;
   content?: string;
   title?: string;
@@ -10,6 +10,7 @@ export interface Message {
   color?: string;
   timestamp: string;
   isAIGuided?: boolean;
+  showName?: boolean;
 }
 
 export interface ThoughtPattern {

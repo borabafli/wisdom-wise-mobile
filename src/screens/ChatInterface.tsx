@@ -1,16 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Animated, Modal, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert, Animated, ImageBackground } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
-
-import { Send, Mic, ChevronLeft, MicOff, Sparkles, Heart, AlertCircle, Volume2, VolumeX, Pause, Play, Square, Check, X, Brain, Wind, Eye, BookOpen, Clock, Star, Copy, ArrowUp, Expand } from 'lucide-react-native';
-
+import { ChevronLeft, AlertCircle, Brain, Wind, Eye, BookOpen, Heart, Star } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import SoundWaveAnimation from '../components/SoundWaveAnimation';
 
-// Import our new services
+// Import new components and hooks
+import { 
+  MessageItem, 
+  AnimatedTypingCursor, 
+  SuggestionChips, 
+  ChatInput, 
+  ExerciseCard 
+} from '../components/chat';
+import { 
+  useTypewriterAnimation, 
+  useVoiceRecording, 
+  useChatSession,
+  useTTSControls
+} from '../hooks/chat';
+
+// Import services and utilities (keeping existing ones)
 import { storageService, Message } from '../services/storageService';
 import { contextService } from '../services/contextService';
 import { apiService } from '../services/apiService';
@@ -37,92 +49,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [fontsLoaded] = useFonts({
     Caveat_400Regular,
   });
-  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Basic state
   const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [exerciseStep, setExerciseStep] = useState(0);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [rateLimitStatus, setRateLimitStatus] = useState({ used: 0, total: 300, percentage: 0, message: '' });
-  const [inputLineCount, setInputLineCount] = useState(1);
-  const [isFullscreenInput, setIsFullscreenInput] = useState(false);
-  
-  // Typewriter animation states
-  const [typewriterText, setTypewriterText] = useState('');
-  const [isTypewriting, setIsTypewriting] = useState(false);
-  const [currentTypewriterMessage, setCurrentTypewriterMessage] = useState<Message | null>(null);
-  const [ttsStatus, setTtsStatus] = useState<{ isSpeaking: boolean; isPaused: boolean; currentSpeechId: string | null }>({ isSpeaking: false, isPaused: false, currentSpeechId: null });
-  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [sttError, setSttError] = useState<string | null>(null);
-  const [partialTranscript, setPartialTranscript] = useState('');
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
-  const [showExerciseCard, setShowExerciseCard] = useState<any>(null); // Exercise suggestion card
+  const [exerciseMode, setExerciseMode] = useState(false);
   
-  // Debug: Monitor exercise card state changes
-  useEffect(() => {
-    console.log('=== EXERCISE CARD STATE CHANGE ===');
-    console.log('showExerciseCard state:', showExerciseCard);
-  }, [showExerciseCard]);
-  const [exerciseMode, setExerciseMode] = useState(false); // Header state for exercise
-  const backgroundAnimation = useRef(new Animated.Value(0)).current; // Background transition
-  const headerAnimation = useRef(new Animated.Value(0)).current; // Header transition
+  // Animation refs
+  const backgroundAnimation = useRef(new Animated.Value(0)).current;
+  const headerAnimation = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
-  const typewriterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Modern animated typing cursor component
-  const AnimatedTypingCursor = () => {
-    const cursorOpacity = useRef(new Animated.Value(1)).current;
-
-    useEffect(() => {
-      const blinkAnimation = Animated.loop(
-        Animated.sequence([
-          Animated.timing(cursorOpacity, {
-            toValue: 0.2,
-            duration: 400,
-            useNativeDriver: true,
-          }),
-          Animated.timing(cursorOpacity, {
-            toValue: 1,
-            duration: 400,
-            useNativeDriver: true,
-          }),
-        ])
-      );
-
-      blinkAnimation.start();
-
-      return () => blinkAnimation.stop();
-    }, [cursorOpacity]);
-
-    return (
-      <Animated.View 
-        style={{ 
-          marginLeft: 3,
-          marginTop: 2,
-          opacity: cursorOpacity
-        }}
-      >
-        <View
-          style={{
-            width: 2,
-            height: 18,
-            backgroundColor: '#3b82f6',
-            borderRadius: 1,
-          }}
-        />
-      </Animated.View>
-    );
-  };
-  
-
-  // Audio level state for real sound wave visualization with animation
-  const [audioLevels, setAudioLevels] = useState<number[]>(Array(7).fill(0.3));
-  const waveAnimations = useRef(
-    Array.from({ length: 7 }, () => new Animated.Value(0.3))
-  ).current;
-
 
   // Complete exercise library data for proper card display
   const exerciseLibraryData: Record<string, any> = {
@@ -162,8 +99,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       color: ['#95B99C', '#B8C5A6'],
       image: require('../../assets/images/7.jpeg')
     },
-    'gratitude': {
+    'morning-mindfulness': {
       id: 4,
+      type: 'morning-mindfulness',
+      name: 'Morning Mindfulness',
+      duration: '8 min',
+      description: 'Start your day with gentle awareness and presence',
+      category: 'Mindfulness',
+      difficulty: 'Beginner',
+      icon: Eye,
+      color: ['#E0F2FE', '#BAE6FD'],
+      image: require('../../assets/images/1.jpeg')
+    },
+    'gratitude': {
+      id: 5,
       type: 'gratitude',
       name: 'Gratitude Practice',
       duration: '10 min',
@@ -175,7 +124,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       image: require('../../assets/images/8.jpeg')
     },
     'self-compassion': {
-      id: 5,
+      id: 6,
       type: 'self-compassion',
       name: 'Self-Compassion Break',
       duration: '5 min',
@@ -187,7 +136,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       image: require('../../assets/images/9.jpeg')
     },
     'stress-relief': {
-      id: 6,
+      id: 7,
       type: 'stress-relief',
       name: 'Stress Relief',
       duration: '10 min',
@@ -199,7 +148,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       image: require('../../assets/images/4.jpeg')
     },
     'values-clarification': {
-      id: 6,
+      id: 8,
       type: 'values-clarification',
       name: '🌱 Living Closer to My Values',
       duration: '15 min',
@@ -214,23 +163,41 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const exerciseFlows: Record<string, any> = {
     mindfulness: {
-      name: '🌸 Morning Mindfulness',
+      name: 'Body Scan',
       color: 'blue',
+      useAI: true,
       steps: [
         {
-          title: 'Welcome to your mindfulness session',
-          content: '**Let\'s start with some gentle breathing** 🌸\n\nFind a comfortable position and let\'s begin this peaceful journey together.',
-          suggestions: ['Feeling calm 😌', 'A bit anxious 😰', 'Ready to relax 🌟', 'Just checking in 👋']
+          title: 'Welcome to Body Scan',
+          stepNumber: 1,
+          description: 'Begin your body scan practice with gentle awareness',
+          aiPrompt: `Welcome them warmly to this body scan practice. Explain that body scanning helps release tension and increase body awareness. Ask how they're feeling physically right now and what brought them to try a body scan.`,
+          dataToCapture: 'initial-body-state',
+          suggestions: ['Feeling tense', 'Body feels heavy', 'Can\'t relax', 'Need physical relief']
         },
         {
-          title: 'Let\'s focus on your breath',
-          content: '**Take a deep breath in... and slowly out** 🌊\n\nNotice how your body feels as you breathe. There\'s no rush, just gentle awareness.',
-          suggestions: ['My breathing feels shallow 💭', 'I\'m feeling more relaxed 🕊️', 'Hard to focus 🌀', 'This feels nice ✨']
+          title: 'Scanning Your Body',
+          stepNumber: 2,
+          description: 'Guide through systematic body awareness from head to toe',
+          aiPrompt: `Guide them through a systematic body scan: starting from the top of their head, moving down through face, neck, shoulders, arms, chest, back, abdomen, legs, and feet. Ask them to notice sensations without judgment. Check in on what they're experiencing.`,
+          dataToCapture: 'body-scan-experience',
+          suggestions: ['Feeling more aware', 'Noticing tension', 'Some areas feel relaxed', 'Hard to focus']
         },
         {
-          title: 'Beautiful work!',
-          content: '**You\'ve completed your mindfulness practice** 🙏\n\n**Well done!** You took time for yourself today. How does this peaceful moment feel?',
-          suggestions: ['More centered 🎯', 'Peaceful 🌸', 'Grateful 🙏', 'Ready for my day ☀️']
+          title: 'Releasing Tension',
+          stepNumber: 3,
+          description: 'Help release any tension discovered during the scan',
+          aiPrompt: `Ask them to identify any areas of tension they discovered. Guide them to gently release that tension with their breath. Help them feel the difference between tension and relaxation.`,
+          dataToCapture: 'tension-release',
+          suggestions: ['Feeling more relaxed', 'Tension is releasing', 'Still some tightness', 'Much better now']
+        },
+        {
+          title: 'Body Scan Complete',
+          stepNumber: 4,
+          description: 'Reflect on the body scan experience and its benefits',
+          aiPrompt: `Ask them to reflect on how their body feels now compared to when they started. Celebrate any changes, however small. Remind them this practice can be used anytime to check in with their body and release tension.`,
+          dataToCapture: 'post-scan-reflection',
+          suggestions: ['More relaxed', 'Better body awareness', 'Would use this again', 'Feel more present']
         }
       ]
     },
@@ -252,6 +219,45 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           title: 'You\'ve done amazing!',
           content: '**Stress relief complete** 🌟\n\n**You handled that beautifully!** Your body and mind deserve this care. Notice how different you feel now.',
           suggestions: ['Much calmer 🌊', 'Less tense 💆', 'More peaceful 🕊️', 'Proud of myself 💪']
+        }
+      ]
+    },
+    'morning-mindfulness': {
+      name: '🌸 Morning Mindfulness',
+      color: 'blue',
+      useAI: true,
+      steps: [
+        {
+          title: 'Welcome to Morning Mindfulness',
+          stepNumber: 1,
+          description: 'Begin your morning with gentle awareness and presence',
+          aiPrompt: `Welcome them warmly to this morning mindfulness practice. Explain that morning mindfulness helps set a positive tone for the day. Ask how they're feeling this morning and what they hope to gain from this practice.`,
+          dataToCapture: 'morning-state',
+          suggestions: ['Feeling calm 😌', 'A bit anxious 😰', 'Ready to relax 🌟', 'Just checking in 👋']
+        },
+        {
+          title: 'Gentle Breathing',
+          stepNumber: 2,
+          description: 'Focus on your breath to center yourself',
+          aiPrompt: `Guide them through gentle breathing awareness. Ask them to notice their breath without trying to change it. Help them feel more present and centered. Check in on how this feels for them.`,
+          dataToCapture: 'breathing-experience',
+          suggestions: ['My breathing feels shallow 💭', 'I\'m feeling more relaxed 🕊️', 'Hard to focus 🌀', 'This feels nice ✨']
+        },
+        {
+          title: 'Morning Intention',
+          stepNumber: 3,
+          description: 'Set a gentle intention for your day',
+          aiPrompt: `Help them set a simple, kind intention for their day. This could be something like "I'll be patient with myself" or "I'll notice moments of joy." Make it personal and achievable.`,
+          dataToCapture: 'morning-intention',
+          suggestions: ['To be kind to myself', 'To stay present', 'To notice beauty', 'To be patient']
+        },
+        {
+          title: 'Morning Mindfulness Complete',
+          stepNumber: 4,
+          description: 'Reflect on your morning practice and carry it forward',
+          aiPrompt: `Ask them to reflect on how this morning practice felt. Celebrate their commitment to starting the day mindfully. Remind them they can return to this awareness throughout the day.`,
+          dataToCapture: 'morning-reflection',
+          suggestions: ['More centered 🎯', 'Peaceful 🌸', 'Grateful 🙏', 'Ready for my day ☀️']
         }
       ]
     },
@@ -442,125 +448,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  // Initialize services and load data
+  // Custom hooks
+  const chatSession = useChatSession(currentExercise, exerciseFlows);
+  const ttsControls = useTTSControls();
+  const typewriterAnimation = useTypewriterAnimation(
+    chatSession.setMessages,
+    scrollViewRef
+  );
+  const voiceRecording = useVoiceRecording((transcript: string) => {
+    setInputText(prev => prev + transcript);
+  });
+
+  // Initialize on mount
   useEffect(() => {
-    initializeChatSession();
+    // Check if this is an AI-guided exercise that needs special handling
+    if (currentExercise && exerciseFlows[currentExercise.type]) {
+      const flow = exerciseFlows[currentExercise.type];
+      
+      if (flow.useAI && flow.steps?.length > 0) {
+        // AI-guided exercise with step structure
+        console.log('Starting AI-guided exercise:', currentExercise.type);
+        enterExerciseMode();
+        startAIGuidedExercise(flow);
+        return;
+      }
+    }
+    
+    // Regular chat session or non-AI exercises
+    chatSession.initializeChatSession();
   }, [currentExercise]);
-
-  // Start AI-driven exercise
-  const startAIExercise = async (flow: any) => {
-    try {
-      console.log('Starting AI-driven exercise with prompt:', flow.initialPrompt);
-      
-      // Set up context for AI exercise
-      const exerciseContext = `EXERCISE_MODE: ${currentExercise.type}
-EXERCISE_NAME: ${currentExercise.name}
-EXERCISE_DURATION: ${currentExercise.duration}
-USER_DATA_COLLECTED: {}
-
-${flow.initialPrompt}`;
-
-      // Get initial AI response
-      setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext([
-        { role: 'system', content: flow.initialPrompt },
-        { role: 'user', content: `I want to do the ${currentExercise.name} exercise. Please guide me through it.` }
-      ]);
-      setIsTyping(false);
-
-      if (response.success && response.message) {
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          type: 'exercise',
-          title: `${currentExercise.name}`,
-          content: response.message,
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-        
-        setMessages([aiMessage]);
-        await storageService.addMessage(aiMessage);
-        
-        // Generate contextual suggestions
-        setSuggestions(['I understand', 'Can you explain more?', 'I\'m ready to start', 'I have questions']);
-      } else {
-        // Fallback to welcoming message if API fails
-        const fallbackMessage: Message = {
-          id: Date.now().toString(),
-          type: 'exercise', 
-          title: 'Welcome to CBT Practice',
-          content: 'Welcome to automatic thoughts recognition! This exercise will help you identify and reframe unhelpful thinking patterns. Let\'s start by sharing a situation that caused you distress recently.',
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-        setMessages([fallbackMessage]);
-        setSuggestions(['At work today...', 'During a conversation...', 'When I was thinking about...', 'Something happened that upset me...']);
-      }
-    } catch (error) {
-      console.error('Error starting AI exercise:', error);
-    }
-  };
-
-
-  const initializeChatSession = async () => {
-    try {
-      setIsLoading(true);
-      
-      // API service is now initialized automatically
-      
-      // Load rate limit status
-      const rateLimitStatus = await rateLimitService.getRateLimitStatus();
-      setRateLimitStatus(rateLimitStatus);
-      
-      // Debug logging
-      console.log('=== CHAT INITIALIZATION ===');
-      console.log('currentExercise:', currentExercise);
-      console.log('Exercise type:', currentExercise?.type);
-      console.log('Available exercise flows:', Object.keys(exerciseFlows));
-      console.log('Flow found:', exerciseFlows[currentExercise?.type]);
-      
-      // Handle exercise flow vs regular chat
-      if (currentExercise && exerciseFlows[currentExercise.type]) {
-        const flow = exerciseFlows[currentExercise.type];
-        
-        if (flow.useAI && flow.steps.length > 0) {
-          // AI-guided exercise with step structure
-          console.log('Starting AI-guided exercise:', currentExercise.type);
-          enterExerciseMode(); // Add smooth transition for library exercises too
-          await startAIGuidedExercise(flow);
-        } else if (flow.useAI) {
-          // AI-driven exercise - get initial response from AI  
-          console.log('Starting AI-driven exercise:', currentExercise.type);
-          await startAIExercise(flow);
-        } else {
-          // Static exercise flow - use existing logic
-          const initialMessage: Message = {
-            id: Date.now().toString(),
-            type: 'exercise',
-            title: flow.steps[0].title,
-            content: flow.steps[0].content,
-            exerciseType: currentExercise.type,
-            color: flow.color,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          };
-          setMessages([initialMessage]);
-          setSuggestions(flow.steps[0].suggestions);
-          setExerciseStep(0);
-        }
-      } else {
-        // Regular chat - load from storage or create welcome
-        await loadOrCreateChatSession();
-      }
-    } catch (error) {
-      console.error('Error initializing chat session:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Start AI-guided exercise with step structure
   const startAIGuidedExercise = async (flow: any) => {
@@ -574,6 +490,9 @@ ${flow.initialPrompt}`;
       // Start with step 0
       setExerciseStep(0);
       const currentStep = flow.steps[0];
+      
+      // Set suggestions immediately so they appear right away
+      chatSession.setSuggestions(currentStep.suggestions);
       
       // Get AI response for this step
       const systemPrompt = `You are a warm, compassionate CBT therapist starting the "${currentExercise.name}" exercise.
@@ -602,12 +521,12 @@ Guidance: ${currentStep.aiPrompt}
 • Keep your message well-structured and easy to read
 • Break up longer thoughts with line breaks`;
 
-      setIsTyping(true);
+      chatSession.setIsTyping(true);
       const response = await apiService.getChatCompletionWithContext([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.` }
       ]);
-      setIsTyping(false);
+      chatSession.setIsTyping(false);
 
       if (response.success && response.message) {
         const aiMessage: Message = {
@@ -621,37 +540,32 @@ Guidance: ${currentStep.aiPrompt}
           isAIGuided: true
         };
         
-        // For exercise mode, start with clean messages or use current messages
-        const currentMessages = messages.length > 0 ? messages : [];
-        const updatedMessages = [...currentMessages, aiMessage];
-        setMessages(updatedMessages);
+        chatSession.setMessages([aiMessage]);
         await storageService.addMessage(aiMessage);
+        // Prefer backend-provided suggestions when available
+        if (response.suggestions && response.suggestions.length > 0) {
+          chatSession.setSuggestions(response.suggestions);
+        }
         
-        console.log('Exercise mode state after AI response:', true);
+        console.log('Exercise mode state after AI response:', exerciseMode);
         console.log('Messages updated, exercise should be visible');
         console.log('Current exercise type:', currentExercise.type);
         console.log('Exercise step:', 0);
-        
-        // Extract AI suggestions or use step defaults
-        setSuggestions(currentStep.suggestions);
       } else {
         // Fallback to static step content
         const fallbackMessage: Message = {
           id: Date.now().toString(),
           type: 'exercise', 
           title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
-          content: `Welcome to the ${currentExercise.name} exercise! Let's start by describing a situation that triggered some difficult thoughts. Please share just the facts of what happened, without any interpretations.`,
+          content: `Welcome to the ${currentExercise.name} exercise! Let's start with the first step of this therapeutic exercise.`,
           exerciseType: currentExercise.type,
           color: flow.color,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isAIGuided: true
         };
         
-        // For exercise mode, start with clean messages or use current messages  
-        const currentMessages = messages.length > 0 ? messages : [];
-        const updatedMessages = [...currentMessages, fallbackMessage];
-        setMessages(updatedMessages);
-        setSuggestions(currentStep.suggestions);
+        chatSession.setMessages([fallbackMessage]);
+        chatSession.setSuggestions(currentStep.suggestions);
         
         console.log('Fallback exercise message created, exercise mode should be active');
       }
@@ -660,98 +574,31 @@ Guidance: ${currentStep.aiPrompt}
     }
   };
 
-  // Handle AI-driven exercise responses
-  const handleAIExerciseResponse = async (userText: string, flow: any) => {
-    try {
-      console.log('Handling AI exercise response for:', currentExercise.type);
+  // Handle input text changes
+  const handleInputTextChange = (text: string) => {
+    setInputText(text);
+  };
+
+  // Handle sending messages
+  const handleSend = async (text = inputText) => {
+    if (!text.trim()) return;
+
+    // Clear input
+    setInputText('');
+
+    // Check if we're in an AI-guided exercise flow
+    if (currentExercise && exerciseFlows[currentExercise.type]) {
+      const flow = exerciseFlows[currentExercise.type];
       
-      // Build conversation context for the AI
-      const recentMessages = await storageService.getLastMessages(10);
-      const conversationHistory = recentMessages.map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.text || msg.content || ''
-      }));
-      
-      // Add current user response
-      conversationHistory.push({ role: 'user', content: userText });
-      
-      // Build exercise context with current data
-      const exerciseContextData = JSON.stringify(exerciseData, null, 2);
-      const systemPrompt = `${flow.initialPrompt}
-
-EXERCISE_MODE: ${currentExercise.type}
-EXERCISE_NAME: ${currentExercise.name} 
-EXERCISE_DURATION: ${currentExercise.duration}
-USER_DATA_COLLECTED: ${exerciseContextData}
-
-Respond therapeutically to the user's input. Assess if you need more information for the current CBT step, or if you can guide them to the next step. Be warm, supportive, and educational.`;
-
-      // Build messages array with system prompt and conversation history
-      const messages = [
-        { role: 'system', content: systemPrompt },
-        ...conversationHistory
-      ];
-
-      setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext(messages);
-      setIsTyping(false);
-
-      if (response.success && response.message) {
-        // Record successful request for rate limiting
-        await rateLimitService.recordRequest();
-        
-        const aiResponse: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'exercise',
-          title: `${currentExercise.name} - AI Guidance`,
-          content: response.message,
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-
-        await addAIMessageWithTypewriter(aiResponse);
-
-        // Auto-play TTS if enabled
-        await ttsService.speakIfAutoPlay(response.message);
-
-        // Check for exercise suggestions and generate contextual responses
-        console.log('Checking for exercise suggestions in AI response...');
-        const exerciseSuggestions = detectAndParseExerciseSuggestions(response.message);
-        console.log('Exercise suggestions found:', exerciseSuggestions);
-        const aiSuggestions = extractAISuggestions(response.message);
-        const contextualSuggestions = contextService.generateSuggestions([...recentMessages, aiResponse]);
-        
-        // Priority: AI suggestions > Exercise suggestions > Contextual suggestions
-        const finalSuggestions = aiSuggestions.length > 0 
-          ? aiSuggestions
-          : exerciseSuggestions.length > 0 
-            ? exerciseSuggestions
-            : contextualSuggestions;
-        
-        setSuggestions(finalSuggestions);
-        
-        // Extract any structured data from the AI response for insights
-        await extractExerciseDataFromAIResponse(response.message, userText);
-        
-      } else {
-        // Fallback response for API errors
-        const fallbackMessage: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'exercise',
-          content: "I'm here to support you through this exercise. Could you share a bit more about what you're experiencing?",
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-        setMessages(prev => [...prev, fallbackMessage]);
-        setSuggestions(['I need help understanding', 'Let me try again', 'Can you guide me?', 'I\'m feeling stuck']);
+      if (flow.useAI && flow.steps?.length > 0) {
+        // AI-guided exercise with step structure
+        await handleAIGuidedExerciseResponse(text, flow);
+        return;
       }
-    } catch (error) {
-      console.error('Error in handleAIExerciseResponse:', error);
     }
+    
+    // Regular chat or non-AI exercises
+    await chatSession.handleSendMessage(text);
   };
 
   // Handle AI-guided exercise with step structure
@@ -760,6 +607,18 @@ Respond therapeutically to the user's input. Assess if you need more information
       console.log('Handling AI-guided exercise response for step:', exerciseStep + 1);
       
       const currentStep = flow.steps[exerciseStep];
+      
+      // Create user message
+      const userMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'user',
+        text: userText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      // Add user message to UI and storage
+      chatSession.setMessages((prev: Message[]) => [...prev, userMessage]);
+      await storageService.addMessage(userMessage);
       
       // Store user response for this step
       if (currentStep.dataToCapture) {
@@ -779,7 +638,7 @@ Respond therapeutically to the user's input. Assess if you need more information
       conversationHistory.push({ role: 'user', content: userText });
       
       // Check if we should move to next step or stay on current
-      const shouldAdvance = await assessStepCompletion(userText, currentStep, conversationHistory);
+      const shouldAdvance = userText.trim().length >= 8; // Simple advancement logic
       
       if (shouldAdvance && exerciseStep < flow.steps.length - 1) {
         // Move to next step
@@ -793,7 +652,7 @@ Previous step: "${currentStep.title}"
 What they shared: "${userText}"
 
 **MOVING TO NEXT STEP:**
-Step ${nextStep.stepNumber}/7: ${nextStep.title}
+Step ${nextStep.stepNumber}/${flow.steps.length}: ${nextStep.title}
 Goal: ${nextStep.description}
 
 **BE A REAL THERAPIST:**
@@ -814,12 +673,12 @@ Goal: ${nextStep.description}
 • Keep your message well-structured and easy to read
 • Break up longer thoughts with line breaks`;
 
-        setIsTyping(true);
+        chatSession.setIsTyping(true);
         const response = await apiService.getChatCompletionWithContext([
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `I just completed step ${currentStep.stepNumber}. Please guide me to step ${nextStep.stepNumber}.` }
         ]);
-        setIsTyping(false);
+        chatSession.setIsTyping(false);
 
         if (response.success && response.message) {
           await rateLimitService.recordRequest();
@@ -837,16 +696,20 @@ Goal: ${nextStep.description}
 
           await addAIMessageWithTypewriter(aiResponse);
           
-          // Extract AI suggestions or use step defaults
-          setSuggestions(nextStep.suggestions);
+          // Use backend suggestions if present; otherwise step defaults
+          chatSession.setSuggestions(
+            response.suggestions && response.suggestions.length > 0
+              ? response.suggestions
+              : nextStep.suggestions
+          );
           setExerciseStep(nextStepIndex);
           
           await ttsService.speakIfAutoPlay(response.message);
         }
         
       } else if (exerciseStep >= flow.steps.length - 1) {
-        // Exercise completed - show completion message, save data for later processing
-        console.log('CBT exercise completed - will process insights when session ends');
+        // Exercise completed
+        console.log('CBT exercise completed');
         
         const completionMessage: Message = {
           id: (Date.now() + Math.random()).toString(),
@@ -854,40 +717,22 @@ Goal: ${nextStep.description}
           title: '🎉 Exercise Complete!',
           content: `**Excellent work!** 🌟
 
-**You've completed all 7 CBT steps:**
-• Identified situation & emotions
-• Captured automatic thoughts  
-• Examined evidence & patterns
-• Created balanced alternatives
+**You've completed all ${flow.steps.length} steps of the ${currentExercise.name} exercise!**
 
-**Your insights will be saved when you end the session.** Great job practicing this skill! 💪`,
+**Your insights have been captured and will be available in your Insights tab.** Great job practicing this therapeutic skill! 💪`,
           exerciseType: currentExercise.type,
           color: flow.color,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isAIGuided: true
         };
 
-        setMessages(prev => [...prev, completionMessage]);
+        chatSession.setMessages((prev: Message[]) => [...prev, completionMessage]);
         await storageService.addMessage(completionMessage);
         
         // Exit exercise mode with smooth transition
         exitExerciseMode();
         
-        // Show saved insight card after a delay
-        setTimeout(() => {
-          const insightCard: Message = {
-            id: (Date.now() + Math.random()).toString(),
-            type: 'system',
-            content: `**Saved to Insights** ✅\n\nYour thought reframe has been added to your personal patterns. You can review all your insights in the Insights tab.`,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            isAIGuided: true
-          };
-          
-          setMessages(prev => [...prev, insightCard]);
-          storageService.addMessage(insightCard);
-        }, 2000);
-        
-        setSuggestions(['That was helpful 😊', 'I learned something new 🌟', 'I want to try again 🔄', 'Thank you 🙏']);
+        chatSession.setSuggestions(['That was helpful 😊', 'I learned something new 🌟', 'I want to try again 🔄', 'Thank you 🙏']);
         
       } else {
         // Stay on current step - ask for more clarification
@@ -896,7 +741,7 @@ Goal: ${nextStep.description}
 **WHAT THEY SHARED:** "${userText}"
 
 **CURRENT THERAPEUTIC FOCUS:**
-Step ${currentStep.stepNumber}/7: ${currentStep.title}
+Step ${currentStep.stepNumber}/${flow.steps.length}: ${currentStep.title}
 Goal: ${currentStep.description}
 
 **YOUR THERAPEUTIC RESPONSE:**
@@ -912,12 +757,12 @@ You sense this person has more to share or process around this topic. As a skill
 
 **BE REAL:** Don't just ask for "more detail" - be a real therapist who's genuinely interested in understanding this person's experience. What would you naturally want to know more about? What therapeutic curiosity do you have?`;
 
-        setIsTyping(true);
+        chatSession.setIsTyping(true);
         const response = await apiService.getChatCompletionWithContext([
           { role: 'system', content: clarificationPrompt },
           { role: 'user', content: userText }
         ]);
-        setIsTyping(false);
+        chatSession.setIsTyping(false);
 
         if (response.success && response.message) {
           await rateLimitService.recordRequest();
@@ -935,8 +780,12 @@ You sense this person has more to share or process around this topic. As a skill
 
           await addAIMessageWithTypewriter(aiResponse);
           
-          // Extract AI suggestions or use step defaults
-          setSuggestions(currentStep.suggestions);
+          // Use backend suggestions if present; otherwise step defaults
+          chatSession.setSuggestions(
+            response.suggestions && response.suggestions.length > 0
+              ? response.suggestions
+              : currentStep.suggestions
+          );
           
           await ttsService.speakIfAutoPlay(response.message);
         }
@@ -947,1224 +796,44 @@ You sense this person has more to share or process around this topic. As a skill
     }
   };
 
-  // AI-powered therapeutic assessment - decides when to move forward vs. explore deeper
-  const assessStepCompletion = async (userResponse: string, currentStep: any, conversationHistory: any[]): Promise<boolean> => {
-    try {
-      // Use AI to make therapeutic decision about progression
-      const assessmentPrompt = `You are an expert CBT therapist assessing whether to move forward in an exercise or explore deeper.
-
-**EXERCISE CONTEXT:**
-Step ${currentStep.stepNumber}/7: ${currentStep.title}
-Goal: ${currentStep.description}
-
-**USER'S RESPONSE:** 
-"${userResponse}"
-
-**CONVERSATION HISTORY:**
-${conversationHistory.slice(-4).map(msg => `${msg.role}: ${msg.content}`).join('\n')}
-
-**THERAPEUTIC ASSESSMENT NEEDED:**
-Decide whether this response shows sufficient depth and engagement for this CBT step, or if you should ask follow-up questions to understand better.
-
-**RESPOND WITH ONLY:**
-- "ADVANCE" - if their response shows good self-awareness and completion of this step's goal
-- "EXPLORE" - if you need to ask clarifying questions, probe deeper, or help them process more
-
-**DECISION FACTORS:**
-- Quality of self-reflection, not just length
-- Emotional engagement with the topic  
-- Specificity appropriate for this CBT step
-- Therapeutic readiness to move forward
-
-Your decision:`;
-
-      const response = await apiService.getChatCompletionWithContext([
-        { role: 'system', content: assessmentPrompt }
-      ]);
-
-      if (response.success && response.message) {
-        const decision = response.message.trim().toUpperCase();
-        console.log('AI therapeutic assessment:', decision);
-        return decision.includes('ADVANCE');
-      }
-      
-      // Fallback to simple heuristic if AI fails
-      return userResponse.trim().length >= 8;
-      
-    } catch (error) {
-      console.error('Error in AI step assessment:', error);
-      // Fallback to simple heuristic
-      return userResponse.trim().length >= 8;
-    }
-  };
-
-  // Extract structured exercise data from AI responses
-  const extractExerciseDataFromAIResponse = async (aiMessage: string, userResponse: string) => {
-    try {
-      // Use simple keyword detection to capture exercise data
-      const lowerAI = aiMessage.toLowerCase();
-      const lowerUser = userResponse.toLowerCase();
-      
-      // Detect which step we might be on based on AI response content
-      if (lowerAI.includes('situation') || lowerAI.includes('what happened')) {
-        setExerciseData(prev => ({ ...prev, situation: userResponse }));
-      } else if (lowerAI.includes('emotion') && lowerAI.includes('rate')) {
-        setExerciseData(prev => ({ ...prev, emotion: userResponse }));
-      } else if (lowerAI.includes('thought') && (lowerAI.includes('automatic') || lowerAI.includes('came to mind'))) {
-        setExerciseData(prev => ({ ...prev, thought: userResponse }));
-      } else if (lowerAI.includes('distortion') || lowerAI.includes('thinking pattern')) {
-        setExerciseData(prev => ({ ...prev, distortion: userResponse }));
-      } else if (lowerAI.includes('evidence')) {
-        setExerciseData(prev => ({ ...prev, evidence: userResponse }));
-      } else if (lowerAI.includes('balanced') || lowerAI.includes('reframe')) {
-        setExerciseData(prev => ({ ...prev, reframe: userResponse }));
-      } else if (lowerAI.includes('re-rate') || lowerAI.includes('now that')) {
-        setExerciseData(prev => ({ ...prev, 'emotion-after': userResponse }));
-      }
-      
-      // Check if exercise seems complete and process insights
-      const hasKey = (key: string) => exerciseData[key] || userResponse;
-      if (hasKey('situation') && hasKey('thought') && hasKey('reframe')) {
-        console.log('CBT exercise data seems complete, processing insights...');
-        setTimeout(() => {
-          processAutomaticThoughtExercise();
-        }, 2000); // Delay to let final AI response process
-      }
-    } catch (error) {
-      console.error('Error extracting exercise data:', error);
-    }
-  };
-
-  const loadOrCreateChatSession = async () => {
-    try {
-      // Always start with a fresh session - don't load existing messages
-      // This ensures each chat starts clean after ending previous sessions
-      await storageService.clearCurrentSession();
-      
-      // Create new conversation with welcome message
-      const welcomeMessage = contextService.createWelcomeMessage();
-      setMessages([welcomeMessage]);
-      setSuggestions(contextService.generateSuggestions([])); // Empty array for first message suggestions
-      
-      // Save welcome message to storage
-      await storageService.addMessage(welcomeMessage);
-    } catch (error) {
-      console.error('Error creating fresh chat session:', error);
-      // Fallback to local welcome message
-      const welcomeMessage = contextService.createWelcomeMessage();
-      setMessages([welcomeMessage]);
-      setSuggestions(contextService.generateSuggestions([])); // Empty array for first message suggestions
-    }
-  };
-
-  // Handle session end with confirmation
-  const handleEndSession = () => {
-    console.log('handleEndSession called, messages length:', messages.length);
-    
-    // Check if we have any user messages (real conversation)
-    const userMessages = messages.filter(msg => msg.type === 'user');
-    console.log('User messages count:', userMessages.length);
-    
-    if (userMessages.length > 0) {
-      console.log('Showing save dialog');
-      
-      if (Platform.OS === 'web') {
-        // Use browser's native confirm for web
-        const shouldSave = window.confirm(
-          "Would you like to save this conversation to your history?\n\nClick 'OK' to save or 'Cancel' to discard."
-        );
-        
-        if (shouldSave) {
-          console.log('User chose: Save & End (web)');
-          // Extract insights before saving and ending session
-          extractInsightsAndSaveSession();
-        } else {
-          console.log('User chose: Don\'t Save (web)');
-          // Still extract insights for user benefit, but don't save conversation
-          extractInsightsAndEnd();
-        }
-      } else {
-        // Use React Native Alert for mobile
-        Alert.alert(
-          "End Session?",
-          "Would you like to save this conversation to your history?",
-          [
-            {
-              text: "Don't Save",
-              style: "destructive",
-              onPress: () => {
-                console.log('User chose: Don\'t Save');
-                extractInsightsAndEnd();
-              }
-            },
-            {
-              text: "Cancel",
-              style: "cancel",
-              onPress: () => console.log('User chose: Cancel')
-            },
-            {
-              text: "Save & End",
-              style: "default", 
-              onPress: () => {
-                console.log('User chose: Save & End');
-                extractInsightsAndSaveSession();
-              }
-            }
-          ],
-          { cancelable: false }
-        );
-      }
-    } else {
-      console.log('No user messages, going back directly');
-      onBack();
-    }
-  };
-
-  // Save current session to history
-  const saveSessionToHistory = async () => {
-    try {
-      await storageService.saveToHistory();
-    } catch (error) {
-      console.error('Error saving session to history:', error);
-    }
-  };
-
-  // Extract insights and save session - BACKGROUND PROCESSING
-  const extractInsightsAndSaveSession = async () => {
-    try {
-      console.log('Starting background session save and insight extraction...');
-      
-      // IMMEDIATELY return to main app - don't block the user!
-      onBack();
-      
-      // Continue processing in background
-      // Save conversation to history first (fast operation)
-      await saveSessionToHistory();
-      await storageService.clearCurrentSession();
-      console.log('Session saved to history and cleared');
-      
-      // Process insights in background (slow AI operations)
-      setTimeout(async () => {
-        try {
-          if (currentExercise?.type === 'automatic-thoughts' && 
-              exerciseData.situation && exerciseData.thought && exerciseData.reframe) {
-            console.log('Background: Processing completed CBT exercise data...');
-            await processAutomaticThoughtExercise();
-          }
-          
-          // Extract insights from full conversation
-          const patterns = await insightService.extractAtSessionEnd();
-          
-          if (patterns.length > 0) {
-            console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
-          }
-        } catch (error) {
-          console.error('Background insight extraction failed:', error);
-        }
-      }, 100); // Small delay to ensure UI transition completes
-      
-    } catch (error) {
-      console.error('Error in extractInsightsAndSaveSession:', error);
-      // Ensure user still gets back to main app
-      onBack();
-    }
-  };
-
-  // Extract insights but don't save conversation - BACKGROUND PROCESSING
-  const extractInsightsAndEnd = async () => {
-    try {
-      console.log('Background insight extraction (not saving conversation)...');
-      
-      // IMMEDIATELY return to main app - don't block the user!
-      onBack();
-      
-      // Clear session first (fast operation)
-      await storageService.clearCurrentSession();
-      console.log('Session cleared');
-      
-      // Extract insights in background (slow AI operation)
-      setTimeout(async () => {
-        try {
-          const patterns = await insightService.extractAtSessionEnd();
-          
-          if (patterns.length > 0) {
-            console.log(`✅ Background: Extracted ${patterns.length} thought patterns (conversation not saved)`);
-          }
-        } catch (error) {
-          console.error('Background insight extraction failed:', error);
-        }
-      }, 100); // Small delay to ensure UI transition completes
-      
-    } catch (error) {
-      console.error('Error in extractInsightsAndEnd:', error);
-      // Ensure user still gets back to main app
-      onBack();
-    }
-  };
-
-  // Process automatic thought exercise data and save as insights
-  const processAutomaticThoughtExercise = async () => {
-    try {
-      console.log('Processing automatic thought exercise data:', exerciseData);
-      
-      // Validate we have the minimum required data
-      if (!exerciseData.thought || !exerciseData.reframe) {
-        console.log('Incomplete exercise data - skipping insight extraction');
-        return;
-      }
-
-      // Create a thought pattern from the exercise
-      const thoughtPattern = {
-        id: `exercise_${Date.now()}_${Math.random()}`,
-        originalThought: exerciseData.thought,
-        distortionTypes: exerciseData.distortion ? [exerciseData.distortion] : ['Exercise Identified'],
-        reframedThought: exerciseData.reframe,
-        confidence: 0.95, // High confidence since user manually identified
-        extractedFrom: {
-          messageId: 'exercise_completion',
-          sessionId: (await storageService.getCurrentSession())?.id || 'unknown'
-        },
-        timestamp: new Date().toISOString(),
-        context: `CBT Exercise - Situation: ${exerciseData.situation || 'Not specified'}, Emotion: ${exerciseData.emotion || 'Not specified'}`
-      };
-
-      // Save to insights
-      await storageService.addThoughtPattern(thoughtPattern);
-      
-      console.log('✅ Saved automatic thought exercise as insight pattern');
-      
-      // Show completion message
-      const completionMessage: Message = {
-        id: (Date.now() + Math.random()).toString(),
-        type: 'exercise',
-        title: '🎉 Exercise Complete!',
-        content: `**Excellent work!** 🌟\n\nYou've successfully:\n• Identified an automatic thought\n• Spotted the thinking pattern\n• Created a balanced alternative\n\n${exerciseData['emotion-after'] ? `Your emotion shifted from the original intensity to ${exerciseData['emotion-after']} - notice how reframing thoughts can change how we feel!` : 'This insight has been saved to help you recognize similar patterns in the future.'}\n\n**Keep practicing this skill!** 💪`,
-        exerciseType: currentExercise?.type,
-        color: 'purple',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      setMessages(prev => [...prev, completionMessage]);
-      setSuggestions(['That was helpful 😊', 'I learned something new 🌟', 'I want to try again 🔄', 'Thank you 🙏']);
-      
-      // Save completion message
-      await storageService.addMessage(completionMessage);
-      
-    } catch (error) {
-      console.error('Error processing automatic thought exercise:', error);
-    }
-  };
-
-  // TTS Control Functions
-  const handlePlayTTS = async (messageId: string, text: string) => {
-    try {
-      // Stop any current speech
-      await ttsService.stop();
-      
-      // Start speaking with turtle voice settings
-      const speechId = await ttsService.speak(text, ttsService.getTurtleVoiceSettings());
-      
-      if (speechId) {
-        setPlayingMessageId(messageId);
-        setTtsStatus({ isSpeaking: true, isPaused: false, currentSpeechId: speechId });
-      }
-    } catch (error) {
-      console.error('Error starting TTS:', error);
-    }
-  };
-
-  const handleStopTTS = async () => {
-    try {
-      await ttsService.stop();
-      setPlayingMessageId(null);
-      setTtsStatus({ isSpeaking: false, isPaused: false, currentSpeechId: null });
-    } catch (error) {
-      console.error('Error stopping TTS:', error);
-    }
-  };
-
+  // Handle message actions
   const handleCopyMessage = async (content: string) => {
     try {
       await Clipboard.setStringAsync(content);
-      // Could add a toast notification here
     } catch (error) {
       console.error('Error copying message:', error);
     }
   };
 
-  const handleInputTextChange = (text: string) => {
+  const handlePromptSuggestion = (text: string) => {
     setInputText(text);
+  };
+
+  // Handle exercise card actions
+  const handleExerciseCardStart = (exerciseInfo: any) => {
+    console.log('=== EXERCISE CARD START ===');
+    console.log('Exercise info:', exerciseInfo);
     
-    // Count lines by splitting on newlines and adding 1
-    const lines = text.split('\n').length;
-    setInputLineCount(Math.min(lines, 9)); // Max 9 lines as specified
-  };
-
-  const toggleFullscreenInput = () => {
-    setIsFullscreenInput(!isFullscreenInput);
-  };
-
-  // Update TTS status periodically
-  useEffect(() => {
-    const updateTTSStatus = () => {
-      const status = ttsService.getStatus();
-      setTtsStatus(status);
-      
-      // Clear playing message if speech stopped
-      if (!status.isSpeaking && playingMessageId) {
-        setPlayingMessageId(null);
-      }
+    // Hide the card first
+    chatSession.setShowExerciseCard(null);
+    
+    // Create proper exercise object 
+    const exercise = {
+      type: exerciseInfo.type,
+      name: exerciseInfo.name,
+      duration: exerciseInfo.duration,
+      description: exerciseInfo.description || 'AI-guided exercise'
     };
-
-    const interval = setInterval(updateTTSStatus, 500); // Check every 500ms
-    return () => clearInterval(interval);
-  }, [playingMessageId]);
-
-  const handleSend = async (text = inputText) => {
-    if (!text.trim()) return;
-
-    // Clear any previous API errors
-
-    // Create user message
-    const userMessage: Message = {
-      id: (Date.now() + Math.random()).toString(),
-      type: 'user',
-      text: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    // Add user message to UI and storage - remove welcome message if it exists
-    setMessages(prev => {
-      // Filter out welcome message and add user message
-      const filteredMessages = prev.filter(msg => msg.type !== 'welcome');
-      return [...filteredMessages, userMessage];
-    });
-    setInputText('');
     
-    // Check if user is accepting a previously suggested exercise
-    // Look for acceptance keywords after AI has suggested exercises
-    const isAcceptance = /^(yes|ok|sure|let's try|let's do it|sounds good|i'd like to|that would help|let's start)$/i.test(text.trim()) ||
-                        text.toLowerCase().includes('yes, let\'s try') ||
-                        text.toLowerCase().includes('sounds like a good idea');
+    console.log('Exercise object created:', exercise);
     
-    if (isAcceptance) {
-      // Check the last few messages to see if AI suggested an exercise
-      const recentMessages = await storageService.getLastMessages(5);
-      const lastAiMessage = recentMessages
-        .filter(msg => msg.type === 'system')
-        .pop();
-      
-      if (lastAiMessage) {
-        console.log('Checking last AI message for exercise suggestion:', lastAiMessage.text);
-        const exerciseSuggestions = detectAndParseExerciseSuggestions(lastAiMessage.text || lastAiMessage.content || '');
-        if (exerciseSuggestions.length > 0) {
-          console.log('User accepted exercise suggestion from previous AI message');
-          return; // The detection function already showed the card
-        }
-      }
-    }
-    
-    // Simple test triggers - remove these when AI system is working
-    if (text.toLowerCase().includes('show exercise card')) {
-      const exercise = exerciseLibraryData['breathing'];
-      setShowExerciseCard(exercise);
-      console.log('Test exercise card shown');
-    }
-    
-    if (text.toLowerCase().includes('test values')) {
-      console.log('🧪 TEST VALUES TRIGGER ACTIVATED');
-      const exercise = exerciseLibraryData['values-clarification'];
-      console.log('Exercise found:', exercise);
-      console.log('Exercise name:', exercise?.name);
-      console.log('Exercise type:', exercise?.type);
-      setShowExerciseCard(exercise);
-      console.log('✅ Test values exercise card set in state');
-      console.log('Current showExerciseCard state should now be:', exercise);
-      return;
-    }
-    
-    try {
-      await storageService.addMessage(userMessage);
-    } catch (error) {
-      console.error('Error saving user message:', error);
-    }
-
-    // Check if user is accepting an exercise suggestion
-    if (showExerciseCard && (
-      text.toLowerCase().includes('yes') || 
-      text.toLowerCase().includes('let\'s try') ||
-      text.toLowerCase().includes('start') ||
-      text.includes('✨')
-    )) {
-      console.log('=== USER ACCEPTED EXERCISE SUGGESTION ===');
-      console.log('User typed:', text);
-      console.log('Exercise to start:', showExerciseCard);
-      console.log('About to call handleExerciseCardStart...');
-      handleExerciseCardStart(showExerciseCard);
-      return;
-    }
-
-    // Handle exercise flow progression
-    if (currentExercise && exerciseFlows[currentExercise.type]) {
-      const flow = exerciseFlows[currentExercise.type];
-      
-      if (flow.useAI && flow.steps.length > 0) {
-        // AI-guided exercise with step structure
-        await handleAIGuidedExerciseResponse(text, flow);
-        return;
-      } else if (flow.useAI) {
-        // AI-driven exercise - let AI handle the conversation dynamically
-        await handleAIExerciseResponse(text, flow);
-        return;
-      } else {
-        // Static exercise flow - use existing logic
-        // Store user response if this is an exercise step
-        if (flow.steps[exerciseStep]?.stepType) {
-          const stepType = flow.steps[exerciseStep].stepType;
-          setExerciseData(prev => ({
-            ...prev,
-            [stepType]: text
-          }));
-          console.log(`Captured ${stepType}: ${text}`);
-        }
-        
-        if (exerciseStep < flow.steps.length - 1) {
-          const nextStep = exerciseStep + 1;
-          setTimeout(async () => {
-            const nextMessage: Message = {
-              id: (Date.now() + Math.random()).toString(),
-              type: 'exercise',
-              title: flow.steps[nextStep].title,
-              content: flow.steps[nextStep].content,
-              exerciseType: currentExercise.type,
-              color: flow.color,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setMessages(prev => [...prev, nextMessage]);
-            setSuggestions(flow.steps[nextStep].suggestions);
-            setExerciseStep(nextStep);
-            
-            // Save exercise message
-            try {
-              await storageService.addMessage(nextMessage);
-            } catch (error) {
-              console.error('Error saving exercise message:', error);
-            }
-          }, 1500);
-        } else {
-          // Exercise completed - process the data
-          if (currentExercise.type === 'automatic-thoughts') {
-            setTimeout(() => {
-              processAutomaticThoughtExercise();
-            }, 1000);
-          }
-        }
-        return;
-      }
-    }
-
-    // Regular AI chat - check rate limit first
-    try {
-      const rateLimit = await rateLimitService.canMakeRequest();
-      
-      if (rateLimit.isLimitReached) {
-        const limitMessage: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'system',
-          content: rateLimitService.getRateLimitMessage(rateLimit),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        setMessages(prev => [...prev, limitMessage]);
-        await storageService.addMessage(limitMessage);
-        return;
-      }
-
-      // Show typing indicator
-      setIsTyping(true);
-
-      // Get conversation context
-      const recentMessages = await storageService.getLastMessages(20); // Get more for context
-      const context = contextService.assembleContext(recentMessages);
-
-      // Make API call
-      const response = await apiService.getChatCompletionWithContext(context);
-      console.log('Main chat API response:', response);
-
-      setIsTyping(false);
-
-      if (response.success && response.message) {
-        console.log('API Response received:', response.message);
-        // Record successful request for rate limiting
-        await rateLimitService.recordRequest();
-        
-        // Update rate limit status
-        const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
-        setRateLimitStatus(newRateLimitStatus);
-
-        // Create AI response message
-        const aiResponse: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'system',
-          content: response.message,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        // Add to UI with typewriter animation
-        await addAIMessageWithTypewriter(aiResponse);
-
-        // Auto-play TTS if enabled
-        await ttsService.speakIfAutoPlay(response.message);
-
-        // Extract AI-generated suggestions or use contextual fallback
-        const aiSuggestions = extractAISuggestions(response.message);
-        const contextualSuggestions = aiSuggestions.length > 0 
-          ? aiSuggestions 
-          : contextService.generateSuggestions([...recentMessages, userMessage, aiResponse]);
-        setSuggestions(contextualSuggestions);
-      } else {
-        // API error - show fallback response
-        const fallbackContent = response.error || 'I\'m having trouble connecting right now. Please try again in a moment.';
-        const fallbackMessage: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'system',
-          content: apiService.getFallbackResponse(text),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setMessages(prev => [...prev, fallbackMessage]);
-        await storageService.addMessage(fallbackMessage);
-        // Log API error instead of showing in UI
-        console.error('API Error:', response.error || 'Connection failed');
-      }
-    } catch (error) {
-      setIsTyping(false);
-      console.error('Error in handleSend:', error);
-      
-      // Show fallback response for any unexpected errors
-      const fallbackMessage: Message = {
-        id: (Date.now() + Math.random()).toString(),
-        type: 'system',
-        content: apiService.getFallbackResponse(text),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      setMessages(prev => [...prev, fallbackMessage]);
-      try {
-        await storageService.addMessage(fallbackMessage);
-      } catch (storageError) {
-        console.error('Error saving fallback message:', error);
-      }
-      console.error('Unexpected error occurred');
-    }
-  };
-
-  const handleMicToggle = async () => {
-    console.log('=== MIC BUTTON CLICKED ===');
-    console.log('Current recording state:', isRecording);
-    console.log('STT supported:', sttService.isSupported());
-    
-    try {
-      if (isRecording) {
-        console.log('Stopping recording...');
-        await stopRecording();
-      } else {
-        console.log('Starting recording...');
-        await startRecording();
-      }
-    } catch (error) {
-      console.error('Error in handleMicToggle:', error);
-      Alert.alert('Microphone Error', `Failed to toggle microphone: ${error.message}`);
-    }
-  };
-
-  const startRecording = async () => {
-    console.log('startRecording called');
-    console.log('STT service supported:', sttService.isSupported());
-    
-    if (!sttService.isSupported()) {
-      console.log('STT not supported, showing alert');
-      Alert.alert(
-        'Not Supported',
-        'Speech recognition is not supported on this device. Please type your message instead.',
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
-
-    console.log('Starting STT recording...');
-
-    setSttError(null);
-    setPartialTranscript('');
-    
-    const success = await sttService.startRecognition(
-      // On result
-      (result) => {
-        if (result.isFinal) {
-
-          // Final result - just update the input text, don't stop recording
-          setInputText(prev => prev + result.transcript);
-          setPartialTranscript('');
-        } else {
-          // Partial result - don't show as preview (removed blue text)
-
-          setPartialTranscript(result.transcript);
-        }
-      },
-      // On error
-      (error) => {
-        setSttError(error);
-        setIsRecording(false);
-        setIsListening(false);
-        setPartialTranscript('');
-        
-        Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
-      },
-
-      // On end - only update UI when recording truly ends (not restarts)
-      () => {
-        console.log('STT service ended - checking if should update UI');
-        // Only update UI if we're not in continuous recording mode
-        // The service will handle restarts internally
-        if (!isRecording) {
-          console.log('Updating UI - recording ended');
-          setIsListening(false);
-          setPartialTranscript('');
-          resetSoundWaves();
-        }
-      },
-      // On audio level - real-time sound wave data
-      (level, frequencyData) => {
-        console.log('Audio level received:', level, 'Frequency data length:', frequencyData?.length);
-        updateSoundWaves(level, frequencyData);
-      }
-    );
-
-    if (success) {
-      setIsRecording(true);
-      setIsListening(true);
-
-    }
-  };
-
-  // Update sound waves based on real frequency spectrum data
-  const updateSoundWaves = (audioLevel: number, frequencyData?: number[]) => {
-    console.log('updateSoundWaves called - audioLevel:', audioLevel, 'frequencyData:', frequencyData);
-    if (frequencyData && frequencyData.length >= 7) {
-      // Use real frequency data for each bar - animate smoothly to new values
-      frequencyData.forEach((level, index) => {
-        if (index < waveAnimations.length) {
-          const targetHeight = Math.max(0.3, Math.min(1, level));
-          
-          // Animate to the new frequency level with smooth transition
-          Animated.timing(waveAnimations[index], {
-            toValue: targetHeight,
-            duration: 80, // Fast response for real-time feel
-            useNativeDriver: false,
-          }).start();
-        }
-      });
-      
-      // Also update state for immediate rendering (fallback)
-      setAudioLevels(frequencyData.map(level => Math.max(0.3, Math.min(1, level))));
+    // Use onExerciseClick to start the exercise properly
+    if (onExerciseClick) {
+      console.log('Using onExerciseClick to start exercise');
+      onExerciseClick(exercise);
     } else {
-      // Fallback to single level distributed across bars with animation
-      const baseLevel = Math.max(0.3, Math.min(1, audioLevel));
-      const newLevels = Array.from({ length: 7 }, (_, i) => {
-        // Create dynamic variation for organic feel
-        const timeOffset = Date.now() / 200 + i;
-        const variation = Math.sin(timeOffset) * 0.15 + (Math.random() - 0.5) * 0.1;
-        return Math.max(0.3, Math.min(1, baseLevel + variation));
-      });
-      
-      // Animate all bars
-      newLevels.forEach((targetLevel, index) => {
-        Animated.timing(waveAnimations[index], {
-          toValue: targetLevel,
-          duration: 80,
-          useNativeDriver: false,
-        }).start();
-      });
-      
-      setAudioLevels(newLevels);
+      console.error('onExerciseClick not available - cannot start exercise');
     }
-  };
-
-  const resetSoundWaves = () => {
-    // Reset all animations to baseline
-    waveAnimations.forEach(anim => {
-      Animated.timing(anim, {
-        toValue: 0.3,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    });
-    
-    setAudioLevels(Array(7).fill(0.3));
-  };
-
-  const stopRecording = async () => {
-    await sttService.stopRecognition();
-    setIsRecording(false);
-    setIsListening(false);
-    setPartialTranscript('');
-    resetSoundWaves();
-  };
-
-  const cancelRecording = async () => {
-    console.log('Cancelling recording...');
-    try {
-      // Cancel the STT service without processing results
-      await sttService.cancelRecognition();
-      setIsRecording(false);
-      setIsListening(false);
-      setPartialTranscript('');
-      setSttError(null);
-      resetSoundWaves();
-      console.log('Recording cancelled successfully');
-    } catch (error) {
-      console.error('Error cancelling recording:', error);
-      setSttError('Failed to cancel recording');
-
-    }
-  };
-
-
-  // Enhanced message content renderer with rich formatting
-  const renderFormattedContent = (content: string, isWelcome = false) => {
-    const textStyle = isWelcome ? styles.welcomeMessageText : styles.systemMessageText;
-    // Split by lines first, then process each line
-    const lines = content.split('\n');
-    
-    return lines.map((line, lineIndex) => {
-      if (!line.trim()) {
-        return <View key={lineIndex} style={{ height: 8 }} />;
-      }
-      
-      // Check for bold text with **
-      if (line.includes('**')) {
-        const parts = line.split(/(\*\*[^*]+\*\*)/g);
-        return (
-          <View key={lineIndex} style={{ marginVertical: 2 }}>
-            <Text style={textStyle}>
-              {parts.map((part, partIndex) => {
-                if (part.startsWith('**') && part.endsWith('**')) {
-                  const boldText = part.replace(/\*\*/g, '');
-                  return (
-                    <Text key={partIndex} style={{ fontWeight: '700', color: '#1e293b' }}>
-                      {boldText}
-                    </Text>
-                  );
-                }
-                return part;
-              })}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Check for bullet points
-      if (line.startsWith('• ')) {
-        const text = line.replace(/^• /, '');
-        return (
-          <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
-            <View style={{ 
-              width: 6, 
-              height: 6, 
-              borderRadius: 3, 
-              backgroundColor: '#3b82f6', 
-              marginTop: 8, 
-              marginRight: 12 
-            }} />
-            <Text style={[textStyle, { flex: 1 }]}>
-              {text}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Check for numbered lists
-      if (/^\d+\. /.test(line)) {
-        const match = line.match(/^(\d+\.) (.+)$/);
-        if (match) {
-          return (
-            <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
-              <Text style={[textStyle, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
-                {match[1]}
-              </Text>
-              <Text style={[textStyle, { flex: 1 }]}>
-                {match[2]}
-              </Text>
-            </View>
-          );
-        }
-      }
-      
-      // Regular text
-      return (
-        <Text key={lineIndex} style={[textStyle, { marginVertical: 2 }]}>
-          {line}
-        </Text>
-      );
-    });
-  };
-
-
-  // AI-powered exercise detection - parse natural AI suggestions
-  const detectAndParseExerciseSuggestions = (aiMessage: string): string[] => {
-    console.log('=== AI-POWERED EXERCISE DETECTION ===');
-    console.log('AI Message length:', aiMessage.length);
-    console.log('AI Message (first 200 chars):', aiMessage.substring(0, 200));
-    console.log('Full AI Message:', aiMessage);
-    
-    // Look for AI exercise suggestions in natural language format:
-    // "Would you like to try a brief [EXERCISE NAME] exercise that might help with this?"
-    const exerciseSuggestionMatch = aiMessage.match(/Would you like to try a brief (.+?) exercise/i);
-    
-    // Also try alternative patterns for exercise suggestions
-    const alternativePattern1 = aiMessage.match(/try a brief (.+?) exercise that might help/i);
-    const alternativePattern2 = aiMessage.match(/Would you like to try.*?([A-Z][^?]*?).*?exercise/i);
-    
-    // Specific pattern for "Living Closer to My Values" 
-    const valuesPattern = aiMessage.match(/Living Closer to (?:My )?Values/i);
-    
-    // Check for specific exercise names mentioned anywhere in the message
-    const specificExercisePatterns = {
-      'values-clarification': [
-        /Living Closer to (?:My )?Values/i,
-        /values clarification/i,
-        /values exercise/i
-      ],
-      'automatic-thoughts': [
-        /Automatic Thoughts CBT/i,
-        /CBT exercise/i,
-        /thought challenge/i
-      ],
-      'mindfulness': [
-        /Body Scan Mindfulness/i,
-        /mindfulness exercise/i,
-        /body scan/i
-      ],
-      'breathing': [
-        /4-7-8 Breathing/i,
-        /breathing exercise/i,
-        /breath work/i
-      ],
-      'gratitude': [
-        /Gratitude Practice/i,
-        /gratitude exercise/i
-      ],
-      'self-compassion': [
-        /Self-Compassion Break/i,
-        /self-compassion exercise/i
-      ]
-    };
-    
-    let exerciseName = null;
-    if (exerciseSuggestionMatch) {
-      exerciseName = exerciseSuggestionMatch[1].toLowerCase().trim();
-    } else if (alternativePattern1) {
-      exerciseName = alternativePattern1[1].toLowerCase().trim();
-    } else if (alternativePattern2) {
-      exerciseName = alternativePattern2[1].toLowerCase().trim();
-    }
-    
-    console.log('=== EXERCISE DETECTION PATTERNS ===');
-    console.log('Main pattern match:', exerciseSuggestionMatch?.[1]);
-    console.log('Alternative pattern 1:', alternativePattern1?.[1]);
-    console.log('Alternative pattern 2:', alternativePattern2?.[1]);
-    console.log('Values pattern match:', valuesPattern?.[0]);
-    console.log('Final exercise name:', exerciseName);
-    
-    // First check for specific exercise patterns before general parsing
-    for (const [exerciseType, patterns] of Object.entries(specificExercisePatterns)) {
-      for (const pattern of patterns) {
-        if (pattern.test(aiMessage)) {
-          console.log('🎯 DIRECT EXERCISE PATTERN MATCH:', exerciseType, pattern);
-          const exercise = exerciseLibraryData[exerciseType];
-          if (exercise) {
-            setShowExerciseCard(exercise);
-            console.log('✅ Exercise card shown via direct pattern:', exercise.name);
-            return [`✨ Yes, let's try it`, '💭 Tell me more about it first', '🤔 Maybe later'];
-          }
-        }
-      }
-    }
-    
-    if (exerciseName) {
-      console.log('=== EXACT MATCH FOUND ===');
-      console.log('AI suggested exercise name:', exerciseName);
-      
-      // Map exercise names to types - more comprehensive mapping
-      const nameToType = {
-        'automatic thoughts cbt': 'automatic-thoughts',
-        'automatic thoughts': 'automatic-thoughts',
-        'cbt': 'automatic-thoughts',
-        'body scan mindfulness': 'mindfulness', 
-        'body scan': 'mindfulness',
-        'mindfulness': 'mindfulness',
-        '4-7-8 breathing': 'breathing',
-        'breathing': 'breathing',
-        'breath work': 'breathing',
-        'gratitude practice': 'gratitude',
-        'gratitude': 'gratitude',
-        'self-compassion break': 'self-compassion',
-        'self-compassion': 'self-compassion',
-        'living closer to my values': 'values-clarification',
-        'values clarification': 'values-clarification',
-        'values': 'values-clarification',
-        'value': 'values-clarification',
-        'stress relief': 'stress-relief',
-        'stress': 'stress-relief'
-      };
-      
-      const exerciseType = nameToType[exerciseName];
-      console.log('Mapped exercise name to type:', exerciseName, '->', exerciseType);
-      
-      if (exerciseType) {
-        const exercise = exerciseLibraryData[exerciseType];
-        if (exercise) {
-          setShowExerciseCard(exercise);
-          console.log('✅ AI-suggested exercise card shown:', exercise.name, 'for type:', exerciseType);
-          return [`✨ Yes, let's try it`, '💭 Tell me more about it first', '🤔 Maybe later'];
-        }
-      } else {
-        console.warn('❌ Unknown exercise name from AI:', exerciseName);
-        console.log('Available mappings:', Object.keys(nameToType));
-        
-        // Try partial matching for debugging
-        console.log('=== PARTIAL MATCH ATTEMPTS ===');
-        const partialMatches = Object.keys(nameToType).filter(key => 
-          key.includes(exerciseName) || exerciseName.includes(key)
-        );
-        console.log('Partial matches found:', partialMatches);
-        
-        // Check for values-related terms specifically
-        if (exerciseName.includes('value') || exerciseName.includes('living') || exerciseName.includes('closer')) {
-          console.log('💡 This seems to be a values exercise, forcing values-clarification type');
-          const exercise = exerciseLibraryData['values-clarification'];
-          if (exercise) {
-            setShowExerciseCard(exercise);
-            console.log('✅ Values exercise card shown via fallback');
-            return [`✨ Yes, let's try it`, '💭 Tell me more about it first', '🤔 Maybe later'];
-          }
-        }
-      }
-    } else {
-      console.log('No exact "Would you like to try a brief..." pattern found');
-    }
-    
-    // Also look for simpler suggestion patterns
-    const simplePatterns = [
-      /try.*breathing.*exercise/i,
-      /breathing.*technique.*help/i,
-      /mindfulness.*practice.*might.*help/i,
-      /gratitude.*exercise.*would.*help/i,
-      /cbt.*exercise.*for.*thoughts/i,
-      /self-compassion.*practice/i
-    ];
-    
-    for (const pattern of simplePatterns) {
-      if (pattern.test(aiMessage)) {
-        let exerciseType = 'breathing'; // default
-        const lower = aiMessage.toLowerCase();
-        
-        if (lower.includes('breathing') || lower.includes('breath')) {
-          exerciseType = 'breathing';
-        } else if (lower.includes('mindfulness') || lower.includes('meditation')) {
-          exerciseType = 'mindfulness';
-        } else if (lower.includes('gratitude')) {
-          exerciseType = 'gratitude';
-        } else if (lower.includes('cbt') || lower.includes('thoughts')) {
-          exerciseType = 'automatic-thoughts';
-        } else if (lower.includes('compassion')) {
-          exerciseType = 'self-compassion';
-        } else if (lower.includes('stress') || lower.includes('tension')) {
-          exerciseType = 'stress-relief';
-        }
-        
-        const exercise = exerciseLibraryData[exerciseType];
-        if (exercise) {
-          setShowExerciseCard(exercise);
-          console.log('Pattern-matched exercise card shown:', exercise.name);
-          return [`✨ Yes, let's try it`, '💭 Tell me more about it first', '🤔 Maybe later'];
-        }
-        break;
-      }
-    }
-    
-    // Map of exercise detection keywords to actual exercise library data
-    const exerciseKeywords = {
-      'automatic thoughts': 'automatic-thoughts',
-      'thought challenge': 'automatic-thoughts', 
-      'cbt': 'automatic-thoughts',
-      'negative thoughts': 'automatic-thoughts',
-      'thinking patterns': 'automatic-thoughts',
-      'body scan': 'mindfulness',
-      'mindfulness': 'mindfulness',
-      'meditation': 'mindfulness',
-      'breathing': 'breathing',
-      '4-7-8': 'breathing',
-      'breath': 'breathing',
-      'gratitude': 'gratitude',
-      'thankful': 'gratitude',
-      'appreciation': 'gratitude',
-      'self-compassion': 'self-compassion',
-      'self compassion': 'self-compassion',
-      'be kind to yourself': 'self-compassion',
-      'values': 'values-clarification',
-      'living closer to my values': 'values-clarification',
-      'purpose': 'values-clarification',
-      'direction': 'values-clarification',
-      'meaning': 'values-clarification',
-      'stress': 'stress-relief',
-      'stressed': 'stress-relief',
-      'tension': 'stress-relief',
-      'overwhelmed': 'stress-relief'
-    };
-    
-    // Check if AI is suggesting an exercise - much simpler detection
-    const lower = aiMessage.toLowerCase();
-    const containsExerciseKeywords = Object.keys(exerciseKeywords).some(keyword => lower.includes(keyword));
-    const containsSuggestionWords = lower.includes('try') || lower.includes('help') || lower.includes('practice') || 
-                                   lower.includes('exercise') || lower.includes('technique') || lower.includes('would you');
-    
-    const isExerciseSuggestion = containsExerciseKeywords && containsSuggestionWords;
-    
-    console.log('Is Exercise Suggestion:', isExerciseSuggestion);
-    console.log('Contains Exercise Keywords:', containsExerciseKeywords);
-    console.log('Contains Suggestion Words:', containsSuggestionWords);
-    console.log('AI message analysis:', {
-      'contains any exercise keyword': containsExerciseKeywords,
-      'contains suggestion word': containsSuggestionWords,
-      'detected keywords': Object.keys(exerciseKeywords).filter(keyword => lower.includes(keyword)),
-      'message length': aiMessage.length,
-      'first 100 chars': aiMessage.substring(0, 100)
-    });
-    
-    if (!isExerciseSuggestion) {
-      console.log('No exercise suggestion detected');
-      return [];
-    }
-    
-    // Find which exercise is being suggested
-    for (const [keyword, exerciseType] of Object.entries(exerciseKeywords)) {
-      if (lower.includes(keyword)) {
-        const exerciseData = exerciseLibraryData[exerciseType];
-        if (exerciseData) {
-          console.log('Exercise detected:', keyword, exerciseData);
-          setShowExerciseCard(exerciseData);
-          console.log('Exercise card set:', exerciseData);
-          return [`✨ Try ${exerciseData.name}`, '💭 Tell me more first', '🤔 Not right now'];
-        }
-      }
-    }
-    
-    // Generic exercise suggestion - if detected but no specific type found, suggest breathing
-    if (isExerciseSuggestion) {
-      console.log('Generic exercise suggestion detected, showing breathing exercise');
-      const defaultExercise = exerciseLibraryData['breathing'];
-      setShowExerciseCard(defaultExercise);
-      console.log('Default exercise card set:', defaultExercise);
-      return ['✨ Yes, let\'s try it', '💭 Tell me more first', '🤔 Maybe later'];
-    }
-    
-    return [];
-  };
-
-  // Typewriter animation for AI messages - modern and fast
-  const startTypewriterAnimation = (message: Message, fullText: string, speed = 8) => {
-    setCurrentTypewriterMessage(message);
-    setTypewriterText('');
-    setIsTypewriting(true);
-    
-    // Clear any existing timeout
-    if (typewriterTimeoutRef.current) {
-      clearTimeout(typewriterTimeoutRef.current);
-    }
-    
-    let currentIndex = 0;
-    
-    const typeNextCharacter = () => {
-      if (currentIndex < fullText.length) {
-        // Modern approach: type 1-3 characters at once for more natural feel
-        const charsToAdd = Math.min(
-          fullText.length - currentIndex,
-          Math.random() > 0.7 ? 3 : Math.random() > 0.4 ? 2 : 1
-        );
-        
-        currentIndex += charsToAdd;
-        setTypewriterText(fullText.substring(0, currentIndex));
-        
-        // Auto-scroll during typing (less frequently to avoid performance issues)
-        if (currentIndex % 8 === 0) {
-          setTimeout(() => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-          }, 30);
-        }
-        
-        // Variable speed for more natural typing rhythm
-        const variableSpeed = speed + Math.random() * 4;
-        typewriterTimeoutRef.current = setTimeout(typeNextCharacter, variableSpeed);
-      } else {
-        // Animation complete
-        setIsTypewriting(false);
-        setCurrentTypewriterMessage(null);
-        setTypewriterText('');
-        
-        // Update the actual message content
-        setMessages(prevMessages => 
-          prevMessages.map(msg => 
-            msg.id === message.id 
-              ? { ...msg, content: fullText, text: fullText }
-              : msg
-          )
-        );
-        
-        // Final scroll to ensure everything is visible
-        setTimeout(() => {
-          scrollViewRef.current?.scrollToEnd({ animated: true });
-        }, 100);
-      }
-    };
-    
-    typeNextCharacter();
-  };
-
-  // Stop typewriter animation and show full text immediately
-  const skipTypewriterAnimation = () => {
-    if (currentTypewriterMessage && typewriterTimeoutRef.current) {
-      clearTimeout(typewriterTimeoutRef.current);
-      typewriterTimeoutRef.current = null;
-      
-      // Get the full text that should be displayed
-      const fullText = currentTypewriterMessage.content || currentTypewriterMessage.text || '';
-      
-      // Update the message immediately with full content
-      setMessages(prevMessages => 
-        prevMessages.map(msg => 
-          msg.id === currentTypewriterMessage.id 
-            ? { ...msg, content: fullText, text: fullText }
-            : msg
-        )
-      );
-      
-      // Clean up animation state
-      setIsTypewriting(false);
-      setCurrentTypewriterMessage(null);
-      setTypewriterText('');
-    }
-  };
-
-  // Stop typewriter animation if needed (cleanup version)
-  const stopTypewriterAnimation = () => {
-    if (typewriterTimeoutRef.current) {
-      clearTimeout(typewriterTimeoutRef.current);
-      typewriterTimeoutRef.current = null;
-    }
-    setIsTypewriting(false);
-    setCurrentTypewriterMessage(null);
-    setTypewriterText('');
   };
 
   // Helper function to add AI messages with typewriter animation
@@ -2178,10 +847,10 @@ Your decision:`;
       text: ''
     };
     
-    setMessages(prev => [...prev, messageWithEmptyContent]);
+    chatSession.setMessages((prev: Message[]) => [...prev, messageWithEmptyContent]);
     
     // Start typewriter animation
-    startTypewriterAnimation(messageWithEmptyContent, fullText);
+    typewriterAnimation.startTypewriterAnimation(messageWithEmptyContent, fullText);
     
     // Save to storage with full content
     await storageService.addMessage(message);
@@ -2192,256 +861,61 @@ Your decision:`;
     }, 100);
   };
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (typewriterTimeoutRef.current) {
-        clearTimeout(typewriterTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Smooth transition into exercise mode
+  // Smooth transitions for exercise mode (keeping existing)
   const enterExerciseMode = () => {
-    console.log('=== ENTERING EXERCISE MODE ===');
-    console.log('Setting exercise mode to true');
     setExerciseMode(true);
     
-    console.log('Starting background animation...');
-    // Animate background to calm gradient
     Animated.timing(backgroundAnimation, {
       toValue: 1,
       duration: 600,
       useNativeDriver: false,
-    }).start(() => {
-      console.log('Background animation completed');
-    });
+    }).start();
     
-    console.log('Starting header animation...');
-    // Animate header transition
     Animated.timing(headerAnimation, {
       toValue: 1,
       duration: 400,
       useNativeDriver: false,
-    }).start(() => {
-      console.log('Header animation completed');
-    });
+    }).start();
   };
 
-  // Smooth transition out of exercise mode
   const exitExerciseMode = () => {
     setExerciseMode(false);
     
-    // Animate background back to normal
     Animated.timing(backgroundAnimation, {
       toValue: 0,
       duration: 600,
       useNativeDriver: false,
     }).start();
     
-    // Animate header back to normal
     Animated.timing(headerAnimation, {
       toValue: 0,
       duration: 400,
       useNativeDriver: false,
     }).start();
-  };
-
-  // Handle exercise card start
-  const handleExerciseCardStart = (exerciseInfo: any) => {
-    console.log('=== EXERCISE CARD START ===');
-    console.log('Exercise info:', exerciseInfo);
-    
-    // Hide the card first
-    setShowExerciseCard(null);
-    
-    // Create proper exercise object 
-    const exercise = {
-      type: exerciseInfo.type,
-      name: exerciseInfo.name,
-      duration: exerciseInfo.duration,
-      description: exerciseInfo.description || 'AI-guided exercise'
-    };
-    
-    console.log('Exercise object created:', exercise);
-    
-    // Use onExerciseClick to start the exercise properly (this will cause a full restart with the exercise)
-    if (onExerciseClick) {
-      console.log('Using onExerciseClick to start exercise');
-      onExerciseClick(exercise);
-    } else {
-      console.error('onExerciseClick not available - cannot start exercise');
-    }
-  };
-
-  // Extract AI-generated suggestions from response
-  const extractAISuggestions = (aiMessage: string): string[] => {
-    // Look for SUGGESTION_CHIPS: ["option1", "option2", "option3"] pattern
-    const suggestionMatch = aiMessage.match(/SUGGESTION_CHIPS:\s*\[(.*?)\]/);
-    
-    if (suggestionMatch) {
-      try {
-        // Parse the suggestions array
-        const suggestionsStr = suggestionMatch[1];
-        const suggestions = suggestionsStr
-          .split(',')
-          .map(s => s.trim().replace(/['"]/g, ''))
-          .filter(s => s.length > 0 && s.length <= 25); // Reasonable length filter
-        
-        return suggestions.slice(0, 4); // Max 4 suggestions
-      } catch (error) {
-        console.log('Error parsing AI suggestions:', error);
-      }
-    }
-    
-    return []; // Return empty if no suggestions found
-  };
-
-  // Clean AI message content by removing suggestion chips
-  const cleanAIMessageContent = (content: string): string => {
-    return content.replace(/SUGGESTION_CHIPS:\s*\[.*?\]/, '').trim();
-  };
-
-  const renderMessage = (message: Message) => {
-    if (message.type === 'user') {
-      return (
-        <View key={message.id} style={styles.userMessageContainer}>
-          <View style={styles.userMessageWrapper}>
-            <LinearGradient
-              colors={[...colors.gradients.messageUser]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.userMessageBubble}
-            >
-              <Text style={styles.userMessageText}>
-                {message.text}
-              </Text>
-            </LinearGradient>
-          </View>
-        </View>
-      );
-    }
-
-    const isWelcomeMessage = message.type === 'welcome';
-    const turtleContainerStyle = isWelcomeMessage 
-      ? styles.turtleAvatarContainer 
-      : styles.turtleAvatarContainerSmall;
-    const turtleStyle = isWelcomeMessage 
-      ? styles.turtleAvatar 
-      : styles.turtleAvatarSmall;
-    const messageContainerStyle = isWelcomeMessage 
-      ? styles.systemMessageContainer 
-      : styles.systemMessageContainerSmall;
-    const messageContentStyle = isWelcomeMessage 
-      ? styles.systemMessageContent 
-      : styles.systemMessageContentSmall;
-
-    return (
-      <View key={message.id} style={messageContainerStyle}>
-        <View style={styles.systemMessageBubble}>
-          <View style={messageContentStyle}>
-            <View style={turtleContainerStyle}>
-              <Image 
-                source={require('../../assets/images/turtle-simple-3a.png')}
-                style={turtleStyle}
-                contentFit="cover"
-              />
-            </View>
-            
-            {/* Show Anu name for welcome messages */}
-            {isWelcomeMessage && fontsLoaded && (
-              <View style={styles.therapistNameContainer}>
-                <Text style={styles.therapistGreeting}>Hey! I'm </Text>
-                <Text style={styles.therapistName}>Anu</Text>
-              </View>
-            )}
-            
-            <TouchableOpacity 
-              style={isWelcomeMessage ? styles.welcomeMessageTextContainer : styles.systemMessageTextContainer}
-              onPress={isTypewriting && currentTypewriterMessage?.id === message.id ? skipTypewriterAnimation : undefined}
-              activeOpacity={isTypewriting && currentTypewriterMessage?.id === message.id ? 0.7 : 1}
-            >
-              <View>
-                {isTypewriting && currentTypewriterMessage?.id === message.id ? (
-                  // Show typewriter text when animation is active for this message
-                  renderFormattedContent(cleanAIMessageContent(typewriterText), isWelcomeMessage)
-                ) : (
-                  // Show normal content
-                  renderFormattedContent(cleanAIMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸'), isWelcomeMessage)
-                )}
-                {/* Typing cursor for typewriter animation */}
-                {isTypewriting && currentTypewriterMessage?.id === message.id && (
-                  <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                    <AnimatedTypingCursor />
-                    <Text style={{ fontSize: 11, color: '#6b7280', marginLeft: 8, opacity: 0.7 }}>
-                      tap to skip
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-            </View>
-            
-            {/* Message Action Buttons - Only show for non-welcome messages */}
-            {!isWelcomeMessage && (
-              <View style={styles.messageActions}>
-                {playingMessageId === message.id && ttsStatus.isSpeaking ? (
-                  <TouchableOpacity
-                    onPress={handleStopTTS}
-                    style={styles.iconButton}
-                    activeOpacity={0.7}
-                  >
-                    <VolumeX size={16} color="#6b7280" />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => handlePlayTTS(message.id, message.content || message.text || '')}
-                    style={styles.iconButton}
-                    activeOpacity={0.7}
-                  >
-                    <Volume2 size={16} color="#6b7280" />
-                  </TouchableOpacity>
-                )}
-                
-                <TouchableOpacity
-                  onPress={() => handleCopyMessage(message.content || message.text || '')}
-                  style={styles.iconButton}
-                  activeOpacity={0.7}
-                >
-                  <Copy size={16} color="#6b7280" />
-                </TouchableOpacity>
-              </View>
-            )}
-            
-            {/* "or" divider for welcome messages */}
-            {isWelcomeMessage && (
-              <View style={styles.orDividerContainer}>
-                <Text style={styles.orText}>or</Text>
-              </View>
-            )}
-            
-            {/* Prompt Suggestion Card - Only for welcome messages */}
-            {isWelcomeMessage && (
-              <TouchableOpacity 
-                style={styles.promptSuggestionCard}
-                onPress={() => {
-                  setInputText("Suggest something & guide me");
-                }}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.promptSuggestionText}>
-                  Suggest something & guide me
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-      </View>
-    );
   };
 
   // Define animated background gradients
   const normalGradient = [...colors.gradients.primaryLight];
-  const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5']; // Calm green gradient
+  const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5'];
+
+  // Render messages using the new MessageItem component
+  const renderMessage = (message: Message) => (
+    <MessageItem
+      key={message.id}
+      message={message}
+      isTypewriting={typewriterAnimation.isTypewriting}
+      currentTypewriterMessage={typewriterAnimation.currentTypewriterMessage}
+      typewriterText={typewriterAnimation.typewriterText}
+      playingMessageId={ttsControls.playingMessageId}
+      ttsStatus={ttsControls.ttsStatus}
+      onSkipTypewriter={typewriterAnimation.skipTypewriterAnimation}
+      onPlayTTS={ttsControls.handlePlayTTS}
+      onStopTTS={ttsControls.handleStopTTS}
+      onCopyMessage={handleCopyMessage}
+      onPromptSuggestion={handlePromptSuggestion}
+      AnimatedTypingCursor={() => <AnimatedTypingCursor isActive={typewriterAnimation.isTypewriting} />}
+    />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -2451,440 +925,176 @@ Your decision:`;
         resizeMode="cover"
       >
         <View style={styles.backgroundOverlay} />
-      <View style={styles.backgroundGradient}>
-        <Animated.View style={[
-          styles.backgroundGradient,
-          {
-            opacity: backgroundAnimation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 0],
-            }),
-          }
-        ]}>
-          <LinearGradient
-            colors={normalGradient}
-            style={styles.backgroundGradient}
-          />
-        </Animated.View>
-        <Animated.View style={[
-          styles.backgroundGradient,
-          {
-            opacity: backgroundAnimation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            }),
-          }
-        ]}>
-          <LinearGradient
-            colors={exerciseGradient}
-            style={styles.backgroundGradient}
-          />
-        </Animated.View>
-      </View>
-      <KeyboardAvoidingView 
-        style={styles.keyboardView} 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
-      >
-        {/* Header */}
-        <Animated.View style={[
-          styles.header,
-          {
-            backgroundColor: headerAnimation.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['rgba(255, 255, 255, 0)', 'rgba(248, 250, 252, 0.85)'], // Subtle grey instead of blue
-            }),
-          }
-        ]}>
-          <View style={styles.headerContent}>
-            <View style={styles.headerLeft}>
-              <TouchableOpacity 
-                onPress={() => {
+        <View style={styles.backgroundGradient}>
+          <Animated.View style={[
+            styles.backgroundGradient,
+            {
+              opacity: backgroundAnimation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              }),
+            }
+          ]}>
+            <LinearGradient
+              colors={normalGradient as any}
+              style={styles.backgroundGradient}
+            />
+          </Animated.View>
+          <Animated.View style={[
+            styles.backgroundGradient,
+            {
+              opacity: backgroundAnimation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1],
+              }),
+            }
+          ]}>
+            <LinearGradient
+              colors={exerciseGradient as any}
+              style={styles.backgroundGradient}
+            />
+          </Animated.View>
+        </View>
 
-                  if (Platform.OS === 'web') {
-                    // For web, directly call the back handler without confirmation
-                    handleEndSession();
-                  } else {
-                    // Show confirmation dialog before ending session for mobile
-                    Alert.alert(
-                      'End Session?',
-                      'Are you sure you want to end this session? Your conversation will be saved to your chat history.',
-                      [
-                        {
-                          text: 'Cancel',
-                          style: 'cancel',
-                        },
-                        {
-                          text: 'End Session',
-                          style: 'destructive',
-                          onPress: async () => {
-                            console.log('User confirmed session end');
-                            try {
-                              // Save current session to history if there are messages
-                              if (messages.length > 0) {
-                                await storageService.saveToHistory();
-                                console.log('Session saved to history');
-                              }
-                              
-                              // Clear current session
-                              await storageService.clearCurrentSession();
-                              console.log('Current session cleared');
-                              
-                              onBack();
-                              console.log('Session ended successfully');
-                            } catch (err) {
-                              const message = err instanceof Error ? err.message : String(err);
-                              console.error('Error ending session:', err);
-                              Alert.alert('Error', `Failed to end session: ${message}`);
-                            }
-                          },
-                        },
-                      ],
-                      { cancelable: true }
-                    );
-                  }
-                }}
-                style={styles.backButton}
-
-                activeOpacity={0.7}
-              >
-                <ChevronLeft size={20} color="#475569" />
-              </TouchableOpacity>
-              <View style={styles.headerInfo}>
-                <View style={styles.sessionDetails}>
-                  <Text style={[
-                    styles.sessionTitle,
-                    currentExercise && exerciseFlows[currentExercise.type] && styles.exerciseTitle
-                  ]}>
-                    {exerciseMode && currentExercise ? (
-                      exerciseFlows[currentExercise.type]?.name || 'Exercise in Progress'
-                    ) : currentExercise && exerciseFlows[currentExercise.type] ? (
-                      exerciseFlows[currentExercise.type].name 
-                    ) : (
-                      '🌸 Gentle Session'
-                    )}
-                  </Text>
-                  <Text style={styles.sessionSubtitle}>
-                    {currentExercise && exerciseFlows[currentExercise.type] ? (
-                      exerciseFlows[currentExercise.type].useAI && exerciseFlows[currentExercise.type].steps.length > 0 ?
-                        `Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length} • ${exerciseFlows[currentExercise.type].steps[exerciseStep]?.title || currentExercise.duration}` :
-                        `${currentExercise.duration || '5 min'} • Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length}`
-                    ) : (
-                      isLoading ? 'Loading your gentle space...' :
-                      // Don't show API errors in header, just show friendly message
-                      (rateLimitStatus.message || `${Math.max(0, (rateLimitStatus.total || 0) - (rateLimitStatus.used || 0))} messages remaining today`)
-                    )}
-                  </Text>
-                  
-                  {/* Rate limit warning */}
-                  {!currentExercise && typeof rateLimitStatus?.percentage === 'number' && rateLimitStatus.percentage >= 80 && (
-                    <View style={styles.warningContainer}>
-                      <AlertCircle size={14} color="#f59e0b" />
-                      <Text style={styles.warningText}>
-                        {rateLimitStatus.percentage >= 90 
-                          ? `Almost at daily limit! ${Math.max(0, (rateLimitStatus.total || 0) - (rateLimitStatus.used || 0))} left.`
-                          : `${rateLimitStatus.percentage}% of daily limit used.`
-                        }
-                      </Text>
-                    </View>
-                  )}
-                  
-                  {/* Exercise Progress Indicator */}
-                  {exerciseMode && currentExercise && exerciseFlows[currentExercise.type] && exerciseFlows[currentExercise.type].steps && (
-                    <View style={styles.exerciseProgressContainer}>
-                      {exerciseFlows[currentExercise.type].steps.map((_, index) => (
-                        <View
-                          key={index}
-                          style={[
-                            styles.progressDot,
-                            {
-                              backgroundColor: index <= exerciseStep ? '#64748b' : '#d1d5db', // Subtle grey instead of bright blue
-                              transform: [{ scale: index === exerciseStep ? 1.2 : 1 }],
-                            }
-                          ]}
-                        />
-                      ))}
-                    </View>
-                  )}
-                </View>
-              </View>
-            </View>
-          </View>
-        </Animated.View>
-
-        {/* Messages Area */}
-        <ScrollView 
-          ref={scrollViewRef}
-          style={styles.messagesArea}
-          contentContainerStyle={styles.messagesContent}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={true}
-          bounces={true}
-          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+        <KeyboardAvoidingView 
+          style={styles.keyboardView} 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
         >
-          {messages.map(renderMessage)}
-          
-          {/* Exercise Suggestion Card - Library Style */}
-          {showExerciseCard && (
-            <View style={{margin: 15}}>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: 16,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 8,
-                  elevation: 4,
-                  overflow: 'hidden'
-                }}
-                activeOpacity={0.9}
-                onPress={() => handleExerciseCardStart(showExerciseCard)}
-              >
-                {/* Background Image Section */}
-                <View style={{height: 120, position: 'relative'}}>
-                  <Image 
-                    source={showExerciseCard.image}
-                    style={{width: '100%', height: '100%'}}
-                    contentFit="cover"
-                  />
-                  <LinearGradient
-                    colors={[...showExerciseCard.color, `${showExerciseCard.color[1]}80`]}
-                    style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
-                  />
-                  <View style={{position: 'absolute', top: 15, right: 15}}>
-                    <LinearGradient
-                      colors={['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0.95)']}
-                      style={{width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center'}}
-                    >
-                      <showExerciseCard.icon size={20} color={showExerciseCard.color[1]} />
-                    </LinearGradient>
-                  </View>
-                </View>
-
-                {/* Content Section */}
-                <View style={{padding: 16}}>
-                  <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8}}>
-                    <Text style={{fontSize: 18, fontWeight: 'bold', color: '#1f2937', flex: 1}}>
-                      {showExerciseCard.name}
-                    </Text>
-                    <View style={{backgroundColor: '#f3f4f6', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, marginLeft: 8}}>
-                      <Text style={{fontSize: 12, fontWeight: '600', color: '#6b7280'}}>
-                        {showExerciseCard.difficulty}
-                      </Text>
-                    </View>
-                  </View>
-                  
-                  <Text style={{fontSize: 14, color: '#6b7280', lineHeight: 20, marginBottom: 12}}>
-                    {showExerciseCard.description}
-                  </Text>
-                  
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
-                        <Clock size={12} color="#9b9b9b" />
-                        <Text style={{fontSize: 12, color: '#9b9b9b'}}>
-                          {showExerciseCard.duration}
-                        </Text>
-                      </View>
-                      <View style={{width: 1, height: 12, backgroundColor: '#e5e7eb'}} />
-                      <Text style={{fontSize: 12, color: '#9b9b9b'}}>
-                        {showExerciseCard.category}
-                      </Text>
-                    </View>
-                    
-                    <TouchableOpacity
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        setShowExerciseCard(null);
-                      }}
-                      style={{padding: 4}}
-                    >
-                      <X size={16} color="#9b9b9b" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-          
-          {/* Typing Indicator */}
-          {isTyping && (
-            <View style={styles.typingContainer}>
-              <View style={styles.typingBubble}>
-                <View style={styles.typingContent}>
-                  <View style={styles.typingAvatar}>
-                    <Image 
-                      source={require('../../assets/images/turtle-simple-3a.png')}
-                      style={styles.typingTurtleAvatar}
-                      contentFit="cover"
-                    />
-                  </View>
-                  <View style={styles.typingTextContainer}>
-                    <View style={styles.typingDots}>
-                      <View style={styles.typingDot} />
-                      <View style={styles.typingDot} />
-                      <View style={styles.typingDot} />
-                    </View>
-                    <Text style={styles.typingText}>Your therapist is reflecting...</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          )}
-        </ScrollView>
-
-        {/* Suggestion Chips - Hide for welcome screen */}
-        {suggestions.length > 0 && messages.length > 1 && (
-          <View style={styles.suggestionsContainer}>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.suggestionsScroll}
-            >
-              {suggestions.map((suggestion, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handleSend(suggestion)}
-                  style={styles.suggestionChip}
+          {/* Header */}
+          <Animated.View style={[
+            styles.header,
+            {
+              backgroundColor: headerAnimation.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['rgba(255, 255, 255, 0)', 'rgba(248, 250, 252, 0.85)'],
+              }),
+            }
+          ]}>
+            <View style={styles.headerContent}>
+              <View style={styles.headerLeft}>
+                <TouchableOpacity 
+                  onPress={() => chatSession.handleEndSession(onBack)}
+                  style={styles.backButton}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.suggestionText}>
-                    {suggestion}
-                  </Text>
+                  <ChevronLeft size={20} color="#475569" />
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        )}
-
-        {/* Input Area */}
-        <View style={styles.inputContainer}>
-          <View style={styles.inputCard}>
-            <View style={styles.inputRow}>
-              {!isRecording ? (
-                <TextInput
-                  value={inputText}
-                  onChangeText={handleInputTextChange}
-                  placeholder="Type or speak..."
-                  placeholderTextColor="#94a3b8"
-                  multiline
-                  style={[
-                    styles.textInput,
-                    {
-                      height: Math.min(Math.max(48, inputLineCount * 22), 9 * 22),
-                    }
-                  ]}
-                  editable={true}
-                  allowFontScaling={false}
-                  selectionColor="#3b82f6"
-                />
-              ) : (
-                <View style={styles.waveInInputContainer}>
-                  <SoundWaveAnimation 
-                    isRecording={isRecording} 
-                    audioLevels={audioLevels} 
-                  />
+                <View style={styles.headerInfo}>
+                  <View style={styles.sessionDetails}>
+                    <Text style={[
+                      styles.sessionTitle,
+                      currentExercise && exerciseFlows[currentExercise.type] && styles.exerciseTitle
+                    ]}>
+                      {exerciseMode && currentExercise ? (
+                        exerciseFlows[currentExercise.type]?.name || 'Exercise in Progress'
+                      ) : currentExercise && exerciseFlows[currentExercise.type] ? (
+                        exerciseFlows[currentExercise.type].name 
+                      ) : (
+                        '🌸 Gentle Session'
+                      )}
+                    </Text>
+                    <Text style={styles.sessionSubtitle}>
+                      {currentExercise && exerciseFlows[currentExercise.type] ? (
+                        exerciseFlows[currentExercise.type].useAI && exerciseFlows[currentExercise.type].steps.length > 0 ?
+                          `Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length} • ${exerciseFlows[currentExercise.type].steps[exerciseStep]?.title || currentExercise.duration}` :
+                          `${currentExercise.duration || '5 min'} • Step ${exerciseStep + 1} of ${exerciseFlows[currentExercise.type].steps.length}`
+                      ) : (
+                        chatSession.isLoading ? 'Loading your gentle space...' :
+                        `${Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0))} messages remaining today`
+                      )}
+                    </Text>
+                    
+                    {/* Rate limit warning */}
+                    {!currentExercise && typeof chatSession.rateLimitStatus?.percentage === 'number' && chatSession.rateLimitStatus.percentage >= 80 && (
+                      <View style={styles.warningContainer}>
+                        <AlertCircle size={14} color="#f59e0b" />
+                        <Text style={styles.warningText}>
+                          {chatSession.rateLimitStatus.percentage >= 90 
+                            ? `Almost at daily limit! ${Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0))} left.`
+                            : `${chatSession.rateLimitStatus.percentage}% of daily limit used.`
+                          }
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
-              )}
-              
-              {!isRecording ? (
-                <View style={styles.inputButtonsContainer}>
-                  {inputLineCount >= 5 && (
-                    <TouchableOpacity 
-                      onPress={toggleFullscreenInput}
-                      style={styles.expandButton}
-                      activeOpacity={0.7}
-                    >
-                      <Expand size={18} color="#6b7280" />
-                    </TouchableOpacity>
-                  )}
-                  {inputText.trim() ? (
-                    <TouchableOpacity 
-                      onPress={() => handleSend()}
-                      style={styles.sendButton}
-                      activeOpacity={0.7}
-                    >
-                      <ArrowUp size={20} color="#ffffff" />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity 
-                      onPress={handleMicToggle}
-                      style={styles.micButton}
-                      activeOpacity={0.7}
-                    >
-                      <Mic size={24} color="#6b7280" />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              ) : (
-                <View style={styles.recordingActions}>
-                  <TouchableOpacity 
-                    onPress={cancelRecording}
-                    style={styles.recordingButton}
-                    activeOpacity={0.7}
-                  >
-                    <X size={18} color="#3b82f6" />
-                  </TouchableOpacity>
-                  <TouchableOpacity 
-                    onPress={stopRecording}
-                    style={styles.recordingButton}
-                    activeOpacity={0.7}
-                  >
-                    <Check size={18} color="#1d4ed8" />
-                  </TouchableOpacity>
-                </View>
-              )}
+              </View>
             </View>
-          </View>
-          
-        </View>
-      </KeyboardAvoidingView>
+          </Animated.View>
 
-      {/* Fullscreen Input Modal */}
-      <Modal
-        visible={isFullscreenInput}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setIsFullscreenInput(false)}
-      >
-        <SafeAreaView style={styles.fullscreenInputContainer}>
-          <View style={styles.fullscreenInputHeader}>
-            <TouchableOpacity 
-              onPress={() => setIsFullscreenInput(false)}
-              style={styles.fullscreenCloseButton}
-            >
-              <X size={24} color="#6b7280" />
-            </TouchableOpacity>
-            <Text style={styles.fullscreenInputTitle}>Compose Message</Text>
-            <TouchableOpacity 
-              onPress={() => {
-                handleSend();
-                setIsFullscreenInput(false);
-              }}
-              style={[styles.fullscreenSendButton, !inputText.trim() && styles.fullscreenSendButtonDisabled]}
-              disabled={!inputText.trim()}
-            >
-              <ArrowUp size={20} color={inputText.trim() ? "#ffffff" : "#9ca3af"} />
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.fullscreenInputContent}>
-            <TextInput
-              value={inputText}
-              onChangeText={handleInputTextChange}
-              placeholder="Type your message here..."
-              placeholderTextColor="#94a3b8"
-              multiline
-              style={styles.fullscreenTextInput}
-              autoFocus
-              textAlignVertical="top"
-              selectionColor="#3b82f6"
-            />
-          </View>
-        </SafeAreaView>
-      </Modal>
+          {/* Messages Area */}
+          <ScrollView 
+            ref={scrollViewRef}
+            style={styles.messagesArea}
+            contentContainerStyle={styles.messagesContent}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={true}
+            bounces={true}
+            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+          >
+            {chatSession.messages.map(renderMessage)}
+            
+            {/* Exercise Suggestion Card */}
+            {chatSession.showExerciseCard && (
+              <ExerciseCard
+                exercise={chatSession.showExerciseCard}
+                onStart={handleExerciseCardStart}
+                onDismiss={() => chatSession.setShowExerciseCard(null)}
+              />
+            )}
+            
+            {/* Typing Indicator */}
+            {chatSession.isTyping && (
+              <View style={styles.typingContainer}>
+                <View style={styles.typingBubble}>
+                  <View style={styles.typingContent}>
+                    <View style={styles.typingAvatar}>
+                      <Image 
+                        source={require('../../assets/images/turtle-simple-3a.png')}
+                        style={styles.typingTurtleAvatar}
+                        contentFit="cover"
+                      />
+                    </View>
+                    <View style={styles.typingTextContainer}>
+                      <View style={styles.typingDots}>
+                        <View style={styles.typingDot} />
+                        <View style={styles.typingDot} />
+                        <View style={styles.typingDot} />
+                      </View>
+                      <Text style={styles.typingText}>Your therapist is reflecting...</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+          </ScrollView>
 
+          {/* Suggestion Chips */}
+          <SuggestionChips
+            suggestions={chatSession.suggestions}
+            onSuggestionPress={handleSend}
+            isVisible={chatSession.suggestions.length > 0 && (chatSession.messages.length > 1 || exerciseMode)}
+          />
+
+          {/* Input Area */}
+          <ChatInput
+            inputText={inputText}
+            onInputTextChange={handleInputTextChange}
+            onSend={handleSend}
+            isRecording={voiceRecording.isRecording}
+            audioLevels={voiceRecording.audioLevels}
+            onMicToggle={async () => {
+              if (voiceRecording.isRecording) {
+                await voiceRecording.stopRecording();
+              } else {
+                await voiceRecording.startRecording();
+              }
+            }}
+            onStopRecording={voiceRecording.stopRecording}
+            onCancelRecording={voiceRecording.cancelRecording}
+          />
+        </KeyboardAvoidingView>
       </ImageBackground>
     </SafeAreaView>
   );

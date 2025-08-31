@@ -94,7 +94,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           <View style={styles.exercisesList}>
             {/* Morning Mindfulness */}
             <TouchableOpacity
-              onPress={() => onStartSession({ type: 'mindfulness', name: 'Morning Mindfulness', duration: '5 min', description: 'breathing' })}
+              onPress={() => onStartSession({ type: 'morning-mindfulness', name: 'Morning Mindfulness', duration: '8 min', description: 'Start your day with gentle awareness and presence' })}
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
@@ -113,7 +113,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                     <Text style={styles.exerciseName}>Morning Mindfulness</Text>
                     <View style={styles.exerciseMeta}>
                       <Clock size={12} color="#6b7280" />
-                      <Text style={styles.exerciseTime}>5 min breathing</Text>
+                      <Text style={styles.exerciseTime}>8 min mindfulness</Text>
                     </View>
                   </View>
                   <View style={styles.exerciseAction}>

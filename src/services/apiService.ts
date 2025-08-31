@@ -12,6 +12,7 @@ export interface AIResponse {
     completion_tokens: number;
     total_tokens: number;
   };
+  suggestions?: string[];
 }
 
 export interface APIConfig {

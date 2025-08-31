@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { X, Volume2, VolumeX, Play, Settings } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider'; // We'd need to install this
 import { ttsService, TTSSettings, TTSVoice } from '../services/ttsService';
+import { ttsSettingsStyles as styles } from '../styles/components/TTSSettings.styles';
 
 interface TTSSettingsProps {
   visible: boolean;
@@ -253,148 +254,6 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  backgroundGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(226, 232, 240, 0.6)',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1e293b',
-  },
-  closeButton: {
-    padding: 8,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-  },
-  settingCard: {
-    marginBottom: 16,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  settingGradient: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(191, 219, 254, 0.4)',
-  },
-  settingHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-  },
-  settingContent: {
-    padding: 20,
-  },
-  settingInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 4,
-  },
-  settingDescription: {
-    fontSize: 14,
-    color: '#6b7280',
-    lineHeight: 20,
-  },
-  settingValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#3b82f6',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  sliderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  sliderLabel: {
-    fontSize: 12,
-    color: '#6b7280',
-    fontWeight: '500',
-  },
-  sliderWrapper: {
-    flex: 1,
-  },
-  sliderPlaceholder: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#f1f5f9',
-    borderRadius: 8,
-    padding: 4,
-  },
-  sliderButton: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  sliderButtonActive: {
-    backgroundColor: '#3b82f6',
-  },
-  sliderButtonText: {
-    fontSize: 12,
-    color: '#6b7280',
-    fontWeight: '500',
-  },
-  testContainer: {
-    marginTop: 24,
-  },
-  testButton: {
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  testButtonActive: {
-    // Additional styles when active
-  },
-  testButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    gap: 8,
-  },
-  testButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
-});
+
 
 export default TTSSettingsComponent;

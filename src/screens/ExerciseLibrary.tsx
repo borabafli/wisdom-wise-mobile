@@ -53,6 +53,18 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     },
     {
       id: 4,
+      type: 'morning-mindfulness',
+      name: 'Morning Mindfulness',
+      duration: '8 min',
+      description: 'Start your day with gentle awareness and presence',
+      category: 'Mindfulness',
+      difficulty: 'Beginner',
+      icon: Eye,
+      color: ['#E0F2FE', '#BAE6FD'],
+      image: require('../../assets/images/1.jpeg')
+    },
+    {
+      id: 5,
       type: 'gratitude',
       name: 'Gratitude Practice',
       duration: '10 min',
@@ -64,7 +76,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       image: require('../../assets/images/8.jpeg')
     },
     {
-      id: 5,
+      id: 6,
       type: 'self-compassion',
       name: 'Self-Compassion Break',
       duration: '5 min',
@@ -76,7 +88,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       image: require('../../assets/images/9.jpeg')
     },
     {
-      id: 6,
+      id: 7,
       type: 'values-clarification',
       name: 'Living Closer to My Values',
       duration: '15 min',

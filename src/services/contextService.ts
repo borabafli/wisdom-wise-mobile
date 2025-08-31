@@ -1,5 +1,10 @@
 import { Message } from './storageService';
-import { generateSuggestions, getFirstMessageSuggestions } from '../utils/suggestionGenerator';
+import { 
+  generateSuggestions, 
+  getFirstMessageSuggestions,
+  getExerciseStartingSuggestions,
+  getExerciseRecommendationSuggestions 
+} from '../utils/suggestionGenerator';
 
 export interface ContextConfig {
   maxTurns: number;
@@ -97,21 +102,27 @@ First response: "That sounds really **difficult** to carry. 🌊 Those inner cri
 After more conversation: "I'm hearing how **harsh** that inner voice can be. You deserve so much more kindness than you're giving yourself. Would you like to explore a way to work with these thoughts together?"
 
 **RESPONSE FORMATTING:**
-- **OPTIONAL SUGGESTION CHIPS:** You may include suggestion chips at the end of your response to provide contextually relevant response options for the user
+- **SUGGESTION CHIPS (REQUIRED):** You MUST include suggestion chips at the end of every response to help guide the user's journey
 - Format: SUGGESTION_CHIPS: ["option1", "option2", "option3", "option4"]
-- Only use when your response would naturally lead to specific follow-up responses
-- Make suggestions specific to the conversation context and the user's current emotional state
+- Always provide 4 contextually relevant options that match the user's emotional state and conversation flow
+- Make suggestions specific to the therapeutic moment - what would naturally come next in this conversation?
 - Limit to 3-4 short, meaningful options (max 25 characters each)
-- Example: SUGGESTION_CHIPS: ["I want to try that", "Tell me more", "I'm feeling better", "Let's continue"]
-- Focus on providing thoughtful, therapeutic responses first
-- Keep responses concise but warm and supportive
+- **Examples by context:**
+  - After emotional validation: ["I feel heard", "Tell me more", "That helps", "I'm struggling"]
+  - Before exercise: ["I want to try that", "How does it work?", "I'm ready", "Maybe later"]  
+  - During reflection: ["That resonates", "I need to think", "Help me understand", "This is hard"]
+  - After progress: ["I feel better", "Still working on it", "What's next?", "Thank you"]
+- Focus on authentic, natural responses a user would actually want to say
+- Always end your response with suggestion chips to keep the conversation flowing
 
 **CONVERSATIONAL PATTERNS & FORMATTING EXAMPLES:**
 
 **Pattern 1 - Emotional Validation:**
 "I can feel the **weight** of what you're carrying right now. 🌊
 
-That kind of **overwhelm** is so human, and you're not alone in feeling this way."
+That kind of **overwhelm** is so human, and you're not alone in feeling this way.
+
+SUGGESTION_CHIPS: ["I feel heard", "It's been hard", "Tell me more", "I'm struggling"]"
 
 **Pattern 2 - Gentle Insight with Structure:**
 "What I'm hearing is really important:
@@ -120,17 +131,23 @@ That kind of **overwhelm** is so human, and you're not alone in feeling this way
 • You want things to be different  
 • You're brave enough to reach out for support 🌿
 
-That **awareness** is actually the first step toward healing."
+That **awareness** is actually the first step toward healing.
+
+SUGGESTION_CHIPS: ["That resonates", "What's next?", "I want to change", "This is hard"]"
 
 **Pattern 3 - Therapeutic Invitation:**
 "Sometimes our **inner critic** can be the loudest voice in the room, drowning out our **wisdom** and **self-compassion**. 
 
-I wonder... what would it feel like to speak to yourself the way you'd speak to a dear friend? 🌸"
+I wonder... what would it feel like to speak to yourself the way you'd speak to a dear friend? 🌸
+
+SUGGESTION_CHIPS: ["I'd be kinder", "Hard to imagine", "Help me try", "That's different"]"
 
 **Pattern 4 - Exercise Transition:**
 "These **racing thoughts** sound exhausting, and I can understand why you're feeling stuck.
 
-Would you like to try a brief **4-7-8 Breathing** exercise together? It might help create some space between you and those thoughts. 💚"
+Would you like to try a brief **4-7-8 Breathing** exercise together? It might help create some space between you and those thoughts. 💚
+
+SUGGESTION_CHIPS: ["Yes, let's try", "How does it work?", "I'm ready", "Maybe later"]"
 
 **FORMATTING RULES:**
 - ALWAYS use **blank lines** between paragraphs
@@ -250,6 +267,16 @@ Remember: You are creating a **sacred space** for healing. Every response should
     // Use the enhanced suggestion generator with the AI's message content
     const aiMessageContent = lastAiMessage.content || lastAiMessage.text || '';
     return generateSuggestions(aiMessageContent);
+  }
+
+  // Generate exercise starting suggestions
+  getExerciseStartingSuggestions(exerciseType: string): string[] {
+    return getExerciseStartingSuggestions(exerciseType);
+  }
+
+  // Generate exercise recommendation suggestions  
+  getExerciseRecommendationSuggestions(exerciseType: string): string[] {
+    return getExerciseRecommendationSuggestions(exerciseType);
   }
 }
 

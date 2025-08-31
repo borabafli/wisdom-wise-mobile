@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, Modal, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { X, MessageCircle, Clock, Trash2, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { storageService } from '../services/storageService';
+import { chatHistoryStyles as styles } from '../styles/components/ChatHistory.styles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -218,144 +219,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  backgroundGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(226, 232, 240, 0.6)',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1e293b',
-  },
-  closeButton: {
-    padding: 8,
-  },
-  clearAllButton: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.2)',
-  },
-  clearAllText: {
-    color: '#ef4444',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#6b7280',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#374151',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 32,
-  },
-  sessionsList: {
-    paddingVertical: 24,
-  },
-  sessionCard: {
-    marginBottom: 16,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sessionGradient: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(191, 219, 254, 0.4)',
-  },
-  sessionContent: {
-    padding: 20,
-  },
-  sessionInfo: {
-    flex: 1,
-  },
-  sessionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  sessionDate: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#3b82f6',
-    flex: 1,
-    marginLeft: 8,
-  },
-  deleteButton: {
-    padding: 4,
-  },
-  sessionPreview: {
-    fontSize: 16,
-    color: '#374151',
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  sessionMeta: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  metaText: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-});
+
 
 export default ChatHistory;
