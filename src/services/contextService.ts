@@ -218,17 +218,12 @@ Remember: You are creating a **sacred space** for healing. Every response should
 
   // Helper to create welcome message
   createWelcomeMessage(): Message {
-    const welcomeTexts = [
-      "**Hello, gentle soul** 🌸\n\nI'm Anu, your turtle therapist. This is our safe space to explore whatever feels important.\n\n**Would you like to:**\n• Share what's on your mind today\n• Have me guide our session\n• Try a specific practice",
-      "**Welcome, dear one** 🐢\n\nI'm Anu, here to listen and support you. We can move at whatever pace feels right.\n\n**How would you like to start?**\n• Tell me what brought you here\n• Let me ask some gentle questions\n• Explore a mindful exercise together", 
-      "**Greetings, kind heart** 🌿\n\nI'm Anu, your caring companion. Take all the time you need - this space is yours.\n\n**What feels right today?**\n• Sharing something specific\n• Having a guided conversation\n• Trying a therapeutic exercise"
-    ];
-
     return {
       id: Date.now().toString(),
       type: 'system',
-      content: welcomeTexts[Math.floor(Math.random() * welcomeTexts.length)],
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      content: "Tell me what is on your mind?",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      showName: true // Flag to show Anu name
     };
   }
 

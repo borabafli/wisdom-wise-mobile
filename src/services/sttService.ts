@@ -312,6 +312,7 @@ class STTService {
 
   // Monitor audio levels and call callback with frequency spectrum data
   private monitorAudioLevel(): void {
+    console.log('monitorAudioLevel called - analyser:', !!this.analyser, 'callback:', !!this.audioLevelCallback, 'recording:', this.isRecording);
     if (!this.analyser || !this.audioLevelCallback || !this.isRecording) {
       return;
     }
@@ -325,25 +326,51 @@ class STTService {
       
       this.analyser.getByteFrequencyData(dataArray);
       
-      // Get frequency data for different ranges (bass, mid, treble)
-      const bands = 5;
-      const bandSize = Math.floor(bufferLength / bands);
+      // Check for total silence (microphone issues)
+      const totalEnergy = dataArray.reduce((sum, val) => sum + val, 0);
+      if (debugCounter % 120 === 0) { // Every 2 seconds
+        console.log('Total audio energy:', totalEnergy, 'Max possible:', 255 * dataArray.length);
+      }
+      
+      // Get frequency data for different ranges optimized for voice
+      const bands = 7;
       const frequencyData: number[] = [];
+      
+      // Define frequency ranges more suitable for voice (focus on lower frequencies where voice energy is)
+      const voiceRanges = [
+        [0, Math.floor(bufferLength * 0.05)],   // Very low
+        [Math.floor(bufferLength * 0.02), Math.floor(bufferLength * 0.08)],  // Low bass
+        [Math.floor(bufferLength * 0.06), Math.floor(bufferLength * 0.15)],  // Bass
+        [Math.floor(bufferLength * 0.12), Math.floor(bufferLength * 0.25)],  // Low mid (main voice)
+        [Math.floor(bufferLength * 0.2), Math.floor(bufferLength * 0.4)],    // Mid (harmonics)
+        [Math.floor(bufferLength * 0.35), Math.floor(bufferLength * 0.6)],   // High mid
+        [Math.floor(bufferLength * 0.5), Math.floor(bufferLength * 0.8)]     // High
+      ];
       
       for (let i = 0; i < bands; i++) {
         let sum = 0;
-        const start = i * bandSize;
-        const end = Math.min(start + bandSize, bufferLength);
+        const [start, end] = voiceRanges[i];
         
         for (let j = start; j < end; j++) {
           sum += dataArray[j];
         }
         
         const average = sum / (end - start);
-        // Normalize and apply sensitivity
-        const sensitivity = i < 2 ? 4.0 : 3.0; // Higher sensitivity for better response
-        const normalizedLevel = Math.min(1, (average / 255) * sensitivity);
-        frequencyData.push(Math.max(0.2, normalizedLevel));
+        
+        // Log raw data to understand what we're getting
+        if (debugCounter % 120 === 0 && i === 0) { // Log once every 2 seconds
+          console.log('Raw audio data sample:', Array.from(dataArray.slice(start, Math.min(start + 10, end))));
+          console.log('Band', i, 'average:', average, 'out of 255');
+        }
+        
+        // Improved sensitivity calculation with better scaling
+        const baseLevel = average / 255; // 0 to 1
+        const sensitivity = 8.0; // Increased sensitivity
+        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.8); // Power curve for better response
+        const normalizedLevel = Math.min(1.2, amplifiedLevel);
+        
+        // Don't force a minimum - let quiet parts be quiet
+        frequencyData.push(Math.max(0.1, normalizedLevel));
       }
       
       const overallAverage = frequencyData.reduce((sum, level) => sum + level, 0) / frequencyData.length;
@@ -355,6 +382,7 @@ class STTService {
       }
       
       // Pass frequency spectrum data to the callback
+      console.log('Calling audioLevelCallback with level:', overallAverage, 'freq data length:', frequencyData.length);
       this.audioLevelCallback(overallAverage, frequencyData);
       
       // Continue monitoring
@@ -410,6 +438,9 @@ class STTService {
       this.audioRecording = mediaRecorder as any; // Store reference for stopping
       this.isRecording = true;
       
+      // Start audio level monitoring now that recording has begun
+      this.monitorAudioLevel();
+      
       console.log('Web audio recording started successfully');
       return true;
       
@@ -428,6 +459,7 @@ class STTService {
   ): Promise<void> {
     try {
       console.log('🎤 TRANSCRIBING WITH EDGE FUNCTION 🎤');
+      console.log('Audio blob size:', audioBlob.size, 'bytes, type:', audioBlob.type);
       
       // Convert blob to base64 for transmission to Edge Function
       const base64Audio = await this.blobToBase64(audioBlob);
@@ -608,7 +640,7 @@ class STTService {
         const normalizedLevel = Math.min(1, Math.max(0.1, (event.db + 160) / 160));
         
         // Create frequency data for sound wave visualization
-        const frequencyData = Array.from({ length: 5 }, (_, i) => {
+        const frequencyData = Array.from({ length: 7 }, (_, i) => {
           const variance = (Math.random() - 0.5) * 0.3;
           return Math.max(0.1, normalizedLevel + variance);
         });

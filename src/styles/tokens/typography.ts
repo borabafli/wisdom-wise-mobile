@@ -6,12 +6,12 @@
 export const typography = {
   // Font Families (from your existing system)
   fontFamily: {
-    primary: 'Inter', // Clean, readable for UI
-    secondary: 'Poppins', // Friendly, approachable
-    body: 'Nunito', // Warm, comfortable for reading
-    serif: 'Source Serif Pro', // Elegant, authoritative
-    display: 'Lora', // Beautiful for headings
-    decorative: 'Crimson Text', // Sophisticated, calming
+    primary: 'System', // Clean, readable for UI
+    secondary: 'System', // Friendly, approachable
+    body: 'System', // Warm, comfortable for reading
+    serif: 'System', // Elegant, authoritative
+    display: 'System', // Beautiful for headings
+    decorative: 'System', // Sophisticated, calming
     system: 'System', // Fallback
   },
 
@@ -55,37 +55,37 @@ export const typography = {
       fontSize: 32,
       fontWeight: '700',
       lineHeight: 40,
-      fontFamily: 'Lora',
+      fontFamily: 'System',
     },
     h2: {
       fontSize: 28,
       fontWeight: '600', 
       lineHeight: 36,
-      fontFamily: 'Poppins',
+      fontFamily: 'System',
     },
     h3: {
       fontSize: 24,
       fontWeight: '600',
       lineHeight: 32,
-      fontFamily: 'Poppins',
+      fontFamily: 'System',
     },
     h4: {
       fontSize: 20,
       fontWeight: '500',
       lineHeight: 28,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
     h5: {
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 26,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
     h6: {
       fontSize: 16,
       fontWeight: '500',
       lineHeight: 24,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
 
     // Body Text
@@ -93,19 +93,19 @@ export const typography = {
       fontSize: 18,
       fontWeight: '400',
       lineHeight: 28,
-      fontFamily: 'Nunito',
+      fontFamily: 'System',
     },
     body: {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito',
+      fontFamily: 'System',
     },
     bodySmall: {
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 22,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
 
     // UI Text
@@ -113,19 +113,19 @@ export const typography = {
       fontSize: 16,
       fontWeight: '500',
       lineHeight: 22,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
     caption: {
       fontSize: 12,
       fontWeight: '400',
       lineHeight: 18,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
     label: {
       fontSize: 14,
       fontWeight: '500',
       lineHeight: 20,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
 
     // Chat Interface
@@ -133,13 +133,13 @@ export const typography = {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito',
+      fontFamily: 'System',
     },
     chatTimestamp: {
       fontSize: 12,
       fontWeight: '400',
       lineHeight: 18,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
 
     // Welcome & Headers
@@ -147,13 +147,13 @@ export const typography = {
       fontSize: 28,
       fontWeight: '700',
       lineHeight: 36,
-      fontFamily: 'Lora',
+      fontFamily: 'System',
     },
     welcomeSubtitle: {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito',
+      fontFamily: 'System',
     },
 
     // Session Headers
@@ -161,13 +161,13 @@ export const typography = {
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 26,
-      fontFamily: 'Poppins',
+      fontFamily: 'System',
     },
     sessionSubtitle: {
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 22,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
 
     // Action Items
@@ -175,13 +175,13 @@ export const typography = {
       fontSize: 18,
       fontWeight: '600',
       lineHeight: 24,
-      fontFamily: 'Poppins',
+      fontFamily: 'System',
     },
     actionDescription: {
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 20,
-      fontFamily: 'Inter',
+      fontFamily: 'System',
     },
   },
 } as const;

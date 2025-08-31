@@ -45,7 +45,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.turtleGradient}
               />
               <Image 
-                source={require('../../assets/images/turtle11.png')}
+                source={require('../../assets/images/turtle-simple-3a.png')}
                 style={styles.turtleImage}
                 contentFit="contain"
               />

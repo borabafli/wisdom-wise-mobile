@@ -142,12 +142,12 @@ const styles = StyleSheet.create({
   errorMessage: {
     ...typography.textStyles.caption,
     color: colors.text.secondary,
-    fontFamily: 'monospace',
+    fontFamily: 'System',
     marginBottom: spacing[8],
   },
   errorStack: {
     ...typography.textStyles.caption,
     color: colors.text.tertiary,
-    fontFamily: 'monospace',
+    fontFamily: 'System',
   },
 });
