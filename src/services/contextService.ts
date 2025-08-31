@@ -247,42 +247,9 @@ Remember: You are creating a **sacred space** for healing. Every response should
       return getFirstMessageSuggestions();
     }
 
-    // Analyze the AI's message to generate contextual response options
-    const aiText = (lastAiMessage.content || lastAiMessage.text || '').toLowerCase();
-    
-    // If AI is asking a question, provide answers
-    if (aiText.includes('?')) {
-      if (aiText.includes('how are you') || aiText.includes('how do you feel')) {
-        return ["I'm feeling okay", "I'm struggling today", "Mixed feelings", "Better than before"];
-      }
-      if (aiText.includes('would you like to try') && aiText.includes('exercise')) {
-        return ["Yes, let's try it", "Tell me more about it first", "I'm not ready yet", "What would it involve?"];
-      }
-      if (aiText.includes('what') && (aiText.includes('think') || aiText.includes('feel'))) {
-        return ["I think...", "I'm not sure", "It's complicated", "Let me explain"];
-      }
-      if (aiText.includes('tell me more') || aiText.includes('share') || aiText.includes('describe')) {
-        return ["Well...", "It's hard to explain", "Let me try", "Where should I start?"];
-      }
-    }
-
-    // If AI is being supportive, provide receptive responses
-    if (aiText.includes('understand') || aiText.includes('hear you') || aiText.includes('makes sense')) {
-      return ["Thank you", "That means a lot", "I appreciate that", "It helps to talk"];
-    }
-
-    // If AI is offering guidance or suggestions
-    if (aiText.includes('try') || aiText.includes('might help') || aiText.includes('consider')) {
-      return ["I'll try that", "That sounds helpful", "I'm willing to try", "What if it doesn't work?"];
-    }
-
-    // If AI is validating emotions
-    if (aiText.includes('difficult') || aiText.includes('challenging') || aiText.includes('tough')) {
-      return ["It really is", "I'm struggling with it", "Thank you for understanding", "How do I cope?"];
-    }
-
-    // Default contextual responses when no specific pattern matches
-    return ["I see", "Tell me more", "That's helpful", "I understand"];
+    // Use the enhanced suggestion generator with the AI's message content
+    const aiMessageContent = lastAiMessage.content || lastAiMessage.text || '';
+    return generateSuggestions(aiMessageContent);
   }
 }
 
