@@ -79,25 +79,50 @@ const ProfileScreen: React.FC = () => {
         {/* Stats Grid */}
         <View style={styles.statsSection}>
           <View style={styles.statsGrid}>
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <View key={index} style={styles.statCard}>
-                  <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)']}
-                    style={styles.statCardGradient}
-                  >
-                    <View style={styles.statCardContent}>
-                      <View style={styles.statIconContainer}>
-                        <Icon size={18} color="#2563eb" />
-                        <Text style={styles.statValue}>{stat.value}</Text>
+            {/* First Row: Sessions and Streak */}
+            <View style={styles.statsRow}>
+              {stats.slice(0, 2).map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <View key={index} style={styles.statCard}>
+                    <LinearGradient
+                      colors={['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)']}
+                      style={styles.statCardGradient}
+                    >
+                      <View style={styles.statCardContent}>
+                        <View style={styles.statIconContainer}>
+                          <Icon size={18} color="#2563eb" />
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                        </View>
+                        <Text style={styles.statLabel}>{stat.label}</Text>
                       </View>
-                      <Text style={styles.statLabel}>{stat.label}</Text>
-                    </View>
-                  </LinearGradient>
-                </View>
-              );
-            })}
+                    </LinearGradient>
+                  </View>
+                );
+              })}
+            </View>
+            {/* Second Row: Insights and Exercises */}
+            <View style={styles.statsRow}>
+              {stats.slice(2, 4).map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <View key={index + 2} style={styles.statCard}>
+                    <LinearGradient
+                      colors={['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)']}
+                      style={styles.statCardGradient}
+                    >
+                      <View style={styles.statCardContent}>
+                        <View style={styles.statIconContainer}>
+                          <Icon size={18} color="#2563eb" />
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                        </View>
+                        <Text style={styles.statLabel}>{stat.label}</Text>
+                      </View>
+                    </LinearGradient>
+                  </View>
+                );
+              })}
+            </View>
           </View>
         </View>
 

@@ -121,12 +121,14 @@ export const profileScreenStyles = StyleSheet.create({
     marginBottom: spacing.layout.screenPadding,
   },
   statsGrid: {
+    gap: spacing.components.cardGap,
+  },
+  statsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: spacing.components.cardGap,
   },
   statCard: {
-    width: (width - 60) / 2,
+    flex: 1,
     borderRadius: spacing.radius.lg,
     ...shadows.components.actionButton,
   },
