@@ -121,7 +121,7 @@ export const colors = {
     primaryLight: ['#f0f9ff', '#e0f2fe'],
     therapyCalm: ['#dbeafe', '#f0f9ff', '#bfdbfe'],
     turtleWisdom: ['rgba(59, 130, 246, 0.1)', 'rgba(147, 197, 253, 0.08)', 'transparent'],
-    messageUser: ['rgba(59, 130, 246, 0.9)', 'rgba(37, 99, 235, 0.9)'],
+    messageUser: ['#6794C4', '#2883B5'],
     messageSystem: ['rgba(255, 255, 255, 0.95)', 'rgba(248, 250, 252, 0.9)'],
     micButton: ['#3b82f6', '#1d4ed8'],
     stopButton: ['#ef4444', '#dc2626'],

@@ -4,14 +4,14 @@
  */
 
 export const typography = {
-  // Font Families (from your existing system)
+  // Font Families - Nunito as main font
   fontFamily: {
-    primary: 'Inter', // Clean, readable for UI
-    secondary: 'Poppins', // Friendly, approachable
-    body: 'Nunito', // Warm, comfortable for reading
-    serif: 'Source Serif Pro', // Elegant, authoritative
-    display: 'Lora', // Beautiful for headings
-    decorative: 'Crimson Text', // Sophisticated, calming
+    primary: 'Nunito-Regular', // Clean, readable for UI
+    secondary: 'Nunito-Medium', // Friendly, approachable
+    body: 'Nunito-Regular', // Warm, comfortable for reading
+    serif: 'Nunito-Regular', // Elegant, readable
+    display: 'Nunito-SemiBold', // Beautiful for headings
+    decorative: 'Nunito-Regular', // Sophisticated, calming
     system: 'System', // Fallback
   },
 
@@ -55,37 +55,37 @@ export const typography = {
       fontSize: 32,
       fontWeight: '700',
       lineHeight: 40,
-      fontFamily: 'Lora',
+      fontFamily: 'Nunito-Bold',
     },
     h2: {
       fontSize: 28,
       fontWeight: '600', 
       lineHeight: 36,
-      fontFamily: 'Poppins',
+      fontFamily: 'Nunito-SemiBold',
     },
     h3: {
       fontSize: 24,
       fontWeight: '600',
       lineHeight: 32,
-      fontFamily: 'Poppins',
+      fontFamily: 'Nunito-SemiBold',
     },
     h4: {
       fontSize: 20,
       fontWeight: '500',
       lineHeight: 28,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Medium',
     },
     h5: {
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 26,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Medium',
     },
     h6: {
       fontSize: 16,
       fontWeight: '500',
       lineHeight: 24,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Medium',
     },
 
     // Body Text
@@ -93,19 +93,19 @@ export const typography = {
       fontSize: 18,
       fontWeight: '400',
       lineHeight: 28,
-      fontFamily: 'Nunito',
+      fontFamily: 'Nunito-Regular',
     },
     body: {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito',
+      fontFamily: 'Nunito-Regular',
     },
     bodySmall: {
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 22,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Regular',
     },
 
     // UI Text
@@ -113,19 +113,19 @@ export const typography = {
       fontSize: 16,
       fontWeight: '500',
       lineHeight: 22,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Medium',
     },
     caption: {
       fontSize: 12,
       fontWeight: '400',
       lineHeight: 18,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Regular',
     },
     label: {
       fontSize: 14,
       fontWeight: '500',
       lineHeight: 20,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Medium',
     },
 
     // Chat Interface
@@ -133,13 +133,13 @@ export const typography = {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito',
+      fontFamily: 'Nunito-Regular',
     },
     chatTimestamp: {
       fontSize: 12,
       fontWeight: '400',
       lineHeight: 18,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Regular',
     },
 
     // Welcome & Headers
@@ -147,13 +147,13 @@ export const typography = {
       fontSize: 28,
       fontWeight: '700',
       lineHeight: 36,
-      fontFamily: 'Lora',
+      fontFamily: 'Nunito-Bold',
     },
     welcomeSubtitle: {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito',
+      fontFamily: 'Nunito-Regular',
     },
 
     // Session Headers
@@ -161,13 +161,13 @@ export const typography = {
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 26,
-      fontFamily: 'Poppins',
+      fontFamily: 'Nunito-Medium',
     },
     sessionSubtitle: {
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 22,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Regular',
     },
 
     // Action Items
@@ -175,13 +175,13 @@ export const typography = {
       fontSize: 18,
       fontWeight: '600',
       lineHeight: 24,
-      fontFamily: 'Poppins',
+      fontFamily: 'Nunito-SemiBold',
     },
     actionDescription: {
       fontSize: 14,
       fontWeight: '400',
       lineHeight: 20,
-      fontFamily: 'Inter',
+      fontFamily: 'Nunito-Regular',
     },
   },
 } as const;

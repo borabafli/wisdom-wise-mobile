@@ -5,39 +5,39 @@ module.exports = {
     extend: {
       fontFamily: {
         // Primary UI font - Clean, readable for interface elements
-        'sans': ['Inter-Regular', 'system-ui'],
-        'sans-light': ['Inter-Light'],
-        'sans-medium': ['Inter-Medium'],
-        'sans-semibold': ['Inter-SemiBold'],
-        'sans-bold': ['Inter-Bold'],
+        'sans': ['System', 'system-ui'],
+        'sans-light': ['System'],
+        'sans-medium': ['System'],
+        'sans-semibold': ['System'],
+        'sans-bold': ['System'],
         
         // Display font - Friendly, warm for main headings and welcome messages
-        'display': ['Poppins-Regular'],
-        'display-medium': ['Poppins-Medium'],
-        'display-semibold': ['Poppins-SemiBold'],
-        'display-bold': ['Poppins-Bold'],
-        'display-extrabold': ['Poppins-ExtraBold'],
+        'display': ['System'],
+        'display-medium': ['System'],
+        'display-semibold': ['System'],
+        'display-bold': ['System'],
+        'display-extrabold': ['System'],
         
         // Body font - Comfortable reading for longer text content
-        'body': ['Nunito-Regular'],
-        'body-medium': ['Nunito-Medium'],
-        'body-semibold': ['Nunito-SemiBold'],
-        'body-bold': ['Nunito-Bold'],
+        'body': ['System'],
+        'body-medium': ['System'],
+        'body-semibold': ['System'],
+        'body-bold': ['System'],
         
         // Meditation/Therapy font - Calming, therapeutic for exercise content
-        'meditation': ['SourceSerifPro-Regular'],
-        'meditation-semibold': ['SourceSerifPro-SemiBold'],
-        'meditation-bold': ['SourceSerifPro-Bold'],
+        'meditation': ['System'],
+        'meditation-semibold': ['System'],
+        'meditation-bold': ['System'],
         
         // Mindful/Quotes font - Elegant, inspirational for quotes and reflections
-        'mindful': ['Lora-Regular'],
-        'mindful-medium': ['Lora-Medium'],
-        'mindful-semibold': ['Lora-SemiBold'],
-        'mindful-bold': ['Lora-Bold'],
+        'mindful': ['System'],
+        'mindful-medium': ['System'],
+        'mindful-semibold': ['System'],
+        'mindful-bold': ['System'],
         
         // Emphasis font - Gentle serif for special content
-        'accent': ['CrimsonText-Regular'],
-        'accent-semibold': ['CrimsonText-SemiBold'],
+        'accent': ['System'],
+        'accent-semibold': ['System'],
       },
       fontSize: {
         'xs': ['11px', { lineHeight: '16px' }],

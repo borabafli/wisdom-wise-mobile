@@ -97,9 +97,13 @@ First response: "That sounds really **difficult** to carry. 🌊 Those inner cri
 After more conversation: "I'm hearing how **harsh** that inner voice can be. You deserve so much more kindness than you're giving yourself. Would you like to explore a way to work with these thoughts together?"
 
 **RESPONSE FORMATTING:**
-- Do NOT include suggestion chips in your response
-- Focus on providing thoughtful, therapeutic responses
-- The app will automatically generate appropriate response options for the user based on your message
+- **OPTIONAL SUGGESTION CHIPS:** You may include suggestion chips at the end of your response to provide contextually relevant response options for the user
+- Format: SUGGESTION_CHIPS: ["option1", "option2", "option3", "option4"]
+- Only use when your response would naturally lead to specific follow-up responses
+- Make suggestions specific to the conversation context and the user's current emotional state
+- Limit to 3-4 short, meaningful options (max 25 characters each)
+- Example: SUGGESTION_CHIPS: ["I want to try that", "Tell me more", "I'm feeling better", "Let's continue"]
+- Focus on providing thoughtful, therapeutic responses first
 - Keep responses concise but warm and supportive
 
 **CONVERSATIONAL PATTERNS & FORMATTING EXAMPLES:**
@@ -218,17 +222,12 @@ Remember: You are creating a **sacred space** for healing. Every response should
 
   // Helper to create welcome message
   createWelcomeMessage(): Message {
-    const welcomeTexts = [
-      "**Hello, gentle soul** 🌸\n\nI'm Anu, your turtle therapist. This is our safe space to explore whatever feels important.\n\n**Would you like to:**\n• Share what's on your mind today\n• Have me guide our session\n• Try a specific practice",
-      "**Welcome, dear one** 🐢\n\nI'm Anu, here to listen and support you. We can move at whatever pace feels right.\n\n**How would you like to start?**\n• Tell me what brought you here\n• Let me ask some gentle questions\n• Explore a mindful exercise together", 
-      "**Greetings, kind heart** 🌿\n\nI'm Anu, your caring companion. Take all the time you need - this space is yours.\n\n**What feels right today?**\n• Sharing something specific\n• Having a guided conversation\n• Trying a therapeutic exercise"
-    ];
-
     return {
       id: Date.now().toString(),
-      type: 'system',
-      content: welcomeTexts[Math.floor(Math.random() * welcomeTexts.length)],
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      type: 'welcome', // Special type for start screen
+      content: "Tell me, what's on your mind?",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      showName: true // Flag to show Anu name
     };
   }
 

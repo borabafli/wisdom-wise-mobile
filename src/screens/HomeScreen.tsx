@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic } from 'lucide-react-native';
 import { Image } from 'expo-image';
@@ -13,47 +13,32 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   const { currentQuote } = useQuote();
   return (
     <SafeAreaView style={styles.container}>
-      {/* Background watercolor effects */}
-      <LinearGradient
-        colors={[...gradients.background.calm]}
-        style={styles.backgroundGradient}
-      />
-      
-      {/* Background watercolor blobs */}
-      <View style={[styles.watercolorBlob, styles.blob1]} />
-      <View style={[styles.watercolorBlob, styles.blob2]} />
-      <View style={[styles.watercolorBlob, styles.blob3]} />
-      <View style={[styles.watercolorBlob, styles.blob4]} />
+      <ImageBackground
+        source={require('../../assets/images/background2.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.backgroundOverlay} />
+        
+        {/* Background watercolor effects - keeping for subtle overlay */}
+        <LinearGradient
+          colors={[...gradients.background.calm]}
+          style={[styles.backgroundGradient, { opacity: 0.1 }]}
+        />
+        
+        {/* Background watercolor blobs - reduced opacity */}
+        <View style={[styles.watercolorBlob, styles.blob1, { opacity: 0.1 }]} />
+        <View style={[styles.watercolorBlob, styles.blob2, { opacity: 0.1 }]} />
+        <View style={[styles.watercolorBlob, styles.blob3, { opacity: 0.1 }]} />
+        <View style={[styles.watercolorBlob, styles.blob4, { opacity: 0.1 }]} />
 
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <View style={styles.headerText}>
-              <Text style={styles.welcomeTitle}>Welcome back</Text>
-              <Text style={styles.welcomeSubtitle}>How are you feeling today?</Text>
-            </View>
-            
-            {/* Turtle Companion */}
-            <View style={styles.turtleContainer}>
-              <LinearGradient
-                colors={[...gradients.card.subtle]}
-                style={styles.turtleGradient}
-              />
-              <Image 
-                source={require('../../assets/images/turtle11.png')}
-                style={styles.turtleImage}
-                contentFit="contain"
-              />
-            </View>
-          </View>
-        </View>
 
-        {/* Main CTA - Start Guided Session */}
+        {/* Main CTA - Start Guided Session with Turtle at Input Bar Edge */}
         <View style={styles.ctaSection}>
           <TouchableOpacity
             onPress={() => onStartSession()}
@@ -66,14 +51,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             >
               <View style={styles.ctaContent}>
                 <Text style={styles.ctaTitle}>Begin your journey</Text>
-                <Text style={styles.ctaSubtitle}>Let's start a guided session</Text>
+                <Text style={styles.ctaSubtitle}>How are you feeling today?</Text>
                 
-                {/* Minimalist input area */}
-                <View style={styles.inputContainer}>
-                  <MessageCircle size={18} color={colors.text.primary} />
-                  <Text style={styles.inputText}>Type or talk to start...</Text>
-                  <View style={styles.micButton}>
-                    <Mic size={16} color={colors.text.primary} />
+                {/* Container for turtle and input bar */}
+                <View style={styles.inputWithTurtleWrapper}>
+                  {/* Turtle positioned at top edge of input bar */}
+                  <View style={styles.turtleAtBarContainer}>
+                    <Image 
+                      source={require('../../assets/images/turtle-simple-3d.png')}
+                      style={styles.turtleAtBarImage}
+                      contentFit="contain"
+                    />
+                  </View>
+                  
+                  {/* Input area (slightly longer) */}
+                  <View style={styles.inputContainer}>
+                    <MessageCircle size={18} color={colors.text.primary} />
+                    <Text style={styles.inputText}>Type or talk to start...</Text>
+                    <View style={styles.micButton}>
+                      <Mic size={18} color={colors.text.primary} />
+                    </View>
                   </View>
                 </View>
               </View>
@@ -206,7 +203,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 colors={[...gradients.button.primary]}
                 style={styles.quickActionGradient}
               >
-                <BookOpen size={24} color={colors.blue[600]} />
+                <BookOpen size={24} color="#1f2937" />
                 <Text style={styles.quickActionText}>Browse Exercises</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -225,7 +222,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 colors={[...gradients.button.primary]}
                 style={styles.quickActionGradient}
               >
-                <Brain size={24} color={colors.blue[600]} />
+                <Brain size={24} color="#1f2937" />
                 <Text style={styles.quickActionText}>View Insights</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -255,6 +252,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
         </View>
       </ScrollView>
+      
+      </ImageBackground>
     </SafeAreaView>
   );
 };

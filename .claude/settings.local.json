@@ -24,7 +24,10 @@
       "Bash(cd:*)",
       "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/styles/components/**)",
       "Bash(findstr:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

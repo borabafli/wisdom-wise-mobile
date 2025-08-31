@@ -13,6 +13,20 @@ export const homeScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  backgroundOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Light overlay for readability
+    zIndex: 0,
+  },
   backgroundGradient: {
     position: 'absolute',
     top: 0,
@@ -71,106 +85,122 @@ export const homeScreenStyles = StyleSheet.create({
     paddingBottom: spacing.layout.screenPadding,
   },
   headerContent: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.components.cardGap,
   },
   headerText: {
-    flex: 1,
+    alignItems: 'center', // Center the welcome text
   },
   welcomeTitle: {
     ...typography.textStyles.welcomeTitle,
-    color: colors.text.primary,
+    color: '#1f2937', // Darker for better contrast
     marginBottom: spacing[4],
+    textShadowColor: 'rgba(255, 255, 255, 0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    fontWeight: '600',
+    textAlign: 'center', // Center align the text
   },
   welcomeSubtitle: {
     ...typography.textStyles.welcomeSubtitle,
-    color: colors.text.tertiary,
+    color: '#4b5563', // Darker than tertiary, more readable
     fontWeight: typography.fontWeight.medium,
+    textShadowColor: 'rgba(255, 255, 255, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
+    textAlign: 'center', // Center align the text
   },
 
-  // Turtle Companion
-  turtleContainer: {
-    width: 128,
-    height: 128,
-    position: 'relative',
-    justifyContent: 'center',
+  // Turtle and Input Bar Layout
+  inputWithTurtleWrapper: {
     alignItems: 'center',
+    marginTop: spacing[8],
+    position: 'relative',
   },
-  turtleGradient: {
+  turtleAtBarContainer: {
     position: 'absolute',
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    top: -120, // Position turtle so its bottom aligns with top of input bar
+    right: 20, // Move turtle even more to the right
+    zIndex: 2,
+    alignItems: 'center',
+    justifyContent: 'flex-end', // Align turtle to bottom of container
   },
-  turtleImage: {
-    width: 120,
+  turtleAtBarImage: {
+    width: 120, // Smaller turtle
     height: 120,
-    opacity: 0.8,
+    opacity: 0.9,
   },
 
   // CTA Section
   ctaSection: {
     paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[24], // Add top padding for better spacing
     marginBottom: spacing[16],
   },
   ctaButton: {
     borderRadius: spacing.radius['2xl'],
-    ...shadows.components.floating,
     overflow: 'hidden',
-
+    // Removed shadow to eliminate box appearance
   },
   ctaGradient: {
     borderRadius: spacing.radius['2xl'],
     padding: spacing[16],
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Slightly less transparent background
+    // Remove all shadow properties to eliminate the box effect
   },
   ctaContent: {
-    alignItems: 'center',
+    alignItems: 'flex-start', // Align content to the left
   },
   ctaTitle: {
-    ...typography.textStyles.h3,
-    color: colors.text.primary,
+    ...typography.textStyles.h4, // Smaller text style
+    color: '#1f2937', // Darker, more contrasted color
+    marginTop: spacing[4], // Push slightly lower
     marginBottom: spacing[6],
-    textAlign: 'center',
+    textAlign: 'left', // Align to left
     letterSpacing: 0.5,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    fontWeight: '700', // Bolder for better visibility
+    fontSize: 22, // Slightly bigger
   },
   ctaSubtitle: {
     ...typography.textStyles.body,
-    color: 'rgba(30, 41, 59, 0.9)',
+    color: '#374151', // Darker, more readable color
     marginBottom: spacing[14],
-    textAlign: 'center',
+    textAlign: 'left', // Align to left
+    textShadowColor: 'rgba(255, 255, 255, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    fontWeight: '500', // Medium weight for better readability
   },
 
-  // Input Container
+  // Input Container (wider to accommodate turtle)
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Less transparent, more opaque
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
-
     gap: spacing.components.cardGap,
-    minWidth: 280,
+    minWidth: 360, // Slightly wider
+    paddingTop: spacing[8], // Extra top padding for turtle space
     ...shadows.md,
   },
   inputText: {
     flex: 1,
-    ...typography.textStyles.bodySmall,
-    color: colors.text.primary,
-    fontWeight: typography.fontWeight.medium,
+    ...typography.textStyles.body,
+    color: colors.text.tertiary, // Lighter color
+    fontWeight: typography.fontWeight.regular, // Lighter weight
+    textAlign: 'center',
+    fontSize: 17,
   },
   micButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
   },
 
   // Exercises Section
@@ -186,8 +216,11 @@ export const homeScreenStyles = StyleSheet.create({
   },
   sectionTitle: {
     ...typography.textStyles.h4,
-    color: colors.text.primary,
+    color: '#1f2937', // Darker for better contrast
     fontWeight: typography.fontWeight.bold,
+    textShadowColor: 'rgba(255, 255, 255, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   seeAllButton: {
     paddingHorizontal: spacing[6],
@@ -211,7 +244,12 @@ export const homeScreenStyles = StyleSheet.create({
   exerciseCardGradient: {
     borderRadius: spacing.radius.lg,
     padding: spacing.components.cardPadding,
-
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Less transparent
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
   },
   exerciseCardContent: {
     flexDirection: 'row',
@@ -231,8 +269,10 @@ export const homeScreenStyles = StyleSheet.create({
   },
   exerciseName: {
     ...typography.textStyles.actionTitle,
-    color: colors.text.primary,
+    color: '#1f2937', // Darker for better readability in transparent cards
     marginBottom: spacing[2],
+    fontWeight: '600', // Slightly bolder
+    fontSize: 21, // Bigger text for exercise names
   },
   exerciseMeta: {
     flexDirection: 'row',
@@ -240,8 +280,8 @@ export const homeScreenStyles = StyleSheet.create({
     gap: spacing[4],
   },
   exerciseTime: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.tertiary,
+    ...typography.textStyles.body, // Slightly bigger text style
+    color: '#6b7280', // Darker than tertiary for better readability
     fontWeight: typography.fontWeight.medium,
   },
   exerciseAction: {
@@ -286,9 +326,10 @@ export const homeScreenStyles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 96,
     gap: spacing[4],
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
   },
   quickActionText: {
-    color: colors.blue[900],
+    color: '#1f2937',
     ...typography.textStyles.body,
     fontWeight: typography.fontWeight.semibold,
     textAlign: 'center',
@@ -315,12 +356,13 @@ export const homeScreenStyles = StyleSheet.create({
   quoteGradient: {
     padding: spacing[16],
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // More transparent, less white
   },
   quoteIcon: {
     width: 48,
     height: 48,
     borderRadius: spacing.radius.soft,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)', // More transparent icon background
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.components.cardGap,

@@ -7,6 +7,7 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import {
+  Poppins_300Light,
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_600SemiBold,
@@ -36,14 +37,22 @@ import {
 } from '@expo-google-fonts/crimson-text';
 
 export const fontConfig = {
-  // Primary UI font - Clean, readable for interface elements
+  // Primary UI font - Clean, readable for interface elements  
   'Inter-Light': Inter_300Light,
   'Inter-Regular': Inter_400Regular,
   'Inter-Medium': Inter_500Medium,
   'Inter-SemiBold': Inter_600SemiBold,
   'Inter-Bold': Inter_700Bold,
 
+  // Proxima Nova alternative - using Inter as closest match for now
+  'ProximaNova-Light': Inter_300Light,
+  'ProximaNova-Regular': Inter_400Regular,
+  'ProximaNova-Medium': Inter_500Medium,
+  'ProximaNova-SemiBold': Inter_600SemiBold,
+  'ProximaNova-Bold': Inter_700Bold,
+
   // Display font - Friendly, warm for main headings and welcome messages
+  'Poppins-Light': Poppins_300Light,
   'Poppins-Regular': Poppins_400Regular,
   'Poppins-Medium': Poppins_500Medium,
   'Poppins-SemiBold': Poppins_600SemiBold,
