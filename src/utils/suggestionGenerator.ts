@@ -377,8 +377,147 @@ export const getFirstMessageSuggestions = (): string[] => {
     "I'm having trouble sleeping",
     "I feel overwhelmed lately",
     "I need help processing something",
-    "I want to work on myself"
+    "I want to work on myself",
+    "I'm dealing with negativity",
+    "I can't stop worrying",
+    "I'm feeling lost right now",
+    "Work is stressing me out",
+    "I need to talk about something",
+    "I'm having a hard day",
+    "I want to feel better",
+    "My thoughts are racing"
   ];
   
   return shuffleArray(firstMessageSuggestions).slice(0, 4);
+};
+
+/**
+ * Generate contextual exercise starting suggestions based on exercise type and user state
+ */
+export const getExerciseStartingSuggestions = (exerciseType: string, _userContext?: string): string[] => {
+  const exerciseStartingSuggestions: Record<string, string[]> = {
+    'automatic-thoughts': [
+      'At work today',
+      'During a conversation',
+      'Something happened',
+      'I was thinking about...',
+      'Earlier this week',
+      'This morning',
+      'In a meeting',
+      'With family'
+    ],
+    '4-7-8-breathing': [
+      'Feeling anxious',
+      'Very stressed',
+      'Can\'t relax',
+      'Need to calm down',
+      'Overwhelmed',
+      'Mind racing',
+      'Heart pounding',
+      'Can\'t breathe well'
+    ],
+    'self-compassion': [
+      'I\'m hard on myself',
+      'I made a mistake',
+      'I feel like failing',
+      'Disappointed in myself',
+      'I\'m not good enough',
+      'I should be better',
+      'Others are better',
+      'I can\'t do anything right'
+    ],
+    'body-scan': [
+      'Feeling tense',
+      'Body feels heavy',
+      'Can\'t relax',
+      'Shoulders tight',
+      'Headache',
+      'Back pain',
+      'Generally stressed',
+      'Need physical relief'
+    ],
+    'morning-mindfulness': [
+      'Feeling calm 😌',
+      'A bit anxious 😰',
+      'Ready to relax 🌟',
+      'Just checking in 👋',
+      'Need to center myself',
+      'Want to start my day well',
+      'Feeling scattered',
+      'Looking for peace'
+    ],
+    'gratitude': [
+      'My health',
+      'Family & friends',
+      'A warm home',
+      'This moment',
+      'Small joys',
+      'My job',
+      'Nature around me',
+      'Today\'s opportunities'
+    ],
+    'values': [
+      'Connection with others',
+      'Personal growth',
+      'Being helpful',
+      'Creating something',
+      'Learning new things',
+      'Health & wellness',
+      'Family time',
+      'Making a difference'
+    ]
+  };
+
+  // Get suggestions for this exercise type or use default
+  const suggestions = exerciseStartingSuggestions[exerciseType] || [
+    'I want to try this',
+    'I\'m ready to start',
+    'How does this work?',
+    'Let\'s begin'
+  ];
+
+  return shuffleArray(suggestions).slice(0, 4);
+};
+
+/**
+ * Generate suggestions when AI recommends an exercise
+ */
+export const getExerciseRecommendationSuggestions = (exerciseType: string): string[] => {
+  const baseResponses = [
+    'Yes, let\'s try that',
+    'I want to try this',
+    'How does it work?',
+    'I\'m ready',
+    'Maybe later',
+    'Tell me more',
+    'Sounds helpful',
+    'I need this'
+  ];
+
+  // Add exercise-specific responses
+  const exerciseSpecific: Record<string, string[]> = {
+    'automatic-thoughts': [
+      'My thoughts are stuck',
+      'I need help with this',
+      'Yes, let\'s explore',
+      'I want to understand'
+    ],
+    '4-7-8-breathing': [
+      'I need to calm down',
+      'Let\'s breathe together',
+      'This sounds calming',
+      'I\'m feeling anxious'
+    ],
+    'self-compassion': [
+      'I\'m hard on myself',
+      'I need more kindness',
+      'This resonates',
+      'I want to learn this'
+    ]
+  };
+
+  const specificSuggestions = exerciseSpecific[exerciseType] || [];
+  const allSuggestions = [...baseResponses, ...specificSuggestions];
+  
+  return shuffleArray(allSuggestions).slice(0, 4);
 };

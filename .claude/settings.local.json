@@ -27,7 +27,20 @@
       "Bash(npx tsc:*)",
       "Bash(taskkill:*)",
       "Bash(cmd /c:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/services/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)",
+      "Bash(npx supabase login)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/services/**)"
     ],
     "deny": [],
     "ask": []

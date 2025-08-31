@@ -67,3 +67,4 @@ This is an active development project with a detailed PRD (docs/PRD.md) outlinin
 ### Development Guides
 - If requested functionality is too complex handle just within the code, you may advice other suggestions (eg. we should create a database for it in this way...)
 -If a new edge function is needs to be created, also create within /supabase/functions We should always have supabase funtions locally. This is a MUST DO.
+-Follow React native best practices. Instead of having large one component, check for splitting ad re-usability. 

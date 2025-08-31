@@ -119,20 +119,20 @@ export const homeScreenStyles = StyleSheet.create({
   turtleAtBarContainer: {
     position: 'absolute',
     top: -120, // Position turtle so its bottom aligns with top of input bar
-    right: 20, // Move turtle even more to the right
+    right: width < 375 ? 10 : 20, // Less right margin on smaller screens
     zIndex: 2,
     alignItems: 'center',
     justifyContent: 'flex-end', // Align turtle to bottom of container
   },
   turtleAtBarImage: {
-    width: 120, // Smaller turtle
-    height: 120,
+    width: width < 375 ? 100 : 120, // Even smaller turtle on small screens
+    height: width < 375 ? 100 : 120,
     opacity: 0.9,
   },
 
   // CTA Section
   ctaSection: {
-    paddingHorizontal: spacing.layout.screenPadding,
+    paddingHorizontal: width < 375 ? spacing[16] : spacing.layout.screenPadding, // Less padding on smaller screens
     paddingTop: spacing[24], // Add top padding for better spacing
     marginBottom: spacing[16],
   },
@@ -179,11 +179,12 @@ export const homeScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.85)', // Less transparent, more opaque
-    paddingHorizontal: spacing.layout.screenPadding,
+    paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding, // Less padding on smaller screens
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
     gap: spacing.components.cardGap,
-    minWidth: 360, // Slightly wider
+    width: '100%', // Use full available width instead of fixed width
+    maxWidth: width < 375 ? 320 : 360, // Smaller max width for smaller screens
     paddingTop: spacing[8], // Extra top padding for turtle space
     ...shadows.md,
   },

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart, Brain, BookOpen, Clock, Star, Wind, Eye } from 'lucide-react-native';
@@ -12,6 +12,8 @@ interface ExerciseLibraryProps {
 }
 
 const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  
   const exercises = [
     {
       id: 1,
@@ -51,6 +53,18 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     },
     {
       id: 4,
+      type: 'morning-mindfulness',
+      name: 'Morning Mindfulness',
+      duration: '8 min',
+      description: 'Start your day with gentle awareness and presence',
+      category: 'Mindfulness',
+      difficulty: 'Beginner',
+      icon: Eye,
+      color: ['#E0F2FE', '#BAE6FD'],
+      image: require('../../assets/images/1.jpeg')
+    },
+    {
+      id: 5,
       type: 'gratitude',
       name: 'Gratitude Practice',
       duration: '10 min',
@@ -62,7 +76,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       image: require('../../assets/images/8.jpeg')
     },
     {
-      id: 5,
+      id: 6,
       type: 'self-compassion',
       name: 'Self-Compassion Break',
       duration: '5 min',
@@ -74,7 +88,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       image: require('../../assets/images/9.jpeg')
     },
     {
-      id: 6,
+      id: 7,
       type: 'values-clarification',
       name: 'Living Closer to My Values',
       duration: '15 min',
@@ -88,6 +102,14 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   ];
 
   const categories = ['All', 'CBT', 'ACT', 'Mindfulness', 'Breathing', 'Journaling', 'Self-Care'];
+
+  // Filter exercises based on selected category
+  const filteredExercises = useMemo(() => {
+    if (selectedCategory === 'All') {
+      return exercises;
+    }
+    return exercises.filter(exercise => exercise.category === selectedCategory);
+  }, [selectedCategory]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -119,18 +141,19 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.categoriesContainer}
           >
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <TouchableOpacity
                 key={category}
                 style={[
                   styles.categoryButton,
-                  index === 0 && styles.categoryButtonActive
+                  selectedCategory === category && styles.categoryButtonActive
                 ]}
                 activeOpacity={0.8}
+                onPress={() => setSelectedCategory(category)}
               >
                 <Text style={[
                   styles.categoryText,
-                  index === 0 && styles.categoryTextActive
+                  selectedCategory === category && styles.categoryTextActive
                 ]}>
                   {category}
                 </Text>
@@ -141,7 +164,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
         {/* Exercises */}
         <View style={styles.exercisesSection}>
-          {exercises.map((exercise) => {
+          {filteredExercises.map((exercise) => {
             const Icon = exercise.icon;
             return (
               <TouchableOpacity

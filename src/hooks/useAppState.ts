@@ -63,10 +63,10 @@ export const useAppState = () => {
         break;
       case 'suggested-exercises':
         handleStartSession({ 
-          type: 'mindfulness', 
+          type: 'morning-mindfulness', 
           name: 'Morning Mindfulness', 
-          duration: '5 min', 
-          description: 'mindfulness practice' 
+          duration: '8 min', 
+          description: 'Start your day with gentle awareness and presence' 
         });
         break;
       default:
