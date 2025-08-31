@@ -6,7 +6,7 @@ interface ChatMessage {
 }
 
 interface ChatCompletionRequest {
-  action: 'chat' | 'transcribe' | 'healthCheck' | 'getModels';
+  action: 'chat' | 'transcribe' | 'healthCheck' | 'getModels' | 'generateSuggestions';
   messages?: ChatMessage[];
   audioData?: string;
   language?: string;
@@ -14,6 +14,7 @@ interface ChatCompletionRequest {
   model?: string;
   maxTokens?: number;
   temperature?: number;
+  aiResponse?: string; // For suggestion generation
 }
 
 interface AIResponse {
@@ -97,11 +98,27 @@ Deno.serve(async (req: Request) => {
       case 'getModels':
         return await handleGetModels(OPENROUTER_API_KEY);
       
+      case 'generateSuggestions':
+        if (!OPENROUTER_API_KEY) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'OpenRouter API key not configured in environment'
+          }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        return await handleSuggestionGeneration(
+          OPENROUTER_API_KEY,
+          aiResponse || '',
+          model || 'google/gemini-flash-1.5'
+        );
+      
       default:
         return new Response(
           JSON.stringify({ 
             success: false, 
-            error: 'Invalid action. Use: chat, transcribe, healthCheck, or getModels' 
+            error: 'Invalid action. Use: chat, transcribe, healthCheck, getModels, or generateSuggestions' 
           }),
           { 
             status: 400, 

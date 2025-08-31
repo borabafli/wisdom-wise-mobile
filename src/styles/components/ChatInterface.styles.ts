@@ -68,7 +68,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   backButton: {
     padding: spacing[6],
     borderRadius: spacing.radius.soft,
-    backgroundColor: colors.gray[100],
+    backgroundColor: 'rgba(243, 244, 246, 0.7)', // More transparent gray
   },
   headerInfo: {
     flexDirection: 'row',
@@ -446,12 +446,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     gap: spacing[4],
   },
   suggestionChip: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // More transparent
     paddingHorizontal: spacing.components.cardGap + 2,
     paddingVertical: spacing[4] + 1,
     borderRadius: spacing.radius.md,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: 'rgba(209, 213, 219, 0.6)', // Semi-transparent border
   },
   suggestionText: {
     fontSize: 16,
