@@ -441,6 +441,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onSuggestExercise={chatSession.handleSuggestExercise}
             showExerciseButton={shouldShowExerciseButton()}
             isVisible={chatSession.suggestions.length > 0 || shouldShowExerciseButton()}
+            isTyping={chatSession.isTyping}
           />
 
           {/* Input Area */}

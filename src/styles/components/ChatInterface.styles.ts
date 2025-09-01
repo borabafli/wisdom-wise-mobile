@@ -443,15 +443,9 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding,
     paddingBottom: spacing.components.cardGap,
     gap: spacing[4], // Space between the two rows
+    flexWrap: 'wrap', // Allow container to wrap content
   },
-  suggestionsScroll: {
-    marginHorizontal: -spacing.layout.screenPadding, // Extend to screen edges
-    paddingHorizontal: spacing.layout.screenPadding,
-  },
-  suggestionsScrollContent: {
-    gap: spacing[4],
-    paddingRight: spacing.layout.screenPadding, // Extra padding for last item
-  },
+
   suggestionsStack: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -469,6 +463,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: spacing.radius.md,
     borderWidth: 1,
     borderColor: 'rgba(209, 213, 219, 0.6)', // Semi-transparent border
+    flexShrink: 1, // Allow chips to shrink
+    alignSelf: 'flex-start', // Don't stretch to full width
   },
   suggestionText: {
     fontSize: 16,
