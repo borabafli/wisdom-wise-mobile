@@ -13,6 +13,14 @@ export interface Message {
   showName?: boolean;
 }
 
+export interface UserProfile {
+  firstName: string;
+  lastName: string;
+  displayName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ThoughtPattern {
   id: string;
   originalThought: string;
@@ -39,6 +47,7 @@ const STORAGE_KEYS = {
   CURRENT_SESSION: 'chat_current_session',
   CHAT_HISTORY: 'chat_history',
   USER_SETTINGS: 'user_settings',
+  USER_PROFILE: 'user_profile',
   THOUGHT_PATTERNS: 'thought_patterns',
   INSIGHTS_HISTORY: 'insights_history'
 };
@@ -244,6 +253,97 @@ class StorageService {
     }
   }
 
+  // User profile management
+  async getUserProfile(): Promise<UserProfile | null> {
+    try {
+      const profileData = await AsyncStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+      return profileData ? JSON.parse(profileData) : null;
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      return null;
+    }
+  }
+
+  async saveUserProfile(profile: UserProfile): Promise<void> {
+    try {
+      profile.updatedAt = new Date().toISOString();
+      await AsyncStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
+    } catch (error) {
+      console.error('Error saving user profile:', error);
+      throw error;
+    }
+  }
+
+  async updateUserProfile(updates: Partial<Omit<UserProfile, 'createdAt' | 'updatedAt'>>): Promise<UserProfile> {
+    try {
+      let profile = await this.getUserProfile();
+      
+      if (!profile) {
+        // Create new profile if none exists
+        profile = {
+          firstName: updates.firstName || '',
+          lastName: updates.lastName || '',
+          displayName: updates.displayName,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      } else {
+        // Update existing profile
+        profile = {
+          ...profile,
+          ...updates,
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      await this.saveUserProfile(profile);
+      return profile;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
+  }
+
+  async getDisplayName(): Promise<string> {
+    try {
+      const profile = await this.getUserProfile();
+      if (!profile || (!profile.firstName && !profile.lastName)) {
+        return 'Friend'; // Default fallback
+      }
+      
+      if (profile.displayName) {
+        return profile.displayName;
+      }
+      
+      // Generate display name from first/last name
+      const firstName = profile.firstName.trim();
+      const lastName = profile.lastName.trim();
+      
+      if (firstName && lastName) {
+        return `${firstName} ${lastName}`;
+      } else if (firstName) {
+        return firstName;
+      } else if (lastName) {
+        return lastName;
+      }
+      
+      return 'Friend'; // Fallback if somehow both are empty
+    } catch (error) {
+      console.error('Error getting display name:', error);
+      return 'Friend';
+    }
+  }
+
+  async getFirstName(): Promise<string> {
+    try {
+      const profile = await this.getUserProfile();
+      return profile?.firstName?.trim() || 'Friend';
+    } catch (error) {
+      console.error('Error getting first name:', error);
+      return 'Friend';
+    }
+  }
+
   // Debug/utility methods
   async clearAllData(): Promise<void> {
     try {
@@ -251,6 +351,7 @@ class StorageService {
         STORAGE_KEYS.CURRENT_SESSION,
         STORAGE_KEYS.CHAT_HISTORY,
         STORAGE_KEYS.USER_SETTINGS,
+        STORAGE_KEYS.USER_PROFILE,
         STORAGE_KEYS.THOUGHT_PATTERNS,
         STORAGE_KEYS.INSIGHTS_HISTORY
       ]);

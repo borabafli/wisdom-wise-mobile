@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2 } from 'lucide-react-native';
+import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
+import EditProfileModal from '../components/EditProfileModal';
+import { useUserProfile } from '../hooks';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
+  const { displayName, profile } = useUserProfile();
+  
   const stats = [
     { label: 'Sessions', value: '47', icon: Heart },
     { label: 'Streak', value: '7 days', icon: Award },
@@ -19,8 +23,10 @@ const ProfileScreen: React.FC = () => {
 
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   const menuItems = [
+    { icon: Edit3, label: 'Edit Profile', action: () => setShowEditProfile(true) },
     { icon: History, label: 'Chat History', action: () => setShowChatHistory(true) },
     { icon: Volume2, label: 'Voice Settings', action: () => setShowTTSSettings(true) },
     { icon: Bell, label: 'Notifications', badge: '3' },
@@ -67,11 +73,15 @@ const ProfileScreen: React.FC = () => {
                 </LinearGradient>
               </View>
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>Sarah Johnson</Text>
-                <Text style={styles.memberSince}>Member since October 2024</Text>
+                <Text style={styles.userName}>{displayName}</Text>
+                <Text style={styles.memberSince}>
+                  {profile ? `Member since ${new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : 'Welcome to WisdomWise'}
+                </Text>
                 <Text style={styles.premiumBadge}>Premium Member</Text>
               </View>
-              <Settings size={20} color="#6b7280" />
+              <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
+                <Settings size={20} color="#6b7280" />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -197,6 +207,12 @@ const ProfileScreen: React.FC = () => {
       <TTSSettings
         visible={showTTSSettings}
         onClose={() => setShowTTSSettings(false)}
+      />
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        visible={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
       />
     </SafeAreaView>
   );

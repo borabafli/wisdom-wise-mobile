@@ -9,6 +9,7 @@ interface SuggestionChipsProps {
   onSuggestExercise?: () => void;
   showExerciseButton?: boolean;
   isVisible: boolean;
+  isTyping?: boolean;
 }
 
 export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
@@ -16,7 +17,8 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
   onSuggestionPress,
   onSuggestExercise,
   showExerciseButton = false,
-  isVisible
+  isVisible,
+  isTyping = false
 }) => {
   if (!isVisible || (suggestions.length === 0 && !showExerciseButton)) {
     return null;
@@ -24,35 +26,55 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
 
   return (
     <View style={styles.suggestionsContainer}>
-      <View style={styles.suggestionsStack}>
-        {/* Regular suggestion chips */}
-        {suggestions.map((suggestion, index) => (
+      {/* Regular suggestion chips displayed all together */}
+      {suggestions.length > 0 && (
+        <View style={styles.suggestionsStack}>
+          {suggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => !isTyping && onSuggestionPress(suggestion)}
+              style={[
+                styles.suggestionChip,
+                isTyping && { opacity: 0.5 }
+              ]}
+              activeOpacity={isTyping ? 1 : 0.7}
+              disabled={isTyping}
+            >
+              <Text style={[
+                styles.suggestionText,
+                isTyping && { color: '#9CA3AF' }
+              ]}>
+                {suggestion}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+      
+      {/* Exercise suggestion button in separate row */}
+      {showExerciseButton && onSuggestExercise && (
+        <View style={styles.exerciseButtonContainer}>
           <TouchableOpacity
-            key={index}
-            onPress={() => onSuggestionPress(suggestion)}
-            style={styles.suggestionChip}
-            activeOpacity={0.7}
+            onPress={() => !isTyping && onSuggestExercise()}
+            style={[
+              styles.suggestionChip,
+              styles.exerciseSuggestionButton,
+              isTyping && { opacity: 0.5 }
+            ]}
+            activeOpacity={isTyping ? 1 : 0.7}
+            disabled={isTyping}
           >
-            <Text style={styles.suggestionText}>
-              {suggestion}
-            </Text>
-          </TouchableOpacity>
-        ))}
-        
-        {/* Exercise suggestion button */}
-        {showExerciseButton && onSuggestExercise && (
-          <TouchableOpacity
-            onPress={onSuggestExercise}
-            style={[styles.suggestionChip, styles.exerciseSuggestionButton]}
-            activeOpacity={0.7}
-          >
-            <Brain size={16} color="#6B46C1" style={{ marginRight: 6 }} />
-            <Text style={[styles.suggestionText, styles.exerciseSuggestionText]}>
+            <Brain size={16} color={isTyping ? "#9CA3AF" : "#6B46C1"} style={{ marginRight: 6 }} />
+            <Text style={[
+              styles.suggestionText,
+              styles.exerciseSuggestionText,
+              isTyping && { color: '#9CA3AF' }
+            ]}>
               Suggest an exercise
             </Text>
           </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

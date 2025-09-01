@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AlertCircle, RefreshCw } from 'lucide-react-native';
 import { errorBoundaryStyles as styles } from '../styles/components/ErrorBoundary.styles';
+import { colors } from '../styles/tokens';
 
 interface Props {
   children: ReactNode;
