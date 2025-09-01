@@ -446,6 +446,12 @@ export const chatInterfaceStyles = StyleSheet.create({
   suggestionsScroll: {
     gap: spacing[4],
   },
+  suggestionsStack: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing[4],
+    justifyContent: 'flex-start', // Left-aligned instead of centered
+  },
   suggestionChip: {
     backgroundColor: 'rgba(255, 255, 255, 0.85)', // More transparent
     paddingHorizontal: spacing.components.cardGap + 2,
@@ -460,6 +466,16 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontWeight: '500',
     color: colors.text.secondary,
     letterSpacing: 0.2,
+  },
+  exerciseSuggestionButton: {
+    backgroundColor: 'rgba(107, 70, 193, 0.1)', // Light purple background
+    borderColor: 'rgba(107, 70, 193, 0.3)', // Purple border
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  exerciseSuggestionText: {
+    color: '#6B46C1', // Purple text
+    fontWeight: '600',
   },
 
   // Input Area - Modern Glass

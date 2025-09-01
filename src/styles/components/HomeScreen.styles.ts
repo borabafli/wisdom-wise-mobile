@@ -112,14 +112,15 @@ export const homeScreenStyles = StyleSheet.create({
 
   // Turtle and Input Bar Layout
   inputWithTurtleWrapper: {
-    alignItems: 'center',
+    alignItems: 'flex-end', // Align to right side
     marginTop: spacing[8],
     position: 'relative',
+    width: '100%', // Full width to allow proper positioning
   },
   turtleAtBarContainer: {
     position: 'absolute',
     top: -120, // Position turtle so its bottom aligns with top of input bar
-    right: width < 375 ? 10 : 20, // Less right margin on smaller screens
+    right: width < 375 ? 25 : 35, // Moved slightly to the left from edge
     zIndex: 2,
     alignItems: 'center',
     justifyContent: 'flex-end', // Align turtle to bottom of container
@@ -174,17 +175,18 @@ export const homeScreenStyles = StyleSheet.create({
     fontWeight: '500', // Medium weight for better readability
   },
 
-  // Input Container (wider to accommodate turtle)
+  // Input Container (much wider)
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.85)', // Less transparent, more opaque
-    paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding, // Less padding on smaller screens
+    paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
     gap: spacing.components.cardGap,
-    width: '100%', // Use full available width instead of fixed width
-    maxWidth: width < 375 ? 320 : 360, // Smaller max width for smaller screens
+    width: '90%', // Use 90% of available width instead of maxWidth constraint
+    alignSelf: 'flex-end', // Move towards right side
+    marginRight: spacing[8], // Add some margin from edge
     paddingTop: spacing[8], // Extra top padding for turtle space
     ...shadows.md,
   },

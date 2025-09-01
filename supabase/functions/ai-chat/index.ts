@@ -174,16 +174,56 @@ async function handleChatCompletion(
       },
       body: JSON.stringify({
         model: model,
-        messages: messages,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: typeof msg.content === 'string' 
+            ? [{ type: "text", text: msg.content }]
+            : msg.content
+        })),
         max_tokens: maxTokens,
         temperature: temperature,
-        stream: false
+        stream: false,
+        reasoning_effort: "low",
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "therapeutic_response",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                message: {
+                  type: "string",
+                  description: "The therapeutic response message from Anu"
+                },
+                suggestions: {
+                  type: "array",
+                  items: {
+                    type: "string"
+                  },
+                  minItems: 2,
+                  maxItems: 4,
+                  description: "2-4 short user reply suggestions (2-5 words each) that are direct responses to the message"
+                }
+              },
+              required: ["message", "suggestions"],
+              additionalProperties: false
+            }
+          }
+        }
       }),
     });
 
-    const data = await response.json();
-
+    // Handle non-streaming response
     if (!response.ok) {
+      const errorData = await response.json();
+      console.log('🔴 OpenRouter API error response:', { status: response.status, data: errorData, model: model });
+      
+      // Check if the error is related to structured output not being supported
+      if (errorData?.error?.message?.includes('json_schema') || errorData?.error?.message?.includes('response_format')) {
+        console.log('🔴 Model may not support structured output, falling back...');
+        // TODO: Implement fallback without structured output
+      }
       let errorMessage = 'API request failed';
       
       if (response.status === 401) {
@@ -192,9 +232,13 @@ async function handleChatCompletion(
         errorMessage = 'Rate limit exceeded. Please wait a moment before trying again.';
       } else if (response.status === 402) {
         errorMessage = 'Insufficient credits. Please check your OpenRouter account balance.';
-      } else if (data?.error?.message) {
-        errorMessage = data.error.message;
+      } else if (response.status === 400 && errorData?.error?.message?.includes('model')) {
+        errorMessage = `Model '${model}' not found or not available. Please check the model name.`;
+      } else if (errorData?.error?.message) {
+        errorMessage = errorData.error.message;
       }
+      
+      console.error('OpenRouter API error:', { status: response.status, error: errorMessage, fullData: errorData });
 
       return new Response(
         JSON.stringify({ 
@@ -208,12 +252,44 @@ async function handleChatCompletion(
       );
     }
 
+    // Process regular response
+    const data = await response.json();
+    console.log('API response data:', data);
+
     const choice = data.choices?.[0];
-    if (!choice?.message?.content) {
+    console.log('AI choice received:', choice);
+    console.log('Choice message:', choice?.message);
+    console.log('Choice content:', choice?.message?.content);
+    
+    // Handle both string content and structured content array
+    let messageContent = '';
+    
+    if (choice?.message?.content) {
+      if (typeof choice.message.content === 'string') {
+        messageContent = choice.message.content;
+      } else if (Array.isArray(choice.message.content)) {
+        // Extract text from structured content array
+        messageContent = choice.message.content
+          .filter(item => item.type === 'text')
+          .map(item => item.text)
+          .join(' ');
+      }
+    }
+    
+    console.log('🔍 Extracted messageContent type:', typeof messageContent);
+    console.log('🔍 Extracted messageContent preview:', messageContent.substring(0, 300) + '...');
+    
+    if (!messageContent || messageContent.trim().length === 0) {
+      console.error('No content in AI response:', { 
+        choices: data.choices, 
+        choice,
+        messageContent,
+        contentType: typeof choice?.message?.content
+      });
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'No response content received from AI' 
+          error: `No response content received from AI. Model: ${model}. Content type: ${typeof choice?.message?.content}. Response structure: ${JSON.stringify(data).substring(0, 300)}...` 
         }),
         { 
           status: 500, 
@@ -222,16 +298,65 @@ async function handleChatCompletion(
       );
     }
 
-    // Extract suggestion chips and clean message
-    const originalContent: string = (choice.message.content || '').trim();
-    const { cleanedMessage, suggestions } = extractSuggestionsFromContent(originalContent);
+    console.log('🔍 Raw messageContent before parsing:', messageContent);
+    
+    // With structured output, the content should already be parsed JSON
+    let cleanedMessage = '';
+    let suggestions: string[] = [];
+    
+    try {
+      // First, try to extract JSON from markdown code blocks if present
+      let jsonString = messageContent;
+      console.log('🔍 Initial messageContent:', messageContent);
+      
+      const codeBlockMatch = messageContent.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+      if (codeBlockMatch) {
+        jsonString = codeBlockMatch[1].trim();
+        console.log('🔧 Found code block, extracted JSON:', jsonString);
+      } else {
+        console.log('🔍 No code block found, trying direct parsing');
+      }
+      
+      console.log('🔍 About to parse JSON string:', jsonString.substring(0, 300));
+      const jsonResponse = JSON.parse(jsonString);
+      console.log('🔍 Successfully parsed JSON response:', jsonResponse);
+      
+      if (jsonResponse.message && jsonResponse.suggestions) {
+        cleanedMessage = jsonResponse.message.trim();
+        suggestions = Array.isArray(jsonResponse.suggestions) 
+          ? jsonResponse.suggestions.slice(0, 4) 
+          : [];
+        console.log('✅ Successfully extracted from JSON:', { cleanedMessage: cleanedMessage.substring(0, 100), suggestions });
+      } else {
+        console.log('⚠️ JSON missing required fields, using fallback');
+        cleanedMessage = messageContent;
+        suggestions = [];
+      }
+    } catch (e) {
+      console.log('⚠️ Not JSON, using fallback parsing');
+      const result = parseStructuredResponse(messageContent);
+      cleanedMessage = result.cleanedMessage;
+      suggestions = result.suggestions;
+    }
+    
+    console.log('🔍 After parsing - cleanedMessage:', cleanedMessage);
+    console.log('🔍 After parsing - suggestions:', suggestions);
+    
+    // Final validation before sending response
+    if (!cleanedMessage || cleanedMessage.includes('```json')) {
+      console.error('🔴 PARSING FAILED - cleanedMessage still contains raw content!');
+      console.error('🔴 Raw messageContent:', messageContent);
+      console.error('🔴 cleanedMessage:', cleanedMessage);
+    }
 
     const aiResponse: AIResponse = {
       success: true,
-      message: cleanedMessage,
+      message: cleanedMessage || 'Error processing response',
       usage: data.usage,
       suggestions: suggestions.length > 0 ? suggestions : undefined
     };
+    
+    console.log('🔍 Final API response being sent:', aiResponse);
 
     return new Response(
       JSON.stringify(aiResponse),
@@ -326,27 +451,122 @@ async function handleWhisperTranscription(apiKey: string, audioData: string, lan
   }
 }
 
-// Utility: Extract SUGGESTION_CHIPS from the tail of content and return cleaned text + suggestions
-function extractSuggestionsFromContent(content: string): { cleanedMessage: string; suggestions: string[] } {
+// Check if model supports structured output
+function supportsStructuredOutput(model: string): boolean {
+  const supportedModels = [
+    'openai/gpt-4o',
+    'openai/gpt-4o-mini',
+    'openai/gpt-4o-2024-08-06',
+    // Add other supported models as needed
+  ];
+  
+  return supportedModels.some(supportedModel => model.includes(supportedModel.split('/')[1]));
+}
+
+// Parse legacy response with mixed text and embedded suggestions
+function parseLegacyResponse(content: string): { cleanedMessage: string; suggestions: string[] } {
+  console.log('🔍 Parsing legacy response:', content.substring(0, 200) + '...');
+  
   try {
-    const match = content.match(/\s*SUGGESTION_CHIPS:\s*(\[[\s\S]*?\])\s*$/i);
-    if (!match) {
-      return { cleanedMessage: content, suggestions: [] };
+    // Method 1: Try to parse if AI returned pure JSON despite no schema requirement
+    const jsonResponse = JSON.parse(content);
+    if (jsonResponse.message && jsonResponse.suggestions) {
+      console.log('✅ Found JSON in legacy response');
+      return {
+        cleanedMessage: jsonResponse.message.trim(),
+        suggestions: Array.isArray(jsonResponse.suggestions) ? jsonResponse.suggestions.slice(0, 4) : []
+      };
     }
-    const jsonPart = match[1];
-    const parsed = JSON.parse(jsonPart);
-    const suggestions = Array.isArray(parsed)
-      ? parsed
-          .filter((s: any) => typeof s === 'string')
-          .map((s: string) => s.trim())
-          .filter((s: string) => s.length > 0 && s.length <= 25)
-          .slice(0, 4)
-      : [];
-    const cleanedMessage = content.replace(match[0], '').trim();
+  } catch (e) {
+    // Not JSON, continue with text parsing
+  }
+  
+  // Method 2: Look for "suggestions:" text followed by list
+  const suggestionsMatch = content.match(/suggestions:\s*\n((?:\*\s*"[^"]+"\s*\n?)*)/i);
+  if (suggestionsMatch) {
+    const suggestionLines = suggestionsMatch[1];
+    const suggestions = suggestionLines
+      .match(/"([^"]+)"/g)
+      ?.map(s => s.replace(/"/g, '').trim())
+      .filter(s => s.length > 0)
+      .slice(0, 4) || [];
+    
+    const cleanedMessage = content.replace(suggestionsMatch[0], '').replace(/---+/, '').trim();
+    console.log('✅ Parsed suggestions from text format');
     return { cleanedMessage, suggestions };
-  } catch (_e) {
-    // If parsing fails, return original content
-    return { cleanedMessage: content.replace(/\s*SUGGESTION_CHIPS:\s*\[[\s\S]*?\]\s*$/i, '').trim(), suggestions: [] };
+  }
+  
+  // Method 3: Remove any visible suggestion formatting and return message only
+  const cleaned = content
+    .replace(/---+/g, '')
+    .replace(/suggestions:\s*\n(?:\*\s*"[^"]*"\s*\n?)*/gi, '')
+    .trim();
+  
+  console.log('⚠️ No structured suggestions found, returning cleaned text');
+  return { cleanedMessage: cleaned, suggestions: [] };
+}
+
+// Parse structured JSON response from OpenRouter's json_schema
+function parseStructuredResponse(content: string): { cleanedMessage: string; suggestions: string[] } {
+  console.log('🔍 Parsing structured JSON response:', content.substring(0, 200) + '...');
+  
+  try {
+    // With structured outputs, the content should always be valid JSON
+    const jsonResponse = JSON.parse(content);
+    
+    if (jsonResponse.message && jsonResponse.suggestions) {
+      console.log('✅ Successfully parsed structured JSON response');
+      
+      const suggestions = Array.isArray(jsonResponse.suggestions)
+        ? jsonResponse.suggestions
+            .filter((s: any) => typeof s === 'string')
+            .map((s: string) => s.trim())
+            .filter((s: string) => s.length > 0 && s.length <= 30) // Allow slightly longer
+            .slice(0, 4)
+        : [];
+      
+      return {
+        cleanedMessage: jsonResponse.message.trim(),
+        suggestions
+      };
+    } else {
+      console.log('⚠️ JSON structure missing required fields:', jsonResponse);
+    }
+  } catch (e) {
+    console.log('❌ Failed to parse structured response:', e);
+    console.log('Raw content:', content);
+    
+    // Enhanced fallback: try to extract suggestions from bullet points or lines
+    const lines = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const suggestions: string[] = [];
+    let messageLines: string[] = [];
+    let inSuggestionMode = false;
+    
+    for (const line of lines) {
+      // Check if this line indicates suggestions start
+      if (line.toLowerCase().includes('suggestions') || line.match(/^\*\s+/)) {
+        inSuggestionMode = true;
+      }
+      
+      if (inSuggestionMode && line.match(/^\*\s+(.+)/)) {
+        // Extract suggestion from bullet point
+        const suggestion = line.replace(/^\*\s+/, '').replace(/"/g, '').trim();
+        if (suggestion.length > 0 && suggestion.length <= 30) {
+          suggestions.push(suggestion);
+        }
+      } else if (!inSuggestionMode) {
+        // Add to message if not in suggestion mode
+        messageLines.push(line);
+      }
+    }
+    
+    const cleanedMessage = messageLines.join(' ').trim();
+    console.log('🔧 Fallback parsing extracted:', { cleanedMessage: cleanedMessage.substring(0, 100), suggestions });
+    
+    return {
+      cleanedMessage: cleanedMessage || content.trim(),
+      suggestions: suggestions.slice(0, 4)
+    };
   }
 }
 
