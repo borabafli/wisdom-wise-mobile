@@ -33,7 +33,7 @@ class APIService {
     model: API_CONFIG.AI_MODEL,
     maxTokens: API_CONFIG.MAX_TOKENS,
     temperature: API_CONFIG.TEMPERATURE,
-    timeout: 30000 // 30 second timeout
+    timeout: 60000 // 60 second timeout for streaming
   };
 
   constructor() {
@@ -85,6 +85,17 @@ class APIService {
     }
 
     try {
+      console.log('🚀 API Request Details:', {
+        model: this.config.model,
+        maxTokens: this.config.maxTokens,
+        temperature: this.config.temperature,
+        messagesCount: messages.length
+      });
+      
+      // Alert to make sure we see this
+      console.log('=== SENDING REQUEST TO EDGE FUNCTION ===');
+      console.log('Model:', this.config.model);
+      console.log('Expected: openai/gpt-5-nano');
 
       const response = await this.client.post('/ai-chat', {
         action: 'chat',
@@ -94,10 +105,35 @@ class APIService {
         temperature: this.config.temperature
       });
 
+      console.log('📥 Raw API Response:', {
+        status: response.status,
+        data: response.data,
+        model: this.config.model,
+        maxTokens: this.config.maxTokens
+      });
+      
+      // Check if response was truncated
+      if (response.data.usage) {
+        console.log('📊 Token Usage:', {
+          prompt_tokens: response.data.usage.prompt_tokens,
+          completion_tokens: response.data.usage.completion_tokens,
+          total_tokens: response.data.usage.total_tokens,
+          max_tokens: this.config.maxTokens
+        });
+      }
+
       // Edge Function returns the response directly in the expected format
       return response.data;
 
     } catch (error: any) {
+      console.error('❌ API Request Failed:', {
+        model: this.config.model,
+        error: error.message,
+        responseData: error.response?.data,
+        responseStatus: error.response?.status,
+        responseHeaders: error.response?.headers
+      });
+
       // Handle different types of errors
       if (error.response?.data) {
         // Edge Function returns errors in our expected format

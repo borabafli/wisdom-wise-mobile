@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heart, Brain, BookOpen, Clock, Star, Wind, Eye } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
+import { exercisesArray } from '../data/exerciseLibrary';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,92 +15,8 @@ interface ExerciseLibraryProps {
 const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   
-  const exercises = [
-    {
-      id: 1,
-      type: 'automatic-thoughts',
-      name: 'Recognizing Automatic Thoughts',
-      duration: '15 min',
-      description: 'Identify and reframe negative thought patterns with CBT',
-      category: 'CBT',
-      difficulty: 'Intermediate',
-      icon: Brain,
-      color: ['#B5A7C6', '#D4B5D0'],
-      image: require('../../assets/images/4.jpeg')
-    },
-    {
-      id: 2,
-      type: 'breathing',
-      name: '4-7-8 Breathing',
-      duration: '5 min',
-      description: 'Calm your nervous system with rhythmic breathing',
-      category: 'Breathing',
-      difficulty: 'Beginner',
-      icon: Wind,
-      color: ['#8FA5B3', '#C3D9E6'],
-      image: require('../../assets/images/5.jpeg')
-    },
-    {
-      id: 3,
-      type: 'mindfulness',
-      name: 'Body Scan',
-      duration: '10 min',
-      description: 'Release tension through mindful awareness',
-      category: 'Mindfulness',
-      difficulty: 'Beginner',
-      icon: Eye,
-      color: ['#95B99C', '#B8C5A6'],
-      image: require('../../assets/images/7.jpeg')
-    },
-    {
-      id: 4,
-      type: 'morning-mindfulness',
-      name: 'Morning Mindfulness',
-      duration: '8 min',
-      description: 'Start your day with gentle awareness and presence',
-      category: 'Mindfulness',
-      difficulty: 'Beginner',
-      icon: Eye,
-      color: ['#E0F2FE', '#BAE6FD'],
-      image: require('../../assets/images/1.jpeg')
-    },
-    {
-      id: 5,
-      type: 'gratitude',
-      name: 'Gratitude Practice',
-      duration: '10 min',
-      description: 'Shift focus to positive moments and appreciation',
-      category: 'Mindfulness',
-      difficulty: 'Beginner',
-      icon: BookOpen,
-      color: ['#FFD4BA', '#FFE5D4'],
-      image: require('../../assets/images/8.jpeg')
-    },
-    {
-      id: 6,
-      type: 'self-compassion',
-      name: 'Self-Compassion Break',
-      duration: '5 min',
-      description: 'Practice kindness towards yourself',
-      category: 'Self-Care',
-      difficulty: 'Beginner',
-      icon: Heart,
-      color: ['#E8B5A6', '#F5E6D3'],
-      image: require('../../assets/images/9.jpeg')
-    },
-    {
-      id: 7,
-      type: 'values-clarification',
-      name: 'Living Closer to My Values',
-      duration: '15 min',
-      description: 'Discover what truly matters to you and align your actions (ACT)',
-      category: 'ACT',
-      difficulty: 'Intermediate',
-      icon: Star,
-      color: ['#D4C5B9', '#E5E5E5'],
-      image: require('../../assets/images/2.jpeg')
-    }
-  ];
+  // Use unified exercises from exerciseLibrary.ts
+  const exercises = exercisesArray;
 
   const categories = ['All', 'CBT', 'ACT', 'Mindfulness', 'Breathing', 'Journaling', 'Self-Care'];
 

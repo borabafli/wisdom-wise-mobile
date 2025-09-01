@@ -10,16 +10,19 @@ export const API_CONFIG = {
 
   
   // Rate limiting
-  DEFAULT_DAILY_LIMIT: 300,
+  DEFAULT_DAILY_LIMIT: 800,
   
 
-  // AI Model settings
-  AI_MODEL: 'google/gemini-flash-1.5', // Stable and available
-  // Alternative: 'google/gemini-2.5-flash' // Latest version (if available)
-  // Premium options:
+  // AI Model settings - Using Gemini 2.5 Flash (very fast)
+  AI_MODEL: 'google/gemini-2.5-flash-lite', // Very fast and efficient
+  // Alternative models (backup options):
+  // AI_MODEL: 'openai/gpt-5-nano', // Had token limit issues
+  // AI_MODEL: 'openai/gpt-4o-mini', // Reliable fallback
+  // AI_MODEL: 'openai/gpt-4o', // More capable but more expensive  
   // AI_MODEL: 'anthropic/claude-3-haiku', // Excellent for therapy conversations
+  // AI_MODEL: 'google/gemini-flash-1.5', // Stable but inconsistent with formats
   // AI_MODEL: 'anthropic/claude-3.5-sonnet', // Best quality (more expensive)
-  MAX_TOKENS: 500,
+  MAX_TOKENS: 1500, // Good balance for mini with suggestions
   TEMPERATURE: 0.7,
   
   // Context settings
