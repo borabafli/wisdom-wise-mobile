@@ -25,7 +25,7 @@ export const useExerciseFlow = () => {
       console.log('Generating and starting dynamic exercise:', currentExercise.type);
       
       // Get predefined exercise flow
-      const flow = getExerciseFlow(currentExercise.type, currentExercise.name);
+      const flow = getExerciseFlow(currentExercise.type);
       
       if (!flow || !flow.steps || flow.steps.length === 0) {
         console.error('Failed to generate exercise flow, falling back to simple chat');
@@ -40,7 +40,7 @@ export const useExerciseFlow = () => {
       const currentStep = flow.steps[0];
       
       // Use the rich exercise context system for better suggestions
-      const exerciseContext = contextService.assembleExerciseContext(
+      const exerciseContext = await contextService.assembleExerciseContext(
         [], // No previous messages for first step
         flow,
         1, // Step 1
@@ -133,7 +133,7 @@ export const useExerciseFlow = () => {
       
       // Build exercise context using new contextService method with appropriate prompt
       const recentMessages = await storageService.getLastMessages(10);
-      const exerciseContext = contextService.assembleExerciseContext(
+      const exerciseContext = await contextService.assembleExerciseContext(
         recentMessages, 
         flow, 
         exerciseStep + 1, 

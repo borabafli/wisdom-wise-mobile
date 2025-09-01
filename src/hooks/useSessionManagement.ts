@@ -19,19 +19,19 @@ export const useSessionManagement = () => {
       
       // Create new conversation with welcome message
       const { contextService } = await import('../services/contextService');
-      const welcomeMessage = contextService.createWelcomeMessage();
-      
+      const welcomeMessage = await contextService.createWelcomeMessage();
+
       // Save welcome message to storage
       await storageService.addMessage(welcomeMessage);
-      
+
       return [welcomeMessage];
     } catch (error) {
       console.error('Error creating fresh chat session:', error);
-      
+
       // Fallback to local welcome message
       const { contextService } = await import('../services/contextService');
-      const welcomeMessage = contextService.createWelcomeMessage();
-      
+      const welcomeMessage = await contextService.createWelcomeMessage();
+
       return [welcomeMessage];
     } finally {
       setIsLoading(false);

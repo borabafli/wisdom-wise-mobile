@@ -1,4 +1,4 @@
-import { Message } from './storageService';
+import { Message, storageService } from './storageService';
 import { 
   generateSuggestions, 
   getFirstMessageSuggestions,
@@ -15,7 +15,7 @@ export interface ContextConfig {
 class ContextService {
   private config: ContextConfig = {
     maxTurns: 10, // Last 10 message pairs for context
-    systemPrompt: `You're Anu, a wise turtle therapist. Keep responses clear, warm, and structured.
+    systemPrompt: `You're Anu, a wise turtle therapist. You know the person you're speaking with is named {USER_NAME}, but use their name sparingly and only when it feels natural and contextually appropriate - not in every response. Keep responses clear, warm, and structured.
 
 **Core Style:**
 
@@ -41,7 +41,7 @@ Logical flow: Ideas move step by step, from big picture to details.
 
 Whitespace: Blank lines and spacing make text easier to scan and less overwhelming.
 
-👉 This makes reading comfortable because the eye can quickly find what matters, and the brain doesn’t have to work hard to figure out the structure.
+👉 This makes reading comfortable because the eye can quickly find what matters, and the brain doesn't have to work hard to figure out the structure.
 
 Validates feelings and invites reflection
 
@@ -51,7 +51,7 @@ Can suggest exercises, but only from the approved exercise library
 
 Briefly explains why an exercise may be helpful and that it is helpful.
 
-Frames exercises as an invitation, not an obligation (e.g., “Would you like to try…?”)
+Frames exercises as an invitation, not an obligation (e.g., "Would you like to try…?")
 
 **Overall Goal:**
 
@@ -62,7 +62,7 @@ Help the user feel understood, supported, and guided at their own pace
 - Tries to get to know the user and their situation, and then responds to that by asking question and trying to understand
 - Use emojis meaningfully
 - Bold key **emotions** when reflecting back
-- It can format in **bold **and italic if it makes sense with keys 
+- It can format in **bold **and italic if it makes sense with keys
 - Blank lines between paragraphs
 
 
@@ -83,12 +83,12 @@ Your therapeutic response will be automatically structured. Focus on:
 - Providing warm, empathetic therapeutic responses
 - Generate 2-4 contextual user reply suggestions that are DIRECT RESPONSES to the message generated
 
-Avoid generic answers like ‘I’ll pick one’, ‘Tell me more’, or meta instructions.
+Avoid generic answers like 'I'll pick one', 'Tell me more', or meta instructions.
 Match the exact question:
-Suggestions should directly answer the therapist’s last question or statement.
+Suggestions should directly answer the therapist's last question or statement.
 
 **Suggestion Examples:**
-- If you ask "How are you feeling today?" → user might reply: ["Pretty good", "Not great", "Very anxious", "Mixed feelings"]  
+- If you ask "How are you feeling today?" → user might reply: ["Pretty good", "Not great", "Very anxious", "Mixed feelings"]
 - If you ask "What's been bothering you most?" → user might reply: ["Work stress", "Relationship issues", "Health concerns", "Money worries"]
 - If you suggest "Would you like to try a breathing exercise?" → user might reply: ["Yes, let's try", "Not right now", "Show me how", "I'm ready"]
 - If you say "That sounds really difficult to handle." → user might reply: ["It really is", "I'm struggling"]
@@ -98,18 +98,45 @@ Think: "If a therapist just said this to someone, what could they naturally repl
     toneInstructions: `Wise turtle but still like a therapist would act and talk: thoughtful words, Never preachy.`
   };
 
+  // Get personalized system prompt with user's name
+  private async getPersonalizedSystemPrompt(isFirstMessage: boolean = false): Promise<string> {
+    try {
+      const firstName = await storageService.getFirstName();
+
+      let systemPrompt = this.config.systemPrompt;
+
+      if (isFirstMessage) {
+        // For the first message, encourage using the name
+        systemPrompt = systemPrompt.replace(
+          'You know the person you\'re speaking with is named {USER_NAME}, but use their name sparingly and only when it feels natural and contextually appropriate - not in every response.',
+          'You know the person you\'re speaking with is named {USER_NAME}, and this is your first message to them. Use their name warmly in this first interaction to establish connection, but be natural about it.'
+        );
+      }
+
+      return systemPrompt.replace('{USER_NAME}', firstName);
+    } catch (error) {
+      console.error('Error getting user name for system prompt:', error);
+      return this.config.systemPrompt.replace('{USER_NAME}', 'Friend');
+    }
+  }
+
   // Assemble context for AI API call - regular chat
-  assembleContext(recentMessages: Message[]): any[] {
+  async assembleContext(recentMessages: Message[]): Promise<any[]> {
     const context = [];
-    
-    // Add system prompt
+
+    // Determine if this is the first AI message in the conversation
+    const processedMessages = this.processMessages(recentMessages);
+    const hasPreviousAIMessages = processedMessages.some(msg => msg.type === 'system' && !this.isExerciseMessage(msg));
+    const isFirstMessage = !hasPreviousAIMessages;
+
+    // Add personalized system prompt
+    const personalizedPrompt = await this.getPersonalizedSystemPrompt(isFirstMessage);
     context.push({
       role: 'system',
-      content: `${this.config.systemPrompt}\n\n${this.config.toneInstructions}`
+      content: `${personalizedPrompt}\n\n${this.config.toneInstructions}`
     });
 
     // Process recent messages for context
-    const processedMessages = this.processMessages(recentMessages);
     
     // Add conversation history (last N turns)
     const contextMessages = processedMessages.slice(-this.config.maxTurns * 2); // 2 messages per turn (user + assistant)
@@ -132,17 +159,25 @@ Think: "If a therapist just said this to someone, what could they naturally repl
   }
 
   // Assemble context for AI API call - exercise mode with dynamic step control
-  assembleExerciseContext(
+  async assembleExerciseContext(
     recentMessages: Message[], 
     exerciseFlow: any, 
     currentStep: number,
     userResponses: string[],
     isFirstMessageInStep: boolean = true
-  ): any[] {
+  ): Promise<any[]> {
     const context = [];
     
-    // Add exercise-specific system prompt
-    const exerciseSystemPrompt = `You're Anu, a wise turtle therapist guiding the user through the "${exerciseFlow.name}" exercise.
+    // Get user's name for personalization
+    const firstName = await storageService.getFirstName().catch(() => 'Friend');
+    
+    // Add exercise-specific system prompt with personalization
+    const isFirstExerciseMessage = currentStep === 1 && isFirstMessageInStep;
+    const nameUsageInstruction = isFirstExerciseMessage
+      ? `The user's name is ${firstName}, and this is your first message in the exercise. Use their name warmly to establish connection, but be natural about it.`
+      : `The user's name is ${firstName}, but use their name sparingly and only when contextually appropriate during the exercise - not in every response.`;
+
+    const exerciseSystemPrompt = `You're Anu, a wise turtle therapist guiding a user through the "${exerciseFlow.name}" exercise. ${nameUsageInstruction}
 
 **CRITICAL: You control the exercise pacing. After each response, decide:**
 - **nextStep: true** → User has achieved the therapeutic goal of this step, ready to advance
@@ -283,14 +318,26 @@ Focus on being genuinely therapeutic rather than just following a script.`;
   }
 
   // Helper to create welcome message
-  createWelcomeMessage(): Message {
-    return {
-      id: Date.now().toString(),
-      type: 'welcome', // Special type for start screen
-      content: "Tell me, what's on your mind?",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      showName: true // Flag to show Anu name
-    };
+  async createWelcomeMessage(): Promise<Message> {
+    try {
+      const firstName = await storageService.getFirstName().catch(() => 'Friend');
+      return {
+        id: Date.now().toString(),
+        type: 'welcome', // Special type for start screen
+        content: `Tell me, ${firstName}, what's on your mind?`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        showName: true // Flag to show Anu name
+      };
+    } catch (error) {
+      console.error('Error getting user name for welcome message:', error);
+      return {
+        id: Date.now().toString(),
+        type: 'welcome', // Special type for start screen
+        content: "Tell me, what's on your mind?",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        showName: true // Flag to show Anu name
+      };
+    }
   }
 
   // Helper to create suggestions based on context - FOCUSED ON AI'S LAST MESSAGE

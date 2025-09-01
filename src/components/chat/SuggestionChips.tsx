@@ -24,23 +24,32 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
 
   return (
     <View style={styles.suggestionsContainer}>
-      <View style={styles.suggestionsStack}>
-        {/* Regular suggestion chips */}
-        {suggestions.map((suggestion, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => onSuggestionPress(suggestion)}
-            style={styles.suggestionChip}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.suggestionText}>
-              {suggestion}
-            </Text>
-          </TouchableOpacity>
-        ))}
-        
-        {/* Exercise suggestion button */}
-        {showExerciseButton && onSuggestExercise && (
+      {/* Regular suggestion chips in horizontal ScrollView */}
+      {suggestions.length > 0 && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.suggestionsScrollContent}
+          style={styles.suggestionsScroll}
+        >
+          {suggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => onSuggestionPress(suggestion)}
+              style={styles.suggestionChip}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.suggestionText}>
+                {suggestion}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+      
+      {/* Exercise suggestion button in separate row */}
+      {showExerciseButton && onSuggestExercise && (
+        <View style={styles.exerciseButtonContainer}>
           <TouchableOpacity
             onPress={onSuggestExercise}
             style={[styles.suggestionChip, styles.exerciseSuggestionButton]}
@@ -51,8 +60,8 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
               Suggest an exercise
             </Text>
           </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

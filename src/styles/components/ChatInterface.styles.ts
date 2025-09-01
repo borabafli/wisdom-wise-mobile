@@ -442,15 +442,25 @@ export const chatInterfaceStyles = StyleSheet.create({
   suggestionsContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingBottom: spacing.components.cardGap,
+    gap: spacing[4], // Space between the two rows
   },
   suggestionsScroll: {
+    marginHorizontal: -spacing.layout.screenPadding, // Extend to screen edges
+    paddingHorizontal: spacing.layout.screenPadding,
+  },
+  suggestionsScrollContent: {
     gap: spacing[4],
+    paddingRight: spacing.layout.screenPadding, // Extra padding for last item
   },
   suggestionsStack: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing[4],
     justifyContent: 'flex-start', // Left-aligned instead of centered
+  },
+  exerciseButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   suggestionChip: {
     backgroundColor: 'rgba(255, 255, 255, 0.85)', // More transparent

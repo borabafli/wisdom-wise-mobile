@@ -194,7 +194,7 @@ export const useChatSession = (
 
       // Get conversation context
       const recentMessages = await storageService.getLastMessages(20);
-      const context = contextService.assembleContext(recentMessages);
+      const context = await contextService.assembleContext(recentMessages);
 
       // Make API call
       const response = await apiService.getChatCompletionWithContext(context);
