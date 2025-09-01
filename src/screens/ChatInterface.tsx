@@ -31,7 +31,7 @@ import { ttsService } from '../services/ttsService';
 import { sttService } from '../services/sttService';
 import { insightService } from '../services/insightService';
 import { API_CONFIG } from '../config/constants';
-import { exerciseLibraryData } from '../data/exerciseLibrary';
+import { exerciseLibraryData, getExerciseFlow } from '../data/exerciseLibrary';
 
 // Import separated styles
 import { chatInterfaceStyles as styles } from '../styles/components/ChatInterface.styles';
@@ -56,6 +56,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [exerciseStep, setExerciseStep] = useState(0);
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
   const [exerciseMode, setExerciseMode] = useState(false);
+  const [stepMessageCount, setStepMessageCount] = useState<Record<number, number>>({});
   
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
@@ -70,194 +71,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     return userMessages.length >= 2 && !chatSession.showExerciseCard && !exerciseMode;
   };
 
-  // Get predefined exercise flow instead of generating with AI
-  const getExerciseFlow = (exerciseType: string, exerciseName: string) => {
-    // Predefined exercise flows for different types
-    const exerciseFlows: Record<string, any> = {
-      'automatic-thoughts': {
-        name: exerciseName,
-        color: "purple",
-        useAI: true,
-        steps: [
-          {
-            title: "Welcome & Awareness",
-            stepNumber: 1,
-            description: "Introduction to automatic thoughts",
-            aiPrompt: "Welcome them to the Automatic Thoughts exercise. Explain that we'll identify unhelpful thought patterns together. Ask what situation has been on their mind lately that's causing stress."
-          },
-          {
-            title: "Thought Identification",
-            stepNumber: 2,
-            description: "Recognize automatic thoughts",
-            aiPrompt: "Help them identify the automatic thoughts in that situation. Ask: 'When you think about that situation, what thoughts go through your mind?' Guide them to notice patterns."
-          },
-          {
-            title: "Challenge & Reframe",
-            stepNumber: 3,
-            description: "Question and reframe thoughts",
-            aiPrompt: "Guide them to challenge those thoughts. Ask: 'Is this thought helpful? What evidence supports or contradicts it? What would you tell a friend in this situation?'"
-          },
-          {
-            title: "New Perspective",
-            stepNumber: 4,
-            description: "Develop balanced thinking",
-            aiPrompt: "Help them develop a more balanced thought. Ask them to create a realistic, compassionate alternative to the automatic thought they identified."
-          }
-        ]
-      },
-      'breathing': {
-        name: exerciseName,
-        color: "blue",
-        useAI: true,
-        steps: [
-          {
-            title: "Setup & Preparation",
-            stepNumber: 1,
-            description: "Getting comfortable",
-            aiPrompt: "Welcome them to the 4-7-8 breathing exercise. Ask them to find a comfortable position and explain how this technique calms the nervous system. Ask how they're feeling right now."
-          },
-          {
-            title: "Learning the Technique",
-            stepNumber: 2,
-            description: "Practice the rhythm",
-            aiPrompt: "Teach them 4-7-8 breathing: breathe in for 4, hold for 7, exhale for 8. Walk them through it slowly, counting with them. Ask them to try a few cycles."
-          },
-          {
-            title: "Guided Practice",
-            stepNumber: 3,
-            description: "Full breathing session",
-            aiPrompt: "Guide them through several rounds of 4-7-8 breathing. Count with them and offer gentle encouragement. Remind them it's normal if it feels awkward at first."
-          },
-          {
-            title: "Reflection & Integration",
-            stepNumber: 4,
-            description: "Process the experience",
-            aiPrompt: "Ask how they feel now compared to when they started. Help them reflect on when this technique might be useful in their daily life."
-          }
-        ]
-      },
-      'mindfulness': {
-        name: exerciseName,
-        color: "green",
-        useAI: true,
-        steps: [
-          {
-            title: "Settling In",
-            stepNumber: 1,
-            description: "Preparation for body scan",
-            aiPrompt: "Welcome them to the Body Scan exercise. Ask them to get comfortable and explain how this practice helps with awareness and relaxation. Ask what tension they're noticing today."
-          },
-          {
-            title: "Starting the Scan",
-            stepNumber: 2,
-            description: "Begin with awareness",
-            aiPrompt: "Guide them to start with their feet, noticing sensations without changing anything. Walk them through slowly, asking what they notice in each area."
-          },
-          {
-            title: "Full Body Awareness",
-            stepNumber: 3,
-            description: "Complete body scan",
-            aiPrompt: "Continue guiding them up through their body - legs, torso, arms, face. Remind them to simply notice, not judge. Ask them to breathe into any tense areas."
-          },
-          {
-            title: "Integration & Closing",
-            stepNumber: 4,
-            description: "Reflect on the experience",
-            aiPrompt: "Ask them what they discovered about their body today. Help them reflect on how this awareness might help them in stressful moments."
-          }
-        ]
-      },
-      'gratitude': {
-        name: exerciseName,
-        color: "orange",
-        useAI: true,
-        steps: [
-          {
-            title: "Opening & Intention",
-            stepNumber: 1,
-            description: "Setting up for gratitude",
-            aiPrompt: "Welcome them to the Gratitude Practice. Explain how gratitude can shift our perspective and mood. Ask them to think about their day so far."
-          },
-          {
-            title: "Finding Three Things",
-            stepNumber: 2,
-            description: "Identifying specific gratitudes",
-            aiPrompt: "Ask them to share three things they're grateful for today - they can be big or small. Help them be specific and explore why each one matters to them."
-          },
-          {
-            title: "Deepening Appreciation",
-            stepNumber: 3,
-            description: "Exploring gratitude deeply",
-            aiPrompt: "For each thing they mentioned, ask them to go deeper. How did it make them feel? What impact did it have? Help them really savor the positive emotions."
-          },
-          {
-            title: "Carrying It Forward",
-            stepNumber: 4,
-            description: "Integrating gratitude practice",
-            aiPrompt: "Ask them how they might remember to notice good things throughout their day. Help them think of ways to make gratitude a regular practice."
-          }
-        ]
-      },
-      'self-compassion': {
-        name: exerciseName,
-        color: "pink",
-        useAI: true,
-        steps: [
-          {
-            title: "Understanding Self-Compassion",
-            stepNumber: 1,
-            description: "Introduction to self-kindness",
-            aiPrompt: "Welcome them to the Self-Compassion Break. Explain that we'll practice treating themselves with kindness. Ask about a situation where they've been hard on themselves lately."
-          },
-          {
-            title: "Mindful Awareness",
-            stepNumber: 2,
-            description: "Acknowledging the pain",
-            aiPrompt: "Help them acknowledge their struggle without judgment. Guide them to notice: 'This is a moment of difficulty.' Ask them to place a hand on their heart and breathe."
-          },
-          {
-            title: "Common Humanity",
-            stepNumber: 3,
-            description: "Recognizing shared experience",
-            aiPrompt: "Help them recognize they're not alone in this struggle. Ask them to consider: 'Other people have felt this way too. This is part of being human.' Guide them to feel connected."
-          },
-          {
-            title: "Self-Kindness Practice",
-            stepNumber: 4,
-            description: "Offering yourself compassion",
-            aiPrompt: "Ask them what they would say to a good friend in this situation. Help them offer that same kindness to themselves. Guide them to create a compassionate phrase they can use."
-          }
-        ]
-      }
-    };
-
-    // Return the specific flow or a default one
-    return exerciseFlows[exerciseType] || {
-      name: exerciseName,
-      color: "blue",
-      useAI: true,
-      steps: [
-        {
-          title: "Welcome & Setup",
-          stepNumber: 1,
-          description: "Introduction and preparation",
-          aiPrompt: `Welcome them warmly to the ${exerciseName} exercise. Explain what we'll do together and ask how they're feeling right now.`
-        },
-        {
-          title: "Core Practice",
-          stepNumber: 2,
-          description: "Main therapeutic technique",
-          aiPrompt: `Guide them through the main ${exerciseType} technique step by step. Be encouraging and supportive.`
-        },
-        {
-          title: "Reflection",
-          stepNumber: 3,
-          description: "Process the experience",
-          aiPrompt: "Help them reflect on what they noticed during the exercise. Ask open-ended questions about their experience."
-        }
-      ]
-    };
-  };
+  // Use centralized exercise flow from exerciseLibrary.ts
+  // Removed local getExerciseFlow function - now using centralized version
 
   // Custom hooks
   const chatSession = useChatSession(currentExercise);
@@ -305,22 +120,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       const currentStep = flow.steps[0];
       
-      // Get AI response for first step - no hardcoded suggestions
-      const systemPrompt = `You're a warm therapist starting "${currentExercise.name}".
-
-Step 1: ${currentStep.title}
-Goal: ${currentStep.description}
-Guidance: ${currentStep.aiPrompt}
-
-Welcome warmly, explain benefits briefly, start therapeutic conversation. Ask engaging questions.
-
-Generate appropriate user reply suggestions that match the exercise context.`;
+      // Use the rich exercise context system for better suggestions
+      const exerciseContext = contextService.assembleExerciseContext(
+        [], // No previous messages for first step
+        flow,
+        1, // Step 1
+        []
+      );
+      
+      // Add the initial user message to start the exercise
+      exerciseContext.push({
+        role: 'user',
+        content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.`
+      });
 
       chatSession.setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.` }
-      ]);
+      const response = await apiService.getChatCompletionWithContext(exerciseContext);
       chatSession.setIsTyping(false);
 
       if (response.success && response.message) {
@@ -379,10 +194,10 @@ Generate appropriate user reply suggestions that match the exercise context.`;
     await chatSession.handleSendMessage(text);
   };
 
-  // Handle dynamic AI-guided exercise responses
+  // Handle dynamic AI-guided exercise responses - NOW WITH REAL AI CONTROL
   const handleDynamicAIGuidedExerciseResponse = async (userText: string, flow: any) => {
     try {
-      console.log('Handling dynamic AI-guided exercise response for step:', exerciseStep + 1);
+      console.log('🤖 Dynamic AI controlling exercise step:', exerciseStep + 1);
       
       const currentStep = flow.steps[exerciseStep];
       
@@ -398,134 +213,142 @@ Generate appropriate user reply suggestions that match the exercise context.`;
       chatSession.setMessages((prev: Message[]) => [...prev, userMessage]);
       await storageService.addMessage(userMessage);
       
-      // Build conversation context
-      const recentMessages = await storageService.getLastMessages(5);
-      const conversationHistory = recentMessages.map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.text || msg.content || ''
+      // Determine if this is the first message in this step (before updating count)
+      const currentStepCount = stepMessageCount[exerciseStep] || 0;
+      const isFirstMessageInStep = currentStepCount === 0;
+      
+      console.log(`🔍 Step ${exerciseStep}: currentCount=${currentStepCount}, isFirst=${isFirstMessageInStep}`);
+      
+      // Update step message count after determining if it's first message
+      const updatedStepCount = currentStepCount + 1;
+      setStepMessageCount(prev => ({
+        ...prev,
+        [exerciseStep]: updatedStepCount
       }));
-      conversationHistory.push({ role: 'user', content: userText });
       
-      // Check if we should move to next step
-      const shouldAdvance = userText.trim().length >= 8; // Simple advancement logic
-      
-      if (shouldAdvance && exerciseStep < flow.steps.length - 1) {
-        // Move to next step
-        const nextStepIndex = exerciseStep + 1;
-        const nextStep = flow.steps[nextStepIndex];
+      // Build exercise context using new contextService method with appropriate prompt
+      const recentMessages = await storageService.getLastMessages(10);
+      const exerciseContext = contextService.assembleExerciseContext(
+        recentMessages, 
+        flow, 
+        exerciseStep + 1, 
+        [],
+        isFirstMessageInStep
+      );
+
+      chatSession.setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(exerciseContext);
+      chatSession.setIsTyping(false);
+
+      if (response.success && response.message) {
+        // Parse the AI response to check nextStep flag
+        let shouldAdvanceStep = false;
         
-        const systemPrompt = `Continuing "${currentExercise.name}" exercise.
+        try {
+          // Check if response has nextStep flag (from structured output)
+          if (response.nextStep !== undefined) {
+            shouldAdvanceStep = response.nextStep;
+            console.log('🎯 AI decided nextStep:', shouldAdvanceStep);
+          }
+        } catch (parseError) {
+          console.log('No nextStep flag found, staying in current step');
+        }
 
-Previous: "${currentStep.title}" - they shared: "${userText}"
-Next: Step ${nextStep.stepNumber}/${flow.steps.length}: ${nextStep.title}
-Goal: ${nextStep.description}
-Guidance: ${nextStep.aiPrompt}
+        // Force advancement after 8 messages in same step to prevent loops (allow deeper exploration)
+        if (updatedStepCount >= 8 && !shouldAdvanceStep && exerciseStep < flow.steps.length - 1) {
+          console.log('🔄 Fallback: Auto-advancing after 8 messages to prevent loop');
+          shouldAdvanceStep = true;
+        }
 
-Acknowledge their sharing, validate, connect to therapy. Transition to next step naturally. Ask engaging questions.
-
-Generate appropriate user reply suggestions that match the exercise context.`;
-
-        chatSession.setIsTyping(true);
-        const response = await apiService.getChatCompletionWithContext([
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userText }
-        ]);
-        chatSession.setIsTyping(false);
-
-        if (response.success && response.message) {
-          const aiResponse: Message = {
+        // Determine step title based on AI decision
+        let stepTitle = '';
+        let newStepIndex = exerciseStep;
+        
+        if (shouldAdvanceStep && exerciseStep < flow.steps.length - 1) {
+          // AI decided to advance to next step
+          newStepIndex = exerciseStep + 1;
+          const nextStep = flow.steps[newStepIndex];
+          stepTitle = `Step ${nextStep.stepNumber}: ${nextStep.title}`;
+          setExerciseStep(newStepIndex);
+          
+          // Reset message count for new step
+          setStepMessageCount(prev => ({
+            ...prev,
+            [newStepIndex]: 0
+          }));
+          
+          console.log('✅ AI advanced to step:', newStepIndex + 1);
+        } else if (exerciseStep >= flow.steps.length - 1 && shouldAdvanceStep) {
+          // Exercise completed
+          console.log('🎉 AI completed exercise');
+          
+          const completionMessage: Message = {
             id: (Date.now() + Math.random()).toString(),
             type: 'exercise',
-            title: `Step ${nextStep.stepNumber}: ${nextStep.title}`,
-            content: response.message,
+            title: '🎉 Exercise Complete!',
+            content: `**Excellent work completing the ${currentExercise.name} exercise!** 🌟
+
+Your insights have been captured and will be available in your Insights tab. Great job practicing this therapeutic skill! 💪`,
             exerciseType: currentExercise.type,
             color: flow.color,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             isAIGuided: true
           };
 
-          await addAIMessageWithTypewriter(aiResponse);
+          chatSession.setMessages((prev: Message[]) => [...prev, completionMessage]);
+          await storageService.addMessage(completionMessage);
           
-          // Extract suggestions using robust parsing
-          const suggestions = extractSuggestionsFromResponse(response);
-          chatSession.setSuggestions(suggestions);
-          
-          setExerciseStep(nextStepIndex);
-          await ttsService.speakIfAutoPlay(response.message);
+          // Exit exercise mode
+          exitExerciseMode();
+          chatSession.setSuggestions([]);
+          return;
+        } else {
+          // AI decided to stay in current step
+          stepTitle = `Step ${currentStep.stepNumber}: ${currentStep.title}`;
+          console.log('🔄 AI staying in current step for deeper work');
         }
-        
-      } else if (exerciseStep >= flow.steps.length - 1) {
-        // Exercise completed
-        console.log('Dynamic exercise completed');
-        
-        const completionMessage: Message = {
+
+        // Create AI response message
+        const aiResponse: Message = {
           id: (Date.now() + Math.random()).toString(),
           type: 'exercise',
-          title: '🎉 Exercise Complete!',
-          content: `**Excellent work!** 🌟
-
-**You've completed all ${flow.steps.length} steps of the ${currentExercise.name} exercise!**
-
-**Your insights have been captured and will be available in your Insights tab.** Great job practicing this therapeutic skill! 💪`,
+          title: stepTitle,
+          content: response.message,
           exerciseType: currentExercise.type,
           color: flow.color,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isAIGuided: true
         };
 
-        chatSession.setMessages((prev: Message[]) => [...prev, completionMessage]);
-        await storageService.addMessage(completionMessage);
+        await addAIMessageWithTypewriter(aiResponse);
         
-        // Exit exercise mode
-        exitExerciseMode();
-        
-        // Only show suggestions if AI provides them
-        chatSession.setSuggestions([]);
-        
-      } else {
-        // Stay on current step - ask for more clarification
-        const clarificationPrompt = `Continuing current step.
-
-They shared: "${userText}"
-Step ${currentStep.stepNumber}/${flow.steps.length}: ${currentStep.title}
-Goal: ${currentStep.description}
-Guidance: ${currentStep.aiPrompt}
-
-Acknowledge, validate, show curiosity. Ask follow-up questions to go deeper. Stay present with emotions.
-
-Generate appropriate user reply suggestions that match the exercise context.`;
-
-        chatSession.setIsTyping(true);
-        const response = await apiService.getChatCompletionWithContext([
-          { role: 'system', content: clarificationPrompt },
-          { role: 'user', content: userText }
-        ]);
-        chatSession.setIsTyping(false);
-
-        if (response.success && response.message) {
-          const aiResponse: Message = {
-            id: (Date.now() + Math.random()).toString(),
-            type: 'exercise',
-            title: `Step ${currentStep.stepNumber}: ${currentStep.title} (continued)`,
-            content: response.message,
-            exerciseType: currentExercise.type,
-            color: flow.color,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            isAIGuided: true
-          };
-
-          await addAIMessageWithTypewriter(aiResponse);
-          
-          // Extract suggestions using robust parsing
-          const suggestions = extractSuggestionsFromResponse(response);
-          chatSession.setSuggestions(suggestions);
-          
-          await ttsService.speakIfAutoPlay(response.message);
+        // Use AI-generated suggestions
+        if (response.suggestions && response.suggestions.length > 0) {
+          chatSession.setSuggestions(response.suggestions);
+        } else {
+          chatSession.setSuggestions([]);
         }
+        
+        await ttsService.speakIfAutoPlay(response.message);
       }
       
     } catch (error) {
       console.error('Error in handleDynamicAIGuidedExerciseResponse:', error);
+      
+      // Fallback: stay in current step
+      const fallbackMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'exercise',
+        title: `Step ${flow.steps[exerciseStep].stepNumber}: ${flow.steps[exerciseStep].title}`,
+        content: "I want to make sure I understand you correctly. Could you tell me a bit more about that?",
+        exerciseType: currentExercise.type,
+        color: flow.color,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isAIGuided: true
+      };
+      
+      chatSession.setMessages((prev: Message[]) => [...prev, fallbackMessage]);
+      await storageService.addMessage(fallbackMessage);
     }
   };
 

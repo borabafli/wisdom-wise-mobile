@@ -204,6 +204,10 @@ async function handleChatCompletion(
                   minItems: 2,
                   maxItems: 4,
                   description: "2-4 short user reply suggestions (2-5 words each) that are direct responses to the message"
+                },
+                nextStep: {
+                  type: "boolean",
+                  description: "For exercises only: true if the therapeutic goal of current step is achieved and ready to advance, false to stay in current step for deeper exploration"
                 }
               },
               required: ["message", "suggestions"],
