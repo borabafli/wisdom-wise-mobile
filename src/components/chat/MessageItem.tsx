@@ -8,6 +8,7 @@ import { Volume2, VolumeX, Copy } from 'lucide-react-native';
 import { Message } from '../../services/storageService';
 import { colors } from '../../styles/tokens';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
+import { useMessageFormatting } from '../../hooks/useMessageFormatting';
 
 interface MessageItemProps {
   message: Message;
@@ -42,145 +43,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     Caveat_400Regular,
   });
 
-  // Enhanced message content renderer with rich formatting
-  const renderFormattedContent = (content: string, isWelcome = false) => {
-    const textStyle = isWelcome ? styles.welcomeMessageText : styles.systemMessageText;
-    // Split by lines first, then process each line
-    const lines = content.split('\n');
-    
-    return lines.map((line, lineIndex) => {
-      if (!line.trim()) {
-        return <View key={lineIndex} style={{ height: 8 }} />;
-      }
-      
-      // Check for titles (lines that start with # or are all caps)
-      if (line.startsWith('#') || (line.length > 3 && line === line.toUpperCase() && line.length < 50)) {
-        const titleText = line.startsWith('#') ? line.replace(/^#+\s*/, '') : line;
-        return (
-          <View key={lineIndex} style={{ marginVertical: 8 }}>
-            <Text style={[textStyle, { 
-              fontSize: 18, 
-              fontWeight: '700', 
-              color: '#1e293b',
-              textAlign: 'center'
-            }]}>
-              {titleText}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Check for bold text with **
-      if (line.includes('**')) {
-        const parts = line.split(/(\*\*[^*]+\*\*)/g);
-        return (
-          <View key={lineIndex} style={{ marginVertical: 2 }}>
-            <Text style={textStyle}>
-              {parts.map((part, partIndex) => {
-                if (part.startsWith('**') && part.endsWith('**')) {
-                  const boldText = part.replace(/\*\*/g, '');
-                  return (
-                    <Text key={partIndex} style={{ fontWeight: '700', color: '#1e293b' }}>
-                      {boldText}
-                    </Text>
-                  );
-                }
-                return part;
-              })}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Check for italic text with * (but not **)
-      if (line.includes('*') && !line.includes('**')) {
-        const parts = line.split(/(\*[^*]+\*)/g);
-        return (
-          <View key={lineIndex} style={{ marginVertical: 2 }}>
-            <Text style={textStyle}>
-              {parts.map((part, partIndex) => {
-                if (part.startsWith('*') && part.endsWith('*')) {
-                  const italicText = part.replace(/\*/g, '');
-                  return (
-                    <Text key={partIndex} style={{ fontStyle: 'italic', color: '#374151' }}>
-                      {italicText}
-                    </Text>
-                  );
-                }
-                return part;
-              })}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Check for bullet points
-      if (line.startsWith('• ')) {
-        const text = line.replace(/^• /, '');
-        return (
-          <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
-            <View style={{ 
-              width: 6, 
-              height: 6, 
-              borderRadius: 3, 
-              backgroundColor: '#3b82f6', 
-              marginTop: 8, 
-              marginRight: 12 
-            }} />
-            <Text style={[textStyle, { flex: 1 }]}>
-              {text}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Check for numbered lists
-      if (/^\d+\. /.test(line)) {
-        const match = line.match(/^(\d+\.) (.+)$/);
-        if (match) {
-          return (
-            <View key={lineIndex} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 }}>
-              <Text style={[textStyle, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]}>
-                {match[1]}
-              </Text>
-              <Text style={[textStyle, { flex: 1 }]}>
-                {match[2]}
-              </Text>
-            </View>
-          );
-        }
-      }
-      
-      // Check for emoji-heavy lines (treat as special formatting)
-      const emojiCount = (line.match(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu) || []).length;
-      if (emojiCount > 2 && line.length < 100) {
-        return (
-          <View key={lineIndex} style={{ marginVertical: 4 }}>
-            <Text style={[textStyle, { 
-              fontSize: 16, 
-              textAlign: 'center',
-              lineHeight: 24
-            }]}>
-              {line}
-            </Text>
-          </View>
-        );
-      }
-      
-      // Regular text
-      return (
-        <Text key={lineIndex} style={[textStyle, { marginVertical: 2 }]}>
-          {line}
-        </Text>
-      );
-    });
-  };
-
-  // Clean AI message content by removing suggestion chips
-  const cleanAIMessageContent = (content: string): string => {
-    // Remove any trailing SUGGESTION_CHIPS: [ ... ] block if present
-    return content.replace(/\s*SUGGESTION_CHIPS:\s*\[[\s\S]*?\]\s*$/gi, '').trim();
-  };
+  const { formatMessageContent, cleanAIContent } = useMessageFormatting();
 
   if (message.type === 'user') {
     return (
@@ -243,10 +106,18 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             <View>
               {isTypewriting && currentTypewriterMessage?.id === message.id ? (
                 // Show typewriter text when animation is active for this message
-                renderFormattedContent(cleanAIMessageContent(typewriterText), isWelcomeMessage)
+                formatMessageContent(
+                  typewriterText, 
+                  isWelcomeMessage ? styles.welcomeMessageText : styles.systemMessageText,
+                  isWelcomeMessage
+                )
               ) : (
                 // Show normal content
-                renderFormattedContent(cleanAIMessageContent(message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸'), isWelcomeMessage)
+                formatMessageContent(
+                  message.content || message.text || 'Hello! I\'m here to listen and support you. 🌸',
+                  isWelcomeMessage ? styles.welcomeMessageText : styles.systemMessageText,
+                  isWelcomeMessage
+                )
               )}
               {/* Typing cursor for typewriter animation */}
               {isTypewriting && currentTypewriterMessage?.id === message.id && (

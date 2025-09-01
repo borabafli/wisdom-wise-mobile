@@ -12,18 +12,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Technology Stack
 - **Framework**: React Native with Expo SDK 53
+- **Backend**: Supabase with Edge Functions for serverless AI processing
 - **Navigation**: React Navigation v7 with bottom tabs
 - **Styling**: NativeWind (Tailwind CSS for React Native)
 - **Typography**: Custom font system with 6 font families (Inter, Poppins, Nunito, Source Serif Pro, Lora, Crimson Text)
 - **UI Components**: Lucide React Native icons, Expo Linear Gradient, Expo Blur
+- **Voice Features**: Expo Speech Recognition, Expo Speech (TTS), React Native Voice
 - **Platform**: Cross-platform (iOS, Android, Web)
 
 ### App Structure
-WisdomWise is a mindfulness and mental health support app built around a therapeutic AI companion (turtle therapist). The app features:
+WisdomWise is a mindfulness and mental health support app built around a therapeutic AI companion (turtle therapist named Anu). The app features:
 
 - **4 Main Tabs**: Home, Exercises, Insights, Profile
-- **Chat Interface**: AI-guided therapy sessions and exercises
+- **Chat Interface**: AI-guided therapy sessions with advanced exercise detection and flow management
 - **Custom Tab Bar**: With floating action button for new sessions
+- **Service Architecture**: Modular services for chat, transcription, and model management
+- **Supabase Integration**: Edge Functions for secure AI processing and data management
 
 ### Key Components
 
@@ -41,7 +45,22 @@ WisdomWise is a mindfulness and mental health support app built around a therape
 - `src/screens/ProfileScreen.tsx`: User settings and preferences
 - `src/screens/ChatInterface.tsx`: Main AI conversation interface
 
-**Custom Components**:
+**Core Services**:
+- `src/services/chatService.ts`: AI conversation handling with context management
+- `src/services/transcriptionService.ts`: Speech-to-text processing with context
+- `src/services/modelService.ts`: AI model configuration and management
+- `src/services/apiService.ts`: Legacy compatibility layer delegating to focused services
+- `src/utils/apiErrorHandler.ts`: Centralized error handling and user feedback
+
+**Advanced Hooks**:
+- `src/hooks/chat/useChatSession.ts`: Core chat functionality with exercise detection
+- `src/hooks/useExerciseFlow.ts`: Exercise progression and dynamic flow management
+- `src/hooks/useSessionManagement.ts`: Session lifecycle and state management
+- `src/hooks/useMessageFormatting.ts`: Message processing, formatting, and TTS integration
+
+**Chat Components**:
+- `src/components/chat/MessageItem.tsx`: Individual message rendering with TTS controls
+- `src/components/chat/`: Specialized chat interface components
 - `src/components/CustomTabBar.tsx`: Custom tab bar with action palette integration
 - `src/components/ActionPalette.tsx`: Floating menu for starting therapy sessions
 
@@ -56,15 +75,38 @@ WisdomWise is a mindfulness and mental health support app built around a therape
 - **Spacing**: Numeric scale (0-64px) plus component-specific and layout spacing tokens
 - **Shadows**: Elevation system with component-specific shadow presets
 
+### Backend Integration
+- **Supabase Edge Functions**: Serverless functions in `/supabase/functions/` for AI processing
+  - `ai-chat/`: Main AI conversation endpoint with context handling
+  - `extract-insights/`: User data analysis and insights generation
+- **Security**: API keys and sensitive operations handled securely server-side
+- **Scalability**: Serverless architecture for dynamic scaling
+
 ### Configuration Files
 - **tailwind.config.js**: Extensive custom theme with therapeutic design tokens
-- **app.json**: Expo configuration with permissions (RECORD_AUDIO for voice features)
+- **app.json**: Expo configuration with permissions (RECORD_AUDIO, microphone access for voice features)
 - **metro.config.js**: Custom Metro config with Node.js polyfill for os.availableParallelism
 
+### Architecture Patterns
+- **Modular Services**: Decomposed monolithic API service into focused, single-responsibility services
+- **Hook-Based State Management**: Complex state logic encapsulated in reusable hooks
+- **Exercise Flow Management**: Dynamic exercise detection from AI responses with user confirmation patterns
+- **Message Processing Pipeline**: Sophisticated formatting, typewriter effects, and TTS integration
+- **Error Handling**: Centralized error handling with user-friendly fallback responses
+- **Context Management**: Intelligent conversation context assembly for AI interactions
+
+### Data Management
+- **Exercise Library**: Comprehensive exercise data with keyword detection system (`src/data/exerciseLibrary.ts`)
+- **Storage Service**: Local message persistence and conversation history
+- **Rate Limiting**: Built-in rate limiting service for API usage management
+- **Context Service**: Intelligent context assembly for AI conversations
+
 ### Project Status
-This is an active development project with a detailed PRD (docs/PRD.md) outlining remaining work packages including AI guidance logic, insights extraction, and personalization features.
+This is an active development project with sophisticated AI-driven therapy features, advanced exercise flow management, and comprehensive voice interaction capabilities.
 
 ### Development Guides
-- If requested functionality is too complex handle just within the code, you may advice other suggestions (eg. we should create a database for it in this way...)
--If a new edge function is needs to be created, also create within /supabase/functions We should always have supabase funtions locally. This is a MUST DO.
--Follow React native best practices. Instead of having large one component, check for splitting ad re-usability. 
+- If the requested functionality is too complex to handle within the code alone, you may suggest alternative approaches (e.g., "we should create a database for this in the following way...").
+- If a new edge function needs to be created, it should also be created within /supabase/functions. We must always have Supabase functions available locally. This is a MUST DO.
+- Follow React Native best practices. Instead of creating large single components, check for opportunities to split them and improve reusability.
+- Our system prompts and configuration of AI responses are highly important. We don't want you to make changes without asking permission for AI System Prompt modifications.
+- End your last sentence with "be water my friend, take care 🧘🏼‍♀️".

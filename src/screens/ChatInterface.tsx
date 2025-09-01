@@ -21,6 +21,7 @@ import {
   useChatSession,
   useTTSControls
 } from '../hooks/chat';
+import { useExerciseFlow } from '../hooks';
 
 // Import services and utilities (keeping existing ones)
 import { storageService, Message } from '../services/storageService';
@@ -53,10 +54,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Basic state
   const [inputText, setInputText] = useState('');
-  const [exerciseStep, setExerciseStep] = useState(0);
-  const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
-  const [exerciseMode, setExerciseMode] = useState(false);
-  const [stepMessageCount, setStepMessageCount] = useState<Record<number, number>>({});
   
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
@@ -84,92 +81,43 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const voiceRecording = useVoiceRecording((transcript: string) => {
     setInputText(prev => prev + transcript);
   });
+  const {
+    exerciseMode,
+    exerciseStep, 
+    exerciseData,
+    startDynamicAIGuidedExercise,
+    handleDynamicAIGuidedExerciseResponse,
+    enterExerciseMode,
+    exitExerciseMode,
+    extractSuggestionsFromResponse
+  } = useExerciseFlow();
+
+  // Track initialization to prevent multiple calls
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize on mount
   useEffect(() => {
+    if (isInitialized) return; // Prevent multiple initializations
+    
     // Check if this is an exercise that needs special handling
     if (currentExercise) {
       console.log('Starting dynamic AI-guided exercise:', currentExercise.type);
       enterExerciseMode();
-      startDynamicAIGuidedExercise();
+      startDynamicAIGuidedExercise(
+        currentExercise,
+        chatSession.setMessages,
+        chatSession.setIsTyping,
+        chatSession.setSuggestions
+      );
+      setIsInitialized(true);
       return;
     }
     
     // Regular chat session
     chatSession.initializeChatSession();
-  }, [currentExercise]);
+    setIsInitialized(true);
+  }, [currentExercise]); // Simplified dependencies
 
-  // Start dynamic AI-guided exercise
-  const startDynamicAIGuidedExercise = async () => {
-    try {
-      console.log('Generating and starting dynamic exercise:', currentExercise.type);
-      
-      // Get predefined exercise flow
-      const flow = getExerciseFlow(currentExercise.type, currentExercise.name);
-      
-      if (!flow || !flow.steps || flow.steps.length === 0) {
-        console.error('Failed to generate exercise flow, falling back to simple chat');
-        exitExerciseMode();
-        chatSession.initializeChatSession();
-        return;
-      }
-      
-      console.log('Generated dynamic flow with', flow.steps.length, 'steps');
-      setExerciseMode(true);
-      setExerciseStep(0);
-      
-      const currentStep = flow.steps[0];
-      
-      // Use the rich exercise context system for better suggestions
-      const exerciseContext = contextService.assembleExerciseContext(
-        [], // No previous messages for first step
-        flow,
-        1, // Step 1
-        []
-      );
-      
-      // Add the initial user message to start the exercise
-      exerciseContext.push({
-        role: 'user',
-        content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.`
-      });
-
-      chatSession.setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext(exerciseContext);
-      chatSession.setIsTyping(false);
-
-      if (response.success && response.message) {
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          type: 'exercise',
-          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
-          content: response.message,
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-        
-        chatSession.setMessages([aiMessage]);
-        await storageService.addMessage(aiMessage);
-        
-        // Extract suggestions using robust parsing
-        const suggestions = extractSuggestionsFromResponse(response);
-        chatSession.setSuggestions(suggestions);
-        
-        // Store the dynamic flow for later use
-        setExerciseData({ ...exerciseData, dynamicFlow: flow });
-      } else {
-        console.error('Failed to start exercise with AI, exiting exercise mode');
-        exitExerciseMode();
-        chatSession.initializeChatSession();
-      }
-    } catch (error) {
-      console.error('Error starting dynamic AI-guided exercise:', error);
-      exitExerciseMode();
-      chatSession.initializeChatSession();
-    }
-  };
 
   // Handle input text changes
   const handleInputTextChange = (text: string) => {
@@ -186,7 +134,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     // Check if we're in a dynamic exercise mode
     if (exerciseMode && exerciseData.dynamicFlow) {
       // Dynamic AI-guided exercise
-      await handleDynamicAIGuidedExerciseResponse(text, exerciseData.dynamicFlow);
+      await handleDynamicAIGuidedExerciseResponse(
+        text, 
+        exerciseData.dynamicFlow, 
+        currentExercise,
+        chatSession.setMessages,
+        chatSession.setIsTyping,
+        chatSession.setSuggestions,
+        addAIMessageWithTypewriter
+      );
       return;
     }
     
@@ -194,163 +150,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     await chatSession.handleSendMessage(text);
   };
 
-  // Handle dynamic AI-guided exercise responses - NOW WITH REAL AI CONTROL
-  const handleDynamicAIGuidedExerciseResponse = async (userText: string, flow: any) => {
-    try {
-      console.log('🤖 Dynamic AI controlling exercise step:', exerciseStep + 1);
-      
-      const currentStep = flow.steps[exerciseStep];
-      
-      // Create user message
-      const userMessage: Message = {
-        id: (Date.now() + Math.random()).toString(),
-        type: 'user',
-        text: userText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      // Add user message to UI and storage
-      chatSession.setMessages((prev: Message[]) => [...prev, userMessage]);
-      await storageService.addMessage(userMessage);
-      
-      // Determine if this is the first message in this step (before updating count)
-      const currentStepCount = stepMessageCount[exerciseStep] || 0;
-      const isFirstMessageInStep = currentStepCount === 0;
-      
-      console.log(`🔍 Step ${exerciseStep}: currentCount=${currentStepCount}, isFirst=${isFirstMessageInStep}`);
-      
-      // Update step message count after determining if it's first message
-      const updatedStepCount = currentStepCount + 1;
-      setStepMessageCount(prev => ({
-        ...prev,
-        [exerciseStep]: updatedStepCount
-      }));
-      
-      // Build exercise context using new contextService method with appropriate prompt
-      const recentMessages = await storageService.getLastMessages(10);
-      const exerciseContext = contextService.assembleExerciseContext(
-        recentMessages, 
-        flow, 
-        exerciseStep + 1, 
-        [],
-        isFirstMessageInStep
-      );
-
-      chatSession.setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext(exerciseContext);
-      chatSession.setIsTyping(false);
-
-      if (response.success && response.message) {
-        // Parse the AI response to check nextStep flag
-        let shouldAdvanceStep = false;
-        
-        try {
-          // Check if response has nextStep flag (from structured output)
-          if (response.nextStep !== undefined) {
-            shouldAdvanceStep = response.nextStep;
-            console.log('🎯 AI decided nextStep:', shouldAdvanceStep);
-          }
-        } catch (parseError) {
-          console.log('No nextStep flag found, staying in current step');
-        }
-
-        // Force advancement after 8 messages in same step to prevent loops (allow deeper exploration)
-        if (updatedStepCount >= 8 && !shouldAdvanceStep && exerciseStep < flow.steps.length - 1) {
-          console.log('🔄 Fallback: Auto-advancing after 8 messages to prevent loop');
-          shouldAdvanceStep = true;
-        }
-
-        // Determine step title based on AI decision
-        let stepTitle = '';
-        let newStepIndex = exerciseStep;
-        
-        if (shouldAdvanceStep && exerciseStep < flow.steps.length - 1) {
-          // AI decided to advance to next step
-          newStepIndex = exerciseStep + 1;
-          const nextStep = flow.steps[newStepIndex];
-          stepTitle = `Step ${nextStep.stepNumber}: ${nextStep.title}`;
-          setExerciseStep(newStepIndex);
-          
-          // Reset message count for new step
-          setStepMessageCount(prev => ({
-            ...prev,
-            [newStepIndex]: 0
-          }));
-          
-          console.log('✅ AI advanced to step:', newStepIndex + 1);
-        } else if (exerciseStep >= flow.steps.length - 1 && shouldAdvanceStep) {
-          // Exercise completed
-          console.log('🎉 AI completed exercise');
-          
-          const completionMessage: Message = {
-            id: (Date.now() + Math.random()).toString(),
-            type: 'exercise',
-            title: '🎉 Exercise Complete!',
-            content: `**Excellent work completing the ${currentExercise.name} exercise!** 🌟
-
-Your insights have been captured and will be available in your Insights tab. Great job practicing this therapeutic skill! 💪`,
-            exerciseType: currentExercise.type,
-            color: flow.color,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            isAIGuided: true
-          };
-
-          chatSession.setMessages((prev: Message[]) => [...prev, completionMessage]);
-          await storageService.addMessage(completionMessage);
-          
-          // Exit exercise mode
-          exitExerciseMode();
-          chatSession.setSuggestions([]);
-          return;
-        } else {
-          // AI decided to stay in current step
-          stepTitle = `Step ${currentStep.stepNumber}: ${currentStep.title}`;
-          console.log('🔄 AI staying in current step for deeper work');
-        }
-
-        // Create AI response message
-        const aiResponse: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'exercise',
-          title: stepTitle,
-          content: response.message,
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-
-        await addAIMessageWithTypewriter(aiResponse);
-        
-        // Use AI-generated suggestions
-        if (response.suggestions && response.suggestions.length > 0) {
-          chatSession.setSuggestions(response.suggestions);
-        } else {
-          chatSession.setSuggestions([]);
-        }
-        
-        await ttsService.speakIfAutoPlay(response.message);
-      }
-      
-    } catch (error) {
-      console.error('Error in handleDynamicAIGuidedExerciseResponse:', error);
-      
-      // Fallback: stay in current step
-      const fallbackMessage: Message = {
-        id: (Date.now() + Math.random()).toString(),
-        type: 'exercise',
-        title: `Step ${flow.steps[exerciseStep].stepNumber}: ${flow.steps[exerciseStep].title}`,
-        content: "I want to make sure I understand you correctly. Could you tell me a bit more about that?",
-        exerciseType: currentExercise.type,
-        color: flow.color,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isAIGuided: true
-      };
-      
-      chatSession.setMessages((prev: Message[]) => [...prev, fallbackMessage]);
-      await storageService.addMessage(fallbackMessage);
-    }
-  };
 
   // Handle message actions
   const handleCopyMessage = async (content: string) => {
@@ -395,86 +194,6 @@ Your insights have been captured and will be available in your Insights tab. Gre
     }
   };
 
-  // Helper function to extract suggestions from AI response with multiple fallback methods
-  const extractSuggestionsFromResponse = (response: any): string[] => {
-    console.log('🔍 Full AI Response:', response);
-    
-    // Method 1: Check if already parsed by Edge Function
-    if (response.suggestions && response.suggestions.length > 0) {
-      console.log('✅ Method 1: Using Edge Function parsed suggestions:', response.suggestions);
-      return response.suggestions;
-    }
-
-    // Method 2: Parse from message content manually
-    const content = response.message || '';
-    console.log('🔍 Method 2: Attempting manual parsing from content:', content);
-    
-    // Method 2a: Check for JSON code block format
-    const codeBlockMatch = content.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
-    if (codeBlockMatch) {
-      try {
-        console.log('🔧 Found JSON code block, attempting to parse...');
-        const jsonString = codeBlockMatch[1].trim();
-        const jsonResponse = JSON.parse(jsonString);
-        
-        if (jsonResponse.message && jsonResponse.suggestions && Array.isArray(jsonResponse.suggestions)) {
-          console.log('✅ Method 2a: Parsed JSON from code block:', jsonResponse);
-          // Update the response object to use the parsed content
-          response.message = jsonResponse.message;
-          return jsonResponse.suggestions.slice(0, 4);
-        }
-      } catch (e) {
-        console.log('❌ Method 2a: Failed to parse JSON from code block:', e);
-      }
-    }
-    
-    // Look for SUGGESTION_CHIPS format - more flexible regex
-    const suggestionChipsMatch = content.match(/\n*\s*SUGGESTION_CHIPS:\s*(\[.*?\])\s*$/s);
-    if (suggestionChipsMatch) {
-      try {
-        console.log('Found SUGGESTION_CHIPS match:', suggestionChipsMatch[1]);
-        const suggestionsArray = JSON.parse(suggestionChipsMatch[1]);
-        const cleanSuggestions = suggestionsArray
-          .filter(s => typeof s === 'string' && s.trim().length > 0)
-          .map(s => s.replace(/["""]/g, '').trim())
-          .slice(0, 4);
-        if (cleanSuggestions.length > 0) {
-          console.log('✅ Method 2a: Parsed SUGGESTION_CHIPS:', cleanSuggestions);
-          return cleanSuggestions;
-        }
-      } catch (e) {
-        console.log('❌ Method 2a: Failed to parse SUGGESTION_CHIPS JSON:', e);
-      }
-    }
-
-    // Method 3: Look for quoted strings at end of message
-    const quotedSuggestions = content.match(/"([^"]{2,25})"/g);
-    if (quotedSuggestions && quotedSuggestions.length >= 2) {
-      const suggestions = quotedSuggestions
-        .map(s => s.replace(/"/g, '').trim())
-        .slice(-4); // Take last 4 quoted strings
-      console.log('✅ Method 3: Found quoted suggestions:', suggestions);
-      return suggestions;
-    }
-
-    // Method 4: Look for bullet points or numbered lists at end
-    const lines = content.split('\n').reverse();
-    const suggestionLines = [];
-    for (const line of lines) {
-      const cleaned = line.replace(/^[\d\-\*\•]\s*/, '').trim();
-      if (cleaned.length > 0 && cleaned.length <= 25 && !cleaned.includes('**')) {
-        suggestionLines.push(cleaned);
-        if (suggestionLines.length >= 4) break;
-      }
-    }
-    if (suggestionLines.length >= 2) {
-      console.log('✅ Method 4: Found list-based suggestions:', suggestionLines.reverse());
-      return suggestionLines.reverse();
-    }
-
-    console.log('❌ All methods failed: No suggestions found');
-    return [];
-  };
 
   // Helper function to add AI messages with typewriter animation
   const addAIMessageWithTypewriter = async (message: Message) => {
@@ -501,10 +220,8 @@ Your insights have been captured and will be available in your Insights tab. Gre
     }, 100);
   };
 
-  // Smooth transitions for exercise mode (keeping existing)
-  const enterExerciseMode = () => {
-    setExerciseMode(true);
-    
+  // Smooth transitions for exercise mode (keeping local for animations)
+  const startExerciseAnimations = () => {
     Animated.timing(backgroundAnimation, {
       toValue: 1,
       duration: 600,
@@ -518,9 +235,7 @@ Your insights have been captured and will be available in your Insights tab. Gre
     }).start();
   };
 
-  const exitExerciseMode = () => {
-    setExerciseMode(false);
-    
+  const stopExerciseAnimations = () => {
     Animated.timing(backgroundAnimation, {
       toValue: 0,
       duration: 600,
@@ -533,6 +248,15 @@ Your insights have been captured and will be available in your Insights tab. Gre
       useNativeDriver: false,
     }).start();
   };
+
+  // Update animations when exercise mode changes
+  React.useEffect(() => {
+    if (exerciseMode) {
+      startExerciseAnimations();
+    } else {
+      stopExerciseAnimations();
+    }
+  }, [exerciseMode]);
 
   // Define animated background gradients
   const normalGradient = [...colors.gradients.primaryLight];
