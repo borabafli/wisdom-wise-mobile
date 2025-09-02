@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { Message, storageService } from '../services/storageService';
 import { insightService } from '../services/insightService';
 import { contextService } from '../services/contextService';
+import { memoryService } from '../services/memoryService';
 
 /**
  * Hook for session lifecycle management - extracted from useChatSession
@@ -67,13 +68,42 @@ export const useSessionManagement = () => {
       await storageService.clearCurrentSession();
       console.log('Session saved to history and cleared');
       
-      // Process insights in background (slow AI operations)
+      // Process insights and memory in background (slow AI operations)
       setTimeout(async () => {
         try {
-          const patterns = await insightService.extractAtSessionEnd();
+          const currentSession = await storageService.getChatHistory();
+          const lastSession = currentSession[0]; // Most recent session
           
-          if (patterns.length > 0) {
-            console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
+          if (lastSession && lastSession.messages) {
+            // Extract traditional thought patterns
+            const patterns = await insightService.extractAtSessionEnd();
+            if (patterns.length > 0) {
+              console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
+            }
+
+            // Extract memory insights
+            const insightResult = await memoryService.extractInsights(lastSession.messages);
+            if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+              console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
+            }
+
+            // Generate session summary
+            const summaryResult = await memoryService.generateSessionSummary(
+              lastSession.id, 
+              lastSession.messages
+            );
+            console.log(`✅ Background: Generated session summary`);
+
+            // Check for consolidation
+            if (summaryResult.shouldConsolidate) {
+              const consolidatedSummary = await memoryService.consolidateSummaries();
+              if (consolidatedSummary) {
+                console.log(`✅ Background: Created consolidated summary`);
+              }
+            }
+
+            // Prune old data periodically
+            await memoryService.pruneOldData();
           }
         } catch (error) {
           console.error('Background insight extraction failed:', error);
@@ -101,10 +131,20 @@ export const useSessionManagement = () => {
       // Extract insights in background (slow AI operation)
       setTimeout(async () => {
         try {
-          const patterns = await insightService.extractAtSessionEnd();
+          // Get current messages before clearing
+          const currentMessages = await storageService.getMessages();
           
+          const patterns = await insightService.extractAtSessionEnd();
           if (patterns.length > 0) {
             console.log(`✅ Background: Extracted ${patterns.length} thought patterns (conversation not saved)`);
+          }
+
+          // Still extract memory insights even if not saving conversation
+          if (currentMessages.length > 0) {
+            const insightResult = await memoryService.extractInsights(currentMessages);
+            if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+              console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
+            }
           }
         } catch (error) {
           console.error('Background insight extraction failed:', error);
