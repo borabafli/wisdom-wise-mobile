@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,13 +12,18 @@ import { useQuote } from '../hooks/useQuote';
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaWrapper style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background2.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <View style={styles.backgroundOverlay} />
+        <LinearGradient
+          colors={['rgba(187, 242, 255, 0.85)', 'rgba(255, 255, 255, 0.85)']} // Gradient from #BBF2FF to white
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.backgroundOverlay}
+        />
         
         {/* Background watercolor effects - keeping for subtle overlay */}
         <LinearGradient
@@ -66,10 +71,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                   
                   {/* Input area (slightly longer) */}
                   <View style={styles.inputContainer}>
-                    <MessageCircle size={18} color={colors.text.primary} />
+                    <MessageCircle size={22} color={colors.text.primary} />
                     <Text style={styles.inputText}>Type or talk to start...</Text>
                     <View style={styles.micButton}>
-                      <Mic size={18} color={colors.text.primary} />
+                      <Mic size={22} color={colors.text.primary} />
                     </View>
                   </View>
                 </View>
@@ -254,7 +259,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
       </ScrollView>
       
       </ImageBackground>
-    </SafeAreaView>
+    </SafeAreaWrapper>
   );
 };
 

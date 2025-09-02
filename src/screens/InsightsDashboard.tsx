@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
@@ -113,7 +113,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaWrapper style={styles.container}>
       {/* Background */}
       <LinearGradient
         colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
@@ -334,7 +334,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaWrapper>
   );
 };
 

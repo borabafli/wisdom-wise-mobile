@@ -49,7 +49,10 @@
       "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/services/**)",
       "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/styles/components/**)",
       "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/components/**)",
-      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/services/**)"
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/services/**)",
+      "Bash(set SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae npx supabase functions deploy ai-chat --project-ref tarwryruagxsoaljzoot)",
+      "Read(E:\\/**)"
     ],
     "deny": [],
     "ask": []

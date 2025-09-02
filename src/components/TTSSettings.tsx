@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, Switch, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, Volume2, VolumeX, Play, Settings } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider'; // We'd need to install this
@@ -74,7 +74,7 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <SafeAreaView style={styles.container}>
+      <SafeAreaWrapper style={styles.container}>
         <LinearGradient
           colors={['#f0f9ff', '#e0f2fe']}
           style={styles.backgroundGradient}
@@ -249,7 +249,7 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
           </View>
 
         </View>
-      </SafeAreaView>
+      </SafeAreaWrapper>
     </Modal>
   );
 };

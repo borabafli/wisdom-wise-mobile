@@ -13,6 +13,11 @@ export interface AIResponse {
   };
   suggestions?: string[];
   nextStep?: boolean;
+  nextAction?: string;
+  exerciseData?: {
+    type: string;
+    name: string;
+  };
 }
 
 /**

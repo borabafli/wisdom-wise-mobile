@@ -27,6 +27,12 @@ interface AIResponse {
     total_tokens: number;
   };
   suggestions?: string[];
+  nextAction?: string;
+  exerciseData?: {
+    type: string;
+    name: string;
+  };
+  nextStep?: boolean;
 }
 
 const corsHeaders = {
@@ -208,10 +214,31 @@ async function handleChatCompletion(
                 nextStep: {
                   type: "boolean",
                   description: "For exercises only: true if the therapeutic goal of current step is achieved and ready to advance, false to stay in current step for deeper exploration"
+                },
+                nextAction: {
+                  type: "string",
+                  enum: ["none", "showExerciseCard"],
+                  description: "REQUIRED: Set to 'showExerciseCard' when user confirms wanting to do an exercise, 'none' otherwise"
+                },
+                exerciseData: {
+                  type: "object",
+                  properties: {
+                    type: {
+                      type: "string",
+                      enum: ["breathing", "mindfulness", "gratitude", "automatic-thoughts", "self-compassion", "values-clarification"],
+                      description: "The exercise type"
+                    },
+                    name: {
+                      type: "string", 
+                      description: "The display name of the exercise"
+                    }
+                  },
+                  required: ["type", "name"],
+                  description: "Exercise details - REQUIRED when nextAction is 'showExerciseCard', can be null when nextAction is 'none'"
                 }
               },
-              required: ["message", "suggestions"],
-              additionalProperties: false
+              required: ["message", "suggestions", "nextAction"],
+              additionalProperties: true
             }
           }
         }
@@ -307,6 +334,9 @@ async function handleChatCompletion(
     // With structured output, the content should already be parsed JSON
     let cleanedMessage = '';
     let suggestions: string[] = [];
+    let nextAction: string | undefined;
+    let exerciseData: {type: string, name: string} | undefined;
+    let nextStep: boolean | undefined;
     
     try {
       // First, try to extract JSON from markdown code blocks if present
@@ -330,7 +360,16 @@ async function handleChatCompletion(
         suggestions = Array.isArray(jsonResponse.suggestions) 
           ? jsonResponse.suggestions.slice(0, 4) 
           : [];
-        console.log('✅ Successfully extracted from JSON:', { cleanedMessage: cleanedMessage.substring(0, 100), suggestions });
+        nextAction = jsonResponse.nextAction;
+        exerciseData = jsonResponse.exerciseData;
+        nextStep = jsonResponse.nextStep;
+        console.log('✅ Successfully extracted from JSON:', { 
+          cleanedMessage: cleanedMessage.substring(0, 100), 
+          suggestions, 
+          nextAction, 
+          exerciseData,
+          nextStep 
+        });
       } else {
         console.log('⚠️ JSON missing required fields, using fallback');
         cleanedMessage = messageContent;
@@ -357,7 +396,10 @@ async function handleChatCompletion(
       success: true,
       message: cleanedMessage || 'Error processing response',
       usage: data.usage,
-      suggestions: suggestions.length > 0 ? suggestions : undefined
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
+      nextAction: nextAction,
+      exerciseData: exerciseData,
+      nextStep: nextStep
     };
     
     console.log('🔍 Final API response being sent:', aiResponse);

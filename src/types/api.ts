@@ -3,6 +3,13 @@ export interface AIResponse {
   success: boolean;
   message?: string;
   error?: string;
+  suggestions?: string[];
+  nextAction?: string;
+  exerciseData?: {
+    type: string;
+    name: string;
+  };
+  nextStep?: boolean;
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
