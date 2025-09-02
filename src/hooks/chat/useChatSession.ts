@@ -318,181 +318,19 @@ export const useChatSession = (
     }
   };
 
-  const handleExerciseSendMessage = async (text: string, currentStep: number) => {
-    console.log('Handling message within an exercise flow');
-  };
+  // STUBS – exercises are now fully handled by useExerciseFlow
+const handleExerciseSendMessage = async (text: string, currentStep: number) => {
+  console.log("⚠️ handleExerciseSendMessage is now handled by useExerciseFlow. Called with:", text, currentStep);
+};
 
-  const handleConfirmExerciseTransition = useCallback(async (exercise: any) => {
-    console.log(`🎯 User confirmed exercise transition to: ${exercise.name}`);
-    
-    // Clear the exercise card since we're transitioning
-    setShowExerciseCard(null);
-    
-    // Use handleStartExercise with preserveChat = true
-    await handleStartExercise(exercise, true);
-  }, []);
+const handleStartExercise = async (exercise: any, preserveChat: boolean = false) => {
+  console.log("⚠️ handleStartExercise is now handled by useExerciseFlow. Called with:", exercise, preserveChat);
+};
 
-  const handleStartExercise = useCallback(async (exercise: any, preserveChat: boolean = false) => {
-    console.log(`Starting AI-guided exercise flow for: ${exercise.name}, preserveChat: ${preserveChat}`);
+const handleConfirmExerciseTransition = async (exercise: any) => {
+  console.log("⚠️ handleConfirmExerciseTransition is now handled by useExerciseFlow. Called with:", exercise);
+};
 
-    try {
-      // Get predefined exercise flow
-      const flow = getExerciseFlow(exercise.type);
-      if (!flow || !flow.steps || flow.steps.length === 0) {
-        console.error(`Exercise flow not found for type: ${exercise.type}`);
-        return;
-      }
-
-      console.log('Generated dynamic flow with', flow.steps.length, 'steps');
-      
-      // Set exercise flow state
-      setExerciseFlow(flow);
-      setCurrentExerciseStep(1);
-
-      const currentStep = flow.steps[0];
-
-      // Clear chat if not preserving (like library behavior)
-      if (!preserveChat) {
-        await storageService.clearCurrentSession();
-      }
-
-      // Use the rich exercise context system for AI-generated guidance
-      console.log(`🎯 Starting AI-guided exercise: Step 1, isFirstMessageInStep=true`);
-      console.log('🎯 Exercise flow:', flow);
-      console.log('🎯 Exercise type:', exercise.type);
-      
-      const exerciseContext = await contextService.assembleExerciseContext(
-        [], // No previous messages for first step
-        flow,
-        1, // Step 1
-        [],
-        true // This IS the first message in step 1
-      );
-      
-      console.log('🎯 Exercise context assembled:', exerciseContext.length, 'messages');
-
-      // Add the initial user message to start the exercise
-      exerciseContext.push({
-        role: 'user',
-        content: `I'm ready to start the ${exercise.name} exercise. Please guide me through step 1.`
-      });
-      
-      console.log('🎯 Final context for API:', exerciseContext.length, 'messages');
-      console.log('🎯 Calling AI API...');
-
-      setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext(exerciseContext);
-      setIsTyping(false);
-      
-      console.log('🎯 AI API Response received:', response);
-
-      if (response.success && response.message) {
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          type: 'exercise',
-          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
-          content: response.message,
-          exerciseType: exercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-
-        if (preserveChat) {
-          setMessages(prev => [...prev, aiMessage]);
-        } else {
-          setMessages([aiMessage]);
-        }
-        
-        await storageService.addMessage(aiMessage);
-
-        // Extract AI-generated suggestions
-        if (response.suggestions && response.suggestions.length > 0) {
-          setSuggestions(response.suggestions);
-        } else {
-          setSuggestions([]);
-        }
-
-        console.log('AI-guided exercise started successfully');
-      } else {
-        console.error('Failed to start AI-guided exercise - API call failed');
-        console.error('AI Response:', response);
-        
-        // Don't create fake static messages - instead show error and retry
-        const errorMessage: Message = {
-          id: `exercise-error-${Date.now()}`,
-          type: 'system',
-          content: `I'm having trouble starting the ${exercise.name} exercise right now. Let me try again...`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
-
-        if (preserveChat) {
-          setMessages(prev => [...prev, errorMessage]);
-        } else {
-          setMessages([errorMessage]);
-        }
-        
-        await storageService.addMessage(errorMessage);
-        
-        // Retry the AI call after a short delay
-        console.log('Retrying AI-guided exercise in 2 seconds...');
-        setTimeout(async () => {
-          try {
-            setIsTyping(true);
-            const retryResponse = await apiService.getChatCompletionWithContext(exerciseContext);
-            setIsTyping(false);
-
-            if (retryResponse.success && retryResponse.message) {
-              const aiMessage: Message = {
-                id: Date.now().toString(),
-                type: 'exercise',
-                title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
-                content: retryResponse.message,
-                exerciseType: exercise.type,
-                color: flow.color,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                isAIGuided: true
-              };
-
-              setMessages(prev => [...prev, aiMessage]);
-              await storageService.addMessage(aiMessage);
-
-              if (retryResponse.suggestions && retryResponse.suggestions.length > 0) {
-                setSuggestions(retryResponse.suggestions);
-              } else {
-                setSuggestions([]);
-              }
-
-              console.log('AI-guided exercise started successfully on retry');
-            } else {
-              console.error('Retry also failed - giving up');
-              const finalErrorMessage: Message = {
-                id: `exercise-final-error-${Date.now()}`,
-                type: 'system',
-                content: `I'm sorry, I can't start the guided exercise right now. You can try again later or start a regular conversation.`,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              };
-              setMessages(prev => [...prev, finalErrorMessage]);
-              await storageService.addMessage(finalErrorMessage);
-              
-              // Reset exercise state since it failed
-              setExerciseFlow(null);
-              setCurrentExerciseStep(null);
-            }
-          } catch (retryError) {
-            console.error('Retry error:', retryError);
-            setIsTyping(false);
-          }
-        }, 2000);
-
-        setSuggestions([]);
-      }
-
-    } catch (error) {
-      console.error('Error starting AI-guided exercise:', error);
-      setIsTyping(false);
-    }
-  }, []);
 
   const handleEndSession = useCallback((onBack: () => void) => {
     sessionEndHandler(onBack, messages);
