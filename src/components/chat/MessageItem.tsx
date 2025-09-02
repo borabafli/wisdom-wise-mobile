@@ -50,7 +50,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       <View style={styles.userMessageContainer}>
         <View style={styles.userMessageWrapper}>
           <LinearGradient
-            colors={[...colors.gradients.messageUser]}
+            colors={['#BCDCFC', '#C9EBFE']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.userMessageBubble}
@@ -82,19 +82,37 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     <View style={messageContainerStyle}>
       <View style={styles.systemMessageBubble}>
         <View style={messageContentStyle}>
-          <View style={turtleContainerStyle}>
-            <Image 
-              source={require('../../../assets/images/turtle-simple-3a.png')}
-              style={turtleStyle}
-              contentFit="cover"
-            />
-          </View>
-          
-          {/* Show Anu name for welcome messages */}
-          {isWelcomeMessage && fontsLoaded && (
-            <View style={styles.therapistNameContainer}>
-              <Text style={styles.therapistGreeting}>Hey! I'm </Text>
-              <Text style={styles.therapistName}>Anu</Text>
+          {/* Avatar and Name Section */}
+          {isWelcomeMessage ? (
+            // Large welcome layout - avatar on top, name below
+            <View style={styles.avatarSection}>
+              <View style={turtleContainerStyle}>
+                <Image 
+                  source={require('../../../assets/images/turtle-simple-3a.png')}
+                  style={turtleStyle}
+                  contentFit="cover"
+                />
+              </View>
+              {fontsLoaded && (
+                <View style={styles.therapistNameContainer}>
+                  <Text style={styles.therapistGreeting}>Hey! I'm </Text>
+                  <Text style={styles.therapistName}>Anu</Text>
+                </View>
+              )}
+            </View>
+          ) : (
+            // Small layout - avatar and name side by side
+            <View style={styles.avatarRowSmall}>
+              <View style={turtleContainerStyle}>
+                <Image 
+                  source={require('../../../assets/images/turtle-simple-3a.png')}
+                  style={turtleStyle}
+                  contentFit="cover"
+                />
+              </View>
+              {fontsLoaded && (
+                <Text style={styles.therapistNameSmall}>Anu</Text>
+              )}
             </View>
           )}
           

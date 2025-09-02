@@ -9,10 +9,10 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width } = Dimensions.get('window');
 
 export const chatInterfaceStyles = StyleSheet.create({
-  // Container & Layout - Ultra Transparent
+  // Container & Layout - Soft Blue-Tint White Background
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F9FBFD',
   },
   backgroundImage: {
     flex: 1,
@@ -25,7 +25,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.45)', // Slightly increased opacity for better text readability
+    // Background color will be overridden by gradient component
     zIndex: 0,
   },
   backgroundGradient: {
@@ -43,18 +43,15 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  // Header - Ultra Modern Glass
+  // Header - Clean Minimal Design
   header: {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)', // Slightly more opaque for better readability
-    borderBottomWidth: 0,
+    backgroundColor: '#FFFFFF', // Pure white
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(107, 114, 128, 0.04)', // Subtle separator line
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.layout.screenPadding,
     zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    // No shadow - clean separator line instead
   },
   headerContent: {
     flexDirection: 'row',
@@ -95,7 +92,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'System',
     fontWeight: '600',
-    color: colors.text.primary,
+    color: '#111827', // Almost black for readability
     letterSpacing: 0.2,
   },
   exerciseTitle: {
@@ -106,7 +103,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'System',
     fontWeight: '400',
-    color: colors.text.tertiary,
+    color: '#6B7280', // Light gray for secondary text
     letterSpacing: 0.1,
   },
   warningContainer: {
@@ -153,23 +150,22 @@ export const chatInterfaceStyles = StyleSheet.create({
     minWidth: 120,
   },
   userMessageBubble: {
-    backgroundColor: '#519BC2',
     borderRadius: spacing.radius.lg,
     borderBottomRightRadius: spacing.radius.xs,
     borderWidth: 0,
     paddingHorizontal: spacing.components.messagePadding,
     paddingVertical: spacing.components.messagePadding,
-    shadowColor: '#519BC2',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 4,
   },
   userMessageText: {
     fontSize: 15,
     fontFamily: 'System',
     fontWeight: '400',
-    color: '#ffffff',
+    color: '#374151', // Softer dark gray instead of harsh black
     textAlign: 'left',
     flexWrap: 'wrap',
     lineHeight: 30,
@@ -224,6 +220,17 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderWidth: 0,
     borderColor: 'transparent',
   },
+  // Avatar and name layout
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: spacing[2],
+  },
+  avatarRowSmall: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    marginBottom: spacing[2],
+  },
   therapistNameContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
@@ -231,19 +238,32 @@ export const chatInterfaceStyles = StyleSheet.create({
     marginTop: spacing[2],
     marginBottom: spacing[6],
   },
+  therapistNameContainerSmall: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing[1],
+  },
   therapistGreeting: {
     fontSize: 26,
     fontFamily: 'Nunito-Bold',
     fontWeight: '700',
-    color: colors.gray[600],
+    color: '#6B7280', // Light gray for secondary text
     letterSpacing: 0.5,
   },
   therapistName: {
-    fontSize: 42,
+    fontSize: 48,
     fontFamily: 'Caveat_400Regular',
     fontWeight: '400',
-    color: '#519BC2',
+    color: '#3BB4F5', // Light sky blue accent
     letterSpacing: 0.5,
+  },
+  therapistNameSmall: {
+    fontSize: 20,
+    fontFamily: 'Caveat_400Regular',
+    fontWeight: '400',
+    color: '#3BB4F5', // Light sky blue accent
+    letterSpacing: 0.3,
   },
   welcomeMessageTextContainer: {
     alignItems: 'center',
@@ -257,7 +277,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Nunito-Regular',
     fontWeight: '500',
-    color: colors.gray[700],
+    color: '#111827', // Almost black for readability
     textAlign: 'center',
     lineHeight: 26,
     marginBottom: spacing[4],
@@ -266,25 +286,20 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: spacing[4],
   },
   promptSuggestionCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderWidth: 1,
-    borderColor: colors.gray[200],
+    backgroundColor: '#FFFFFF', // Pure white
+    borderWidth: 0, // No border for cleaner look
     borderRadius: spacing.radius.lg,
     paddingHorizontal: spacing[10],
     paddingVertical: spacing[8],
     marginTop: spacing[8],
     alignSelf: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
+    // No shadow - flat minimal design
   },
   promptSuggestionText: {
     fontSize: 16,
     fontFamily: 'System',
     fontWeight: '500',
-    color: colors.gray[700],
+    color: '#6B7280', // Light gray for secondary text
     textAlign: 'center',
     letterSpacing: 0.3,
   },
@@ -297,7 +312,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Nunito-Regular',
     fontWeight: '400',
-    color: colors.gray[400],
+    color: '#6B7280',
     textAlign: 'center',
     opacity: 0.7,
   },
@@ -346,7 +361,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
     fontWeight: '400',
-    color: '#374151', // Darker grey for better readability
+    color: '#111827', // Almost black for readability
     textAlign: 'left',
     lineHeight: 24,
     marginBottom: spacing[2],
@@ -433,55 +448,66 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'System',
     fontWeight: '400',
-    color: colors.text.tertiary,
+    color: '#6B7280', // Light gray for secondary text
     fontStyle: 'italic',
     letterSpacing: 0.1,
   },
 
-  // Suggestions
+  // Suggestions - Mobile Optimized
   suggestionsContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingBottom: spacing.components.cardGap,
-    gap: spacing[4], // Space between the two rows
-    flexWrap: 'wrap', // Allow container to wrap content
+    paddingBottom: spacing[6], // More bottom padding for mobile
+    gap: spacing[5], // Better spacing between rows
+    flexWrap: 'wrap',
   },
 
   suggestionsStack: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing[4],
-    justifyContent: 'flex-start', // Left-aligned instead of centered
+    gap: spacing[3], // Tighter horizontal gap for mobile
+    justifyContent: 'flex-start',
+    marginBottom: spacing[2], // Space between suggestion rows
   },
   exerciseButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
   suggestionChip: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)', // More transparent
-    paddingHorizontal: spacing.components.cardGap + 2,
-    paddingVertical: spacing[4] + 1,
-    borderRadius: spacing.radius.md,
+    backgroundColor: '#FFFFFF', // Clean pure white
+    paddingHorizontal: spacing[6], // Generous horizontal padding
+    paddingVertical: spacing[5], // Generous vertical padding
+    minHeight: 44, // Minimum touch target for accessibility
+    borderRadius: 20, // Slightly less rounded for cleaner look
     borderWidth: 1,
-    borderColor: 'rgba(209, 213, 219, 0.6)', // Semi-transparent border
-    flexShrink: 1, // Allow chips to shrink
-    alignSelf: 'flex-start', // Don't stretch to full width
+    borderColor: 'rgba(107, 114, 128, 0.2)', // More contrasting gray border
+    flexShrink: 1,
+    alignSelf: 'flex-start',
+    // No shadow - completely flat design
   },
   suggestionText: {
-    fontSize: 16,
+    fontSize: 15, // Optimized for mobile readability
     fontFamily: 'System',
-    fontWeight: '500',
-    color: colors.text.secondary,
-    letterSpacing: 0.2,
+    fontWeight: '600', // Bolder for better mobile readability
+    color: '#111827', // Much better contrast for mobile
+    letterSpacing: 0.3,
+    textAlign: 'center',
+    lineHeight: 22, // More line height for better spacing
   },
   exerciseSuggestionButton: {
-    backgroundColor: 'rgba(107, 70, 193, 0.1)', // Light purple background
-    borderColor: 'rgba(107, 70, 193, 0.3)', // Purple border
+    backgroundColor: 'rgba(59, 180, 245, 0.06)', // Even lighter accent background
+    borderColor: 'rgba(59, 180, 245, 0.12)', // Very subtle accent border
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: 48, // Slightly larger for special exercise button
+    paddingHorizontal: spacing[7], // Generous padding
+    paddingVertical: spacing[5], // Generous vertical padding
+    // No shadow - flat design
   },
   exerciseSuggestionText: {
-    color: '#6B46C1', // Purple text
-    fontWeight: '600',
+    color: '#3BB4F5', // Accent color for consistency
+    fontWeight: '700', // Even bolder for call-to-action
+    fontSize: 15,
+    letterSpacing: 0.4,
   },
 
   // Input Area - Modern Glass
@@ -492,17 +518,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     zIndex: 10,
   },
   inputCard: {
-    backgroundColor: 'rgba(248, 250, 255, 0.95)',
+    backgroundColor: '#FFFFFF', // Pure white
     borderWidth: 1,
-    borderColor: '#e1f5fe',
+    borderColor: 'rgba(107, 114, 128, 0.08)', // Much subtler border
     borderRadius: 25,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    // No shadow - clean flat design
   },
   inputRow: {
     flexDirection: 'row',
@@ -591,7 +613,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
     fontWeight: '400',
-    color: colors.text.primary,
+    color: '#111827', // Almost black for readability
     minHeight: 48,
     maxHeight: 200,
     paddingVertical: spacing[3],
@@ -617,7 +639,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Fullscreen Input Modal Styles
   fullscreenInputContainer: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F9FBFD', // Soft blue-tint white background
   },
   fullscreenInputHeader: {
     flexDirection: 'row',
@@ -641,13 +663,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'System',
     fontWeight: '600',
-    color: colors.text.primary,
+    color: '#111827', // Almost black for readability
     letterSpacing: 0.2,
   },
   fullscreenSendButton: {
     padding: spacing[2],
     borderRadius: 20,
-    backgroundColor: '#519BC2',
+    backgroundColor: '#3B82F6', // Much darker, more contrasty blue
     width: 40,
     height: 40,
     alignItems: 'center',
@@ -665,7 +687,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
     fontWeight: '400',
-    color: colors.text.primary,
+    color: '#111827', // Almost black for readability
     backgroundColor: 'transparent',
     lineHeight: 24,
     letterSpacing: 0.2,
@@ -765,7 +787,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'System',
     fontWeight: '400',
-    color: colors.text.tertiary,
+    color: '#6B7280', // Light gray for secondary text
     textAlign: 'center',
     letterSpacing: 0.2,
   },
@@ -777,12 +799,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#519BC2',
-    shadowColor: '#519BC2',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: '#3B82F6', // Much darker, more contrasty blue
+    // Minimal shadow for send button
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
     zIndex: 2,
   },
   sendButtonActive: {
@@ -814,12 +837,12 @@ export const chatInterfaceStyles = StyleSheet.create({
   exerciseCardTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: '#111827', // Almost black for readability
     marginBottom: 4,
   },
   exerciseCardSubtitle: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: '#6B7280', // Light gray for secondary text
     fontWeight: '500',
   },
   exerciseCardActions: {
@@ -849,7 +872,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   exerciseDismissButtonText: {
-    color: colors.text.tertiary,
+    color: '#6B7280', // Light gray for secondary text
     fontSize: 14,
     fontWeight: '500',
   },

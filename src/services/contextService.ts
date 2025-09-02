@@ -116,7 +116,7 @@ Think: "If a therapist just said this to someone, what could they naturally repl
       return systemPrompt.replace('{USER_NAME}', firstName);
     } catch (error) {
       console.error('Error getting user name for system prompt:', error);
-      return this.config.systemPrompt.replace('{USER_NAME}', 'Friend');
+      return this.config.systemPrompt.replace('{USER_NAME}', 'friend');
     }
   }
 

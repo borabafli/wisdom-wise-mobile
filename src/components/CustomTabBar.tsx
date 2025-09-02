@@ -93,7 +93,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 colors={[...gradients.button.primary]}
                 style={styles.plusButton}
               >
-                <Plus size={24} color={colors.text.inverse} strokeWidth={2.5} />
+                <Plus size={24} color="#3B82F6" strokeWidth={2.5} />
               </LinearGradient>
             </TouchableOpacity>
 

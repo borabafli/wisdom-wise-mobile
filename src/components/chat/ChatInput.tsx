@@ -87,7 +87,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     style={styles.sendButton}
                     activeOpacity={0.7}
                   >
-                    <ArrowUp size={20} color="#ffffff" />
+                    <ArrowUp size={24} color="#ffffff" />
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity 
@@ -95,7 +95,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     style={styles.micButton}
                     activeOpacity={0.7}
                   >
-                    <Mic size={24} color="#6b7280" />
+                    <Mic size={26} color="#6b7280" />
                   </TouchableOpacity>
                 )}
               </View>

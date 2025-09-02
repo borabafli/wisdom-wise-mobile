@@ -162,6 +162,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const handlePromptSuggestion = (text: string) => {
     setInputText(text);
+    // Automatically send the message
+    handleSend(text);
   };
 
   // Handle exercise card actions
@@ -288,7 +290,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <View style={styles.backgroundOverlay} />
+        <LinearGradient
+          colors={['rgba(255, 253, 232, 0.7)', 'rgba(187, 242, 255, 0.7)']} // Gradient from #FFFDE8 to #BBF2FF with transparency
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.backgroundOverlay}
+        />
         <View style={styles.backgroundGradient}>
           <Animated.View style={[
             styles.backgroundGradient,
@@ -355,7 +362,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       ) : currentExercise ? (
                         currentExercise.name
                       ) : (
-                        '🌸 Gentle Session'
+                        '💭 Reflection Space'
                       )}
                     </Text>
                     <Text style={styles.sessionSubtitle}>
@@ -364,8 +371,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       ) : currentExercise ? (
                         `${currentExercise.duration || '5 min'} • Therapeutic Exercise`
                       ) : (
-                        chatSession.isLoading ? 'Loading your gentle space...' :
-                        `${Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0))} messages remaining today`
+                        chatSession.isLoading ? 'Loading your gentle space...' : 'Your safe space for reflection'
                       )}
                     </Text>
                     
@@ -426,7 +432,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         <View style={styles.typingDot} />
                         <View style={styles.typingDot} />
                       </View>
-                      <Text style={styles.typingText}>Your therapist is reflecting...</Text>
+                      <Text style={styles.typingText}>Anu is reflecting...</Text>
                     </View>
                   </View>
                 </View>

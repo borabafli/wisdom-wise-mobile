@@ -18,7 +18,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <View style={styles.backgroundOverlay} />
+        <LinearGradient
+          colors={['rgba(187, 242, 255, 0.85)', 'rgba(255, 255, 255, 0.85)']} // Gradient from #BBF2FF to white
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.backgroundOverlay}
+        />
         
         {/* Background watercolor effects - keeping for subtle overlay */}
         <LinearGradient
@@ -66,10 +71,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                   
                   {/* Input area (slightly longer) */}
                   <View style={styles.inputContainer}>
-                    <MessageCircle size={18} color={colors.text.primary} />
+                    <MessageCircle size={22} color={colors.text.primary} />
                     <Text style={styles.inputText}>Type or talk to start...</Text>
                     <View style={styles.micButton}>
-                      <Mic size={18} color={colors.text.primary} />
+                      <Mic size={22} color={colors.text.primary} />
                     </View>
                   </View>
                 </View>

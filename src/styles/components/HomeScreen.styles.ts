@@ -24,7 +24,7 @@ export const homeScreenStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Light overlay for readability
+    // Background color will be handled by LinearGradient
     zIndex: 0,
   },
   backgroundGradient: {
@@ -214,7 +214,7 @@ export const homeScreenStyles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-end', // Align to bottom for better visual balance
     marginBottom: spacing.components.cardGap,
   },
   sectionTitle: {
@@ -232,7 +232,7 @@ export const homeScreenStyles = StyleSheet.create({
   },
   seeAllText: {
     ...typography.textStyles.bodySmall,
-    color: colors.blue[700],
+    color: '#111827', // Same black as other text for consistency
     fontWeight: typography.fontWeight.semibold,
   },
 
