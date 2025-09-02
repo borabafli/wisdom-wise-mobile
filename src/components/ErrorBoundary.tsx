@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { AlertCircle, RefreshCw } from 'lucide-react-native';
 import { errorBoundaryStyles as styles } from '../styles/components/ErrorBoundary.styles';
 import { colors } from '../styles/tokens';
@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaWrapper style={styles.container}>
           <View style={styles.content}>
             <View style={styles.iconContainer}>
               <AlertCircle size={64} color={colors.semantic.error} />
@@ -78,7 +78,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </View>
             )}
           </View>
-        </SafeAreaView>
+        </SafeAreaWrapper>
       );
     }
 

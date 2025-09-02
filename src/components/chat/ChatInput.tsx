@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Modal, SafeAreaView, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, Modal, Text } from 'react-native';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
 import SoundWaveAnimation from '../SoundWaveAnimation';
+import { SafeAreaWrapper } from '../SafeAreaWrapper';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
 
 interface ChatInputProps {
@@ -128,7 +129,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         presentationStyle="pageSheet"
         onRequestClose={() => setIsFullscreenInput(false)}
       >
-        <SafeAreaView style={styles.fullscreenInputContainer}>
+        <SafeAreaWrapper style={styles.fullscreenInputContainer}>
           <View style={styles.fullscreenInputHeader}>
             <TouchableOpacity 
               onPress={() => setIsFullscreenInput(false)}
@@ -162,7 +163,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               selectionColor="#3b82f6"
             />
           </View>
-        </SafeAreaView>
+        </SafeAreaWrapper>
       </Modal>
     </>
   );

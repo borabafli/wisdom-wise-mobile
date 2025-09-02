@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,7 +12,7 @@ import { useQuote } from '../hooks/useQuote';
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaWrapper style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background2.png')}
         style={styles.backgroundImage}
@@ -259,7 +259,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
       </ScrollView>
       
       </ImageBackground>
-    </SafeAreaView>
+    </SafeAreaWrapper>
   );
 };
 

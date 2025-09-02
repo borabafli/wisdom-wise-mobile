@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, MessageCircle, Clock, Trash2, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { storageService } from '../services/storageService';
@@ -121,7 +121,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <SafeAreaView style={styles.container}>
+      <SafeAreaWrapper style={styles.container}>
         <LinearGradient
           colors={['#f0f9ff', '#e0f2fe']}
           style={styles.backgroundGradient}
@@ -214,7 +214,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
             </View>
           )}
         </ScrollView>
-      </SafeAreaView>
+      </SafeAreaWrapper>
     </Modal>
   );
 };

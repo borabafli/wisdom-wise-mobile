@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { Home, BookOpen, Brain, User, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ActionPalette from './ActionPalette';
@@ -33,7 +33,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <>
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaWrapper style={styles.container} edges={['bottom']}>
         <LinearGradient
           colors={[...gradients.card.primary]}
           style={styles.tabBarGradient}
@@ -143,7 +143,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
             })}
           </View>
         </LinearGradient>
-      </SafeAreaView>
+      </SafeAreaWrapper>
 
       {/* Action Palette */}
       <ActionPalette 

@@ -4,70 +4,8 @@ import { contextService } from '../../services/contextService';
 import { apiService } from '../../services/apiService';
 import { rateLimitService } from '../../services/rateLimitService';
 import { ttsService } from '../../services/ttsService';
-import { EXERCISE_KEYWORDS, getExerciseByType } from '../../data/exerciseLibrary';
 import { useSessionManagement } from '../useSessionManagement';
-
-
-// Detect exercise suggestions in AI messages (returns exercise type key, not full object)
-function detectExerciseFromMessage(message: string): string | null {
-  const lowerMessage = message.toLowerCase();
-  
-  // Look for exercise suggestions in the message
-  for (const [exerciseType, keywords] of Object.entries(EXERCISE_KEYWORDS)) {
-    const hasKeyword = keywords.some(keyword => lowerMessage.includes(keyword));
-    const hasSuggestion = lowerMessage.includes('would you like to try') ||
-      lowerMessage.includes('want to try') ||
-      lowerMessage.includes('exercise') ||
-      lowerMessage.includes('practice');
-    
-    if (hasKeyword && hasSuggestion) {
-      console.log(`🎯 Detected ${exerciseType} exercise suggestion in message`);
-      return exerciseType;
-    }
-  }
-  
-  return null;
-}
-
-// Detect when user confirms they want to do an exercise
-function detectExerciseConfirmation(userMessage: string, recentMessages: Message[]): any | null {
-  const lowerUserMessage = userMessage.toLowerCase();
-  
-  // Check if user is responding positively to exercise suggestion
-  const positiveResponses = [
-    'yes', 'yeah', 'ok', 'okay', 'sure', 'let\'s try', 'let me try', 'i want to try',
-    'yes please', 'sounds good', 'i\'d like to', 'i want to', 'let\'s do it',
-    'help me', 'show me', 'i\'m ready', 'let\'s start', 'i need this'
-  ];
-  
-  const isPositiveResponse = positiveResponses.some(response => 
-    lowerUserMessage.includes(response)
-  );
-  
-  if (!isPositiveResponse) {
-    return null;
-  }
-  
-  // Look in recent AI messages for exercise suggestions
-  const recentAIMessages = recentMessages
-    .filter(msg => msg.type === 'system')
-    .slice(-3); // Check last 3 AI messages
-  
-  for (const aiMessage of recentAIMessages.reverse()) {
-    const aiContent = aiMessage.content || aiMessage.text || '';
-    const detectedExerciseType = detectExerciseFromMessage(aiContent);
-    if (detectedExerciseType) {
-      const exerciseData = getExerciseByType(detectedExerciseType);
-      if (exerciseData) {
-        console.log(`✅ User confirmed exercise: ${exerciseData.name}`);
-        return exerciseData;
-      }
-    }
-  }
-  
-  return null;
-}
-
+import { getExerciseFlow, exerciseLibraryData } from '../../data/exerciseLibrary';
 
 interface ChatSessionState {
   messages: Message[];
@@ -80,6 +18,8 @@ interface ChatSessionState {
     message: string;
   };
   showExerciseCard: any;
+  currentExerciseStep: number | null;
+  exerciseFlow: any | null;
 }
 
 interface UseChatSessionReturn extends ChatSessionState {
@@ -92,6 +32,9 @@ interface UseChatSessionReturn extends ChatSessionState {
   handleSendMessage: (text: string) => Promise<void>;
   handleSuggestExercise: () => Promise<void>;
   handleEndSession: (onBack: () => void) => void;
+  handleExerciseSendMessage: (text: string, currentStep: number) => Promise<void>;
+  handleStartExercise: (exercise: any, preserveChat?: boolean) => Promise<void>;
+  handleConfirmExerciseTransition: (exercise: any) => Promise<void>;
 }
 
 export const useChatSession = (
@@ -100,35 +43,35 @@ export const useChatSession = (
   const [messages, setMessages] = useState<Message[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [rateLimitStatus, setRateLimitStatus] = useState({ 
-    used: 0, 
-    total: 300, 
-    percentage: 0, 
-    message: '' 
+  const [rateLimitStatus, setRateLimitStatus] = useState({
+    used: 0,
+    total: 300,
+    percentage: 0,
+    message: ''
   });
   const [showExerciseCard, setShowExerciseCard] = useState<any>(null);
+  const [currentExerciseStep, setCurrentExerciseStep] = useState<number | null>(null);
+  const [exerciseFlow, setExerciseFlow] = useState<any>(null);
 
-  // Use the session management hook
   const { isLoading, initializeSession, handleEndSession: sessionEndHandler } = useSessionManagement();
 
   const initializeChatSession = useCallback(async () => {
     try {
-      // Load rate limit status
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
       setRateLimitStatus(rateLimitStatus);
-      
+
       console.log('=== CHAT INITIALIZATION ===');
-      console.log('currentExercise:', currentExercise);
-      
-      // If there's a current exercise, delegate to parent for dynamic flow handling
+
       if (currentExercise) {
-        console.log('Exercise detected - delegating to parent component for dynamic flow:', currentExercise.type);
-        return; // Let parent handle all exercises dynamically
+        console.log('Exercise detected - delegating to handleStartExercise:', currentExercise.type);
+        await handleStartExercise(currentExercise);
+        return;
       } else {
-        // Regular chat - use session management hook
-        const welcomeMessages = await initializeSession();
-        setMessages(welcomeMessages);
-        setSuggestions([]);
+        console.log('Starting fresh chat session');
+        const initialMessages = await initializeSession();
+        
+        setMessages(initialMessages);
+        setSuggestions([]); // No initial suggestions - wait for AI
       }
     } catch (error) {
       console.error('Error initializing chat session:', error);
@@ -137,16 +80,13 @@ export const useChatSession = (
 
   const handleSuggestExercise = async () => {
     console.log('🎯 User requested exercise suggestion');
-    
-    // Send a special message to get exercise recommendation
-    const suggestionText = "Please suggest an exercise that might be helpful for me right now based on our conversation.";
+    const suggestionText = "I need some help right now. Could you suggest a therapeutic exercise for me?";
     await handleSendMessage(suggestionText);
   };
 
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return;
 
-    // Create user message
     const userMessage: Message = {
       id: (Date.now() + Math.random()).toString(),
       type: 'user',
@@ -154,29 +94,19 @@ export const useChatSession = (
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    // Add user message to UI and storage - remove welcome message if it exists
     setMessages(prev => {
       const filteredMessages = prev.filter(msg => msg.type !== 'welcome');
       return [...filteredMessages, userMessage];
     });
-    
+
     try {
       await storageService.addMessage(userMessage);
     } catch (error) {
       console.error('Error saving user message:', error);
     }
 
-    // Check if user is confirming an exercise suggestion
-    const exerciseConfirmation = detectExerciseConfirmation(text, messages);
-    if (exerciseConfirmation) {
-      console.log('🎯 User confirmed exercise:', exerciseConfirmation);
-      setShowExerciseCard(exerciseConfirmation);
-    }
-
-    // Check rate limit first
     try {
       const rateLimit = await rateLimitService.canMakeRequest();
-      
       if (rateLimit.isLimitReached) {
         const limitMessage: Message = {
           id: (Date.now() + Math.random()).toString(),
@@ -189,64 +119,183 @@ export const useChatSession = (
         return;
       }
 
-      // Show typing indicator
       setIsTyping(true);
 
-      // Get conversation context
       const recentMessages = await storageService.getLastMessages(20);
-      const context = await contextService.assembleContext(recentMessages);
+      
+      // Check if we're in exercise mode
+      let context;
+      if (exerciseFlow && currentExerciseStep) {
+        console.log(`🎯 In exercise mode: Step ${currentExerciseStep}, using exercise context`);
+        context = await contextService.assembleExerciseContext(
+          recentMessages,
+          exerciseFlow,
+          currentExerciseStep,
+          [],
+          false // Not the first message in step
+        );
+      } else {
+        console.log('🎯 In regular chat mode, using chat context');
+        context = await contextService.assembleContext(recentMessages);
+      }
 
-      // Make API call
       const response = await apiService.getChatCompletionWithContext(context);
       console.log('API response:', response);
+      console.log('🔍 Exercise card debug - nextAction:', response.nextAction);
+      console.log('🔍 Exercise card debug - exerciseData:', response.exerciseData);
+      
+      // Log if AI is now providing nextAction field
+      if (response.nextAction !== undefined) {
+        console.log('✅ AI is now providing nextAction field:', response.nextAction);
+      } else {
+        console.log('❌ AI still not providing nextAction field');
+      }
 
       setIsTyping(false);
 
       if (response.success && response.message) {
-        // Record successful request for rate limiting
         await rateLimitService.recordRequest();
-        
-        // Update rate limit status
         const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
         setRateLimitStatus(newRateLimitStatus);
 
-        // Server-side parsing now handles JSON code blocks, but keep minimal fallback
-        const cleanedMessage = response.message;
-
-        // Create AI response message
-        const aiResponse: Message = {
-          id: (Date.now() + Math.random()).toString(),
-          type: 'system',
-          content: cleanedMessage,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
+        // Create appropriate message type based on context
+        let aiResponse: Message;
+        if (exerciseFlow && currentExerciseStep) {
+          // In exercise mode: create exercise-type message
+          const currentStep = exerciseFlow.steps[currentExerciseStep - 1];
+          aiResponse = {
+            id: (Date.now() + Math.random()).toString(),
+            type: 'exercise',
+            title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+            content: response.message,
+            exerciseType: exerciseFlow.type,
+            color: exerciseFlow.color,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isAIGuided: true
+          };
+        } else {
+          // Regular chat mode: create system message
+          aiResponse = {
+            id: (Date.now() + Math.random()).toString(),
+            type: 'system',
+            content: response.message,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+        }
 
         setMessages(prev => [...prev, aiResponse]);
         await storageService.addMessage(aiResponse);
-
-        // Auto-play TTS if enabled
         await ttsService.speakIfAutoPlay(response.message);
 
-        // Don't show exercise card on AI suggestion - wait for user confirmation
-        // The card will be shown when user responds positively to the suggestion
+        // Handle exercise step progression if in exercise mode
+        if (exerciseFlow && currentExerciseStep) {
+          // Check if AI wants to advance to next step
+          let shouldAdvanceStep = false;
+          try {
+            if (response.nextStep !== undefined) {
+              shouldAdvanceStep = response.nextStep;
+              console.log('🎯 AI decided nextStep:', shouldAdvanceStep);
+            }
+          } catch (parseError) {
+            console.log('No nextStep flag found, staying in current step');
+          }
 
-        // Only use AI-provided suggestions, no hardcoded fallbacks
-        if (response.suggestions && response.suggestions.length > 0) {
-          console.log('Using AI-generated suggestions:', response.suggestions);
-          setSuggestions(response.suggestions);
+          if (shouldAdvanceStep && currentExerciseStep < exerciseFlow.steps.length) {
+            // Advance to next step
+            const newStepIndex = currentExerciseStep + 1;
+            setCurrentExerciseStep(newStepIndex);
+            console.log('✅ AI advanced to step:', newStepIndex);
+          } else if (shouldAdvanceStep && currentExerciseStep >= exerciseFlow.steps.length) {
+            // Exercise completed
+            console.log('🎉 AI completed exercise');
+            setExerciseFlow(null);
+            setCurrentExerciseStep(null);
+          }
+
+          // Use AI-generated suggestions for exercises
+          if (response.suggestions && response.suggestions.length > 0) {
+            setSuggestions(response.suggestions);
+          } else {
+            setSuggestions([]);
+          }
         } else {
-          console.log('No AI suggestions provided, showing none');
-          setSuggestions([]);
+          // Regular chat suggestions
+          if (response.suggestions && response.suggestions.length > 0) {
+            console.log('Using AI-generated suggestions:', response.suggestions);
+            setSuggestions(response.suggestions);
+          } else {
+            console.log('No AI suggestions provided, not showing any suggestions');
+            setSuggestions([]); // Only show suggestions when AI provides them
+          }
         }
+
+        // Only show exercise cards if we're NOT already in an exercise
+        if (!exerciseFlow && !currentExerciseStep) {
+          console.log('🎯 Checking exercise card trigger...');
+          if (response.nextAction === 'showExerciseCard' && response.exerciseData) {
+          console.log('🎯 Exercise card should show! Type:', response.exerciseData.type);
+          // Get complete exercise data from library
+          const fullExerciseData = exerciseLibraryData[response.exerciseData.type];
+          console.log('🎯 Full exercise data found:', fullExerciseData);
+          if (fullExerciseData) {
+            console.log('🎯 Setting exercise card state...');
+            setShowExerciseCard(fullExerciseData);
+          }
+        } else {
+          console.log('🎯 No exercise card trigger. nextAction:', response.nextAction, 'exerciseData:', response.exerciseData);
+          
+          // FALLBACK: Check if this might be a confirmation that AI missed
+          const userText = text.toLowerCase();
+          const confirmationWords = ['yes', 'sure', 'okay', 'ok', "let's try", "let's do", 'i want to', 'sounds good'];
+          const isConfirmation = confirmationWords.some(word => userText.includes(word));
+          
+          if (isConfirmation) {
+            console.log('🔍 FALLBACK: Detected potential exercise confirmation:', userText);
+            // Check recent messages for exercise suggestions
+            const recentMessages = await storageService.getLastMessages(5);
+            const hasRecentExerciseSuggestion = recentMessages.some(msg => 
+              msg.type === 'system' && (
+                msg.content?.toLowerCase().includes('exercise') ||
+                msg.content?.toLowerCase().includes('breathing') ||
+                msg.content?.toLowerCase().includes('body scan') ||
+                msg.content?.toLowerCase().includes('gratitude') ||
+                msg.content?.toLowerCase().includes('automatic thought')
+              )
+            );
+            
+            if (hasRecentExerciseSuggestion) {
+              console.log('🎯 FALLBACK: Found recent exercise suggestion, trying to match exercise type');
+              // Try to determine exercise type from AI response or recent messages
+              let exerciseType = 'breathing'; // Default fallback
+              
+              if (response.message?.toLowerCase().includes('breathing') || response.message?.toLowerCase().includes('breath')) {
+                exerciseType = 'breathing';
+              } else if (response.message?.toLowerCase().includes('body scan') || response.message?.toLowerCase().includes('body')) {
+                exerciseType = 'mindfulness';
+              } else if (response.message?.toLowerCase().includes('gratitude')) {
+                exerciseType = 'gratitude';
+              } else if (response.message?.toLowerCase().includes('thought') || response.message?.toLowerCase().includes('cognitive')) {
+                exerciseType = 'automatic-thoughts';
+              }
+              
+              console.log('🎯 FALLBACK: Using exercise type:', exerciseType);
+              const fallbackExercise = exerciseLibraryData[exerciseType];
+              if (fallbackExercise) {
+                console.log('🎯 FALLBACK: Showing exercise card for:', fallbackExercise.name);
+                setShowExerciseCard(fallbackExercise);
+              }
+            }
+          }
+        }
+        } // Close the "only show exercise cards if we're NOT in exercise" block
+
       } else {
-        // API error - show fallback response
         const fallbackMessage: Message = {
           id: (Date.now() + Math.random()).toString(),
           type: 'system',
           content: apiService.getFallbackResponse(text),
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-
         setMessages(prev => [...prev, fallbackMessage]);
         await storageService.addMessage(fallbackMessage);
         console.error('API Error:', response.error || 'Connection failed');
@@ -254,15 +303,12 @@ export const useChatSession = (
     } catch (error) {
       setIsTyping(false);
       console.error('Error in handleSendMessage:', error);
-      
-      // Show fallback response for any unexpected errors
       const fallbackMessage: Message = {
         id: (Date.now() + Math.random()).toString(),
         type: 'system',
         content: apiService.getFallbackResponse(text),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-
       setMessages(prev => [...prev, fallbackMessage]);
       try {
         await storageService.addMessage(fallbackMessage);
@@ -272,7 +318,182 @@ export const useChatSession = (
     }
   };
 
-  // Handle session end with confirmation - delegate to session management hook
+  const handleExerciseSendMessage = async (text: string, currentStep: number) => {
+    console.log('Handling message within an exercise flow');
+  };
+
+  const handleConfirmExerciseTransition = useCallback(async (exercise: any) => {
+    console.log(`🎯 User confirmed exercise transition to: ${exercise.name}`);
+    
+    // Clear the exercise card since we're transitioning
+    setShowExerciseCard(null);
+    
+    // Use handleStartExercise with preserveChat = true
+    await handleStartExercise(exercise, true);
+  }, []);
+
+  const handleStartExercise = useCallback(async (exercise: any, preserveChat: boolean = false) => {
+    console.log(`Starting AI-guided exercise flow for: ${exercise.name}, preserveChat: ${preserveChat}`);
+
+    try {
+      // Get predefined exercise flow
+      const flow = getExerciseFlow(exercise.type);
+      if (!flow || !flow.steps || flow.steps.length === 0) {
+        console.error(`Exercise flow not found for type: ${exercise.type}`);
+        return;
+      }
+
+      console.log('Generated dynamic flow with', flow.steps.length, 'steps');
+      
+      // Set exercise flow state
+      setExerciseFlow(flow);
+      setCurrentExerciseStep(1);
+
+      const currentStep = flow.steps[0];
+
+      // Clear chat if not preserving (like library behavior)
+      if (!preserveChat) {
+        await storageService.clearCurrentSession();
+      }
+
+      // Use the rich exercise context system for AI-generated guidance
+      console.log(`🎯 Starting AI-guided exercise: Step 1, isFirstMessageInStep=true`);
+      console.log('🎯 Exercise flow:', flow);
+      console.log('🎯 Exercise type:', exercise.type);
+      
+      const exerciseContext = await contextService.assembleExerciseContext(
+        [], // No previous messages for first step
+        flow,
+        1, // Step 1
+        [],
+        true // This IS the first message in step 1
+      );
+      
+      console.log('🎯 Exercise context assembled:', exerciseContext.length, 'messages');
+
+      // Add the initial user message to start the exercise
+      exerciseContext.push({
+        role: 'user',
+        content: `I'm ready to start the ${exercise.name} exercise. Please guide me through step 1.`
+      });
+      
+      console.log('🎯 Final context for API:', exerciseContext.length, 'messages');
+      console.log('🎯 Calling AI API...');
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(exerciseContext);
+      setIsTyping(false);
+      
+      console.log('🎯 AI API Response received:', response);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'exercise',
+          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+          content: response.message,
+          exerciseType: exercise.type,
+          color: flow.color,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true
+        };
+
+        if (preserveChat) {
+          setMessages(prev => [...prev, aiMessage]);
+        } else {
+          setMessages([aiMessage]);
+        }
+        
+        await storageService.addMessage(aiMessage);
+
+        // Extract AI-generated suggestions
+        if (response.suggestions && response.suggestions.length > 0) {
+          setSuggestions(response.suggestions);
+        } else {
+          setSuggestions([]);
+        }
+
+        console.log('AI-guided exercise started successfully');
+      } else {
+        console.error('Failed to start AI-guided exercise - API call failed');
+        console.error('AI Response:', response);
+        
+        // Don't create fake static messages - instead show error and retry
+        const errorMessage: Message = {
+          id: `exercise-error-${Date.now()}`,
+          type: 'system',
+          content: `I'm having trouble starting the ${exercise.name} exercise right now. Let me try again...`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+
+        if (preserveChat) {
+          setMessages(prev => [...prev, errorMessage]);
+        } else {
+          setMessages([errorMessage]);
+        }
+        
+        await storageService.addMessage(errorMessage);
+        
+        // Retry the AI call after a short delay
+        console.log('Retrying AI-guided exercise in 2 seconds...');
+        setTimeout(async () => {
+          try {
+            setIsTyping(true);
+            const retryResponse = await apiService.getChatCompletionWithContext(exerciseContext);
+            setIsTyping(false);
+
+            if (retryResponse.success && retryResponse.message) {
+              const aiMessage: Message = {
+                id: Date.now().toString(),
+                type: 'exercise',
+                title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+                content: retryResponse.message,
+                exerciseType: exercise.type,
+                color: flow.color,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                isAIGuided: true
+              };
+
+              setMessages(prev => [...prev, aiMessage]);
+              await storageService.addMessage(aiMessage);
+
+              if (retryResponse.suggestions && retryResponse.suggestions.length > 0) {
+                setSuggestions(retryResponse.suggestions);
+              } else {
+                setSuggestions([]);
+              }
+
+              console.log('AI-guided exercise started successfully on retry');
+            } else {
+              console.error('Retry also failed - giving up');
+              const finalErrorMessage: Message = {
+                id: `exercise-final-error-${Date.now()}`,
+                type: 'system',
+                content: `I'm sorry, I can't start the guided exercise right now. You can try again later or start a regular conversation.`,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              };
+              setMessages(prev => [...prev, finalErrorMessage]);
+              await storageService.addMessage(finalErrorMessage);
+              
+              // Reset exercise state since it failed
+              setExerciseFlow(null);
+              setCurrentExerciseStep(null);
+            }
+          } catch (retryError) {
+            console.error('Retry error:', retryError);
+            setIsTyping(false);
+          }
+        }, 2000);
+
+        setSuggestions([]);
+      }
+
+    } catch (error) {
+      console.error('Error starting AI-guided exercise:', error);
+      setIsTyping(false);
+    }
+  }, []);
+
   const handleEndSession = useCallback((onBack: () => void) => {
     sessionEndHandler(onBack, messages);
   }, [sessionEndHandler, messages]);
@@ -284,6 +505,8 @@ export const useChatSession = (
     isTyping,
     rateLimitStatus,
     showExerciseCard,
+    currentExerciseStep,
+    exerciseFlow,
     setMessages,
     setSuggestions,
     setIsTyping,
@@ -292,6 +515,9 @@ export const useChatSession = (
     handleSendMessage,
     handleSuggestExercise,
     handleEndSession,
+    handleExerciseSendMessage,
+    handleStartExercise,
+    handleConfirmExerciseTransition,
   };
 };
 

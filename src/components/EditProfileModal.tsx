@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, User, Check, AlertCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserProfile } from '../hooks';
@@ -132,7 +132,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <SafeAreaView style={styles.container}>
+      <SafeAreaWrapper style={styles.container}>
         <LinearGradient
           colors={['#f0f9ff', '#e0f2fe']}
           style={styles.backgroundGradient}
@@ -285,7 +285,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
 
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </SafeAreaWrapper>
     </Modal>
   );
 };

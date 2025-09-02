@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Message {
   id: string;
-  type: 'user' | 'system' | 'exercise' | 'welcome';
+  type: 'user' | 'system' | 'exercise' | 'welcome' | 'exercise-intro';
   text?: string;
   content?: string;
   title?: string;
@@ -11,6 +11,7 @@ export interface Message {
   timestamp: string;
   isAIGuided?: boolean;
   showName?: boolean;
+  image?: string;
 }
 
 export interface UserProfile {
@@ -86,6 +87,15 @@ class StorageService {
     return newSession;
   }
 
+  /**
+   * Checks if the current chat session is new or a continuation.
+   * A session is considered new if it has no messages.
+   */
+  async isNewSession(): Promise<boolean> {
+    const messages = await this.getMessages();
+    return messages.length === 0;
+  }
+  
   // Message management
   async addMessage(message: Message): Promise<void> {
     try {

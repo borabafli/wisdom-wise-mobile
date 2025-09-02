@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert, Animated, ImageBackground } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
 import { ChevronLeft, AlertCircle, Brain, Wind, Eye, BookOpen, Heart, Star } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 // Import new components and hooks
 import { 
@@ -60,12 +61,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const headerAnimation = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
 
+  // === DEBUGGING: Add logs to confirm props are received ===
+  useEffect(() => {
+    console.log('DEBUG: ChatInterface received props:');
+    console.log('onExerciseClick is a function:', typeof onExerciseClick === 'function');
+    console.log('onActionSelect is a function:', typeof onActionSelect === 'function');
+  }, [onExerciseClick, onActionSelect]);
+  // =========================================================
+
   // Dynamic exercise flow generation - no hardcoded flows
   // Determine when to show exercise suggestion button
   const shouldShowExerciseButton = () => {
-    // Show button after a few message exchanges and when not already showing an exercise card
+    // Show button after a few message exchanges and when not already showing an exercise card or in exercise mode
     const userMessages = chatSession.messages.filter(msg => msg.type === 'user');
-    return userMessages.length >= 2 && !chatSession.showExerciseCard && !exerciseMode;
+    const isInExerciseMode = chatSession.currentExerciseStep && chatSession.exerciseFlow;
+    return userMessages.length >= 2 && !chatSession.showExerciseCard && !isInExerciseMode;
   };
 
   // Use centralized exercise flow from exerciseLibrary.ts
@@ -131,9 +141,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     // Clear input
     setInputText('');
 
-    // Check if we're in a dynamic exercise mode
+    // Check if we're in exercise mode (from exerciseFlow)
     if (exerciseMode && exerciseData.dynamicFlow) {
-      // Dynamic AI-guided exercise
+      // Exercise mode: use exercise-specific message handler
       await handleDynamicAIGuidedExerciseResponse(
         text, 
         exerciseData.dynamicFlow, 
@@ -166,33 +176,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     handleSend(text);
   };
 
-  // Handle exercise card actions
+  // Handle exercise card actions - same behavior as exercise library
   const handleExerciseCardStart = (exerciseInfo: any) => {
-    console.log('=== EXERCISE CARD START ===');
+    console.log('=== EXERCISE CARD CLICKED FROM CHAT ===');
     console.log('Exercise info:', exerciseInfo);
     
-    // Hide the card first
-    console.log('🔴 Setting showExerciseCard to null...');
+    // Clear the exercise card first
     chatSession.setShowExerciseCard(null);
-    console.log('🔴 showExerciseCard should now be null');
-    console.log('🔴 Current showExerciseCard value:', chatSession.showExerciseCard);
     
-    // Create proper exercise object 
-    const exercise = {
-      type: exerciseInfo.type,
-      name: exerciseInfo.name,
-      duration: exerciseInfo.duration,
-      description: exerciseInfo.description || 'AI-guided exercise'
-    };
-    
-    console.log('Exercise object created:', exercise);
-    
-    // Use onExerciseClick to start the exercise properly
+    // Use EXACTLY the same flow as library - go through app state
     if (onExerciseClick) {
-      console.log('Using onExerciseClick to start exercise');
-      onExerciseClick(exercise);
+      console.log('DEBUG: onExerciseClick is valid, attempting to navigate...');
+      onExerciseClick(exerciseInfo);
     } else {
-      console.error('onExerciseClick not available - cannot start exercise');
+      console.error('onExerciseClick not available - this is the source of the problem!');
     }
   };
 
@@ -253,12 +250,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Update animations when exercise mode changes
   React.useEffect(() => {
-    if (exerciseMode) {
+    const isInExerciseMode = chatSession.currentExerciseStep && chatSession.exerciseFlow;
+    if (isInExerciseMode) {
       startExerciseAnimations();
     } else {
       stopExerciseAnimations();
     }
-  }, [exerciseMode]);
+  }, [chatSession.currentExerciseStep, chatSession.exerciseFlow]);
 
   // Define animated background gradients
   const normalGradient = [...colors.gradients.primaryLight];
@@ -284,7 +282,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaWrapper style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background1.png')}
         style={styles.backgroundImage}
@@ -412,6 +410,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             {chatSession.messages.map(renderMessage)}
             
             {/* Exercise Suggestion Card */}
+            {console.log('🔍 Render check - showExerciseCard:', chatSession.showExerciseCard)}
             {chatSession.showExerciseCard && (
               <ExerciseCard
                 exercise={chatSession.showExerciseCard}
@@ -419,6 +418,56 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 onDismiss={() => chatSession.setShowExerciseCard(null)}
               />
             )}
+            
+            {/* DEBUG TEST BUTTONS */}
+            <View style={{padding: 10, gap: 5}}>
+              <View style={{flexDirection: 'row', gap: 5}}>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: '#4CAF50',
+                    padding: 8,
+                    borderRadius: 5,
+                    flex: 1
+                  }}
+                  onPress={() => {
+                    console.log('🧪 TEST: Manual exercise card trigger');
+                    const testExercise = exerciseLibraryData['breathing'];
+                    chatSession.setShowExerciseCard(testExercise);
+                  }}
+                >
+                  <Text style={{color: 'white', fontSize: 10, textAlign: 'center'}}>🧪 Card</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: '#2196F3',
+                    padding: 8,
+                    borderRadius: 5,
+                    flex: 2
+                  }}
+                  onPress={() => {
+                    console.log('🧪 TEST: Sending stress message to AI');
+                    handleSend("I'm feeling really anxious and overwhelmed. I have negative thoughts racing through my mind and I need help.");
+                  }}
+                >
+                  <Text style={{color: 'white', fontSize: 10, textAlign: 'center'}}>🧪 AI Stress Test</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#FF9800',
+                  padding: 8,
+                  borderRadius: 5
+                }}
+                onPress={() => {
+                  console.log('🧪 TEST: Sending exercise confirmation');
+                  handleSend("Yes, let's try it! I want to do the exercise.");
+                }}
+              >
+                <Text style={{color: 'white', fontSize: 10, textAlign: 'center'}}>🧪 Confirm Exercise ("Yes, let's try it!")</Text>
+              </TouchableOpacity>
+            </View>
             
             {/* Typing Indicator */}
             {chatSession.isTyping && (
@@ -450,7 +499,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <SuggestionChips
             suggestions={chatSession.suggestions}
             onSuggestionPress={handleSend}
-            onSuggestExercise={chatSession.handleSuggestExercise}
+            onSuggestExercise={() => {
+              if (onExerciseClick) {
+                const breathingExercise = exerciseLibraryData['breathing'];
+                onExerciseClick(breathingExercise);
+              }
+            }}
+            onActionSelect={() => {
+              if (onActionSelect) {
+                onActionSelect('guided-session');
+              }
+            }}
             showExerciseButton={shouldShowExerciseButton()}
             isVisible={chatSession.suggestions.length > 0 || shouldShowExerciseButton()}
             isTyping={chatSession.isTyping}
@@ -475,7 +534,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           />
         </KeyboardAvoidingView>
       </ImageBackground>
-    </SafeAreaView>
+    </SafeAreaWrapper>
   );
 };
 

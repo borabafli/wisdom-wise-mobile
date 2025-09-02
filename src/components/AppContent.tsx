@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 
@@ -33,25 +33,38 @@ export const AppContent: React.FC = () => {
   } = useApp();
 
   // Navigation ref for tab navigation
-  const [navigationRef, setNavigationRef] = React.useState<any>(null);
+  const navigationRef = useNavigationContainerRef();
 
-  const handleNavigateToExercises = React.useCallback(() => {
-    if (navigationRef) {
+  const handleNavigateToExercises = useCallback(() => {
+    if (navigationRef.isReady()) {
       navigationRef.navigate('Exercises');
     }
   }, [navigationRef]);
 
-  const handleNavigateToInsights = React.useCallback(() => {
-    if (navigationRef) {
+  const handleNavigateToInsights = useCallback(() => {
+    if (navigationRef.isReady()) {
       navigationRef.navigate('Insights');
     }
   }, [navigationRef]);
+
+  // Log state changes for debugging
+  useEffect(() => {
+    console.log('AppContent re-rendered. State:', {
+      showChat,
+      currentExercise: currentExercise ? currentExercise.name : 'null',
+      chatWithActionPalette,
+    });
+  }, [showChat, currentExercise, chatWithActionPalette]);
+
+  // Use a key to force ChatInterface to remount when starting a new exercise
+  const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
 
   if (showChat) {
     return (
       <>
         <StatusBar style="dark" backgroundColor="#f0f9ff" />
         <ChatInterface 
+          key={chatKey}
           onBack={handleBackFromChat}
           currentExercise={currentExercise}
           startWithActionPalette={chatWithActionPalette}
@@ -63,7 +76,7 @@ export const AppContent: React.FC = () => {
   }
 
   return (
-    <NavigationContainer ref={setNavigationRef}>
+    <NavigationContainer ref={navigationRef}>
       <StatusBar style="dark" backgroundColor="#f0f9ff" />
       <Tab.Navigator
         tabBar={(props: any) => (
@@ -99,3 +112,4 @@ export const AppContent: React.FC = () => {
     </NavigationContainer>
   );
 };
+  
