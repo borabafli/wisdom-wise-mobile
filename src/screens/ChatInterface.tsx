@@ -357,17 +357,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       styles.sessionTitle,
                       currentExercise && styles.exerciseTitle
                     ]}>
-                      {exerciseMode && currentExercise && exerciseData.dynamicFlow ? (
-                        exerciseData.dynamicFlow.name || 'Exercise in Progress'
-                      ) : currentExercise ? (
-                        currentExercise.name
+                      {currentExercise ? (
+                        exerciseMode && exerciseData.dynamicFlow ? (
+                          exerciseData.dynamicFlow.name || currentExercise.name
+                        ) : (
+                          currentExercise.name
+                        )
                       ) : (
                         '💭 Reflection Space'
                       )}
                     </Text>
                     <Text style={styles.sessionSubtitle}>
-                      {exerciseMode && exerciseData.dynamicFlow ? (
-                        `Step ${exerciseStep + 1} of ${exerciseData.dynamicFlow.steps.length} • ${exerciseData.dynamicFlow.steps[exerciseStep]?.title || currentExercise?.duration || '5 min'}`
+                      {currentExercise && exerciseMode ? (
+                        exerciseData.dynamicFlow ? (
+                          `Step ${exerciseStep + 1} of ${exerciseData.dynamicFlow.steps.length} • ${exerciseData.dynamicFlow.steps[exerciseStep]?.title || 'In Progress'}`
+                        ) : (
+                          `Step ${exerciseStep + 1} • Exercise Starting...`
+                        )
                       ) : currentExercise ? (
                         `${currentExercise.duration || '5 min'} • Therapeutic Exercise`
                       ) : (
