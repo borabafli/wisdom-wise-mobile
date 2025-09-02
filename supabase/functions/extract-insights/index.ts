@@ -113,12 +113,24 @@ const SESSION_SUMMARY_PROMPT = `You are creating a therapeutic session summary t
 7. **Future Focus Areas**: What themes or issues might benefit from continued exploration?
 
 **SUMMARY FORMAT:**
-Create a 3-4 sentence summary that captures the essence of what happened therapeutically. Write in a way that would help a therapist provide continuity in the next session.
+Create a detailed 4-6 sentence summary that captures the therapeutic essence and key developments. Write as if briefing a therapist for the next session - include specific details that matter for continuity.
 
-**EXAMPLE GOOD SUMMARY:**
-"User explored work-related anxiety stemming from perfectionist beliefs about needing to be flawless. Identified pattern of catastrophic thinking when receiving feedback, leading to avoidance of challenging projects. Recognized connection between childhood criticism and current self-doubt. Expressed readiness to practice self-compassion techniques and challenge all-or-nothing thinking patterns."
+**REQUIREMENTS:**
+- Be specific about emotions, thoughts, and patterns discussed
+- Include any breakthroughs, insights, or "aha moments" 
+- Mention specific coping strategies or techniques explored
+- Note any resistance, progress, or therapeutic developments
+- Include relevant context (work, relationships, past experiences)
 
-Return only the summary text - no additional formatting or explanation.`;
+**EXAMPLE EXCELLENT SUMMARY:**
+"User explored work-related anxiety stemming from perfectionist beliefs about needing to be flawless. Identified pattern of catastrophic thinking when receiving feedback, leading to avoidance of challenging projects. Made significant connection between childhood criticism from demanding parents and current self-doubt patterns. Showed readiness to practice self-compassion techniques and expressed genuine interest in challenging all-or-nothing thinking. Demonstrated good insight and emotional awareness throughout the session."
+
+**AVOID:**
+- Generic phrases like "discussed feelings" or "explored emotions"
+- Vague statements without specific context
+- Brief, unhelpful summaries that lack therapeutic value
+
+Return only the rich, detailed summary text - no additional formatting or explanation.`;
 
 const CONSOLIDATION_PROMPT = `You are consolidating multiple therapy session summaries to create a comprehensive overview of the user's therapeutic journey. This consolidated summary will be used to maintain long-term context continuity.
 
@@ -183,7 +195,22 @@ Deno.serve(async (req: Request) => {
 
     // Parse request body
     const requestBody: ExtractInsightsRequest = await req.json();
-    const { messages, sessionId, userId, action = 'extract_patterns', summaries } = requestBody;
+    let { messages, sessionId, userId, action = 'extract_patterns', summaries } = requestBody;
+
+    // Normalize message format - convert role field to type field if needed
+    if (messages) {
+      messages = messages.map(msg => {
+        // If message has 'role' field, convert to 'type' field
+        if ('role' in msg && !('type' in msg)) {
+          return {
+            ...msg,
+            type: msg.role === 'assistant' ? 'system' : msg.role,
+            text: msg.content || msg.text
+          };
+        }
+        return msg;
+      });
+    }
 
     if (!messages && action !== 'consolidate_summaries') {
       return new Response(JSON.stringify({

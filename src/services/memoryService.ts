@@ -152,18 +152,26 @@ class MemoryService {
 
   async getInsights(): Promise<Insight[]> {
     try {
+      console.log('🧠 [STORAGE DEBUG] Getting insights from AsyncStorage...');
       const data = await AsyncStorage.getItem(STORAGE_KEYS.INSIGHTS);
-      if (!data) return [];
+      if (!data) {
+        console.log('🧠 [STORAGE DEBUG] No insights data found in storage');
+        return [];
+      }
       
       const insights: Insight[] = JSON.parse(data);
+      console.log('🧠 [STORAGE DEBUG] Parsed insights from storage:', insights.length);
       
       // Filter out old insights
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - EXTRACTION_CONFIG.MAX_INSIGHT_AGE_DAYS);
       
-      return insights.filter(insight => 
+      const filteredInsights = insights.filter(insight => 
         new Date(insight.date) > cutoffDate
       );
+      
+      console.log('🧠 [STORAGE DEBUG] Filtered insights (after date filter):', filteredInsights.length);
+      return filteredInsights;
     } catch (error) {
       console.error('Error loading insights:', error);
       return [];
@@ -190,8 +198,15 @@ class MemoryService {
 
   async getSummaries(): Promise<Summary[]> {
     try {
+      console.log('🧠 [STORAGE DEBUG] Getting summaries from AsyncStorage...');
       const data = await AsyncStorage.getItem(STORAGE_KEYS.SUMMARIES);
-      return data ? JSON.parse(data) : [];
+      if (!data) {
+        console.log('🧠 [STORAGE DEBUG] No summaries data found in storage');
+        return [];
+      }
+      const summaries = JSON.parse(data);
+      console.log('🧠 [STORAGE DEBUG] Parsed summaries from storage:', summaries.length);
+      return summaries;
     } catch (error) {
       console.error('Error loading summaries:', error);
       return [];
@@ -319,10 +334,11 @@ class MemoryService {
         .join('\n');
 
       if (!relevantMessages.trim()) {
+        console.log('📝 [SUMMARY DEBUG] No relevant messages found, using brief summary');
         return {
           summary: {
-            id: Date.now().toString(),
-            text: 'Brief conversation session',
+            id: sessionId + '_summary_' + Date.now(),
+            text: 'Brief conversation session with limited content for analysis',
             date: new Date().toISOString(),
             type: 'session',
             messageCount: messages.length
@@ -332,6 +348,12 @@ class MemoryService {
       }
 
       // Call the Supabase Edge Function for summary generation
+      console.log('📤 [SUMMARY DEBUG] Calling extract-insights API...', {
+        action: 'generate_summary',
+        messageCount: messages.length,
+        userMessageCount: messages.filter(msg => msg.type === 'user').length
+      });
+
       const response = await axios.post(`${API_CONFIG.SUPABASE_URL}/functions/v1/extract-insights`, {
         action: 'generate_summary',
         messages: messages.slice(-30).map(msg => ({
@@ -346,9 +368,19 @@ class MemoryService {
         }
       });
 
+      console.log('📥 [SUMMARY DEBUG] API Response:', {
+        status: response.status,
+        success: response.data?.success,
+        hasSummary: !!response.data?.summary,
+        summaryLength: response.data?.summary?.length || 0,
+        error: response.data?.error
+      });
+
       const summaryText = response.data.success && response.data.summary 
         ? response.data.summary.trim()
         : `Session covered ${messages.filter(msg => msg.type === 'user').length} user exchanges focusing on personal reflection and therapeutic dialogue.`;
+
+      console.log('📝 [SUMMARY DEBUG] Final summary text:', summaryText);
 
       const summary: Summary = {
         id: sessionId + '_summary_' + Date.now(),
@@ -448,10 +480,18 @@ class MemoryService {
 
   async getMemoryContext(): Promise<MemoryContext> {
     try {
+      console.log('🧠 [MEMORY DEBUG] Getting insights and summaries...');
       const [insights, summaries] = await Promise.all([
         this.getInsights(),
         this.getSummaries()
       ]);
+
+      console.log('🧠 [MEMORY DEBUG] Raw data retrieved:', {
+        totalInsights: insights.length,
+        totalSummaries: summaries.length,
+        insightCategories: insights.map(i => i.category),
+        summaryTypes: summaries.map(s => s.type)
+      });
 
       // Sort insights by confidence and recency, take top results
       const topInsights = insights
@@ -465,6 +505,12 @@ class MemoryService {
       // Get recent summaries
       const recentSummaries = summaries.slice(0, EXTRACTION_CONFIG.MAX_CONTEXT_SUMMARIES);
       const consolidatedSummary = summaries.find(s => s.type === 'consolidated');
+
+      console.log('🧠 [MEMORY DEBUG] Processed for context:', {
+        topInsightsCount: topInsights.length,
+        recentSummariesCount: recentSummaries.filter(s => s.type === 'session').length,
+        hasConsolidatedSummary: !!consolidatedSummary
+      });
 
       return {
         insights: topInsights,

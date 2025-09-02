@@ -5,6 +5,7 @@ import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart }
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
+import { createTestMemoryData, debugMemorySystem } from '../utils/memoryDebugUtils';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -38,9 +39,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     try {
       setIsLoading(true);
       
+      // DEBUG: Log what we're trying to load
+      console.log('🔍 [INSIGHTS DEBUG] Loading insight data...');
+      
       // Load recent thought patterns (existing system)
       const recentPatterns = await insightService.getRecentPatterns(10);
       setThinkingPatterns(recentPatterns);
+      console.log('🔍 [INSIGHTS DEBUG] Thought patterns loaded:', recentPatterns.length);
       
       // Load insight statistics
       const stats = await insightService.getInsightStats();
@@ -49,11 +54,14 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       // Load new memory system data
       const insights = await memoryService.getInsights();
       setMemoryInsights(insights.slice(0, 10)); // Top 10 recent insights
+      console.log('🔍 [INSIGHTS DEBUG] Memory insights loaded:', insights.length, insights);
       
       const summaries = await memoryService.getSummaries();
       setSummaries(summaries.slice(0, 5)); // Top 5 recent summaries
+      console.log('🔍 [INSIGHTS DEBUG] Summaries loaded:', summaries.length, summaries);
       
       const memStats = await memoryService.getMemoryStats();
+      console.log('🔍 [INSIGHTS DEBUG] Memory stats:', memStats);
       if (memStats) {
         setMemoryStats({
           totalInsights: memStats.totalInsights,
@@ -71,6 +79,18 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // DEBUG: Manual test functions
+  const handleCreateTestData = async () => {
+    console.log('🧪 Creating test memory data...');
+    await createTestMemoryData();
+    await loadInsightData(); // Reload to show new data
+  };
+
+  const handleDebugMemory = async () => {
+    console.log('🔍 Running memory system debug...');
+    await debugMemorySystem();
   };
 
   // Mock data for demonstration when no patterns exist
@@ -158,6 +178,28 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
         <Text style={styles.subtitle}>
           Amazing journey so far!
         </Text>
+        
+        {/* DEBUG BUTTONS - Remove in production */}
+        <View style={{ flexDirection: 'row', marginTop: 10, gap: 10 }}>
+          <TouchableOpacity 
+            onPress={handleCreateTestData}
+            style={{ backgroundColor: '#3b82f6', padding: 8, borderRadius: 6 }}
+          >
+            <Text style={{ color: 'white', fontSize: 12 }}>Create Test Data</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={handleDebugMemory}
+            style={{ backgroundColor: '#059669', padding: 8, borderRadius: 6 }}
+          >
+            <Text style={{ color: 'white', fontSize: 12 }}>Debug Memory</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={loadInsightData}
+            style={{ backgroundColor: '#dc2626', padding: 8, borderRadius: 6 }}
+          >
+            <Text style={{ color: 'white', fontSize: 12 }}>Reload Data</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView 

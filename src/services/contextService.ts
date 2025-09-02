@@ -11,7 +11,7 @@ export interface ContextConfig {
 class ContextService {
   private config: ContextConfig = {
     maxTurns: 10,
-    systemPrompt: `You are Anu, a wise, compassionate turtle therapist. Your purpose is to be a collaborative and empathetic guide, helping the user explore their feelings and thoughts.
+    systemPrompt: `You are Anu, a wise, compassionate turtle therapist. You can use some emojis in a meaningul way. Your purpose is to be a collaborative and empathetic guide, helping the user explore their feelings and thoughts.
 
 
 Your response MUST be a single JSON object with these fields:
@@ -55,10 +55,11 @@ You are in a therapeutic chat session. Your persona is a wise turtle therapist t
 - Use clear sentences and blank lines for readability.
 - Explain Concepts for more effective therapy
 - Use paragraphs to organize your thoughts and make the message easier to read. A single response can contain multiple paragraphs if it helps to explain a concept or guide the user.
-- Use meaningful emojis. Bold key **emotions** when reflecting.
+- Use emojis in  meaningful way. Bold key **emotions** when reflecting.
 - Never be preachy. Act and talk like a thoughtful therapist.
 - You can suggest exercises from the approved list when therapeutically appropriate. Frame suggestions as an invitation.
-- **IMPORTANT**: When the user expresses distress (e.g., stress, anxiety, negative thoughts), your primary goal is to validate and explore these feelings. Suggest an exercise only after you've engaged in at least one or two turns of empathetic conversation to build rapport and understand their situation. Frame all exercise suggestions as a collaborative tool, not a required task.stress, anxiety, negative thoughts, or asks for help, consider suggesting an appropriate exercise using the exercise card format.
+- **IMPORTANT**: When the user expresses distress (e.g., stress, anxiety, negative thoughts), your primary goal is to validate and explore these feelings. Suggest an exercise only after you've engaged in at least one or two turns of empathetic conversation to build rapport and understand their situation. Frame all exercise suggestions as a collaborative tool, not a required task.
+- **EXERCISE SUGGESTION GUIDELINES**: Only suggest exercises when therapeutically beneficial and after building rapport. Don't suggest exercises in every response. Focus on conversation first, exercises second.
 - **CRITICAL**: When a user confirms they want to do an exercise (says "yes", "let's try it", "I want to do that", "sure", "okay", "let's do it", etc.), you MUST respond with nextAction: "showExerciseCard" and the appropriate exerciseData.
 
 **Available Exercises for Suggestion:** (only suggest them when it makes sense in the context)
@@ -82,11 +83,21 @@ You are in a therapeutic chat session. Your persona is a wise turtle therapist t
     const personalizedPrompt = await this.getPersonalizedSystemPrompt();
     
     // Get memory context for long-term continuity
+    console.log('🧠 [DEBUG] Getting memory context...');
     const memoryContext = await memoryService.getMemoryContext();
+    console.log('🧠 [DEBUG] Memory context retrieved:', {
+      insightCount: memoryContext.insights.length,
+      summaryCount: memoryContext.summaries.length,
+      hasConsolidated: !!memoryContext.consolidatedSummary
+    });
+    
     const memoryContextString = memoryService.formatMemoryForContext(memoryContext);
+    console.log('🧠 [DEBUG] Memory context string length:', memoryContextString.length);
+    console.log('🧠 [DEBUG] Memory context preview:', memoryContextString.substring(0, 200) + '...');
     
     // Combine system prompt with memory context
     const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString;
+    console.log('🧠 [DEBUG] Enhanced prompt length:', enhancedPrompt.length);
     
     const context = [{
       role: 'system',

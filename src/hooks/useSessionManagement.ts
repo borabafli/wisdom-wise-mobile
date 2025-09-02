@@ -76,7 +76,7 @@ export const useSessionManagement = () => {
           
           if (lastSession && lastSession.messages) {
             // Extract traditional thought patterns
-            const patterns = await insightService.extractAtSessionEnd();
+            const patterns = await insightService.extractAtSessionEnd(lastSession.messages);
             if (patterns.length > 0) {
               console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
             }
