@@ -99,7 +99,7 @@ const ExerciseCompletionRating: React.FC<ExerciseCompletionRatingProps> = ({
           {/* Illustration */}
           <View style={styles.illustrationContainer}>
             <Image 
-              source={require('../../assets/images/icons-1.png')}
+              source={require('../../assets/images/new-icon1.png')}
               style={styles.illustrationIcon}
               contentFit="contain"
             />

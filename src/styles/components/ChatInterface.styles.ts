@@ -515,7 +515,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     paddingBottom: spacing.components.cardGap + 10, // Extra padding for keyboard
-    zIndex: 10,
+    zIndex: 100, // Ensure input is above everything else
   },
   inputCard: {
     backgroundColor: '#FFFFFF', // Pure white
@@ -524,6 +524,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
+    zIndex: 101, // Ensure card is above welcome text
+    elevation: 5, // Android elevation
     // No shadow - clean flat design
   },
   inputRow: {
@@ -554,7 +556,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     height: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
+    zIndex: 103, // Higher z-index for buttons
     marginRight: spacing[2],
   },
   iconButton: {
@@ -623,6 +625,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     letterSpacing: 0.2,
     textAlignVertical: 'top',
     paddingTop: 14,
+    zIndex: 102, // Highest z-index for text input
   },
   partialTranscriptOverlay: {
     position: 'absolute',
@@ -806,7 +809,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 2,
     elevation: 2,
-    zIndex: 2,
+    zIndex: 103, // Higher z-index for buttons
   },
   sendButtonActive: {
     backgroundColor: '#2563eb',

@@ -57,7 +57,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
             <View style={styles.featuredCardLeft}>
               <View style={styles.featuredCardGradient}>
                 <Image 
-                  source={exercises[0]?.image || require('../../assets/images/icons-1.png')}
+                  source={exercises[0]?.image || require('../../assets/images/new-icon1.png')}
                   style={styles.featuredCardImage}
                   contentFit="contain"
                 />
@@ -166,7 +166,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                   style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Image 
-                    source={require('../../assets/images/icons-4.png')}
+                    source={require('../../assets/images/new-icon4.png')}
                     style={styles.quickPracticeIconImage}
                     contentFit="contain"
                   />
@@ -183,7 +183,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                   style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Image 
-                    source={require('../../assets/images/icons-5.png')}
+                    source={require('../../assets/images/new-icon5.png')}
                     style={styles.quickPracticeIconImage}
                     contentFit="contain"
                   />

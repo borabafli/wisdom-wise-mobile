@@ -22,42 +22,42 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
       id: 'breathing',
       title: 'Breathing Exercise',
       description: 'Quick 3-minute breathing exercise',
-      icon: require('../../assets/images/icons-4.png'),
+      icon: require('../../assets/images/new-icon4.png'),
       category: 'Wellness',
     },
     {
       id: 'gratitude',
       title: 'Gratitude Practice',
       description: 'Daily gratitude reflection',
-      icon: require('../../assets/images/icons-5.png'),
+      icon: require('../../assets/images/new-icon5.png'),
       category: 'Mindfulness',
     },
     {
       id: 'meditation',
       title: 'Quick Meditation',
       description: '5-minute mindful meditation',
-      icon: require('../../assets/images/icons-6.png'),
+      icon: require('../../assets/images/new-icon6.png'),
       category: 'Meditation',
     },
     {
       id: 'journaling',
       title: 'Mood Check-in',
       description: 'Track how you\'re feeling',
-      icon: require('../../assets/images/icons-7.png'),
+      icon: require('../../assets/images/new-icon7.png'),
       category: 'Journaling',
     },
     {
       id: 'stress-relief',
       title: 'Stress Relief',
       description: 'Progressive muscle relaxation',
-      icon: require('../../assets/images/icons-8.png'),
+      icon: require('../../assets/images/new-icon8.png'),
       category: 'Wellness',
     },
     {
       id: 'voice-session',
       title: 'Voice Session',
       description: 'Talk with your AI companion',
-      icon: require('../../assets/images/icons-9.png'),
+      icon: require('../../assets/images/new-icon9.png'),
       category: 'Chat',
     },
   ];
@@ -97,7 +97,7 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
             <View style={styles.featuredActionLeft}>
               <View style={styles.featuredActionIcon}>
                 <Image 
-                  source={require('../../assets/images/icons-4.png')}
+                  source={require('../../assets/images/new-icon4.png')}
                   style={styles.featuredActionIconImage}
                   contentFit="contain"
                 />

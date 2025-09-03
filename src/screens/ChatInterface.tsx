@@ -288,6 +288,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             </View>
           </Animated.View>
 
+
           {/* Messages Area */}
           <ScrollView 
             ref={scrollViewRef}
@@ -296,6 +297,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
           >
+            
             {chatSession.messages.map(renderMessage)}
             
             {chatSession.showExerciseCard && (

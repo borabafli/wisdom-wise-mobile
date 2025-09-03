@@ -68,13 +68,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 >
                   <Icon 
                     size={22} 
-                    color={isFocused ? colors.primary[700] : colors.text.secondary} 
+                    color={isFocused ? '#3BB4F5' : '#6B7280'} 
                     strokeWidth={isFocused ? 2.5 : 2} 
                   />
                   <Text 
                     style={[
                       styles.tabLabel,
-                      { color: isFocused ? colors.primary[700] : colors.text.secondary }
+                      { color: isFocused ? '#3BB4F5' : '#6B7280' }
                     ]}
                   >
                     {tab.label}
@@ -127,13 +127,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 >
                   <Icon 
                     size={22} 
-                    color={isFocused ? colors.primary[700] : colors.text.secondary} 
+                    color={isFocused ? '#3BB4F5' : '#6B7280'} 
                     strokeWidth={isFocused ? 2.5 : 2} 
                   />
                   <Text 
                     style={[
                       styles.tabLabel,
-                      { color: isFocused ? colors.primary[700] : colors.text.secondary }
+                      { color: isFocused ? '#3BB4F5' : '#6B7280' }
                     ]}
                   >
                     {tab.label}
