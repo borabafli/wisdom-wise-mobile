@@ -315,6 +315,12 @@ export const insightsDashboardStyles = StyleSheet.create({
     fontStyle: 'italic',
     lineHeight: typography.lineHeight.normal,
   },
+  summaryText: {
+    ...typography.textStyles.bodySmall,
+    color: colors.text.secondary,
+    lineHeight: typography.lineHeight.relaxed,
+    marginTop: spacing[2],
+  },
   patternArrow: {
     marginLeft: spacing.components.cardGap,
     opacity: 0.7,

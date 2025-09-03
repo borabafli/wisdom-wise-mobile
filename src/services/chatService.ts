@@ -72,6 +72,15 @@ class ChatService {
         messagesCount: messages.length
       });
       
+      // Debug: Check if memory context is in the system message
+      console.log('🧠 [CHAT DEBUG] System message length:', messages[0]?.content?.length || 0);
+      console.log('🧠 [CHAT DEBUG] System message preview:', messages[0]?.content?.substring(0, 300) + '...');
+      console.log('🧠 [CHAT DEBUG] Contains memory indicators:', {
+        hasLongTermInsights: messages[0]?.content?.includes('Long-term Insights') || false,
+        hasRecentSessions: messages[0]?.content?.includes('Recent Sessions') || false,
+        hasConsolidatedThemes: messages[0]?.content?.includes('Consolidated Themes') || false
+      });
+      
       console.log('=== SENDING REQUEST TO EDGE FUNCTION ===');
       console.log('Model:', this.config.model);
 

@@ -22,11 +22,11 @@ export const API_CONFIG = {
   // AI_MODEL: 'anthropic/claude-3-haiku', // Excellent for therapy conversations
   // AI_MODEL: 'google/gemini-flash-1.5', // Stable but inconsistent with formats
   // AI_MODEL: 'anthropic/claude-3.5-sonnet', // Best quality (more expensive)
-  MAX_TOKENS: 1500, // Good balance for mini with suggestions
+  MAX_TOKENS: 3500, // Good balance for mini with suggestions
   TEMPERATURE: 0.7,
   
   // Context settings
-  MAX_CONTEXT_TURNS: 10
+  MAX_CONTEXT_TURNS: 15
 };
 
 // Environment check

@@ -47,16 +47,27 @@ class InsightService {
   /**
    * Extract insights at session end - optimized for full conversation analysis
    */
-  async extractAtSessionEnd(): Promise<ThoughtPattern[]> {
+  async extractAtSessionEnd(messages?: Message[]): Promise<ThoughtPattern[]> {
     try {
-      const session = await storageService.getCurrentSession();
-      if (!session || session.messages.length === 0) {
-        console.log('No session or messages to analyze');
+      let sessionMessages = messages;
+      
+      // If no messages provided, try to get current session (legacy behavior)
+      if (!sessionMessages) {
+        const session = await storageService.getCurrentSession();
+        if (!session || session.messages.length === 0) {
+          console.log('No session or messages to analyze');
+          return [];
+        }
+        sessionMessages = session.messages;
+      }
+
+      if (!sessionMessages || sessionMessages.length === 0) {
+        console.log('No messages provided for analysis');
         return [];
       }
 
       // Filter for meaningful user messages
-      const userMessages = session.messages.filter(msg => 
+      const userMessages = sessionMessages.filter(msg => 
         msg.type === 'user' && 
         (msg.text || msg.content) && 
         (msg.text || msg.content)!.length > 20 // Longer threshold for quality
@@ -67,10 +78,11 @@ class InsightService {
         return [];
       }
 
-      console.log(`Analyzing full conversation: ${session.messages.length} total messages, ${userMessages.length} user messages`);
+      console.log(`Analyzing full conversation: ${sessionMessages.length} total messages, ${userMessages.length} user messages`);
       
-      // Use the full conversation context for better analysis
-      const patterns = await this.extractFromMessages(session.messages, session.id);
+      // Use the full conversation context for better analysis  
+      const sessionId = messages ? 'passed-session' : (await storageService.getCurrentSession())?.id || 'unknown-session';
+      const patterns = await this.extractFromMessages(sessionMessages, sessionId);
       
       if (patterns.length > 0) {
         console.log(`Session analysis complete: extracted ${patterns.length} thought patterns`);

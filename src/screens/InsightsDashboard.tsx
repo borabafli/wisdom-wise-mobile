@@ -4,6 +4,7 @@ import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
+import { memoryService, Insight, Summary } from '../services/memoryService';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -14,11 +15,18 @@ interface InsightsDashboardProps {
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
   const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
+  const [memoryInsights, setMemoryInsights] = useState<Insight[]>([]);
+  const [sessionSummaries, setSummaries] = useState<Summary[]>([]);
   const [insightStats, setInsightStats] = useState({
     totalPatterns: 0,
     commonDistortions: [] as { name: string; count: number }[],
     recentActivity: 0,
     confidenceAverage: 0
+  });
+  const [memoryStats, setMemoryStats] = useState({
+    totalInsights: 0,
+    sessionSummaries: 0,
+    consolidatedSummaries: 0
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,22 +38,48 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     try {
       setIsLoading(true);
       
-      // Load recent thought patterns
+      // DEBUG: Log what we're trying to load
+      console.log('🔍 [INSIGHTS DEBUG] Loading insight data...');
+      
+      // Load recent thought patterns (existing system)
       const recentPatterns = await insightService.getRecentPatterns(10);
       setThinkingPatterns(recentPatterns);
+      console.log('🔍 [INSIGHTS DEBUG] Thought patterns loaded:', recentPatterns.length);
       
       // Load insight statistics
       const stats = await insightService.getInsightStats();
       setInsightStats(stats);
       
+      // Load new memory system data
+      const insights = await memoryService.getInsights();
+      setMemoryInsights(insights.slice(0, 10)); // Top 10 recent insights
+      console.log('🔍 [INSIGHTS DEBUG] Memory insights loaded:', insights.length, insights);
+      
+      const summaries = await memoryService.getSummaries();
+      setSummaries(summaries.slice(0, 5)); // Top 5 recent summaries
+      console.log('🔍 [INSIGHTS DEBUG] Summaries loaded:', summaries.length, summaries);
+      
+      const memStats = await memoryService.getMemoryStats();
+      console.log('🔍 [INSIGHTS DEBUG] Memory stats:', memStats);
+      if (memStats) {
+        setMemoryStats({
+          totalInsights: memStats.totalInsights,
+          sessionSummaries: memStats.sessionSummaries,
+          consolidatedSummaries: memStats.consolidatedSummaries
+        });
+      }
+      
     } catch (error) {
       console.error('Error loading insight data:', error);
       // Fallback to mock data if needed
       setThinkingPatterns([]);
+      setMemoryInsights([]);
+      setSummaries([]);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   // Mock data for demonstration when no patterns exist
   const mockPatterns = [
@@ -88,27 +122,27 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
   const insights = [
     {
       id: 1,
-      title: 'Patterns Found',
-      value: insightStats.totalPatterns.toString(),
-      subtitle: 'Thought patterns identified',
+      title: 'Memory Insights',
+      value: memoryStats.totalInsights.toString(),
+      subtitle: 'Long-term patterns discovered',
       icon: Brain,
-      trend: 'neutral'
+      trend: memoryStats.totalInsights > 0 ? 'positive' : 'neutral'
     },
     {
       id: 2,
-      title: 'Recent Activity',
-      value: insightStats.recentActivity.toString(),
-      subtitle: 'Patterns this week',
+      title: 'Session Summaries',
+      value: memoryStats.sessionSummaries.toString(),
+      subtitle: 'Sessions analyzed',
       icon: TrendingUp,
-      trend: insightStats.recentActivity > 0 ? 'positive' : 'neutral'
+      trend: memoryStats.sessionSummaries > 0 ? 'positive' : 'neutral'
     },
     {
       id: 3,
-      title: 'Accuracy Score',
-      value: Math.round(insightStats.confidenceAverage * 100) + '%',
-      subtitle: 'AI confidence average',
+      title: 'Thought Patterns',
+      value: insightStats.totalPatterns.toString(),
+      subtitle: 'CBT patterns identified',
       icon: Target,
-      trend: insightStats.confidenceAverage > 0.7 ? 'positive' : 'neutral'
+      trend: insightStats.totalPatterns > 0 ? 'positive' : 'neutral'
     }
   ];
 
@@ -225,6 +259,108 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             );
           })}
         </View>
+
+        {/* Session Summaries Section */}
+        {sessionSummaries.length > 0 && (
+          <View style={styles.patternsCard}>
+            <View style={styles.patternsAccent} />
+            
+            <View style={styles.patternsHeader}>
+              <LinearGradient
+                colors={['#dcfdf4', '#86efac']}
+                style={styles.patternsIcon}
+              >
+                <TrendingUp size={24} color="#059669" />
+              </LinearGradient>
+              <View style={styles.patternsTitleContainer}>
+                <Text style={styles.patternsTitle}>Session Summaries</Text>
+                <Text style={styles.patternsSubtitle}>Your therapeutic journey insights</Text>
+              </View>
+            </View>
+
+            <View style={styles.patternsContainer}>
+              {sessionSummaries.map((summary, index) => (
+                <TouchableOpacity
+                  key={summary.id}
+                  onPress={() => onInsightClick('summary', summary)}
+                  style={styles.patternCard}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.patternContent}>
+                    <View style={styles.patternContentLeft}>
+                      <Text style={styles.patternName}>
+                        {summary.type === 'consolidated' ? 'Consolidated Themes' : `Session ${index + 1}`}
+                      </Text>
+                      <Text style={styles.patternDescription}>
+                        {new Date(summary.date).toLocaleDateString()} • {summary.messageCount} messages
+                      </Text>
+                      
+                      <View style={styles.thoughtContainer}>
+                        <Text style={styles.summaryText}>
+                          {summary.text}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.patternArrow}>
+                      <ArrowRight size={16} color="#059669" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Memory Insights Section */}
+        {memoryInsights.length > 0 && (
+          <View style={styles.patternsCard}>
+            <View style={styles.patternsAccent} />
+            
+            <View style={styles.patternsHeader}>
+              <LinearGradient
+                colors={['#fef3c7', '#fbbf24']}
+                style={styles.patternsIcon}
+              >
+                <Brain size={24} color="#d97706" />
+              </LinearGradient>
+              <View style={styles.patternsTitleContainer}>
+                <Text style={styles.patternsTitle}>Memory Insights</Text>
+                <Text style={styles.patternsSubtitle}>Long-term patterns & themes</Text>
+              </View>
+            </View>
+
+            <View style={styles.patternsContainer}>
+              {memoryInsights.map((insight) => (
+                <TouchableOpacity
+                  key={insight.id}
+                  onPress={() => onInsightClick('memory_insight', insight)}
+                  style={styles.patternCard}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.patternContent}>
+                    <View style={styles.patternContentLeft}>
+                      <Text style={styles.patternName}>
+                        {insight.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </Text>
+                      <Text style={styles.patternDescription}>
+                        Confidence: {Math.round(insight.confidence * 100)}% • {new Date(insight.date).toLocaleDateString()}
+                      </Text>
+                      
+                      <View style={styles.thoughtContainer}>
+                        <Text style={styles.summaryText}>
+                          {insight.content}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.patternArrow}>
+                      <ArrowRight size={16} color="#d97706" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* Thinking Patterns Section */}
         <View style={styles.patternsCard}>
