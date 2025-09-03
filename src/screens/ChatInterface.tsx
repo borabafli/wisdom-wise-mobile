@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
@@ -43,6 +44,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [fontsLoaded] = useFonts({
     Caveat_400Regular,
   });
+
+  const insets = useSafeAreaInsets();
 
   // Basic state
   const [inputText, setInputText] = useState('');
@@ -99,6 +102,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Handle input text changes
   const handleInputTextChange = (text: string) => {
     setInputText(text);
+  };
+
+  // Handle keyboard dismiss
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
   };
 
   // Handle sending messages
@@ -207,7 +215,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     );
 
   return (
-    <SafeAreaWrapper style={styles.container}>
+    <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
       <ImageBackground
         source={require('../../assets/images/background1.png')}
         style={styles.backgroundImage}
@@ -295,41 +303,43 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             contentContainerStyle={styles.messagesContent}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="on-drag"
           >
-            {chatSession.messages.map(renderMessage)}
-            
-            {chatSession.showExerciseCard && (
-              <ExerciseCard
-                exercise={chatSession.showExerciseCard}
-                onStart={handleExerciseCardStart}
-                onDismiss={() => chatSession.setShowExerciseCard(null)}
-              />
-            )}
+              {chatSession.messages.map(renderMessage)}
+              
+              {chatSession.showExerciseCard && (
+                <ExerciseCard
+                  exercise={chatSession.showExerciseCard}
+                  onStart={handleExerciseCardStart}
+                  onDismiss={() => chatSession.setShowExerciseCard(null)}
+                />
+              )}
 
-            {chatSession.isTyping && (
-              <View style={styles.typingContainer}>
-                <View style={styles.typingBubble}>
-                  <View style={styles.typingContent}>
-                    <View style={styles.typingAvatar}>
-                      <Image 
-                        source={require('../../assets/images/turtle-simple-3a.png')}
-                        style={styles.typingTurtleAvatar}
-                        contentFit="cover"
-                      />
-                    </View>
-                    <View style={styles.typingTextContainer}>
-                      <View style={styles.typingDots}>
-                        <View style={styles.typingDot} />
-                        <View style={styles.typingDot} />
-                        <View style={styles.typingDot} />
+              {chatSession.isTyping && (
+                <View style={styles.typingContainer}>
+                  <View style={styles.typingBubble}>
+                    <View style={styles.typingContent}>
+                      <View style={styles.typingAvatar}>
+                        <Image 
+                          source={require('../../assets/images/turtle-simple-3a.png')}
+                          style={styles.typingTurtleAvatar}
+                          contentFit="cover"
+                        />
                       </View>
-                      <Text style={styles.typingText}>Anu is reflecting...</Text>
+                      <View style={styles.typingTextContainer}>
+                        <View style={styles.typingDots}>
+                          <View style={styles.typingDot} />
+                          <View style={styles.typingDot} />
+                          <View style={styles.typingDot} />
+                        </View>
+                        <Text style={styles.typingText}>Anu is reflecting...</Text>
+                      </View>
                     </View>
                   </View>
                 </View>
-              </View>
-            )}
-          </ScrollView>
+              )}
+            </ScrollView>
 
           {/* Suggestion Chips */}
           <SuggestionChips

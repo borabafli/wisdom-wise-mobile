@@ -134,7 +134,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   messagesContent: {
     paddingVertical: spacing.components.contentGap,
-    paddingBottom: spacing[10],
+    paddingBottom: spacing[8], // Reduced bottom padding
     flexGrow: 1,
   },
 
@@ -456,7 +456,8 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Suggestions - Mobile Optimized
   suggestionsContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingBottom: spacing[6], // More bottom padding for mobile
+    paddingBottom: spacing[4], // Reduced bottom padding to avoid too much space
+    paddingTop: spacing[2], // Small top padding for separation
     gap: spacing[5], // Better spacing between rows
     flexWrap: 'wrap',
   },
@@ -514,17 +515,21 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
-    paddingBottom: spacing.components.cardGap + 10, // Extra padding for keyboard
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20, // Extra padding for keyboard suggestion bar
     zIndex: 10,
   },
   inputCard: {
     backgroundColor: '#FFFFFF', // Pure white
     borderWidth: 1,
-    borderColor: 'rgba(107, 114, 128, 0.08)', // Much subtler border
+    borderColor: 'rgba(107, 114, 128, 0.12)', // Slightly more visible border
     borderRadius: 25,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    // No shadow - clean flat design
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2, // Subtle shadow for better separation
   },
   inputRow: {
     flexDirection: 'row',
@@ -616,13 +621,14 @@ export const chatInterfaceStyles = StyleSheet.create({
     color: '#111827', // Almost black for readability
     minHeight: 48,
     maxHeight: 200,
-    paddingVertical: spacing[3],
-    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[4], // Increased vertical padding
+    paddingHorizontal: spacing[4], // Increased horizontal padding
     backgroundColor: 'transparent',
-    lineHeight: 22,
+    lineHeight: 24, // Better line height
     letterSpacing: 0.2,
     textAlignVertical: 'top',
-    paddingTop: 14,
+    paddingTop: 12,
+    paddingBottom: 12,
   },
   partialTranscriptOverlay: {
     position: 'absolute',
