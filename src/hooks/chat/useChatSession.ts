@@ -6,6 +6,7 @@ import { rateLimitService } from '../../services/rateLimitService';
 import { ttsService } from '../../services/ttsService';
 import { useSessionManagement } from '../useSessionManagement';
 import { getExerciseFlow, exerciseLibraryData } from '../../data/exerciseLibrary';
+import { memoryService } from '../../services/memoryService';
 
 interface ChatSessionState {
   messages: Message[];

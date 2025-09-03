@@ -4,6 +4,7 @@ import { contextService } from '../services/contextService';
 import { apiService } from '../services/apiService';
 import { getExerciseFlow } from '../data/exerciseLibrary';
 import { ttsService } from '../services/ttsService';
+import { memoryService } from '../services/memoryService';
 
 export const useExerciseFlow = (initialExercise?: any) => {
   const [exerciseMode, setExerciseMode] = useState(false);
@@ -133,6 +134,20 @@ export const useExerciseFlow = (initialExercise?: any) => {
           await storageService.addMessage(completion);
           setExerciseMode(false);
           setSuggestions([]);
+          
+          // Extract insights after exercise completion (background processing)
+          setTimeout(async () => {
+            try {
+              const messages = await storageService.getMessages();
+              const insightResult = await memoryService.extractInsights(messages);
+              if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                console.log(`✅ Exercise completion: Extracted ${insightResult.insights.length} memory insights`);
+              }
+            } catch (error) {
+              console.error('Error extracting insights after exercise completion:', error);
+            }
+          }, 100);
+          
           return;
         }
 
