@@ -55,7 +55,10 @@
       "Read(E:\\/**)",
       "Bash(node:*)",
       "Bash(timeout:*)",
-      "Bash(SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae npx supabase functions deploy extract-insights --project-ref tarwryruagxsoaljzoot)"
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae npx supabase functions deploy extract-insights --project-ref tarwryruagxsoaljzoot)",
+      "Bash(kill:*)",
+      "Bash(find:*)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/**)"
     ],
     "deny": [],
     "ask": []
