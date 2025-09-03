@@ -144,15 +144,26 @@ class NativeVoiceService {
 
   private onSpeechVolumeChanged = (event: SpeechVolumeChangedEvent) => {
     if (this.audioLevelCallback && event.value !== undefined) {
-      // Convert dB level to 0-1 range (typical range is -160 to 0 dB)
-      const normalizedLevel = Math.min(1, Math.max(0.1, (event.value + 160) / 160));
+      // Convert dB level to 0-1 range with better sensitivity
+      // Native voice typically gives values from -40 (silence) to 0 (loud)
+      const dbValue = event.value;
+      const minDb = -40; // Silence threshold
+      const maxDb = 0;   // Maximum volume
       
-      // Create frequency data for sound wave visualization
+      // More responsive normalization that shows true silence
+      const normalizedLevel = Math.max(0.02, Math.min(1, (dbValue - minDb) / (maxDb - minDb)));
+      
+      // Create more realistic frequency distribution based on actual audio level
       const frequencyData = Array.from({ length: 7 }, (_, i) => {
-        // Create dynamic variation for organic feel
-        const timeOffset = Date.now() / 200 + i;
-        const variation = Math.sin(timeOffset) * 0.15 + (Math.random() - 0.5) * 0.1;
-        return Math.max(0.1, Math.min(1, normalizedLevel + variation));
+        if (normalizedLevel < 0.1) {
+          // During silence, keep waves very low
+          return Math.max(0.02, normalizedLevel * (0.8 + Math.random() * 0.4));
+        } else {
+          // During speech, create natural variation around the base level
+          const bandVariation = 0.7 + (Math.random() * 0.6); // 0.7 to 1.3 multiplier
+          const frequencyFactor = Math.pow(0.9, i); // Slight decay for higher frequencies
+          return Math.max(0.02, Math.min(1, normalizedLevel * bandVariation * frequencyFactor));
+        }
       });
       
       this.audioLevelCallback(normalizedLevel, frequencyData);

@@ -345,14 +345,17 @@ class STTService {
           console.log('Band', i, 'average:', average, 'out of 255');
         }
         
-        // Improved sensitivity calculation with better scaling
+        // More responsive and realistic audio level calculation
         const baseLevel = average / 255; // 0 to 1
-        const sensitivity = 8.0; // Increased sensitivity
-        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.8); // Power curve for better response
-        const normalizedLevel = Math.min(1.2, amplifiedLevel);
         
-        // Don't force a minimum - let quiet parts be quiet
-        frequencyData.push(Math.max(0.1, normalizedLevel));
+        // Use a more reasonable sensitivity that responds to actual voice
+        const sensitivity = 2.5; // Moderate sensitivity
+        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.6); // Gentler curve
+        const normalizedLevel = Math.min(1.0, amplifiedLevel);
+        
+        // Use a very low baseline that shows true silence
+        const minLevel = 0.05; // Very low baseline for true silence
+        frequencyData.push(Math.max(minLevel, normalizedLevel));
       }
       
       const overallAverage = frequencyData.reduce((sum, level) => sum + level, 0) / frequencyData.length;
