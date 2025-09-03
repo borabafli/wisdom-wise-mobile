@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+ios/
+android/
+
 .env
 .mcp.json
 

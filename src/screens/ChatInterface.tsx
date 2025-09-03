@@ -46,6 +46,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Basic state
   const [inputText, setInputText] = useState('');
+  const textBeforeVoiceRef = useRef(''); // Store text that was typed before voice recording
   
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
@@ -60,7 +61,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     scrollViewRef
   );
   const voiceRecording = useVoiceRecording((transcript: string) => {
-    setInputText(prev => prev + transcript);
+    // For final results, append transcript to text that existed before recording
+    // This prevents accumulation of partial results while preserving typed text
+    const finalText = textBeforeVoiceRef.current + (textBeforeVoiceRef.current ? ' ' : '') + transcript;
+    setInputText(finalText);
   });
 
   const {
@@ -364,15 +368,23 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onSend={handleSend}
             isRecording={voiceRecording.isRecording}
             audioLevels={voiceRecording.audioLevels}
-            onMicToggle={async () => {
+            partialTranscript={voiceRecording.partialTranscript}
+            onMicPressIn={async () => {
+              // Store current text before starting voice recording
+              textBeforeVoiceRef.current = inputText.trim();
+              await voiceRecording.startRecording();
+            }}
+            onMicPressOut={async () => {
               if (voiceRecording.isRecording) {
                 await voiceRecording.stopRecording();
-              } else {
-                await voiceRecording.startRecording();
               }
             }}
             onStopRecording={voiceRecording.stopRecording}
-            onCancelRecording={voiceRecording.cancelRecording}
+            onCancelRecording={async () => {
+              await voiceRecording.cancelRecording();
+              // Restore text that was there before recording started
+              setInputText(textBeforeVoiceRef.current);
+            }}
           />
         </KeyboardAvoidingView>
       </ImageBackground>

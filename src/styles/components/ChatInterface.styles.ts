@@ -584,6 +584,16 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingVertical: spacing[2],
     minHeight: 40,
   },
+  partialTranscriptText: {
+    marginTop: spacing[2],
+    fontSize: 14,
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    maxWidth: '100%',
+    fontFamily: 'System',
+    fontWeight: '400',
+  },
   recordingActions: {
     flexDirection: 'row',
     gap: spacing[2],

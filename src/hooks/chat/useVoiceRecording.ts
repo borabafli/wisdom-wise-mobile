@@ -30,8 +30,7 @@ export const useVoiceRecording = (
   ).current;
 
   const startRecording = async () => {
-    console.log('startRecording called');
-    console.log('STT service supported:', sttService.isSupported());
+    console.log('🎤 Starting recording...');
     
     if (!sttService.isSupported()) {
       console.log('STT not supported, showing alert');
@@ -40,6 +39,11 @@ export const useVoiceRecording = (
         'Speech recognition is not supported on this device. Please type your message instead.',
         [{ text: 'OK' }]
       );
+      return;
+    }
+
+    if (isRecording) {
+      console.log('Already recording, ignoring start request');
       return;
     }
 
@@ -79,7 +83,6 @@ export const useVoiceRecording = (
       },
       // On audio level
       (level, frequencyData) => {
-        console.log('Audio level received:', level, 'Frequency data length:', frequencyData?.length);
         updateSoundWaves(level, frequencyData);
       }
     );
@@ -91,11 +94,16 @@ export const useVoiceRecording = (
   };
 
   const stopRecording = async () => {
+    console.log('🛑 stopRecording called - current state:', isRecording);
+    // Always stop the service regardless of current state
     await sttService.stopRecognition();
+    // Reset all recording-related states
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
+    setSttError(null);
     resetSoundWaves();
+    console.log('✅ Recording stopped and state reset');
   };
 
   const cancelRecording = async () => {
@@ -116,7 +124,6 @@ export const useVoiceRecording = (
 
   // Update sound waves based on real frequency spectrum data
   const updateSoundWaves = (audioLevel: number, frequencyData?: number[]) => {
-    console.log('updateSoundWaves called - audioLevel:', audioLevel, 'frequencyData:', frequencyData);
     if (frequencyData && frequencyData.length >= 7) {
       // Use real frequency data for each bar - animate smoothly to new values
       frequencyData.forEach((level, index) => {
