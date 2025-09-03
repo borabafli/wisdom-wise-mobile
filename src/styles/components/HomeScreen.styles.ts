@@ -24,7 +24,6 @@ export const homeScreenStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    // Background color will be handled by LinearGradient
     zIndex: 0,
   },
   backgroundGradient: {
@@ -88,6 +87,59 @@ export const homeScreenStyles = StyleSheet.create({
     alignItems: 'center',
   },
   headerText: {
+    alignItems: 'center',
+  },
+  welcomeTitle: {
+    ...typography.textStyles.welcomeTitle,
+    color: '#1f2937',
+    marginBottom: spacing[4],
+    textShadowColor: 'rgba(255, 255, 255, 0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  welcomeSubtitle: {
+    ...typography.textStyles.welcomeSubtitle,
+    color: '#4b5563',
+    fontWeight: typography.fontWeight.medium,
+    textShadowColor: 'rgba(255, 255, 255, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
+    textAlign: 'center',
+  },
+
+  // Turtle and Input Bar Layout
+  inputWithTurtleWrapper: {
+    alignItems: 'flex-end',
+    marginTop: spacing[8],
+    position: 'relative',
+    width: '100%',
+  },
+  turtleAtBarContainer: {
+    position: 'absolute',
+    top: -120,
+    right: width < 375 ? 25 : 35,
+    zIndex: 2,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  turtleAtBarImage: {
+    width: width < 375 ? 100 : 120,
+    height: width < 375 ? 100 : 120,
+    opacity: 0.9,
+  },
+
+  // Header Section
+  header: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[16],
+    paddingBottom: spacing.layout.screenPadding,
+  },
+  headerContent: {
+    alignItems: 'center',
+  },
+  headerText: {
     alignItems: 'center', // Center the welcome text
   },
   welcomeTitle: {
@@ -124,11 +176,6 @@ export const homeScreenStyles = StyleSheet.create({
     zIndex: 2,
     alignItems: 'center',
     justifyContent: 'flex-end', // Align turtle to bottom of container
-  },
-  turtleAtBarImage: {
-    width: width < 375 ? 100 : 120, // Even smaller turtle on small screens
-    height: width < 375 ? 100 : 120,
-    opacity: 0.9,
   },
 
   // CTA Section
@@ -206,6 +253,79 @@ export const homeScreenStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  // CTA Section
+  ctaSection: {
+    paddingHorizontal: width < 375 ? spacing[16] : spacing.layout.screenPadding,
+    paddingTop: spacing[24],
+    marginBottom: spacing[16],
+  },
+  ctaButton: {
+    borderRadius: spacing.radius['2xl'],
+    overflow: 'hidden',
+  },
+  ctaGradient: {
+    borderRadius: spacing.radius['2xl'],
+    padding: spacing[16],
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  ctaContent: {
+    alignItems: 'flex-start',
+  },
+  ctaTitle: {
+    ...typography.textStyles.h4,
+    color: '#1f2937',
+    marginTop: spacing[4],
+    marginBottom: spacing[6],
+    textAlign: 'left',
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    fontWeight: '700',
+    fontSize: 22,
+  },
+  ctaSubtitle: {
+    ...typography.textStyles.body,
+    color: '#374151',
+    marginBottom: spacing[14],
+    textAlign: 'left',
+    textShadowColor: 'rgba(255, 255, 255, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    fontWeight: '500',
+  },
+
+  // Input Container
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding,
+    paddingVertical: spacing.components.cardGap,
+    borderRadius: 50,
+    gap: spacing.components.cardGap,
+    width: '90%',
+    alignSelf: 'flex-end',
+    marginRight: spacing[8],
+    paddingTop: spacing[8],
+    ...shadows.md,
+  },
+  inputText: {
+    flex: 1,
+    ...typography.textStyles.body,
+    color: colors.text.tertiary,
+    fontWeight: typography.fontWeight.regular,
+    textAlign: 'center',
+    fontSize: 17,
+  },
+  micButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   // Exercises Section
   exercisesSection: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -214,12 +334,12 @@ export const homeScreenStyles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end', // Align to bottom for better visual balance
+    alignItems: 'flex-end',
     marginBottom: spacing.components.cardGap,
   },
   sectionTitle: {
     ...typography.textStyles.h4,
-    color: '#1f2937', // Darker for better contrast
+    color: '#1f2937',
     fontWeight: typography.fontWeight.bold,
     textShadowColor: 'rgba(255, 255, 255, 0.6)',
     textShadowOffset: { width: 0, height: 1 },
@@ -232,7 +352,7 @@ export const homeScreenStyles = StyleSheet.create({
   },
   seeAllText: {
     ...typography.textStyles.bodySmall,
-    color: '#111827', // Same black as other text for consistency
+    color: '#111827',
     fontWeight: typography.fontWeight.semibold,
   },
 
@@ -247,7 +367,7 @@ export const homeScreenStyles = StyleSheet.create({
   exerciseCardGradient: {
     borderRadius: spacing.radius.lg,
     padding: spacing.components.cardPadding,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Less transparent
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -265,17 +385,20 @@ export const homeScreenStyles = StyleSheet.create({
     borderRadius: spacing.radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
+  },
+  exerciseIconImage: {
+    width: 36,
+    height: 36,
   },
   exerciseInfo: {
     flex: 1,
   },
   exerciseName: {
     ...typography.textStyles.actionTitle,
-    color: '#1f2937', // Darker for better readability in transparent cards
+    color: '#1f2937',
     marginBottom: spacing[2],
-    fontWeight: '600', // Slightly bolder
-    fontSize: 21, // Bigger text for exercise names
+    fontWeight: '600',
+    fontSize: 21,
   },
   exerciseMeta: {
     flexDirection: 'row',
@@ -283,8 +406,8 @@ export const homeScreenStyles = StyleSheet.create({
     gap: spacing[4],
   },
   exerciseTime: {
-    ...typography.textStyles.body, // Slightly bigger text style
-    color: '#6b7280', // Darker than tertiary for better readability
+    ...typography.textStyles.body,
+    color: '#6b7280',
     fontWeight: typography.fontWeight.medium,
   },
   exerciseAction: {
@@ -296,7 +419,6 @@ export const homeScreenStyles = StyleSheet.create({
     borderRadius: spacing.radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
   },
 
   // Quick Actions
@@ -311,7 +433,6 @@ export const homeScreenStyles = StyleSheet.create({
   quickActionButton: {
     flex: 1,
     borderRadius: spacing.radius.lg,
-    ...shadows.components.actionButton,
     overflow: 'hidden',
   },
   quickActionBackgroundImage: {
@@ -338,6 +459,36 @@ export const homeScreenStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  // Quick Actions
+  quickActions: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing.layout.screenPadding,
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    gap: spacing.components.cardGap,
+  },
+  quickActionButton: {
+    flex: 1,
+    borderRadius: spacing.radius.lg,
+    overflow: 'hidden',
+  },
+  quickActionGradient: {
+    borderRadius: spacing.radius.lg,
+    padding: spacing.components.cardGap,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 96,
+    gap: spacing[4],
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+  },
+  quickActionText: {
+    color: '#1f2937',
+    ...typography.textStyles.body,
+    fontWeight: typography.fontWeight.semibold,
+    textAlign: 'center',
+  },
+
   // Quote Section
   quoteSection: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -347,28 +498,18 @@ export const homeScreenStyles = StyleSheet.create({
     borderRadius: spacing.radius['2xl'],
     ...shadows.components.modal,
     overflow: 'hidden',
-  },
-  quoteBackgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.6,
-  },
-  quoteGradient: {
     padding: spacing[16],
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // More transparent, less white
   },
   quoteIcon: {
+    marginBottom: spacing.components.cardGap,
+  },
+  quoteIconGradient: {
     width: 48,
     height: 48,
     borderRadius: spacing.radius.soft,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)', // More transparent icon background
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.components.cardGap,
   },
   quoteSymbol: {
     ...typography.textStyles.h3,
@@ -377,15 +518,25 @@ export const homeScreenStyles = StyleSheet.create({
   },
   quoteText: {
     ...typography.textStyles.h4,
-    color: colors.text.inverse,
+    color: '#1f2937',
     textAlign: 'center',
     lineHeight: typography.lineHeight.loose,
     marginBottom: spacing[6],
   },
   quoteAuthor: {
     ...typography.textStyles.bodySmall,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#6b7280',
     fontWeight: typography.fontWeight.medium,
     textAlign: 'center',
   },
+
+  // Legacy styles - keeping for any dependencies
+  // (removed to simplify and focus on Stoic-inspired design)
 });
+
+// Gradient colors inspired by the user's specified accent colors
+export const accentGradient = {
+  colors: ['#04CCEF', '#0898D3'],
+  start: { x: 0, y: 0 },
+  end: { x: 1, y: 1 },
+};

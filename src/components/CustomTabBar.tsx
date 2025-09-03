@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { Home, BookOpen, Brain, User, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import ActionPalette from './ActionPalette';
+import QuickActionsPopup from './QuickActionsPopup';
 import { customTabBarStyles as styles } from '../styles/components/CustomTabBar.styles';
 import { colors, gradients } from '../styles/tokens';
 
@@ -22,7 +22,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   onNewSession, 
   onActionSelect 
 }) => {
-  const [showActionPalette, setShowActionPalette] = useState(false);
+  const [showQuickActions, setShowQuickActions] = useState(false);
 
   const tabs = [
     { name: 'Home', icon: Home, label: 'Home' },
@@ -85,7 +85,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
             {/* Center Plus Button - Show on all tabs */}
             <TouchableOpacity
-              onPress={() => setShowActionPalette(true)}
+              onPress={() => setShowQuickActions(true)}
               style={styles.centerButton}
               activeOpacity={0.8}
             >
@@ -93,7 +93,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 colors={[...gradients.button.primary]}
                 style={styles.plusButton}
               >
-                <Plus size={24} color="#3B82F6" strokeWidth={2.5} />
+                <Plus size={24} color="#ffffff" strokeWidth={2.5} />
               </LinearGradient>
             </TouchableOpacity>
 
@@ -145,22 +145,21 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
         </LinearGradient>
       </SafeAreaWrapper>
 
-      {/* Action Palette */}
-      <ActionPalette 
-        isVisible={showActionPalette}
-        onClose={() => setShowActionPalette(false)}
-        onOptionSelect={(optionId) => {
-          setShowActionPalette(false);
+      {/* Quick Actions Popup */}
+      <QuickActionsPopup 
+        visible={showQuickActions}
+        onClose={() => setShowQuickActions(false)}
+        onActionSelect={(action) => {
+          setShowQuickActions(false);
           if (onActionSelect) {
-            onActionSelect(optionId);
+            onActionSelect(action);
           } else {
             // Fallback behavior
-            switch (optionId) {
-              case 'guided-session':
+            switch (action) {
+              case 'chat':
+              case 'voice-session':
+              case 'featured-breathing':
                 onNewSession();
-                break;
-              case 'exercise-library':
-                navigation.navigate('Exercises');
                 break;
               default:
                 onNewSession();
