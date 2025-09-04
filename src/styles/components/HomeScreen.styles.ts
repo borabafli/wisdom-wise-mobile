@@ -34,7 +34,7 @@ export const homeScreenStyles = StyleSheet.create({
   // Turtle and Input Bar Layout
   inputWithTurtleWrapper: {
     alignItems: 'flex-end',
-    marginTop: height < 700 ? 120 : 140, // Much reduced spacing for tighter layout
+    marginTop: height < 700 ? 140 : 160, // Moved chat bar higher up
     position: 'relative',
     width: '100%',
   },
@@ -57,42 +57,47 @@ export const homeScreenStyles = StyleSheet.create({
     paddingHorizontal: width < 375 ? spacing[16] : spacing.layout.screenPadding,
     paddingTop: spacing[32],
     marginBottom: height < 700 ? 80 : 90, // Much reduced spacing below header
-    minHeight: height < 700 ? 120 : 140, // Much reduced minimum height
+    minHeight: height < 700 ? 180 : 200, // Increased for deeper header
   },
   headerText: {
     position: 'absolute',
-    left: width < 375 ? width * 0.15 : width * 0.18, // Moved more towards center
-    top: height < 700 ? 80 : 100, // Fixed positioning to ensure no overlap
-    zIndex: 1,
-    maxWidth: width * 0.7, // Adjusted max width for centered position
+    left: width < 375 ? width * 0.08 : width * 0.1, // Moved more to the left
+    top: height < 700 ? 60 : 80, // Higher up in the blue header area
+    zIndex: 2, // Above wave header
+    maxWidth: width * 0.8, // Increased max width for left positioning
   },
   ctaTitle: {
     fontFamily: 'Poppins-Bold',
     fontSize: width < 375 ? 28 : 32, // Responsive font size - much bigger
     fontWeight: 'bold',
-    color: '#003366',
+    color: '#002244', // Dark blue color
     marginTop: spacing[2],
     marginBottom: spacing[4],
     textAlign: 'left',
     letterSpacing: -0.5,
     lineHeight: width < 375 ? 32 : 38, // Better line height
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   ctaSubtitle: {
     fontFamily: 'Poppins-Regular',
     fontSize: width < 375 ? 17 : 19, // Bigger subtitle
     fontWeight: 'normal',
-    color: '#003366',
+    color: '#002244', // Dark blue color
     marginBottom: spacing[8],
     textAlign: 'left',
     lineHeight: width < 375 ? 22 : 26, // Better line height
-    opacity: 0.8, // Slightly softer than title
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
 
   // Input Container - Clean design without borders
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // More white background
     paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
@@ -110,8 +115,8 @@ export const homeScreenStyles = StyleSheet.create({
   inputText: {
     flex: 1,
     fontSize: 18,
-    color: '#002244',
-    fontWeight: 'normal',
+    color: '#1F2937', // Dark text for better contrast on white background
+    fontWeight: '500', // Slightly bolder for better visibility
     textAlign: 'left',
     marginLeft: spacing[4],
   },
@@ -165,7 +170,7 @@ export const homeScreenStyles = StyleSheet.create({
   },
   exerciseCardGradient: {
     padding: spacing[16],
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: 'rgba(161, 214, 242, 0.4)',
     marginBottom: spacing[4],
     borderRadius: 20,
   },
@@ -251,7 +256,7 @@ export const homeScreenStyles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 96,
     gap: spacing[4],
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: 'rgba(184, 224, 245, 0.5)',
     borderRadius: 18,
   },
   quickActionText: {
@@ -275,7 +280,7 @@ export const homeScreenStyles = StyleSheet.create({
     overflow: 'hidden',
     padding: spacing[16],
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: 'rgba(161, 214, 242, 0.6)',
     borderRadius: 24,
   },
   quoteIcon: {

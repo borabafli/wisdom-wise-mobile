@@ -214,8 +214,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexShrink: 0,
   },
   turtleAvatar: {
-    width: 120,
-    height: 120,
+    width: '100%',
+    height: '100%',
     borderRadius: 0,
     borderWidth: 0,
     borderColor: 'transparent',
@@ -341,8 +341,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexShrink: 0,
   },
   turtleAvatarSmall: {
-    width: 50,
-    height: 50,
+    width: '100%',
+    height: '100%',
     borderRadius: 0,
     borderWidth: 0,
     borderColor: 'transparent',
@@ -425,8 +425,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     ...shadows.md,
   },
   typingTurtleAvatar: {
-    width: 36,
-    height: 36,
+    width: '100%',
+    height: '100%',
     borderRadius: 0,
   },
   typingTextContainer: {
@@ -473,13 +473,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   suggestionChip: {
-    backgroundColor: '#FFFFFF', // Clean pure white
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // More transparent white
     paddingHorizontal: spacing[6], // Generous horizontal padding
     paddingVertical: spacing[5], // Generous vertical padding
     minHeight: 44, // Minimum touch target for accessibility
     borderRadius: 20, // Slightly less rounded for cleaner look
-    borderWidth: 1,
-    borderColor: 'rgba(107, 114, 128, 0.2)', // More contrasting gray border
+    borderWidth: 0, // Remove border
     flexShrink: 1,
     alignSelf: 'flex-start',
     // No shadow - completely flat design
@@ -494,8 +493,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     lineHeight: 22, // More line height for better spacing
   },
   exerciseSuggestionButton: {
-    backgroundColor: 'rgba(59, 180, 245, 0.06)', // Even lighter accent background
-    borderColor: 'rgba(59, 180, 245, 0.12)', // Very subtle accent border
+    backgroundColor: 'rgba(59, 180, 245, 0.04)', // More transparent accent background
+    borderWidth: 0, // Remove border
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 48, // Slightly larger for special exercise button

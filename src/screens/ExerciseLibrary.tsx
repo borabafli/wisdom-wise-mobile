@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Heart, Brain, BookOpen, Clock, Star, Wind, Eye, Search, X, ChevronRight } from 'lucide-react-native';
+import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X, Bug } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { exercisesArray } from '../data/exerciseLibrary';
 import { colors, gradients, shadows } from '../styles/tokens';
+import { MoodSlider } from '../components/chat/MoodSlider';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,185 +15,312 @@ interface ExerciseLibraryProps {
 }
 
 const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchText, setSearchText] = useState('');
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState('All');
+  const [selectedBenefitFilter, setSelectedBenefitFilter] = useState('All');
+  const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
+  const [showFilters, setShowFilters] = useState(true);
+  const [showDevSlider, setShowDevSlider] = useState(false);
   
   // Use unified exercises from exerciseLibrary.ts
   const exercises = exercisesArray;
 
-  const categories = ['All', 'CBT', 'ACT', 'Mindfulness', 'Breathing', 'Journaling', 'Self-Care'];
+  // Filter options
+  const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
+  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-exploration', 'Clarity', 'Stress', 'Focus', 'Sleep'];
+  const styleFilters = ['All', 'CBT', 'Breathing', 'Meditation', 'Journaling', 'Mindfulness', 'ACT'];
 
-  // Filter exercises based on selected category
+  // Helper function to get duration in minutes
+  const getDurationInMinutes = (duration: string) => {
+    const match = duration.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
+  };
+
+  // Filter exercises based on all criteria
   const filteredExercises = useMemo(() => {
-    if (selectedCategory === 'All') {
-      return exercises;
+    let filtered = exercises;
+
+    // Search filter
+    if (searchText) {
+      filtered = filtered.filter(exercise =>
+        exercise.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        exercise.description.toLowerCase().includes(searchText.toLowerCase()) ||
+        exercise.category.toLowerCase().includes(searchText.toLowerCase())
+      );
     }
-    return exercises.filter(exercise => exercise.category === selectedCategory);
-  }, [selectedCategory]);
+
+    // Time filter
+    if (selectedTimeFilter !== 'All') {
+      filtered = filtered.filter(exercise => {
+        const duration = getDurationInMinutes(exercise.duration);
+        switch (selectedTimeFilter) {
+          case '1-5 min': return duration >= 1 && duration <= 5;
+          case '5-15 min': return duration > 5 && duration <= 15;
+          case '15-30 min': return duration > 15 && duration <= 30;
+          case '30+ min': return duration > 30;
+          default: return true;
+        }
+      });
+    }
+
+    // Benefit filter (based on category and keywords)
+    if (selectedBenefitFilter !== 'All') {
+      filtered = filtered.filter(exercise => {
+        const benefit = selectedBenefitFilter.toLowerCase();
+        return exercise.category.toLowerCase().includes(benefit) ||
+               exercise.description.toLowerCase().includes(benefit) ||
+               exercise.name.toLowerCase().includes(benefit);
+      });
+    }
+
+    // Style filter
+    if (selectedStyleFilter !== 'All') {
+      filtered = filtered.filter(exercise => 
+        exercise.category.toLowerCase().includes(selectedStyleFilter.toLowerCase())
+      );
+    }
+
+    return filtered;
+  }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
+
+  // Tag colors similar to home screen
+  const getTagColor = (category: string) => {
+    const tagColors = {
+      'CBT': { bg: 'rgba(161, 214, 242, 0.8)', text: '#002244' },
+      'Breathing': { bg: 'rgba(184, 224, 245, 0.8)', text: '#002244' },
+      'Meditation': { bg: 'rgba(227, 244, 253, 0.8)', text: '#002244' },
+      'Mindfulness': { bg: 'rgba(186, 230, 253, 0.8)', text: '#002244' },
+      'Journaling': { bg: 'rgba(203, 213, 225, 0.8)', text: '#002244' },
+      'ACT': { bg: 'rgba(147, 197, 253, 0.8)', text: '#002244' },
+      'Self-Care': { bg: 'rgba(96, 165, 250, 0.8)', text: '#FFFFFF' },
+    };
+    return tagColors[category] || { bg: 'rgba(161, 214, 242, 0.8)', text: '#002244' };
+  };
+
+  const FilterChip = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) => (
+    <TouchableOpacity
+      style={[styles.filterChip, selected && styles.filterChipSelected]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={[styles.filterChipText, selected && styles.filterChipTextSelected]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const ExerciseCard = ({ exercise }: { exercise: any }) => {
+    const tagColor = getTagColor(exercise.category);
+    
+    return (
+      <TouchableOpacity
+        style={styles.exerciseCard}
+        onPress={() => onExerciseClick(exercise)}
+        activeOpacity={0.8}
+      >
+        <LinearGradient
+          colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
+          style={styles.exerciseCardGradient}
+        >
+          {/* Left side image */}
+          <View style={styles.exerciseImageContainer}>
+            <Image 
+              source={exercise.image || require('../../assets/images/new-icon1.png')}
+              style={styles.exerciseImage}
+              contentFit="cover"
+            />
+          </View>
+          
+          {/* Right side content */}
+          <View style={styles.exerciseContent}>
+            {/* Category tag */}
+            <View style={[styles.categoryTag, { backgroundColor: tagColor.bg }]}>
+              <Text style={[styles.categoryTagText, { color: tagColor.text }]}>
+                {exercise.category}
+              </Text>
+            </View>
+            
+            <Text style={styles.exerciseTitle} numberOfLines={2}>
+              {exercise.name}
+            </Text>
+            
+            <View style={styles.exerciseMeta}>
+              <View style={styles.durationContainer}>
+                <Clock size={12} color="#002244" />
+                <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
+              </View>
+            </View>
+            
+            <Text style={styles.exerciseDescription} numberOfLines={2}>
+              {exercise.description}
+            </Text>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchSection}>
-        <TouchableOpacity style={styles.searchBar} activeOpacity={0.8}>
-          <Search size={20} color={colors.text.secondary} />
-          <Text style={styles.searchText}>Exercises, quotes and your entries...</Text>
-        </TouchableOpacity>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Exercise Library</Text>
+        <View style={styles.headerButtons}>
+          {/* Dev Test Button */}
+          <TouchableOpacity
+            style={styles.devButton}
+            onPress={() => setShowDevSlider(!showDevSlider)}
+            activeOpacity={0.7}
+          >
+            <Bug size={16} color={colors.primary[400]} />
+            <Text style={styles.devButtonText}>Test Slider</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => setShowFilters(!showFilters)}
+            activeOpacity={0.7}
+          >
+            <Filter size={20} color={colors.primary[400]} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView 
+      {/* Search Bar */}
+      <View style={styles.searchSection}>
+        <View style={styles.searchBar}>
+          <Search size={20} color={colors.text.secondary} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search exercises..."
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholderTextColor={colors.text.secondary}
+          />
+          {searchText ? (
+            <TouchableOpacity onPress={() => setSearchText('')} activeOpacity={0.7}>
+              <X size={18} color={colors.text.secondary} />
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </View>
+
+      {/* Dev Slider Test */}
+      {showDevSlider && (
+        <View style={styles.devSliderSection}>
+          <View style={styles.devSliderContainer}>
+            <MoodSlider
+              title="Dev Test: Mood Slider"
+              subtitle="Testing the slider component"
+              onRatingChange={(rating) => console.log('Rating changed:', rating)}
+              onComplete={(rating) => {
+                console.log('Rating completed:', rating);
+                // Auto-hide after completion for better UX
+                setTimeout(() => setShowDevSlider(false), 2000);
+              }}
+              type="mood"
+              initialValue={2.5}
+            />
+          </View>
+        </View>
+      )}
+
+      {/* Filters */}
+      {showFilters && (
+        <View style={styles.filtersSection}>
+          {/* Time Filter */}
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterGroupTitle}>Duration</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScrollView}>
+              <View style={styles.filterRow}>
+                {timeFilters.map((filter) => (
+                  <FilterChip
+                    key={filter}
+                    label={filter}
+                    selected={selectedTimeFilter === filter}
+                    onPress={() => setSelectedTimeFilter(filter)}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+
+          {/* Benefit Filter */}
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterGroupTitle}>Benefits</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScrollView}>
+              <View style={styles.filterRow}>
+                {benefitFilters.map((filter) => (
+                  <FilterChip
+                    key={filter}
+                    label={filter}
+                    selected={selectedBenefitFilter === filter}
+                    onPress={() => setSelectedBenefitFilter(filter)}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+
+          {/* Style Filter */}
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterGroupTitle}>Approach</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScrollView}>
+              <View style={styles.filterRow}>
+                {styleFilters.map((filter) => (
+                  <FilterChip
+                    key={filter}
+                    label={filter}
+                    selected={selectedStyleFilter === filter}
+                    onPress={() => setSelectedStyleFilter(filter)}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      )}
+
+      {/* Results */}
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Featured & For You Section */}
-        <View style={styles.featuredSection}>
-          <Text style={styles.sectionTitle}>Featured & For You</Text>
-          
-          {/* Featured Card */}
-          <TouchableOpacity 
-            style={styles.featuredCard}
-            onPress={() => onExerciseClick(exercises[0])}
-            activeOpacity={0.8}
-          >
-            <View style={styles.featuredCardLeft}>
-              <View style={styles.featuredCardGradient}>
-                <Image 
-                  source={exercises[0]?.image || require('../../assets/images/new-icon1.png')}
-                  style={styles.featuredCardImage}
-                  contentFit="contain"
-                />
-              </View>
-            </View>
-            <View style={styles.featuredCardRight}>
-              <Text style={styles.featuredCardLabel}>Upcoming Exercise</Text>
-              <Text style={styles.featuredCardTitle}>Daily Mindfulness!</Text>
-              <Text style={styles.featuredCardDescription}>
-                Today is the perfect time to practice mindfulness and inner peace.
-              </Text>
-              <View style={styles.featuredCardBadge}>
-                <Text style={styles.featuredCardBadgeText}>in 1 week</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-          
-          {/* Quick Exercise Cards Grid */}
-          <View style={styles.exerciseGrid}>
-            <TouchableOpacity 
-              style={styles.exerciseGridCard}
-              onPress={() => onExerciseClick(exercises[1])}
-              activeOpacity={0.8}
-            >
-              <View style={styles.exerciseGridBadge}>
-                <Text style={styles.exerciseGridBadgeText}>NEW</Text>
-              </View>
-              <Text style={styles.exerciseGridCategory}>Journaling</Text>
-              <Text style={styles.exerciseGridTitle}>Well-Being Check-Up</Text>
-              <Text style={styles.exerciseGridDescription}>
-                A journal to track your mental and emotional w...
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.exerciseGridCard}
-              onPress={() => onExerciseClick(exercises[2])}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.exerciseGridBadge, styles.featuredBadge]}>
-                <Text style={[styles.exerciseGridBadgeText, { color: colors.text.primary }]}>FEATURED</Text>
-              </View>
-              <Text style={styles.exerciseGridCategory}>Journaling</Text>
-              <Text style={styles.exerciseGridTitle}>Moment of Gratitude</Text>
-              <Text style={styles.exerciseGridDescription}>
-                A short guided journal to practice gratitude in yo...
-              </Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.resultsHeader}>
+          <Text style={styles.resultsCount}>
+            {filteredExercises.length} exercise{filteredExercises.length !== 1 ? 's' : ''} found
+          </Text>
         </View>
 
-        {/* Your Mindful Library Section */}
-        <View style={styles.librarySection}>
-          <Text style={styles.sectionTitle}>Your Mindful Library, Organized</Text>
-          
-          {/* Library Grid */}
-          <View style={styles.libraryGrid}>
-            {/* Collections Card */}
-            <TouchableOpacity style={styles.libraryCard} activeOpacity={0.8}>
-              <Text style={styles.libraryCardTitle}>Collections</Text>
-              <Text style={styles.libraryCardDescription}>
-                Deep dive into important topics.
-              </Text>
-              <ChevronRight size={20} color={colors.text.primary} style={styles.libraryCardIcon} />
-            </TouchableOpacity>
-            
-            {/* Weekly Themes Card */}
-            <TouchableOpacity style={[styles.libraryCard, styles.darkCard]} activeOpacity={0.8}>
-              <Text style={styles.libraryCardTitleDark}>Weekly Themes</Text>
-              <Text style={styles.libraryCardDescriptionDark}>
-                Browse topics from past weeks.
-              </Text>
-              <ChevronRight size={20} color={colors.background.card} style={styles.libraryCardIcon} />
-            </TouchableOpacity>
-            
-            {/* Daily Essentials Card */}
-            <TouchableOpacity style={[styles.libraryCard, styles.darkCard]} activeOpacity={0.8}>
-              <Text style={styles.libraryCardTitleDark}>Daily Essentials</Text>
-              <ChevronRight size={20} color={colors.background.card} style={styles.libraryCardIcon} />
-            </TouchableOpacity>
-            
-            {/* Well-Being SOS Card */}
-            <TouchableOpacity style={[styles.libraryCard, styles.darkCard]} activeOpacity={0.8}>
-              <Text style={styles.libraryCardTitleDark}>Well-Being SOS</Text>
-              <Text style={styles.libraryCardDescriptionDark}>
-                Your emotional emergency toolkit for stress relief.
-              </Text>
-              <View style={styles.sosIllustration}>
-                <View style={styles.sosCircle} />
-                <View style={[styles.sosCircle, styles.sosCircle2]} />
-                <View style={[styles.sosCircle, styles.sosCircle3]} />
-              </View>
-              <ChevronRight size={20} color={colors.background.card} style={styles.libraryCardIcon} />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.exercisesGrid}>
+          {filteredExercises.reduce((rows, exercise, index) => {
+            if (index % 2 === 0) {
+              rows.push([exercise]);
+            } else {
+              rows[rows.length - 1].push(exercise);
+            }
+            return rows;
+          }, [] as any[][]).map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.exerciseRow}>
+              {row.map((exercise, index) => (
+                <View key={exercise.id || index} style={styles.exerciseCardWrapper}>
+                  <ExerciseCard exercise={exercise} />
+                </View>
+              ))}
+              {row.length === 1 && <View style={styles.exerciseCardWrapper} />}
+            </View>
+          ))}
         </View>
 
-        {/* Quick Practice Cards */}
-        <View style={styles.quickPracticeSection}>
-          <View style={styles.quickPracticeGrid}>
-            <TouchableOpacity style={styles.quickPracticeCard} activeOpacity={0.8}>
-              <Text style={styles.quickPracticeTitle}>breathing.</Text>
-              <Text style={styles.quickPracticeDescription}>Breathe in, breathe out.</Text>
-              <View style={styles.quickPracticeIcon}>
-                <View
-                  style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <Image 
-                    source={require('../../assets/images/new-icon4.png')}
-                    style={styles.quickPracticeIconImage}
-                    contentFit="contain"
-                  />
-                </View>
-              </View>
-              <ChevronRight size={20} color={colors.text.primary} style={styles.quickPracticeArrow} />
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.quickPracticeCard} activeOpacity={0.8}>
-              <Text style={styles.quickPracticeTitle}>meditation.</Text>
-              <Text style={styles.quickPracticeDescription}>Wind down and relax.</Text>
-              <View style={styles.quickPracticeIcon}>
-                <View
-                  style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <Image 
-                    source={require('../../assets/images/new-icon5.png')}
-                    style={styles.quickPracticeIconImage}
-                    contentFit="contain"
-                  />
-                </View>
-              </View>
-              <ChevronRight size={20} color={colors.text.primary} style={styles.quickPracticeArrow} />
-            </TouchableOpacity>
+        {filteredExercises.length === 0 && (
+          <View style={styles.emptyState}>
+            <Sparkles size={48} color={colors.text.tertiary} />
+            <Text style={styles.emptyStateTitle}>No exercises found</Text>
+            <Text style={styles.emptyStateDescription}>
+              Try adjusting your filters or search terms
+            </Text>
           </View>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaWrapper>
   );
@@ -203,17 +331,51 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background.primary,
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 120,
-  },
-  
-  // Search Section
-  searchSection: {
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 16,
+    paddingBottom: 8,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.text.primary,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  devButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#FFE4B5',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#DEB887',
+  },
+  devButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.primary[400],
+  },
+  filterButton: {
+    padding: 8,
+    backgroundColor: colors.background.card,
+    borderRadius: 12,
+  },
+
+  // Search
+  searchSection: {
+    paddingHorizontal: 20,
     paddingBottom: 16,
   },
   searchBar: {
@@ -230,270 +392,194 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  searchText: {
+  searchInput: {
     flex: 1,
     fontSize: 16,
-    color: colors.text.secondary,
+    color: colors.text.primary,
     fontWeight: '400',
   },
-  
-  // Featured Section
-  featuredSection: {
-    paddingHorizontal: 20,
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 20,
-  },
-  featuredCard: {
-    flexDirection: 'row',
-    backgroundColor: colors.background.card,
+
+  // Dev Slider
+  devSliderSection: {
+    backgroundColor: '#FFF9E6',
     borderRadius: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
     padding: 16,
-    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#FFE4B5',
     shadowColor: shadows.sm.shadowColor,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
   },
-  featuredCardLeft: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
-    marginRight: 16,
-    overflow: 'hidden',
-  },
-  featuredCardGradient: {
-    width: '100%',
-    height: '100%',
+  devSliderContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  featuredCardImage: {
-    width: 50,
-    height: 50,
+
+  // Filters
+  filtersSection: {
+    backgroundColor: colors.background.secondary,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    gap: 16,
   },
-  featuredCardRight: {
-    flex: 1,
+  filterGroup: {
+    gap: 8,
   },
-  featuredCardLabel: {
-    fontSize: 12,
-    color: colors.text.secondary,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  featuredCardTitle: {
-    fontSize: 18,
+  filterGroupTitle: {
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: 8,
   },
-  featuredCardDescription: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
-    marginBottom: 12,
+  filterScrollView: {
+    flexGrow: 0,
   },
-  featuredCardBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.background.secondary,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  filterRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingRight: 20,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#C9E8F8',
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#9ED0DD',
   },
-  featuredCardBadgeText: {
-    fontSize: 12,
+  filterChipSelected: {
+    backgroundColor: '#4999BB',
+    borderColor: '#4999BB',
+  },
+  filterChipText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#002244',
+  },
+  filterChipTextSelected: {
+    color: '#FFFFFF',
+  },
+
+  // Results
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 120,
+  },
+  resultsHeader: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  resultsCount: {
+    fontSize: 14,
     color: colors.text.secondary,
     fontWeight: '500',
   },
-  
-  // Exercise Grid
-  exerciseGrid: {
+
+  // Exercise Cards
+  exercisesGrid: {
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  exerciseRow: {
     flexDirection: 'row',
     gap: 12,
   },
-  exerciseGridCard: {
+  exerciseCardWrapper: {
     flex: 1,
-    backgroundColor: colors.background.card,
+  },
+  exerciseCard: {
     borderRadius: 16,
-    padding: 16,
-    minHeight: 180,
+    overflow: 'hidden',
     shadowColor: shadows.sm.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
+    minHeight: 160,
   },
-  exerciseGridBadge: {
+  exerciseCardGradient: {
+    flexDirection: 'row',
+    padding: 12,
+    height: '100%',
+  },
+  exerciseImageContainer: {
+    width: 60,
+    height: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginRight: 12,
+  },
+  exerciseImage: {
+    width: '100%',
+    height: '100%',
+  },
+  exerciseContent: {
+    flex: 1,
+    gap: 8,
+  },
+  categoryTag: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.primary.main,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    marginBottom: 12,
   },
-  featuredBadge: {
-    backgroundColor: colors.background.card,
-  },
-  exerciseGridBadgeText: {
+  categoryTagText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#ffffff',
+    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  exerciseGridCategory: {
-    fontSize: 12,
-    color: colors.text.secondary,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  exerciseGridTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  exerciseGridDescription: {
-    fontSize: 14,
-    color: colors.text.secondary,
+  exerciseTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#002244',
     lineHeight: 20,
   },
-  
-  // Library Section
-  librarySection: {
-    paddingHorizontal: 20,
-    marginBottom: 32,
-  },
-  libraryGrid: {
-    gap: 12,
-  },
-  libraryCard: {
-    backgroundColor: colors.background.card,
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: shadows.sm.shadowColor,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    position: 'relative',
-  },
-  darkCard: {
-    backgroundColor: colors.text.primary,
-  },
-  libraryCardTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  libraryCardTitleDark: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.background.card,
-    marginBottom: 8,
-  },
-  libraryCardDescription: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
-  },
-  libraryCardDescriptionDark: {
-    fontSize: 14,
-    color: colors.text.tertiary,
-    lineHeight: 20,
-  },
-  libraryCardIcon: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-  },
-  sosIllustration: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 60,
-    height: 40,
-  },
-  sosCircle: {
-    position: 'absolute',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: colors.background.card,
-  },
-  sosCircle2: {
-    left: 15,
-    top: 5,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-  },
-  sosCircle3: {
-    left: 30,
-    top: 15,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  
-  // Quick Practice Section
-  quickPracticeSection: {
-    paddingHorizontal: 20,
-    marginBottom: 32,
-  },
-  quickPracticeGrid: {
+  exerciseMeta: {
     flexDirection: 'row',
-    gap: 12,
+    alignItems: 'center',
+    gap: 8,
   },
-  quickPracticeCard: {
-    flex: 1,
-    backgroundColor: colors.background.card,
-    borderRadius: 16,
-    padding: 16,
-    minHeight: 160,
-    shadowColor: shadows.sm.shadowColor,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    position: 'relative',
+  durationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
-  quickPracticeTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginBottom: 8,
+  exerciseDuration: {
+    fontSize: 12,
+    color: '#002244',
+    fontWeight: '500',
   },
-  quickPracticeDescription: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
+  exerciseDescription: {
+    fontSize: 12,
+    color: '#003366',
+    lineHeight: 16,
+    opacity: 0.8,
   },
-  quickPracticeIcon: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+
+  // Empty State
+  emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    paddingVertical: 64,
+    paddingHorizontal: 32,
   },
-  quickPracticeIconImage: {
-    width: 28,
-    height: 28,
+  emptyStateTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginTop: 16,
+    marginBottom: 8,
   },
-  quickPracticeArrow: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
+  emptyStateDescription: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });
 

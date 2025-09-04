@@ -137,6 +137,11 @@ export const colors = {
     disabled: '#d1d5db',
   },
 
+  // Chat Colors
+  chat: {
+    bulletPoint: '#006A8F', // Turtle message bullet points and list numbers
+  },
+
   // Border Colors - Ultra Subtle
   border: {
     light: 'rgba(255, 255, 255, 0.2)',
@@ -189,7 +194,7 @@ export const gradients = {
   
   // Button gradients
   button: {
-    primary: ['rgba(186, 230, 253, 0.8)', 'rgba(147, 197, 253, 0.7)'],
+    primary: ['#4A98BC', '#3A7A9A'],
     blue: ['#3b82f6', '#1d4ed8'],
     purple: ['#8b5cf6', '#7c3aed'],
     cyan: ['#06b6d4', '#0891b2'],

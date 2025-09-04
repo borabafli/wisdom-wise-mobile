@@ -15,6 +15,7 @@ import {
   ChatInput, 
   ExerciseCard 
 } from '../components/chat';
+import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -71,8 +72,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     exerciseMode,
     exerciseStep, 
     exerciseData,
+    showMoodRating,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
+    handleMoodRatingComplete,
+    handleMoodRatingSkip,
     enterExerciseMode,
     exitExerciseMode,
   } = useExerciseFlow();
@@ -320,7 +324,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                       <Image 
                         source={require('../../assets/images/turtle-simple-3a.png')}
                         style={styles.typingTurtleAvatar}
-                        contentFit="cover"
+                        contentFit="contain"
                       />
                     </View>
                     <View style={styles.typingTextContainer}>
@@ -334,6 +338,16 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                   </View>
                 </View>
               </View>
+            )}
+
+            {showMoodRating && exerciseData.currentExercise && (
+              <MoodRatingCard
+                exerciseType={exerciseData.currentExercise.type}
+                exerciseName={exerciseData.currentExercise.name}
+                sessionId={Date.now().toString()}
+                onComplete={handleMoodRatingComplete}
+                onSkip={handleMoodRatingSkip}
+              />
             )}
           </ScrollView>
 

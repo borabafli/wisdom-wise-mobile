@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { colors } from '../styles/tokens/colors';
 
 export interface FormattedTextProps {
   content: string;
@@ -57,8 +58,8 @@ export class MessageFormatter {
         return MessageFormatter.formatItalicText(line, lineIndex, textStyle);
       }
       
-      // Check for bullet points
-      if (line.startsWith('• ')) {
+      // Check for bullet points (various formats)
+      if (line.startsWith('• ') || line.startsWith('- ') || line.startsWith('* ')) {
         return MessageFormatter.formatBulletPoint(line, lineIndex, textStyle);
       }
       
@@ -122,22 +123,23 @@ export class MessageFormatter {
   }
 
   private static formatBulletPoint(line: string, lineIndex: number, textStyle: any): React.ReactElement {
-    const text = line.replace(/^• /, '');
+    // Remove bullet point characters (•, -, *)
+    const text = line.replace(/^[•\-\*] /, '');
     return React.createElement(
       View, 
-      { key: lineIndex, style: { flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 } },
+      { key: lineIndex, style: { flexDirection: 'row', alignItems: 'flex-start', marginVertical: 4 } },
       React.createElement(View, {
         style: { 
-          width: 6, 
-          height: 6, 
-          borderRadius: 3, 
-          backgroundColor: '#3b82f6', 
-          marginTop: 8, 
+          width: 8, 
+          height: 8, 
+          borderRadius: 4, 
+          backgroundColor: colors.chat.bulletPoint, 
+          marginTop: 7, 
           marginRight: 12 
         }
       }),
       React.createElement(Text, {
-        style: [textStyle, { flex: 1 }]
+        style: [textStyle, { flex: 1, lineHeight: 22 }]
       }, text)
     );
   }
@@ -149,7 +151,7 @@ export class MessageFormatter {
         View, 
         { key: lineIndex, style: { flexDirection: 'row', alignItems: 'flex-start', marginVertical: 3 } },
         React.createElement(Text, {
-          style: [textStyle, { fontWeight: '600', color: '#3b82f6', marginRight: 8 }]
+          style: [textStyle, { fontWeight: '600', color: colors.chat.bulletPoint, marginRight: 8 }]
         }, match[1]),
         React.createElement(Text, {
           style: [textStyle, { flex: 1 }]

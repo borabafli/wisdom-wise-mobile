@@ -11,6 +11,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
   const [exerciseStep, setExerciseStep] = useState(0);
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
   const [stepMessageCount, setStepMessageCount] = useState<Record<number, number>>({});
+  const [showMoodRating, setShowMoodRating] = useState(false);
 
   const startDynamicAIGuidedExercise = useCallback(async (
     currentExercise: any,
@@ -132,6 +133,9 @@ export const useExerciseFlow = (initialExercise?: any) => {
           };
           setMessages(prev => [...prev, completion]);
           await storageService.addMessage(completion);
+          
+          // Show mood rating after exercise completion
+          setShowMoodRating(true);
           setExerciseMode(false);
           setSuggestions([]);
           
@@ -171,12 +175,25 @@ export const useExerciseFlow = (initialExercise?: any) => {
     }
   }, [exerciseStep, stepMessageCount]);
 
+  const handleMoodRatingComplete = useCallback((rating: any) => {
+    console.log('Mood rating completed:', rating);
+    setShowMoodRating(false);
+  }, []);
+
+  const handleMoodRatingSkip = useCallback(() => {
+    console.log('Mood rating skipped');
+    setShowMoodRating(false);
+  }, []);
+
   return {
     exerciseMode,
     exerciseStep,
     exerciseData,
+    showMoodRating,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
+    handleMoodRatingComplete,
+    handleMoodRatingSkip,
     enterExerciseMode: () => setExerciseMode(true),
     exitExerciseMode: () => setExerciseMode(false),
   };

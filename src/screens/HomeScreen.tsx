@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
+import { WaveHeader } from '../components/WaveHeader';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,8 +23,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
   return (
     <SafeAreaWrapper style={styles.container}>
+      <WaveHeader height={450} colors={['#4A98BC', '#5BA7C9', '#6BB6D6']} />
       <LinearGradient
-        colors={['#A1D6F2', '#B8E0F5', '#E3F4FD']}
+        colors={['rgba(255, 255, 255, 0)', '#FFFFFF', '#F8FAFC']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
@@ -60,9 +62,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             {/* Input area */}
             <View style={styles.inputContainer}>
               <View style={styles.micButton}>
-                <Mic size={32} color="#29BDE0" strokeWidth={1.5} />
+                <Mic size={32} color="#374151" strokeWidth={1.5} />
               </View>
-              <Text style={styles.inputText}>Type or talk to start...</Text>
+              <Text style={styles.inputText}>Share a thought...</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -88,7 +90,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(255, 255, 255, 0.85)', 'rgba(248, 250, 252, 0.75)']}
+                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
@@ -115,7 +117,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(255, 255, 255, 0.85)', 'rgba(248, 250, 252, 0.75)']}
+                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
@@ -142,7 +144,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(255, 255, 255, 0.85)', 'rgba(248, 250, 252, 0.75)']}
+                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
@@ -177,7 +179,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(186, 230, 253, 0.8)', 'rgba(147, 197, 253, 0.7)']}
+                colors={['rgba(184, 224, 245, 0.6)', 'rgba(227, 244, 253, 0.5)']}
                 style={styles.quickActionGradient}
               >
                 <Image 
@@ -195,7 +197,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(147, 197, 253, 0.8)', 'rgba(96, 165, 250, 0.7)']}
+                colors={['rgba(227, 244, 253, 0.6)', 'rgba(186, 230, 253, 0.5)']}
                 style={styles.quickActionGradient}
               >
                 <Image 
@@ -212,7 +214,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         {/* Motivational Quote - Modern Style */}
         <View style={styles.quoteSection}>
           <LinearGradient
-            colors={['rgba(255, 255, 255, 0.9)', 'rgba(248, 250, 252, 0.8)']}
+            colors={['rgba(161, 214, 242, 0.7)', 'rgba(186, 230, 253, 0.6)']}
             style={styles.quoteCard}
           >
             <ImageBackground

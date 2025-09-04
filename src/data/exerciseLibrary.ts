@@ -1,5 +1,5 @@
 // Final, corrected exerciseLibrary.ts
-import { Brain, Wind, Eye, BookOpen, Heart, Star } from 'lucide-react-native';
+import { Brain, Wind, Eye, BookOpen, Heart, Star, Clock, Filter } from 'lucide-react-native';
 
 export const exerciseLibraryData: Record<string, any> = {
   'automatic-thoughts': {
@@ -12,7 +12,7 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Intermediate',
     icon: Brain,
     color: ['#B5A7C6', '#D4B5D0'],
-    image: require('../../assets/images/4.jpeg'),
+    image: require('../../assets/images/1.jpeg'),
     keywords: ['automatic thoughts', 'thought patterns', 'negative thoughts', 'cognitive', 'cbt'],
   },
   'breathing': {
@@ -25,7 +25,7 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Beginner',
     icon: Wind,
     color: ['#8FA5B3', '#C3D9E6'],
-    image: require('../../assets/images/5.jpeg'),
+    image: require('../../assets/images/2.jpeg'),
     keywords: ['breathing', 'breath', '4-7-8'],
   },
   'mindfulness': {
@@ -38,7 +38,7 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Beginner',
     icon: Eye,
     color: ['#95B99C', '#B8C5A6'],
-    image: require('../../assets/images/7.jpeg'),
+    image: require('../../assets/images/3.jpeg'),
     keywords: ['body scan', 'mindfulness', 'body awareness'],
   },
   'morning-mindfulness': {
@@ -51,7 +51,7 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Beginner',
     icon: Eye,
     color: ['#E0F2FE', '#BAE6FD'],
-    image: require('../../assets/images/1.jpeg'),
+    image: require('../../assets/images/4.jpeg'),
     keywords: ['morning', 'start day', 'morning mindfulness'],
   },
   'gratitude': {
@@ -64,7 +64,7 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Beginner',
     icon: BookOpen,
     color: ['#FFD4BA', '#FFE5D4'],
-    image: require('../../assets/images/8.jpeg'),
+    image: require('../../assets/images/5.jpeg'),
     keywords: ['gratitude', 'appreciation', 'thankful'],
   },
   'self-compassion': {
@@ -77,7 +77,7 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Beginner',
     icon: Heart,
     color: ['#E8B5A6', '#F5E6D3'],
-    image: require('../../assets/images/9.jpeg'),
+    image: require('../../assets/images/6.jpg'),
     keywords: ['self-compassion', 'self compassion', 'kind to yourself', 'self-care'],
   },
   'values-clarification': {
@@ -90,8 +90,34 @@ export const exerciseLibraryData: Record<string, any> = {
     difficulty: 'Intermediate',
     icon: Star,
     color: ['#D4C5B9', '#E5E5E5'],
-    image: require('../../assets/images/2.jpeg'),
+    image: require('../../assets/images/7.jpeg'),
     keywords: ['values', 'meaning', 'purpose', 'what matters'],
+  },
+  'future-self-journaling': {
+    id: 8,
+    type: 'future-self-journaling',
+    name: 'Future Self Journaling',
+    duration: '20 min',
+    description: 'Connect with your future self to gain clarity and perspective',
+    category: 'Self-Discovery',
+    difficulty: 'Intermediate',
+    icon: Clock,
+    color: ['#99F6E4', '#5EEAD4'],
+    image: require('../../assets/images/8.jpeg'),
+    keywords: ['future self', 'vision', 'future', 'goals', 'dreams', 'journaling', 'clarity'],
+  },
+  'sorting-thoughts': {
+    id: 9,
+    type: 'sorting-thoughts',
+    name: 'Sorting Thoughts',
+    duration: '10 min',
+    description: 'Organize and clarify overwhelming thoughts',
+    category: 'CBT',
+    difficulty: 'Beginner',
+    icon: Filter,
+    color: ['#93C5FD', '#60A5FA'],
+    image: require('../../assets/images/9.jpeg'),
+    keywords: ['sorting thoughts', 'organize thoughts', 'clarity', 'overwhelmed', 'mental clutter', 'clear mind'],
   }
 };
 
@@ -249,6 +275,68 @@ export const exerciseFlows: Record<string, any> = {
         stepNumber: 3,
         description: 'Creating a values-driven path',
         instruction: 'Guide the user to set a small, actionable intention for the week that will help them live more in line with their values.'
+      }
+    ]
+  },
+  'future-self-journaling': {
+    name: 'Future Self Journaling',
+    color: 'teal',
+    useAI: true,
+    steps: [
+      {
+        title: 'Welcome & Intention',
+        stepNumber: 1,
+        description: 'Introducing the practice and setting a gentle focus.',
+        instruction: 'Encourage the user to open the exercise with presence and set an intention for exploring their future self.'
+      },
+      {
+        title: 'Envisioning the Future Self',
+        stepNumber: 2,
+        description: 'Imagining a future version of oneself in daily life.',
+        instruction: 'Guide the user to create a vision of their future self, noticing how they live, feel, and carry themselves in different aspects of life.'
+      },
+      {
+        title: 'Exploring Character & Values',
+        stepNumber: 3,
+        description: 'Deepening the vision by reflecting on inner qualities.',
+        instruction: 'Encourage the user to focus on the qualities, strengths, and values that define their future self and how these shape their way of being.'
+      },
+      {
+        title: 'Dialogue Across Time',
+        stepNumber: 4,
+        description: 'Creating a connection between present and future.',
+        instruction: 'Invite the user to imagine an exchange with their future self, noticing what guidance, reassurance, or perspective arises.'
+      },
+      {
+        title: 'Integration & Takeaway',
+        stepNumber: 5,
+        description: 'Bringing insights from the vision into the present.',
+        instruction: 'Support the user in capturing one key takeaway from their future self and grounding it as a reminder for daily life.'
+      }
+    ]
+  },
+  'sorting-thoughts': {
+    name: 'Sorting Thoughts',
+    color: 'blue',
+    useAI: true,
+    steps: [
+      {
+        title: 'Welcome & Awareness',
+        stepNumber: 1,
+        description: 'Opening space to share current thoughts.',
+        instruction: 'Invite the user to share the thoughts on their mind right now.'
+      },
+      {
+        title: 'Organizing',
+        stepNumber: 2,
+        description: 'Bringing structure and clarity.',
+        instruction: 'Support the user in sorting these thoughts, noticing what feels most important and what feels secondary.'
+      },
+      {
+        title: 'Integration',
+        stepNumber: 3,
+        description: 'Ending with reflection.',
+        instruction: 'Encourage the user to notice how it feels to see their thoughts more clearly, and what takeaway they want to hold onto.'
       }
     ]
   }

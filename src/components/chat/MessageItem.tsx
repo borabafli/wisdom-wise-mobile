@@ -90,7 +90,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                 <Image 
                   source={require('../../../assets/images/turtle-simple-3a.png')}
                   style={turtleStyle}
-                  contentFit="cover"
+                  contentFit="contain"
                 />
               </View>
               {fontsLoaded && (
@@ -107,7 +107,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                 <Image 
                   source={require('../../../assets/images/turtle-simple-3a.png')}
                   style={turtleStyle}
-                  contentFit="cover"
+                  contentFit="contain"
                 />
               </View>
               {fontsLoaded && (

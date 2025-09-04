@@ -23,7 +23,7 @@ export const useTypewriterAnimation = (
   const startTypewriterAnimation = useCallback((
     message: Message, 
     fullText: string, 
-    speed = 8,
+    speed = 25, // Faster default speed for streaming
     onComplete?: () => void
   ) => {
     setCurrentTypewriterMessage(message);
@@ -37,27 +37,25 @@ export const useTypewriterAnimation = (
     
     let currentIndex = 0;
     
-    const typeNextCharacter = () => {
-      if (currentIndex < fullText.length) {
-        // Modern approach: type 1-3 characters at once for more natural feel
-        const charsToAdd = Math.min(
-          fullText.length - currentIndex,
-          Math.random() > 0.7 ? 3 : Math.random() > 0.4 ? 2 : 1
-        );
+    // Split text into words for word-by-word streaming
+    const words = fullText.split(/(\s+)/); // Keep whitespace
+    let wordIndex = 0;
+    
+    const typeNextWord = () => {
+      if (wordIndex < words.length) {
+        // Add the next word (including whitespace)
+        wordIndex++;
+        const currentText = words.slice(0, wordIndex).join('');
+        setTypewriterText(currentText);
         
-        currentIndex += charsToAdd;
-        setTypewriterText(fullText.substring(0, currentIndex));
+        // Auto-scroll during typing
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 30);
         
-        // Auto-scroll during typing (less frequently to avoid performance issues)
-        if (currentIndex % 8 === 0) {
-          setTimeout(() => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-          }, 30);
-        }
-        
-        // Variable speed for more natural typing rhythm
-        const variableSpeed = speed + Math.random() * 4;
-        typewriterTimeoutRef.current = setTimeout(typeNextCharacter, variableSpeed);
+        // ChatGPT-like streaming speed - very fast word appearance
+        const streamingSpeed = Math.max(speed * 0.2, 10); // Very fast streaming like ChatGPT
+        typewriterTimeoutRef.current = setTimeout(typeNextWord, streamingSpeed);
       } else {
         // Animation complete
         setIsTypewriting(false);
@@ -83,7 +81,7 @@ export const useTypewriterAnimation = (
       }
     };
     
-    typeNextCharacter();
+    typeNextWord();
   }, [onMessagesUpdate, scrollViewRef]);
 
   // Stop typewriter animation and show full text immediately
