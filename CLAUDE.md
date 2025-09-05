@@ -40,6 +40,7 @@ IMMEDIATELY after implementing any front-end change:
 9. **Capture mobile evidence** - Take screenshots at each mobile viewport size (375px, 390px, 414px) of each changed view
 10. **Check for errors** - Run mcp_playwright_browser_console_messages and verify no mobile-specific issues
 
+
 ### App Structure
 WisdomWise is a mindfulness and mental health support app built around a therapeutic AI companion (turtle therapist named Anu). The app features:
 
