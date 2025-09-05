@@ -21,6 +21,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
   const [showFilters, setShowFilters] = useState(true);
   const [showDevSlider, setShowDevSlider] = useState(false);
+  const [sliderVariant, setSliderVariant] = useState<'default' | 'test'>('default');
   
   // Use unified exercises from exerciseLibrary.ts
   const exercises = exercisesArray;
@@ -166,6 +167,19 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Exercise Library</Text>
         <View style={styles.headerButtons}>
+          {/* Slider Variant Toggle */}
+          {showDevSlider && (
+            <TouchableOpacity
+              style={[styles.devButton, sliderVariant === 'test' && styles.devButtonSelected]}
+              onPress={() => setSliderVariant(sliderVariant === 'default' ? 'test' : 'default')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.devButtonText}>
+                {sliderVariant === 'default' ? '#446D78' : '#10597B'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          
           {/* Dev Test Button */}
           <TouchableOpacity
             style={styles.devButton}
@@ -175,6 +189,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
             <Bug size={16} color={colors.primary[400]} />
             <Text style={styles.devButtonText}>Test Slider</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setShowFilters(!showFilters)}
@@ -209,15 +224,16 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         <View style={styles.devSliderSection}>
           <View style={styles.devSliderContainer}>
             <MoodSlider
-              title="Dev Test: Mood Slider"
-              subtitle="Testing the slider component"
-              onRatingChange={(rating) => console.log('Rating changed:', rating)}
+              title={sliderVariant === 'default' ? "How are you feeling right now?" : "How effective was this session?"}
+              subtitle={sliderVariant === 'default' ? "Testing mood slider" : "Testing effectiveness slider"}
+              onRatingChange={(rating) => console.log(`${sliderVariant} slider changed:`, rating)}
               onComplete={(rating) => {
-                console.log('Rating completed:', rating);
+                console.log(`${sliderVariant} slider completed:`, rating);
                 // Auto-hide after completion for better UX
                 setTimeout(() => setShowDevSlider(false), 2000);
               }}
-              type="mood"
+              type={sliderVariant === 'default' ? 'mood' : 'helpfulness'}
+              variant={sliderVariant}
               initialValue={2.5}
             />
           </View>
@@ -366,6 +382,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: colors.primary[400],
+  },
+  devButtonSelected: {
+    backgroundColor: '#446D78',
+    borderColor: '#446D78',
   },
   filterButton: {
     padding: 8,

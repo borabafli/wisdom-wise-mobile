@@ -16,6 +16,7 @@ import {
   ExerciseCard 
 } from '../components/chat';
 import { MoodRatingCard } from '../components/chat/MoodRatingCard';
+import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -73,10 +74,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     exerciseStep, 
     exerciseData,
     showMoodRating,
+    showPreExerciseMoodSlider,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
+    handlePreExerciseMoodComplete,
     enterExerciseMode,
     exitExerciseMode,
   } = useExerciseFlow();
@@ -338,6 +341,24 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                   </View>
                 </View>
               </View>
+            )}
+
+            {showPreExerciseMoodSlider && exerciseData.currentExercise && (
+              <PreExerciseMoodCard
+                exerciseName={exerciseData.currentExercise.name}
+                onComplete={(rating) => handlePreExerciseMoodComplete(
+                  rating,
+                  chatSession.setMessages,
+                  chatSession.setIsTyping,
+                  chatSession.setSuggestions
+                )}
+                onSkip={() => handlePreExerciseMoodComplete(
+                  2.5,
+                  chatSession.setMessages,
+                  chatSession.setIsTyping,
+                  chatSession.setSuggestions
+                )}
+              />
             )}
 
             {showMoodRating && exerciseData.currentExercise && (

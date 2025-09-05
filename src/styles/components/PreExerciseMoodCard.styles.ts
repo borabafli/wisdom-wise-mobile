@@ -3,11 +3,10 @@ import { colors } from '../tokens/colors';
 import { spacing } from '../tokens/spacing';
 import { typography } from '../tokens/typography';
 
-export const moodRatingCardStyles = StyleSheet.create({
+export const preExerciseMoodCardStyles = StyleSheet.create({
   container: {
     borderRadius: 20,
-    marginVertical: spacing.md,
-    marginHorizontal: spacing.md,
+    margin: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
@@ -19,63 +18,41 @@ export const moodRatingCardStyles = StyleSheet.create({
   },
 
   glassOverlay: {
-    padding: spacing.xl,
+    padding: 24,
     borderRadius: 20,
   },
-  
+
   header: {
     alignItems: 'center',
     marginBottom: spacing.lg,
   },
-  
+
   title: {
-    ...typography.textStyles.h4,
+    ...typography.textStyles.h3,
     color: colors.text.primary,
     textAlign: 'center',
     marginBottom: spacing.xs,
+    fontSize: 20,
+    fontWeight: '600',
   },
-  
+
   subtitle: {
-    ...typography.textStyles.bodySmall,
+    ...typography.textStyles.body,
     color: colors.text.secondary,
     textAlign: 'center',
+    fontSize: 16,
+    lineHeight: 22,
   },
-  
+
   slidersContainer: {
-    marginBottom: 0,
+    marginVertical: 0,
   },
-  
-  progressIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-    gap: spacing.sm,
-  },
-  
-  progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.gray[300],
-  },
-  
-  activeDot: {
-    backgroundColor: colors.blue[500],
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  
+
   actions: {
     alignItems: 'center',
+    marginTop: spacing.lg,
   },
-  
-  skipButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  
+
   skipText: {
     ...typography.textStyles.body,
     color: colors.text.secondary,
