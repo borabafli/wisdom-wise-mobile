@@ -629,7 +629,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={isPlaying ? ['#EF4444', '#DC2626'] : ['#3BB4F5', '#0EA5E9']}
+              colors={['#9ED0DD', '#7BC1CE']}
               style={styles.playButtonGradient}
             >
               {isPlaying ? (
