@@ -20,6 +20,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Voice Features**: Expo Speech Recognition, Expo Speech (TTS), React Native Voice
 - **Platform**: Cross-platform (iOS, Android, Web)
 
+## Visual Development
+
+### Design Principles
+- Comprehensive design checklist in '/docs/design-principles.md'
+- Brand style guide in '/docs/style-guide.md'
+- When making visual (front-end, UI/UX) changes, always refer to these files for guidance
+
+### Quick Visual Check
+IMMEDIATELY after implementing any front-end change:
+1. **Identify what changed** - Review the modified /src/components and src/screens, /styles
+2. **Navigate to affected pages** - Use mcp_playwright_browser_navigate to visit each changed view
+3. **Mobile-first viewport testing** - Test at key mobile breakpoints (375px, 390px, 414px) using mcp_playwright_browser_resize
+4. **Verify responsive behavior** - Ensure no horizontal scrolling, proper touch targets (min 44px), and content reflow
+5. **Check mobile interactions** - Test touch events, gestures, and mobile-specific UI patterns
+6. **Verify design compliance** - Compare against '/docs/design-principles.md' and */docs/style-guide.md*
+7. **Validate feature implementation** - Ensure the change fulfills the user's specific request on all tested viewports
+8. **Check acceptance criteria** - Review any provided context files or requirements
+9. **Capture mobile evidence** - Take screenshots at each mobile viewport size (375px, 390px, 414px) of each changed view
+10. **Check for errors** - Run mcp_playwright_browser_console_messages and verify no mobile-specific issues
+
 ### App Structure
 WisdomWise is a mindfulness and mental health support app built around a therapeutic AI companion (turtle therapist named Anu). The app features:
 

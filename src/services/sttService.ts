@@ -1,8 +1,33 @@
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
-import { nativeVoiceService } from './nativeVoiceService';
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
+
+// Dynamic import for native voice service to avoid crashes in Expo Go
+let nativeVoiceService: any = null;
+
+// Safely check if we can use native modules
+const canUseNativeModules = () => {
+  try {
+    // Check if we're in Expo Go by testing for native module availability
+    require('@react-native-voice/voice');
+    return true;
+  } catch (error) {
+    console.log('Native voice module not available - probably running in Expo Go');
+    return false;
+  }
+};
+
+// Dynamically import native voice service only if available
+if (canUseNativeModules()) {
+  try {
+    const { nativeVoiceService: importedService } = require('./nativeVoiceService');
+    nativeVoiceService = importedService;
+    console.log('✅ Native voice service loaded successfully');
+  } catch (error) {
+    console.log('⚠️ Failed to load native voice service:', error);
+  }
+}
 
 
 export interface STTSettings {
@@ -169,8 +194,8 @@ class STTService {
     if (Platform.OS === 'web') {
       return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
     } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      // Native Voice service handles native speech recognition
-      return true;
+      // Check if native voice service is available (not in Expo Go)
+      return nativeVoiceService !== null;
     }
     return false;
   }
@@ -243,8 +268,15 @@ class STTService {
         }
 
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Use Native Voice Service for real-time speech recognition
-        return await nativeVoiceService.startRecognition(onResult, onError, onEnd, onAudioLevel);
+        // Use Native Voice Service for real-time speech recognition if available
+        if (nativeVoiceService) {
+          return await nativeVoiceService.startRecognition(onResult, onError, onEnd, onAudioLevel);
+        } else {
+          // Fallback for Expo Go - use simulation
+          console.log('⚠️ Native voice service not available, using simulation');
+          this.simulateNativeSTT(onResult, onError, onEnd);
+          return true;
+        }
       } else {
         // Fallback simulation
 
@@ -653,8 +685,8 @@ class STTService {
       this.restartTimeout = undefined;
     }
     
-    // Cancel native voice service on mobile
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    // Cancel native voice service on mobile if available
+    if ((Platform.OS === 'ios' || Platform.OS === 'android') && nativeVoiceService) {
       await nativeVoiceService.cancelRecognition();
     } else {
       await this.stopRecognition();
@@ -687,9 +719,11 @@ class STTService {
           this.audioRecording.stop();
         }
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Stop Native Voice Service
-        console.log('🛑 Stopping native voice recognition...');
-        await nativeVoiceService.stopRecognition();
+        // Stop Native Voice Service if available
+        if (nativeVoiceService) {
+          console.log('🛑 Stopping native voice recognition...');
+          await nativeVoiceService.stopRecognition();
+        }
       } else if (this.audioRecording) {
         // Legacy audio recording cleanup (fallback)
         console.log('Stopping audio recording...');
@@ -884,8 +918,8 @@ class STTService {
       this.recognition.onstart = null;
     }
     
-    // Clean up Native Voice Service
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    // Clean up Native Voice Service if available
+    if ((Platform.OS === 'ios' || Platform.OS === 'android') && nativeVoiceService) {
       await nativeVoiceService.destroy();
     }
     
