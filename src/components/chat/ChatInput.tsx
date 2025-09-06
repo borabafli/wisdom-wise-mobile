@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Modal, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
 import SoundWaveAnimation from '../SoundWaveAnimation';
 import { SafeAreaWrapper } from '../SafeAreaWrapper';
@@ -41,6 +41,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   const toggleFullscreenInput = () => {
     setIsFullscreenInput(!isFullscreenInput);
+  };
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
   };
 
   return (
@@ -155,19 +159,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             </TouchableOpacity>
           </View>
           
-          <View style={styles.fullscreenInputContent}>
-            <TextInput
-              value={inputText}
-              onChangeText={handleInputTextChange}
-              placeholder="Type your message here..."
-              placeholderTextColor="#94a3b8"
-              multiline
-              style={styles.fullscreenTextInput}
-              autoFocus
-              textAlignVertical="top"
-              selectionColor="#3b82f6"
-            />
-          </View>
+          <TouchableWithoutFeedback onPress={dismissKeyboard}>
+            <View style={styles.fullscreenInputContent}>
+              <TextInput
+                value={inputText}
+                onChangeText={handleInputTextChange}
+                placeholder="Type your message here..."
+                placeholderTextColor="#94a3b8"
+                multiline
+                style={styles.fullscreenTextInput}
+                autoFocus
+                textAlignVertical="top"
+                selectionColor="#3b82f6"
+              />
+            </View>
+          </TouchableWithoutFeedback>
         </SafeAreaWrapper>
       </Modal>
     </>
