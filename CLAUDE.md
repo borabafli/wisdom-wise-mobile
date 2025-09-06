@@ -27,10 +27,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Brand style guide in '/docs/style-guide.md'
 - When making visual (front-end, UI/UX) changes, always refer to these files for guidance
 
-### Quick Visual Check
-IMMEDIATELY after implementing any front-end change:
-1. **Identify what changed** - Review the modified /src/components and src/screens, /styles
-2. **Navigate to affected pages** - Use mcp_playwright_browser_navigate to visit each changed view
+### Visual Development & UI Actions
+IMMEDIATELY after implementing any front-end change, any visual change:
+1. **Identify what changed** - Review the modified components/pages
+2. **Navigate to affected pages** - Use 'mcp_playwright_browser_navigate' to visit each changed view
 3. **Mobile-first viewport testing** - Test at key mobile breakpoints (375px, 390px, 414px) using mcp_playwright_browser_resize
 4. **Verify responsive behavior** - Ensure no horizontal scrolling, proper touch targets (min 44px), and content reflow
 5. **Check mobile interactions** - Test touch events, gestures, and mobile-specific UI patterns

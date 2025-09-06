@@ -90,7 +90,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
+                colors={['rgba(161, 214, 242, 0.3)', 'rgba(184, 224, 245, 0.2)', 'rgba(227, 244, 253, 0.1)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
@@ -117,7 +119,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
+                colors={['rgba(161, 214, 242, 0.4)', 'rgba(147, 197, 253, 0.25)', 'rgba(219, 234, 254, 0.15)']}
+                start={{ x: 0, y: 0.3 }}
+                end={{ x: 1, y: 0.8 }}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
@@ -144,7 +148,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
+                colors={['rgba(161, 214, 242, 0.35)', 'rgba(186, 230, 253, 0.2)', 'rgba(240, 249, 255, 0.1)']}
+                start={{ x: 0.2, y: 0 }}
+                end={{ x: 0.8, y: 1 }}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
@@ -179,7 +185,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(184, 224, 245, 0.6)', 'rgba(227, 244, 253, 0.5)']}
+                colors={['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
                 style={styles.quickActionGradient}
               >
                 <Image 
@@ -197,7 +205,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(227, 244, 253, 0.6)', 'rgba(186, 230, 253, 0.5)']}
+                colors={['rgba(147, 197, 253, 0.25)', 'rgba(186, 230, 253, 0.15)', 'rgba(255, 255, 255, 0.8)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
                 style={styles.quickActionGradient}
               >
                 <Image 
@@ -213,29 +223,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
         {/* Motivational Quote - Modern Style */}
         <View style={styles.quoteSection}>
-          <LinearGradient
-            colors={['rgba(161, 214, 242, 0.7)', 'rgba(186, 230, 253, 0.6)']}
-            style={styles.quoteCard}
-          >
+          <View style={styles.quoteCard}>
             <ImageBackground
               source={require('../../assets/images/6.jpg')}
               style={styles.quoteBackgroundImage}
               imageStyle={styles.quoteBackgroundImageStyle}
               resizeMode="cover"
             >
-            <View style={styles.quoteIcon}>
-              <Image 
-                source={require('../../assets/images/new-icon5.png')}
-                style={styles.quoteIconImage}
-                contentFit="contain"
-              />
-            </View>
-            <Text style={styles.quoteText}>
-              {currentQuote?.text || 'Progress is progress, no matter how small'}
-            </Text>
-            <Text style={styles.quoteAuthor}>— {currentQuote?.author || 'Daily Mindfulness'}</Text>
+              <LinearGradient
+                colors={['rgba(161, 214, 242, 0.4)', 'rgba(186, 230, 253, 0.3)', 'rgba(255, 255, 255, 0.6)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.quoteOverlayGradient}
+              >
+                <View style={styles.quoteIcon}>
+                  <Image 
+                    source={require('../../assets/images/new-icon5.png')}
+                    style={styles.quoteIconImage}
+                    contentFit="contain"
+                  />
+                </View>
+                <Text style={styles.quoteText}>
+                  {currentQuote?.text || 'Progress is progress, no matter how small'}
+                </Text>
+                <Text style={styles.quoteAuthor}>— {currentQuote?.author || 'Daily Mindfulness'}</Text>
+              </LinearGradient>
             </ImageBackground>
-          </LinearGradient>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaWrapper>
