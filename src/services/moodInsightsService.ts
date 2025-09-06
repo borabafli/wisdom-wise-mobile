@@ -36,18 +36,18 @@ class MoodInsightsService {
       
       const recentSessions = await memoryService.getSessionSummaries();
       const recentSessionsFiltered = recentSessions.filter(session => 
-        new Date(session.timestamp) >= fourteenDaysAgo
+        new Date(session.date) >= fourteenDaysAgo
       );
 
       if (recentSessionsFiltered.length === 0) {
-        return this.getFallbackInsights();
+        return this.getEmptyInsights();
       }
 
       // Prepare data for AI analysis
       const sessionData = recentSessionsFiltered.map(session => ({
         id: session.id,
-        date: session.timestamp,
-        summary: session.summary,
+        date: session.date,
+        summary: session.text,
         keyTopics: session.keyTopics || [],
         sentiment: session.sentiment || 'neutral'
       }));
@@ -68,7 +68,7 @@ class MoodInsightsService {
       return insightsData;
     } catch (error) {
       console.error('Error generating mood insights:', error);
-      return this.getFallbackInsights();
+      return this.getEmptyInsights();
     }
   }
 
@@ -216,34 +216,12 @@ class MoodInsightsService {
     return insights.slice(0, 3);
   }
 
-  private getFallbackInsights(): MoodInsightsData {
+  private getEmptyInsights(): MoodInsightsData {
     return {
-      highlights: [
-        {
-          id: 'fallback-1',
-          text: 'Taking positive steps toward mental wellness and self-care',
-          category: 'strength',
-          confidence: 0.8,
-          sessionsReferenced: []
-        },
-        {
-          id: 'fallback-2',
-          text: 'Building awareness and developing healthy coping tools',
-          category: 'progress',
-          confidence: 0.7,
-          sessionsReferenced: []
-        },
-        {
-          id: 'fallback-3',
-          text: 'Showing courage and commitment to personal growth',
-          category: 'growth',
-          confidence: 0.7,
-          sessionsReferenced: []
-        }
-      ],
+      highlights: [],
       analysisDate: new Date().toISOString(),
       sessionsAnalyzed: 0,
-      weeksCovered: 2
+      weeksCovered: 0
     };
   }
 

@@ -159,7 +159,45 @@ export const insightsDashboardStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border.primary,
     ...shadows.components.card,
-    padding: spacing.components.cardGap,
+    padding: spacing.components.cardPadding,
+    marginBottom: spacing.components.cardGap,
+  },
+
+  // Card header styles
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.components.cardPadding,
+  },
+
+  cardTitle: {
+    ...typography.textStyles.h3,
+    color: colors.text.primary,
+    fontWeight: typography.fontWeight.bold,
+  },
+
+  cardSubtitle: {
+    ...typography.textStyles.bodySmall,
+    color: colors.text.tertiary,
+    marginTop: spacing[1],
+    fontWeight: typography.fontWeight.medium,
+  },
+
+  // Chart toggle button
+  chartToggleButton: {
+    backgroundColor: '#6366F1', // Indigo to match our new palette
+    borderRadius: spacing.radius.full,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[2],
+    ...shadows.components.actionButton,
+  },
+
+  chartToggleButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.semibold,
+    fontFamily: typography.fontFamily.body,
   },
   insightContent: {
     flexDirection: 'row',

@@ -138,7 +138,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   onPatternPress,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [backgroundImage, setBackgroundImage] = useState(BACKGROUND_IMAGES[0]);
+  const [backgroundImage, setBackgroundImage] = useState(require('../../assets/images/8.jpeg'));
   const flatListRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
@@ -160,12 +160,9 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   const mockMoodImprovements = [72, 68, 85, 79, 91]; // Percentage improvements
   const averageMoodImprovement = Math.round(mockMoodImprovements.reduce((a, b) => a + b, 0) / mockMoodImprovements.length);
 
-  // Select random background image when modal opens
+  // Animate modal entrance/exit
   useEffect(() => {
     if (visible) {
-      const randomIndex = Math.floor(Math.random() * BACKGROUND_IMAGES.length);
-      setBackgroundImage(BACKGROUND_IMAGES[randomIndex]);
-      
       // Animate modal entrance
       Animated.parallel([
         Animated.timing(fadeAnim, {

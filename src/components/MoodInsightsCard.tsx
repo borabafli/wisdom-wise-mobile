@@ -1,27 +1,91 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { TrendingUp, Heart, Star, Clock } from 'lucide-react-native';
+import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3 } from 'lucide-react-native';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
+import { moodRatingService } from '../services/moodRatingService';
+import { memoryService } from '../services/memoryService';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
+import { generateSampleMoodData } from '../utils/sampleMoodData';
 
 interface MoodInsightsCardProps {
   onInsightPress?: (insightId: string) => void;
+}
+
+interface DataAvailability {
+  hasSessionSummaries: boolean;
+  hasMoodRatings: boolean;
+  sessionCount: number;
+  moodRatingCount: number;
 }
 
 export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPress }) => {
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showFullChart, setShowFullChart] = useState(false);
+  const [dataAvailability, setDataAvailability] = useState<DataAvailability>({
+    hasSessionSummaries: false,
+    hasMoodRatings: false,
+    sessionCount: 0,
+    moodRatingCount: 0
+  });
 
   useEffect(() => {
     loadInsights();
   }, []);
 
+  const checkDataAvailability = async (): Promise<DataAvailability> => {
+    try {
+      // Check session summaries from last 14 days
+      const fourteenDaysAgo = new Date();
+      fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+      
+      const sessionSummaries = await memoryService.getSessionSummaries();
+      const recentSessions = sessionSummaries.filter(session => 
+        new Date(session.date) >= fourteenDaysAgo
+      );
+
+      // Check mood ratings from last 14 days  
+      const allRatings = await moodRatingService.getAllRatings();
+      const recentRatings = allRatings.filter(rating =>
+        new Date(rating.timestamp) >= fourteenDaysAgo
+      );
+
+      return {
+        hasSessionSummaries: recentSessions.length > 0,
+        hasMoodRatings: recentRatings.length > 0,
+        sessionCount: recentSessions.length,
+        moodRatingCount: recentRatings.length
+      };
+    } catch (error) {
+      console.error('Error checking data availability:', error);
+      return {
+        hasSessionSummaries: false,
+        hasMoodRatings: false,
+        sessionCount: 0,
+        moodRatingCount: 0
+      };
+    }
+  };
+
   const loadInsights = async () => {
     try {
-      const insightsData = await moodInsightsService.generateMoodInsights();
-      setInsights(insightsData);
+      // First check what data we have available
+      const availability = await checkDataAvailability();
+      console.log('Data availability:', availability);
+      setDataAvailability(availability);
+
+      // Only generate insights if we have actual data
+      if (availability.hasSessionSummaries || availability.hasMoodRatings) {
+        const insightsData = await moodInsightsService.generateMoodInsights();
+        console.log('Generated insights:', insightsData);
+        // Only set insights if they contain real data (not fallbacks)
+        if (insightsData.sessionsAnalyzed > 0) {
+          setInsights(insightsData);
+        }
+      } else {
+        console.log('No data available for insights');
+      }
     } catch (error) {
       console.error('Error loading mood insights:', error);
     } finally {
@@ -29,10 +93,274 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
     }
   };
 
+  const renderEmptyStateContent = () => {
+    const { hasSessionSummaries, hasMoodRatings, sessionCount, moodRatingCount } = dataAvailability;
+    
+    // No data at all
+    if (!hasSessionSummaries && !hasMoodRatings) {
+      return (
+        <>
+          <MessageCircle size={32} color="#8B5CF6" />
+          <Text style={{
+            fontSize: 16,
+            color: '#374151',
+            textAlign: 'center',
+            marginTop: 12,
+            fontWeight: '600',
+            lineHeight: 24,
+          }}>
+            Start your wellness journey! ✨
+          </Text>
+          <Text style={{
+            fontSize: 14,
+            color: '#6b7280',
+            textAlign: 'center',
+            marginTop: 8,
+            lineHeight: 20,
+            marginBottom: 20,
+          }}>
+            Chat with Anu or track your mood after exercises to see personalized insights here
+          </Text>
+          
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#8B5CF6',
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderRadius: 20,
+                shadowColor: '#8B5CF6',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 3,
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={{
+                color: 'white',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+                Chat with Anu
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#6366F1',
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderRadius: 20,
+                shadowColor: '#6366F1',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 3,
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={{
+                color: 'white',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+                Try Exercise
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Sample Data Button - Development Only */}
+          {__DEV__ && (
+            <TouchableOpacity
+              onPress={async () => {
+                setLoading(true);
+                await generateSampleMoodData();
+                await loadInsights();
+                setLoading(false);
+              }}
+              style={{
+                marginTop: 16,
+                backgroundColor: '#A78BFA',
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderRadius: 20,
+                shadowColor: '#A78BFA',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 3,
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={{
+                color: 'white',
+                fontSize: 13,
+                fontWeight: '500',
+              }}>
+                Generate Sample Data
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
+      );
+    }
+    
+    // Has mood ratings only
+    if (!hasSessionSummaries && hasMoodRatings) {
+      return (
+        <>
+          <BarChart3 size={32} color="#6366F1" />
+          <Text style={{
+            fontSize: 16,
+            color: '#374151',
+            textAlign: 'center',
+            marginTop: 12,
+            fontWeight: '600',
+            lineHeight: 24,
+          }}>
+            Great job tracking your mood! 📈
+          </Text>
+          <Text style={{
+            fontSize: 14,
+            color: '#6b7280',
+            textAlign: 'center',
+            marginTop: 8,
+            lineHeight: 20,
+            marginBottom: 20,
+          }}>
+            You've logged {moodRatingCount} mood {moodRatingCount === 1 ? 'rating' : 'ratings'}. Chat with Anu to unlock personalized insights about your patterns.
+          </Text>
+          
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#8B5CF6',
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              borderRadius: 20,
+              shadowColor: '#8B5CF6',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+            activeOpacity={0.8}
+          >
+            <Text style={{
+              color: 'white',
+              fontSize: 13,
+              fontWeight: '500',
+            }}>
+              Chat with Anu
+            </Text>
+          </TouchableOpacity>
+        </>
+      );
+    }
+    
+    // Has sessions only  
+    if (hasSessionSummaries && !hasMoodRatings) {
+      return (
+        <>
+          <Heart size={32} color="#8B5CF6" />
+          <Text style={{
+            fontSize: 16,
+            color: '#374151',
+            textAlign: 'center',
+            marginTop: 12,
+            fontWeight: '600',
+            lineHeight: 24,
+          }}>
+            Nice progress with Anu! 💬
+          </Text>
+          <Text style={{
+            fontSize: 14,
+            color: '#6b7280',
+            textAlign: 'center',
+            marginTop: 8,
+            lineHeight: 20,
+            marginBottom: 20,
+          }}>
+            You've had {sessionCount} conversation{sessionCount === 1 ? '' : 's'}. Rate your mood after exercises to see weekly trends and deeper insights.
+          </Text>
+          
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#6366F1',
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              borderRadius: 20,
+              shadowColor: '#6366F1',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+            activeOpacity={0.8}
+          >
+            <Text style={{
+              color: 'white',
+              fontSize: 13,
+              fontWeight: '500',
+            }}>
+              Try an Exercise
+            </Text>
+          </TouchableOpacity>
+        </>
+      );
+    }
+    
+    // Has both data types but insights didn't generate - show encouragement to continue
+    if (hasSessionSummaries && hasMoodRatings) {
+      return (
+        <>
+          <Star size={32} color="#8B5CF6" />
+          <Text style={{
+            fontSize: 16,
+            color: '#374151',
+            textAlign: 'center',
+            marginTop: 12,
+            fontWeight: '600',
+            lineHeight: 24,
+          }}>
+            Keep building your insights! ⭐
+          </Text>
+          <Text style={{
+            fontSize: 14,
+            color: '#6b7280',
+            textAlign: 'center',
+            marginTop: 8,
+            lineHeight: 20,
+            marginBottom: 20,
+          }}>
+            You have {sessionCount} conversations and {moodRatingCount} mood ratings. Continue your journey for deeper insights.
+          </Text>
+        </>
+      );
+    }
+
+    // Should not reach here, but fallback
+    return (
+      <>
+        <MessageCircle size={32} color="#8B5CF6" />
+        <Text style={{
+          fontSize: 16,
+          color: '#374151',
+          textAlign: 'center',
+          marginTop: 12,
+          fontWeight: '600',
+          lineHeight: 24,
+        }}>
+          Checking your data... ✨
+        </Text>
+      </>
+    );
+  };
+
   if (loading) {
     return (
       <View style={[styles.insightCard, { alignItems: 'center', justifyContent: 'center', minHeight: 200 }]}>
-        <ActivityIndicator size="large" color="#3b82f6" />
+        <ActivityIndicator size="large" color="#8B5CF6" />
         <Text style={{ color: '#64748b', fontSize: 14, marginTop: 12 }}>
           Analyzing your mood patterns...
         </Text>
@@ -72,14 +400,10 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         </View>
         <TouchableOpacity 
           onPress={() => setShowFullChart(!showFullChart)}
-          style={{
-            backgroundColor: '#3b82f6',
-            borderRadius: 20,
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-          }}
+          style={styles.chartToggleButton}
+          activeOpacity={0.7}
         >
-          <Text style={{ color: 'white', fontSize: 12, fontWeight: '500' }}>
+          <Text style={styles.chartToggleButtonText}>
             {showFullChart ? 'Hide' : 'View'} Chart
           </Text>
         </TouchableOpacity>
@@ -171,17 +495,10 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           <View style={{
             alignItems: 'center',
             justifyContent: 'center',
-            paddingVertical: 20,
+            paddingVertical: 32,
+            paddingHorizontal: 20,
           }}>
-            <Heart size={24} color="#9ca3af" />
-            <Text style={{
-              fontSize: 14,
-              color: '#6b7280',
-              textAlign: 'center',
-              marginTop: 8,
-            }}>
-              Keep using the app to generate personalized insights
-            </Text>
+            {renderEmptyStateContent()}
           </View>
         )}
       </View>
