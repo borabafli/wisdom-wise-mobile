@@ -184,6 +184,73 @@ export const typography = {
       fontFamily: 'Nunito-Regular',
     },
   },
+
+  // Legacy structure for backward compatibility
+  heading: {
+    xs: {
+      fontSize: 14,
+      fontWeight: '600',
+      lineHeight: 20,
+      fontFamily: 'Nunito-SemiBold',
+    },
+    sm: {
+      fontSize: 16,
+      fontWeight: '600', 
+      lineHeight: 24,
+      fontFamily: 'Nunito-SemiBold',
+    },
+    md: {
+      fontSize: 18,
+      fontWeight: '600',
+      lineHeight: 26,
+      fontFamily: 'Nunito-SemiBold', 
+    },
+    lg: {
+      fontSize: 20,
+      fontWeight: '600',
+      lineHeight: 28,
+      fontFamily: 'Nunito-SemiBold',
+    },
+    xl: {
+      fontSize: 24,
+      fontWeight: '700',
+      lineHeight: 32,
+      fontFamily: 'Nunito-Bold',
+    },
+    '2xl': {
+      fontSize: 28,
+      fontWeight: '700', 
+      lineHeight: 36,
+      fontFamily: 'Nunito-Bold',
+    },
+  },
+
+  body: {
+    xs: {
+      fontSize: 12,
+      fontWeight: '400',
+      lineHeight: 18,
+      fontFamily: 'Nunito-Regular',
+    },
+    sm: {
+      fontSize: 14,
+      fontWeight: '400',
+      lineHeight: 20,
+      fontFamily: 'Nunito-Regular',
+    },
+    md: {
+      fontSize: 16,
+      fontWeight: '400',
+      lineHeight: 24,
+      fontFamily: 'Nunito-Regular',
+    },
+    lg: {
+      fontSize: 18,
+      fontWeight: '400',
+      lineHeight: 28,
+      fontFamily: 'Nunito-Regular',
+    },
+  },
 } as const;
 
 export type TypographyTokens = typeof typography;

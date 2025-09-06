@@ -28,7 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - When making visual (front-end, UI/UX) changes, always refer to these files for guidance
 
 ### Visual Development & UI Actions
-IMMEDIATELY after implementing any front-end change, any visual change:
+When you are prompted to do a review of the UI after implementing any front-end change, any visual change:
 1. **Identify what changed** - Review the modified components/pages
 2. **Navigate to affected pages** - Use 'mcp_playwright_browser_navigate' to visit each changed view
 3. **Mobile-first viewport testing** - Test at key mobile breakpoints (375px, 390px, 414px) using mcp_playwright_browser_resize

@@ -427,4 +427,78 @@ export const insightsDashboardStyles = StyleSheet.create({
     color: colors.primary[500],
     fontWeight: typography.fontWeight.semibold,
   },
+
+  // Goal-specific styles
+  addGoalButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.semantic.warning.light,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.semantic.warning.default,
+  },
+
+  goalCard: {
+    backgroundColor: colors.white,
+    borderRadius: spacing.radius.lg,
+    borderWidth: 1,
+    borderColor: colors.gray[100],
+    ...shadows.sm,
+  },
+
+  goalContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: spacing[4],
+  },
+
+  goalContentLeft: {
+    flex: 1,
+  },
+
+  goalTitle: {
+    ...typography.textStyles.bodyMd,
+    color: colors.gray[900],
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing[1],
+    lineHeight: 20,
+  },
+
+  goalMeta: {
+    ...typography.textStyles.captionSm,
+    color: colors.gray[500],
+    marginBottom: spacing[2],
+  },
+
+  goalProgressContainer: {
+    marginBottom: spacing[3],
+  },
+
+  goalProgressTrack: {
+    height: 6,
+    backgroundColor: colors.gray[200],
+    borderRadius: 3,
+  },
+
+  goalProgressFill: {
+    height: '100%',
+    backgroundColor: colors.semantic.warning.default,
+    borderRadius: 3,
+  },
+
+  goalStep: {
+    ...typography.textStyles.captionMd,
+    color: colors.gray[600],
+    fontStyle: 'italic',
+    marginBottom: spacing[2],
+  },
+
+  goalMotivation: {
+    ...typography.textStyles.captionMd,
+    color: colors.gray[700],
+    fontStyle: 'italic',
+    lineHeight: 18,
+  },
 });
