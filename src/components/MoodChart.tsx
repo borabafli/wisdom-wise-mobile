@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Line, Circle, Path, Defs, LinearGradient, Stop, Filter, FeGaussianBlur, FeMorphology, FeFlood, FeComposite } from 'react-native-svg';
 import { moodRatingService, type MoodStats } from '../services/moodRatingService';
+import { moodChartStyles as styles } from '../styles/components/MoodChart.styles';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -25,11 +26,40 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     loadMoodData();
   }, [days]);
 
+  const generateDateSequence = (days: number) => {
+    const today = new Date();
+    const sequence = [];
+    
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      sequence.push(date.toISOString().split('T')[0]);
+    }
+    
+    return sequence;
+  };
+
   const loadMoodData = async () => {
     try {
       const stats = await moodRatingService.getMoodStats();
-      const recentTrend = stats.moodTrend.slice(-days);
-      setMoodData(recentTrend);
+      const dateSequence = generateDateSequence(days);
+      
+      // Create a map of existing data
+      const dataMap = new Map();
+      stats.moodTrend.forEach(item => {
+        dataMap.set(item.date, item.rating);
+      });
+      
+      // Fill gaps with null values and ensure proper sequence
+      const filledData = dateSequence.map(date => ({
+        date,
+        rating: dataMap.get(date) || null
+      }));
+      
+      // Filter out null values for display, but keep structure
+      const validData = filledData.filter(item => item.rating !== null);
+      
+      setMoodData(validData);
     } catch (error) {
       console.error('Error loading mood data:', error);
       setMoodData([]);
@@ -40,26 +70,32 @@ export const MoodChart: React.FC<MoodChartProps> = ({
 
   if (loading) {
     return (
-      <View style={[{ height, alignItems: 'center', justifyContent: 'center' }, style]}>
-        <Text style={{ color: '#9ca3af', fontSize: 14 }}>Loading mood data...</Text>
+      <View style={[styles.loadingContainer, { height }, style]}>
+        <Text style={styles.loadingText}>Loading mood data...</Text>
       </View>
     );
   }
 
-  const chartWidth = screenWidth - 64;
+  // Mobile-first width calculation with aggressive padding
+  const containerPadding = 80; // More aggressive padding for mobile
+  const chartWidth = Math.min(screenWidth - containerPadding, 320); // Cap max width
   const chartHeight = height - 80;
-  const paddingLeft = showEmojis ? 40 : 20;
-  const paddingRight = 20;
-  const paddingTop = 30;
-  const paddingBottom = 50;
   
-  const graphWidth = chartWidth - paddingLeft - paddingRight;
-  const graphHeight = chartHeight - paddingTop - paddingBottom;
+  // Mobile-optimized padding calculations  
+  const paddingLeft = showEmojis ? 40 : 16;
+  const paddingRight = 30; // Extra right padding for mobile safety
+  const paddingTop = 24;
+  const paddingBottom = 40;
   
+  const graphWidth = Math.max(180, chartWidth - paddingLeft - paddingRight);
+  const graphHeight = Math.max(120, chartHeight - paddingTop - paddingBottom);
+  
+
   if (!moodData.length) {
     return (
-      <View style={[{ height, alignItems: 'center', justifyContent: 'center' }, style]}>
-        <Text style={{ color: '#9ca3af', fontSize: 14 }}>No mood data available</Text>
+      <View style={[styles.emptyContainer, { height }, style]}>
+        <Text style={styles.emptyTitle}>No mood data available</Text>
+        <Text style={styles.emptySubtitle}>Track your mood to see insights here</Text>
       </View>
     );
   }
@@ -69,20 +105,37 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   const maxValue = 5;
   const valueRange = maxValue - minValue;
   
-  const xStep = graphWidth / Math.max(1, moodData.length - 1);
+  const xStep = moodData.length > 1 ? graphWidth / (moodData.length - 1) : 0;
   
-  // Generate path for mood line
+  // Generate path for mood line with bounds checking
   const pathData = moodData.map((item, index) => {
-    const x = paddingLeft + (index * xStep);
+    const x = Math.min(paddingLeft + graphWidth, paddingLeft + (index * xStep));
     const y = paddingTop + graphHeight - ((item.rating - minValue) / valueRange) * graphHeight;
     return { x, y, value: item.rating, date: item.date };
   });
   
-  // Generate labels from dates
-  const labels = moodData.map(item => {
-    const date = new Date(item.date);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  });
+  // Generate labels from dates with better spacing
+  const generateLabels = () => {
+    if (moodData.length <= 4) {
+      // Show all labels for small datasets
+      return moodData.map(item => {
+        const date = new Date(item.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      });
+    } else {
+      // Show fewer labels for larger datasets to prevent overlap
+      const step = Math.ceil(moodData.length / 4);
+      return moodData.map((item, index) => {
+        if (index % step === 0 || index === moodData.length - 1) {
+          const date = new Date(item.date);
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        return '';
+      });
+    }
+  };
+
+  const labels = generateLabels();
 
   // Create smooth curve path
   const createSmoothPath = () => {
@@ -118,50 +171,79 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return `${linePath} L${lastPoint.x},${paddingTop + graphHeight} L${firstPoint.x},${paddingTop + graphHeight} Z`;
   };
   
-  // Y-axis emoji positions
+  // Y-axis emoji positions aligned with actual chart scale
   const emojiPositions = [
-    { rating: 5, emoji: '😊', y: paddingTop },
-    { rating: 4, emoji: '🙂', y: paddingTop + graphHeight * 0.2 },
-    { rating: 3, emoji: '😐', y: paddingTop + graphHeight * 0.4 },
-    { rating: 2, emoji: '😕', y: paddingTop + graphHeight * 0.6 },
-    { rating: 1, emoji: '😞', y: paddingTop + graphHeight * 0.8 },
-    { rating: 0, emoji: '😢', y: paddingTop + graphHeight }
+    { 
+      rating: 5, 
+      emoji: '😊', 
+      y: paddingTop + graphHeight - ((5 - 0) / 5) * graphHeight
+    },
+    { 
+      rating: 4, 
+      emoji: '🙂', 
+      y: paddingTop + graphHeight - ((4 - 0) / 5) * graphHeight 
+    },
+    { 
+      rating: 3, 
+      emoji: '😐', 
+      y: paddingTop + graphHeight - ((3 - 0) / 5) * graphHeight 
+    },
+    { 
+      rating: 2, 
+      emoji: '😕', 
+      y: paddingTop + graphHeight - ((2 - 0) / 5) * graphHeight 
+    },
+    { 
+      rating: 1, 
+      emoji: '😞', 
+      y: paddingTop + graphHeight - ((1 - 0) / 5) * graphHeight 
+    },
+    { 
+      rating: 0, 
+      emoji: '😢', 
+      y: paddingTop + graphHeight - ((0 - 0) / 5) * graphHeight 
+    }
   ];
   
   return (
-    <View style={[{ height }, style]}>
-      <Svg width={chartWidth} height={chartHeight}>
+    <View style={[styles.chartContainer, { 
+      height, 
+      width: chartWidth, 
+      overflow: 'hidden',
+      padding: 0 // Override default padding
+    }, style]}>
+      <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
         <Defs>
-          {/* Main line gradient */}
+          {/* Therapeutic line gradient */}
           <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <Stop offset="0%" stopColor="rgba(59, 130, 246, 0.4)" />
-            <Stop offset="30%" stopColor="rgba(59, 130, 246, 0.8)" />
-            <Stop offset="100%" stopColor="rgba(59, 130, 246, 1)" />
+            <Stop offset="0%" stopColor={styles.colors.lineGradient.start} stopOpacity="0.6" />
+            <Stop offset="50%" stopColor={styles.colors.lineGradient.middle} stopOpacity="0.8" />
+            <Stop offset="100%" stopColor={styles.colors.lineGradient.end} stopOpacity="1" />
           </LinearGradient>
           
-          {/* Area gradient */}
+          {/* Calming area gradient */}
           <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor="rgba(59, 130, 246, 0.3)" />
-            <Stop offset="50%" stopColor="rgba(59, 130, 246, 0.15)" />
-            <Stop offset="100%" stopColor="rgba(59, 130, 246, 0.05)" />
+            <Stop offset="0%" stopColor={styles.colors.areaGradient.start} stopOpacity="0.4" />
+            <Stop offset="50%" stopColor={styles.colors.areaGradient.middle} stopOpacity="0.2" />
+            <Stop offset="100%" stopColor={styles.colors.areaGradient.end} stopOpacity="0.05" />
           </LinearGradient>
           
-          {/* Glow effect */}
-          <Filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <FeGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <FeFlood floodColor="#3b82f6" floodOpacity="0.4"/>
+          {/* Gentle glow effect */}
+          <Filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+            <FeGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <FeFlood floodColor={styles.colors.glow} floodOpacity="0.3"/>
             <FeComposite in="SourceGraphic" operator="over"/>
           </Filter>
           
-          {/* Shadow effect */}
-          <Filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <FeGaussianBlur stdDeviation="2" result="blur"/>
-            <FeFlood floodColor="#1e40af" floodOpacity="0.2"/>
+          {/* Soft shadow effect */}
+          <Filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <FeGaussianBlur stdDeviation="1.5" result="blur"/>
+            <FeFlood floodColor={styles.colors.shadow} floodOpacity="0.15"/>
             <FeComposite in="SourceGraphic" operator="over"/>
           </Filter>
         </Defs>
         
-        {/* Background grid lines */}
+        {/* Calming background grid lines */}
         {emojiPositions.map((pos, index) => (
           <Line
             key={`grid-${index}`}
@@ -169,89 +251,78 @@ export const MoodChart: React.FC<MoodChartProps> = ({
             y1={pos.y}
             x2={paddingLeft + graphWidth}
             y2={pos.y}
-            stroke="#f1f5f9"
-            strokeWidth={1}
-            strokeDasharray="2,4"
-            opacity={0.6}
+            stroke={styles.colors.gridLines}
+            strokeWidth={0.8}
+            strokeDasharray="3,6"
+            opacity={0.4}
           />
         ))}
         
-        {/* Gradient area fill */}
-        <Path
-          d={createAreaPath()}
-          fill="url(#areaGradient)"
-          opacity={0.8}
-        />
         
-        {/* Shadow line */}
+        {/* Gentle shadow line */}
         <Path
           d={createSmoothPath()}
-          stroke="rgba(59, 130, 246, 0.3)"
-          strokeWidth={8}
+          stroke={styles.colors.glow}
+          strokeWidth={6}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
           filter="url(#shadow)"
+          opacity={0.3}
         />
         
-        {/* Main mood line with glow */}
+        {/* Main therapeutic line with soft glow */}
         <Path
           d={createSmoothPath()}
           stroke="url(#lineGradient)"
-          strokeWidth={4}
+          strokeWidth={3.5}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
           filter="url(#glow)"
         />
         
-        {/* Data points */}
+        {/* Calming data points */}
         {pathData.map((point, index) => (
           <Circle
             key={`point-${index}`}
             cx={point.x}
             cy={point.y}
-            r={6}
-            fill="#ffffff"
-            stroke="#3b82f6"
-            strokeWidth={3}
+            r={5.5}
+            fill={styles.colors.dataPointFill}
+            stroke={styles.colors.dataPointStroke}
+            strokeWidth={2.5}
             filter="url(#shadow)"
-            opacity={0.9}
+            opacity={0.95}
           />
         ))}
         
-        {/* Highlight circles */}
+        {/* Gentle highlight circles */}
         {pathData.map((point, index) => (
           <Circle
             key={`highlight-${index}`}
             cx={point.x}
             cy={point.y}
-            r={3}
-            fill="#3b82f6"
+            r={2.5}
+            fill={styles.colors.dataPointHighlight}
           />
         ))}
       </Svg>
       
-      {/* Emoji Y-axis */}
+      {/* Mindful emoji Y-axis */}
       {showEmojis && (
-        <View style={{
-          position: 'absolute',
-          left: 8,
-          top: 0,
+        <View style={[styles.emojiContainer, {
           height: chartHeight,
-          justifyContent: 'space-between',
           paddingVertical: paddingTop,
-        }}>
+        }]}>
           {emojiPositions.map((pos, index) => (
             <Text
               key={`emoji-${index}`}
-              style={{
-                fontSize: 16,
-                textAlign: 'center',
+              style={[styles.emojiText, { 
                 position: 'absolute',
                 top: pos.y - 10,
-                opacity: 0.7,
-              }}
+                left: -2,
+              }]}
             >
               {pos.emoji}
             </Text>
@@ -259,24 +330,20 @@ export const MoodChart: React.FC<MoodChartProps> = ({
         </View>
       )}
       
-      {/* X-axis labels */}
-      <View style={{
-        position: 'absolute',
-        bottom: 15,
+      {/* Gentle X-axis labels */}
+      <View style={[styles.labelsContainer, {
         left: paddingLeft,
         right: paddingRight,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-      }}>
+        width: graphWidth,
+      }]}>
         {labels.map((label, index) => (
           <Text
             key={`label-${index}`}
-            style={{
-              fontSize: 11,
-              color: '#64748b',
-              textAlign: 'center',
-              fontWeight: '500',
-            }}
+            style={[styles.labelText, {
+              width: graphWidth / labels.length,
+              textAlign: index === 0 ? 'left' : 
+                       index === labels.length - 1 ? 'right' : 'center'
+            }]}
           >
             {label}
           </Text>
@@ -296,6 +363,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
     currentWeek: { rating: number; label: string };
     previousWeek: { rating: number; label: string };
   } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadWeeklyData();
@@ -303,7 +371,6 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
 
   const loadWeeklyData = async () => {
     try {
-      const stats = await moodRatingService.getMoodStats();
       const allRatings = await moodRatingService.getAllRatings();
       
       // Calculate current and previous week averages
@@ -354,22 +421,30 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
       });
     } catch (error) {
       console.error('Error loading weekly data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!weeklyData) {
+
+  if (loading) {
     return (
-      <View style={[{ height: 120, alignItems: 'center', justifyContent: 'center' }, style]}>
-        <Text style={{ color: '#9ca3af', fontSize: 14 }}>Loading weekly data...</Text>
+      <View style={[styles.loadingContainer, { height: 120 }, style]}>
+        <Text style={styles.loadingText}>Loading weekly data...</Text>
       </View>
     );
   }
 
-  const barWidth = (screenWidth - 120) / 2;
-  const maxBarHeight = 80;
-  
-  const currentBarHeight = Math.max(5, (weeklyData.currentWeek.rating / 5) * maxBarHeight);
-  const previousBarHeight = Math.max(5, (weeklyData.previousWeek.rating / 5) * maxBarHeight);
+  // Don't show empty state for weekly comparison - always show the bars with emojis
+  if (!weeklyData) {
+    // Only show empty state if data couldn't be loaded at all
+    return (
+      <View style={[styles.emptyContainer, { height: 120 }, style]}>
+        <Text style={styles.emptyTitle}>Loading weekly data...</Text>
+      </View>
+    );
+  }
+
   
   const getMoodEmoji = (rating: number) => {
     if (rating >= 4.5) return '😊';
@@ -377,68 +452,64 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
     if (rating >= 2.5) return '😐';
     if (rating >= 1.5) return '😕';
     if (rating > 0) return '😞';
-    return '😶';
+    return '😶'; // Neutral emoji for no data
   };
   
   return (
-    <View style={[{
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems: 'flex-end',
-      paddingHorizontal: 20,
-      paddingVertical: 20,
-      height: 140,
-    }, style]}>
-      {/* Previous Week */}
-      <View style={{ alignItems: 'center', flex: 1 }}>
-        <View style={{
-          width: barWidth - 20,
-          height: previousBarHeight,
-          backgroundColor: '#e2e8f0',
-          borderRadius: 12,
-          marginBottom: 12,
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          paddingBottom: 8,
-          shadowColor: '#64748b',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-        }}>
-          <Text style={{ fontSize: 22 }}>{getMoodEmoji(weeklyData.previousWeek.rating)}</Text>
+    <View style={[styles.weeklyContainer, style]}>
+      {/* Unified comparison card */}
+      <View style={styles.comparisonCard}>
+        {/* Header with trend indicator */}
+        <View style={styles.comparisonHeader}>
+          <Text style={styles.comparisonTitle}>Weekly Progress</Text>
+          {weeklyData.currentWeek.rating > weeklyData.previousWeek.rating && (
+            <View style={styles.trendIndicator}>
+              <Text style={styles.trendText}>↗ Improving</Text>
+            </View>
+          )}
+          {weeklyData.currentWeek.rating === weeklyData.previousWeek.rating && (
+            <View style={[styles.trendIndicator, { backgroundColor: '#F3F4F6' }]}>
+              <Text style={[styles.trendText, { color: '#6B7280' }]}>→ Stable</Text>
+            </View>
+          )}
         </View>
-        <Text style={{ fontSize: 12, color: '#64748b', textAlign: 'center', marginBottom: 2 }}>
-          Week Before
-        </Text>
-        <Text style={{ fontSize: 14, color: '#374151', fontWeight: '600' }}>
-          {weeklyData.previousWeek.label}
-        </Text>
-      </View>
-      
-      {/* Current Week */}
-      <View style={{ alignItems: 'center', flex: 1 }}>
-        <View style={{
-          width: barWidth - 20,
-          height: currentBarHeight,
-          backgroundColor: '#3b82f6',
-          borderRadius: 12,
-          marginBottom: 12,
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          paddingBottom: 8,
-          shadowColor: '#3b82f6',
-          shadowOffset: { width: 0, height: 3 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-        }}>
-          <Text style={{ fontSize: 22 }}>{getMoodEmoji(weeklyData.currentWeek.rating)}</Text>
+
+        {/* Progress visualization - Side by side layout */}
+        <View style={styles.progressVisualization}>
+          <View style={styles.weeksRow}>
+            {/* Previous week */}
+            <View style={styles.weekSection}>
+              <View style={styles.weekHeader}>
+                <Text style={styles.weekPeriod}>Last Week</Text>
+                <Text style={styles.moodEmoji}>{getMoodEmoji(weeklyData.previousWeek.rating)}</Text>
+              </View>
+              <Text style={styles.moodLabel}>{weeklyData.previousWeek.label}</Text>
+              <View style={styles.progressBar}>
+                <View 
+                  style={[styles.progressFill, styles.previousWeekFill, {
+                    width: `${Math.max(10, (weeklyData.previousWeek.rating / 5) * 100)}%`
+                  }]}
+                />
+              </View>
+            </View>
+
+            {/* Current week */}
+            <View style={styles.weekSection}>
+              <View style={styles.weekHeader}>
+                <Text style={styles.weekPeriod}>This Week</Text>
+                <Text style={styles.moodEmoji}>{getMoodEmoji(weeklyData.currentWeek.rating)}</Text>
+              </View>
+              <Text style={styles.moodLabel}>{weeklyData.currentWeek.label}</Text>
+              <View style={styles.progressBar}>
+                <View 
+                  style={[styles.progressFill, styles.currentWeekFill, {
+                    width: `${Math.max(10, (weeklyData.currentWeek.rating / 5) * 100)}%`
+                  }]}
+                />
+              </View>
+            </View>
+          </View>
         </View>
-        <Text style={{ fontSize: 12, color: '#64748b', textAlign: 'center', marginBottom: 2 }}>
-          This Week
-        </Text>
-        <Text style={{ fontSize: 14, color: '#374151', fontWeight: '600' }}>
-          {weeklyData.currentWeek.label}
-        </Text>
       </View>
     </View>
   );
