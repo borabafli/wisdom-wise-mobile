@@ -9,6 +9,7 @@ import ExerciseLibrary from '../screens/ExerciseLibrary';
 import InsightsDashboard from '../screens/InsightsDashboard';
 import ProfileScreen from '../screens/ProfileScreen';
 import ChatInterface from '../screens/ChatInterface';
+import BreathingScreen from '../screens/BreathingScreen';
 import CustomTabBar from './CustomTabBar';
 
 // Import context
@@ -37,11 +38,13 @@ const customTheme = {
 export const AppContent: React.FC = () => {
   const {
     showChat,
+    showBreathing,
     currentExercise,
     chatWithActionPalette,
     handleStartSession,
     handleNewSession,
     handleBackFromChat,
+    handleBackFromBreathing,
     handleExerciseClick,
     handleInsightClick,
     handleActionSelect,
@@ -66,13 +69,23 @@ export const AppContent: React.FC = () => {
   useEffect(() => {
     console.log('AppContent re-rendered. State:', {
       showChat,
+      showBreathing,
       currentExercise: currentExercise ? currentExercise.name : 'null',
       chatWithActionPalette,
     });
-  }, [showChat, currentExercise, chatWithActionPalette]);
+  }, [showChat, showBreathing, currentExercise, chatWithActionPalette]);
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
+
+  if (showBreathing) {
+    return (
+      <>
+        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <BreathingScreen onBack={handleBackFromBreathing} />
+      </>
+    );
+  }
 
   if (showChat) {
     return (

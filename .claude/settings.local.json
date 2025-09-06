@@ -53,8 +53,10 @@
       "Bash(set SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae)",
       "Bash(SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae npx supabase functions deploy ai-chat --project-ref tarwryruagxsoaljzoot)",
       "Read(E:\\/**)",
+      "Read(/Users/borabafli/Desktop/Hello World/StartUPs/wisdomwise/src/screens/**)"
       "Bash(node:*)",
       "Bash(timeout:*)",
+
       "Bash(SUPABASE_ACCESS_TOKEN=sbp_f7414e48ddf7d2bd69b50d02698af37c3a8ce7ae npx supabase functions deploy extract-insights --project-ref tarwryruagxsoaljzoot)",
       "Bash(kill:*)",
       "Bash(find:*)",
@@ -102,6 +104,9 @@
       "mcp__playwright__browser_tab_list",
       "mcp__playwright__browser_tab_new",
       "mcp__playwright__browser_wait_for"
+
+      "Read(/Users/borabafli/Desktop/HelloWorld/StartUPs/wisdomwise/src/styles/components/**)"
+
     ],
     "deny": [],
     "ask": []

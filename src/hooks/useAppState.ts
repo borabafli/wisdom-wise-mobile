@@ -6,6 +6,7 @@ import { Exercise } from '../types';
  */
 export const useAppState = () => {
   const [showChat, setShowChat] = useState<boolean>(false);
+  const [showBreathing, setShowBreathing] = useState<boolean>(false);
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
 
@@ -33,12 +34,25 @@ export const useAppState = () => {
     console.log('handleBackFromChat completed - should return to main app');
   }, [showChat, chatWithActionPalette, currentExercise]);
 
+  const handleBackFromBreathing = useCallback(() => {
+    console.log('handleBackFromBreathing called');
+    setShowBreathing(false);
+    console.log('Returned to main app from breathing screen');
+  }, []);
+
   const handleExerciseClick = useCallback((exercise?: Exercise) => {
     console.log('=== EXERCISE CLICK ===');
     console.log('Exercise clicked:', exercise);
     if (exercise) {
       console.log('Starting session with exercise:', exercise.type, exercise.name);
-      handleStartSession(exercise);
+      
+      // Special handling for breathing exercises
+      if (exercise.type === 'breathing') {
+        setShowBreathing(true);
+        console.log('Opening dedicated breathing screen');
+      } else {
+        handleStartSession(exercise);
+      }
     } else {
       console.log('No exercise provided to handleExerciseClick');
     }
@@ -63,7 +77,7 @@ export const useAppState = () => {
         break;
       case 'suggested-exercises':
         handleStartSession({ 
-          type: 'morning-mindfulness', 
+          type: 'mindfulness', 
           name: 'Morning Mindfulness', 
           duration: '8 min', 
           description: 'Start your day with gentle awareness and presence' 
@@ -76,11 +90,13 @@ export const useAppState = () => {
 
   return {
     showChat,
+    showBreathing,
     currentExercise,
     chatWithActionPalette,
     handleStartSession,
     handleNewSession,
     handleBackFromChat,
+    handleBackFromBreathing,
     handleExerciseClick,
     handleInsightClick,
     handleActionSelect,

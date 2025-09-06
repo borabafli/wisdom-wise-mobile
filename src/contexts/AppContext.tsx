@@ -4,11 +4,13 @@ import { useAppState } from '../hooks';
 
 interface AppContextType {
   showChat: boolean;
+  showBreathing: boolean;
   currentExercise: Exercise | null;
   chatWithActionPalette: boolean;
   handleStartSession: (exercise?: Exercise | null) => void;
   handleNewSession: () => void;
   handleBackFromChat: () => void;
+  handleBackFromBreathing: () => void;
   handleExerciseClick: (exercise?: Exercise) => void;
   handleInsightClick: (type: string, insight?: any) => void;
   handleActionSelect: (actionId: string) => void;
