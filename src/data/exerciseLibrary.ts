@@ -1,5 +1,5 @@
 // Final, corrected exerciseLibrary.ts
-import { Brain, Wind, Eye, BookOpen, Heart, Star, Clock, Filter } from 'lucide-react-native';
+import { Brain, Wind, Eye, BookOpen, Heart, Star, Clock, Filter, FileText } from 'lucide-react-native';
 
 export const exerciseLibraryData: Record<string, any> = {
   'automatic-thoughts': {
@@ -157,6 +157,32 @@ export const exerciseLibraryData: Record<string, any> = {
     color: ['#93C5FD', '#60A5FA'],
     image: require('../../assets/images/9.jpeg'),
     keywords: ['sorting thoughts', 'organize thoughts', 'clarity', 'overwhelmed', 'mental clutter', 'clear mind'],
+  },
+  'goal-setting': {
+    id: 12,
+    type: 'goal-setting',
+    name: 'Therapy Goal-Setting',
+    duration: '20 min',
+    description: 'Create meaningful, achievable therapy goals aligned with your values',
+    category: 'Self-Growth',
+    difficulty: 'Intermediate',
+    icon: Star,
+    color: ['#FBBF24', '#F59E0B'],
+    image: require('../../assets/images/10.jpeg'), // Reusing image for now
+    keywords: ['goals', 'goal setting', 'therapy goals', 'values', 'motivation', 'purpose', 'direction', 'achievement', 'progress'],
+  },
+  'tell-your-story': {
+    id: 13,
+    type: 'tell-your-story',
+    name: 'Tell Me Your Story',
+    duration: '15-25 min',
+    description: 'Reflect on your personal journey, identify strengths, and gain deeper self-understanding',
+    category: 'Self-Discovery',
+    difficulty: 'Beginner',
+    icon: FileText,
+    color: ['#FEF3C7', '#FDE68A'],
+    image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
+    keywords: ['story', 'narrative', 'reflection', 'journey', 'personal history', 'strengths', 'self-understanding', 'life story', 'identity'],
   }
 };
 
@@ -376,6 +402,88 @@ export const exerciseFlows: Record<string, any> = {
         stepNumber: 3,
         description: 'Ending with reflection.',
         instruction: 'Encourage the user to notice how it feels to see their thoughts more clearly, and what takeaway they want to hold onto.'
+      }
+    ]
+  },
+  'goal-setting': {
+    name: 'Therapy Goal-Setting',
+    color: 'yellow',
+    useAI: false, // This uses the custom GoalSettingExercise component
+    isCustomComponent: true,
+    steps: [
+      {
+        title: 'Introduction',
+        stepNumber: 1,
+        description: 'Understanding the purpose of therapy goal-setting.',
+        instruction: 'Explain how therapy goals provide direction and motivation for personal growth.'
+      },
+      {
+        title: 'Focus Area Selection',
+        stepNumber: 2,
+        description: 'Choose what area of life to focus on.',
+        instruction: 'Help user select from emotional well-being, relationships, habits, or personal growth areas.'
+      },
+      {
+        title: 'Goal Clarification',
+        stepNumber: 3,
+        description: 'Define what they want to be different.',
+        instruction: 'Guide user to phrase their goal positively and specifically.'
+      },
+      {
+        title: 'Practical Steps',
+        stepNumber: 4,
+        description: 'Break the goal into actionable steps.',
+        instruction: 'Help identify one small, doable step they can take this week.'
+      },
+      {
+        title: 'Motivation & Values',
+        stepNumber: 5,
+        description: 'Connect the goal to deeper meaning.',
+        instruction: 'Explore why this goal matters and how it aligns with their values.'
+      },
+      {
+        title: 'Timeline & Planning',
+        stepNumber: 6,
+        description: 'Set a realistic timeframe for progress.',
+        instruction: 'Choose appropriate timeline and discuss progress tracking.'
+      }
+    ]
+  },
+  'tell-your-story': {
+    name: 'Tell Me Your Story',
+    color: 'yellow',
+    useAI: false, // This uses the custom StorytellingExercise component
+    isCustomComponent: true,
+    steps: [
+      {
+        title: 'Introduction',
+        stepNumber: 1,
+        description: 'Understanding the purpose of sharing your story.',
+        instruction: 'Explain how storytelling can help with self-reflection and identifying strengths.'
+      },
+      {
+        title: 'Timeline Choice',
+        stepNumber: 2,
+        description: 'Choose how to frame your story.',
+        instruction: 'Help user select between childhood to today, recent years, or a specific theme.'
+      },
+      {
+        title: 'Open Sharing',
+        stepNumber: 3,
+        description: 'Tell your story in your own words.',
+        instruction: 'Provide a safe space for the user to share what has shaped them most.'
+      },
+      {
+        title: 'Deepening Questions',
+        stepNumber: 4,
+        description: 'Optional deeper reflection questions.',
+        instruction: 'Ask follow-up questions about growth, strengths, and key insights.'
+      },
+      {
+        title: 'Compassionate Reflection',
+        stepNumber: 5,
+        description: 'Receive supportive reflection on your story.',
+        instruction: 'Provide compassionate summary highlighting strengths, resilience, and values.'
       }
     ]
   }

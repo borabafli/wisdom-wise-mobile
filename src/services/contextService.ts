@@ -2,6 +2,7 @@
 import { Message, storageService } from './storageService';
 import { generateFirstMessageSuggestions } from '../utils/suggestionGenerator';
 import { memoryService, MemoryContext } from './memoryService';
+import { goalService, TherapyGoal } from './goalService';
 
 export interface ContextConfig {
   maxTurns: number;
@@ -82,13 +83,20 @@ Final check: Output must be a single valid JSON object, nothing else.`
       summaryCount: memoryContext.summaries.length,
       hasConsolidated: !!memoryContext.consolidatedSummary
     });
+
+    // Get active goals for therapy direction
+    console.log('🎯 [DEBUG] Getting active goals...');
+    const activeGoals = await goalService.getActiveGoals();
+    console.log('🎯 [DEBUG] Active goals retrieved:', activeGoals.length);
     
     const memoryContextString = memoryService.formatMemoryForContext(memoryContext);
-    console.log('🧠 [DEBUG] Memory context string length:', memoryContextString.length);
-    console.log('🧠 [DEBUG] Memory context preview:', memoryContextString.substring(0, 200) + '...');
+    const goalContextString = this.formatGoalsForContext(activeGoals);
     
-    // Combine system prompt with memory context
-    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString;
+    console.log('🧠 [DEBUG] Memory context string length:', memoryContextString.length);
+    console.log('🎯 [DEBUG] Goal context string length:', goalContextString.length);
+    
+    // Combine system prompt with memory and goal context
+    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString;
     console.log('🧠 [DEBUG] Enhanced prompt length:', enhancedPrompt.length);
     
     const context = [{
@@ -213,6 +221,50 @@ Final check: Output must be a single valid JSON object, nothing else.`
     // No suggestions initially - let AI provide them
     // This method should only be called in specific cases
     return [];
+  }
+
+  /**
+   * Format active goals for AI context integration
+   */
+  formatGoalsForContext(goals: TherapyGoal[]): string {
+    if (!goals || goals.length === 0) {
+      return '\n**Current Therapy Goals:** No active goals set yet.\n';
+    }
+
+    let contextString = '\n**Current Therapy Goals:**\n';
+    contextString += 'The user has set the following therapy goals. Use these to provide direction, reference progress, and suggest relevant exercises. Goals represent what the user is actively working toward in their therapeutic journey.\n\n';
+
+    goals.forEach((goal, index) => {
+      const focusAreaText = goal.focusArea === 'other' ? goal.customFocusArea : 
+        goal.focusArea.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      contextString += `**Goal ${index + 1}** (${focusAreaText}):\n`;
+      contextString += `- **What they want:** ${goal.mainGoal}\n`;
+      contextString += `- **Current step:** ${goal.practicalStep}\n`;
+      contextString += `- **Why it matters:** ${goal.motivation}\n`;
+      contextString += `- **Timeline:** ${goal.timelineText}\n`;
+      contextString += `- **Progress:** ${goal.progress}% complete\n`;
+      
+      if (goal.checkIns.length > 0) {
+        const lastCheckIn = goal.checkIns[0];
+        const ratingText = ['struggling', 'some challenges', 'making progress', 'going well', 'excellent'][lastCheckIn.progressRating - 1];
+        contextString += `- **Recent update:** ${ratingText} (${new Date(lastCheckIn.date).toLocaleDateString()})\n`;
+        if (lastCheckIn.reflection) {
+          contextString += `- **Reflection:** "${lastCheckIn.reflection}"\n`;
+        }
+      }
+      contextString += '\n';
+    });
+
+    contextString += '**Goal Integration Guidelines:**\n';
+    contextString += '- Reference goals when relevant to current conversation\n';
+    contextString += '- Connect discussions to goal progress when appropriate\n';
+    contextString += '- Suggest exercises that align with active goals\n';
+    contextString += '- Check in on goal progress periodically\n';
+    contextString += '- Celebrate progress and acknowledge challenges\n';
+    contextString += '- Use goals to provide direction and scientific measurement of therapeutic progress\n\n';
+
+    return contextString;
   }
 }
 
