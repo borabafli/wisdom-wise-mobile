@@ -4,7 +4,8 @@
 node_modules/
 
 
-
+.playwright-mcp/*
+.playwright-mcp/
 .env
 .mcp.json
 
