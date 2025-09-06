@@ -1,0 +1,677 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
+import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart, Plus } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { insightService, ThoughtPattern } from '../services/insightService';
+import { memoryService, Insight, Summary } from '../services/memoryService';
+import { goalService, TherapyGoal } from '../services/goalService';
+import ThinkingPatternsModal from '../components/ThinkingPatternsModal';
+import { GoalDetailsModal } from '../components/GoalDetailsModal';
+import { SessionSummariesModal } from '../components/SessionSummariesModal';
+import { MoodInsightsCard } from '../components/MoodInsightsCard';
+import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
+
+const { width, height } = Dimensions.get('window');
+
+interface InsightsDashboardProps {
+  onInsightClick: (type: string, insight?: any) => void;
+}
+
+const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
+  const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
+  const [memoryInsights, setMemoryInsights] = useState<Insight[]>([]);
+  const [sessionSummaries, setSummaries] = useState<Summary[]>([]);
+  const [activeGoals, setActiveGoals] = useState<TherapyGoal[]>([]);
+  const [selectedGoal, setSelectedGoal] = useState<TherapyGoal | null>(null);
+  const [insightStats, setInsightStats] = useState({
+    totalPatterns: 0,
+    commonDistortions: [] as { name: string; count: number }[],
+    recentActivity: 0,
+    confidenceAverage: 0
+  });
+  const [memoryStats, setMemoryStats] = useState({
+    totalInsights: 0,
+    sessionSummaries: 0,
+    consolidatedSummaries: 0
+  });
+  const [goalStats, setGoalStats] = useState({
+    totalGoals: 0,
+    activeGoals: 0,
+    averageProgress: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [patternsModalVisible, setPatternsModalVisible] = useState(false);
+  const [goalDetailsVisible, setGoalDetailsVisible] = useState(false);
+  const [sessionSummariesVisible, setSessionSummariesVisible] = useState(false);
+  const [expandedMemoryInsights, setExpandedMemoryInsights] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    loadInsightData();
+  }, []);
+
+  const loadInsightData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // DEBUG: Log what we're trying to load
+      console.log('🔍 [INSIGHTS DEBUG] Loading insight data...');
+      
+      // Load recent thought patterns (existing system)
+      const recentPatterns = await insightService.getRecentPatterns(10);
+      setThinkingPatterns(recentPatterns);
+      console.log('🔍 [INSIGHTS DEBUG] Thought patterns loaded:', recentPatterns.length);
+      
+      // Load insight statistics
+      const stats = await insightService.getInsightStats();
+      setInsightStats(stats);
+      
+      // Load new memory system data
+      const insights = await memoryService.getInsights();
+      setMemoryInsights(insights.slice(0, 10)); // Top 10 recent insights
+      console.log('🔍 [INSIGHTS DEBUG] Memory insights loaded:', insights.length, insights);
+      
+      const summaries = await memoryService.getSummaries();
+      setSummaries(summaries.slice(0, 5)); // Top 5 recent summaries
+      console.log('🔍 [INSIGHTS DEBUG] Summaries loaded:', summaries.length, summaries);
+      
+      const memStats = await memoryService.getMemoryStats();
+      console.log('🔍 [INSIGHTS DEBUG] Memory stats:', memStats);
+      if (memStats) {
+        setMemoryStats({
+          totalInsights: memStats.totalInsights,
+          sessionSummaries: memStats.sessionSummaries,
+          consolidatedSummaries: memStats.consolidatedSummaries
+        });
+      }
+
+      // Load goals data
+      const goals = await goalService.getActiveGoals();
+      setActiveGoals(goals.slice(0, 2)); // Show max 2 goals in dashboard
+      console.log('🔍 [INSIGHTS DEBUG] Active goals loaded:', goals.length);
+
+      const goalProgress = await goalService.getGoalProgress();
+      setGoalStats({
+        totalGoals: goalProgress.totalGoals,
+        activeGoals: goalProgress.activeGoals,
+        averageProgress: goalProgress.averageProgress
+      });
+      console.log('🔍 [INSIGHTS DEBUG] Goal stats loaded:', goalProgress);
+      
+    } catch (error) {
+      console.error('Error loading insight data:', error);
+      // Fallback to mock data if needed
+      setThinkingPatterns([]);
+      setMemoryInsights([]);
+      setSummaries([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleMemoryInsightExpansion = (insightId: string) => {
+    setExpandedMemoryInsights(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(insightId)) {
+        newSet.delete(insightId);
+      } else {
+        newSet.add(insightId);
+      }
+      return newSet;
+    });
+  };
+
+  // Mock data for demonstration when no patterns exist
+  const mockPatterns = [
+    {
+      id: 'mock_1',
+      originalThought: 'I completely messed up that presentation, I\'m terrible at public speaking',
+      reframedThought: 'The presentation had some rough spots, but I also had good moments. I\'m learning and improving.',
+      distortionTypes: ['All-or-Nothing Thinking'],
+      confidence: 0.85,
+      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
+      timestamp: new Date().toISOString(),
+      context: 'Identified during conversation about work stress'
+    },
+    {
+      id: 'mock_2', 
+      originalThought: 'If I don\'t get this job, my career will be ruined',
+      reframedThought: 'Not getting this particular job would be disappointing, but there are other opportunities out there.',
+      distortionTypes: ['Catastrophizing'],
+      confidence: 0.92,
+      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
+      timestamp: new Date().toISOString(),
+      context: 'Pattern recognized during anxiety session'
+    }
+  ];
+
+  const displayPatterns = thinkingPatterns.length > 0 ? thinkingPatterns : mockPatterns;
+
+  const journeyData = {
+    sessionsCompleted: 3,
+    exercisesCompleted: 7,
+    streakDays: 5,
+    nextSuggestion: 'Try a Reframe to reduce worry',
+    achievements: [
+      'First guided session',
+      'Daily check-in streak', 
+      'Completed breathing exercise'
+    ]
+  };
+
+  const insights = [
+    {
+      id: 1,
+      title: 'Active Goals',
+      value: goalStats.activeGoals.toString(),
+      subtitle: `${goalStats.averageProgress}% average progress`,
+      icon: Target,
+      trend: goalStats.activeGoals > 0 ? 'positive' : 'neutral'
+    },
+    {
+      id: 2,
+      title: 'Memory Insights',
+      value: memoryStats.totalInsights.toString(),
+      subtitle: 'Long-term patterns discovered',
+      icon: Brain,
+      trend: memoryStats.totalInsights > 0 ? 'positive' : 'neutral'
+    },
+    {
+      id: 3,
+      title: 'Session Summaries',
+      value: memoryStats.sessionSummaries.toString(),
+      subtitle: 'Sessions analyzed',
+      icon: TrendingUp,
+      trend: memoryStats.sessionSummaries > 0 ? 'positive' : 'neutral'
+    },
+    {
+      id: 4,
+      title: 'Thought Patterns',
+      value: insightStats.totalPatterns.toString(),
+      subtitle: 'CBT patterns identified',
+      icon: Lightbulb,
+      trend: insightStats.totalPatterns > 0 ? 'positive' : 'neutral'
+    }
+  ];
+
+  return (
+    <SafeAreaWrapper style={styles.container}>
+      {/* Background */}
+      <LinearGradient
+        colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
+        style={styles.backgroundGradient}
+      />
+      
+      {/* Beautiful background shapes */}
+      <View style={[styles.watercolorBlob, styles.blob1]} />
+      <View style={[styles.watercolorBlob, styles.blob2]} />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>
+          Your Progress
+        </Text>
+        <Text style={styles.subtitle}>
+          Amazing journey so far!
+        </Text>
+      </View>
+
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Your Journey Section */}
+        <View style={styles.journeyCard}>
+          {/* Background accent */}
+          <View style={styles.journeyAccent} />
+          
+          <View style={styles.journeyHeader}>
+            <LinearGradient
+              colors={['#bfdbfe', '#7dd3fc']}
+              style={styles.journeyIcon}
+            >
+              <Heart size={24} color="#1e40af" />
+            </LinearGradient>
+            <View style={styles.journeyTitleContainer}>
+              <Text style={styles.journeyTitle}>Your Journey</Text>
+              <Text style={styles.journeySubtitle}>Every step counts! Keep going</Text>
+            </View>
+          </View>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{journeyData.sessionsCompleted}</Text>
+              <Text style={styles.statLabel}>Sessions</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValueSky}>{journeyData.exercisesCompleted}</Text>
+              <Text style={styles.statLabel}>Exercises</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{journeyData.streakDays}</Text>
+              <Text style={styles.statLabel}>Day streak</Text>
+            </View>
+          </View>
+
+          <LinearGradient
+            colors={['rgba(59, 130, 246, 0.05)', 'rgba(14, 165, 233, 0.05)']}
+            style={styles.suggestionCard}
+          >
+            <Text style={styles.suggestionText}>
+              You've completed <Text style={styles.suggestionBold}>{journeyData.sessionsCompleted}</Text> guided sessions! 
+              <Text style={styles.suggestionBoldBlue}> Next up: {journeyData.nextSuggestion}</Text>
+            </Text>
+          </LinearGradient>
+        </View>
+
+        {/* Quick Insights */}
+        <View style={styles.insightsSection}>
+          {insights.map((insight) => {
+            const Icon = insight.icon;
+            return (
+              <TouchableOpacity
+                key={insight.id}
+                onPress={() => onInsightClick('insight', insight)}
+                style={styles.insightCard}
+                activeOpacity={0.9}
+              >
+                <View style={styles.insightContent}>
+                  <View style={styles.insightLeft}>
+                    <LinearGradient
+                      colors={insight.trend === 'positive' ? ['#bfdbfe', '#7dd3fc'] : ['#bae6fd', '#7dd3fc']}
+                      style={styles.insightIcon}
+                    >
+                      <Icon 
+                        size={24} 
+                        color={insight.trend === 'positive' ? '#1e40af' : '#0369a1'} 
+                      />
+                    </LinearGradient>
+                    <View style={styles.insightText}>
+                      <Text style={styles.insightTitle}>
+                        {insight.title}
+                      </Text>
+                      <Text style={styles.insightSubtitle}>{insight.subtitle}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.insightRight}>
+                    <Text style={[
+                      styles.insightValue,
+                      insight.trend === 'positive' ? styles.insightValuePositive : styles.insightValueNeutral
+                    ]}>
+                      {insight.value}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Active Goals Section */}
+        {activeGoals.length > 0 && (
+          <View style={styles.patternsCard}>
+            <View style={styles.patternsAccent} />
+            
+            <View style={styles.patternsHeader}>
+              <LinearGradient
+                colors={['#fef3c7', '#fbbf24']}
+                style={styles.patternsIcon}
+              >
+                <Target size={24} color="#d97706" />
+              </LinearGradient>
+              <View style={styles.patternsTitleContainer}>
+                <Text style={styles.patternsTitle}>Your Active Goals</Text>
+                <Text style={styles.patternsSubtitle}>Working toward meaningful change</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => onInsightClick('add_goal')}
+                style={styles.addGoalButton}
+                activeOpacity={0.7}
+              >
+                <Plus size={18} color="#d97706" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.patternsContainer}>
+              {activeGoals.map((goal, index) => (
+                <TouchableOpacity
+                  key={goal.id}
+                  onPress={() => {
+                    setSelectedGoal(goal);
+                    setGoalDetailsVisible(true);
+                  }}
+                  style={styles.goalCard}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.goalContent}>
+                    <View style={styles.goalContentLeft}>
+                      <Text style={styles.goalTitle}>
+                        {goal.mainGoal}
+                      </Text>
+                      <Text style={styles.goalMeta}>
+                        {goal.timelineText} • {goal.progress}% complete
+                      </Text>
+                      
+                      <View style={styles.goalProgressContainer}>
+                        <View style={styles.goalProgressTrack}>
+                          <View style={[styles.goalProgressFill, { width: `${goal.progress}%` }]} />
+                        </View>
+                      </View>
+
+                      <Text style={styles.goalStep}>
+                        Next: {goal.practicalStep}
+                      </Text>
+
+                      <Text style={styles.goalMotivation}>
+                        "{goal.motivation}"
+                      </Text>
+                    </View>
+                    <View style={styles.patternArrow}>
+                      <ArrowRight size={16} color="#d97706" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {goalStats.totalGoals > activeGoals.length && (
+              <View style={styles.viewAllContainer}>
+                <TouchableOpacity
+                  onPress={() => onInsightClick('all_goals')}
+                  style={styles.viewAllButton}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.viewAllText}>
+                    View all goals ({goalStats.totalGoals})
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Session Summaries Section */}
+        {sessionSummaries.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setSessionSummariesVisible(true)}
+            style={styles.insightCard}
+            activeOpacity={0.9}
+          >
+            <View style={styles.insightContent}>
+              <View style={styles.insightLeft}>
+                <LinearGradient
+                  colors={['#dcfdf4', '#86efac']}
+                  style={styles.insightIcon}
+                >
+                  <TrendingUp size={24} color="#059669" />
+                </LinearGradient>
+                <View style={styles.insightText}>
+                  <Text style={styles.insightTitle}>Session Summaries</Text>
+                  <Text style={styles.insightSubtitle}>
+                    {memoryStats.sessionSummaries} sessions analyzed
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.insightRight}>
+                <ArrowRight size={20} color="#059669" />
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {/* Mood Insights Section */}
+        <MoodInsightsCard onInsightPress={(insightId) => onInsightClick('mood_insight', insightId)} />
+
+        {/* Goals Summary Section */}
+        {goalStats.totalGoals > 0 && (
+          <TouchableOpacity
+            onPress={() => onInsightClick('all_goals')}
+            style={styles.insightCard}
+            activeOpacity={0.9}
+          >
+            <View style={styles.insightContent}>
+              <View style={styles.insightLeft}>
+                <LinearGradient
+                  colors={['#fef3c7', '#fbbf24']}
+                  style={styles.insightIcon}
+                >
+                  <Target size={24} color="#d97706" />
+                </LinearGradient>
+                <View style={styles.insightText}>
+                  <Text style={styles.insightTitle}>Goals Overview</Text>
+                  <Text style={styles.insightSubtitle}>
+                    {goalStats.activeGoals} active • {goalStats.averageProgress}% avg progress
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.insightRight}>
+                <ArrowRight size={20} color="#d97706" />
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {/* Memory Insights Section */}
+        {memoryInsights.length > 0 && (
+          <View style={styles.patternsCard}>
+            <View style={styles.patternsAccent} />
+            
+            <View style={styles.patternsHeader}>
+              <LinearGradient
+                colors={['#fef3c7', '#fbbf24']}
+                style={styles.patternsIcon}
+              >
+                <Brain size={24} color="#d97706" />
+              </LinearGradient>
+              <View style={styles.patternsTitleContainer}>
+                <Text style={styles.patternsTitle}>Memory Insights</Text>
+                <Text style={styles.patternsSubtitle}>Long-term patterns & themes</Text>
+              </View>
+            </View>
+
+            <View style={styles.patternsContainer}>
+              {memoryInsights.map((insight) => {
+                const isExpanded = expandedMemoryInsights.has(insight.id);
+                return (
+                  <TouchableOpacity
+                    key={insight.id}
+                    onPress={() => toggleMemoryInsightExpansion(insight.id)}
+                    style={styles.patternCard}
+                    activeOpacity={0.9}
+                  >
+                    <View style={styles.patternContent}>
+                      <View style={styles.patternContentLeft}>
+                        <Text style={styles.patternName}>
+                          {insight.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </Text>
+                        <Text style={styles.patternDescription}>
+                          Confidence: {Math.round(insight.confidence * 100)}% • {new Date(insight.date).toLocaleDateString()}
+                        </Text>
+                        
+                        {isExpanded && (
+                          <View style={styles.thoughtContainer}>
+                            <Text style={styles.summaryText}>
+                              {insight.content}
+                            </Text>
+                          </View>
+                        )}
+                        
+                        {!isExpanded && (
+                          <Text style={styles.patternDescription}>
+                            Tap to view long-term memory insight
+                          </Text>
+                        )}
+                      </View>
+                      <View style={styles.patternArrow}>
+                        <ArrowRight 
+                          size={16} 
+                          color="#d97706" 
+                          style={isExpanded ? { transform: [{ rotate: '90deg' }] } : {}}
+                        />
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* Thinking Patterns Section */}
+        <View style={styles.patternsCard}>
+          {/* Background accent */}
+          <View style={styles.patternsAccent} />
+          
+          <View style={styles.patternsHeader}>
+            <LinearGradient
+              colors={['#bae6fd', '#7dd3fc']}
+              style={styles.patternsIcon}
+            >
+              <Lightbulb size={24} color="#1e40af" />
+            </LinearGradient>
+            <View style={styles.patternsTitleContainer}>
+              <Text style={styles.patternsTitle}>Thinking Patterns</Text>
+              <Text style={styles.patternsSubtitle}>Recognize & transform your thoughts</Text>
+            </View>
+          </View>
+
+          <View style={styles.patternsContainer}>
+            {isLoading ? (
+              <View style={styles.loadingContainer}>
+                <Text style={styles.loadingText}>Loading your insights...</Text>
+              </View>
+            ) : displayPatterns.length > 0 ? (
+              // Show only the first (most recent) pattern as preview
+              (() => {
+                const previewPattern = displayPatterns[0];
+                return (
+                  <TouchableOpacity
+                    key={previewPattern.id}
+                    onPress={() => onInsightClick('pattern', previewPattern)}
+                    style={styles.patternCard}
+                    activeOpacity={0.9}
+                  >
+                    <View style={styles.patternContent}>
+                      <View style={styles.patternContentLeft}>
+                        <Text style={styles.patternName}>
+                          {previewPattern.distortionTypes[0] || 'Thought Pattern'}
+                        </Text>
+                        <Text style={styles.patternDescription}>
+                          {previewPattern.context || `Confidence: ${Math.round(previewPattern.confidence * 100)}%`}
+                        </Text>
+                        
+                        <View style={styles.thoughtContainer}>
+                          <View style={styles.originalThought}>
+                            <Text style={styles.thoughtText}>
+                              "{previewPattern.originalThought}"
+                            </Text>
+                          </View>
+                          <View style={styles.reframedThought}>
+                            <Text style={styles.reframedText}>
+                              "{previewPattern.reframedThought}"
+                            </Text>
+                          </View>
+                        </View>
+                        
+                        {previewPattern.distortionTypes.length > 1 && (
+                          <View style={styles.distortionTags}>
+                            {previewPattern.distortionTypes.slice(1, 3).map((distortion, index) => (
+                              <View key={index} style={styles.distortionTag}>
+                                <Text style={styles.distortionTagText}>
+                                  {distortion}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                      <View style={styles.patternArrow}>
+                        <ArrowRight size={16} color="#1e40af" />
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })()
+            ) : (
+              <View style={styles.emptyStateContainer}>
+                <Text style={styles.emptyStateText}>
+                  Start a conversation to discover your thought patterns! 🌱
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {displayPatterns.length > 1 && (
+            <View style={styles.viewAllContainer}>
+              <TouchableOpacity
+                onPress={() => setPatternsModalVisible(true)}
+                style={styles.viewAllButton}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.viewAllText}>
+                  Show all patterns ({displayPatterns.length})
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
+        {/* Recent Achievements */}
+        <View style={styles.achievementsCard}>
+          {/* Background accent */}
+          <View style={styles.achievementsAccent} />
+          <Text style={styles.achievementsTitle}>Recent Achievements</Text>
+          <View style={styles.achievementsList}>
+            {journeyData.achievements.map((achievement, index) => (
+              <View key={index} style={styles.achievementItem}>
+                <CheckCircle2 size={18} color="#1e40af" />
+                <Text style={styles.achievementText}>{achievement}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Thinking Patterns Modal */}
+      <ThinkingPatternsModal
+        visible={patternsModalVisible}
+        onClose={() => setPatternsModalVisible(false)}
+        patterns={displayPatterns}
+        onPatternPress={(pattern) => {
+          setPatternsModalVisible(false);
+          onInsightClick('pattern', pattern);
+        }}
+      />
+
+      {/* Goal Details Modal */}
+      <GoalDetailsModal
+        visible={goalDetailsVisible}
+        goal={selectedGoal}
+        onClose={() => {
+          setGoalDetailsVisible(false);
+          setSelectedGoal(null);
+        }}
+        onGoalUpdated={() => {
+          loadInsightData(); // Refresh data when goal is updated
+        }}
+        onStartExercise={(exerciseType) => {
+          setGoalDetailsVisible(false);
+          onInsightClick('exercise', { type: exerciseType });
+        }}
+      />
+
+      {/* Session Summaries Modal */}
+      <SessionSummariesModal
+        visible={sessionSummariesVisible}
+        onClose={() => setSessionSummariesVisible(false)}
+        initialSummaries={sessionSummaries}
+        totalCount={memoryStats.sessionSummaries}
+      />
+    </SafeAreaWrapper>
+  );
+};
+
+
+
+export default InsightsDashboard;

@@ -1,0 +1,93 @@
+{
+  "expo": {
+    "name": "WisdomWise",
+    "slug": "wisdomwise",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "primaryColor": "#3b82f6",
+    "description": "Your gentle companion for mindful wellness and mental health support",
+    "keywords": [
+      "wellness",
+      "mindfulness",
+      "mental health",
+      "meditation",
+      "therapy"
+    ],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f0f9ff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "statusBar": {
+        "style": "dark",
+        "backgroundColor": "#f0f9ff"
+      },
+      "bundleIdentifier": "com.wisdomwise.app",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions.",
+        "NSMicrophoneUsageDescription": "Allow WisdomWise to access your microphone for voice input during therapy sessions."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f0f9ff"
+      },
+      "edgeToEdgeEnabled": true,
+      "statusBar": {
+        "backgroundColor": "#f0f9ff",
+        "translucent": false
+      },
+      "package": "com.wisdomwise.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "WisdomWise - Mindful Wellness"
+    },
+    "plugins": [
+      [
+        "expo-font"
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#f0f9ff",
+          "image": "./assets/splash-icon.png",
+          "dark": {
+            "backgroundColor": "#f0f9ff"
+          }
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow WisdomWise to access your microphone for voice input during therapy sessions.",
+          "speechRecognitionPermission": "Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions."
+        }
+      ],
+      [
+        "@react-native-voice/voice",
+        {
+          "microphonePermission": "Allow WisdomWise to access your microphone for voice input during therapy sessions.",
+          "speechRecognitionPermission": "Allow WisdomWise to securely recognize user speech during therapy sessions."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bee70e2e-8050-4ef6-ac3b-1d699f00bb47"
+      }
+    }
+  }
+}
