@@ -16,6 +16,8 @@ import {
   ChatInput, 
   ExerciseCard 
 } from '../components/chat';
+import { MoodRatingCard } from '../components/chat/MoodRatingCard';
+import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -49,6 +51,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Basic state
   const [inputText, setInputText] = useState('');
+  const textBeforeVoiceRef = useRef(''); // Store text that was typed before voice recording
   
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
@@ -63,15 +66,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     scrollViewRef
   );
   const voiceRecording = useVoiceRecording((transcript: string) => {
-    setInputText(prev => prev + transcript);
+    // For final results, append transcript to text that existed before recording
+    // This prevents accumulation of partial results while preserving typed text
+    const finalText = textBeforeVoiceRef.current + (textBeforeVoiceRef.current ? ' ' : '') + transcript;
+    setInputText(finalText);
   });
 
   const {
     exerciseMode,
     exerciseStep, 
     exerciseData,
+    showMoodRating,
+    showPreExerciseMoodSlider,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
+    handleMoodRatingComplete,
+    handleMoodRatingSkip,
+    handlePreExerciseMoodComplete,
     enterExerciseMode,
     exitExerciseMode,
   } = useExerciseFlow();
@@ -296,6 +307,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             </View>
           </Animated.View>
 
+
           {/* Messages Area */}
           <ScrollView 
             ref={scrollViewRef}
@@ -306,40 +318,72 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             keyboardShouldPersistTaps="always"
             keyboardDismissMode="on-drag"
           >
-              {chatSession.messages.map(renderMessage)}
-              
-              {chatSession.showExerciseCard && (
-                <ExerciseCard
-                  exercise={chatSession.showExerciseCard}
-                  onStart={handleExerciseCardStart}
-                  onDismiss={() => chatSession.setShowExerciseCard(null)}
-                />
-              )}
 
-              {chatSession.isTyping && (
-                <View style={styles.typingContainer}>
-                  <View style={styles.typingBubble}>
-                    <View style={styles.typingContent}>
-                      <View style={styles.typingAvatar}>
-                        <Image 
-                          source={require('../../assets/images/turtle-simple-3a.png')}
-                          style={styles.typingTurtleAvatar}
-                          contentFit="cover"
-                        />
-                      </View>
-                      <View style={styles.typingTextContainer}>
-                        <View style={styles.typingDots}>
-                          <View style={styles.typingDot} />
-                          <View style={styles.typingDot} />
-                          <View style={styles.typingDot} />
-                        </View>
-                        <Text style={styles.typingText}>Anu is reflecting...</Text>
+            
+            {chatSession.messages.map(renderMessage)}
+            
+            {chatSession.showExerciseCard && (
+              <ExerciseCard
+                exercise={chatSession.showExerciseCard}
+                onStart={handleExerciseCardStart}
+                onDismiss={() => chatSession.setShowExerciseCard(null)}
+              />
+            )}
+
+            {chatSession.isTyping && (
+              <View style={styles.typingContainer}>
+                <View style={styles.typingBubble}>
+                  <View style={styles.typingContent}>
+                    <View style={styles.typingAvatar}>
+                      <Image 
+                        source={require('../../assets/images/turtle-simple-3a.png')}
+                        style={styles.typingTurtleAvatar}
+                        contentFit="contain"
+                      />
+                    </View>
+                    <View style={styles.typingTextContainer}>
+                      <View style={styles.typingDots}>
+                        <View style={styles.typingDot} />
+                        <View style={styles.typingDot} />
+                        <View style={styles.typingDot} />
+
                       </View>
                     </View>
                   </View>
                 </View>
-              )}
-            </ScrollView>
+
+              </View>
+            )}
+
+            {showPreExerciseMoodSlider && exerciseData.currentExercise && (
+              <PreExerciseMoodCard
+                exerciseName={exerciseData.currentExercise.name}
+                onComplete={(rating) => handlePreExerciseMoodComplete(
+                  rating,
+                  chatSession.setMessages,
+                  chatSession.setIsTyping,
+                  chatSession.setSuggestions
+                )}
+                onSkip={() => handlePreExerciseMoodComplete(
+                  2.5,
+                  chatSession.setMessages,
+                  chatSession.setIsTyping,
+                  chatSession.setSuggestions
+                )}
+              />
+            )}
+
+            {showMoodRating && exerciseData.currentExercise && (
+              <MoodRatingCard
+                exerciseType={exerciseData.currentExercise.type}
+                exerciseName={exerciseData.currentExercise.name}
+                sessionId={Date.now().toString()}
+                onComplete={handleMoodRatingComplete}
+                onSkip={handleMoodRatingSkip}
+              />
+            )}
+          </ScrollView>
+
 
           {/* Suggestion Chips */}
           <SuggestionChips
@@ -372,15 +416,23 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onSend={handleSend}
             isRecording={voiceRecording.isRecording}
             audioLevels={voiceRecording.audioLevels}
-            onMicToggle={async () => {
+            partialTranscript={voiceRecording.partialTranscript}
+            onMicPressIn={async () => {
+              // Store current text before starting voice recording
+              textBeforeVoiceRef.current = inputText.trim();
+              await voiceRecording.startRecording();
+            }}
+            onMicPressOut={async () => {
               if (voiceRecording.isRecording) {
                 await voiceRecording.stopRecording();
-              } else {
-                await voiceRecording.startRecording();
               }
             }}
             onStopRecording={voiceRecording.stopRecording}
-            onCancelRecording={voiceRecording.cancelRecording}
+            onCancelRecording={async () => {
+              await voiceRecording.cancelRecording();
+              // Restore text that was there before recording started
+              setInputText(textBeforeVoiceRef.current);
+            }}
           />
         </KeyboardAvoidingView>
       </ImageBackground>

@@ -214,8 +214,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexShrink: 0,
   },
   turtleAvatar: {
-    width: 120,
-    height: 120,
+    width: '100%',
+    height: '100%',
     borderRadius: 0,
     borderWidth: 0,
     borderColor: 'transparent',
@@ -341,8 +341,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexShrink: 0,
   },
   turtleAvatarSmall: {
-    width: 50,
-    height: 50,
+    width: '100%',
+    height: '100%',
     borderRadius: 0,
     borderWidth: 0,
     borderColor: 'transparent',
@@ -425,8 +425,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     ...shadows.md,
   },
   typingTurtleAvatar: {
-    width: 36,
-    height: 36,
+    width: '100%',
+    height: '100%',
     borderRadius: 0,
   },
   typingTextContainer: {
@@ -474,13 +474,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   suggestionChip: {
-    backgroundColor: '#FFFFFF', // Clean pure white
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // More transparent white
     paddingHorizontal: spacing[6], // Generous horizontal padding
     paddingVertical: spacing[5], // Generous vertical padding
     minHeight: 44, // Minimum touch target for accessibility
     borderRadius: 20, // Slightly less rounded for cleaner look
-    borderWidth: 1,
-    borderColor: 'rgba(107, 114, 128, 0.2)', // More contrasting gray border
+    borderWidth: 0, // Remove border
     flexShrink: 1,
     alignSelf: 'flex-start',
     // No shadow - completely flat design
@@ -495,8 +494,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     lineHeight: 22, // More line height for better spacing
   },
   exerciseSuggestionButton: {
-    backgroundColor: 'rgba(59, 180, 245, 0.06)', // Even lighter accent background
-    borderColor: 'rgba(59, 180, 245, 0.12)', // Very subtle accent border
+    backgroundColor: 'rgba(59, 180, 245, 0.04)', // More transparent accent background
+    borderWidth: 0, // Remove border
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 48, // Slightly larger for special exercise button
@@ -515,8 +514,10 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 20, // Extra padding for keyboard suggestion bar
-    zIndex: 10,
+
+    paddingBottom: spacing.components.cardGap + 10, // Extra padding for keyboard
+    zIndex: 100, // Ensure input is above everything else
+
   },
   inputCard: {
     backgroundColor: '#FFFFFF', // Pure white
@@ -525,11 +526,10 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2, // Subtle shadow for better separation
+    zIndex: 101, // Ensure card is above welcome text
+    elevation: 5, // Android elevation
+    // No shadow - clean flat design
+
   },
   inputRow: {
     flexDirection: 'row',
@@ -559,7 +559,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     height: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
+    zIndex: 103, // Higher z-index for buttons
     marginRight: spacing[2],
   },
   iconButton: {
@@ -586,6 +586,16 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: spacing[2],
     paddingVertical: spacing[2],
     minHeight: 40,
+  },
+  partialTranscriptText: {
+    marginTop: spacing[2],
+    fontSize: 14,
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    maxWidth: '100%',
+    fontFamily: 'System',
+    fontWeight: '400',
   },
   recordingActions: {
     flexDirection: 'row',
@@ -627,8 +637,10 @@ export const chatInterfaceStyles = StyleSheet.create({
     lineHeight: 24, // Better line height
     letterSpacing: 0.2,
     textAlignVertical: 'top',
-    paddingTop: 12,
-    paddingBottom: 12,
+
+    paddingTop: 14,
+    zIndex: 102, // Highest z-index for text input
+
   },
   partialTranscriptOverlay: {
     position: 'absolute',
@@ -812,7 +824,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 2,
     elevation: 2,
-    zIndex: 2,
+    zIndex: 103, // Higher z-index for buttons
   },
   sendButtonActive: {
     backgroundColor: '#2563eb',

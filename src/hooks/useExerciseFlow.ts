@@ -11,6 +11,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
   const [exerciseStep, setExerciseStep] = useState(0);
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
   const [stepMessageCount, setStepMessageCount] = useState<Record<number, number>>({});
+  const [showPreExerciseMoodSlider, setShowPreExerciseMoodSlider] = useState(false);
+  const [showMoodRating, setShowMoodRating] = useState(false);
 
   const startDynamicAIGuidedExercise = useCallback(async (
     currentExercise: any,
@@ -28,45 +30,11 @@ export const useExerciseFlow = (initialExercise?: any) => {
         return false;
       }
 
-      setExerciseMode(true);
-      setExerciseStep(0);
-      setStepMessageCount({ 0: 1 });
       setExerciseData({ dynamicFlow: flow, currentExercise });
-
-      const currentStep = flow.steps[0];
-      const exerciseContext = await contextService.assembleExerciseContext([], flow, 1, [], true);
-
-      exerciseContext.push({
-        role: 'user',
-        content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.`
-      });
-
-      setIsTyping(true);
-      const response = await apiService.getChatCompletionWithContext(exerciseContext);
-      setIsTyping(false);
-
-      if (response.success && response.message) {
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          type: 'exercise',
-          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
-          content: response.message,
-          exerciseType: currentExercise.type,
-          color: flow.color,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isAIGuided: true
-        };
-
-        // ✅ Append instead of replacing
-        setMessages(prev => [...prev, aiMessage]);
-        await storageService.addMessage(aiMessage);
-
-        setSuggestions(response.suggestions ?? []);
-        return true;
-      } else {
-        setExerciseMode(false);
-        return false;
-      }
+      
+      // Show pre-exercise mood slider first
+      setShowPreExerciseMoodSlider(true);
+      return true;
     } catch (error) {
       console.error('Error starting dynamic AI-guided exercise:', error);
       setExerciseMode(false);
@@ -132,6 +100,9 @@ export const useExerciseFlow = (initialExercise?: any) => {
           };
           setMessages(prev => [...prev, completion]);
           await storageService.addMessage(completion);
+          
+          // Show mood rating after exercise completion
+          setShowMoodRating(true);
           setExerciseMode(false);
           setSuggestions([]);
           
@@ -171,12 +142,75 @@ export const useExerciseFlow = (initialExercise?: any) => {
     }
   }, [exerciseStep, stepMessageCount]);
 
+  const handleMoodRatingComplete = useCallback((rating: any) => {
+    console.log('Mood rating completed:', rating);
+    setShowMoodRating(false);
+  }, []);
+
+  const handleMoodRatingSkip = useCallback(() => {
+    console.log('Mood rating skipped');
+    setShowMoodRating(false);
+  }, []);
+
+  const handlePreExerciseMoodComplete = useCallback(async (
+    rating: number,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void
+  ) => {
+    console.log('Pre-exercise mood rating:', rating);
+    setShowPreExerciseMoodSlider(false);
+    
+    // Now start the actual exercise
+    const { dynamicFlow: flow, currentExercise } = exerciseData;
+    
+    setExerciseMode(true);
+    setExerciseStep(0);
+    setStepMessageCount({ 0: 1 });
+
+    const currentStep = flow.steps[0];
+    const exerciseContext = await contextService.assembleExerciseContext([], flow, 1, [], true);
+
+    exerciseContext.push({
+      role: 'user',
+      content: `I'm ready to start the ${currentExercise.name} exercise. Please guide me through step 1.`
+    });
+
+    setIsTyping(true);
+    const response = await apiService.getChatCompletionWithContext(exerciseContext);
+    setIsTyping(false);
+
+    if (response.success && response.message) {
+      const aiMessage: Message = {
+        id: Date.now().toString(),
+        type: 'exercise',
+        title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+        content: response.message,
+        exerciseType: currentExercise.type,
+        color: flow.color,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isAIGuided: true
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+      await storageService.addMessage(aiMessage);
+      setSuggestions(response.suggestions ?? []);
+    } else {
+      setExerciseMode(false);
+    }
+  }, [exerciseData]);
+
   return {
     exerciseMode,
     exerciseStep,
     exerciseData,
+    showMoodRating,
+    showPreExerciseMoodSlider,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
+    handleMoodRatingComplete,
+    handleMoodRatingSkip,
+    handlePreExerciseMoodComplete,
     enterExerciseMode: () => setExerciseMode(true),
     exitExerciseMode: () => setExerciseMode(false),
   };

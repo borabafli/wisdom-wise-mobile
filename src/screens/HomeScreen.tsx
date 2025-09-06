@@ -1,41 +1,35 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic } from 'lucide-react-native';
+import { WaveHeader } from '../components/WaveHeader';
+import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { homeScreenStyles as styles } from '../styles/components/HomeScreen.styles';
 import { colors, gradients } from '../styles/tokens';
-import { HomeScreenProps } from '../types';
+import { HomeScreenProps } from '../types/app';
 import { useQuote } from '../hooks/useQuote';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
+  const { width, height } = Dimensions.get('window');
+
+  // Static welcome message
+  const welcomeMessage = {
+    title: "Begin your journey",
+    subtitle: "How are you feeling today?"
+  };
+
+
   return (
     <SafeAreaWrapper style={styles.container}>
-      <ImageBackground
-        source={require('../../assets/images/background2.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      >
-        <LinearGradient
-          colors={['rgba(187, 242, 255, 0.85)', 'rgba(255, 255, 255, 0.85)']} // Gradient from #BBF2FF to white
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.backgroundOverlay}
-        />
-        
-        {/* Background watercolor effects - keeping for subtle overlay */}
-        <LinearGradient
-          colors={[...gradients.background.calm]}
-          style={[styles.backgroundGradient, { opacity: 0.1 }]}
-        />
-        
-        {/* Background watercolor blobs - reduced opacity */}
-        <View style={[styles.watercolorBlob, styles.blob1, { opacity: 0.1 }]} />
-        <View style={[styles.watercolorBlob, styles.blob2, { opacity: 0.1 }]} />
-        <View style={[styles.watercolorBlob, styles.blob3, { opacity: 0.1 }]} />
-        <View style={[styles.watercolorBlob, styles.blob4, { opacity: 0.1 }]} />
+      <WaveHeader height={450} colors={['#4A98BC', '#5BA7C9', '#6BB6D6']} />
+      <LinearGradient
+        colors={['rgba(255, 255, 255, 0)', '#FFFFFF', '#F8FAFC']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.backgroundGradient}
+      />
 
       <ScrollView 
         style={styles.scrollView}
@@ -43,43 +37,35 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         contentContainerStyle={styles.scrollContent}
       >
 
-        {/* Main CTA - Start Guided Session with Turtle at Input Bar Edge */}
-        <View style={styles.ctaSection}>
+        {/* Header Text and Chat Input */}
+        <View style={styles.headerSection}>
+          <View style={styles.headerText}>
+            <Text style={styles.ctaTitle}>{welcomeMessage.title}</Text>
+            <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>
+          </View>
+          
+          {/* Container for turtle and input bar */}
           <TouchableOpacity
             onPress={() => onStartSession()}
-            style={styles.ctaButton}
+            style={styles.inputWithTurtleWrapper}
             activeOpacity={0.9}
           >
-            <LinearGradient
-              colors={[...gradients.card.glass]}
-              style={styles.ctaGradient}
-            >
-              <View style={styles.ctaContent}>
-                <Text style={styles.ctaTitle}>Begin your journey</Text>
-                <Text style={styles.ctaSubtitle}>How are you feeling today?</Text>
-                
-                {/* Container for turtle and input bar */}
-                <View style={styles.inputWithTurtleWrapper}>
-                  {/* Turtle positioned at top edge of input bar */}
-                  <View style={styles.turtleAtBarContainer}>
-                    <Image 
-                      source={require('../../assets/images/turtle-simple-3d.png')}
-                      style={styles.turtleAtBarImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                  
-                  {/* Input area (slightly longer) */}
-                  <View style={styles.inputContainer}>
-                    <MessageCircle size={22} color={colors.text.primary} />
-                    <Text style={styles.inputText}>Type or talk to start...</Text>
-                    <View style={styles.micButton}>
-                      <Mic size={22} color={colors.text.primary} />
-                    </View>
-                  </View>
-                </View>
+            {/* Minimalist turtle positioned at top edge of input bar */}
+            <View style={styles.turtleAtBarContainer}>
+              <Image 
+                source={require('../../assets/images/turtle-simple-3d.png')}
+                style={styles.turtleAtBarImage}
+                contentFit="contain"
+              />
+            </View>
+            
+            {/* Input area */}
+            <View style={styles.inputContainer}>
+              <View style={styles.micButton}>
+                <Mic size={32} color="#374151" strokeWidth={1.5} />
               </View>
-            </LinearGradient>
+              <Text style={styles.inputText}>Share a thought...</Text>
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -99,35 +85,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           <View style={styles.exercisesList}>
             {/* Morning Mindfulness */}
             <TouchableOpacity
-              onPress={() => onStartSession({ type: 'morning-mindfulness', name: 'Morning Mindfulness', duration: '8 min', description: 'Start your day with gentle awareness and presence' })}
+              onPress={() => onStartSession({ type: 'mindfulness', name: 'Morning Mindfulness', duration: '8 min', description: 'Start your day with gentle awareness and presence' })}
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={[...gradients.card.primary]}
+                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
-                  <LinearGradient
-                    colors={[...gradients.icon.blue]}
-                    style={styles.exerciseIcon}
-                  >
-                    <Heart size={20} color={colors.blue[700]} />
-                  </LinearGradient>
+                  <View style={styles.exerciseIcon}>
+                    <Image 
+                      source={require('../../assets/images/new-icon1.png')}
+                      style={styles.exerciseIconImage}
+                      contentFit="contain"
+                    />
+                  </View>
                   <View style={styles.exerciseInfo}>
                     <Text style={styles.exerciseName}>Morning Mindfulness</Text>
-                    <View style={styles.exerciseMeta}>
-                      <Clock size={12} color="#6b7280" />
-                      <Text style={styles.exerciseTime}>8 min mindfulness</Text>
-                    </View>
-                  </View>
-                  <View style={styles.exerciseAction}>
-                    <LinearGradient
-                      colors={[...gradients.button.subtle]}
-                      style={styles.actionIcon}
-                    >
-                      <Zap size={14} color={colors.blue[700]} />
-                    </LinearGradient>
+                    <Text style={styles.exerciseDescription}>Start your day with gentle awareness</Text>
+                    <Text style={styles.exerciseTime}>8 min session</Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -135,27 +112,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
             {/* Stress Relief */}
             <TouchableOpacity
-              onPress={() => onStartSession({ type: 'stress-relief', name: 'Stress Relief', duration: '3 min', description: 'progressive relaxation' })}
+              onPress={() => onStartSession({ type: 'stress-relief', name: 'Stress Relief', duration: '3 min', description: 'Progressive relaxation for immediate relief' })}
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={[...gradients.card.primary]}
+                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
-                  <LinearGradient
-                    colors={[...gradients.icon.blue]}
-                    style={styles.exerciseIcon}
-                  >
-                    <Brain size={20} color={colors.blue[600]} />
-                  </LinearGradient>
+                  <View style={styles.exerciseIcon}>
+                    <Image 
+                      source={require('../../assets/images/new-icon2.png')}
+                      style={styles.exerciseIconImage}
+                      contentFit="contain"
+                    />
+                  </View>
                   <View style={styles.exerciseInfo}>
                     <Text style={styles.exerciseName}>Stress Relief</Text>
-                    <View style={styles.exerciseMeta}>
-                      <Clock size={12} color="#6b7280" />
-                      <Text style={styles.exerciseTime}>3 min progressive relaxation</Text>
-                    </View>
+                    <Text style={styles.exerciseDescription}>Release tension and find calm</Text>
+                    <Text style={styles.exerciseTime}>3 min relaxation</Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -163,52 +139,54 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
             {/* Gratitude Practice */}
             <TouchableOpacity
-              onPress={() => onStartSession({ type: 'gratitude', name: 'Gratitude Practice', duration: '2 min', description: 'reflection' })}
+              onPress={() => onStartSession({ type: 'gratitude', name: 'Gratitude Practice', duration: '2 min', description: 'Cultivate appreciation and positive mindset' })}
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={[...gradients.card.primary]}
+                colors={['rgba(161, 214, 242, 0.5)', 'rgba(184, 224, 245, 0.4)']}
                 style={styles.exerciseCardGradient}
               >
                 <View style={styles.exerciseCardContent}>
-                  <LinearGradient
-                    colors={[...gradients.icon.blue]}
-                    style={styles.exerciseIcon}
-                  >
-                    <BookOpen size={20} color={colors.blue[700]} />
-                  </LinearGradient>
+                  <View style={styles.exerciseIcon}>
+                    <Image 
+                      source={require('../../assets/images/new-icon3.png')}
+                      style={styles.exerciseIconImage}
+                      contentFit="contain"
+                    />
+                  </View>
                   <View style={styles.exerciseInfo}>
                     <Text style={styles.exerciseName}>Gratitude Practice</Text>
-                    <View style={styles.exerciseMeta}>
-                      <Clock size={12} color="#6b7280" />
-                      <Text style={styles.exerciseTime}>2 min reflection</Text>
-                    </View>
+                    <Text style={styles.exerciseDescription}>Cultivate appreciation and positivity</Text>
+                    <Text style={styles.exerciseTime}>2 min reflection</Text>
                   </View>
                 </View>
               </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* Quick Actions */}
+        
+        {/* Quick Actions - Modern Style */}
         <View style={styles.quickActions}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Quick Actions</Text>
+          </View>
+          
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
               onPress={onNavigateToExercises}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
-              <Image 
-                source={require('../../assets/images/13.png')}
-                style={styles.quickActionBackgroundImage}
-                contentFit="cover"
-              />
               <LinearGradient
-                colors={[...gradients.button.primary]}
+                colors={['rgba(184, 224, 245, 0.6)', 'rgba(227, 244, 253, 0.5)']}
                 style={styles.quickActionGradient}
               >
-                <BookOpen size={24} color="#1f2937" />
+                <Image 
+                  source={require('../../assets/images/new-icon6.png')}
+                  style={styles.quickActionIconImage}
+                  contentFit="contain"
+                />
                 <Text style={styles.quickActionText}>Browse Exercises</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -218,50 +196,50 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
-              <Image 
-                source={require('../../assets/images/15.png')}
-                style={styles.quickActionBackgroundImage}
-                contentFit="cover"
-              />
               <LinearGradient
-                colors={[...gradients.button.primary]}
+                colors={['rgba(227, 244, 253, 0.6)', 'rgba(186, 230, 253, 0.5)']}
                 style={styles.quickActionGradient}
               >
-                <Brain size={24} color="#1f2937" />
+                <Image 
+                  source={require('../../assets/images/new-icon7.png')}
+                  style={styles.quickActionIconImage}
+                  contentFit="contain"
+                />
                 <Text style={styles.quickActionText}>View Insights</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Motivational Quote */}
+        {/* Motivational Quote - Modern Style */}
         <View style={styles.quoteSection}>
-          <View style={styles.quoteCard}>
-            <Image 
-              source={require('../../assets/images/4.jpeg')}
+          <LinearGradient
+            colors={['rgba(161, 214, 242, 0.7)', 'rgba(186, 230, 253, 0.6)']}
+            style={styles.quoteCard}
+          >
+            <ImageBackground
+              source={require('../../assets/images/6.jpg')}
               style={styles.quoteBackgroundImage}
-              contentFit="cover"
-            />
-            <LinearGradient
-              colors={[...gradients.hero.primary]}
-              style={styles.quoteGradient}
+              imageStyle={styles.quoteBackgroundImageStyle}
+              resizeMode="cover"
             >
-              <View style={styles.quoteIcon}>
-                <Text style={styles.quoteSymbol}>"</Text>
-              </View>
-              <Text style={styles.quoteText}>
-                {currentQuote?.text || 'Progress is progress, no matter how small'}
-              </Text>
-              <Text style={styles.quoteAuthor}>— {currentQuote?.author || 'Daily Mindfulness'}</Text>
-            </LinearGradient>
-          </View>
+            <View style={styles.quoteIcon}>
+              <Image 
+                source={require('../../assets/images/new-icon5.png')}
+                style={styles.quoteIconImage}
+                contentFit="contain"
+              />
+            </View>
+            <Text style={styles.quoteText}>
+              {currentQuote?.text || 'Progress is progress, no matter how small'}
+            </Text>
+            <Text style={styles.quoteAuthor}>— {currentQuote?.author || 'Daily Mindfulness'}</Text>
+            </ImageBackground>
+          </LinearGradient>
         </View>
       </ScrollView>
-      
-      </ImageBackground>
     </SafeAreaWrapper>
   );
 };
-
 
 export default HomeScreen;

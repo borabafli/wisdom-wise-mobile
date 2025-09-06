@@ -5,6 +5,7 @@ import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart }
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
+import ThinkingPatternsModal from '../components/ThinkingPatternsModal';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -29,6 +30,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     consolidatedSummaries: 0
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [patternsModalVisible, setPatternsModalVisible] = useState(false);
 
   useEffect(() => {
     loadInsightData();
@@ -386,53 +388,57 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                 <Text style={styles.loadingText}>Loading your insights...</Text>
               </View>
             ) : displayPatterns.length > 0 ? (
-              displayPatterns.map((pattern) => (
-                <TouchableOpacity
-                  key={pattern.id}
-                  onPress={() => onInsightClick('pattern', pattern)}
-                  style={styles.patternCard}
-                  activeOpacity={0.9}
-                >
-                  <View style={styles.patternContent}>
-                    <View style={styles.patternContentLeft}>
-                      <Text style={styles.patternName}>
-                        {pattern.distortionTypes[0] || 'Thought Pattern'}
-                      </Text>
-                      <Text style={styles.patternDescription}>
-                        {pattern.context || `Confidence: ${Math.round(pattern.confidence * 100)}%`}
-                      </Text>
-                      
-                      <View style={styles.thoughtContainer}>
-                        <View style={styles.originalThought}>
-                          <Text style={styles.thoughtText}>
-                            "{pattern.originalThought}"
-                          </Text>
+              // Show only the first (most recent) pattern as preview
+              (() => {
+                const previewPattern = displayPatterns[0];
+                return (
+                  <TouchableOpacity
+                    key={previewPattern.id}
+                    onPress={() => onInsightClick('pattern', previewPattern)}
+                    style={styles.patternCard}
+                    activeOpacity={0.9}
+                  >
+                    <View style={styles.patternContent}>
+                      <View style={styles.patternContentLeft}>
+                        <Text style={styles.patternName}>
+                          {previewPattern.distortionTypes[0] || 'Thought Pattern'}
+                        </Text>
+                        <Text style={styles.patternDescription}>
+                          {previewPattern.context || `Confidence: ${Math.round(previewPattern.confidence * 100)}%`}
+                        </Text>
+                        
+                        <View style={styles.thoughtContainer}>
+                          <View style={styles.originalThought}>
+                            <Text style={styles.thoughtText}>
+                              "{previewPattern.originalThought}"
+                            </Text>
+                          </View>
+                          <View style={styles.reframedThought}>
+                            <Text style={styles.reframedText}>
+                              "{previewPattern.reframedThought}"
+                            </Text>
+                          </View>
                         </View>
-                        <View style={styles.reframedThought}>
-                          <Text style={styles.reframedText}>
-                            "{pattern.reframedThought}"
-                          </Text>
-                        </View>
+                        
+                        {previewPattern.distortionTypes.length > 1 && (
+                          <View style={styles.distortionTags}>
+                            {previewPattern.distortionTypes.slice(1, 3).map((distortion, index) => (
+                              <View key={index} style={styles.distortionTag}>
+                                <Text style={styles.distortionTagText}>
+                                  {distortion}
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
                       </View>
-                      
-                      {pattern.distortionTypes.length > 1 && (
-                        <View style={styles.distortionTags}>
-                          {pattern.distortionTypes.slice(1, 3).map((distortion, index) => (
-                            <View key={index} style={styles.distortionTag}>
-                              <Text style={styles.distortionTagText}>
-                                {distortion}
-                              </Text>
-                            </View>
-                          ))}
-                        </View>
-                      )}
+                      <View style={styles.patternArrow}>
+                        <ArrowRight size={16} color="#1e40af" />
+                      </View>
                     </View>
-                    <View style={styles.patternArrow}>
-                      <ArrowRight size={16} color="#1e40af" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))
+                  </TouchableOpacity>
+                );
+              })()
             ) : (
               <View style={styles.emptyStateContainer}>
                 <Text style={styles.emptyStateText}>
@@ -442,17 +448,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             )}
           </View>
 
-          <View style={styles.viewAllContainer}>
-            <TouchableOpacity
-              onPress={() => onInsightClick('patterns')}
-              style={styles.viewAllButton}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.viewAllText}>
-                View all patterns
-              </Text>
-            </TouchableOpacity>
-          </View>
+          {displayPatterns.length > 1 && (
+            <View style={styles.viewAllContainer}>
+              <TouchableOpacity
+                onPress={() => setPatternsModalVisible(true)}
+                style={styles.viewAllButton}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.viewAllText}>
+                  Show all patterns ({displayPatterns.length})
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Recent Achievements */}
@@ -470,6 +478,17 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           </View>
         </View>
       </ScrollView>
+
+      {/* Thinking Patterns Modal */}
+      <ThinkingPatternsModal
+        visible={patternsModalVisible}
+        onClose={() => setPatternsModalVisible(false)}
+        patterns={displayPatterns}
+        onPatternPress={(pattern) => {
+          setPatternsModalVisible(false);
+          onInsightClick('pattern', pattern);
+        }}
+      />
     </SafeAreaWrapper>
   );
 };

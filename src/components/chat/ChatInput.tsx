@@ -11,7 +11,9 @@ interface ChatInputProps {
   onSend: (text?: string) => void;
   isRecording: boolean;
   audioLevels: number[];
-  onMicToggle: () => void;
+  partialTranscript?: string;
+  onMicPressIn: () => void;
+  onMicPressOut: () => void;
   onStopRecording: () => void;
   onCancelRecording: () => void;
 }
@@ -22,7 +24,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
   isRecording,
   audioLevels,
-  onMicToggle,
+  partialTranscript,
+  onMicPressIn,
+  onMicPressOut,
   onStopRecording,
   onCancelRecording,
 }) => {
@@ -96,7 +100,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity 
-                    onPress={onMicToggle}
+                    onPressIn={onMicPressIn}
+                    onPressOut={onMicPressOut}
                     style={styles.micButton}
                     activeOpacity={0.7}
                   >

@@ -1,11 +1,6 @@
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
-// TEMPORARILY DISABLED: expo-speech-recognition package causing expo start issues
-// import {
-//   ExpoSpeechRecognitionModule,
-//   useSpeechRecognitionEvent
-// } from 'expo-speech-recognition';
-
+import { nativeVoiceService } from './nativeVoiceService';
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
 
@@ -60,9 +55,7 @@ class STTService {
   private defaultSettings: STTSettings = {
     isEnabled: true,
     language: 'en-US',
-
-    continuous: true, // Continuous recording - don't stop automatically
-
+    continuous: false, // Simple start/stop recording - no auto restart
     interimResults: true, // Show partial results
     maxAlternatives: 1
   };
@@ -113,7 +106,7 @@ class STTService {
           
           // For other errors, stop recording and notify user
           this.isRecording = false;
-          this.shouldKeepRecording = false; // Stop restart loop on errors
+          this.shouldKeepRecording = false;
 
           
           let errorMessage = 'Speech recognition failed';
@@ -141,38 +134,14 @@ class STTService {
         };
 
         this.recognition.onend = () => {
-
           console.log('Speech recognition ended');
           
-          // Only restart if we should keep recording and haven't been cancelled
-          if (this.shouldKeepRecording && !this.isCancelled && this.restartCount < this.maxRestarts) {
-            console.log(`Restarting speech recognition for continuous recording (${this.restartCount + 1}/${this.maxRestarts})`);
-            this.restartCount++;
-            
-            this.restartTimeout = setTimeout(() => {
-              if (this.shouldKeepRecording && !this.isCancelled && this.recognition) {
-                try {
-                  this.recognition.start();
-                  console.log('Speech recognition restarted successfully');
-                } catch (error) {
-                  console.error('Error restarting recognition:', error);
-                  this.shouldKeepRecording = false;
-                  this.isRecording = false;
-                  if (this.onEndCallback) {
-                    this.onEndCallback();
-                  }
-                }
-              }
-            }, 100); // Quick restart for seamless experience
-          } else {
-            // User stopped or max restarts reached
-            console.log('Stopping speech recognition - user requested or max restarts reached');
-            this.isRecording = false;
-            this.shouldKeepRecording = false;
-            if (this.onEndCallback) {
-              this.onEndCallback();
-            }
-
+          // Simple approach - just stop when recognition ends
+          this.isRecording = false;
+          this.shouldKeepRecording = false;
+          
+          if (this.onEndCallback) {
+            this.onEndCallback();
           }
         };
 
@@ -200,7 +169,7 @@ class STTService {
     if (Platform.OS === 'web') {
       return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
     } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      // React Native Voice handles native speech recognition
+      // Native Voice service handles native speech recognition
       return true;
     }
     return false;
@@ -220,9 +189,9 @@ class STTService {
       return false;
     }
 
-    if (this.isRecording) {
-      await this.stopRecognition();
-    }
+    // Always ensure we stop any existing recognition first
+    console.log('🧹 Cleaning up any existing recognition before starting new one...');
+    await this.stopRecognition();
 
     this.onResultCallback = onResult;
     this.onErrorCallback = onError;
@@ -230,11 +199,22 @@ class STTService {
 
     this.audioLevelCallback = onAudioLevel;
     this.isCancelled = false; // Reset cancellation flag
-    this.shouldKeepRecording = true; // Enable continuous recording
+    this.shouldKeepRecording = false; // Simple recording - no auto restart
     this.restartCount = 0; // Reset restart counter
 
     try {
       if (Platform.OS === 'web') {
+        // Ensure web speech recognition is properly stopped first
+        if (this.recognition) {
+          try {
+            this.recognition.stop();
+            // Wait a bit for it to fully stop
+            await new Promise(resolve => setTimeout(resolve, 100));
+          } catch (error) {
+            console.log('Previous recognition already stopped');
+          }
+        }
+
         // For web, we'll use OpenRouter Whisper API too for consistency
         // But we'll also keep real-time audio visualization using Web Audio API
         try {
@@ -263,8 +243,8 @@ class STTService {
         }
 
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Use React Native Voice for native speech recognition
-        return await this.startNativeSpeechRecognition(onResult, onError, onEnd);
+        // Use Native Voice Service for real-time speech recognition
+        return await nativeVoiceService.startRecognition(onResult, onError, onEnd, onAudioLevel);
       } else {
         // Fallback simulation
 
@@ -312,7 +292,6 @@ class STTService {
 
   // Monitor audio levels and call callback with frequency spectrum data
   private monitorAudioLevel(): void {
-    console.log('monitorAudioLevel called - analyser:', !!this.analyser, 'callback:', !!this.audioLevelCallback, 'recording:', this.isRecording);
     if (!this.analyser || !this.audioLevelCallback || !this.isRecording) {
       return;
     }
@@ -322,7 +301,10 @@ class STTService {
     let debugCounter = 0;
     
     const updateLevel = () => {
-      if (!this.isRecording || !this.analyser || !this.audioLevelCallback) return;
+      if (!this.isRecording || !this.analyser || !this.audioLevelCallback) {
+        console.log('Stopping audio level monitoring - recording ended');
+        return;
+      }
       
       this.analyser.getByteFrequencyData(dataArray);
       
@@ -363,14 +345,17 @@ class STTService {
           console.log('Band', i, 'average:', average, 'out of 255');
         }
         
-        // Improved sensitivity calculation with better scaling
+        // More responsive and realistic audio level calculation
         const baseLevel = average / 255; // 0 to 1
-        const sensitivity = 8.0; // Increased sensitivity
-        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.8); // Power curve for better response
-        const normalizedLevel = Math.min(1.2, amplifiedLevel);
         
-        // Don't force a minimum - let quiet parts be quiet
-        frequencyData.push(Math.max(0.1, normalizedLevel));
+        // Use a more reasonable sensitivity that responds to actual voice
+        const sensitivity = 2.5; // Moderate sensitivity
+        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.6); // Gentler curve
+        const normalizedLevel = Math.min(1.0, amplifiedLevel);
+        
+        // Use a very low baseline that shows true silence
+        const minLevel = 0.05; // Very low baseline for true silence
+        frequencyData.push(Math.max(minLevel, normalizedLevel));
       }
       
       const overallAverage = frequencyData.reduce((sum, level) => sum + level, 0) / frequencyData.length;
@@ -382,7 +367,6 @@ class STTService {
       }
       
       // Pass frequency spectrum data to the callback
-      console.log('Calling audioLevelCallback with level:', overallAverage, 'freq data length:', frequencyData.length);
       this.audioLevelCallback(overallAverage, frequencyData);
       
       // Continue monitoring
@@ -426,9 +410,9 @@ class STTService {
         try {
           const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
           await this.transcribeWebAudio(audioBlob, onResult, onError);
-        } catch (error) {
+        } catch (error: any) {
           console.error('Error processing web audio:', error);
-          onError(`Audio processing failed: ${error.message}`);
+          onError(`Audio processing failed: ${error?.message || 'Unknown error'}`);
         }
         
         onEnd();
@@ -444,9 +428,9 @@ class STTService {
       console.log('Web audio recording started successfully');
       return true;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error starting web recording:', error);
-      onError(`Failed to start web recording: ${error.message}`);
+      onError(`Failed to start web recording: ${error?.message || 'Unknown error'}`);
       return false;
     }
   }
@@ -485,9 +469,9 @@ class STTService {
         onError(result.error || 'No speech detected in the recording');
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error transcribing web audio:', error);
-      onError(`Transcription failed: ${error.message}`);
+      onError(`Transcription failed: ${error?.message || 'Unknown error'}`);
     }
   }
 
@@ -506,6 +490,9 @@ class STTService {
 
   // Cleanup audio monitoring
   private cleanupAudioMonitoring(): void {
+    // Clear the audio level callback to stop any further audio monitoring
+    this.audioLevelCallback = undefined;
+    
     if (this.microphone) {
       this.microphone.disconnect();
       this.microphone = undefined;
@@ -576,9 +563,9 @@ class STTService {
       // this.isRecording = true;
       // return true;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error starting Expo speech recognition:', error);
-      onError(`Failed to start speech recognition: ${error.message || 'Unknown error'}`);
+      onError(`Failed to start speech recognition: ${error?.message || 'Unknown error'}`);
       return false;
     }
   }
@@ -665,15 +652,24 @@ class STTService {
       clearTimeout(this.restartTimeout);
       this.restartTimeout = undefined;
     }
-    await this.stopRecognition();
+    
+    // Cancel native voice service on mobile
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      await nativeVoiceService.cancelRecognition();
+    } else {
+      await this.stopRecognition();
+    }
   }
 
   // Stop speech recognition
   async stopRecognition(): Promise<void> {
-    console.log('Stopping speech recognition...');
+    console.log('Stopping speech recognition... current isRecording:', this.isRecording);
     
     // Disable continuous recording
     this.shouldKeepRecording = false;
+    
+    // Always clean up regardless of current state
+    this.isRecording = false;
     
     // Clear any pending restart
     if (this.restartTimeout) {
@@ -691,19 +687,9 @@ class STTService {
           this.audioRecording.stop();
         }
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
-        // TODO: Re-enable when package issues are resolved
-        // // Stop Expo Speech Recognition
-        // console.log('🛑 Stopping native speech recognition...');
-        // try {
-        //   await ExpoSpeechRecognitionModule.stop();
-        //   console.log('✅ Native speech recognition stopped');
-        //   this.speechRecognitionTask = undefined;
-        // } catch (speechError) {
-        //   console.error('❌ Error stopping native speech recognition:', speechError);
-        // }
-        console.log('⚠️ expo-speech-recognition temporarily disabled');
-        this.speechRecognitionTask = undefined;
+        // Stop Native Voice Service
+        console.log('🛑 Stopping native voice recognition...');
+        await nativeVoiceService.stopRecognition();
       } else if (this.audioRecording) {
         // Legacy audio recording cleanup (fallback)
         console.log('Stopping audio recording...');
@@ -765,9 +751,9 @@ class STTService {
         this.onEndCallback();
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in audio transcription:', error);
-      onError(`Transcription failed: ${error.message}`);
+      onError(`Transcription failed: ${error?.message || 'Unknown error'}`);
       if (this.onEndCallback) {
         this.onEndCallback();
       }
@@ -898,21 +884,9 @@ class STTService {
       this.recognition.onstart = null;
     }
     
-    // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
-    // TODO: Re-enable when package issues are resolved
-    // // Clean up Expo Speech Recognition
-    // if (Platform.OS === 'ios' || Platform.OS === 'android') {
-    //   try {
-    //     await ExpoSpeechRecognitionModule.stop();
-    //     this.speechRecognitionTask = undefined;
-    //   } catch (error) {
-    //     console.error('Error stopping Expo Speech Recognition:', error);
-    //   }
-    // }
-    
-    // Clean up speech recognition task
+    // Clean up Native Voice Service
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      this.speechRecognitionTask = undefined;
+      await nativeVoiceService.destroy();
     }
     
     await this.stopRecognition();

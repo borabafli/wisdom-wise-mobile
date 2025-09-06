@@ -22,16 +22,15 @@ export const useVoiceRecording = (
   const [isListening, setIsListening] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
-  const [audioLevels, setAudioLevels] = useState<number[]>(Array(7).fill(0.3));
+  const [audioLevels, setAudioLevels] = useState<number[]>(Array(7).fill(0.05));
 
   // Audio level animations for real sound wave visualization
   const waveAnimations = useRef(
-    Array.from({ length: 7 }, () => new Animated.Value(0.3))
+    Array.from({ length: 7 }, () => new Animated.Value(0.05))
   ).current;
 
   const startRecording = async () => {
-    console.log('startRecording called');
-    console.log('STT service supported:', sttService.isSupported());
+    console.log('🎤 Starting recording...');
     
     if (!sttService.isSupported()) {
       console.log('STT not supported, showing alert');
@@ -40,6 +39,11 @@ export const useVoiceRecording = (
         'Speech recognition is not supported on this device. Please type your message instead.',
         [{ text: 'OK' }]
       );
+      return;
+    }
+
+    if (isRecording) {
+      console.log('Already recording, ignoring start request');
       return;
     }
 
@@ -79,7 +83,6 @@ export const useVoiceRecording = (
       },
       // On audio level
       (level, frequencyData) => {
-        console.log('Audio level received:', level, 'Frequency data length:', frequencyData?.length);
         updateSoundWaves(level, frequencyData);
       }
     );
@@ -91,11 +94,16 @@ export const useVoiceRecording = (
   };
 
   const stopRecording = async () => {
+    console.log('🛑 stopRecording called - current state:', isRecording);
+    // Always stop the service regardless of current state
     await sttService.stopRecognition();
+    // Reset all recording-related states
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
+    setSttError(null);
     resetSoundWaves();
+    console.log('✅ Recording stopped and state reset');
   };
 
   const cancelRecording = async () => {
@@ -116,12 +124,11 @@ export const useVoiceRecording = (
 
   // Update sound waves based on real frequency spectrum data
   const updateSoundWaves = (audioLevel: number, frequencyData?: number[]) => {
-    console.log('updateSoundWaves called - audioLevel:', audioLevel, 'frequencyData:', frequencyData);
     if (frequencyData && frequencyData.length >= 7) {
       // Use real frequency data for each bar - animate smoothly to new values
       frequencyData.forEach((level, index) => {
         if (index < waveAnimations.length) {
-          const targetHeight = Math.max(0.3, Math.min(1, level));
+          const targetHeight = Math.max(0.05, Math.min(1, level)); // Lower minimum for true silence
           
           // Animate to the new frequency level with smooth transition
           Animated.timing(waveAnimations[index], {
@@ -133,15 +140,19 @@ export const useVoiceRecording = (
       });
       
       // Also update state for immediate rendering (fallback)
-      setAudioLevels(frequencyData.map(level => Math.max(0.3, Math.min(1, level))));
+      setAudioLevels(frequencyData.map(level => Math.max(0.05, Math.min(1, level))));
     } else {
       // Fallback to single level distributed across bars with animation
-      const baseLevel = Math.max(0.3, Math.min(1, audioLevel));
+      const baseLevel = Math.max(0.05, Math.min(1, audioLevel)); // Lower baseline
       const newLevels = Array.from({ length: 7 }, (_, i) => {
-        // Create dynamic variation for organic feel
-        const timeOffset = Date.now() / 200 + i;
-        const variation = Math.sin(timeOffset) * 0.15 + (Math.random() - 0.5) * 0.1;
-        return Math.max(0.3, Math.min(1, baseLevel + variation));
+        if (baseLevel < 0.1) {
+          // During silence, keep all bars very low
+          return Math.max(0.05, baseLevel * (0.8 + Math.random() * 0.4));
+        } else {
+          // During speech, create natural variation
+          const variation = (Math.random() - 0.5) * 0.2; // Less random variation
+          return Math.max(0.05, Math.min(1, baseLevel + variation));
+        }
       });
       
       // Animate all bars
@@ -158,16 +169,16 @@ export const useVoiceRecording = (
   };
 
   const resetSoundWaves = () => {
-    // Reset all animations to baseline
+    // Reset all animations to true baseline for silence
     waveAnimations.forEach(anim => {
       Animated.timing(anim, {
-        toValue: 0.3,
+        toValue: 0.05, // Much lower baseline to show true silence
         duration: 200,
         useNativeDriver: false,
       }).start();
     });
     
-    setAudioLevels(Array(7).fill(0.3));
+    setAudioLevels(Array(7).fill(0.05)); // Lower baseline values
   };
 
   return {

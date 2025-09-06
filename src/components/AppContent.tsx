@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
-import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 
@@ -9,6 +9,7 @@ import ExerciseLibrary from '../screens/ExerciseLibrary';
 import InsightsDashboard from '../screens/InsightsDashboard';
 import ProfileScreen from '../screens/ProfileScreen';
 import ChatInterface from '../screens/ChatInterface';
+import BreathingScreen from '../screens/BreathingScreen';
 import CustomTabBar from './CustomTabBar';
 
 // Import context
@@ -16,17 +17,34 @@ import { useApp } from '../contexts';
 
 // Import types
 import { RootTabParamList } from '../types';
+import { colors } from '../styles/tokens';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
+
+// Custom navigation theme matching app colors
+const customTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#F9FBFD', // Therapeutic soft blue-tint background
+    card: colors.white, // Pure white tab bar
+    text: colors.text.primary, // Primary text color
+    primary: '#3BB4F5', // Light sky blue accent - matches turtle theme
+    border: colors.gray[200], // Visible subtle border
+    notification: '#3BB4F5', // Sky blue for notifications
+  },
+};
 
 export const AppContent: React.FC = () => {
   const {
     showChat,
+    showBreathing,
     currentExercise,
     chatWithActionPalette,
     handleStartSession,
     handleNewSession,
     handleBackFromChat,
+    handleBackFromBreathing,
     handleExerciseClick,
     handleInsightClick,
     handleActionSelect,
@@ -51,13 +69,23 @@ export const AppContent: React.FC = () => {
   useEffect(() => {
     console.log('AppContent re-rendered. State:', {
       showChat,
+      showBreathing,
       currentExercise: currentExercise ? currentExercise.name : 'null',
       chatWithActionPalette,
     });
-  }, [showChat, currentExercise, chatWithActionPalette]);
+  }, [showChat, showBreathing, currentExercise, chatWithActionPalette]);
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
+
+  if (showBreathing) {
+    return (
+      <>
+        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <BreathingScreen onBack={handleBackFromBreathing} />
+      </>
+    );
+  }
 
   if (showChat) {
     return (
@@ -76,7 +104,7 @@ export const AppContent: React.FC = () => {
   }
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} theme={customTheme}>
       <StatusBar style="dark" backgroundColor="#f0f9ff" />
       <Tab.Navigator
         tabBar={(props: any) => (

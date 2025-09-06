@@ -13,7 +13,7 @@ export const customTabBarStyles = StyleSheet.create({
   },
   tabBarGradient: {
     borderTopWidth: 1,
-    borderTopColor: colors.border.light,
+    borderTopColor: colors.gray[200], // Use more visible border color
     ...shadows.components.tabBar,
     backgroundColor: colors.white, // Force white background to override dark mode
   },
@@ -35,8 +35,7 @@ export const customTabBarStyles = StyleSheet.create({
     minWidth: 60,
   },
   tabButtonActive: {
-    backgroundColor: colors.primaryAlpha[10],
-
+    backgroundColor: 'rgba(59, 180, 245, 0.1)', // Light sky blue background that matches the accent
   },
   tabLabel: {
     ...typography.textStyles.caption,
