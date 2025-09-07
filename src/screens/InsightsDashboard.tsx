@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb } from 'lucide-react-native';
+import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
@@ -200,7 +200,39 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       value: goalStats.activeGoals.toString(),
       subtitle: `${goalStats.averageProgress}% average progress`,
       icon: Target,
-      trend: goalStats.activeGoals > 0 ? 'positive' : 'neutral'
+      trend: goalStats.activeGoals > 0 ? 'positive' : 'neutral',
+      onClick: () => {
+        // Handle goals section navigation
+      }
+    },
+    {
+      id: 2,
+      title: 'Memory Insights',
+      value: memoryInsights.length.toString(),
+      subtitle: 'Long-term patterns discovered',
+      icon: Brain,
+      trend: memoryInsights.length > 0 ? 'positive' : 'neutral',
+      onClick: () => {
+        // Scroll to memory insights section or handle navigation
+      }
+    },
+    {
+      id: 3,
+      title: 'Session Summaries',
+      value: memoryStats.sessionSummaries.toString(),
+      subtitle: 'Sessions analyzed',
+      icon: FileText,
+      trend: memoryStats.sessionSummaries > 0 ? 'positive' : 'neutral',
+      onClick: () => setSessionSummariesVisible(true)
+    },
+    {
+      id: 4,
+      title: 'Thought Patterns',
+      value: displayPatterns.length.toString(),
+      subtitle: 'CBT patterns identified',
+      icon: Lightbulb,
+      trend: displayPatterns.length > 0 ? 'positive' : 'neutral',
+      onClick: () => setPatternsModalVisible(true)
     }
   ];
 
@@ -447,19 +479,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             return (
               <TouchableOpacity
                 key={insight.id}
-                onPress={() => onInsightClick('insight', insight)}
+                onPress={insight.onClick || (() => onInsightClick('insight', insight))}
                 style={styles.insightCard}
                 activeOpacity={0.9}
               >
                 <View style={styles.insightContent}>
                   <View style={styles.insightLeft}>
                     <LinearGradient
-                      colors={insight.trend === 'positive' ? ['#bfdbfe', '#7dd3fc'] : ['#bae6fd', '#7dd3fc']}
+                      colors={['#bfdbfe', '#7dd3fc']}
                       style={styles.insightIcon}
                     >
                       <Icon 
                         size={24} 
-                        color={insight.trend === 'positive' ? '#1e40af' : '#0369a1'} 
+                        color="#1e40af"
                       />
                     </LinearGradient>
                     <View style={styles.insightText}>
@@ -470,10 +502,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                     </View>
                   </View>
                   <View style={styles.insightRight}>
-                    <Text style={[
-                      styles.insightValue,
-                      insight.trend === 'positive' ? styles.insightValuePositive : styles.insightValueNeutral
-                    ]}>
+                    <Text style={styles.insightValue}>
                       {insight.value}
                     </Text>
                   </View>
@@ -567,6 +596,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
         )}
 
 
+
         {/* Memory Insights Section */}
         {memoryInsights.length > 0 && (
           <View style={styles.patternsCard}>
@@ -625,8 +655,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                             {/* Action Buttons */}
                             <View style={styles.memoryActionButtons}>
                               <ValuesReflectButton
-                                onPress={(e) => {
-                                  e.stopPropagation();
+                                onPress={() => {
                                   const prompt = `I noticed from your memory insights that you have some strengths and positive patterns. Let's take a moment to reflect on these strengths: "${insight.content}"\n\nWhat do you think makes these strengths particularly meaningful to you? How might you lean into these strengths more in your daily life?`;
                                   onInsightClick('strength_reflection', {
                                     insightContent: insight.content,
@@ -639,8 +668,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                               />
                               
                               <ValuesReflectButton
-                                onPress={(e) => {
-                                  e.stopPropagation();
+                                onPress={() => {
                                   const prompt = `I see that you have some deep emotional insights from our conversations: "${insight.content}"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?`;
                                   onInsightClick('emotion_reflection', {
                                     insightContent: insight.content,
