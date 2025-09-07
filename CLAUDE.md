@@ -26,9 +26,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Comprehensive design checklist in '/docs/design-principles.md'
 - Brand style guide in '/docs/style-guide.md'
 - When making visual (front-end, UI/UX) changes, always refer to these files for guidance
+- Do not write style codes inside of the components. You can write their stylings in /src/styles.
 
 ### Visual Development & UI Actions
-When you are prompted to do a review of the UI after implementing any front-end change, any visual change:
+If you have prompred to do, while implementing front-end change do those:
 1. **Identify what changed** - Review the modified components/pages
 2. **Navigate to affected pages** - Use 'mcp_playwright_browser_navigate' to visit each changed view
 3. **Mobile-first viewport testing** - Test at key mobile breakpoints (375px, 390px, 414px) using mcp_playwright_browser_resize

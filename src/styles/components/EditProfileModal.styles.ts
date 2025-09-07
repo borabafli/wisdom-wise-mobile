@@ -145,27 +145,27 @@ export const editProfileModalStyles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: spacing.therapy.lg,
     paddingHorizontal: 0,
-    justifyContent: 'space-between',
+    gap: spacing.therapy.md,
     alignItems: 'stretch',
   },
   
   // Cancel Button
   cancelButton: {
-    flex: 1,
-    marginRight: spacing.therapy.md,
+    minWidth: 100,
+    maxWidth: 120,
     borderRadius: 12,
     overflow: 'hidden',
     ...shadows.sm,
   },
   cancelButtonGradient: {
     paddingVertical: spacing[16],
-    paddingHorizontal: spacing[16],
+    paddingHorizontal: spacing[20],
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
   },
   cancelButtonText: {
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
     color: colors.text.secondary,
     fontFamily: typography.fontFamily.primary,
@@ -173,7 +173,7 @@ export const editProfileModalStyles = StyleSheet.create({
 
   // Save Button
   saveButton: {
-    flex: 2,
+    flex: 1,
     borderRadius: 12,
     overflow: 'hidden',
     ...shadows.sm,
@@ -183,14 +183,14 @@ export const editProfileModalStyles = StyleSheet.create({
   },
   saveButtonGradient: {
     paddingVertical: spacing[16],
-    paddingHorizontal: spacing[16],
+    paddingHorizontal: spacing[20],
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     minHeight: 48,
   },
   saveButtonText: {
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: 'white',
     marginLeft: spacing.therapy.xs,

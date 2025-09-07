@@ -385,6 +385,15 @@ export const insightsDashboardStyles = StyleSheet.create({
     lineHeight: typography.lineHeight.relaxed,
     fontWeight: typography.fontWeight.medium,
   },
+  insightPreview: {
+    ...typography.textStyles.body,
+    color: colors.text.primary,
+    marginBottom: spacing[1],
+    lineHeight: typography.lineHeight.relaxed,
+    fontStyle: 'italic',
+    fontSize: 14,
+    fontWeight: typography.fontWeight.normal,
+  },
   thoughtContainer: {
     gap: spacing.components.cardGap,
   },
@@ -609,13 +618,12 @@ export const insightsDashboardStyles = StyleSheet.create({
 
   // Memory Insights Action Buttons
   memoryActionButtons: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: spacing[2],
     marginTop: spacing[3],
   },
 
   memoryActionButton: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

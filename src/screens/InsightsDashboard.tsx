@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Brain, TrendingUp, Target, CheckCircle2, Lightbulb, ArrowRight, Heart, Plus } from 'lucide-react-native';
+import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
 import { goalService, TherapyGoal } from '../services/goalService';
 import { motivationalCardService, MotivationalData, MotivationalMessage } from '../services/motivationalCardService';
 import { getShortConfidenceLabel } from '../utils/confidenceDisplay';
+import { generateInsightPreview, getCategoryDisplayName } from '../utils/insightPreviewGenerator';
 import ThinkingPatternsModal from '../components/ThinkingPatternsModal';
 import { GoalDetailsModal } from '../components/GoalDetailsModal';
 import { SessionSummariesModal } from '../components/SessionSummariesModal';
@@ -15,26 +16,23 @@ import { MoodInsightsCard } from '../components/MoodInsightsCard';
 import { ValueCards } from '../components/ValueCards';
 import { VisionInsightsCard } from '../components/VisionInsightsCard';
 import { VisionDetailsModal } from '../components/VisionDetailsModal';
+import { useUserProfile } from '../hooks';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
+import { ValuesReflectButton } from '../components/ReflectButton';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface InsightsDashboardProps {
   onInsightClick: (type: string, insight?: any) => void;
 }
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
+  const { firstName } = useUserProfile();
   const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
   const [memoryInsights, setMemoryInsights] = useState<Insight[]>([]);
   const [sessionSummaries, setSummaries] = useState<Summary[]>([]);
   const [activeGoals, setActiveGoals] = useState<TherapyGoal[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<TherapyGoal | null>(null);
-  const [insightStats, setInsightStats] = useState({
-    totalPatterns: 0,
-    commonDistortions: [] as { name: string; count: number }[],
-    recentActivity: 0,
-    confidenceAverage: 0
-  });
   const [memoryStats, setMemoryStats] = useState({
     totalInsights: 0,
     sessionSummaries: 0,
@@ -96,9 +94,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       setThinkingPatterns(recentPatterns);
       console.log('🔍 [INSIGHTS DEBUG] Thought patterns loaded:', recentPatterns.length);
       
-      // Load insight statistics
-      const stats = await insightService.getInsightStats();
-      setInsightStats(stats);
       
       // Load new memory system data
       const insights = await memoryService.getInsights();
@@ -206,30 +201,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       subtitle: `${goalStats.averageProgress}% average progress`,
       icon: Target,
       trend: goalStats.activeGoals > 0 ? 'positive' : 'neutral'
-    },
-    {
-      id: 2,
-      title: 'Memory Insights',
-      value: memoryStats.totalInsights.toString(),
-      subtitle: 'Long-term patterns discovered',
-      icon: Brain,
-      trend: memoryStats.totalInsights > 0 ? 'positive' : 'neutral'
-    },
-    {
-      id: 3,
-      title: 'Session Summaries',
-      value: memoryStats.sessionSummaries.toString(),
-      subtitle: 'Sessions analyzed',
-      icon: TrendingUp,
-      trend: memoryStats.sessionSummaries > 0 ? 'positive' : 'neutral'
-    },
-    {
-      id: 4,
-      title: 'Thought Patterns',
-      value: insightStats.totalPatterns.toString(),
-      subtitle: 'CBT patterns identified',
-      icon: Lightbulb,
-      trend: insightStats.totalPatterns > 0 ? 'positive' : 'neutral'
     }
   ];
 
@@ -248,10 +219,10 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>
-          Progress
+          {firstName !== 'Friend' ? `${firstName}'s Progress` : 'Progress'}
         </Text>
         <Text style={styles.subtitle}>
-          Your wellness journey
+          {firstName !== 'Friend' ? `${firstName}, your wellness journey continues ✨` : 'Your wellness journey continues'}
         </Text>
       </View>
 
@@ -379,7 +350,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                         )}
                         
                         {/* Reflect on This Button */}
-                        <TouchableOpacity
+                        <ValuesReflectButton
                           onPress={(e) => {
                             e.stopPropagation();
                             const prompt = `I noticed that your thought "${previewPattern.originalThought}" might show a pattern of ${previewPattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${previewPattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
@@ -390,28 +361,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                               prompt: prompt
                             });
                           }}
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#3b82f6',
-                            borderRadius: 8,
-                            paddingVertical: 8,
-                            paddingHorizontal: 12,
-                            marginTop: 12,
-                          }}
-                          activeOpacity={0.8}
-                        >
-                          <Text style={{
-                            color: 'white',
-                            fontSize: 12,
-                            fontWeight: '600',
-                            marginRight: 4
-                          }}>
-                            Reflect on This
-                          </Text>
-                          <ArrowRight size={12} color="white" />
-                        </TouchableOpacity>
+                          style={{ marginTop: 12 }}
+                        />
                       </View>
                       <View style={styles.patternArrow}>
                         <ArrowRight size={16} color="#1e40af" />
@@ -488,49 +439,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           onStartExercise={() => onInsightClick('exercise', { type: 'vision-of-future' })}
         />
 
-        {/* Your Journey Section */}
-        <View style={styles.journeyCard}>
-          {/* Background accent */}
-          <View style={styles.journeyAccent} />
-          
-          <View style={styles.journeyHeader}>
-            <LinearGradient
-              colors={['#f0f9ff', '#dbeafe']}
-              style={styles.journeyIcon}
-            >
-              <Heart size={24} color="#2563eb" />
-            </LinearGradient>
-            <View style={styles.journeyTitleContainer}>
-              <Text style={styles.journeyTitle}>Journey</Text>
-              <Text style={styles.journeySubtitle}>Every step counts</Text>
-            </View>
-          </View>
-
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{journeyData.sessionsCompleted}</Text>
-              <Text style={styles.statLabel}>Sessions</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValueSky}>{journeyData.exercisesCompleted}</Text>
-              <Text style={styles.statLabel}>Exercises</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{journeyData.streakDays}</Text>
-              <Text style={styles.statLabel}>Day streak</Text>
-            </View>
-          </View>
-
-          <LinearGradient
-            colors={['rgba(59, 130, 246, 0.05)', 'rgba(14, 165, 233, 0.05)']}
-            style={styles.suggestionCard}
-          >
-            <Text style={styles.suggestionText}>
-              You've completed <Text style={styles.suggestionBold}>{journeyData.sessionsCompleted}</Text> guided sessions! 
-              <Text style={styles.suggestionBoldBlue}> Next up: {journeyData.nextSuggestion}</Text>
-            </Text>
-          </LinearGradient>
-        </View>
 
         {/* Quick Insights */}
         <View style={styles.insightsSection}>
@@ -658,34 +566,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           </View>
         )}
 
-        {/* Goals Summary Section */}
-        {goalStats.totalGoals > 0 && (
-          <TouchableOpacity
-            onPress={() => onInsightClick('all_goals')}
-            style={styles.insightCard}
-            activeOpacity={0.9}
-          >
-            <View style={styles.insightContent}>
-              <View style={styles.insightLeft}>
-                <LinearGradient
-                  colors={['#fef3c7', '#fbbf24']}
-                  style={styles.insightIcon}
-                >
-                  <Target size={24} color="#d97706" />
-                </LinearGradient>
-                <View style={styles.insightText}>
-                  <Text style={styles.insightTitle}>Goals Overview</Text>
-                  <Text style={styles.insightSubtitle}>
-                    {goalStats.activeGoals} active • {goalStats.averageProgress}% avg progress
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.insightRight}>
-                <ArrowRight size={20} color="#d97706" />
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
 
         {/* Memory Insights Section */}
         {memoryInsights.length > 0 && (
@@ -708,6 +588,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             <View style={styles.patternsContainer}>
               {memoryInsights.map((insight) => {
                 const isExpanded = expandedMemoryInsights.has(insight.id);
+                const previewText = generateInsightPreview(insight);
+                const categoryName = getCategoryDisplayName(insight.category);
+                
                 return (
                   <TouchableOpacity
                     key={insight.id}
@@ -718,9 +601,16 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                     <View style={styles.patternContent}>
                       <View style={styles.patternContentLeft}>
                         <Text style={styles.patternName}>
-                          {insight.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          {categoryName}
                         </Text>
-                        <Text style={styles.patternDescription}>
+                        
+                        {!isExpanded && (
+                          <Text style={styles.insightPreview}>
+                            {previewText}
+                          </Text>
+                        )}
+                        
+                        <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
                           {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
                         </Text>
                         
@@ -734,7 +624,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                             
                             {/* Action Buttons */}
                             <View style={styles.memoryActionButtons}>
-                              <TouchableOpacity
+                              <ValuesReflectButton
                                 onPress={(e) => {
                                   e.stopPropagation();
                                   const prompt = `I noticed from your memory insights that you have some strengths and positive patterns. Let's take a moment to reflect on these strengths: "${insight.content}"\n\nWhat do you think makes these strengths particularly meaningful to you? How might you lean into these strengths more in your daily life?`;
@@ -744,16 +634,11 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                                     prompt: prompt
                                   });
                                 }}
-                                style={styles.memoryActionButton}
-                                activeOpacity={0.8}
-                              >
-                                <Text style={styles.memoryActionButtonText}>
-                                  Reflect on Strengths
-                                </Text>
-                                <ArrowRight size={12} color="#059669" />
-                              </TouchableOpacity>
+                                text="Reflect on Strengths"
+                                style={{ marginBottom: 8 }}
+                              />
                               
-                              <TouchableOpacity
+                              <ValuesReflectButton
                                 onPress={(e) => {
                                   e.stopPropagation();
                                   const prompt = `I see that you have some deep emotional insights from our conversations: "${insight.content}"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?`;
@@ -763,22 +648,10 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                                     prompt: prompt
                                   });
                                 }}
-                                style={styles.memoryActionButton}
-                                activeOpacity={0.8}
-                              >
-                                <Text style={styles.memoryActionButtonText}>
-                                  Spend Time with Emotions
-                                </Text>
-                                <ArrowRight size={12} color="#059669" />
-                              </TouchableOpacity>
+                                text="Spend Time with Emotions"
+                              />
                             </View>
                           </>
-                        )}
-                        
-                        {!isExpanded && (
-                          <Text style={styles.patternDescription}>
-                            Tap to view long-term memory insight
-                          </Text>
                         )}
                       </View>
                       <View style={styles.patternArrow}>
@@ -796,34 +669,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           </View>
         )}
 
-        {/* Session Summaries Section - Moved to bottom */}
-        {sessionSummaries.length > 0 && (
-          <TouchableOpacity
-            onPress={() => setSessionSummariesVisible(true)}
-            style={styles.insightCard}
-            activeOpacity={0.9}
-          >
-            <View style={styles.insightContent}>
-              <View style={styles.insightLeft}>
-                <LinearGradient
-                  colors={['#dcfdf4', '#86efac']}
-                  style={styles.insightIcon}
-                >
-                  <TrendingUp size={24} color="#059669" />
-                </LinearGradient>
-                <View style={styles.insightText}>
-                  <Text style={styles.insightTitle}>Session Summaries</Text>
-                  <Text style={styles.insightSubtitle}>
-                    {memoryStats.sessionSummaries} sessions analyzed
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.insightRight}>
-                <ArrowRight size={20} color="#059669" />
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
 
         {/* Recent Achievements */}
         <View style={styles.achievementsCard}>
@@ -838,6 +683,50 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
               </View>
             ))}
           </View>
+        </View>
+
+        {/* Your Journey Section - Moved to bottom */}
+        <View style={styles.journeyCard}>
+          {/* Background accent */}
+          <View style={styles.journeyAccent} />
+          
+          <View style={styles.journeyHeader}>
+            <LinearGradient
+              colors={['#f0f9ff', '#dbeafe']}
+              style={styles.journeyIcon}
+            >
+              <Heart size={24} color="#2563eb" />
+            </LinearGradient>
+            <View style={styles.journeyTitleContainer}>
+              <Text style={styles.journeyTitle}>Journey</Text>
+              <Text style={styles.journeySubtitle}>Every step counts</Text>
+            </View>
+          </View>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{journeyData.sessionsCompleted}</Text>
+              <Text style={styles.statLabel}>Sessions</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValueSky}>{journeyData.exercisesCompleted}</Text>
+              <Text style={styles.statLabel}>Exercises</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{journeyData.streakDays}</Text>
+              <Text style={styles.statLabel}>Day streak</Text>
+            </View>
+          </View>
+
+          <LinearGradient
+            colors={['rgba(59, 130, 246, 0.05)', 'rgba(14, 165, 233, 0.05)']}
+            style={styles.suggestionCard}
+          >
+            <Text style={styles.suggestionText}>
+              You've completed <Text style={styles.suggestionBold}>{journeyData.sessionsCompleted}</Text> guided sessions! 
+              <Text style={styles.suggestionBoldBlue}> Next up: {journeyData.nextSuggestion}</Text>
+            </Text>
+          </LinearGradient>
         </View>
       </ScrollView>
 

@@ -3,6 +3,7 @@ import { Message, storageService } from './storageService';
 import { generateFirstMessageSuggestions } from '../utils/suggestionGenerator';
 import { memoryService, MemoryContext } from './memoryService';
 import { goalService, TherapyGoal } from './goalService';
+import { apiService } from './apiService';
 
 export interface ContextConfig {
   maxTurns: number;

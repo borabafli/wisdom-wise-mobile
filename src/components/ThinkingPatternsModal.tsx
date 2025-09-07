@@ -14,6 +14,7 @@ import {
 import { BlurView } from 'expo-blur';
 import { X, ArrowLeft, ArrowRight, Brain, Lightbulb, TrendingUp, Target, Zap } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ValuesReflectButton } from './ReflectButton';
 import { ThoughtPattern } from '../services/storageService';
 import { thinkingPatternsModalStyles as styles } from '../styles/components/ThinkingPatternsModal.styles';
 
@@ -222,7 +223,12 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
     return (
       <View style={styles.patternCard}>
         <BlurView intensity={40} style={styles.cardBlurContainer}>
-          <View style={styles.cardContent}>
+          <ScrollView 
+            style={styles.cardScrollView}
+            contentContainerStyle={styles.cardContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
             {/* 1. Distortion Pattern Header */}
             <View style={styles.cardHeader}>
               <Text style={styles.patternType}>
@@ -293,7 +299,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
 
             {/* Reflect on This Button */}
             {onStartReflection && (
-              <TouchableOpacity
+              <ValuesReflectButton
                 onPress={() => {
                   const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${primaryDistortion.toLowerCase()}. Sometimes when we experience ${primaryDistortion.toLowerCase()}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
                   if (onStartReflection) {
@@ -304,30 +310,10 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
                     console.log('onStartReflection not provided');
                   }
                 }}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(59, 130, 246, 0.9)',
-                  borderRadius: 12,
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  marginTop: 12,
-                }}
-                activeOpacity={0.8}
-              >
-                <Text style={{
-                  color: 'white',
-                  fontSize: 14,
-                  fontWeight: '600',
-                  marginRight: 6
-                }}>
-                  Reflect on This
-                </Text>
-                <ArrowRight size={16} color="white" />
-              </TouchableOpacity>
+                style={{ marginTop: 12 }}
+              />
             )}
-          </View>
+          </ScrollView>
         </BlurView>
       </View>
     );

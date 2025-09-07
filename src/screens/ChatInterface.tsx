@@ -58,6 +58,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
   const headerAnimation = useRef(new Animated.Value(0)).current;
+  const endReflectionButtonAnimation = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Custom hooks
@@ -86,6 +87,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     valueReflectionSummary,
     showThinkingPatternSummary,
     thinkingPatternSummary,
+    reflectionMessageCount,
+    canEndReflection,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
     startValueReflection,
@@ -266,6 +269,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       if (isInExerciseMode) startExerciseAnimations();
       else stopExerciseAnimations();
     }, [exerciseMode, exerciseData]);
+
+    // Animate end reflection button
+    useEffect(() => {
+      if (canEndReflection) {
+        Animated.spring(endReflectionButtonAnimation, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 100,
+          friction: 8,
+        }).start();
+      } else {
+        endReflectionButtonAnimation.setValue(0);
+      }
+    }, [canEndReflection]);
 
     const normalGradient = [...colors.gradients.primaryLight];
     const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5'];
@@ -466,37 +483,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           </ScrollView>
 
 
-          {/* End Reflection Button */}
-          {isValueReflection && !showValueReflectionSummary && (
-            <View style={styles.endReflectionContainer}>
-              <TouchableOpacity
-                style={styles.endReflectionButton}
-                onPress={() => endValueReflection(
-                  chatSession.setMessages,
-                  chatSession.setIsTyping,
-                  chatSession.setSuggestions
-                )}
-              >
-                <Text style={styles.endReflectionButtonText}>End Reflection & Save Summary</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {isThinkingPatternReflection && !showThinkingPatternSummary && (
-            <View style={styles.endReflectionContainer}>
-              <TouchableOpacity
-                style={styles.endReflectionButton}
-                onPress={() => endThinkingPatternReflection(
-                  chatSession.setMessages,
-                  chatSession.setIsTyping,
-                  chatSession.setSuggestions
-                )}
-              >
-                <Text style={styles.endReflectionButtonText}>End Reflection & Save Summary</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
           {/* Suggestion Chips */}
           <SuggestionChips
             suggestions={chatSession.suggestions}
@@ -515,11 +501,59 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             showExerciseButton={
               chatSession.messages.filter(msg => msg.type === 'user').length >= 2 &&
               !chatSession.showExerciseCard &&
-              !(exerciseMode && exerciseData.dynamicFlow)
+              !(exerciseMode && exerciseData.dynamicFlow) &&
+              !isValueReflection &&
+              !isThinkingPatternReflection
             }
             isVisible={chatSession.suggestions.length > 0}
             isTyping={chatSession.isTyping}
           />
+
+          {/* End Reflection Button - Positioned after suggestion chips */}
+          {(isValueReflection || isThinkingPatternReflection) && !showValueReflectionSummary && !showThinkingPatternSummary && canEndReflection && (
+            <Animated.View 
+              style={[
+                styles.endReflectionContainer,
+                {
+                  opacity: endReflectionButtonAnimation,
+                  transform: [{
+                    scale: endReflectionButtonAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.9, 1]
+                    })
+                  }]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  if (isValueReflection) {
+                    endValueReflection(
+                      chatSession.setMessages,
+                      chatSession.setIsTyping,
+                      chatSession.setSuggestions
+                    );
+                  } else {
+                    endThinkingPatternReflection(
+                      chatSession.setMessages,
+                      chatSession.setIsTyping,
+                      chatSession.setSuggestions
+                    );
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['#5DA4CD', '#7FC4C4']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.endReflectionButton}
+                >
+                  <Text style={styles.endReflectionButtonText}>End Reflection</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
 
           {/* Input Area */}
           <ChatInput

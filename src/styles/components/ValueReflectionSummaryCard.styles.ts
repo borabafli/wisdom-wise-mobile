@@ -104,40 +104,48 @@ export const valueReflectionSummaryCardStyles = StyleSheet.create({
 
   actions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.therapy.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacing.therapy.sm,
+    paddingTop: spacing.therapy.sm,
   },
 
   cancelButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingVertical: spacing.therapy.md,
-    paddingHorizontal: spacing.therapy.lg,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: spacing.therapy.sm + 2,
+    paddingHorizontal: spacing.therapy.md,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderWidth: 1,
-    borderColor: 'rgba(107, 114, 128, 0.3)',
+    borderColor: 'rgba(107, 114, 128, 0.2)',
     gap: spacing.therapy.xs,
+    minWidth: 140,
   },
 
   cancelButtonText: {
-    ...typography.textStyles.body,
+    ...typography.textStyles.bodySmall,
     color: colors.text.secondary,
     fontWeight: '500',
+    fontSize: 13,
   },
 
   saveButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingVertical: spacing.therapy.md,
-    paddingHorizontal: spacing.therapy.lg,
-    borderRadius: 12,
+    paddingVertical: spacing.therapy.sm + 2,
+    paddingHorizontal: spacing.therapy.md + 4,
+    borderRadius: 16,
     backgroundColor: colors.purple[600],
     gap: spacing.therapy.xs,
+    minWidth: 140,
+    shadowColor: colors.purple[600],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   saveButtonDisabled: {
@@ -145,8 +153,9 @@ export const valueReflectionSummaryCardStyles = StyleSheet.create({
   },
 
   saveButtonText: {
-    ...typography.textStyles.body,
+    ...typography.textStyles.bodySmall,
     color: colors.white,
     fontWeight: '600',
+    fontSize: 13,
   },
 });

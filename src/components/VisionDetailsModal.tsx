@@ -10,6 +10,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { X, Star, Lightbulb, ArrowRight, Calendar, Heart } from 'lucide-react-native';
 import { visionInsightsService, VisionInsight } from '../services/visionInsightsService';
+import { ValuesReflectButton } from './ReflectButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -179,18 +180,13 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
 
             {/* Reflect Button */}
             {onReflectPress && (
-              <TouchableOpacity
+              <ValuesReflectButton
                 onPress={() => {
                   onClose();
                   onReflectPress(vision);
                 }}
-                style={styles.reflectButton}
-                activeOpacity={0.8}
-              >
-                <Lightbulb size={16} color="white" />
-                <Text style={styles.reflectButtonText}>Reflect on This Vision</Text>
-                <ArrowRight size={14} color="white" />
-              </TouchableOpacity>
+                text="Reflect on This Vision"
+              />
             )}
           </View>
         )}

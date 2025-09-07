@@ -89,13 +89,13 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   }
 
   // Fixed chart dimensions to prevent width overflow
-  const containerPadding = 40; // Better padding for proper spacing
+  const containerPadding = 20; // Reduced container padding
   const chartWidth = screenWidth - containerPadding; // Use remaining space after padding
   const chartHeight = height - 40;
   
   // Padding with space for smiley Y-axis
-  const paddingLeft = 60; // More space for smiley images
-  const paddingRight = 30; // Adequate padding
+  const paddingLeft = 55; // Adjusted space for smaller smiley images with padding
+  const paddingRight = 20; // Adequate padding
   const paddingTop = 30;
   const paddingBottom = 40; // Space for date labels
   
@@ -221,16 +221,16 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       width: '100%', // Full width
       alignItems: 'center', // Center the chart
       justifyContent: 'center',
-      overflow: 'hidden',
+      overflow: 'visible', // Allow emojis to be visible
       padding: 0
     }, style]}>
       <View style={{
         width: chartWidth,
         height: chartHeight,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}>
-        <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
+        <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{marginLeft: 0}}>
           <Defs>
             {/* Improved line gradient with softer edge fading */}
             <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -309,15 +309,16 @@ export const MoodChart: React.FC<MoodChartProps> = ({
           })}
         </Svg>
       
-      {/* Smiley Y-axis indicators - better aligned */}
+      {/* Smiley Y-axis indicators - properly positioned with padding */}
       <View style={{
         position: 'absolute',
-        left: 15,
+        left: 10, // More space from edge
         top: 0,
         bottom: paddingBottom,
-        width: 40,
+        width: 45, // Slightly smaller container
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 5, // Internal padding
       }}>
         {smileyPositions.map((smiley, index) => (
           <Image
@@ -325,9 +326,10 @@ export const MoodChart: React.FC<MoodChartProps> = ({
             source={smiley.image}
             style={{
               position: 'absolute',
-              top: smiley.y - 15, // Better centering for 30px image
-              width: 30,
-              height: 30,
+              top: smiley.y - 12, // Centered for smaller 24px image
+              left: 10, // Centered with padding
+              width: 24, // Smaller size to fit better
+              height: 24,
               opacity: 0.85,
             }}
             resizeMode="contain"

@@ -909,30 +909,33 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 4,
   },
 
-  // End Reflection Button
+  // End Reflection Button - Compact design
   endReflectionContainer: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.therapy.lg,
+    paddingVertical: spacing.therapy.sm,
     alignItems: 'center',
   },
 
   endReflectionButton: {
-    backgroundColor: colors.purple[600],
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    borderRadius: 12,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    backgroundColor: 'transparent',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 18, // Similar to suggestion chips
+    shadowColor: 'rgba(93, 164, 205, 0.25)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 4,
+    // More compact size, similar to suggestion chips
   },
 
   endReflectionButtonText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 14, // Smaller for compact design
     fontWeight: '600',
     textAlign: 'center',
+    letterSpacing: 0.1,
+    lineHeight: 18,
   },
 
 });

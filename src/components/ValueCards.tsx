@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList, Dimensions, Modal } from 'react-native';
 import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar } from 'lucide-react-native';
+import { ValuesReflectButton } from './ReflectButton';
 import Svg, { Rect, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { valuesService, type UserValue, type ValueReflectionSummary } from '../services/valuesService';
 import { generateSampleValuesData } from '../utils/sampleValuesData';
@@ -253,32 +254,10 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
       </View>
 
       {/* Action button */}
-      <TouchableOpacity
+      <ValuesReflectButton
         onPress={() => onStartReflection?.(value.id, prompt.text, value.name, value.userDescription)}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#698991',
-          borderRadius: 10,
-          paddingVertical: 10,
-          paddingHorizontal: 16,
-          marginBottom: 10,
-        }}
-        activeOpacity={0.8}
-      >
-        <MessageCircle size={16} color="white" />
-        <Text style={{
-          color: 'white',
-          fontSize: 14,
-          fontWeight: '500',
-          marginLeft: 6,
-          marginRight: 4
-        }}>
-          Reflect on This
-        </Text>
-        <ArrowRight size={14} color="white" />
-      </TouchableOpacity>
+        style={{ marginBottom: 10 }}
+      />
 
       {/* Reflections button (if any exist) */}
       {valueReflections.length > 0 && (

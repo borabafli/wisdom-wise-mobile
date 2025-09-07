@@ -187,8 +187,15 @@ const generateSampleSessionSummaries = async (): Promise<void> => {
   ];
 
   // Save session summaries
-  for (const summary of sessionSummaries) {
-    await memoryService.saveSessionSummary(summary);
+  for (const summaryData of sessionSummaries) {
+    const summary = {
+      id: summaryData.sessionId + '_summary_' + Date.now(),
+      text: summaryData.summary,
+      date: summaryData.date,
+      type: 'session' as const,
+      messageCount: 10 // Approximate message count for sample data
+    };
+    await memoryService.saveSummary(summary);
   }
 
   console.log('Sample session summaries generated successfully:', sessionSummaries.length, 'entries');

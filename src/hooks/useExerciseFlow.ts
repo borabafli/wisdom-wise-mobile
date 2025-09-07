@@ -20,6 +20,11 @@ export const useExerciseFlow = (initialExercise?: any) => {
   const [valueReflectionSummary, setValueReflectionSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
   const [showThinkingPatternSummary, setShowThinkingPatternSummary] = useState(false);
   const [thinkingPatternSummary, setThinkingPatternSummary] = useState<string | null>(null);
+  
+  // Reflection session tracking
+  const [reflectionMessageCount, setReflectionMessageCount] = useState(0);
+  const [reflectionStartTime, setReflectionStartTime] = useState<number | null>(null);
+  const [canEndReflection, setCanEndReflection] = useState(false);
 
   const startDynamicAIGuidedExercise = useCallback(async (
     currentExercise: any,
@@ -220,6 +225,11 @@ export const useExerciseFlow = (initialExercise?: any) => {
       setIsValueReflection(true);
       setExerciseData({ valueContext });
       
+      // Initialize reflection tracking
+      setReflectionMessageCount(0);
+      setReflectionStartTime(Date.now());
+      setCanEndReflection(false);
+      
       // Get the AI's opening message for the value reflection
       const context = await contextService.assembleValueReflectionContext(valueContext);
       
@@ -280,6 +290,16 @@ export const useExerciseFlow = (initialExercise?: any) => {
 
       setMessages(prev => [...prev, userMessage]);
       await storageService.addMessage(userMessage);
+
+      // Update reflection tracking
+      const newMessageCount = reflectionMessageCount + 1;
+      setReflectionMessageCount(newMessageCount);
+      
+      // Enable end button after 3 meaningful exchanges or 2 minutes
+      const timeElapsed = reflectionStartTime ? (Date.now() - reflectionStartTime) / 1000 : 0;
+      if (newMessageCount >= 3 || timeElapsed >= 120) {
+        setCanEndReflection(true);
+      }
 
       const recentMessages = await storageService.getLastMessages(10);
       
@@ -473,6 +493,11 @@ export const useExerciseFlow = (initialExercise?: any) => {
       setIsThinkingPatternReflection(true);
       setExerciseData({ patternContext });
       
+      // Initialize reflection tracking
+      setReflectionMessageCount(0);
+      setReflectionStartTime(Date.now());
+      setCanEndReflection(false);
+      
       // Get the AI's opening message for the thinking pattern reflection
       const context = await contextService.assembleThinkingPatternReflectionContext(patternContext);
       
@@ -538,6 +563,17 @@ export const useExerciseFlow = (initialExercise?: any) => {
       setMessages(prev => [...prev, userMessage]);
       await storageService.addMessage(userMessage);
 
+      // Update reflection tracking
+      const newMessageCount = reflectionMessageCount + 1;
+      setReflectionMessageCount(newMessageCount);
+      
+      // Enable end button after 3 meaningful exchanges or 2 minutes
+      const timeElapsed = reflectionStartTime ? (Date.now() - reflectionStartTime) / 1000 : 0;
+      
+      if (newMessageCount >= 3 || timeElapsed >= 120) {
+        setCanEndReflection(true);
+      }
+
       const recentMessages = await storageService.getLastMessages(10);
       
       // For thinking pattern reflection, we need to maintain the pattern context throughout the conversation
@@ -602,6 +638,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
     valueReflectionSummary,
     showThinkingPatternSummary,
     thinkingPatternSummary,
+    reflectionMessageCount,
+    canEndReflection,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
     startValueReflection,
