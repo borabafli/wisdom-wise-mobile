@@ -16,7 +16,7 @@ interface MoodSliderProps {
 }
 
 const SLIDER_WIDTH = 280;
-const THUMB_SIZE = 32;
+const THUMB_SIZE = 24;
 
 // Smiley image assets
 const smileyImages = {
@@ -213,8 +213,8 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
           style={[
             styles.thumb,
             {
-              left: Math.max(0, Math.min(SLIDER_WIDTH - THUMB_SIZE, thumbPosition - THUMB_SIZE / 2)),
-              transform: [{ scale: isDragging ? 1.2 : 1 }],
+              left: Math.max(-THUMB_SIZE/2, Math.min(SLIDER_WIDTH - THUMB_SIZE/2, thumbPosition - THUMB_SIZE / 2)),
+              transform: [{ scale: isDragging ? 1.1 : 1 }],
               borderColor: colors.borderColor,
             },
           ]}

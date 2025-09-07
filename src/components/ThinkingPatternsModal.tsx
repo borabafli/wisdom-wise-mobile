@@ -14,6 +14,7 @@ import {
 import { BlurView } from 'expo-blur';
 import { X, ArrowLeft, ArrowRight, Brain, Lightbulb, TrendingUp, Target, Zap } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ValuesReflectButton } from './ReflectButton';
 import { ThoughtPattern } from '../services/storageService';
 import { thinkingPatternsModalStyles as styles } from '../styles/components/ThinkingPatternsModal.styles';
 
@@ -24,6 +25,7 @@ interface ThinkingPatternsModalProps {
   onClose: () => void;
   patterns: ThoughtPattern[];
   onPatternPress?: (pattern: ThoughtPattern) => void;
+  onStartReflection?: (pattern: ThoughtPattern, prompt: string) => void;
 }
 
 // Background images - we'll randomly select one
@@ -136,6 +138,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   onClose,
   patterns,
   onPatternPress,
+  onStartReflection,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [backgroundImage, setBackgroundImage] = useState(require('../../assets/images/8.jpeg'));
@@ -220,7 +223,12 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
     return (
       <View style={styles.patternCard}>
         <BlurView intensity={40} style={styles.cardBlurContainer}>
-          <View style={styles.cardContent}>
+          <ScrollView 
+            style={styles.cardScrollView}
+            contentContainerStyle={styles.cardContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
             {/* 1. Distortion Pattern Header */}
             <View style={styles.cardHeader}>
               <Text style={styles.patternType}>
@@ -288,7 +296,24 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
             {pattern.context && (
               <Text style={styles.contextText}>{pattern.context}</Text>
             )}
-          </View>
+
+            {/* Reflect on This Button */}
+            {onStartReflection && (
+              <ValuesReflectButton
+                onPress={() => {
+                  const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${primaryDistortion.toLowerCase()}. Sometimes when we experience ${primaryDistortion.toLowerCase()}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
+                  if (onStartReflection) {
+                    onStartReflection(pattern, prompt);
+                    // Close modal when starting reflection
+                    handleClose();
+                  } else {
+                    console.log('onStartReflection not provided');
+                  }
+                }}
+                style={{ marginTop: 12 }}
+              />
+            )}
+          </ScrollView>
         </BlurView>
       </View>
     );

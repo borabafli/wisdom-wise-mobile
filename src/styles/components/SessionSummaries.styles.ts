@@ -1,181 +1,208 @@
 import { StyleSheet } from 'react-native';
-import { colors, typography, spacing, shadows } from '../tokens';
 
 export const sessionSummariesStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: '#FAFBFC', // --off-white from style guide
   },
 
   header: {
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    paddingTop: 50,
+    paddingBottom: 24,
+    paddingHorizontal: 24,
     position: 'relative',
   },
 
   closeButton: {
     position: 'absolute',
-    top: spacing.xl,
-    right: spacing.lg,
+    top: 50,
+    right: 24,
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.green[100],
+    borderRadius: 20, // --radius-full
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
+    shadowColor: '#357A8A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
   },
 
   headerContent: {
     alignItems: 'center',
-    marginTop: spacing.lg,
+    marginTop: 12,
   },
 
   headerTitle: {
-    ...typography.heading.xl,
-    color: colors.green[800],
-    marginTop: spacing.sm,
-    marginBottom: spacing.xs,
+    fontSize: 26, // --text-2xl
+    fontWeight: '600', // --font-semibold
+    color: '#FFFFFF',
+    marginTop: 12,
+    marginBottom: 4,
+    textAlign: 'center',
   },
 
   headerSubtitle: {
-    ...typography.body.md,
-    color: colors.green[700],
+    fontSize: 16, // --text-base
+    fontWeight: '400', // --font-regular
+    color: 'rgba(255, 255, 255, 0.85)',
+    lineHeight: 24,
+    textAlign: 'center',
   },
 
   // Filter bar
   filterBar: {
     flexDirection: 'row',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.gray[50],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: '#F5F7FA', // --light-gray
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-    gap: spacing.sm,
+    borderBottomColor: '#E1E8ED', // --medium-gray
+    gap: 8,
   },
 
   filterButton: {
     flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    paddingVertical: spacing.sm,
+    backgroundColor: '#FFFFFF', // --white
+    borderRadius: 20, // --radius-xl
+    paddingVertical: 8,
+    paddingHorizontal: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.gray[300],
+    borderColor: '#E1E8ED',
+    shadowColor: '#5BA3B8',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
 
   filterButtonActive: {
-    backgroundColor: colors.green[500],
-    borderColor: colors.green[500],
+    backgroundColor: '#5BA3B8', // --primary-blue-teal
+    borderColor: '#5BA3B8',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 2,
   },
 
   filterText: {
-    ...typography.body.sm,
-    color: colors.gray[600],
-    fontWeight: '500',
+    fontSize: 13, // --text-sm (slightly smaller)
+    fontWeight: '500', // --font-medium
+    color: '#64748B', // --text-gray
   },
 
   filterTextActive: {
-    color: colors.white,
+    color: '#FFFFFF',
+    fontWeight: '600', // --font-semibold
   },
 
   // Summaries list
   summariesList: {
     flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
+    paddingHorizontal: 24,
+    paddingTop: 16,
   },
 
   summaryCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: spacing.lg,
-    marginBottom: spacing.md,
+    backgroundColor: '#FFFFFF', // --white
+    borderRadius: 16, // --radius-lg
+    padding: 24, // --space-3
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: colors.gray[200],
-    ...shadows.sm,
+    borderColor: 'transparent',
+    shadowColor: '#5BA3B8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 3,
   },
 
   summaryHeader: {
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
 
   summaryHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.sm,
-    gap: spacing.sm,
+    marginBottom: 12,
+    gap: 12,
   },
 
   typeBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12, // --radius-md
   },
 
   typeBadgeSession: {
-    backgroundColor: colors.blue[100],
+    backgroundColor: '#A8D5E8', // --primary-light
   },
 
   typeBadgeConsolidated: {
-    backgroundColor: colors.purple[100],
+    backgroundColor: '#B5A7E6', // --lavender
   },
 
   typeBadgeText: {
-    ...typography.body.xs,
-    fontWeight: '600',
+    fontSize: 12, // --text-xs
+    fontWeight: '600', // --font-semibold
   },
 
   typeBadgeTextSession: {
-    color: colors.blue[800],
+    color: '#357A8A', // --primary-dark
   },
 
   typeBadgeTextConsolidated: {
-    color: colors.purple[800],
+    color: '#5A4B8A',
   },
 
   summaryTitle: {
-    ...typography.heading.sm,
-    color: colors.gray[900],
+    fontSize: 18, // --text-lg
+    fontWeight: '600', // --font-semibold
+    color: '#1A2332', // --near-black
     flex: 1,
+    lineHeight: 24,
   },
 
   summaryMeta: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: 16,
   },
 
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: 6,
   },
 
   metaText: {
-    ...typography.body.xs,
-    color: colors.gray[600],
+    fontSize: 12, // --text-xs
+    color: '#64748B', // --text-gray
+    fontWeight: '400',
   },
 
   summaryContent: {
-    ...typography.body.md,
-    color: colors.gray[800],
-    lineHeight: 22,
-    marginBottom: spacing.sm,
+    fontSize: 16, // --text-base
+    fontWeight: '400', // --font-regular
+    color: '#334155', // --dark-gray
+    lineHeight: 28, // --leading-relaxed
+    marginBottom: 12,
   },
 
   consolidatedInfo: {
-    backgroundColor: colors.purple[50],
-    borderRadius: 6,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
+    backgroundColor: 'rgba(181, 167, 230, 0.15)', // Lavender with transparency
+    borderRadius: 8, // --radius-sm
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     alignSelf: 'flex-start',
   },
 
   consolidatedInfoText: {
-    ...typography.body.xs,
-    color: colors.purple[700],
-    fontWeight: '500',
+    fontSize: 12, // --text-xs
+    color: '#5A4B8A',
+    fontWeight: '600', // --font-semibold
   },
 
   // Empty state
@@ -183,21 +210,24 @@ export const sessionSummariesStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 24,
   },
 
   emptyStateTitle: {
-    ...typography.heading.md,
-    color: colors.gray[700],
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
+    fontSize: 22, // --text-xl
+    fontWeight: '600', // --font-semibold
+    color: '#334155', // --dark-gray
+    marginTop: 24,
+    marginBottom: 12,
+    textAlign: 'center',
   },
 
   emptyStateText: {
-    ...typography.body.md,
-    color: colors.gray[600],
+    fontSize: 16, // --text-base
+    fontWeight: '400', // --font-regular
+    color: '#64748B', // --text-gray
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 28, // --leading-relaxed
   },
 
   // Loading state
@@ -208,7 +238,8 @@ export const sessionSummariesStyles = StyleSheet.create({
   },
 
   loadingText: {
-    ...typography.body.md,
-    color: colors.gray[500],
+    fontSize: 16, // --text-base
+    fontWeight: '400', // --font-regular
+    color: '#64748B', // --text-gray
   },
 });

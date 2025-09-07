@@ -78,7 +78,7 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
   },
   patternCard: {
     width: width - (spacing.layout.screenPadding * 2),
-    height: height * 0.65, // Even smaller to accommodate fixed bottom section
+    height: height * 0.72, // Increased height to show more content
     marginRight: spacing.components.cardGap,
     borderRadius: spacing.radius['2xl'],
     overflow: 'hidden',
@@ -93,14 +93,20 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.15)', // Subtle glassy border
     ...shadows.components.card,
   },
+  cardScrollView: {
+    flex: 1,
+  },
   cardContent: {
+    flexGrow: 1,
     padding: spacing.layout.screenPadding,
+    paddingBottom: spacing.layout.screenPadding * 1.5, // Extra bottom padding for button visibility
     backgroundColor: 'rgba(255, 255, 255, 0.25)', // Glass morphism - translucent
     borderRadius: spacing.radius['2xl'],
     margin: 2,
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.3)', // Glassy border
     ...shadows.components.card,
+    minHeight: '100%', // Ensure content takes at least full height
   },
 
   // Card header (compact)

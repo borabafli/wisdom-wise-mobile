@@ -18,6 +18,8 @@ import {
 } from '../components/chat';
 import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
+import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
+import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -56,6 +58,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
   const headerAnimation = useRef(new Animated.Value(0)).current;
+  const endReflectionButtonAnimation = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Custom hooks
@@ -78,8 +81,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     exerciseData,
     showMoodRating,
     showPreExerciseMoodSlider,
+    isValueReflection,
+    isThinkingPatternReflection,
+    showValueReflectionSummary,
+    valueReflectionSummary,
+    showThinkingPatternSummary,
+    thinkingPatternSummary,
+    reflectionMessageCount,
+    canEndReflection,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
+    startValueReflection,
+    handleValueReflectionResponse,
+    endValueReflection,
+    saveValueReflectionSummary,
+    cancelValueReflectionSummary,
+    startThinkingPatternReflection,
+    handleThinkingPatternReflectionResponse,
+    endThinkingPatternReflection,
+    saveThinkingPatternSummary,
+    cancelThinkingPatternSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,
@@ -95,13 +116,36 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (isInitialized) return;
 
     if (currentExercise) {
-      enterExerciseMode();
-      startDynamicAIGuidedExercise(
-        currentExercise,
-        chatSession.setMessages,
-        chatSession.setIsTyping,
-        chatSession.setSuggestions
-      );
+      console.log('Initializing chat with exercise:', currentExercise.type);
+      
+      if (currentExercise.type === 'value_reflection') {
+        console.log('Starting value reflection with context:', currentExercise.context);
+        startValueReflection(
+          currentExercise.context,
+          chatSession.setMessages,
+          chatSession.setIsTyping,
+          chatSession.setSuggestions,
+          addAIMessageWithTypewriter
+        );
+      } else if (currentExercise.type === 'thinking_pattern_reflection') {
+        console.log('Starting thinking pattern reflection with context:', currentExercise.context);
+        startThinkingPatternReflection(
+          currentExercise.context,
+          chatSession.setMessages,
+          chatSession.setIsTyping,
+          chatSession.setSuggestions,
+          addAIMessageWithTypewriter
+        );
+      } else {
+        enterExerciseMode();
+        startDynamicAIGuidedExercise(
+          currentExercise,
+          chatSession.setMessages,
+          chatSession.setIsTyping,
+          chatSession.setSuggestions
+        );
+      }
+      
       setIsInitialized(true);
       return;
     }
@@ -124,6 +168,28 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const handleSend = async (text = inputText) => {
     if (!text.trim()) return;
     setInputText('');
+
+    if (isValueReflection) {
+      await handleValueReflectionResponse(
+        text,
+        chatSession.setMessages,
+        chatSession.setIsTyping,
+        chatSession.setSuggestions,
+        addAIMessageWithTypewriter
+      );
+      return;
+    }
+
+    if (isThinkingPatternReflection) {
+      await handleThinkingPatternReflectionResponse(
+        text,
+        chatSession.setMessages,
+        chatSession.setIsTyping,
+        chatSession.setSuggestions,
+        addAIMessageWithTypewriter
+      );
+      return;
+    }
 
     if (exerciseMode && exerciseData.dynamicFlow) {
       await handleDynamicAIGuidedExerciseResponse(
@@ -203,6 +269,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       if (isInExerciseMode) startExerciseAnimations();
       else stopExerciseAnimations();
     }, [exerciseMode, exerciseData]);
+
+    // Animate end reflection button
+    useEffect(() => {
+      if (canEndReflection) {
+        Animated.spring(endReflectionButtonAnimation, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 100,
+          friction: 8,
+        }).start();
+      } else {
+        endReflectionButtonAnimation.setValue(0);
+      }
+    }, [canEndReflection]);
 
     const normalGradient = [...colors.gradients.primaryLight];
     const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5'];
@@ -382,6 +462,24 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                 onSkip={handleMoodRatingSkip}
               />
             )}
+
+            {showValueReflectionSummary && valueReflectionSummary && (
+              <ValueReflectionSummaryCard
+                valueContext={exerciseData.valueContext}
+                summary={valueReflectionSummary}
+                onSave={saveValueReflectionSummary}
+                onCancel={cancelValueReflectionSummary}
+              />
+            )}
+
+            {showThinkingPatternSummary && thinkingPatternSummary && (
+              <ThinkingPatternSummaryCard
+                patternContext={exerciseData.patternContext}
+                summary={thinkingPatternSummary}
+                onSave={saveThinkingPatternSummary}
+                onCancel={cancelThinkingPatternSummary}
+              />
+            )}
           </ScrollView>
 
 
@@ -403,11 +501,59 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             showExerciseButton={
               chatSession.messages.filter(msg => msg.type === 'user').length >= 2 &&
               !chatSession.showExerciseCard &&
-              !(exerciseMode && exerciseData.dynamicFlow)
+              !(exerciseMode && exerciseData.dynamicFlow) &&
+              !isValueReflection &&
+              !isThinkingPatternReflection
             }
             isVisible={chatSession.suggestions.length > 0}
             isTyping={chatSession.isTyping}
           />
+
+          {/* End Reflection Button - Positioned after suggestion chips */}
+          {(isValueReflection || isThinkingPatternReflection) && !showValueReflectionSummary && !showThinkingPatternSummary && canEndReflection && (
+            <Animated.View 
+              style={[
+                styles.endReflectionContainer,
+                {
+                  opacity: endReflectionButtonAnimation,
+                  transform: [{
+                    scale: endReflectionButtonAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.9, 1]
+                    })
+                  }]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  if (isValueReflection) {
+                    endValueReflection(
+                      chatSession.setMessages,
+                      chatSession.setIsTyping,
+                      chatSession.setSuggestions
+                    );
+                  } else {
+                    endThinkingPatternReflection(
+                      chatSession.setMessages,
+                      chatSession.setIsTyping,
+                      chatSession.setSuggestions
+                    );
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['#5DA4CD', '#7FC4C4']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.endReflectionButton}
+                >
+                  <Text style={styles.endReflectionButtonText}>End Reflection</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
 
           {/* Input Area */}
           <ChatInput

@@ -50,7 +50,9 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
 
   const renderHeader = () => (
     <LinearGradient
-      colors={['#dcfdf4', '#86efac']}
+      colors={['#A8D5E8', '#5BA3B8']} // Primary light to primary blue-teal
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
       style={styles.header}
     >
       <TouchableOpacity
@@ -58,11 +60,11 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
         onPress={onClose}
         activeOpacity={0.7}
       >
-        <X size={24} color="#059669" />
+        <X size={24} color="#357A8A" />
       </TouchableOpacity>
 
       <View style={styles.headerContent}>
-        <TrendingUp size={32} color="#059669" />
+        <TrendingUp size={32} color="#FFFFFF" />
         <Text style={styles.headerTitle}>Session Summaries</Text>
         <Text style={styles.headerSubtitle}>
           {totalCount || summaries.length} sessions analyzed

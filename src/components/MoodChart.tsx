@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, Image } from 'react-native';
 import Svg, { Line, Circle, Path, Defs, LinearGradient, Stop, Filter, FeGaussianBlur, FeMorphology, FeFlood, FeComposite } from 'react-native-svg';
 import { moodRatingService, type MoodStats } from '../services/moodRatingService';
 import { moodChartStyles as styles } from '../styles/components/MoodChart.styles';
@@ -15,7 +15,7 @@ interface MoodChartProps {
 
 export const MoodChart: React.FC<MoodChartProps> = ({ 
   height = 220, 
-  showEmojis = true,
+  showEmojis = false, // Clean design without emojis
   style,
   days = 14
 }) => {
@@ -44,11 +44,20 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       const stats = await moodRatingService.getMoodStats();
       const dateSequence = generateDateSequence(days);
       
+      console.log('🎯 MoodChart Debug:');
+      console.log('- Stats loaded:', stats);
+      console.log('- Mood trend:', stats.moodTrend);
+      console.log('- Total ratings:', stats.totalRatings);
+      console.log('- Date sequence length:', dateSequence.length);
+      
       // Create a map of existing data
       const dataMap = new Map();
       stats.moodTrend.forEach(item => {
         dataMap.set(item.date, item.rating);
       });
+      
+      console.log('- Data map size:', dataMap.size);
+      console.log('- Data map entries:', Array.from(dataMap.entries()).slice(0, 5));
       
       // Fill gaps with null values and ensure proper sequence
       const filledData = dateSequence.map(date => ({
@@ -58,6 +67,9 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       
       // Filter out null values for display, but keep structure
       const validData = filledData.filter(item => item.rating !== null);
+      
+      console.log('- Valid data points:', validData.length);
+      console.log('- Valid data sample:', validData.slice(0, 3));
       
       setMoodData(validData);
     } catch (error) {
@@ -76,18 +88,18 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     );
   }
 
-  // Mobile-first width calculation with aggressive padding
-  const containerPadding = 80; // More aggressive padding for mobile
-  const chartWidth = Math.min(screenWidth - containerPadding, 320); // Cap max width
-  const chartHeight = height - 80;
+  // Fixed chart dimensions to prevent width overflow
+  const containerPadding = 20; // Reduced container padding
+  const chartWidth = screenWidth - containerPadding; // Use remaining space after padding
+  const chartHeight = height - 40;
   
-  // Mobile-optimized padding calculations  
-  const paddingLeft = showEmojis ? 40 : 16;
-  const paddingRight = 30; // Extra right padding for mobile safety
-  const paddingTop = 24;
-  const paddingBottom = 40;
+  // Padding with space for smiley Y-axis
+  const paddingLeft = 55; // Adjusted space for smaller smiley images with padding
+  const paddingRight = 20; // Adequate padding
+  const paddingTop = 30;
+  const paddingBottom = 40; // Space for date labels
   
-  const graphWidth = Math.max(180, chartWidth - paddingLeft - paddingRight);
+  const graphWidth = Math.max(200, chartWidth - paddingLeft - paddingRight);
   const graphHeight = Math.max(120, chartHeight - paddingTop - paddingBottom);
   
 
@@ -100,8 +112,8 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     );
   }
 
-  // Calculate chart coordinates
-  const minValue = 0;
+  // Calculate chart coordinates (mood scale 1-5)
+  const minValue = 1;
   const maxValue = 5;
   const valueRange = maxValue - minValue;
   
@@ -114,25 +126,28 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return { x, y, value: item.rating, date: item.date };
   });
   
-  // Generate labels from dates with better spacing
+  // Clean, consistent date labels
   const generateLabels = () => {
+    // Always show exactly 4 labels for consistency: first, middle points, and last
+    const labelIndices = [];
     if (moodData.length <= 4) {
-      // Show all labels for small datasets
-      return moodData.map(item => {
+      // Show all if we have 4 or fewer points
+      labelIndices.push(...Array.from({length: moodData.length}, (_, i) => i));
+    } else {
+      // Always show first, two middle points, and last for consistency
+      labelIndices.push(0);
+      labelIndices.push(Math.floor(moodData.length / 3));
+      labelIndices.push(Math.floor((moodData.length * 2) / 3));
+      labelIndices.push(moodData.length - 1);
+    }
+    
+    return moodData.map((item, index) => {
+      if (labelIndices.includes(index)) {
         const date = new Date(item.date);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      });
-    } else {
-      // Show fewer labels for larger datasets to prevent overlap
-      const step = Math.ceil(moodData.length / 4);
-      return moodData.map((item, index) => {
-        if (index % step === 0 || index === moodData.length - 1) {
-          const date = new Date(item.date);
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        }
-        return '';
-      });
-    }
+      }
+      return '';
+    });
   };
 
   const labels = generateLabels();
@@ -170,184 +185,183 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     const firstPoint = pathData[0];
     return `${linePath} L${lastPoint.x},${paddingTop + graphHeight} L${firstPoint.x},${paddingTop + graphHeight} Z`;
   };
-  
-  // Y-axis emoji positions aligned with actual chart scale
-  const emojiPositions = [
+
+  // Smiley Y-axis positions (5 smileys for mood scale 1-5)
+  const smileyPositions = [
     { 
-      rating: 5, 
-      emoji: '😊', 
-      y: paddingTop + graphHeight - ((5 - 0) / 5) * graphHeight
+      mood: 5, 
+      image: require('../../assets/images/smiley-5.png'), // Happiest
+      y: paddingTop + graphHeight - ((5 - minValue) / valueRange) * graphHeight
     },
     { 
-      rating: 4, 
-      emoji: '🙂', 
-      y: paddingTop + graphHeight - ((4 - 0) / 5) * graphHeight 
+      mood: 4, 
+      image: require('../../assets/images/smiley-4.png'), 
+      y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight 
     },
     { 
-      rating: 3, 
-      emoji: '😐', 
-      y: paddingTop + graphHeight - ((3 - 0) / 5) * graphHeight 
+      mood: 3, 
+      image: require('../../assets/images/smiley-3.png'), // Neutral
+      y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight 
     },
     { 
-      rating: 2, 
-      emoji: '😕', 
-      y: paddingTop + graphHeight - ((2 - 0) / 5) * graphHeight 
+      mood: 2, 
+      image: require('../../assets/images/smiley-2.png'), 
+      y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight 
     },
     { 
-      rating: 1, 
-      emoji: '😞', 
-      y: paddingTop + graphHeight - ((1 - 0) / 5) * graphHeight 
-    },
-    { 
-      rating: 0, 
-      emoji: '😢', 
-      y: paddingTop + graphHeight - ((0 - 0) / 5) * graphHeight 
+      mood: 1, 
+      image: require('../../assets/images/smiley-1.png'), // Worst
+      y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight 
     }
   ];
   
   return (
     <View style={[styles.chartContainer, { 
       height, 
-      width: chartWidth, 
-      overflow: 'hidden',
-      padding: 0 // Override default padding
+      width: '100%', // Full width
+      alignItems: 'center', // Center the chart
+      justifyContent: 'center',
+      overflow: 'visible', // Allow emojis to be visible
+      padding: 0
     }, style]}>
-      <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
-        <Defs>
-          {/* Therapeutic line gradient */}
-          <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <Stop offset="0%" stopColor={styles.colors.lineGradient.start} stopOpacity="0.6" />
-            <Stop offset="50%" stopColor={styles.colors.lineGradient.middle} stopOpacity="0.8" />
-            <Stop offset="100%" stopColor={styles.colors.lineGradient.end} stopOpacity="1" />
-          </LinearGradient>
+      <View style={{
+        width: chartWidth,
+        height: chartHeight,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{marginLeft: 0}}>
+          <Defs>
+            {/* Improved line gradient with softer edge fading */}
+            <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor="#88b5da" stopOpacity="0.2" />
+              <Stop offset="5%" stopColor="#88b5da" stopOpacity="0.6" />
+              <Stop offset="15%" stopColor="#88b5da" stopOpacity="1" />
+              <Stop offset="85%" stopColor="#88b5da" stopOpacity="1" />
+              <Stop offset="95%" stopColor="#88b5da" stopOpacity="0.6" />
+              <Stop offset="100%" stopColor="#88b5da" stopOpacity="0.2" />
+            </LinearGradient>
+            
+            {/* Smoother area gradient fill */}
+            <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor="#88b5da" stopOpacity="0.6" />
+              <Stop offset="20%" stopColor="#88b5da" stopOpacity="0.4" />
+              <Stop offset="50%" stopColor="#88b5da" stopOpacity="0.2" />
+              <Stop offset="80%" stopColor="#88b5da" stopOpacity="0.08" />
+              <Stop offset="100%" stopColor="#88b5da" stopOpacity="0" />
+            </LinearGradient>
+            
+            {/* Mask for softer horizontal edge fading */}
+            <LinearGradient id="areaMask" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor="white" stopOpacity="0.1" />
+              <Stop offset="5%" stopColor="white" stopOpacity="0.4" />
+              <Stop offset="15%" stopColor="white" stopOpacity="1" />
+              <Stop offset="85%" stopColor="white" stopOpacity="1" />
+              <Stop offset="95%" stopColor="white" stopOpacity="0.4" />
+              <Stop offset="100%" stopColor="white" stopOpacity="0.1" />
+            </LinearGradient>
+          </Defs>
           
-          {/* Calming area gradient */}
-          <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={styles.colors.areaGradient.start} stopOpacity="0.4" />
-            <Stop offset="50%" stopColor={styles.colors.areaGradient.middle} stopOpacity="0.2" />
-            <Stop offset="100%" stopColor={styles.colors.areaGradient.end} stopOpacity="0.05" />
-          </LinearGradient>
+          {/* Area fill with horizontal and vertical gradient fading */}
+          <Path
+            d={createAreaPath()}
+            fill="url(#areaGradient)"
+            mask="url(#areaMask)"
+          />
           
-          {/* Gentle glow effect */}
-          <Filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-            <FeGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <FeFlood floodColor={styles.colors.glow} floodOpacity="0.3"/>
-            <FeComposite in="SourceGraphic" operator="over"/>
-          </Filter>
+          {/* Clean line with gradient fading at edges */}
+          <Path
+            d={createSmoothPath()}
+            stroke="url(#lineGradient)"
+            strokeWidth={3}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           
-          {/* Soft shadow effect */}
-          <Filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <FeGaussianBlur stdDeviation="1.5" result="blur"/>
-            <FeFlood floodColor={styles.colors.shadow} floodOpacity="0.15"/>
-            <FeComposite in="SourceGraphic" operator="over"/>
-          </Filter>
-        </Defs>
-        
-        {/* Calming background grid lines */}
-        {emojiPositions.map((pos, index) => (
-          <Line
-            key={`grid-${index}`}
-            x1={paddingLeft}
-            y1={pos.y}
-            x2={paddingLeft + graphWidth}
-            y2={pos.y}
-            stroke={styles.colors.gridLines}
-            strokeWidth={0.8}
-            strokeDasharray="3,6"
-            opacity={0.4}
-          />
-        ))}
-        
-        
-        {/* Gentle shadow line */}
-        <Path
-          d={createSmoothPath()}
-          stroke={styles.colors.glow}
-          strokeWidth={6}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#shadow)"
-          opacity={0.3}
-        />
-        
-        {/* Main therapeutic line with soft glow */}
-        <Path
-          d={createSmoothPath()}
-          stroke="url(#lineGradient)"
-          strokeWidth={3.5}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#glow)"
-        />
-        
-        {/* Calming data points */}
-        {pathData.map((point, index) => (
-          <Circle
-            key={`point-${index}`}
-            cx={point.x}
-            cy={point.y}
-            r={5.5}
-            fill={styles.colors.dataPointFill}
-            stroke={styles.colors.dataPointStroke}
-            strokeWidth={2.5}
-            filter="url(#shadow)"
-            opacity={0.95}
-          />
-        ))}
-        
-        {/* Gentle highlight circles */}
-        {pathData.map((point, index) => (
-          <Circle
-            key={`highlight-${index}`}
-            cx={point.x}
-            cy={point.y}
-            r={2.5}
-            fill={styles.colors.dataPointHighlight}
-          />
-        ))}
-      </Svg>
+          {/* Data points with softer edge fading */}
+          {pathData.map((point, index) => {
+            // Calculate smoother opacity for edge fading
+            const totalPoints = pathData.length;
+            let opacity = 0.9;
+            
+            if (totalPoints > 1) {
+              const position = index / (totalPoints - 1); // 0 to 1
+              if (position <= 0.15) {
+                opacity = 0.2 + (position / 0.15) * 0.7; // Gradual fade in
+              } else if (position >= 0.85) {
+                opacity = 0.9 - ((position - 0.85) / 0.15) * 0.7; // Gradual fade out
+              }
+            }
+            
+            return (
+              <Circle
+                key={`point-${index}`}
+                cx={point.x}
+                cy={point.y}
+                r={4}
+                fill="#88b5da"
+                stroke="white"
+                strokeWidth={1.5}
+                opacity={opacity}
+              />
+            );
+          })}
+        </Svg>
       
-      {/* Mindful emoji Y-axis */}
-      {showEmojis && (
-        <View style={[styles.emojiContainer, {
-          height: chartHeight,
-          paddingVertical: paddingTop,
-        }]}>
-          {emojiPositions.map((pos, index) => (
-            <Text
-              key={`emoji-${index}`}
-              style={[styles.emojiText, { 
-                position: 'absolute',
-                top: pos.y - 10,
-                left: -2,
-              }]}
-            >
-              {pos.emoji}
-            </Text>
-          ))}
-        </View>
-      )}
+      {/* Smiley Y-axis indicators - properly positioned with padding */}
+      <View style={{
+        position: 'absolute',
+        left: 10, // More space from edge
+        top: 0,
+        bottom: paddingBottom,
+        width: 45, // Slightly smaller container
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 5, // Internal padding
+      }}>
+        {smileyPositions.map((smiley, index) => (
+          <Image
+            key={`smiley-${index}`}
+            source={smiley.image}
+            style={{
+              position: 'absolute',
+              top: smiley.y - 12, // Centered for smaller 24px image
+              left: 10, // Centered with padding
+              width: 24, // Smaller size to fit better
+              height: 24,
+              opacity: 0.85,
+            }}
+            resizeMode="contain"
+          />
+        ))}
+      </View>
       
-      {/* Gentle X-axis labels */}
-      <View style={[styles.labelsContainer, {
+      {/* Clean, minimal X-axis labels */}
+      <View style={{
+        position: 'absolute',
+        bottom: 5,
         left: paddingLeft,
         right: paddingRight,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         width: graphWidth,
-      }]}>
-        {labels.map((label, index) => (
-          <Text
-            key={`label-${index}`}
-            style={[styles.labelText, {
-              width: graphWidth / labels.length,
-              textAlign: index === 0 ? 'left' : 
-                       index === labels.length - 1 ? 'right' : 'center'
-            }]}
-          >
-            {label}
-          </Text>
-        ))}
+      }}>
+        {labels.map((label, index) => 
+          label ? (
+            <Text
+              key={`label-${index}`}
+              style={{
+                fontSize: 11,
+                color: '#64748B',
+                fontWeight: '400',
+              }}
+            >
+              {label}
+            </Text>
+          ) : null
+        )}
+      </View>
       </View>
     </View>
   );
@@ -446,13 +460,22 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
   }
 
   
-  const getMoodEmoji = (rating: number) => {
-    if (rating >= 4.5) return '😊';
-    if (rating >= 3.5) return '🙂';
-    if (rating >= 2.5) return '😐';
-    if (rating >= 1.5) return '😕';
-    if (rating > 0) return '😞';
-    return '😶'; // Neutral emoji for no data
+  const getMoodImage = (rating: number) => {
+    let imageSource;
+    if (rating >= 4.5) imageSource = require('../../assets/images/smiley-5.png');
+    else if (rating >= 3.5) imageSource = require('../../assets/images/smiley-4.png');
+    else if (rating >= 2.5) imageSource = require('../../assets/images/smiley-3.png');
+    else if (rating >= 1.5) imageSource = require('../../assets/images/smiley-2.png');
+    else if (rating > 0) imageSource = require('../../assets/images/smiley-1.png');
+    else imageSource = require('../../assets/images/smiley-3.png'); // Default to neutral
+    
+    return (
+      <Image 
+        source={imageSource} 
+        style={{ width: 24, height: 24 }} 
+        resizeMode="contain" 
+      />
+    );
   };
   
   return (
@@ -481,7 +504,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
             <View style={styles.weekSection}>
               <View style={styles.weekHeader}>
                 <Text style={styles.weekPeriod}>Last Week</Text>
-                <Text style={styles.moodEmoji}>{getMoodEmoji(weeklyData.previousWeek.rating)}</Text>
+                <View style={styles.moodEmoji}>{getMoodImage(weeklyData.previousWeek.rating)}</View>
               </View>
               <Text style={styles.moodLabel}>{weeklyData.previousWeek.label}</Text>
               <View style={styles.progressBar}>
@@ -497,7 +520,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
             <View style={styles.weekSection}>
               <View style={styles.weekHeader}>
                 <Text style={styles.weekPeriod}>This Week</Text>
-                <Text style={styles.moodEmoji}>{getMoodEmoji(weeklyData.currentWeek.rating)}</Text>
+                <View style={styles.moodEmoji}>{getMoodImage(weeklyData.currentWeek.rating)}</View>
               </View>
               <Text style={styles.moodLabel}>{weeklyData.currentWeek.label}</Text>
               <View style={styles.progressBar}>

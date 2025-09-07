@@ -28,9 +28,21 @@ export interface ValuesProgress {
   alignmentScore: number; // How well actions align with values
 }
 
+export interface ValueReflectionSummary {
+  id: string;
+  valueId: string;
+  valueName: string;
+  prompt: string;
+  summary: string;
+  keyInsights: string[];
+  date: string;
+  sessionId: string;
+}
+
 const STORAGE_KEYS = {
   VALUES: 'user_values',
-  VALUE_INSIGHTS: 'value_insights'
+  VALUE_INSIGHTS: 'value_insights',
+  VALUE_REFLECTIONS: 'value_reflection_summaries'
 };
 
 const CORE_VALUE_SUGGESTIONS = [
@@ -289,6 +301,58 @@ class ValuesService {
         ? value.userDescription.substring(0, 47) + '...'
         : value.userDescription
     }));
+  }
+
+  async saveReflectionSummary(summary: Omit<ValueReflectionSummary, 'id' | 'date'>): Promise<ValueReflectionSummary> {
+    try {
+      const newSummary: ValueReflectionSummary = {
+        ...summary,
+        id: `reflection_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        date: new Date().toISOString()
+      };
+
+      const existingSummaries = await this.getReflectionSummaries();
+      const updatedSummaries = [...existingSummaries, newSummary];
+      
+      await AsyncStorage.setItem(STORAGE_KEYS.VALUE_REFLECTIONS, JSON.stringify(updatedSummaries));
+      return newSummary;
+    } catch (error) {
+      console.error('Error saving reflection summary:', error);
+      throw error;
+    }
+  }
+
+  async getReflectionSummaries(): Promise<ValueReflectionSummary[]> {
+    try {
+      const summariesData = await AsyncStorage.getItem(STORAGE_KEYS.VALUE_REFLECTIONS);
+      return summariesData ? JSON.parse(summariesData) : [];
+    } catch (error) {
+      console.error('Error getting reflection summaries:', error);
+      return [];
+    }
+  }
+
+  async getReflectionSummariesForValue(valueId: string): Promise<ValueReflectionSummary[]> {
+    try {
+      const allSummaries = await this.getReflectionSummaries();
+      return allSummaries
+        .filter(summary => summary.valueId === valueId)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } catch (error) {
+      console.error('Error getting reflection summaries for value:', error);
+      return [];
+    }
+  }
+
+  async deleteReflectionSummary(summaryId: string): Promise<void> {
+    try {
+      const existingSummaries = await this.getReflectionSummaries();
+      const updatedSummaries = existingSummaries.filter(s => s.id !== summaryId);
+      await AsyncStorage.setItem(STORAGE_KEYS.VALUE_REFLECTIONS, JSON.stringify(updatedSummaries));
+    } catch (error) {
+      console.error('Error deleting reflection summary:', error);
+      throw error;
+    }
   }
 }
 

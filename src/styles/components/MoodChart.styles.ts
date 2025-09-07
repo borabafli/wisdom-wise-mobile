@@ -207,11 +207,12 @@ export const moodChartStyles = {
   },
 
   previousWeekFill: {
-    backgroundColor: '#C7D2FE', // Light indigo for previous week
+    backgroundColor: '#88b5da', // Previous week using #88b5da with reduced opacity
+    opacity: 0.6,
   },
 
   currentWeekFill: {
-    backgroundColor: '#6366F1', // Warm indigo for current week
+    backgroundColor: '#88b5da', // Current week using #88b5da
   },
 
   // Chart SVG colors following therapeutic palette

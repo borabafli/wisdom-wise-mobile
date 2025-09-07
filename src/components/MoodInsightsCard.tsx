@@ -7,6 +7,8 @@ import { moodRatingService } from '../services/moodRatingService';
 import { memoryService } from '../services/memoryService';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 import { generateSampleMoodData } from '../utils/sampleMoodData';
+import { generateSampleValuesData } from '../utils/sampleValuesData';
+import { getShortConfidenceLabel } from '../utils/confidenceDisplay';
 
 interface MoodInsightsCardProps {
   onInsightPress?: (insightId: string) => void;
@@ -75,16 +77,31 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       console.log('Data availability:', availability);
       setDataAvailability(availability);
 
-      // Only generate insights if we have actual data
-      if (availability.hasSessionSummaries || availability.hasMoodRatings) {
+      // Auto-generate sample data if no data exists (for demo purposes)
+      if (!availability.hasSessionSummaries && !availability.hasMoodRatings) {
+        console.log('No data found, auto-generating sample data...');
+        const success = await generateSampleMoodData();
+        if (success) {
+          // Reload availability after generating sample data
+          const newAvailability = await checkDataAvailability();
+          setDataAvailability(newAvailability);
+          
+          if (newAvailability.hasSessionSummaries || newAvailability.hasMoodRatings) {
+            const insightsData = await moodInsightsService.generateMoodInsights();
+            console.log('Generated insights from sample data:', insightsData);
+            if (insightsData.sessionsAnalyzed > 0) {
+              setInsights(insightsData);
+            }
+          }
+        }
+      } else {
+        // Only generate insights if we have actual data
         const insightsData = await moodInsightsService.generateMoodInsights();
         console.log('Generated insights:', insightsData);
         // Only set insights if they contain real data (not fallbacks)
         if (insightsData.sessionsAnalyzed > 0) {
           setInsights(insightsData);
         }
-      } else {
-        console.log('No data available for insights');
       }
     } catch (error) {
       console.error('Error loading mood insights:', error);
@@ -170,38 +187,36 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
             </TouchableOpacity>
           </View>
           
-          {/* Sample Data Button - Development Only */}
-          {__DEV__ && (
-            <TouchableOpacity
-              onPress={async () => {
-                setLoading(true);
-                await generateSampleMoodData();
-                await loadInsights();
-                setLoading(false);
-              }}
-              style={{
-                marginTop: 16,
-                backgroundColor: '#A78BFA',
-                paddingHorizontal: 16,
-                paddingVertical: 10,
-                borderRadius: 20,
-                shadowColor: '#A78BFA',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.2,
-                shadowRadius: 4,
-                elevation: 3,
-              }}
-              activeOpacity={0.8}
-            >
-              <Text style={{
-                color: 'white',
-                fontSize: 13,
-                fontWeight: '500',
-              }}>
-                Generate Sample Data
-              </Text>
-            </TouchableOpacity>
-          )}
+          {/* Sample Data Button */}
+          <TouchableOpacity
+            onPress={async () => {
+              setLoading(true);
+              await generateSampleMoodData();
+              await loadInsights();
+              setLoading(false);
+            }}
+            style={{
+              marginTop: 16,
+              backgroundColor: '#A78BFA',
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              borderRadius: 20,
+              shadowColor: '#A78BFA',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+            activeOpacity={0.8}
+          >
+            <Text style={{
+              color: 'white',
+              fontSize: 13,
+              fontWeight: '500',
+            }}>
+              Generate Sample Data
+            </Text>
+          </TouchableOpacity>
         </>
       );
     }
@@ -393,40 +408,20 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       {/* Header */}
       <View style={styles.cardHeader}>
         <View>
-          <Text style={styles.cardTitle}>Mood Insights</Text>
+          <Text style={styles.cardTitle}>Mood</Text>
           <Text style={styles.cardSubtitle}>
-            {insights ? `${insights.sessionsAnalyzed} sessions analyzed` : 'Your emotional wellness'}
+            {insights ? `${insights.sessionsAnalyzed} sessions tracked` : 'Track your emotional wellness'}
           </Text>
         </View>
-        <TouchableOpacity 
-          onPress={() => setShowFullChart(!showFullChart)}
-          style={styles.chartToggleButton}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.chartToggleButtonText}>
-            {showFullChart ? 'Hide' : 'View'} Chart
-          </Text>
-        </TouchableOpacity>
       </View>
 
-      {/* Weekly Mood Comparison - Always visible */}
-      <WeeklyMoodComparison style={{ marginBottom: 20 }} />
+      {/* Main Mood Chart - Always visible at top */}
+      <View style={{ marginBottom: 20 }}>
+        <MoodChart days={14} height={250} />
+      </View>
 
-      {/* Full Chart - Toggle visibility */}
-      {showFullChart && (
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{
-            fontSize: 16,
-            fontWeight: '600',
-            color: '#374151',
-            marginBottom: 12,
-            textAlign: 'center'
-          }}>
-            Mood Over Time
-          </Text>
-          <MoodChart days={14} height={200} />
-        </View>
-      )}
+      {/* Weekly Mood Comparison */}
+      <WeeklyMoodComparison style={{ marginBottom: 20 }} />
 
       {/* Insights Highlights */}
       <View>
@@ -483,7 +478,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
                         fontWeight: '600',
                         textTransform: 'uppercase',
                       }}>
-                        High Confidence
+                        {getShortConfidenceLabel(insight.confidence, 'insight')}
                       </Text>
                     </View>
                   )}
@@ -503,26 +498,57 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         )}
       </View>
 
-      {/* Refresh Button */}
-      <TouchableOpacity
-        onPress={loadInsights}
-        style={{
-          marginTop: 20,
-          backgroundColor: '#f1f5f9',
-          borderRadius: 8,
-          paddingVertical: 10,
-          alignItems: 'center',
-        }}
-        activeOpacity={0.7}
-      >
-        <Text style={{
-          fontSize: 12,
-          color: '#64748b',
-          fontWeight: '500',
-        }}>
-          Refresh Insights
-        </Text>
-      </TouchableOpacity>
+      {/* Control Buttons */}
+      <View style={{ flexDirection: 'row', marginTop: 20, gap: 10 }}>
+        <TouchableOpacity
+          onPress={async () => {
+            setLoading(true);
+            // Generate both mood and values sample data
+            await Promise.all([
+              generateSampleMoodData(),
+              generateSampleValuesData()
+            ]);
+            await loadInsights();
+            setLoading(false);
+          }}
+          style={{
+            flex: 1,
+            backgroundColor: '#A78BFA',
+            borderRadius: 8,
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}
+          activeOpacity={0.7}
+        >
+          <Text style={{
+            fontSize: 12,
+            color: 'white',
+            fontWeight: '500',
+          }}>
+            Generate Data
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          onPress={loadInsights}
+          style={{
+            flex: 1,
+            backgroundColor: '#f1f5f9',
+            borderRadius: 8,
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}
+          activeOpacity={0.7}
+        >
+          <Text style={{
+            fontSize: 12,
+            color: '#64748b',
+            fontWeight: '500',
+          }}>
+            Refresh
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Analysis Date */}
       {insights?.analysisDate && (
