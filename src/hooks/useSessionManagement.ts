@@ -4,6 +4,7 @@ import { Message, storageService } from '../services/storageService';
 import { insightService } from '../services/insightService';
 import { contextService } from '../services/contextService';
 import { memoryService } from '../services/memoryService';
+import { visionInsightsService } from '../services/visionInsightsService';
 
 /**
  * Hook for session lifecycle management - extracted from useChatSession
@@ -75,16 +76,35 @@ export const useSessionManagement = () => {
           const lastSession = currentSession[0]; // Most recent session
           
           if (lastSession && lastSession.messages) {
-            // Extract traditional thought patterns
-            const patterns = await insightService.extractAtSessionEnd(lastSession.messages);
-            if (patterns.length > 0) {
-              console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
+            // Check if this was a reflection session (values or thinking patterns)
+            const isReflectionSession = lastSession.messages.some(msg => 
+              msg.context?.type === 'value_reflection' || 
+              msg.context?.type === 'thinking_pattern_reflection'
+            );
+
+            if (!isReflectionSession) {
+              // Only extract thought patterns from regular therapy sessions
+              const patterns = await insightService.extractAtSessionEnd(lastSession.messages);
+              if (patterns.length > 0) {
+                console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
+              }
+            } else {
+              console.log(`⏭️ Skipping thought pattern extraction - detected reflection session`);
             }
 
             // Extract memory insights
             const insightResult = await memoryService.extractInsights(lastSession.messages);
             if (insightResult.shouldExtract && insightResult.insights.length > 0) {
               console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
+            }
+
+            // Check for and extract vision insights
+            const shouldExtractVision = await visionInsightsService.shouldExtractVisionInsight(lastSession.messages);
+            if (shouldExtractVision) {
+              const visionInsight = await visionInsightsService.extractVisionInsight(lastSession.messages, lastSession.id);
+              if (visionInsight) {
+                console.log(`✨ Background: Extracted Vision of the Future insight`);
+              }
             }
 
             // Generate session summary
@@ -144,6 +164,16 @@ export const useSessionManagement = () => {
             const insightResult = await memoryService.extractInsights(currentMessages);
             if (insightResult.shouldExtract && insightResult.insights.length > 0) {
               console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
+            }
+
+            // Check for and extract vision insights even if not saving conversation
+            const shouldExtractVision = await visionInsightsService.shouldExtractVisionInsight(currentMessages);
+            if (shouldExtractVision) {
+              const sessionId = 'temp_' + Date.now(); // Temporary session ID
+              const visionInsight = await visionInsightsService.extractVisionInsight(currentMessages, sessionId);
+              if (visionInsight) {
+                console.log(`✨ Background: Extracted Vision of the Future insight (conversation not saved)`);
+              }
             }
           }
         } catch (error) {

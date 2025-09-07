@@ -5,6 +5,7 @@ import { apiService } from '../services/apiService';
 import { getExerciseFlow } from '../data/exerciseLibrary';
 import { ttsService } from '../services/ttsService';
 import { memoryService } from '../services/memoryService';
+import { valuesService } from '../services/valuesService';
 
 export const useExerciseFlow = (initialExercise?: any) => {
   const [exerciseMode, setExerciseMode] = useState(false);
@@ -13,6 +14,12 @@ export const useExerciseFlow = (initialExercise?: any) => {
   const [stepMessageCount, setStepMessageCount] = useState<Record<number, number>>({});
   const [showPreExerciseMoodSlider, setShowPreExerciseMoodSlider] = useState(false);
   const [showMoodRating, setShowMoodRating] = useState(false);
+  const [isValueReflection, setIsValueReflection] = useState(false);
+  const [isThinkingPatternReflection, setIsThinkingPatternReflection] = useState(false);
+  const [showValueReflectionSummary, setShowValueReflectionSummary] = useState(false);
+  const [valueReflectionSummary, setValueReflectionSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
+  const [showThinkingPatternSummary, setShowThinkingPatternSummary] = useState(false);
+  const [thinkingPatternSummary, setThinkingPatternSummary] = useState<string | null>(null);
 
   const startDynamicAIGuidedExercise = useCallback(async (
     currentExercise: any,
@@ -200,14 +207,413 @@ export const useExerciseFlow = (initialExercise?: any) => {
     }
   }, [exerciseData]);
 
+  const startValueReflection = useCallback(async (
+    valueContext: any,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void,
+    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+  ) => {
+    try {
+      console.log('Starting value reflection with context:', valueContext);
+      
+      setIsValueReflection(true);
+      setExerciseData({ valueContext });
+      
+      // Get the AI's opening message for the value reflection
+      const context = await contextService.assembleValueReflectionContext(valueContext);
+      
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(context);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          text: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true,
+          context: { type: 'value_reflection', value: valueContext.valueName }
+        };
+
+        await addAIMessageWithTypewriter(aiMessage);
+        
+        if (response.suggestions) {
+          setSuggestions(response.suggestions);
+        }
+
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error starting value reflection:', error);
+      setIsValueReflection(false);
+      return false;
+    }
+  }, []);
+
+  const handleValueReflectionResponse = useCallback(async (
+    userText: string,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void,
+    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+  ) => {
+    try {
+      // Check if user wants to end the reflection
+      const userTextLower = userText.toLowerCase();
+      if (userTextLower.includes('end here and create a summary') || 
+          userTextLower.includes('finish the reflection') ||
+          userTextLower.includes('create a summary now')) {
+        // End the reflection and show summary
+        await endValueReflection(setMessages, setIsTyping, setSuggestions);
+        return;
+      }
+      const userMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'user',
+        text: userText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages(prev => [...prev, userMessage]);
+      await storageService.addMessage(userMessage);
+
+      const recentMessages = await storageService.getLastMessages(10);
+      
+      // For value reflection, we need to maintain the value context throughout the conversation
+      const valueContext = exerciseData.valueContext;
+      const context = await contextService.assembleValueReflectionContext(valueContext);
+      
+      // Add the recent conversation messages to the context
+      const conversationMessages = recentMessages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      }));
+      
+      context.push(...conversationMessages);
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(context);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          text: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true,
+          context: { type: 'value_reflection', value: exerciseData.valueContext?.valueName }
+        };
+
+        await addAIMessageWithTypewriter(aiMessage);
+        
+        if (response.suggestions) {
+          setSuggestions(response.suggestions);
+        }
+
+        // Check if this is a summary offer from the AI
+        const messageText = response.message.toLowerCase();
+        if (messageText.includes('summarize') && messageText.includes('insights') && messageText.includes('reflection')) {
+          // Add special suggestions for ending the reflection
+          const endReflectionSuggestion = "Yes, let's end here and create a summary";
+          const continueReflectionSuggestion = "I'd like to explore this a bit more";
+          setSuggestions([endReflectionSuggestion, continueReflectionSuggestion, ...(response.suggestions?.slice(0, 2) || [])]);
+        }
+      }
+    } catch (error) {
+      console.error('Error handling value reflection response:', error);
+    }
+  }, [exerciseData]);
+
+  const endValueReflection = useCallback(async (
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void
+  ) => {
+    try {
+      console.log('Ending value reflection and generating summary...');
+      
+      // Get recent messages for summary generation
+      const recentMessages = await storageService.getLastMessages(15);
+      const valueContext = exerciseData.valueContext;
+
+      // Generate the reflection summary
+      setIsTyping(true);
+      const summary = await contextService.generateValueReflectionSummary(recentMessages, valueContext);
+      setIsTyping(false);
+      
+      // Store the summary for display
+      setValueReflectionSummary(summary);
+      setShowValueReflectionSummary(true);
+      setSuggestions([]);
+      
+    } catch (error) {
+      console.error('Error ending value reflection:', error);
+      setIsTyping(false);
+    }
+  }, [exerciseData]);
+
+  const saveValueReflectionSummary = useCallback(async () => {
+    try {
+      if (!valueReflectionSummary || !exerciseData.valueContext) return;
+      
+      const valueContext = exerciseData.valueContext;
+      
+      await valuesService.saveReflectionSummary({
+        valueId: valueContext.valueId,
+        valueName: valueContext.valueName,
+        prompt: valueContext.prompt,
+        summary: valueReflectionSummary.summary,
+        keyInsights: valueReflectionSummary.keyInsights,
+        sessionId: Date.now().toString()
+      });
+      
+      console.log('Reflection summary saved successfully');
+      
+      // Reset states
+      setShowValueReflectionSummary(false);
+      setValueReflectionSummary(null);
+      setIsValueReflection(false);
+      setExerciseData({});
+      
+    } catch (error) {
+      console.error('Error saving reflection summary:', error);
+    }
+  }, [valueReflectionSummary, exerciseData]);
+
+  const cancelValueReflectionSummary = useCallback(() => {
+    setShowValueReflectionSummary(false);
+    setValueReflectionSummary(null);
+    // Don't reset isValueReflection - user can continue the conversation
+  }, []);
+
+  const endThinkingPatternReflection = useCallback(async (
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void
+  ) => {
+    try {
+      console.log('Ending thinking pattern reflection and generating summary...');
+      
+      // Get recent messages for summary generation
+      const recentMessages = await storageService.getLastMessages(15);
+      
+      // Generate a session summary using the memoryService
+      setIsTyping(true);
+      const summaryResult = await memoryService.generateSessionSummary('temp_session_' + Date.now(), recentMessages);
+      setIsTyping(false);
+      
+      if (summaryResult.success && summaryResult.summary) {
+        // Store the summary for display
+        setThinkingPatternSummary(summaryResult.summary);
+        setShowThinkingPatternSummary(true);
+        setSuggestions([]);
+      } else {
+        console.error('Failed to generate thinking pattern summary');
+        // Fallback to ending without summary
+        setIsThinkingPatternReflection(false);
+        setExerciseData({});
+      }
+      
+    } catch (error) {
+      console.error('Error ending thinking pattern reflection:', error);
+      setIsTyping(false);
+      // Fallback to ending without summary
+      setIsThinkingPatternReflection(false);
+      setExerciseData({});
+    }
+  }, []);
+
+  const saveThinkingPatternSummary = useCallback(async () => {
+    try {
+      if (!thinkingPatternSummary) return;
+      
+      // Save the summary to memory service
+      const recentMessages = await storageService.getLastMessages(15);
+      await memoryService.generateSessionSummary('reflection_session_' + Date.now(), recentMessages);
+      
+      console.log('Thinking pattern reflection summary saved successfully');
+      
+      // Reset states
+      setShowThinkingPatternSummary(false);
+      setThinkingPatternSummary(null);
+      setIsThinkingPatternReflection(false);
+      setExerciseData({});
+      
+    } catch (error) {
+      console.error('Error saving thinking pattern summary:', error);
+    }
+  }, [thinkingPatternSummary]);
+
+  const cancelThinkingPatternSummary = useCallback(() => {
+    setShowThinkingPatternSummary(false);
+    setThinkingPatternSummary(null);
+    // Don't reset isThinkingPatternReflection - user can continue the conversation
+  }, []);
+
+  const startThinkingPatternReflection = useCallback(async (
+    patternContext: {
+      originalThought: string;
+      distortionType: string;
+      reframedThought: string;
+      prompt: string;
+    },
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void,
+    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+  ) => {
+    try {
+      console.log('Starting thinking pattern reflection with context:', patternContext);
+      
+      setIsThinkingPatternReflection(true);
+      setExerciseData({ patternContext });
+      
+      // Get the AI's opening message for the thinking pattern reflection
+      const context = await contextService.assembleThinkingPatternReflectionContext(patternContext);
+      
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(context);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          text: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true,
+          context: { 
+            type: 'thinking_pattern_reflection', 
+            distortionType: patternContext.distortionType,
+            originalThought: patternContext.originalThought
+          }
+        };
+
+        await addAIMessageWithTypewriter(aiMessage);
+        
+        if (response.suggestions) {
+          setSuggestions(response.suggestions);
+        }
+
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error starting thinking pattern reflection:', error);
+      setIsThinkingPatternReflection(false);
+      return false;
+    }
+  }, []);
+
+  const handleThinkingPatternReflectionResponse = useCallback(async (
+    userText: string,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void,
+    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+  ) => {
+    try {
+      // Check if user wants to end the reflection
+      const userTextLower = userText.toLowerCase();
+      if (userTextLower.includes('end here and create a summary') || 
+          userTextLower.includes('finish the reflection') ||
+          userTextLower.includes('create a summary now')) {
+        // End the reflection and show summary
+        await endThinkingPatternReflection(setMessages, setIsTyping, setSuggestions);
+        return;
+      }
+      const userMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'user',
+        text: userText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages(prev => [...prev, userMessage]);
+      await storageService.addMessage(userMessage);
+
+      const recentMessages = await storageService.getLastMessages(10);
+      
+      // For thinking pattern reflection, we need to maintain the pattern context throughout the conversation
+      const patternContext = exerciseData.patternContext;
+      const context = await contextService.assembleThinkingPatternReflectionContext(patternContext);
+      
+      // Add the recent conversation messages to the context
+      const conversationMessages = recentMessages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      }));
+      
+      context.push(...conversationMessages);
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(context);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          text: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true,
+          context: { 
+            type: 'thinking_pattern_reflection', 
+            distortionType: exerciseData.patternContext?.distortionType,
+            originalThought: exerciseData.patternContext?.originalThought
+          }
+        };
+
+        await addAIMessageWithTypewriter(aiMessage);
+        
+        if (response.suggestions) {
+          setSuggestions(response.suggestions);
+        }
+
+        // Check if this is a summary offer from the AI for thinking patterns
+        const messageText = response.message.toLowerCase();
+        if (messageText.includes('summarize') && messageText.includes('insights') && messageText.includes('pattern')) {
+          // Add special suggestions for ending the reflection
+          const endReflectionSuggestion = "Yes, let's end here and create a summary";
+          const continueReflectionSuggestion = "I'd like to explore this pattern more";
+          setSuggestions([endReflectionSuggestion, continueReflectionSuggestion, ...(response.suggestions?.slice(0, 2) || [])]);
+        }
+      }
+    } catch (error) {
+      console.error('Error handling thinking pattern reflection response:', error);
+    }
+  }, [exerciseData]);
+
   return {
     exerciseMode,
     exerciseStep,
     exerciseData,
     showMoodRating,
     showPreExerciseMoodSlider,
+    isValueReflection,
+    isThinkingPatternReflection,
+    showValueReflectionSummary,
+    valueReflectionSummary,
+    showThinkingPatternSummary,
+    thinkingPatternSummary,
     startDynamicAIGuidedExercise,
     handleDynamicAIGuidedExerciseResponse,
+    startValueReflection,
+    handleValueReflectionResponse,
+    endValueReflection,
+    saveValueReflectionSummary,
+    cancelValueReflectionSummary,
+    startThinkingPatternReflection,
+    handleThinkingPatternReflectionResponse,
+    endThinkingPatternReflection,
+    saveThinkingPatternSummary,
+    cancelThinkingPatternSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,

@@ -58,9 +58,70 @@ export const useAppState = () => {
     }
   }, [handleStartSession]);
 
-  const handleInsightClick = useCallback((_type: string, _insight?: any) => {
-    // Handle insight navigation - placeholder for future implementation
-  }, []);
+  const handleInsightClick = useCallback((type: string, insight?: any) => {
+    console.log('=== INSIGHT CLICK ===');
+    console.log('Type:', type, 'Insight:', insight);
+    
+    switch (type) {
+      case 'value_reflection':
+        if (insight?.valueId && insight?.prompt) {
+          // Create a special reflection exercise with the value context
+          const reflectionExercise = {
+            type: 'value_reflection',
+            name: 'Values Reflection',
+            duration: '10-15 min',
+            description: 'Reflection on personal values',
+            context: {
+              valueId: insight.valueId,
+              prompt: insight.prompt,
+              valueName: insight.valueName,
+              valueDescription: insight.valueDescription
+            }
+          };
+          console.log('Starting values reflection with exercise:', reflectionExercise);
+          handleStartSession(reflectionExercise);
+        }
+        break;
+      case 'thinking_pattern_reflection':
+        if (insight?.originalThought && insight?.distortionType) {
+          // Create a special reflection exercise with the thinking pattern context
+          const patternReflectionExercise = {
+            type: 'thinking_pattern_reflection',
+            name: 'Thinking Pattern Reflection',
+            duration: '10-15 min',
+            description: 'Explore and reframe cognitive patterns',
+            context: {
+              originalThought: insight.originalThought,
+              distortionType: insight.distortionType,
+              reframedThought: insight.reframedThought,
+              prompt: insight.prompt
+            }
+          };
+          console.log('Starting thinking pattern reflection with exercise:', patternReflectionExercise);
+          handleStartSession(patternReflectionExercise);
+        }
+        break;
+      case 'exercise':
+        // Handle exercise type clicks
+        if (insight?.type) {
+          console.log('Starting exercise from insight:', insight.type);
+          // Create exercise object from the insight data
+          const exerciseFromInsight = {
+            type: insight.type,
+            name: insight.type === 'vision-of-future' ? 'Vision of the Future' : insight.name || 'Exercise',
+            duration: '15-20 min',
+            description: insight.description || 'Guided therapeutic exercise'
+          };
+          handleStartSession(exerciseFromInsight);
+        } else {
+          console.log('Exercise insight missing type:', insight);
+        }
+        break;
+      default:
+        console.log('Unhandled insight type:', type);
+        // Handle other insight types as needed
+    }
+  }, [handleStartSession]);
 
   const handleActionSelect = useCallback((actionId: string) => {
     switch (actionId) {

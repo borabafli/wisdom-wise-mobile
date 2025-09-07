@@ -29,14 +29,14 @@ export const insightsDashboardStyles = StyleSheet.create({
     right: -80,
     width: 256,
     height: 256,
-    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    backgroundColor: 'rgba(96, 165, 250, 0.15)', // Softer blue
   },
   blob2: {
     bottom: 0,
     left: -96,
     width: 384,
     height: 384,
-    backgroundColor: 'rgba(125, 211, 252, 0.15)',
+    backgroundColor: 'rgba(147, 197, 253, 0.12)', // Lighter complement
   },
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -60,6 +60,69 @@ export const insightsDashboardStyles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 120,
   },
+  // Enhanced Motivational Header Card
+  motivationalCard: {
+    borderRadius: spacing.radius.xl,
+    borderWidth: 1,
+    borderColor: 'rgba(251, 146, 60, 0.15)',
+    ...shadows.components.modal,
+    marginBottom: spacing.layout.screenPadding,
+    overflow: 'hidden',
+  },
+  
+  motivationalGradient: {
+    padding: spacing.layout.screenPadding,
+  },
+  motivationalContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.layout.screenPadding,
+  },
+  motivationalText: {
+    flex: 1,
+    marginRight: spacing[4],
+  },
+  motivationalTitle: {
+    fontSize: 16,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: spacing[1],
+  },
+  motivationalSubtitle: {
+    fontSize: 13,
+    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.medium,
+  },
+  motivationalStats: {
+    flexDirection: 'row',
+    gap: spacing[4],
+  },
+  motivationalStat: {
+    alignItems: 'center',
+    minWidth: 50,
+  },
+  motivationalNumber: {
+    fontSize: 20,
+    fontWeight: typography.fontWeight.bold,
+    color: '#3b82f6',
+    marginBottom: spacing[0],
+  },
+  
+  motivationalNumberVision: {
+    color: '#7c3aed', // Purple for vision-related stats
+  },
+  
+  motivationalNumberAchievement: {
+    color: '#059669', // Green for achievement stats
+  },
+  motivationalLabel: {
+    fontSize: 11,
+    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   journeyCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: spacing.radius['2xl'],
@@ -76,7 +139,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     right: 0,
     width: 96,
     height: 96,
-    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    backgroundColor: 'rgba(96, 165, 250, 0.15)', // Updated blue for journey
     borderRadius: 48,
     transform: [{ translateY: -48 }, { translateX: 48 }],
   },
@@ -258,7 +321,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     right: 0,
     width: 128,
     height: 128,
-    backgroundColor: 'rgba(125, 211, 252, 0.15)',
+    backgroundColor: 'rgba(165, 180, 252, 0.15)', // Indigo accent for thinking patterns
     borderRadius: 64,
     transform: [{ translateY: 64 }, { translateX: 64 }],
   },
@@ -372,13 +435,17 @@ export const insightsDashboardStyles = StyleSheet.create({
   viewAllButton: {
     width: '100%',
     paddingVertical: spacing.components.cardGap,
-    borderRadius: spacing.radius.sm,
+    borderRadius: spacing.radius.lg,
+    backgroundColor: 'rgba(99, 102, 241, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(99, 102, 241, 0.2)',
+    ...shadows.components.actionButton,
   },
   viewAllText: {
     textAlign: 'center',
     ...typography.textStyles.body,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.primary[500],
+    color: '#6366f1',
   },
   achievementsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -538,5 +605,33 @@ export const insightsDashboardStyles = StyleSheet.create({
     color: colors.gray[700],
     fontStyle: 'italic',
     lineHeight: 18,
+  },
+
+  // Memory Insights Action Buttons
+  memoryActionButtons: {
+    flexDirection: 'row',
+    gap: spacing[2],
+    marginTop: spacing[3],
+  },
+
+  memoryActionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
+    borderRadius: spacing.radius.md,
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[3],
+    gap: spacing[1],
+  },
+
+  memoryActionButtonText: {
+    ...typography.textStyles.bodySmall,
+    color: '#059669',
+    fontWeight: typography.fontWeight.medium,
+    textAlign: 'center',
   },
 });

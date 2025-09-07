@@ -24,6 +24,7 @@ interface ThinkingPatternsModalProps {
   onClose: () => void;
   patterns: ThoughtPattern[];
   onPatternPress?: (pattern: ThoughtPattern) => void;
+  onStartReflection?: (pattern: ThoughtPattern, prompt: string) => void;
 }
 
 // Background images - we'll randomly select one
@@ -136,6 +137,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   onClose,
   patterns,
   onPatternPress,
+  onStartReflection,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [backgroundImage, setBackgroundImage] = useState(require('../../assets/images/8.jpeg'));
@@ -287,6 +289,43 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
 
             {pattern.context && (
               <Text style={styles.contextText}>{pattern.context}</Text>
+            )}
+
+            {/* Reflect on This Button */}
+            {onStartReflection && (
+              <TouchableOpacity
+                onPress={() => {
+                  const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${primaryDistortion.toLowerCase()}. Sometimes when we experience ${primaryDistortion.toLowerCase()}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
+                  if (onStartReflection) {
+                    onStartReflection(pattern, prompt);
+                    // Close modal when starting reflection
+                    handleClose();
+                  } else {
+                    console.log('onStartReflection not provided');
+                  }
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(59, 130, 246, 0.9)',
+                  borderRadius: 12,
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  marginTop: 12,
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={{
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: '600',
+                  marginRight: 6
+                }}>
+                  Reflect on This
+                </Text>
+                <ArrowRight size={16} color="white" />
+              </TouchableOpacity>
             )}
           </View>
         </BlurView>

@@ -183,6 +183,19 @@ export const exerciseLibraryData: Record<string, any> = {
     color: ['#FEF3C7', '#FDE68A'],
     image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
     keywords: ['story', 'narrative', 'reflection', 'journey', 'personal history', 'strengths', 'self-understanding', 'life story', 'identity'],
+  },
+  'vision-of-future': {
+    id: 14,
+    type: 'vision-of-future',
+    name: 'Vision of the Future',
+    duration: '20-30 min',
+    description: 'Imagine and emotionally connect to an inspiring future that guides your present',
+    category: 'Self-Discovery',
+    difficulty: 'Intermediate',
+    icon: Star,
+    color: ['#E0F2FE', '#7DD3FC'],
+    image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
+    keywords: ['vision', 'future', 'goals', 'dreams', 'inspiration', 'values', 'purpose', 'life direction', 'imagination', 'hope'],
   }
 };
 
@@ -484,6 +497,61 @@ export const exerciseFlows: Record<string, any> = {
         stepNumber: 5,
         description: 'Receive supportive reflection on your story.',
         instruction: 'Provide compassionate summary highlighting strengths, resilience, and values.'
+      }
+    ]
+  },
+  'vision-of-future': {
+    name: 'Vision of the Future',
+    color: 'blue',
+    useAI: true,
+    steps: [
+      {
+        title: 'Welcome & Intention',
+        stepNumber: 1,
+        description: 'Setting the frame for exploring your future self',
+        instruction: 'Welcome the user warmly and explain that this exercise is about imagining their future self and drawing inspiration from that vision. Encourage them to approach this with openness and curiosity, not as a rigid life plan but as a guiding compass.'
+      },
+      {
+        title: 'Envisioning Daily Life',
+        stepNumber: 2,
+        description: 'Imagining your future self in daily life',
+        instruction: 'Guide the user to envision their future self living a typical day. Ask them to describe what their daily life looks like, how they wake up, what their relationships feel like, how they approach work or activities, and what brings them joy. Encourage rich, sensory details about how this future self lives.'
+      },
+      {
+        title: 'Character & Values Exploration',
+        stepNumber: 3,
+        description: 'Exploring the inner qualities of your future self',
+        instruction: 'Encourage the user to focus on the character qualities and values that define their future self. Ask about what qualities they embody - perhaps grounded, confident, connected, joyful. How do these values shape their way of being? Focus on identity-based aspects rather than just achievements.'
+      },
+      {
+        title: 'Life Domains Integration',
+        stepNumber: 4,
+        description: 'Exploring different areas of life',
+        instruction: 'Help the user explore how their future self shows up across different life domains: relationships (family, friends, community), health and well-being, career or meaningful work, creativity or hobbies, and lifestyle choices. Ask how their core values express themselves in each area.'
+      },
+      {
+        title: 'Emotional Connection',
+        stepNumber: 5,
+        description: 'Connecting emotionally with this future vision',
+        instruction: 'Guide the user to connect with how it feels to be this future self. Ask them to sit with the emotional experience of living as this person. What does confidence feel like in their body? How does living aligned with their values affect their daily experience? Build motivation and emotional resonance.'
+      },
+      {
+        title: 'Wisdom Exchange',
+        stepNumber: 6,
+        description: 'Receiving guidance from your future self',
+        instruction: 'Invite the user to imagine their future self has some words of guidance or encouragement for their present self. What would this future self want them to know? What reassurance or perspective might they offer about current challenges? Foster a dialogue across time.'
+      },
+      {
+        title: 'Present Integration',
+        stepNumber: 7,
+        description: 'Bringing the vision into today',
+        instruction: 'Help the user identify 1-2 small, practical steps they could take today or this week that would align them with their future vision. Focus on embodying the qualities of their future self right now, rather than just achieving goals. Ask: "How can you be a little more like your future self today?"'
+      },
+      {
+        title: 'Guiding Sentences',
+        stepNumber: 8,
+        description: 'Creating your personal compass',
+        instruction: 'Support the user in creating 2-3 short, meaningful sentences that capture the essence of their vision - like personal mantras or affirmations they can return to. These should feel inspiring and authentic to them, serving as a compass for daily decisions.'
       }
     ]
   }

@@ -82,10 +82,24 @@ Return a JSON object with this structure:
 
 **CONVERSATION TO ANALYZE:**`;
 
-const SESSION_SUMMARY_PROMPT = `Create a concise 2-3 sentence summary of this therapy session. Focus on:
-- Key emotional themes discussed
-- Main insights or breakthroughs
-- Any shifts in perspective or understanding
+const SESSION_SUMMARY_PROMPT = `Create a meaningful and actionable session summary (1-5 sentences). Focus on capturing the key insight or breakthrough for the user in a way they can apply to their life.
+
+**GUIDELINES:**
+- Start with "Insight:" when possible to highlight the main realization
+- Make it personal and specific to what the user discovered
+- Include actionable elements - what they learned they can do differently
+- Capture emotional shifts or new perspectives
+- Be concise but meaningful - quality over quantity
+
+**EXAMPLES OF GOOD SUMMARIES:**
+- "Insight: You realized your anxiety stems from trying to control outcomes you can't influence, not from the actual situations themselves. This awareness gives you permission to focus energy on what you can control instead."
+- "You made a powerful connection between your childhood need to be 'perfect' and your current difficulty accepting compliments. Understanding this pattern opens up space to practice receiving positive feedback without immediately dismissing it."
+- "Insight: You discovered that your stress comes mainly from deadlines and time pressure, not from the work itself. This distinction helps you see that better time management rather than career change might address the root issue."
+
+**AVOID:**
+- Generic statements like "discussed feelings about work"
+- Vague summaries without specific insights
+- Therapy jargon that doesn't help the user
 
 **SESSION MESSAGES:**`;
 

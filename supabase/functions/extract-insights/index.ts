@@ -27,7 +27,7 @@ interface ExtractInsightsRequest {
   messages: Message[];
   sessionId: string;
   userId?: string;
-  action: 'extract_patterns' | 'extract_insights' | 'generate_summary' | 'consolidate_summaries';
+  action: 'extract_patterns' | 'extract_insights' | 'generate_summary' | 'consolidate_summaries' | 'extract_vision_insights';
   summaries?: string[]; // For consolidation
 }
 
@@ -37,6 +37,7 @@ interface ExtractInsightsResponse {
   insights?: any[];
   summary?: string;
   consolidated_summary?: string;
+  visionInsights?: any;
   error?: string;
   processingTime?: number;
 }
@@ -94,43 +95,34 @@ Return only a JSON object with this structure:
   ]
 }`;
 
-const SESSION_SUMMARY_PROMPT = `You are creating a therapeutic session summary that will be used for context continuity in future conversations. Extract the most important information that needs to be remembered.
+const SESSION_SUMMARY_PROMPT = `Create a meaningful and actionable session summary (1-5 sentences) that captures key insights the user can apply to their life. This will be used for therapeutic continuity and user reflection.
 
-**FOCUS ON EXTRACTING:**
+**PRIMARY FOCUS:**
+- Start with "Insight:" when there's a clear breakthrough or realization
+- Capture what the user discovered about themselves, their patterns, or their situation
+- Include actionable elements - what they learned they can do differently
+- Make it personal and specific to their experience
 
-1. **Primary Concerns Discussed**: What specific issues, worries, or challenges did the user bring up?
+**EXAMPLES OF EXCELLENT SUMMARIES:**
+- "Insight: You realized your anxiety stems from trying to control outcomes you can't influence, not from the actual situations themselves. This awareness gives you permission to focus energy on what you can control instead."
+- "You made a powerful connection between your childhood need to be 'perfect' and your current difficulty accepting compliments. Understanding this pattern opens up space to practice receiving positive feedback without immediately dismissing it."
+- "Insight: You discovered that your stress comes mainly from deadlines and time pressure, not from the work itself. This distinction helps you see that better time management rather than career change might address the root issue."
+- "Through exploring your relationship patterns, you recognized that your fear of vulnerability stems from past betrayal. This insight helps explain why you pull away when relationships deepen, giving you awareness to choose differently next time."
 
-2. **Emotional States & Triggers**: What emotions were prominent? What situations or thoughts triggered these feelings?
-
-3. **Thought Patterns Revealed**: What automatic thoughts, beliefs, or cognitive patterns emerged during the session?
-
-4. **Coping Strategies & Resources**: What coping mechanisms were discussed? What strengths or resources were identified?
-
-5. **Actionable Insights**: What realizations, breakthroughs, or "aha moments" occurred that could be referenced later?
-
-6. **Therapeutic Progress**: Any notable shifts in perspective, increased self-awareness, or emotional regulation improvements?
-
-7. **Future Focus Areas**: What themes or issues might benefit from continued exploration?
-
-**SUMMARY FORMAT:**
-Create a detailed 4-6 sentence summary that captures the therapeutic essence and key developments. Write as if briefing a therapist for the next session - include specific details that matter for continuity.
-
-**REQUIREMENTS:**
-- Be specific about emotions, thoughts, and patterns discussed
-- Include any breakthroughs, insights, or "aha moments" 
-- Mention specific coping strategies or techniques explored
-- Note any resistance, progress, or therapeutic developments
-- Include relevant context (work, relationships, past experiences)
-
-**EXAMPLE EXCELLENT SUMMARY:**
-"User explored work-related anxiety stemming from perfectionist beliefs about needing to be flawless. Identified pattern of catastrophic thinking when receiving feedback, leading to avoidance of challenging projects. Made significant connection between childhood criticism from demanding parents and current self-doubt patterns. Showed readiness to practice self-compassion techniques and expressed genuine interest in challenging all-or-nothing thinking. Demonstrated good insight and emotional awareness throughout the session."
+**WHAT TO INCLUDE:**
+- Specific insights, realizations, or "aha moments"
+- Connections between past experiences and current patterns
+- Emotional shifts or new perspectives gained
+- Practical applications or next steps identified
+- Root causes or underlying patterns discovered
 
 **AVOID:**
-- Generic phrases like "discussed feelings" or "explored emotions"
-- Vague statements without specific context
-- Brief, unhelpful summaries that lack therapeutic value
+- Generic statements like "discussed feelings about work"
+- Vague summaries without specific insights
+- Therapy jargon that doesn't help the user
+- Simple recaps without meaningful discoveries
 
-Return only the rich, detailed summary text - no additional formatting or explanation.`;
+Return only the actionable summary text - no additional formatting or explanation.`;
 
 const CONSOLIDATION_PROMPT = `You are consolidating multiple therapy session summaries to create a comprehensive overview of the user's therapeutic journey. This consolidated summary will be used to maintain long-term context continuity.
 
@@ -157,6 +149,50 @@ Create a cohesive paragraph (4-6 sentences) that tells the story of the user's t
 "User's sessions have consistently centered around work-related perfectionism and its impact on self-worth and relationships. Initially struggled with all-or-nothing thinking and harsh self-criticism, particularly when receiving feedback. Over time, developed greater awareness of the connection between childhood experiences of criticism and current anxiety patterns. Has made progress in challenging catastrophic thinking and implementing self-compassion practices, though still working on applying these skills in high-pressure situations. Shows strong analytical abilities and willingness to examine difficult patterns, with increasing recognition of personal strengths and resilience."
 
 Return only the consolidated summary text - no additional formatting or explanation.`;
+
+const VISION_EXTRACTION_PROMPT = `You are analyzing a Vision of the Future exercise session to extract structured insights. The user has completed an exercise imagining their future self and connecting emotionally with that vision.
+
+**EXTRACT THE FOLLOWING:**
+
+1. **Core Qualities/Values**: Character traits and values the future self embodies (e.g., grounded, confident, connected, joyful, balanced, calm, etc.)
+
+2. **Life Domains**: How the future self shows up in different areas:
+   - Relationships (family, friends, community)
+   - Health & Well-being (physical, mental, spiritual practices)
+   - Career/Work (meaningful work, professional qualities)
+   - Creativity/Hobbies (creative expression, personal interests)
+   - Lifestyle (daily routines, environment, way of living)
+
+3. **Guiding Sentences**: 2-3 short, meaningful affirmations or mantras that capture the essence of their vision (like "I live with balance and calm" or "I trust myself and my choices")
+
+4. **Practical Takeaways**: 1-2 specific, small steps they identified for today/this week to align with their future self
+
+5. **Full Description**: A beautifully written 2-3 sentence summary of their complete vision that they can return to for inspiration
+
+6. **Emotional Connection**: How it feels to embody this future self (emotional states, body sensations, overall feeling)
+
+7. **Wisdom Exchange**: Any guidance, encouragement, or perspective their future self offered to their present self
+
+**RESPONSE FORMAT:**
+Return only a JSON object with this structure:
+{
+  "coreQualities": ["quality1", "quality2"],
+  "lifeDomains": {
+    "relationships": "description of relationship vision",
+    "health": "description of health/wellbeing vision",
+    "career": "description of work/career vision",
+    "creativity": "description of creative/hobby vision",
+    "lifestyle": "description of lifestyle vision"
+  },
+  "guidingSentences": ["sentence1", "sentence2"],
+  "practicalTakeaways": ["takeaway1", "takeaway2"],
+  "fullDescription": "Beautiful 2-3 sentence vision summary",
+  "emotionalConnection": "How it feels to be this future self",
+  "wisdomExchange": "Guidance from future self to present self",
+  "confidence": 0.85
+}
+
+**Only include domains that were meaningfully discussed. If a domain wasn't explored, omit it from lifeDomains.**`;
 
 Deno.serve(async (req: Request) => {
   const startTime = performance.now();
@@ -271,6 +307,16 @@ Deno.serve(async (req: Request) => {
         response = {
           success: true,
           consolidated_summary: consolidatedSummary,
+          processingTime: Math.round(performance.now() - startTime)
+        };
+        break;
+
+      case 'extract_vision_insights':
+        // Extract vision of the future insights
+        const visionInsights = await extractVisionInsights(OPENROUTER_API_KEY, messages);
+        response = {
+          success: !!visionInsights,
+          visionInsights,
           processingTime: Math.round(performance.now() - startTime)
         };
         break;
@@ -650,5 +696,105 @@ async function consolidateSummaries(apiKey: string, summaries: string[]): Promis
   } catch (error) {
     console.error('Error consolidating summaries:', error);
     return `Consolidated analysis of ${summaries.length} therapy sessions showing ongoing therapeutic progress and recurring themes in personal development.`;
+  }
+}
+
+async function extractVisionInsights(apiKey: string, messages: Message[]): Promise<any | null> {
+  try {
+    // Get relevant messages for vision insight extraction
+    const relevantMessages = messages
+      .filter(msg => (msg.type === 'user' || msg.type === 'system') && (msg.text || msg.content))
+      .slice(-30)
+      .map(msg => {
+        const content = msg.text || msg.content || '';
+        const speaker = msg.type === 'user' ? 'User' : 'Therapist';
+        return `${speaker}: ${content}`;
+      })
+      .join('\n\n');
+
+    if (!relevantMessages.trim()) {
+      return null;
+    }
+
+    // Check if this actually contains vision-related content
+    const visionKeywords = [
+      'vision of the future',
+      'future self',
+      'imagine your future',
+      'envisioning',
+      'future vision',
+      'how will you live',
+      'your future life',
+      'future you',
+      'years from now'
+    ];
+
+    const relevantText = relevantMessages.toLowerCase();
+    const hasVisionContent = visionKeywords.some(keyword => relevantText.includes(keyword));
+
+    if (!hasVisionContent) {
+      return null;
+    }
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://wisdomwise.app',
+        'X-Title': 'WisdomWise',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-3.5-sonnet',
+        messages: [
+          {
+            role: 'system',
+            content: VISION_EXTRACTION_PROMPT
+          },
+          {
+            role: 'user',
+            content: `Analyze this Vision of the Future exercise session and extract structured insights:\n\n${relevantMessages}`
+          }
+        ],
+        max_tokens: 1500,
+        temperature: 0.3,
+        stream: false
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`LLM API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const result = data.choices?.[0]?.message?.content;
+
+    if (!result) {
+      return null;
+    }
+
+    // Parse JSON response
+    try {
+      const jsonMatch = result.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        return null;
+      }
+
+      const parsed = JSON.parse(jsonMatch[0]);
+      
+      // Validate that we have meaningful vision content
+      if (!parsed.coreQualities || parsed.coreQualities.length === 0) {
+        return null;
+      }
+
+      return parsed;
+    } catch (parseError) {
+      console.error('JSON parse error for vision insights:', parseError);
+      return null;
+    }
+
+  } catch (error) {
+    console.error('Error extracting vision insights:', error);
+    return null;
   }
 }

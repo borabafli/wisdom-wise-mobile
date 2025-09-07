@@ -909,5 +909,30 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 4,
   },
 
+  // End Reflection Button
+  endReflectionContainer: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+  },
+
+  endReflectionButton: {
+    backgroundColor: colors.purple[600],
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: 12,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+
+  endReflectionButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 
 });
