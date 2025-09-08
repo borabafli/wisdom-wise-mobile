@@ -162,14 +162,14 @@ export const chatInterfaceStyles = StyleSheet.create({
     elevation: 4,
   },
   userMessageText: {
-    fontSize: 15,
-    fontFamily: 'System',
+    fontSize: 16,
+    fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
-    color: '#374151', // Softer dark gray instead of harsh black
+    color: '#111827', // Match AI message color exactly
     textAlign: 'left',
     flexWrap: 'wrap',
-    lineHeight: 30,
-    letterSpacing: 0.4,
+    lineHeight: 24,
+    letterSpacing: 0.3,
   },
 
   // System Messages - No Box Style
@@ -359,7 +359,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   systemMessageText: {
     fontSize: 16,
-    fontFamily: 'System',
+    fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
     color: '#111827', // Almost black for readability
     textAlign: 'left',
@@ -594,7 +594,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     maxWidth: '100%',
-    fontFamily: 'System',
+    fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
   },
   recordingActions: {
@@ -626,16 +626,16 @@ export const chatInterfaceStyles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: 'System',
+    fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
-    color: '#111827', // Almost black for readability
+    color: '#111827', // Match AI message color exactly
     minHeight: 48,
     maxHeight: 200,
     paddingVertical: spacing[4], // Increased vertical padding
     paddingHorizontal: spacing[4], // Increased horizontal padding
     backgroundColor: 'transparent',
-    lineHeight: 24, // Better line height
-    letterSpacing: 0.2,
+    lineHeight: 24, // Match AI message line height
+    letterSpacing: 0.3, // Match AI message letter spacing
     textAlignVertical: 'top',
 
     paddingTop: 14,
@@ -703,12 +703,12 @@ export const chatInterfaceStyles = StyleSheet.create({
   fullscreenTextInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: 'System',
+    fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
-    color: '#111827', // Almost black for readability
+    color: '#111827', // Match AI message color exactly
     backgroundColor: 'transparent',
-    lineHeight: 24,
-    letterSpacing: 0.2,
+    lineHeight: 24, // Match AI message line height
+    letterSpacing: 0.3, // Match AI message letter spacing
     textAlignVertical: 'top',
   },
 

@@ -20,6 +20,8 @@ import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
+import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
+import TestButton from '../components/TestButton';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -87,6 +89,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     valueReflectionSummary,
     showThinkingPatternSummary,
     thinkingPatternSummary,
+    showVisionSummary,
+    visionSummary,
     reflectionMessageCount,
     canEndReflection,
     startDynamicAIGuidedExercise,
@@ -101,6 +105,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     endThinkingPatternReflection,
     saveThinkingPatternSummary,
     cancelThinkingPatternSummary,
+    saveVisionSummary,
+    cancelVisionSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,
@@ -124,8 +130,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           currentExercise.context,
           chatSession.setMessages,
           chatSession.setIsTyping,
-          chatSession.setSuggestions,
-          addAIMessageWithTypewriter
+          chatSession.setSuggestions
         );
       } else if (currentExercise.type === 'thinking_pattern_reflection') {
         console.log('Starting thinking pattern reflection with context:', currentExercise.context);
@@ -133,8 +138,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           currentExercise.context,
           chatSession.setMessages,
           chatSession.setIsTyping,
-          chatSession.setSuggestions,
-          addAIMessageWithTypewriter
+          chatSession.setSuggestions
         );
       } else {
         enterExerciseMode();
@@ -174,8 +178,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         text,
         chatSession.setMessages,
         chatSession.setIsTyping,
-        chatSession.setSuggestions,
-        addAIMessageWithTypewriter
+        chatSession.setSuggestions
       );
       return;
     }
@@ -185,8 +188,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         text,
         chatSession.setMessages,
         chatSession.setIsTyping,
-        chatSession.setSuggestions,
-        addAIMessageWithTypewriter
+        chatSession.setSuggestions
       );
       return;
     }
@@ -198,8 +200,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         exerciseData.currentExercise,   // ✅ use currentExercise from exerciseData
         chatSession.setMessages,
         chatSession.setIsTyping,
-        chatSession.setSuggestions,
-        addAIMessageWithTypewriter
+        chatSession.setSuggestions
       );
       return;
     }
@@ -346,7 +347,16 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             <View style={styles.headerContent}>
               <View style={styles.headerLeft}>
                 <TouchableOpacity 
-                  onPress={() => chatSession.handleEndSession(onBack)}
+                  onPress={() => {
+                    const exerciseContext = {
+                      exerciseMode,
+                      exerciseType: exerciseData.currentExercise?.type,
+                      isValueReflection,
+                      isThinkingPatternReflection,
+                      isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
+                    };
+                    chatSession.handleEndSession(onBack, exerciseContext);
+                  }}
                   style={styles.backButton}
                   activeOpacity={0.7}
                 >
@@ -480,6 +490,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                 onCancel={cancelThinkingPatternSummary}
               />
             )}
+
+            {showVisionSummary && visionSummary && (
+              <VisionSummaryCard
+                summary={visionSummary}
+                onSave={saveVisionSummary}
+                onCancel={cancelVisionSummary}
+              />
+            )}
           </ScrollView>
 
 
@@ -578,6 +596,35 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               await voiceRecording.cancelRecording();
               // Restore text that was there before recording started
               setInputText(textBeforeVoiceRef.current);
+            }}
+          />
+
+          {/* Development Test Button */}
+          <TestButton
+            exerciseMode={exerciseMode}
+            exerciseData={exerciseData}
+            isValueReflection={isValueReflection}
+            isThinkingPatternReflection={isThinkingPatternReflection}
+            exerciseStep={exerciseStep}
+            onSendMessage={(message) => handleSendMessage(message, '')}
+            onStartExercise={(exerciseType) => {
+              // Find the exercise in the library and start it
+              const exercises = {
+                'breathing': { type: 'breathing', name: '4-7-8 Breathing' },
+                'automatic-thoughts': { type: 'automatic-thoughts', name: 'Automatic Thoughts CBT' },
+                'gratitude': { type: 'gratitude', name: 'Gratitude Practice' },
+                'vision-of-future': { type: 'vision-of-future', name: 'Vision of the Future' }
+              };
+              const exercise = exercises[exerciseType];
+              if (exercise) {
+                enterExerciseMode();
+                startDynamicAIGuidedExercise(
+                  exercise,
+                  chatSession.setMessages,
+                  chatSession.setIsTyping,
+                  chatSession.setSuggestions
+                );
+              }
             }}
           />
         </KeyboardAvoidingView>

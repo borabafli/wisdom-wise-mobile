@@ -162,13 +162,13 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
   const getColors = () => {
     if (variant === 'test') {
       return {
-        fillColor: '#10597B',
-        borderColor: '#10597B'
+        fillColor: '#9AC0DF',
+        borderColor: '#9AC0DF'
       };
     }
     return {
-      fillColor: '#446D78',
-      borderColor: '#446D78'
+      fillColor: '#9AC0DF',
+      borderColor: '#9AC0DF'
     };
   };
 

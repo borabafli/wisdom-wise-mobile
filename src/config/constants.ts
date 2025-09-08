@@ -13,8 +13,8 @@ export const API_CONFIG = {
   DEFAULT_DAILY_LIMIT: 800,
   
 
-  // AI Model settings - Using Gemini 2.5 Flash (very fast)
-  AI_MODEL: 'google/gemini-2.5-flash-lite', // Very fast and efficient
+  // AI Model settings - Using Gemini Flash (stable and working)  
+  AI_MODEL: 'google/gemini-2.5-flash', // Stable and working model
   // Alternative models (backup options):
   // AI_MODEL: 'openai/gpt-5-nano', // Had token limit issues
   // AI_MODEL: 'openai/gpt-4o-mini', // Reliable fallback

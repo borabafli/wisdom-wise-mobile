@@ -6,7 +6,7 @@ interface ChatMessage {
 }
 
 interface ChatCompletionRequest {
-  action: 'chat' | 'transcribe' | 'healthCheck' | 'getModels' | 'generateSuggestions';
+  action: 'chat' | 'transcribe' | 'healthCheck' | 'getModels' | 'generateSuggestions' | 'generateSummary';
   messages?: ChatMessage[];
   audioData?: string;
   language?: string;
@@ -81,7 +81,7 @@ Deno.serve(async (req: Request) => {
         return await handleChatCompletion(
           OPENROUTER_API_KEY,
           messages || [],
-          model || 'google/gemini-flash-1.5',
+          model || 'google/gemini-2.5-flash',
           maxTokens || 500,
           temperature || 0.7
         );
@@ -118,14 +118,32 @@ Deno.serve(async (req: Request) => {
         return await handleSuggestionGeneration(
           OPENROUTER_API_KEY,
           requestBody.aiResponse || '',
-          model || 'google/gemini-flash-1.5'
+          model || 'google/gemini-2.5-flash'
+        );
+
+      case 'generateSummary':
+        if (!OPENROUTER_API_KEY) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'OpenRouter API key not configured in environment'
+          }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        return await handleSummaryGeneration(
+          OPENROUTER_API_KEY,
+          messages || [],
+          model || 'google/gemini-2.5-flash',
+          maxTokens || 500,
+          temperature || 0.3
         );
       
       default:
         return new Response(
           JSON.stringify({ 
             success: false, 
-            error: 'Invalid action. Use: chat, transcribe, healthCheck, getModels, or generateSuggestions' 
+            error: 'Invalid action. Use: chat, transcribe, healthCheck, getModels, generateSuggestions, or generateSummary' 
           }),
           { 
             status: 400, 
@@ -625,7 +643,7 @@ async function handleConnectionTest(apiKey: string): Promise<Response> {
     const response = await handleChatCompletion(
       apiKey,
       testMessages,
-      'google/gemini-flash-1.5',
+      'google/gemini-2.5-flash',
       50,
       0.1
     );
@@ -723,7 +741,7 @@ async function handleGetModels(apiKey: string): Promise<Response> {
 async function handleSuggestionGeneration(
   apiKey: string,
   aiResponse: string,
-  model: string = 'google/gemini-flash-1.5'
+  model: string = 'google/gemini-2.5-flash'
 ): Promise<Response> {
   if (!aiResponse || aiResponse.trim().length === 0) {
     return new Response(
@@ -879,6 +897,88 @@ Respond with ONLY a JSON array of 4 strings, no other text:
       JSON.stringify({
         success: false,
         error: 'Failed to generate contextual suggestions'
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+}
+
+async function handleSummaryGeneration(
+  apiKey: string,
+  messages: ChatMessage[],
+  model: string,
+  maxTokens: number,
+  temperature: number
+): Promise<Response> {
+  if (!messages || messages.length === 0) {
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: 'Messages array is required for summary generation' 
+      }),
+      { 
+        status: 400, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+
+  try {
+    // Call OpenRouter API directly for summary generation without JSON schema constraints
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://wisdomwise.app',
+        'X-Title': 'WisdomWise',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: typeof msg.content === 'string' 
+            ? [{ type: "text", text: msg.content }]
+            : msg.content
+        })),
+        max_tokens: maxTokens,
+        temperature: temperature,
+        stream: false
+        // No JSON schema for summary generation - allows free-form JSON responses
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenRouter API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: data.choices[0].message.content,
+          usage: data.usage
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    } else {
+      throw new Error('Invalid response format from OpenRouter');
+    }
+
+  } catch (error) {
+    console.error('Summary generation error:', error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: `Failed to generate summary: ${error.message}`
       }),
       {
         status: 500,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText } from 'lucide-react-native';
+import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
@@ -10,11 +10,13 @@ import { motivationalCardService, MotivationalData, MotivationalMessage } from '
 import { getShortConfidenceLabel } from '../utils/confidenceDisplay';
 import { generateInsightPreview, getCategoryDisplayName } from '../utils/insightPreviewGenerator';
 import ThinkingPatternsModal from '../components/ThinkingPatternsModal';
+import ThinkingPatternReflectionsModal from '../components/ThinkingPatternReflectionsModal';
 import { GoalDetailsModal } from '../components/GoalDetailsModal';
 import { SessionSummariesModal } from '../components/SessionSummariesModal';
 import { MoodInsightsCard } from '../components/MoodInsightsCard';
 import { ValueCards } from '../components/ValueCards';
 import { VisionInsightsCard } from '../components/VisionInsightsCard';
+import { thinkingPatternsService, ThinkingPatternReflectionSummary } from '../services/thinkingPatternsService';
 import { VisionDetailsModal } from '../components/VisionDetailsModal';
 import { useUserProfile } from '../hooks';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
@@ -29,6 +31,7 @@ interface InsightsDashboardProps {
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
   const { firstName } = useUserProfile();
   const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
+  const [thinkingPatternReflections, setThinkingPatternReflections] = useState<ThinkingPatternReflectionSummary[]>([]);
   const [memoryInsights, setMemoryInsights] = useState<Insight[]>([]);
   const [sessionSummaries, setSummaries] = useState<Summary[]>([]);
   const [activeGoals, setActiveGoals] = useState<TherapyGoal[]>([]);
@@ -45,10 +48,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
   });
   const [isLoading, setIsLoading] = useState(true);
   const [patternsModalVisible, setPatternsModalVisible] = useState(false);
+  const [thinkingPatternReflectionsModalVisible, setThinkingPatternReflectionsModalVisible] = useState(false);
   const [goalDetailsVisible, setGoalDetailsVisible] = useState(false);
   const [sessionSummariesVisible, setSessionSummariesVisible] = useState(false);
   const [visionDetailsVisible, setVisionDetailsVisible] = useState(false);
   const [expandedMemoryInsights, setExpandedMemoryInsights] = useState<Set<string>>(new Set()); // Collapsed by default
+  const [memoryInsightsSectionExpanded, setMemoryInsightsSectionExpanded] = useState(false);
+  const [currentPatternIndex, setCurrentPatternIndex] = useState(0);
   const [motivationalCard, setMotivationalCard] = useState<{
     message: MotivationalMessage;
     statsText: string;
@@ -89,11 +95,15 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       // DEBUG: Log what we're trying to load
       console.log('🔍 [INSIGHTS DEBUG] Loading insight data...');
       
-      // Load recent thought patterns (existing system)
+      // Load recent thought patterns (existing system) - show all 10
       const recentPatterns = await insightService.getRecentPatterns(10);
       setThinkingPatterns(recentPatterns);
       console.log('🔍 [INSIGHTS DEBUG] Thought patterns loaded:', recentPatterns.length);
       
+      // Load thinking pattern reflections (new dedicated system)
+      const reflectionSummaries = await thinkingPatternsService.getRecentReflections(10);
+      setThinkingPatternReflections(reflectionSummaries);
+      console.log('🔍 [INSIGHTS DEBUG] Thinking pattern reflections loaded:', reflectionSummaries.length);
       
       // Load new memory system data
       const insights = await memoryService.getInsights();
@@ -195,28 +205,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
   const insights = [
     {
-      id: 1,
-      title: 'Active Goals',
-      value: goalStats.activeGoals.toString(),
-      subtitle: `${goalStats.averageProgress}% average progress`,
-      icon: Target,
-      trend: goalStats.activeGoals > 0 ? 'positive' : 'neutral',
-      onClick: () => {
-        // Handle goals section navigation
-      }
-    },
-    {
-      id: 2,
-      title: 'Memory Insights',
-      value: memoryInsights.length.toString(),
-      subtitle: 'Long-term patterns discovered',
-      icon: Brain,
-      trend: memoryInsights.length > 0 ? 'positive' : 'neutral',
-      onClick: () => {
-        // Scroll to memory insights section or handle navigation
-      }
-    },
-    {
       id: 3,
       title: 'Session Summaries',
       value: memoryStats.sessionSummaries.toString(),
@@ -224,15 +212,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       icon: FileText,
       trend: memoryStats.sessionSummaries > 0 ? 'positive' : 'neutral',
       onClick: () => setSessionSummariesVisible(true)
-    },
-    {
-      id: 4,
-      title: 'Thought Patterns',
-      value: displayPatterns.length.toString(),
-      subtitle: 'CBT patterns identified',
-      icon: Lightbulb,
-      trend: displayPatterns.length > 0 ? 'positive' : 'neutral',
-      onClick: () => setPatternsModalVisible(true)
     }
   ];
 
@@ -251,10 +230,10 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>
-          {firstName !== 'Friend' ? `${firstName}'s Progress` : 'Progress'}
+          Your progress
         </Text>
         <Text style={styles.subtitle}>
-          {firstName !== 'Friend' ? `${firstName}, your wellness journey continues ✨` : 'Your wellness journey continues'}
+          Your wellness journey continues ✨
         </Text>
       </View>
 
@@ -320,13 +299,15 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           
           <View style={styles.patternsHeader}>
             <LinearGradient
-              colors={['#e0e7ff', '#c7d2fe']}
+              colors={['#A8B5BD', '#688890', '#547A82', '#3F5D64']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.patternsIcon}
             >
-              <Lightbulb size={24} color="#6366f1" />
+              <Lightbulb size={24} color="white" />
             </LinearGradient>
             <View style={styles.patternsTitleContainer}>
-              <Text style={styles.patternsTitle}>Thoughts</Text>
+              <Text style={styles.patternsTitle}>Your Thoughts</Text>
               <Text style={styles.patternsSubtitle}>Patterns & insights</Text>
             </View>
           </View>
@@ -337,72 +318,198 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                 <Text style={styles.loadingText}>Loading your insights...</Text>
               </View>
             ) : displayPatterns.length > 0 ? (
-              // Show only the first (most recent) pattern as preview
-              (() => {
-                const previewPattern = displayPatterns[0];
-                return (
-                  <TouchableOpacity
-                    key={previewPattern.id}
-                    onPress={() => onInsightClick('pattern', previewPattern)}
-                    style={styles.patternCard}
-                    activeOpacity={0.9}
-                  >
-                    <View style={styles.patternContent}>
-                      <View style={styles.patternContentLeft}>
-                        <Text style={styles.patternName}>
-                          {previewPattern.distortionTypes[0] || 'Thought Pattern'}
-                        </Text>
-                        <Text style={styles.patternDescription}>
-                          {previewPattern.context || getShortConfidenceLabel(previewPattern.confidence, 'pattern')}
-                        </Text>
-                        
-                        <View style={styles.thoughtContainer}>
-                          <View style={styles.originalThought}>
-                            <Text style={styles.thoughtText}>
-                              "{previewPattern.originalThought}"
-                            </Text>
-                          </View>
-                          <View style={styles.reframedThought}>
-                            <Text style={styles.reframedText}>
-                              "{previewPattern.reframedThought}"
-                            </Text>
-                          </View>
-                        </View>
-                        
-                        {previewPattern.distortionTypes.length > 1 && (
-                          <View style={styles.distortionTags}>
-                            {previewPattern.distortionTypes.slice(1, 3).map((distortion, index) => (
-                              <View key={index} style={styles.distortionTag}>
-                                <Text style={styles.distortionTagText}>
-                                  {distortion}
-                                </Text>
-                              </View>
-                            ))}
-                          </View>
-                        )}
-                        
-                        {/* Reflect on This Button */}
-                        <ValuesReflectButton
-                          onPress={(e) => {
-                            e.stopPropagation();
-                            const prompt = `I noticed that your thought "${previewPattern.originalThought}" might show a pattern of ${previewPattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${previewPattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
-                            onInsightClick('thinking_pattern_reflection', {
-                              originalThought: previewPattern.originalThought,
-                              distortionType: previewPattern.distortionTypes[0] || 'Cognitive Distortion',
-                              reframedThought: previewPattern.reframedThought,
-                              prompt: prompt
-                            });
-                          }}
-                          style={{ marginTop: 12 }}
-                        />
-                      </View>
-                      <View style={styles.patternArrow}>
-                        <ArrowRight size={16} color="#1e40af" />
-                      </View>
+              <View>
+                {/* Navigation Header */}
+                {displayPatterns.length > 1 && (
+                  <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingHorizontal: 16,
+                    paddingBottom: 12
+                  }}>
+                    <TouchableOpacity
+                      onPress={() => setCurrentPatternIndex(prev => Math.max(0, prev - 1))}
+                      disabled={currentPatternIndex === 0}
+                      style={{
+                        opacity: currentPatternIndex === 0 ? 0.3 : 1,
+                        padding: 8
+                      }}
+                    >
+                      <ChevronLeft size={24} color="#6366f1" />
+                    </TouchableOpacity>
+                    
+                    <View style={{ alignItems: 'center' }}>
+                      <Text style={{
+                        fontSize: 14,
+                        color: '#6366f1',
+                        fontWeight: '500'
+                      }}>
+                        {currentPatternIndex + 1} of {displayPatterns.length}
+                      </Text>
+                      <Text style={{
+                        fontSize: 12,
+                        color: '#9CA3AF',
+                        marginTop: 2
+                      }}>
+                        Swipe to explore
+                      </Text>
                     </View>
-                  </TouchableOpacity>
-                );
-              })()
+                    
+                    <TouchableOpacity
+                      onPress={() => setCurrentPatternIndex(prev => Math.min(displayPatterns.length - 1, prev + 1))}
+                      disabled={currentPatternIndex === displayPatterns.length - 1}
+                      style={{
+                        opacity: currentPatternIndex === displayPatterns.length - 1 ? 0.3 : 1,
+                        padding: 8
+                      }}
+                    >
+                      <ChevronRight size={24} color="#6366f1" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                {/* Current Pattern */}
+                {(() => {
+                  const currentPattern = displayPatterns[currentPatternIndex] || displayPatterns[0];
+                  return (
+                    <TouchableOpacity
+                      key={currentPattern.id}
+                      onPress={() => onInsightClick('pattern', currentPattern)}
+                      style={styles.patternCard}
+                      activeOpacity={0.9}
+                    >
+                      <View style={styles.patternContent}>
+                        <View style={styles.patternContentLeft}>
+                          <Text style={styles.patternName}>
+                            {currentPattern.distortionTypes[0] || 'Thought Pattern'}
+                          </Text>
+                          <Text style={styles.patternDescription}>
+                            {currentPattern.context || getShortConfidenceLabel(currentPattern.confidence, 'pattern')}
+                          </Text>
+                          
+                          <View style={styles.thoughtContainer}>
+                            <LinearGradient
+                              colors={['rgba(190, 2, 35, 0.08)', 'rgba(190, 2, 35, 0.02)', 'rgba(190, 2, 35, 0)']}
+                              locations={[0, 0.15, 1]}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                              style={styles.originalThought}
+                            >
+                              <Text style={[styles.thoughtText, { fontFamily: 'Ubuntu-Regular', color: '#374151' }]}>
+                                "{currentPattern.originalThought}"
+                              </Text>
+                            </LinearGradient>
+                            <LinearGradient
+                              colors={['rgba(4, 107, 59, 0.08)', 'rgba(4, 107, 59, 0.02)', 'rgba(4, 107, 59, 0)']}
+                              locations={[0, 0.15, 1]}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                              style={styles.reframedThought}
+                            >
+                              <Text style={[styles.reframedText, { fontFamily: 'Ubuntu-Medium', color: '#374151' }]}>
+                                "{currentPattern.reframedThought}"
+                              </Text>
+                            </LinearGradient>
+                          </View>
+                          
+                          {currentPattern.distortionTypes.length > 1 && (
+                            <View style={styles.distortionTags}>
+                              {currentPattern.distortionTypes.slice(1, 3).map((distortion, index) => (
+                                <View key={index} style={styles.distortionTag}>
+                                  <Text style={styles.distortionTagText}>
+                                    {distortion}
+                                  </Text>
+                                </View>
+                              ))}
+                            </View>
+                          )}
+                          
+                          {/* Reflect on This Button */}
+                          <ValuesReflectButton
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              const prompt = `I noticed that your thought "${currentPattern.originalThought}" might show a pattern of ${currentPattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${currentPattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
+                              onInsightClick('thinking_pattern_reflection', {
+                                originalThought: currentPattern.originalThought,
+                                distortionType: currentPattern.distortionTypes[0] || 'Cognitive Distortion',
+                                reframedThought: currentPattern.reframedThought,
+                                prompt: prompt
+                              });
+                            }}
+                            style={{ marginTop: 12 }}
+                          />
+
+                          {/* Action Buttons - Moved up from bottom */}
+                          {(displayPatterns.length > 1 || thinkingPatternReflections.length > 0) && (
+                            <View style={{ marginTop: 16, gap: 8 }}>
+                              {displayPatterns.length > 1 && (
+                                <TouchableOpacity
+                                  onPress={() => setPatternsModalVisible(true)}
+                                  style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#f8fafc',
+                                    borderColor: '#698991',
+                                    borderWidth: 1,
+                                    borderRadius: 10,
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 12,
+                                  }}
+                                  activeOpacity={0.8}
+                                >
+                                  <Lightbulb size={14} color="#698991" />
+                                  <Text style={{
+                                    color: '#698991',
+                                    fontSize: 13,
+                                    fontWeight: '500',
+                                    marginLeft: 6,
+                                  }}>
+                                    Show all {displayPatterns.length} Patterns
+                                  </Text>
+                                </TouchableOpacity>
+                              )}
+
+                              {/* View Thinking Pattern Reflections Button */}
+                              {thinkingPatternReflections.length > 0 && (
+                                <TouchableOpacity
+                                  onPress={() => setThinkingPatternReflectionsModalVisible(true)}
+                                  style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#f8fafc',
+                                    borderColor: '#698991',
+                                    borderWidth: 1,
+                                    borderRadius: 10,
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 12,
+                                  }}
+                                  activeOpacity={0.8}
+                                >
+                                  <FileText size={14} color="#698991" />
+                                  <Text style={{
+                                    color: '#698991',
+                                    fontSize: 13,
+                                    fontWeight: '500',
+                                    marginLeft: 6,
+                                  }}>
+                                    View {thinkingPatternReflections.length} Reflection{thinkingPatternReflections.length > 1 ? 's' : ''}
+                                  </Text>
+                                </TouchableOpacity>
+                              )}
+                            </View>
+                          )}
+                        </View>
+                        <View style={styles.patternArrow}>
+                          <ArrowRight size={16} color="#1e40af" />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })()}
+              </View>
             ) : (
               <View style={styles.emptyStateContainer}>
                 <Text style={styles.emptyStateText}>
@@ -412,19 +519,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             )}
           </View>
 
-          {displayPatterns.length > 1 && (
-            <View style={styles.viewAllContainer}>
-              <TouchableOpacity
-                onPress={() => setPatternsModalVisible(true)}
-                style={styles.viewAllButton}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.viewAllText}>
-                  Show all patterns ({displayPatterns.length})
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
 
         {/* Values Section - Third */}
@@ -433,13 +527,15 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           
           <View style={styles.patternsHeader}>
             <LinearGradient
-              colors={['#f0fdfa', '#ccfbf1']}
+              colors={['#A8B5BD', '#688890', '#547A82', '#3F5D64']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={styles.patternsIcon}
             >
-              <Heart size={24} color="#0d9488" />
+              <Heart size={24} color="white" />
             </LinearGradient>
             <View style={styles.patternsTitleContainer}>
-              <Text style={styles.patternsTitle}>Values</Text>
+              <Text style={styles.patternsTitle}>Your Values</Text>
               <Text style={styles.patternsSubtitle}>What matters to you</Text>
             </View>
           </View>
@@ -472,149 +568,67 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
         />
 
 
-        {/* Quick Insights */}
-        <View style={styles.insightsSection}>
-          {insights.map((insight) => {
-            const Icon = insight.icon;
-            return (
-              <TouchableOpacity
-                key={insight.id}
-                onPress={insight.onClick || (() => onInsightClick('insight', insight))}
-                style={styles.insightCard}
-                activeOpacity={0.9}
-              >
-                <View style={styles.insightContent}>
-                  <View style={styles.insightLeft}>
-                    <LinearGradient
-                      colors={['#bfdbfe', '#7dd3fc']}
-                      style={styles.insightIcon}
-                    >
-                      <Icon 
-                        size={24} 
-                        color="#1e40af"
-                      />
-                    </LinearGradient>
-                    <View style={styles.insightText}>
-                      <Text style={styles.insightTitle}>
-                        {insight.title}
-                      </Text>
-                      <Text style={styles.insightSubtitle}>{insight.subtitle}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.insightRight}>
-                    <Text style={styles.insightValue}>
-                      {insight.value}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+
+
+
+
+
+
+
+        {/* Session Summaries Section */}
+        <View style={styles.patternsCard}>
+          <View style={styles.patternsAccent} />
+          
+          <TouchableOpacity 
+            style={styles.patternsHeader}
+            onPress={() => setSessionSummariesVisible(true)}
+            activeOpacity={0.7}
+          >
+            <LinearGradient
+              colors={['#bfdbfe', '#7dd3fc']}
+              style={styles.patternsIcon}
+            >
+              <FileText size={24} color="#1e40af" />
+            </LinearGradient>
+            <View style={styles.patternsTitleContainer}>
+              <Text style={styles.patternsTitle}>Session Summaries</Text>
+              <Text style={styles.patternsSubtitle}>Sessions analyzed</Text>
+            </View>
+            <View style={styles.patternArrow}>
+              <ArrowRight size={16} color="#1e40af" />
+            </View>
+          </TouchableOpacity>
         </View>
 
-        {/* Active Goals Section */}
-        {activeGoals.length > 0 && (
-          <View style={styles.patternsCard}>
-            <View style={[styles.patternsAccent, { backgroundColor: 'rgba(251, 146, 60, 0.15)' }]} />
-            
-            <View style={styles.patternsHeader}>
-              <LinearGradient
-                colors={['#fef7ed', '#fed7aa']}
-                style={styles.patternsIcon}
-              >
-                <Target size={24} color="#ea580c" />
-              </LinearGradient>
-              <View style={styles.patternsTitleContainer}>
-                <Text style={styles.patternsTitle}>Goals</Text>
-                <Text style={styles.patternsSubtitle}>Working toward change</Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => onInsightClick('add_goal')}
-                style={styles.addGoalButton}
-                activeOpacity={0.7}
-              >
-                <Plus size={18} color="#d97706" />
-              </TouchableOpacity>
+        {/* Memory Insights Section - Collapsible */}
+        <View style={styles.patternsCard}>
+          <View style={styles.patternsAccent} />
+          
+          <TouchableOpacity 
+            style={styles.patternsHeader}
+            onPress={() => setMemoryInsightsSectionExpanded(!memoryInsightsSectionExpanded)}
+            activeOpacity={0.7}
+          >
+            <LinearGradient
+              colors={['#fef3c7', '#fbbf24']}
+              style={styles.patternsIcon}
+            >
+              <Brain size={24} color="#d97706" />
+            </LinearGradient>
+            <View style={styles.patternsTitleContainer}>
+              <Text style={styles.patternsTitle}>Memory Insights</Text>
+              <Text style={styles.patternsSubtitle}>Long-term patterns & themes</Text>
             </View>
-
-            <View style={styles.patternsContainer}>
-              {activeGoals.map((goal, index) => (
-                <TouchableOpacity
-                  key={goal.id}
-                  onPress={() => {
-                    setSelectedGoal(goal);
-                    setGoalDetailsVisible(true);
-                  }}
-                  style={styles.goalCard}
-                  activeOpacity={0.9}
-                >
-                  <View style={styles.goalContent}>
-                    <View style={styles.goalContentLeft}>
-                      <Text style={styles.goalTitle}>
-                        {goal.mainGoal}
-                      </Text>
-                      <Text style={styles.goalMeta}>
-                        {goal.timelineText} • {goal.progress}% complete
-                      </Text>
-                      
-                      <View style={styles.goalProgressContainer}>
-                        <View style={styles.goalProgressTrack}>
-                          <View style={[styles.goalProgressFill, { width: `${goal.progress}%` }]} />
-                        </View>
-                      </View>
-
-                      <Text style={styles.goalStep}>
-                        Next: {goal.practicalStep}
-                      </Text>
-
-                      <Text style={styles.goalMotivation}>
-                        "{goal.motivation}"
-                      </Text>
-                    </View>
-                    <View style={styles.patternArrow}>
-                      <ArrowRight size={16} color="#d97706" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <View style={styles.patternArrow}>
+              <ArrowRight 
+                size={16} 
+                color="#d97706" 
+                style={memoryInsightsSectionExpanded ? { transform: [{ rotate: '90deg' }] } : {}}
+              />
             </View>
+          </TouchableOpacity>
 
-            {goalStats.totalGoals > activeGoals.length && (
-              <View style={styles.viewAllContainer}>
-                <TouchableOpacity
-                  onPress={() => onInsightClick('all_goals')}
-                  style={styles.viewAllButton}
-                  activeOpacity={0.7}
-                >
-                  <Text style={styles.viewAllText}>
-                    View all goals ({goalStats.totalGoals})
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
-
-
-
-        {/* Memory Insights Section */}
-        {memoryInsights.length > 0 && (
-          <View style={styles.patternsCard}>
-            <View style={styles.patternsAccent} />
-            
-            <View style={styles.patternsHeader}>
-              <LinearGradient
-                colors={['#fef3c7', '#fbbf24']}
-                style={styles.patternsIcon}
-              >
-                <Brain size={24} color="#d97706" />
-              </LinearGradient>
-              <View style={styles.patternsTitleContainer}>
-                <Text style={styles.patternsTitle}>Memory Insights</Text>
-                <Text style={styles.patternsSubtitle}>Long-term patterns & themes</Text>
-              </View>
-            </View>
-
+          {memoryInsightsSectionExpanded && memoryInsights.length > 0 && (
             <View style={styles.patternsContainer}>
               {memoryInsights.map((insight) => {
                 const isExpanded = expandedMemoryInsights.has(insight.id);
@@ -694,40 +708,24 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                 );
               })}
             </View>
-          </View>
-        )}
-
-
-        {/* Recent Achievements */}
-        <View style={styles.achievementsCard}>
-          {/* Background accent */}
-          <View style={styles.achievementsAccent} />
-          <Text style={styles.achievementsTitle}>Recent Achievements</Text>
-          <View style={styles.achievementsList}>
-            {journeyData.achievements.map((achievement, index) => (
-              <View key={index} style={styles.achievementItem}>
-                <CheckCircle2 size={18} color="#1e40af" />
-                <Text style={styles.achievementText}>{achievement}</Text>
-              </View>
-            ))}
-          </View>
+          )}
         </View>
 
         {/* Your Journey Section - Moved to bottom */}
-        <View style={styles.journeyCard}>
+        <View style={styles.patternsCard}>
           {/* Background accent */}
-          <View style={styles.journeyAccent} />
+          <View style={[styles.patternsAccent, { backgroundColor: 'rgba(96, 165, 250, 0.15)' }]} />
           
-          <View style={styles.journeyHeader}>
+          <View style={styles.patternsHeader}>
             <LinearGradient
               colors={['#f0f9ff', '#dbeafe']}
-              style={styles.journeyIcon}
+              style={styles.patternsIcon}
             >
               <Heart size={24} color="#2563eb" />
             </LinearGradient>
-            <View style={styles.journeyTitleContainer}>
-              <Text style={styles.journeyTitle}>Journey</Text>
-              <Text style={styles.journeySubtitle}>Every step counts</Text>
+            <View style={styles.patternsTitleContainer}>
+              <Text style={styles.patternsTitle}>Journey</Text>
+              <Text style={styles.patternsSubtitle}>Every step counts</Text>
             </View>
           </View>
 
@@ -755,6 +753,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
               <Text style={styles.suggestionBoldBlue}> Next up: {journeyData.nextSuggestion}</Text>
             </Text>
           </LinearGradient>
+
+          {/* Recent Achievements - Now inside Journey section */}
+          <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(226, 232, 240, 0.6)' }}>
+            <Text style={styles.achievementsTitle}>Recent Achievements</Text>
+            <View style={styles.achievementsList}>
+              {journeyData.achievements.map((achievement, index) => (
+                <View key={index} style={styles.achievementItem}>
+                  <CheckCircle2 size={18} color="#1e40af" />
+                  <Text style={styles.achievementText}>{achievement}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -775,6 +786,17 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             reframedThought: pattern.reframedThought,
             prompt: prompt
           });
+        }}
+      />
+
+      {/* Thinking Pattern Reflections Modal */}
+      <ThinkingPatternReflectionsModal
+        visible={thinkingPatternReflectionsModalVisible}
+        reflections={thinkingPatternReflections}
+        onClose={() => setThinkingPatternReflectionsModalVisible(false)}
+        onReflectionPress={(reflection) => {
+          setThinkingPatternReflectionsModalVisible(false);
+          // Optional: Handle reflection press if needed
         }}
       />
 

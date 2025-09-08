@@ -6,6 +6,15 @@ import { contextService } from '../services/contextService';
 import { memoryService } from '../services/memoryService';
 import { visionInsightsService } from '../services/visionInsightsService';
 
+// Exercise context interface for targeted extraction
+export interface ExerciseContext {
+  exerciseMode: boolean;
+  exerciseType?: string;
+  isValueReflection: boolean;
+  isThinkingPatternReflection: boolean;
+  isVisionExercise: boolean;
+}
+
 /**
  * Hook for session lifecycle management - extracted from useChatSession
  * Handles session initialization, saving, and cleanup
@@ -39,8 +48,9 @@ export const useSessionManagement = () => {
     }
   }, []);
 
-  const handleEndSession = useCallback((onBack: () => void, messages: Message[]) => {
+  const handleEndSession = useCallback((onBack: () => void, messages: Message[], exerciseContext?: ExerciseContext) => {
     console.log('handleEndSession called, messages length:', messages.length);
+    console.log('Exercise context:', exerciseContext);
     
     // Check if we have any user messages (real conversation)
     const userMessages = messages.filter(msg => msg.type === 'user');
@@ -49,7 +59,7 @@ export const useSessionManagement = () => {
     if (userMessages.length > 0) {
       console.log('Showing save dialog');
       // For now, let's proceed as if user chose to save.
-      extractInsightsAndSaveSession(onBack);
+      extractInsightsAndSaveSession(onBack, exerciseContext);
     } else {
       console.log('No user messages, going back directly');
       onBack();
@@ -57,7 +67,7 @@ export const useSessionManagement = () => {
   }, []);
 
   // Extract insights and save session - BACKGROUND PROCESSING
-  const extractInsightsAndSaveSession = useCallback(async (onBack: () => void) => {
+  const extractInsightsAndSaveSession = useCallback(async (onBack: () => void, exerciseContext?: ExerciseContext) => {
     try {
       console.log('Starting background session save and insight extraction...');
       
@@ -76,49 +86,75 @@ export const useSessionManagement = () => {
           const lastSession = currentSession[0]; // Most recent session
           
           if (lastSession && lastSession.messages) {
-            // Check if this was a reflection session (values or thinking patterns)
-            const isReflectionSession = lastSession.messages.some(msg => 
-              msg.context?.type === 'value_reflection' || 
-              msg.context?.type === 'thinking_pattern_reflection'
-            );
+            // Check if this was a reflection session (values or thinking patterns) or specific exercise
+            const isReflectionSession = exerciseContext?.isValueReflection || exerciseContext?.isThinkingPatternReflection;
+            const isSpecificExercise = exerciseContext?.exerciseType && exerciseContext.exerciseType !== 'breathing' && exerciseContext.exerciseType !== 'mindfulness';
 
-            if (!isReflectionSession) {
-              // Only extract thought patterns from regular therapy sessions
+            // Only extract thought patterns from regular therapy sessions (not exercises or reflections)
+            if (!isReflectionSession && !isSpecificExercise) {
               const patterns = await insightService.extractAtSessionEnd(lastSession.messages);
               if (patterns.length > 0) {
                 console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
               }
-            } else {
+            } else if (isReflectionSession) {
               console.log(`⏭️ Skipping thought pattern extraction - detected reflection session`);
+            } else if (isSpecificExercise) {
+              console.log(`⏭️ Skipping thought pattern extraction - detected ${exerciseContext.exerciseType} exercise`);
             }
 
-            // Extract memory insights
-            const insightResult = await memoryService.extractInsights(lastSession.messages);
-            if (insightResult.shouldExtract && insightResult.insights.length > 0) {
-              console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
-            }
-
-            // Check for and extract vision insights
-            const shouldExtractVision = await visionInsightsService.shouldExtractVisionInsight(lastSession.messages);
-            if (shouldExtractVision) {
-              const visionInsight = await visionInsightsService.extractVisionInsight(lastSession.messages, lastSession.id);
-              if (visionInsight) {
-                console.log(`✨ Background: Extracted Vision of the Future insight`);
+            // Exercise-specific insight extraction based on context
+            if (exerciseContext) {
+              if (exerciseContext.isVisionExercise) {
+                console.log('🔮 Vision exercise - extracting only vision insights');
+                const visionInsight = await visionInsightsService.extractVisionInsight(lastSession.messages, lastSession.id);
+                if (visionInsight) {
+                  console.log(`✨ Background: Extracted Vision of the Future insight`);
+                }
+                // Skip other extractions for vision exercises - they have their own structured summary
+                console.log('⏭️ Skipping memory insights and session summary for vision exercise');
+              } else if (exerciseContext.isThinkingPatternReflection) {
+                console.log('🧠 Thinking pattern reflection - extracting memory insights only');
+                const insightResult = await memoryService.extractInsights(lastSession.messages);
+                if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                  console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
+                }
+              } else if (exerciseContext.isValueReflection) {
+                console.log('💎 Value reflection - extracting memory insights only');
+                const insightResult = await memoryService.extractInsights(lastSession.messages);
+                if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                  console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
+                }
+              } else {
+                console.log(`⚡ ${exerciseContext.exerciseType || 'Regular'} exercise - standard processing`);
+                // Extract memory insights for other exercises
+                const insightResult = await memoryService.extractInsights(lastSession.messages);
+                if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                  console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
+                }
+              }
+            } else {
+              console.log('❓ No exercise context - extracting memory insights only');
+              // Extract memory insights for regular therapy sessions
+              const insightResult = await memoryService.extractInsights(lastSession.messages);
+              if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights`);
               }
             }
 
-            // Generate session summary
-            const summaryResult = await memoryService.generateSessionSummary(
-              lastSession.id, 
-              lastSession.messages
-            );
-            console.log(`✅ Background: Generated session summary`);
+            // Generate session summary and consolidation - ONLY for non-vision exercises
+            if (!exerciseContext?.isVisionExercise) {
+              const summaryResult = await memoryService.generateSessionSummary(
+                lastSession.id, 
+                lastSession.messages
+              );
+              console.log(`✅ Background: Generated session summary`);
 
-            // Check for consolidation
-            if (summaryResult.shouldConsolidate) {
-              const consolidatedSummary = await memoryService.consolidateSummaries();
-              if (consolidatedSummary) {
-                console.log(`✅ Background: Created consolidated summary`);
+              // Check for consolidation
+              if (summaryResult.shouldConsolidate) {
+                const consolidatedSummary = await memoryService.consolidateSummaries();
+                if (consolidatedSummary) {
+                  console.log(`✅ Background: Created consolidated summary`);
+                }
               }
             }
 
@@ -137,7 +173,7 @@ export const useSessionManagement = () => {
   }, []);
 
   // Extract insights but don't save conversation - BACKGROUND PROCESSING
-  const extractInsightsAndEnd = useCallback(async (onBack: () => void) => {
+  const extractInsightsAndEnd = useCallback(async (onBack: () => void, exerciseContext?: ExerciseContext) => {
     try {
       console.log('Background insight extraction (not saving conversation)...');
       
@@ -154,25 +190,58 @@ export const useSessionManagement = () => {
           // Get current messages before clearing
           const currentMessages = await storageService.getMessages();
           
-          const patterns = await insightService.extractAtSessionEnd();
-          if (patterns.length > 0) {
-            console.log(`✅ Background: Extracted ${patterns.length} thought patterns (conversation not saved)`);
+          // Check if this was a specific exercise or reflection - same logic as above
+          const isReflectionSession = exerciseContext?.isValueReflection || exerciseContext?.isThinkingPatternReflection;
+          const isSpecificExercise = exerciseContext?.exerciseType && exerciseContext.exerciseType !== 'breathing' && exerciseContext.exerciseType !== 'mindfulness';
+
+          // Only extract thought patterns from regular therapy sessions (not exercises or reflections)
+          if (!isReflectionSession && !isSpecificExercise) {
+            const patterns = await insightService.extractAtSessionEnd();
+            if (patterns.length > 0) {
+              console.log(`✅ Background: Extracted ${patterns.length} thought patterns (conversation not saved)`);
+            }
+          } else if (isReflectionSession) {
+            console.log(`⏭️ Skipping thought pattern extraction - detected reflection session (conversation not saved)`);
+          } else if (isSpecificExercise) {
+            console.log(`⏭️ Skipping thought pattern extraction - detected ${exerciseContext.exerciseType} exercise (conversation not saved)`);
           }
 
-          // Still extract memory insights even if not saving conversation
+          // Extract insights based on exercise type even if not saving conversation
           if (currentMessages.length > 0) {
-            const insightResult = await memoryService.extractInsights(currentMessages);
-            if (insightResult.shouldExtract && insightResult.insights.length > 0) {
-              console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
-            }
-
-            // Check for and extract vision insights even if not saving conversation
-            const shouldExtractVision = await visionInsightsService.shouldExtractVisionInsight(currentMessages);
-            if (shouldExtractVision) {
-              const sessionId = 'temp_' + Date.now(); // Temporary session ID
-              const visionInsight = await visionInsightsService.extractVisionInsight(currentMessages, sessionId);
-              if (visionInsight) {
-                console.log(`✨ Background: Extracted Vision of the Future insight (conversation not saved)`);
+            // Exercise-specific insight extraction based on context (conversation not saved)
+            if (exerciseContext) {
+              if (exerciseContext.isVisionExercise) {
+                console.log('🔮 Vision exercise - extracting only vision insights (conversation not saved)');
+                const sessionId = 'temp_' + Date.now(); // Temporary session ID
+                const visionInsight = await visionInsightsService.extractVisionInsight(currentMessages, sessionId);
+                if (visionInsight) {
+                  console.log(`✨ Background: Extracted Vision of the Future insight (conversation not saved)`);
+                }
+                console.log('⏭️ Skipping memory insights for vision exercise (conversation not saved)');
+              } else if (exerciseContext.isThinkingPatternReflection) {
+                console.log('🧠 Thinking pattern reflection - extracting memory insights only (conversation not saved)');
+                const insightResult = await memoryService.extractInsights(currentMessages);
+                if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                  console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
+                }
+              } else if (exerciseContext.isValueReflection) {
+                console.log('💎 Value reflection - extracting memory insights only (conversation not saved)');
+                const insightResult = await memoryService.extractInsights(currentMessages);
+                if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                  console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
+                }
+              } else {
+                console.log(`⚡ ${exerciseContext.exerciseType || 'Regular'} exercise - extracting memory insights (conversation not saved)`);
+                const insightResult = await memoryService.extractInsights(currentMessages);
+                if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                  console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
+                }
+              }
+            } else {
+              console.log('❓ No exercise context - extracting memory insights only (conversation not saved)');
+              const insightResult = await memoryService.extractInsights(currentMessages);
+              if (insightResult.shouldExtract && insightResult.insights.length > 0) {
+                console.log(`✅ Background: Extracted ${insightResult.insights.length} memory insights (conversation not saved)`);
               }
             }
           }

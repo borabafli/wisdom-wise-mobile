@@ -27,7 +27,7 @@ interface ExtractInsightsRequest {
   messages: Message[];
   sessionId: string;
   userId?: string;
-  action: 'extract_patterns' | 'extract_insights' | 'generate_summary' | 'consolidate_summaries' | 'extract_vision_insights';
+  action: 'extract_patterns' | 'extract_insights' | 'generate_summary' | 'consolidate_summaries' | 'extract_vision_insights' | 'generate_vision_summary';
   summaries?: string[]; // For consolidation
 }
 
@@ -38,6 +38,7 @@ interface ExtractInsightsResponse {
   summary?: string;
   consolidated_summary?: string;
   visionInsights?: any;
+  message?: string; // For contextService compatibility
   error?: string;
   processingTime?: number;
 }
@@ -95,34 +96,34 @@ Return only a JSON object with this structure:
   ]
 }`;
 
-const SESSION_SUMMARY_PROMPT = `Create a meaningful and actionable session summary (1-5 sentences) that captures key insights the user can apply to their life. This will be used for therapeutic continuity and user reflection.
+const SESSION_SUMMARY_PROMPT = `Create a warm, personal session summary (1-4 sentences) that feels like clear feedback from a caring friend. Write directly TO the user, using "you" language. Make it encouraging and recognizable to them.
 
-**PRIMARY FOCUS:**
-- Start with "Insight:" when there's a clear breakthrough or realization
-- Capture what the user discovered about themselves, their patterns, or their situation
-- Include actionable elements - what they learned they can do differently
-- Make it personal and specific to their experience
+**TONE GUIDELINES:**
+- Write like you're speaking directly to the user, not about them
+- Use simple, everyday language - no therapy jargon or clinical terms  
+- Focus on what they discovered, not what they "discussed" or "explored"
+- Sound encouraging and motivated, like a supportive friend giving feedback
+- Keep it conversational and warm, not formal or academic
 
-**EXAMPLES OF EXCELLENT SUMMARIES:**
-- "Insight: You realized your anxiety stems from trying to control outcomes you can't influence, not from the actual situations themselves. This awareness gives you permission to focus energy on what you can control instead."
-- "You made a powerful connection between your childhood need to be 'perfect' and your current difficulty accepting compliments. Understanding this pattern opens up space to practice receiving positive feedback without immediately dismissing it."
-- "Insight: You discovered that your stress comes mainly from deadlines and time pressure, not from the work itself. This distinction helps you see that better time management rather than career change might address the root issue."
-- "Through exploring your relationship patterns, you recognized that your fear of vulnerability stems from past betrayal. This insight helps explain why you pull away when relationships deepen, giving you awareness to choose differently next time."
+**EXCELLENT EXAMPLES:**
+- "You realized something important today: your anxiety isn't really about the situations themselves, but about trying to control things you can't change. This gives you permission to focus your energy where it actually makes a difference."
+- "You made a powerful connection between always needing to be 'perfect' as a kid and why compliments feel so uncomfortable now. Recognizing this pattern means you can start practicing just saying 'thank you' instead of deflecting."
+- "You discovered that it's not your job that's stressing you out - it's the time pressure and deadlines. This insight opens up some practical options like better planning or having honest conversations about workload."
+- "You recognized how your past experience with betrayal makes you pull away when relationships get deeper. Now that you see this pattern, you can choose differently next time someone gets close."
 
-**WHAT TO INCLUDE:**
-- Specific insights, realizations, or "aha moments"
-- Connections between past experiences and current patterns
-- Emotional shifts or new perspectives gained
-- Practical applications or next steps identified
-- Root causes or underlying patterns discovered
+**FOCUS ON:**
+- What they personally realized or figured out
+- How this insight helps them going forward  
+- Specific, concrete discoveries they made
+- Their strengths and growth in the conversation
 
 **AVOID:**
-- Generic statements like "discussed feelings about work"
-- Vague summaries without specific insights
-- Therapy jargon that doesn't help the user
-- Simple recaps without meaningful discoveries
+- Clinical language like "explored themes" or "processed feelings"
+- Talking ABOUT them instead of TO them ("The user discovered..." vs "You discovered...")
+- Generic summaries that could apply to anyone
+- Overly formal or academic tone
 
-Return only the actionable summary text - no additional formatting or explanation.`;
+Write as if you're summarizing their insights back to them in a caring, clear way.`;
 
 const CONSOLIDATION_PROMPT = `You are consolidating multiple therapy session summaries to create a comprehensive overview of the user's therapeutic journey. This consolidated summary will be used to maintain long-term context continuity.
 
@@ -319,6 +320,29 @@ Deno.serve(async (req: Request) => {
           visionInsights,
           processingTime: Math.round(performance.now() - startTime)
         };
+        break;
+
+      case 'generate_vision_summary':
+        // Generate vision summary for contextService compatibility
+        const visionSummary = await extractVisionInsights(OPENROUTER_API_KEY, messages);
+        if (visionSummary) {
+          // Convert to the format contextService expects
+          const summaryData = {
+            summary: visionSummary.fullDescription || "A meaningful vision of your future self was explored.",
+            keyInsights: visionSummary.practicalTakeaways || []
+          };
+          response = {
+            success: true,
+            message: JSON.stringify(summaryData),
+            processingTime: Math.round(performance.now() - startTime)
+          };
+        } else {
+          response = {
+            success: false,
+            error: 'Failed to generate vision summary',
+            processingTime: Math.round(performance.now() - startTime)
+          };
+        }
         break;
 
       default:
@@ -644,11 +668,11 @@ async function generateSessionSummary(apiKey: string, messages: Message[]): Prom
     const data = await response.json();
     const summary = data.choices?.[0]?.message?.content?.trim();
 
-    return summary || `Therapeutic session with ${messages.filter(msg => msg.type === 'user').length} user responses, exploring personal insights and emotional patterns.`;
+    return summary || `You shared some meaningful thoughts and insights in our conversation today. Even though every session is different, the fact that you're taking time to reflect on your experiences shows real commitment to your growth.`;
 
   } catch (error) {
     console.error('Error generating session summary:', error);
-    return `Therapeutic session with ${messages.filter(msg => msg.type === 'user').length} user responses, exploring personal insights and emotional patterns.`;
+    return `You took time to reflect and explore what's on your mind today. These moments of honest self-reflection are valuable steps in your journey, even when the insights aren't immediately clear.`;
   }
 }
 

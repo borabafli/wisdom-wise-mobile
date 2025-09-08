@@ -57,7 +57,17 @@
     },
     "plugins": [
       [
-        "expo-font"
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/OTF/ClashGrotesk-Bold.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Extralight.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Light.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Medium.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Regular.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Semibold.otf"
+          ]
+        }
       ],
       [
         "expo-splash-screen",

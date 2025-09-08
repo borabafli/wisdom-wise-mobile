@@ -48,19 +48,19 @@ export class MessageFormatter {
         );
       }
       
+      // Check for bullet points (various formats) FIRST - also handle * at start of line with possible indentation
+      if (line.match(/^\s*[•\-\*]\s+/)) {
+        return MessageFormatter.formatBulletPoint(line, lineIndex, textStyle);
+      }
+      
       // Check for bold text with **
       if (line.includes('**')) {
         return MessageFormatter.formatBoldText(line, lineIndex, textStyle);
       }
       
-      // Check for italic text with * (but not **)
-      if (line.includes('*') && !line.includes('**')) {
+      // Check for italic text with * (but not **) - only if not already handled as bullet
+      if (line.includes('*') && !line.includes('**') && !line.match(/^\s*\*\s+/)) {
         return MessageFormatter.formatItalicText(line, lineIndex, textStyle);
-      }
-      
-      // Check for bullet points (various formats)
-      if (line.startsWith('• ') || line.startsWith('- ') || line.startsWith('* ')) {
-        return MessageFormatter.formatBulletPoint(line, lineIndex, textStyle);
       }
       
       // Check for numbered lists
@@ -123,24 +123,43 @@ export class MessageFormatter {
   }
 
   private static formatBulletPoint(line: string, lineIndex: number, textStyle: any): React.ReactElement {
-    // Remove bullet point characters (•, -, *)
-    const text = line.replace(/^[•\-\*] /, '');
+    // Extract indentation level and bullet text
+    const match = line.match(/^(\s*)([•\-\*])\s+(.+)$/);
+    if (!match) return React.createElement(Text, { key: lineIndex, style: textStyle }, line);
+    
+    const [, indentation, , text] = match;
+    const indentLevel = Math.floor(indentation.length / 4); // 4 spaces = 1 indent level
+    const leftMargin = indentLevel * 16; // 16px per indent level
+    
+    // Check if bullet text contains bold formatting
+    let textContent;
+    if (text.includes('**')) {
+      textContent = MessageFormatter.formatBoldTextInline(text, textStyle);
+    } else {
+      textContent = React.createElement(Text, {
+        style: [textStyle, { flex: 1, lineHeight: 22 }]
+      }, text);
+    }
+    
     return React.createElement(
       View, 
-      { key: lineIndex, style: { flexDirection: 'row', alignItems: 'flex-start', marginVertical: 4 } },
+      { key: lineIndex, style: { 
+        flexDirection: 'row', 
+        alignItems: 'flex-start', 
+        marginVertical: 4,
+        marginLeft: leftMargin
+      } },
       React.createElement(View, {
         style: { 
-          width: 8, 
-          height: 8, 
-          borderRadius: 4, 
+          width: 6, 
+          height: 6, 
+          borderRadius: 3, 
           backgroundColor: colors.chat.bulletPoint, 
-          marginTop: 7, 
+          marginTop: 9, 
           marginRight: 12 
         }
       }),
-      React.createElement(Text, {
-        style: [textStyle, { flex: 1, lineHeight: 22 }]
-      }, text)
+      textContent
     );
   }
 
@@ -175,6 +194,22 @@ export class MessageFormatter {
           lineHeight: 24
         }]
       }, line)
+    );
+  }
+
+  private static formatBoldTextInline(text: string, textStyle: any): React.ReactElement {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return React.createElement(Text, { style: [textStyle, { flex: 1, lineHeight: 22 }] },
+      ...parts.map((part, partIndex) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          const boldText = part.replace(/\*\*/g, '');
+          return React.createElement(Text, {
+            key: partIndex,
+            style: { fontWeight: '700', color: '#1e293b' }
+          }, boldText);
+        }
+        return part;
+      })
     );
   }
 }
