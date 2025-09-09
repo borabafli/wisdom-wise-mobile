@@ -2,7 +2,7 @@ import React, { createContext, useContext, ReactNode, useState, useEffect, useCa
 import { NavigationContainer, useNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -17,7 +17,8 @@ import CustomTabBar from './CustomTabBar';
 import { AuthNavigator } from '../navigation/AuthNavigator';
 
 // Import contexts
-import { useApp, useAuth } from '../contexts';
+import { useApp } from '../contexts';
+import { useAuth } from '../contexts';
 
 // Import types
 import { RootTabParamList } from '../types';
@@ -41,6 +42,7 @@ const customTheme = {
 
 export const AppContent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  
   const {
     showChat,
     showBreathing,
@@ -55,26 +57,7 @@ export const AppContent: React.FC = () => {
     handleActionSelect,
   } = useApp();
 
-  // Show loading screen while checking auth
-  if (isLoading) {
-    return (
-      <View className="flex-1 bg-blue-50 justify-center items-center">
-        <ActivityIndicator size="large" color="#3B82F6" />
-      </View>
-    );
-  }
-
-  // Show auth screens if not authenticated
-  if (!isAuthenticated) {
-    return (
-      <NavigationContainer theme={customTheme}>
-        <StatusBar style="dark" backgroundColor="#f0f9ff" />
-        <AuthNavigator />
-      </NavigationContainer>
-    );
-  }
-
-  // Navigation ref for tab navigation
+  // Navigation ref for tab navigation - must be called before any conditional returns
   const navigationRef = useNavigationContainerRef();
 
   const handleNavigateToExercises = useCallback(() => {
@@ -101,6 +84,20 @@ export const AppContent: React.FC = () => {
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
+
+  // Show loading screen while checking auth
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-blue-50 justify-center items-center">
+        {/* Add loading indicator if needed */}
+      </View>
+    );
+  }
+
+  // Show auth screen if not authenticated
+  if (!isAuthenticated) {
+    return <AuthNavigator />;
+  }
 
   if (showBreathing) {
     return (

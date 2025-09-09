@@ -1,172 +1,131 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../../contexts';
-import { authStyles as styles } from '../../styles/components/AuthComponents.styles';
+import { authService } from '../../services/authService';
+import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
 
 interface VerificationScreenProps {
   email: string;
-  onNavigateBack: () => void;
+  onNavigateToSignIn: () => void;
+  onVerificationSuccess: () => void;
 }
 
-export const VerificationScreen: React.FC<VerificationScreenProps> = ({
-  email,
-  onNavigateBack,
+export const VerificationScreen: React.FC<VerificationScreenProps> = ({ 
+  email, 
+  onNavigateToSignIn,
+  onVerificationSuccess 
 }) => {
-  const { verifyEmail, resendVerification } = useAuth();
-  
-  const [code, setCode] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(0);
-  
-  const inputRef = useRef<TextInput>(null);
+  const [resendTimer, setResendTimer] = useState(0);
 
-  // Countdown for resend button
   useEffect(() => {
-    if (resendCooldown > 0) {
-      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
-      return () => clearTimeout(timer);
+    // Start timer for resend button
+    if (resendTimer > 0) {
+      const timeout = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timeout);
     }
-  }, [resendCooldown]);
+  }, [resendTimer]);
 
-  const handleVerify = async () => {
-    if (code.length !== 6) {
-      Alert.alert('Invalid Code', 'Please enter the 6-digit verification code.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const response = await verifyEmail(code);
-      
-      if (!response.success) {
-        Alert.alert('Verification Failed', response.error || 'Invalid verification code');
-      }
-      // If successful, user will be automatically signed in
-    } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleResendCode = async () => {
-    if (resendCooldown > 0) return;
+  const handleResendVerification = async () => {
+    if (resendTimer > 0) return;
 
     setIsResending(true);
     try {
-      const response = await resendVerification(email);
-      
-      if (response.success) {
-        Alert.alert('Code Sent', 'A new verification code has been sent to your email.');
-        setResendCooldown(60); // 60 second cooldown
-        setCode(''); // Clear current code
-      } else {
-        Alert.alert('Resend Failed', response.error || 'Failed to resend verification code');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      await authService.resendVerification(email);
+      Alert.alert('Email Sent', 'Verification email has been sent again. Please check your inbox.');
+      setResendTimer(60); // 60 second cooldown
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to resend verification email');
     } finally {
       setIsResending(false);
     }
   };
 
-  const handleCodeChange = (text: string) => {
-    // Only allow numbers and limit to 6 digits
-    const numericCode = text.replace(/[^0-9]/g, '').slice(0, 6);
-    setCode(numericCode);
+  const handleCheckVerification = async () => {
+    try {
+      const user = await authService.getCurrentUser();
+      if (user?.email_confirmed_at) {
+        onVerificationSuccess();
+      } else {
+        Alert.alert('Not Verified', 'Please check your email and click the verification link first.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Unable to check verification status. Please try again.');
+    }
   };
 
   return (
-    <SafeAreaView className={styles.safeArea}>
-      <View className={styles.container}>
-        <View className={styles.contentContainer}>
-          {/* Header */}
-          <View className={styles.headerContainer}>
-            <TouchableOpacity
-              onPress={onNavigateBack}
-              className="absolute left-0 top-0"
-            >
-              <Ionicons name="arrow-back" size={24} color="#374151" />
-            </TouchableOpacity>
-            
-            <View className="items-center">
-              <View className="w-16 h-16 bg-blue-100 rounded-full items-center justify-center mb-4">
-                <Ionicons name="mail" size={32} color="#3B82F6" />
-              </View>
-              <Text className={styles.title}>Verify Your Email</Text>
-              <Text className={styles.subtitle}>
-                We've sent a 6-digit verification code to{'\n'}
-                <Text className="font-medium">{email}</Text>
-              </Text>
-            </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Background Decorative Elements */}
+        <View style={styles.decorativeElement} />
+        <View style={styles.decorativeElement2} />
+        
+        {/* Background Bird Image */}
+        <Image 
+          source={require('../../../assets/images/Teal watercolor single element/bird-background1.png')}
+          style={styles.backgroundImage}
+          resizeMode="contain"
+        />
+
+        {/* Header */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>
+            Check Your Email
+          </Text>
+          <Text style={styles.subtitle}>
+            We've sent a verification link to{'\n'}
+            <Text style={styles.emailText}>{email}</Text>
+          </Text>
+        </View>
+
+        {/* Instructions */}
+        <View style={styles.formContainer}>
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.instructionsText}>
+              Please check your email and click the verification link to activate your account.
+            </Text>
+            <Text style={styles.instructionsSubtext}>
+              After clicking the link, come back here and tap "I've Verified" below.
+            </Text>
           </View>
 
-          {/* Verification Form */}
-          <View className={styles.verificationContainer}>
-            <Text className={styles.label}>Verification Code</Text>
-            <TextInput
-              ref={inputRef}
-              className={styles.verificationInput}
-              placeholder="000000"
-              placeholderTextColor="#9CA3AF"
-              value={code}
-              onChangeText={handleCodeChange}
-              keyboardType="numeric"
-              maxLength={6}
-              autoFocus
-              editable={!isSubmitting}
-            />
+          {/* Verification Check Button */}
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={handleCheckVerification}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.primaryButtonText}>
+              I've Verified My Email
+            </Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              className={`${styles.primaryButton} ${
-                code.length !== 6 || isSubmitting ? styles.primaryButtonDisabled : ''
-              }`}
-              onPress={handleVerify}
-              disabled={code.length !== 6 || isSubmitting}
-            >
-              {isSubmitting ? (
-                <View className="flex-row items-center justify-center">
-                  <ActivityIndicator size="small" color="white" />
-                  <Text className={`${styles.primaryButtonText} ml-2`}>Verifying...</Text>
-                </View>
-              ) : (
-                <Text className={styles.primaryButtonText}>Verify Email</Text>
-              )}
-            </TouchableOpacity>
+          {/* Resend Button */}
+          <TouchableOpacity
+            style={[
+              styles.secondaryButton,
+              (isResending || resendTimer > 0) && styles.secondaryButtonDisabled
+            ]}
+            onPress={handleResendVerification}
+            disabled={isResending || resendTimer > 0}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {isResending ? 'Sending...' : 
+               resendTimer > 0 ? `Resend in ${resendTimer}s` : 
+               'Resend Verification Email'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-            {/* Resend Code */}
-            <View className="items-center mt-6">
-              <Text className={styles.linkText}>Didn't receive the code?</Text>
-              <TouchableOpacity
-                onPress={handleResendCode}
-                disabled={resendCooldown > 0 || isResending}
-                className="mt-2"
-              >
-                {isResending ? (
-                  <View className="flex-row items-center">
-                    <ActivityIndicator size="small" color="#3B82F6" />
-                    <Text className={`${styles.link} ml-2`}>Sending...</Text>
-                  </View>
-                ) : resendCooldown > 0 ? (
-                  <Text className="text-gray-400 text-base">
-                    Resend in {resendCooldown}s
-                  </Text>
-                ) : (
-                  <Text className={styles.link}>Resend Code</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
+        {/* Footer */}
+        <View style={styles.footerContainer}>
+          <TouchableOpacity onPress={onNavigateToSignIn} activeOpacity={0.7}>
+            <Text style={styles.footerText}>
+              Back to Sign In
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>

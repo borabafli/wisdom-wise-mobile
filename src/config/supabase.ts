@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://tarwryruagxsoaljzoot.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_kwdqWqCQQgbHMoIikvhkUw_W7YS5_F_';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl) {
+  throw new Error('Missing EXPO_PUBLIC_SUPABASE_URL environment variable');
+}
+
+if (!supabaseAnonKey) {
+  throw new Error('Missing EXPO_PUBLIC_SUPABASE_ANON_KEY environment variable');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -13,26 +21,23 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Database types for better type safety
+// Types
+export interface User {
+  id: string;
+  email: string;
+  user_metadata?: {
+    first_name?: string;
+    last_name?: string;
+  };
+}
+
 export interface UserProfile {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
   privacy_accepted: boolean;
-  privacy_accepted_at: string | null;
+  privacy_accepted_at?: string;
   created_at: string;
   updated_at: string;
-}
-
-export interface Database {
-  public: {
-    Tables: {
-      user_profiles: {
-        Row: UserProfile;
-        Insert: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>>;
-      };
-    };
-  };
 }

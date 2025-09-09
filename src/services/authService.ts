@@ -1,37 +1,20 @@
-import { supabase, UserProfile } from '../config/supabase';
-import { AuthError, User } from '@supabase/supabase-js';
-import * as AuthSession from 'expo-auth-session';
-import * as WebBrowser from 'expo-web-browser';
-import * as Crypto from 'expo-crypto';
+import { supabase } from '../config/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-WebBrowser.maybeCompleteAuthSession();
+export class AuthService {
+  // Helper to get the correct redirect URL for current environment
+  private getRedirectUrl(path: string = '/auth/verify'): string {
+    if (__DEV__) {
+      // For development, we'll use a localhost URL that we'll configure in Supabase
+      // This works for all developers without needing to change IPs
+      return `exp://localhost:19000/--${path}`;
+    }
+    // Production: use custom scheme
+    return `wisdomwise:${path}`;
+  }
 
-export interface SignUpData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  privacyAccepted: boolean;
-}
-
-export interface SignInData {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  success: boolean;
-  user?: User;
-  profile?: UserProfile;
-  error?: string;
-  needsVerification?: boolean;
-}
-
-class AuthService {
-  /**
-   * Sign up a new user with email and password
-   */
-  async signUp({ email, password, firstName, lastName, privacyAccepted }: SignUpData): Promise<AuthResponse> {
+  // Sign up with email and password
+  async signUp(email: string, password: string, firstName: string, lastName: string) {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -40,39 +23,24 @@ class AuthService {
           data: {
             first_name: firstName,
             last_name: lastName,
-            privacy_accepted: privacyAccepted,
           },
+          emailRedirectTo: this.getRedirectUrl('/auth/verify')
         },
       });
 
       if (error) {
-        return { success: false, error: this.getErrorMessage(error) };
+        throw new Error(error.message);
       }
 
-      if (data.user && !data.user.email_confirmed_at) {
-        return { 
-          success: true, 
-          user: data.user, 
-          needsVerification: true 
-        };
-      }
-
-      return { 
-        success: true, 
-        user: data.user 
-      };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An unexpected error occurred during sign up' 
-      };
+      return data;
+    } catch (error: any) {
+      console.error('AuthService.signUp error:', error);
+      throw error;
     }
   }
 
-  /**
-   * Sign in a user with email and password
-   */
-  async signIn({ email, password }: SignInData): Promise<AuthResponse> {
+  // Sign in with email and password
+  async signIn(email: string, password: string) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -80,254 +48,169 @@ class AuthService {
       });
 
       if (error) {
-        return { success: false, error: this.getErrorMessage(error) };
+        throw new Error(error.message);
       }
 
-      // Get user profile after successful login
-      const profile = await this.getUserProfile(data.user.id);
-
-      return { 
-        success: true, 
-        user: data.user,
-        profile
-      };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An unexpected error occurred during sign in' 
-      };
+      return data;
+    } catch (error: any) {
+      console.error('AuthService.signIn error:', error);
+      throw error;
     }
   }
 
-  /**
-   * Sign in with Google OAuth
-   */
-  async signInWithGoogle(): Promise<AuthResponse> {
+  // Sign out
+  async signOut() {
     try {
-      const redirectUrl = AuthSession.makeRedirectUri({
-        useProxy: true,
-      });
-
-      const authUrl = `https://tarwryruagxsoaljzoot.supabase.co/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}`;
-
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUrl);
-
-      if (result.type === 'success') {
-        const url = result.url;
-        const params = new URLSearchParams(url.split('#')[1]);
-        const accessToken = params.get('access_token');
-        const refreshToken = params.get('refresh_token');
-
-        if (accessToken && refreshToken) {
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-
-          if (error) {
-            return { success: false, error: this.getErrorMessage(error) };
-          }
-
-          // Get user profile after successful Google login
-          const profile = await this.getUserProfile(data.user.id);
-
-          return { 
-            success: true, 
-            user: data.user,
-            profile
-          };
-        }
-      }
-
-      return { success: false, error: 'Google sign-in was cancelled or failed' };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An error occurred during Google sign-in' 
-      };
-    }
-  }
-
-  /**
-   * Verify email with confirmation token
-   */
-  async verifyEmail(token: string): Promise<AuthResponse> {
-    try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        token_hash: token,
-        type: 'email',
-      });
-
+      const { error } = await supabase.auth.signOut();
+      
       if (error) {
-        return { success: false, error: this.getErrorMessage(error) };
+        throw new Error(error.message);
       }
 
-      return { success: true, user: data.user };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An error occurred during email verification' 
-      };
+      // Only clear auth-related data, preserve all user content
+      // Note: Supabase manages its own auth tokens, but we clear any custom auth data
+      const authKeysToRemove = [
+        'userProfile', // User profile data from auth
+        'authState',   // Any custom auth state
+        'user_profile' // Alternative key name
+      ];
+
+      // Clear only specific auth-related keys, preserving all user content:
+      // - chat_current_session, chat_history (preserved)
+      // - user_values, value_insights (preserved) 
+      // - wisdom_wise_mood_ratings (preserved)
+      // - user_settings (preserved)
+      // - thought_patterns, insights_history (preserved)
+      await Promise.all(
+        authKeysToRemove.map(key => AsyncStorage.removeItem(key).catch(() => {}))
+      );
+    } catch (error: any) {
+      console.error('AuthService.signOut error:', error);
+      throw error;
     }
   }
 
-  /**
-   * Resend verification email
-   */
-  async resendVerification(email: string): Promise<AuthResponse> {
+  // Get current user
+  async getCurrentUser() {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return user;
+    } catch (error: any) {
+      console.error('AuthService.getCurrentUser error:', error);
+      return null;
+    }
+  }
+
+  // Get current session
+  async getCurrentSession() {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return session;
+    } catch (error: any) {
+      console.error('AuthService.getCurrentSession error:', error);
+      return null;
+    }
+  }
+
+  // Reset password
+  async resetPassword(email: string) {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      console.error('AuthService.resetPassword error:', error);
+      throw error;
+    }
+  }
+
+  // Resend verification email
+  async resendVerification(email: string) {
     try {
       const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: this.getRedirectUrl('/auth/verify')
+        }
+      });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      console.error('AuthService.resendVerification error:', error);
+      throw error;
+    }
+  }
+
+  // Verify email with token (if manually handling verification)
+  async verifyEmail(token: string, email: string) {
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        token,
         type: 'signup',
         email,
       });
 
       if (error) {
-        return { success: false, error: this.getErrorMessage(error) };
-      }
-
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An error occurred while resending verification email' 
-      };
-    }
-  }
-
-  /**
-   * Reset password
-   */
-  async resetPassword(email: string): Promise<AuthResponse> {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-
-      if (error) {
-        return { success: false, error: this.getErrorMessage(error) };
-      }
-
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An error occurred while sending password reset email' 
-      };
-    }
-  }
-
-  /**
-   * Sign out current user
-   */
-  async signOut(): Promise<AuthResponse> {
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        return { success: false, error: this.getErrorMessage(error) };
-      }
-
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'An error occurred during sign out' 
-      };
-    }
-  }
-
-  /**
-   * Get current user
-   */
-  async getCurrentUser(): Promise<User | null> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      return user;
-    } catch (error) {
-      console.error('Error getting current user:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Get user profile from database
-   */
-  async getUserProfile(userId: string): Promise<UserProfile | null> {
-    try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return null;
+        throw new Error(error.message);
       }
 
       return data;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      return null;
+    } catch (error: any) {
+      console.error('AuthService.verifyEmail error:', error);
+      throw error;
     }
   }
 
-  /**
-   * Update user profile
-   */
-  async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<AuthResponse> {
+  // Listen to auth changes
+  onAuthStateChange(callback: (event: string, session: any) => void) {
+    return supabase.auth.onAuthStateChange(callback);
+  }
+
+  // Utility method to clear specific data on signout (if needed)
+  async clearUserData(options: {
+    clearChatHistory?: boolean;
+    clearMoodRatings?: boolean;
+    clearValues?: boolean;
+    clearSettings?: boolean;
+  } = {}) {
     try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .update(updates)
-        .eq('id', userId)
-        .select()
-        .single();
+      const keysToRemove: string[] = [];
 
-      if (error) {
-        return { success: false, error: 'Failed to update profile' };
+      if (options.clearChatHistory) {
+        keysToRemove.push('chat_current_session', 'chat_history');
+      }
+      if (options.clearMoodRatings) {
+        keysToRemove.push('wisdom_wise_mood_ratings');
+      }
+      if (options.clearValues) {
+        keysToRemove.push('user_values', 'value_insights', 'value_reflection_summaries');
+      }
+      if (options.clearSettings) {
+        keysToRemove.push('user_settings');
       }
 
-      return { success: true, profile: data };
+      await Promise.all(
+        keysToRemove.map(key => AsyncStorage.removeItem(key).catch(() => {}))
+      );
+
+      console.log('Cleared user data:', keysToRemove);
     } catch (error) {
-      return { 
-        success: false, 
-        error: 'An error occurred while updating profile' 
-      };
-    }
-  }
-
-  /**
-   * Listen to authentication state changes
-   */
-  onAuthStateChange(callback: (user: User | null, profile: UserProfile | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
-      const user = session?.user || null;
-      let profile = null;
-
-      if (user) {
-        profile = await this.getUserProfile(user.id);
-      }
-
-      callback(user, profile);
-    });
-  }
-
-  /**
-   * Convert Supabase auth errors to user-friendly messages
-   */
-  private getErrorMessage(error: AuthError): string {
-    switch (error.message) {
-      case 'Invalid login credentials':
-        return 'Invalid email or password. Please try again.';
-      case 'Email not confirmed':
-        return 'Please check your email and click the confirmation link.';
-      case 'User already registered':
-        return 'This email is already registered. Please sign in instead.';
-      case 'Password should be at least 6 characters':
-        return 'Password must be at least 6 characters long.';
-      case 'Email address invalid':
-        return 'Please enter a valid email address.';
-      default:
-        return error.message || 'An unexpected error occurred. Please try again.';
+      console.error('Error clearing user data:', error);
     }
   }
 }

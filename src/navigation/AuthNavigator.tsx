@@ -1,69 +1,40 @@
 import React, { useState } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import {
-  SignInScreen,
-  SignUpScreen,
-  VerificationScreen,
-  ForgotPasswordScreen,
-} from '../screens/auth';
+import { SignInScreen } from '../screens/auth/SignInScreen';
+import { SignUpScreen } from '../screens/auth/SignUpScreen';
+import { VerificationScreen } from '../screens/auth/VerificationScreen';
 
-export type AuthStackParamList = {
-  SignIn: undefined;
-  SignUp: undefined;
-  Verification: { email: string };
-  ForgotPassword: undefined;
-};
-
-const Stack = createStackNavigator<AuthStackParamList>();
+type AuthScreen = 'signin' | 'signup' | 'verification';
 
 export const AuthNavigator: React.FC = () => {
-  const [verificationEmail, setVerificationEmail] = useState<string>('');
+  const [currentScreen, setCurrentScreen] = useState<AuthScreen>('signin');
+  const [pendingEmail, setPendingEmail] = useState<string>('');
 
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        cardStyle: { backgroundColor: '#F0F9FF' },
-      }}
-      initialRouteName="SignIn"
-    >
-      <Stack.Screen name="SignIn">
-        {({ navigation }) => (
-          <SignInScreen
-            onNavigateToSignUp={() => navigation.navigate('SignUp')}
-            onNavigateToForgotPassword={() => navigation.navigate('ForgotPassword')}
-          />
-        )}
-      </Stack.Screen>
-      
-      <Stack.Screen name="SignUp">
-        {({ navigation }) => (
-          <SignUpScreen
-            onNavigateToSignIn={() => navigation.navigate('SignIn')}
-            onNavigateToVerification={(email) => {
-              setVerificationEmail(email);
-              navigation.navigate('Verification', { email });
-            }}
-          />
-        )}
-      </Stack.Screen>
-      
-      <Stack.Screen name="Verification">
-        {({ navigation, route }) => (
-          <VerificationScreen
-            email={route.params?.email || verificationEmail}
-            onNavigateBack={() => navigation.navigate('SignUp')}
-          />
-        )}
-      </Stack.Screen>
-      
-      <Stack.Screen name="ForgotPassword">
-        {({ navigation }) => (
-          <ForgotPasswordScreen
-            onNavigateBack={() => navigation.navigate('SignIn')}
-          />
-        )}
-      </Stack.Screen>
-    </Stack.Navigator>
-  );
+  const navigateToSignUp = () => setCurrentScreen('signup');
+  const navigateToSignIn = () => setCurrentScreen('signin');
+  const navigateToVerification = (email: string) => {
+    setPendingEmail(email);
+    setCurrentScreen('verification');
+  };
+  const onVerificationSuccess = () => setCurrentScreen('signin');
+
+  if (currentScreen === 'verification') {
+    return (
+      <VerificationScreen 
+        email={pendingEmail}
+        onNavigateToSignIn={navigateToSignIn} 
+        onVerificationSuccess={onVerificationSuccess}
+      />
+    );
+  }
+
+  if (currentScreen === 'signup') {
+    return (
+      <SignUpScreen 
+        onNavigateToSignIn={navigateToSignIn} 
+        onNavigateToVerification={navigateToVerification}
+      />
+    );
+  }
+
+  return <SignInScreen onNavigateToSignUp={navigateToSignUp} />;
 };

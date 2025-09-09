@@ -1,351 +1,237 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts';
-import { authStyles as styles } from '../../styles/components/AuthComponents.styles';
+import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
 
-interface SignUpScreenProps {
+export const SignUpScreen: React.FC<{ 
   onNavigateToSignIn: () => void;
   onNavigateToVerification: (email: string) => void;
-}
-
-export const SignUpScreen: React.FC<SignUpScreenProps> = ({
-  onNavigateToSignIn,
-  onNavigateToVerification,
-}) => {
-  const { signUp, signInWithGoogle, isLoading } = useAuth();
-  
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    privacyAccepted: false,
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+}> = ({ onNavigateToSignIn, onNavigateToVerification }) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const { signUp, isLoading } = useAuth();
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+    if (!firstName.trim()) {
+      Alert.alert('Error', 'Please enter your first name');
+      return false;
     }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+    if (!lastName.trim()) {
+      Alert.alert('Error', 'Please enter your last name');
+      return false;
     }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+    if (!email.trim()) {
+      Alert.alert('Error', 'Please enter your email');
+      return false;
     }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return false;
     }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters long');
+      return false;
     }
-
-    if (!formData.privacyAccepted) {
-      newErrors.privacy = 'You must accept the privacy policy to continue';
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return false;
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (!privacyAccepted) {
+      Alert.alert('Error', 'Please accept the privacy policy to continue');
+      return false;
+    }
+    return true;
   };
 
   const handleSignUp = async () => {
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
     try {
-      const response = await signUp({
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        privacyAccepted: formData.privacyAccepted,
-      });
-      
-      if (response.success) {
-        if (response.needsVerification) {
-          onNavigateToVerification(formData.email.trim().toLowerCase());
-        }
-        // If no verification needed, user will be automatically signed in
-      } else {
-        Alert.alert('Sign Up Failed', response.error || 'An unexpected error occurred');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      await signUp(email, password, firstName, lastName);
+      // Navigate to verification screen after successful signup
+      onNavigateToVerification(email);
+    } catch (error: any) {
+      Alert.alert('Sign Up Failed', error.message || 'Please try again');
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    try {
-      const response = await signInWithGoogle();
-      
-      if (!response.success) {
-        Alert.alert('Google Sign Up Failed', response.error || 'An unexpected error occurred');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred during Google sign up.');
-    }
+  const getPasswordStrength = () => {
+    if (password.length === 0) return '';
+    if (password.length < 6) return 'Weak';
+    if (password.length < 10) return 'Medium';
+    return 'Strong';
   };
 
-  const isFormDisabled = isLoading || isSubmitting;
+  const getPasswordColor = () => {
+    const strength = getPasswordStrength();
+    if (strength === 'Weak') return 'text-red-500';
+    if (strength === 'Medium') return 'text-yellow-500';
+    if (strength === 'Strong') return 'text-green-500';
+    return '';
+  };
 
   return (
-    <SafeAreaView className={styles.safeArea}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className={styles.keyboardView}
-      >
-        <ScrollView 
-          className={styles.scrollContainer}
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className={styles.container}>
-            <View className={styles.contentContainer}>
-              {/* Header */}
-              <View className={styles.headerContainer}>
-                <Text className={styles.title}>Create Account</Text>
-                <Text className={styles.subtitle}>
-                  Join WisdomWise and start your mindful wellness journey
-                </Text>
-              </View>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        {/* Background Decorative Elements */}
+        <View style={styles.decorativeElement} />
+        <View style={styles.decorativeElement2} />
+        
+        {/* Background Bird Image */}
+        <Image 
+          source={require('../../../assets/images/Teal watercolor single element/bird-background1.png')}
+          style={styles.backgroundImage}
+          resizeMode="contain"
+        />
 
-              {/* Form */}
-              <View className={styles.formContainer}>
-                {/* Name Inputs */}
-                <View className="flex-row space-x-3">
-                  <View className="flex-1">
-                    <Text className={styles.label}>First Name</Text>
-                    <TextInput
-                      className={`${styles.input} ${errors.firstName ? styles.inputError : ''}`}
-                      placeholder="First name"
-                      placeholderTextColor="#9CA3AF"
-                      value={formData.firstName}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, firstName: text });
-                        if (errors.firstName) setErrors({ ...errors, firstName: '' });
-                      }}
-                      autoCapitalize="words"
-                      editable={!isFormDisabled}
-                    />
-                    {errors.firstName && (
-                      <Text className={styles.errorText}>{errors.firstName}</Text>
-                    )}
-                  </View>
-                  
-                  <View className="flex-1">
-                    <Text className={styles.label}>Last Name</Text>
-                    <TextInput
-                      className={`${styles.input} ${errors.lastName ? styles.inputError : ''}`}
-                      placeholder="Last name"
-                      placeholderTextColor="#9CA3AF"
-                      value={formData.lastName}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, lastName: text });
-                        if (errors.lastName) setErrors({ ...errors, lastName: '' });
-                      }}
-                      autoCapitalize="words"
-                      editable={!isFormDisabled}
-                    />
-                    {errors.lastName && (
-                      <Text className={styles.errorText}>{errors.lastName}</Text>
-                    )}
-                  </View>
-                </View>
+        {/* Header */}
+        <View style={styles.headerContainerSignUp}>
+          <Text style={styles.title}>
+            Create Account
+          </Text>
+          <Text style={styles.subtitle}>
+            Join your mindfulness journey with WisdomWise
+          </Text>
+        </View>
 
-                {/* Email Input */}
-                <View className={styles.inputContainer}>
-                  <Text className={styles.label}>Email</Text>
-                  <TextInput
-                    className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
-                    placeholder="Enter your email"
-                    placeholderTextColor="#9CA3AF"
-                    value={formData.email}
-                    onChangeText={(text) => {
-                      setFormData({ ...formData, email: text });
-                      if (errors.email) setErrors({ ...errors, email: '' });
-                    }}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    editable={!isFormDisabled}
-                  />
-                  {errors.email && (
-                    <Text className={styles.errorText}>{errors.email}</Text>
-                  )}
-                </View>
-
-                {/* Password Input */}
-                <View className={styles.inputContainer}>
-                  <Text className={styles.label}>Password</Text>
-                  <View className="relative">
-                    <TextInput
-                      className={`${styles.input} ${errors.password ? styles.inputError : ''} pr-12`}
-                      placeholder="Create a password"
-                      placeholderTextColor="#9CA3AF"
-                      value={formData.password}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, password: text });
-                        if (errors.password) setErrors({ ...errors, password: '' });
-                      }}
-                      secureTextEntry={!showPassword}
-                      editable={!isFormDisabled}
-                    />
-                    <TouchableOpacity
-                      className="absolute right-3 top-3"
-                      onPress={() => setShowPassword(!showPassword)}
-                      disabled={isFormDisabled}
-                    >
-                      <Ionicons
-                        name={showPassword ? 'eye-off' : 'eye'}
-                        size={20}
-                        color="#6B7280"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  {errors.password && (
-                    <Text className={styles.errorText}>{errors.password}</Text>
-                  )}
-                </View>
-
-                {/* Confirm Password Input */}
-                <View className={styles.inputContainer}>
-                  <Text className={styles.label}>Confirm Password</Text>
-                  <View className="relative">
-                    <TextInput
-                      className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''} pr-12`}
-                      placeholder="Confirm your password"
-                      placeholderTextColor="#9CA3AF"
-                      value={formData.confirmPassword}
-                      onChangeText={(text) => {
-                        setFormData({ ...formData, confirmPassword: text });
-                        if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: '' });
-                      }}
-                      secureTextEntry={!showConfirmPassword}
-                      editable={!isFormDisabled}
-                    />
-                    <TouchableOpacity
-                      className="absolute right-3 top-3"
-                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                      disabled={isFormDisabled}
-                    >
-                      <Ionicons
-                        name={showConfirmPassword ? 'eye-off' : 'eye'}
-                        size={20}
-                        color="#6B7280"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  {errors.confirmPassword && (
-                    <Text className={styles.errorText}>{errors.confirmPassword}</Text>
-                  )}
-                </View>
-
-                {/* Privacy Policy Checkbox */}
-                <View className={styles.inputContainer}>
-                  <TouchableOpacity
-                    className={styles.privacyContainer}
-                    onPress={() => {
-                      setFormData({ ...formData, privacyAccepted: !formData.privacyAccepted });
-                      if (errors.privacy) setErrors({ ...errors, privacy: '' });
-                    }}
-                    disabled={isFormDisabled}
-                  >
-                    <View className={`${styles.checkbox} ${formData.privacyAccepted ? styles.checkboxChecked : ''}`}>
-                      {formData.privacyAccepted && (
-                        <Ionicons name="checkmark" size={14} color="white" />
-                      )}
-                    </View>
-                    <Text className={styles.checkboxText}>
-                      I trust Mind Wise to keep my information private and safe as outlined in{' '}
-                      <Text className={styles.privacyLink}>Privacy Policy</Text>
-                    </Text>
-                  </TouchableOpacity>
-                  {errors.privacy && (
-                    <Text className={styles.errorText}>{errors.privacy}</Text>
-                  )}
-                </View>
-
-                {/* Sign Up Button */}
-                <TouchableOpacity
-                  className={`${styles.primaryButton} ${
-                    isFormDisabled ? styles.primaryButtonDisabled : ''
-                  }`}
-                  onPress={handleSignUp}
-                  disabled={isFormDisabled}
-                >
-                  {isSubmitting ? (
-                    <View className="flex-row items-center justify-center">
-                      <ActivityIndicator size="small" color="white" />
-                      <Text className={`${styles.primaryButtonText} ml-2`}>Creating Account...</Text>
-                    </View>
-                  ) : (
-                    <Text className={styles.primaryButtonText}>Create Account</Text>
-                  )}
-                </TouchableOpacity>
-
-                {/* Divider */}
-                <View className={styles.dividerContainer}>
-                  <View className={styles.dividerLine} />
-                  <Text className={styles.dividerText}>or</Text>
-                  <View className={styles.dividerLine} />
-                </View>
-
-                {/* Google Sign Up Button */}
-                <TouchableOpacity
-                  className={styles.googleButton}
-                  onPress={handleGoogleSignUp}
-                  disabled={isFormDisabled}
-                >
-                  <Ionicons name="logo-google" size={20} color="#DB4437" />
-                  <Text className={styles.googleButtonText}>Continue with Google</Text>
-                </TouchableOpacity>
-
-                {/* Sign In Link */}
-                <View className={styles.linkContainer}>
-                  <Text className={styles.linkText}>Already have an account? </Text>
-                  <TouchableOpacity
-                    onPress={onNavigateToSignIn}
-                    disabled={isFormDisabled}
-                  >
-                    <Text className={styles.link}>Sign In</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+        {/* Form */}
+        <View style={styles.formContainer}>
+          {/* Name Fields */}
+          <View style={styles.nameFieldsRow}>
+            <View style={styles.nameFieldContainer}>
+              <Text style={styles.inputLabel}>First Name</Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder="First name"
+                placeholderTextColor={styles.inputLabel.color}
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+                autoCorrect={false}
+              />
+            </View>
+            <View style={styles.nameFieldContainer}>
+              <Text style={styles.inputLabel}>Last Name</Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Last name"
+                placeholderTextColor={styles.inputLabel.color}
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+                autoCorrect={false}
+              />
             </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+          {/* Email */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your email"
+              placeholderTextColor={styles.inputLabel.color}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+
+          {/* Password */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Create a password"
+              placeholderTextColor={styles.inputLabel.color}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoComplete="off"
+              textContentType="none"
+              passwordRules=""
+            />
+            {password.length > 0 && (
+              <View style={styles.passwordStrengthContainer}>
+                <Text style={[
+                  getPasswordStrength() === 'Weak' && styles.passwordStrengthWeak,
+                  getPasswordStrength() === 'Medium' && styles.passwordStrengthMedium,
+                  getPasswordStrength() === 'Strong' && styles.passwordStrengthStrong,
+                ]}>
+                  Password strength: {getPasswordStrength()}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Confirm Password */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Confirm Password</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Confirm your password"
+              placeholderTextColor={styles.inputLabel.color}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              autoComplete="off"
+              textContentType="none"
+              passwordRules=""
+            />
+          </View>
+
+          {/* Privacy Policy Checkbox */}
+          <TouchableOpacity 
+            style={styles.checkboxContainer}
+            onPress={() => setPrivacyAccepted(!privacyAccepted)}
+            activeOpacity={0.7}
+          >
+            <View style={[
+              styles.checkbox,
+              privacyAccepted && styles.checkboxChecked
+            ]}>
+              {privacyAccepted && (
+                <Text style={styles.checkmark}>✓</Text>
+              )}
+            </View>
+            <Text style={styles.checkboxText}>
+              I trust WisdomWise to keep my information private and safe as outlined in{' '}
+              <Text style={styles.privacyPolicyLink}>Privacy Policy</Text>
+            </Text>
+          </TouchableOpacity>
+
+          {/* Create Account Button */}
+          <TouchableOpacity
+            style={[
+              styles.primaryButton,
+              isLoading && styles.primaryButtonDisabled
+            ]}
+            onPress={handleSignUp}
+            disabled={isLoading}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.primaryButtonText}>
+              {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footerContainer}>
+          <TouchableOpacity onPress={onNavigateToSignIn} activeOpacity={0.7}>
+            <Text style={styles.footerText}>
+              Already have an account? Sign In
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

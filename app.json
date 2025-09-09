@@ -80,6 +80,7 @@
         }
       ]
     ],
+    "scheme": "wisdomwise",
     "extra": {
       "eas": {
         "projectId": "bee70e2e-8050-4ef6-ac3b-1d699f00bb47"
