@@ -3,6 +3,8 @@ import { Platform } from 'react-native';
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
 
+// Enhanced simulation for mobile audio levels (no native dependencies required)
+
 
 export interface STTSettings {
   isEnabled: boolean;
@@ -328,16 +330,16 @@ class STTService {
           console.log('Band', i, 'average:', average, 'out of 255');
         }
         
-        // More responsive and realistic audio level calculation
+        // Enhanced audio level calculation for bigger, more responsive waves
         const baseLevel = average / 255; // 0 to 1
         
-        // Use a more reasonable sensitivity that responds to actual voice
-        const sensitivity = 2.5; // Moderate sensitivity
-        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.6); // Gentler curve
+        // Increased sensitivity for bigger waves
+        const sensitivity = 4.0; // Higher sensitivity for more dramatic waves
+        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.5); // More aggressive curve for bigger waves
         const normalizedLevel = Math.min(1.0, amplifiedLevel);
         
-        // Use a very low baseline that shows true silence
-        const minLevel = 0.05; // Very low baseline for true silence
+        // Higher minimum level for more visible waves even in silence
+        const minLevel = 0.12; // Higher baseline for more visible waves
         frequencyData.push(Math.max(minLevel, normalizedLevel));
       }
       
@@ -358,6 +360,9 @@ class STTService {
     
     updateLevel();
   }
+
+  // Store the detected recording format for transcription
+  private detectedRecordingFormat: any = null;
 
   // Mobile recording using Expo Audio + Whisper API
   private async startMobileRecording(
@@ -384,25 +389,27 @@ class STTService {
         playThroughEarpieceAndroid: false,
       });
 
-      // Start recording
+      // Start recording with enhanced logging
       const recording = new Audio.Recording();
+      
+      console.log('🎯 Preparing Android M4A recording with enhanced debugging...');
       
       const recordingOptions = {
         android: {
           extension: '.m4a',
-          outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-          audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
+          outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+          audioEncoder: Audio.AndroidAudioEncoder.AAC,
+          sampleRate: 16000, // 16kHz is optimal for speech recognition
+          numberOfChannels: 1, // Mono is sufficient for speech
+          bitRate: 64000, // Lower bitrate for speech
         },
         ios: {
           extension: '.m4a',
-          outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC,
-          audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-          sampleRate: 44100,
-          numberOfChannels: 2,
-          bitRate: 128000,
+          outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+          audioQuality: Audio.IOSAudioQuality.HIGH,
+          sampleRate: 16000, // 16kHz is optimal for speech recognition
+          numberOfChannels: 1, // Mono is sufficient for speech
+          bitRate: 64000, // Lower bitrate for speech
           linearPCMBitDepth: 16,
           linearPCMIsBigEndian: false,
           linearPCMIsFloat: false,
@@ -413,7 +420,15 @@ class STTService {
         },
       };
 
+      // Store format info for transcription
+      this.detectedRecordingFormat = {
+        name: 'M4A/AAC',
+        extension: '.m4a',
+        mimeType: 'audio/mp4'
+      };
+
       await recording.prepareToRecordAsync(recordingOptions);
+      console.log('✅ M4A recording prepared successfully')
       await recording.startAsync();
       
       this.audioRecording = recording;
@@ -422,9 +437,9 @@ class STTService {
 
       console.log('✅ Mobile audio recording started successfully');
 
-      // Simulate audio levels for sound wave animation since we don't have real-time audio analysis on mobile
+      // Try to get real audio levels, fallback to enhanced simulation
       if (onAudioLevel) {
-        this.simulateAudioLevels(onAudioLevel);
+        this.startMobileAudioLevelMonitoring(onAudioLevel, recording);
       }
 
       return true;
@@ -436,29 +451,46 @@ class STTService {
     }
   }
 
-  // Simulate audio levels for mobile sound wave animation
-  private simulateAudioLevels(onAudioLevel: (level: number, frequencyData?: number[]) => void) {
+  // Enhanced audio simulation for mobile with bigger, more dynamic waves
+  private startMobileAudioLevelMonitoring(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void, 
+    recording: Audio.Recording
+  ) {
+    console.log('🎵 Starting enhanced audio level simulation...');
+    this.startEnhancedAudioSimulation(onAudioLevel);
+  }
+
+  // Enhanced simulation with bigger, more realistic waves
+  private startEnhancedAudioSimulation(onAudioLevel: (level: number, frequencyData?: number[]) => void) {
+    let frameCount = 0;
+    
     const updateLevels = () => {
       if (!this.isRecording || !onAudioLevel) return;
 
-      // Create more realistic audio level simulation
-      const baseLevel = 0.2 + (Math.random() * 0.6); // 0.2 to 0.8 range
+      frameCount++;
+      const time = frameCount * 0.02; // Faster time progression
       
-      // Generate frequency spectrum simulation
+      // Create realistic audio simulation with bigger waves
+      const baseLevel = 0.4 + (Math.random() * 0.5); // 0.4 to 0.9 range
+      const periodicVariation = Math.sin(time * 1.2) * 0.25;
+      const finalBaseLevel = Math.max(0.15, Math.min(1.0, baseLevel + periodicVariation));
+      
+      // Generate dynamic frequency spectrum
       const frequencyData = Array.from({ length: 7 }, (_, i) => {
-        const bandVariation = 0.7 + (Math.random() * 0.6); // 0.7 to 1.3
-        const frequencyFactor = Math.pow(0.85, i); // Natural decay for higher frequencies
-        return Math.max(0.1, Math.min(1, baseLevel * bandVariation * frequencyFactor));
+        const bandVariation = 0.6 + (Math.random() * 0.8); // More variation
+        const periodicMovement = Math.sin(time * (1.5 + i * 0.4)) * 0.2;
+        const frequencyFactor = Math.pow(0.8, i);
+        const level = finalBaseLevel * bandVariation * frequencyFactor + periodicMovement;
+        return Math.max(0.12, Math.min(1.0, level));
       });
 
-      onAudioLevel(baseLevel, frequencyData);
+      onAudioLevel(finalBaseLevel, frequencyData);
 
-      // Continue updating every 100ms
-      setTimeout(updateLevels, 100);
+      // 60fps updates
+      setTimeout(updateLevels, 16);
     };
 
-    // Start simulation after a brief delay
-    setTimeout(updateLevels, 200);
+    setTimeout(updateLevels, 100);
   }
 
   // Web recording using MediaRecorder + Whisper API
@@ -589,6 +621,11 @@ class STTService {
     this.analyser = undefined;
   }
 
+  // No cleanup needed for enhanced simulation
+  private cleanupRealAudioLevelMonitoring(): void {
+    // Enhanced simulation cleanup is handled by isRecording flag
+  }
+
 
   // Cancel recording without processing
   async cancelRecognition(): Promise<void> {
@@ -624,11 +661,14 @@ class STTService {
       // Cleanup audio monitoring for web
       this.cleanupAudioMonitoring();
       
+      // Cleanup real audio level monitoring
+      this.cleanupRealAudioLevelMonitoring();
+      
       if (this.audioRecording) {
-        if (Platform.OS === 'web' && this.audioRecording.state !== 'inactive') {
+        if (Platform.OS === 'web' && (this.audioRecording as any).state !== 'inactive') {
           // Stop MediaRecorder for web
           console.log('🛑 Stopping web MediaRecorder...');
-          this.audioRecording.stop();
+          (this.audioRecording as any).stop();
         } else if ((Platform.OS === 'ios' || Platform.OS === 'android')) {
           // Stop Expo Audio recording for mobile
           console.log('🛑 Stopping mobile audio recording...');
@@ -672,17 +712,30 @@ class STTService {
     onError: (error: string) => void
   ): Promise<void> {
     try {
-      console.log('Transcribing audio with Edge Function...');
+      console.log('=== TRANSCRIBING AUDIO FILE ===');
       console.log('Audio file URI:', audioUri);
       
-      // For mobile platforms, read the file as base64 directly
-      const base64Audio = await this.fileUriToBase64(audioUri);
+      // Get file info for debugging
+      try {
+        const response = await fetch(audioUri);
+        const blob = await response.blob();
+        console.log('📁 File details:', {
+          size: blob.size,
+          type: blob.type,
+          uri: audioUri
+        });
+      } catch (infoError) {
+        console.warn('Could not get file info:', infoError);
+      }
       
-      // Use Edge Function for transcription (mobile uses m4a format)
-      const result = await apiService.transcribeAudioWithContext(
-        base64Audio,
+      // For mobile platforms, send the file directly as multipart/form-data
+      const fileType = this.detectedRecordingFormat ? this.detectedRecordingFormat.extension.replace('.', '') : 'm4a';
+      console.log(`🎯 Transcribing with detected format: ${fileType}`);
+      
+      const result = await this.transcribeWithFileUpload(
+        audioUri,
         this.defaultSettings.language.split('-')[0],
-        'm4a'
+        fileType
       );
       
       if (result.success && result.transcript) {
@@ -707,6 +760,78 @@ class STTService {
       if (this.onEndCallback) {
         this.onEndCallback();
       }
+    }
+  }
+
+  // New method to handle file upload to Edge Function
+  private async transcribeWithFileUpload(
+    audioUri: string,
+    language: string,
+    fileType: string
+  ): Promise<{ success: boolean; transcript?: string; error?: string }> {
+    try {
+      console.log('🎤 Uploading audio file to Edge Function...');
+      
+      // Create FormData for multipart upload
+      const formData = new FormData();
+      
+      // Get the proper MIME type and filename based on detected format
+      const mimeType = this.detectedRecordingFormat ? this.detectedRecordingFormat.mimeType : 'audio/mp4';
+      const filename = `recording${this.detectedRecordingFormat ? this.detectedRecordingFormat.extension : '.m4a'}`;
+      
+      console.log(`📎 Upload details: MIME=${mimeType}, filename=${filename}`);
+      
+      // Add the audio file with proper MIME type
+      formData.append('file', {
+        uri: audioUri,
+        type: mimeType,
+        name: filename
+      } as any);
+      
+      // Add other parameters
+      formData.append('action', 'transcribe');
+      formData.append('language', language);
+      formData.append('fileType', fileType);
+
+      console.log('📡 Sending multipart request to Edge Function...');
+      console.log('FormData contents:', {
+        language,
+        fileType,
+        audioUri: audioUri.substring(0, 100) + '...'
+      });
+      
+      const response = await fetch(`${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`,
+          'apikey': API_CONFIG.SUPABASE_ANON_KEY,
+          // Don't set Content-Type - let FormData set it with boundary
+        },
+        body: formData,
+      });
+
+      console.log('📨 Edge Function response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Edge Function error:', errorText);
+        return {
+          success: false,
+          error: `Edge Function error: ${response.status} - ${errorText}`
+        };
+      }
+
+      const result = await response.json();
+      console.log('✅ Edge Function response:', result);
+      
+      return result;
+      
+    } catch (error: any) {
+      console.error('❌ File upload error:', error);
+      return {
+        success: false,
+        error: `File upload failed: ${error?.message || 'Unknown error'}`
+      };
     }
   }
 
@@ -774,6 +899,9 @@ class STTService {
     
     // Stop any ongoing recording
     await this.stopRecognition();
+    
+    // Final cleanup
+    this.cleanupRealAudioLevelMonitoring();
     
     console.log('✅ STT service destroyed');
   }

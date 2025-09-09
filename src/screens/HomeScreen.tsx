@@ -24,10 +24,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
     <SafeAreaWrapper style={styles.container}>
       {/* Bird Background */}
       <ImageBackground
-        source={require('../../assets/images/Teal watercolor single element/bird-background.png')}
+        source={require('../../assets/images/Teal watercolor single element/home-background.png')}
         style={styles.fullScreenBackground}
         imageStyle={styles.backgroundImageStyle}
-        resizeMode="center"
+        resizeMode="cover"
       >
         <LinearGradient
           colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
@@ -87,7 +87,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(161, 214, 242, 0.3)', 'rgba(184, 224, 245, 0.2)', 'rgba(227, 244, 253, 0.1)']}
+                colors={['#edf5f5', '#fafbfc', '#f8f9fa']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -116,7 +116,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(161, 214, 242, 0.4)', 'rgba(147, 197, 253, 0.25)', 'rgba(219, 234, 254, 0.15)']}
+                colors={['#edf5f5', '#fafbfc', '#f8f9fa']}
                 start={{ x: 0, y: 0.3 }}
                 end={{ x: 1, y: 0.8 }}
                 style={styles.exerciseCardGradient}
@@ -145,7 +145,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['rgba(161, 214, 242, 0.35)', 'rgba(186, 230, 253, 0.2)', 'rgba(240, 249, 255, 0.1)']}
+                colors={['#edf5f5', '#fafbfc', '#f8f9fa']}
                 start={{ x: 0.2, y: 0 }}
                 end={{ x: 0.8, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -222,7 +222,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         <View style={styles.quoteSection}>
           <View style={styles.quoteCard}>
             <ImageBackground
-              source={require('../../assets/images/Teal watercolor single element/bird-background.png')}
+              source={require('../../assets/images/Teal watercolor single element/home-background.png')}
               style={styles.quoteBackgroundImage}
               imageStyle={styles.quoteBackgroundImageStyle}
               resizeMode="cover"

@@ -62,8 +62,90 @@ Deno.serve(async (req: Request) => {
     const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     
-    // Parse request body
-    const requestBody: ChatCompletionRequest = await req.json();
+    console.log('🔧 Edge Function: Processing request');
+    console.log('🗝️ API Keys available:', {
+      hasOpenRouterKey: !!OPENROUTER_API_KEY,
+      hasOpenAIKey: !!OPENAI_API_KEY
+    });
+
+    const contentType = req.headers.get('content-type') || '';
+    console.log('📋 Request content type:', contentType);
+    
+    let requestBody: ChatCompletionRequest;
+    let audioFile: File | null = null;
+    
+    // Handle multipart/form-data for file uploads
+    if (contentType.includes('multipart/form-data')) {
+      console.log('📤 Handling multipart/form-data request');
+      try {
+        const formData = await req.formData();
+        
+        // Extract form fields
+        const action = formData.get('action') as string;
+        const language = formData.get('language') as string;
+        const fileType = formData.get('fileType') as string;
+        const file = formData.get('file') as File;
+        
+        console.log('📋 Form data extracted:', {
+          action,
+          language,
+          fileType,
+          hasFile: !!file,
+          fileName: file?.name,
+          fileSize: file?.size
+        });
+        
+        if (!file) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'No file provided in multipart request'
+          }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        audioFile = file;
+        requestBody = {
+          action,
+          language,
+          fileType
+        } as ChatCompletionRequest;
+        
+      } catch (formError) {
+        console.error('❌ Failed to parse form data:', formError);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Invalid multipart/form-data'
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    } else {
+      // Handle JSON requests
+      console.log('📤 Handling JSON request');
+      try {
+        requestBody = await req.json();
+        console.log('📦 Request body parsed successfully:', {
+          action: requestBody.action,
+          hasMessages: !!requestBody.messages,
+          hasAudioData: !!requestBody.audioData,
+          audioDataType: typeof requestBody.audioData,
+          audioDataLength: requestBody.audioData?.length || 0
+        });
+      } catch (parseError) {
+        console.error('❌ Failed to parse request body:', parseError);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Invalid JSON in request body'
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
     const { action, messages, audioData, language, model, maxTokens, temperature } = requestBody;
 
     // Handle different actions
@@ -87,7 +169,10 @@ Deno.serve(async (req: Request) => {
         );
 
       case 'transcribe':
+        console.log('🎤 TRANSCRIBE REQUEST RECEIVED');
+        
         if (!OPENAI_API_KEY) {
+          console.error('❌ OpenAI API key not configured');
           return new Response(JSON.stringify({
             success: false,
             error: 'OpenAI API key not configured in environment'
@@ -96,8 +181,31 @@ Deno.serve(async (req: Request) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           });
         }
+        
         const fileType = requestBody.fileType || 'm4a';
-        return await handleWhisperTranscription(OPENAI_API_KEY, audioData || '', language || 'en', fileType);
+        
+        // Handle file upload (multipart) vs base64 data (JSON)
+        if (audioFile) {
+          console.log('📤 Processing file upload:', {
+            fileName: audioFile.name,
+            fileSize: audioFile.size,
+            fileType: audioFile.type,
+            language: language || 'en'
+          });
+          
+          return await handleWhisperTranscriptionWithFile(OPENAI_API_KEY, audioFile, language || 'en', fileType);
+        } else {
+          console.log('📊 Processing base64 audio data:', {
+            hasAudioData: !!audioData,
+            audioDataLength: audioData?.length || 0,
+            audioDataType: typeof audioData,
+            audioDataPreview: audioData?.substring(0, 50) + '...',
+            language: language || 'en',
+            fileType
+          });
+          
+          return await handleWhisperTranscription(OPENAI_API_KEY, audioData || '', language || 'en', fileType);
+        }
       
       case 'healthCheck':
         return await handleConnectionTest(OPENROUTER_API_KEY);
@@ -444,38 +552,114 @@ async function handleChatCompletion(
   }
 }
 
-// Handle Whisper transcription via OpenAI
-async function handleWhisperTranscription(apiKey: string, audioData: string, language: string, fileType: string = 'm4a'): Promise<Response> {
+// Handle Whisper transcription via OpenAI with File object (for multipart uploads)
+async function handleWhisperTranscriptionWithFile(apiKey: string, audioFile: File, language: string, fileType: string = 'm4a'): Promise<Response> {
   try {
-    // Decode base64 audio data
-    const audioBytes = Uint8Array.from(atob(audioData), c => c.charCodeAt(0));
+    console.log(`=== WHISPER TRANSCRIPTION WITH FILE ===`);
+    console.log(`📊 File details:`, {
+      name: audioFile.name,
+      size: audioFile.size,
+      type: audioFile.type,
+      language: language,
+      fileType: fileType
+    });
     
-    // Determine correct MIME type and filename based on file type
-    const mimeType = fileType === 'webm' ? 'audio/webm' : 'audio/m4a';
-    const filename = fileType === 'webm' ? 'recording.webm' : 'recording.m4a';
-    
-    const audioBlob = new Blob([audioBytes], { type: mimeType });
+    // Validate file size (OpenAI has 25MB limit)
+    if (audioFile.size > 25 * 1024 * 1024) {
+      console.error('❌ File too large:', audioFile.size);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Audio file too large (max 25MB)'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
-    // Prepare form data
+    // Check if file is empty
+    if (audioFile.size === 0) {
+      console.error('❌ Empty file received');
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Empty audio file received'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Inspect file content for debugging
+    try {
+      const arrayBuffer = await audioFile.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      console.log(`🔍 File magic bytes (first 16):`, Array.from(uint8Array.slice(0, 16)).map(b => b.toString(16).padStart(2, '0')).join(' '));
+      
+      // Check for common audio file signatures
+      const magicBytes = Array.from(uint8Array.slice(0, 8));
+      if (magicBytes[4] === 0x66 && magicBytes[5] === 0x74 && magicBytes[6] === 0x79 && magicBytes[7] === 0x70) {
+        console.log('✅ Detected MPEG-4 container (ftyp box found)');
+      } else {
+        console.warn('⚠️ No MPEG-4 ftyp signature found in file header');
+      }
+    } catch (inspectError) {
+      console.warn('Could not inspect file content:', inspectError);
+    }
+
+    // Prepare form data for OpenAI Whisper API
     const formData = new FormData();
-    formData.append('file', audioBlob, filename);
+    formData.append('file', audioFile);
     formData.append('model', 'whisper-1');
     formData.append('language', language);
     formData.append('response_format', 'json');
+    
+    console.log('Sending request to OpenAI Whisper API with file...');
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
+        // Note: Do NOT set Content-Type header when using FormData - browser/fetch sets it automatically with boundary
       },
       body: formData,
     });
 
+    console.log(`OpenAI API Response Status: ${response.status}`);
+    console.log(`OpenAI API Response Headers:`, Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('OpenAI Whisper API Error Response:', errorText);
+      console.error(`Full error details - Status: ${response.status}, FileSize: ${audioFile.size}, Language: ${language}`);
+      
+      let userFriendlyError = 'Failed to transcribe audio';
+      
+      // Parse specific error messages
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.error?.message) {
+          if (errorData.error.message.includes('file format')) {
+            userFriendlyError = `Unsupported audio format. Please use flac, m4a, mp3, mp4, mpeg, mpga, oga, ogg, wav, or webm format.`;
+          } else if (errorData.error.message.includes('file size')) {
+            userFriendlyError = 'Audio file is too large. Maximum size is 25MB.';
+          } else if (errorData.error.message.includes('model')) {
+            userFriendlyError = 'Whisper model not available. Please try again later.';
+          } else {
+            userFriendlyError = errorData.error.message;
+          }
+        }
+      } catch (parseError) {
+        // Keep default error if JSON parsing fails
+      }
+
       return new Response(JSON.stringify({
         success: false,
-        error: `OpenAI Whisper API error: ${response.status} - ${errorText}`
+        error: userFriendlyError,
+        debug: {
+          status: response.status,
+          originalError: errorText,
+          fileType: fileType,
+          audioSize: audioFile.size
+        }
       }), {
         status: response.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -483,9 +667,12 @@ async function handleWhisperTranscription(apiKey: string, audioData: string, lan
     }
 
     const result = await response.json();
+    console.log('OpenAI Whisper API Success Response:', result);
+    
     const transcript = result.text?.trim() || '';
 
     if (!transcript) {
+      console.log('No transcript received from Whisper API');
       return new Response(JSON.stringify({
         success: false,
         error: 'No speech detected in the recording'
@@ -495,10 +682,218 @@ async function handleWhisperTranscription(apiKey: string, audioData: string, lan
       });
     }
 
+    console.log(`Transcription successful - Length: ${transcript.length} characters`);
+    console.log(`Transcript preview: ${transcript.substring(0, 100)}...`);
+
     return new Response(JSON.stringify({
       success: true,
       transcript: transcript,
-      confidence: 0.95
+      confidence: 0.95,
+      language: result.language || language,
+      duration: result.duration
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Whisper transcription error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Failed to transcribe audio'
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// Handle Whisper transcription via OpenAI with base64 data (for JSON uploads)
+async function handleWhisperTranscription(apiKey: string, audioData: string, language: string, fileType: string = 'm4a'): Promise<Response> {
+  try {
+    // Validate input data
+    if (!audioData || audioData.trim().length === 0) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Audio data is required'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    console.log(`Starting Whisper transcription - Language: ${language}, FileType: ${fileType}, AudioData length: ${audioData.length}`);
+    
+    // Decode base64 audio data
+    let audioBytes: Uint8Array;
+    try {
+      audioBytes = Uint8Array.from(atob(audioData), c => c.charCodeAt(0));
+      console.log(`Successfully decoded audio data - Bytes length: ${audioBytes.length}`);
+    } catch (decodeError) {
+      console.error('Failed to decode base64 audio data:', decodeError);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Invalid base64 audio data'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Validate audio size (OpenAI has 25MB limit)
+    if (audioBytes.length > 25 * 1024 * 1024) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Audio file too large (max 25MB)'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Determine correct MIME type and filename based on file type
+    let mimeType: string;
+    let filename: string;
+    
+    switch (fileType.toLowerCase()) {
+      case 'webm':
+        mimeType = 'audio/webm';
+        filename = 'recording.webm';
+        break;
+      case 'mp3':
+        mimeType = 'audio/mpeg'; // Use audio/mpeg for MP3 files for better compatibility
+        filename = 'recording.mp3';
+        break;
+      case 'wav':
+        mimeType = 'audio/wav';
+        filename = 'recording.wav';
+        break;
+      case 'mp4':
+        mimeType = 'audio/mp4';
+        filename = 'recording.mp4';
+        break;
+      case 'mpeg':
+        mimeType = 'audio/mpeg';
+        filename = 'recording.mpeg';
+        break;
+      case 'mpga':
+        mimeType = 'audio/mpeg';
+        filename = 'recording.mpga';
+        break;
+      case '3gp':
+      case '3gpp':
+        mimeType = 'audio/3gpp';
+        filename = 'recording.3gp';
+        break;
+      case 'ogg':
+        mimeType = 'audio/ogg';
+        filename = 'recording.ogg';
+        break;
+      case 'flac':
+        mimeType = 'audio/flac';
+        filename = 'recording.flac';
+        break;
+      case 'm4a':
+      default:
+        mimeType = 'audio/mp4'; // Use audio/mp4 for M4A files as it's more widely recognized
+        filename = 'recording.m4a';
+        break;
+    }
+    
+    console.log(`Using MIME type: ${mimeType}, filename: ${filename}`);
+    
+    // Create audio blob with proper MIME type
+    const audioBlob = new Blob([audioBytes], { type: mimeType });
+    console.log(`Created blob - Size: ${audioBlob.size}, Type: ${audioBlob.type}`);
+
+    // Prepare form data - FormData automatically sets multipart/form-data content-type
+    const formData = new FormData();
+    formData.append('file', audioBlob, filename);
+    formData.append('model', 'whisper-1');
+    formData.append('language', language);
+    formData.append('response_format', 'json');
+    
+    console.log('Sending request to OpenAI Whisper API...');
+
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        // Note: Do NOT set Content-Type header when using FormData - browser/fetch sets it automatically with boundary
+      },
+      body: formData,
+    });
+
+    console.log(`OpenAI API Response Status: ${response.status}`);
+    console.log(`OpenAI API Response Headers:`, Object.fromEntries(response.headers.entries()));
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI Whisper API Error Response:', errorText);
+      console.error(`Full error details - Status: ${response.status}, AudioSize: ${audioBytes.length}, MimeType: ${mimeType}, Language: ${language}`);
+      
+      let userFriendlyError = 'Failed to transcribe audio';
+      
+      // Parse specific error messages
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.error?.message) {
+          if (errorData.error.message.includes('file format') || errorData.error.message.includes('format')) {
+            userFriendlyError = `Unsupported audio format. Please use mp3, mp4, wav, m4a, webm, or mpga format.`;
+          } else if (errorData.error.message.includes('file size') || errorData.error.message.includes('size')) {
+            userFriendlyError = 'Audio file is too large. Maximum size is 25MB.';
+          } else if (errorData.error.message.includes('model')) {
+            userFriendlyError = 'Whisper model not available. Please try again later.';
+          } else if (errorData.error.message.includes('Invalid file format')) {
+            userFriendlyError = `Unsupported audio format. Please use mp3, mp4, wav, m4a, webm, or mpga format.`;
+          } else {
+            userFriendlyError = errorData.error.message;
+          }
+        }
+      } catch (parseError) {
+        // Keep default error if JSON parsing fails
+      }
+
+      return new Response(JSON.stringify({
+        success: false,
+        error: userFriendlyError,
+        debug: {
+          status: response.status,
+          originalError: errorText,
+          fileType: fileType,
+          mimeType: mimeType,
+          audioSize: audioBytes.length
+        }
+      }), {
+        status: response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const result = await response.json();
+    console.log('OpenAI Whisper API Success Response:', result);
+    
+    const transcript = result.text?.trim() || '';
+
+    if (!transcript) {
+      console.log('No transcript received from Whisper API');
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'No speech detected in the recording'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    console.log(`Transcription successful - Length: ${transcript.length} characters`);
+    console.log(`Transcript preview: ${transcript.substring(0, 100)}...`);
+
+    return new Response(JSON.stringify({
+      success: true,
+      transcript: transcript,
+      confidence: 0.95,
+      language: result.language || language,
+      duration: result.duration
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
