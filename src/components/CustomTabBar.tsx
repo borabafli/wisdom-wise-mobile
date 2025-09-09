@@ -33,12 +33,12 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <>
-      <SafeAreaWrapper style={styles.container} edges={['bottom']}>
+      <View style={styles.container}>
         <LinearGradient
           colors={[...gradients.card.primary]}
           style={styles.tabBarGradient}
         >
-          <View style={styles.tabBarContent}>
+          <SafeAreaWrapper style={styles.tabBarContent} edges={['bottom']}>
             {/* First 2 tabs */}
             {tabs.slice(0, 2).map((tab, index) => {
               const isFocused = state.index === index;
@@ -141,9 +141,9 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </SafeAreaWrapper>
         </LinearGradient>
-      </SafeAreaWrapper>
+      </View>
 
       {/* Quick Actions Popup */}
       <QuickActionsPopup 

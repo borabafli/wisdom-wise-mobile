@@ -1,6 +1,6 @@
-import com.facebook.react.common.assets.ReactFontManager
 package com.wisdomwise.app
 
+import com.facebook.react.common.assets.ReactFontManager
 import android.app.Application
 import android.content.res.Configuration
 

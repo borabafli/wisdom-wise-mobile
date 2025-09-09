@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { WaveHeader } from '../components/WaveHeader';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,13 +22,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      <WaveHeader height={450} colors={['#4A98BC', '#5BA7C9', '#6BB6D6']} />
-      <LinearGradient
-        colors={['rgba(255, 255, 255, 0)', '#FFFFFF', '#F8FAFC']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
-      />
+      {/* Bird Background */}
+      <ImageBackground
+        source={require('../../assets/images/Teal watercolor single element/bird-background.png')}
+        style={styles.fullScreenBackground}
+        imageStyle={styles.backgroundImageStyle}
+        resizeMode="center"
+      >
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.backgroundGradient}
+        />
 
       <ScrollView 
         style={styles.scrollView}
@@ -50,14 +55,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             style={styles.inputWithTurtleWrapper}
             activeOpacity={0.9}
           >
-            {/* Minimalist turtle positioned at top edge of input bar */}
-            <View style={styles.turtleAtBarContainer}>
-              <Image 
-                source={require('../../assets/images/turtle-simple-3d.png')}
-                style={styles.turtleAtBarImage}
-                contentFit="contain"
-              />
-            </View>
             
             {/* Input area */}
             <View style={styles.inputContainer}>
@@ -98,7 +95,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/new-icon1.png')}
+                      source={require('../../assets/images/Teal watercolor single element/teal-icon-1.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
@@ -127,7 +124,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/new-icon2.png')}
+                      source={require('../../assets/images/Teal watercolor single element/teal-icon-2.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
@@ -156,7 +153,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/new-icon3.png')}
+                      source={require('../../assets/images/Teal watercolor single element/teal-icon-3.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
@@ -191,7 +188,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.quickActionGradient}
               >
                 <Image 
-                  source={require('../../assets/images/new-icon6.png')}
+                  source={require('../../assets/images/Teal watercolor single element/teal-icon-4.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -211,7 +208,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.quickActionGradient}
               >
                 <Image 
-                  source={require('../../assets/images/new-icon7.png')}
+                  source={require('../../assets/images/Teal watercolor single element/teal-icon-5.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -225,7 +222,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         <View style={styles.quoteSection}>
           <View style={styles.quoteCard}>
             <ImageBackground
-              source={require('../../assets/images/6.jpg')}
+              source={require('../../assets/images/Teal watercolor single element/bird-background.png')}
               style={styles.quoteBackgroundImage}
               imageStyle={styles.quoteBackgroundImageStyle}
               resizeMode="cover"
@@ -238,7 +235,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               >
                 <View style={styles.quoteIcon}>
                   <Image 
-                    source={require('../../assets/images/new-icon5.png')}
+                    source={require('../../assets/images/Teal watercolor single element/teal-icon-6.png')}
                     style={styles.quoteIconImage}
                     contentFit="contain"
                   />
@@ -252,6 +249,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
         </View>
       </ScrollView>
+      </ImageBackground>
     </SafeAreaWrapper>
   );
 };

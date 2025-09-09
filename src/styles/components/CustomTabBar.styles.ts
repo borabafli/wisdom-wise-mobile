@@ -23,6 +23,7 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.components.cardGap,
     paddingHorizontal: spacing.components.cardPadding,
+    flex: 0, // Don't stretch to fill available space
   },
 
   // Tab Buttons

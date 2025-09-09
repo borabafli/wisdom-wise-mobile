@@ -333,12 +333,8 @@ export const insightsDashboardStyles = StyleSheet.create({
     zIndex: 10,
   },
   patternsIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: spacing.radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
   },
   patternsTitleContainer: {
     flex: 1,

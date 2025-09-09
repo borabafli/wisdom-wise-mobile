@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
@@ -411,14 +412,13 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       
       {/* Header */}
       <View style={styles.patternsHeader}>
-        <LinearGradient
-          colors={['#BCDCFC', '#9AC0DF', '#5A94C7', '#2E6B9B']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.patternsIcon}
-        >
-          <Heart size={24} color="white" />
-        </LinearGradient>
+        <View style={styles.patternsIcon}>
+          <Image 
+            source={require('../../assets/images/Teal watercolor single element/teal-icon-4.png')}
+            style={{ width: 60, height: 60 }}
+            contentFit="contain"
+          />
+        </View>
         <View style={styles.patternsTitleContainer}>
           <Text style={styles.patternsTitle}>Your mood</Text>
           <Text style={styles.patternsSubtitle}>Track your emotion</Text>

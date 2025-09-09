@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -298,14 +299,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           <View style={styles.patternsAccent} />
           
           <View style={styles.patternsHeader}>
-            <LinearGradient
-              colors={['#A8B5BD', '#688890', '#547A82', '#3F5D64']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.patternsIcon}
-            >
-              <Lightbulb size={24} color="white" />
-            </LinearGradient>
+            <View style={styles.patternsIcon}>
+              <Image 
+                source={require('../../assets/images/Teal watercolor single element/teal-icon-7.png')}
+                style={{ width: 60, height: 60 }}
+                contentFit="contain"
+              />
+            </View>
             <View style={styles.patternsTitleContainer}>
               <Text style={styles.patternsTitle}>Your Thoughts</Text>
               <Text style={styles.patternsSubtitle}>Patterns & insights</Text>
@@ -526,14 +526,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           <View style={[styles.patternsAccent, { backgroundColor: 'rgba(153, 246, 228, 0.15)' }]} />
           
           <View style={styles.patternsHeader}>
-            <LinearGradient
-              colors={['#A8B5BD', '#688890', '#547A82', '#3F5D64']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.patternsIcon}
-            >
-              <Heart size={24} color="white" />
-            </LinearGradient>
+            <View style={styles.patternsIcon}>
+              <Image 
+                source={require('../../assets/images/Teal watercolor single element/teal-icon-8.png')}
+                style={{ width: 60, height: 60 }}
+                contentFit="contain"
+              />
+            </View>
             <View style={styles.patternsTitleContainer}>
               <Text style={styles.patternsTitle}>Your Values</Text>
               <Text style={styles.patternsSubtitle}>What matters to you</Text>
@@ -584,12 +583,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             onPress={() => setSessionSummariesVisible(true)}
             activeOpacity={0.7}
           >
-            <LinearGradient
-              colors={['#bfdbfe', '#7dd3fc']}
-              style={styles.patternsIcon}
-            >
-              <FileText size={24} color="#1e40af" />
-            </LinearGradient>
+            <View style={styles.patternsIcon}>
+              <Image 
+                source={require('../../assets/images/Teal watercolor single element/teal-icon-1.png')}
+                style={{ width: 60, height: 60 }}
+                contentFit="contain"
+              />
+            </View>
             <View style={styles.patternsTitleContainer}>
               <Text style={styles.patternsTitle}>Session Summaries</Text>
               <Text style={styles.patternsSubtitle}>Sessions analyzed</Text>
@@ -609,12 +609,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             onPress={() => setMemoryInsightsSectionExpanded(!memoryInsightsSectionExpanded)}
             activeOpacity={0.7}
           >
-            <LinearGradient
-              colors={['#fef3c7', '#fbbf24']}
-              style={styles.patternsIcon}
-            >
-              <Brain size={24} color="#d97706" />
-            </LinearGradient>
+            <View style={styles.patternsIcon}>
+              <Image 
+                source={require('../../assets/images/Teal watercolor single element/teal-icon-2.png')}
+                style={{ width: 60, height: 60 }}
+                contentFit="contain"
+              />
+            </View>
             <View style={styles.patternsTitleContainer}>
               <Text style={styles.patternsTitle}>Memory Insights</Text>
               <Text style={styles.patternsSubtitle}>Long-term patterns & themes</Text>
@@ -717,12 +718,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           <View style={[styles.patternsAccent, { backgroundColor: 'rgba(96, 165, 250, 0.15)' }]} />
           
           <View style={styles.patternsHeader}>
-            <LinearGradient
-              colors={['#f0f9ff', '#dbeafe']}
-              style={styles.patternsIcon}
-            >
-              <Heart size={24} color="#2563eb" />
-            </LinearGradient>
+            <View style={styles.patternsIcon}>
+              <Image 
+                source={require('../../assets/images/Teal watercolor single element/teal-icon-3.png')}
+                style={{ width: 60, height: 60 }}
+                contentFit="contain"
+              />
+            </View>
             <View style={styles.patternsTitleContainer}>
               <Text style={styles.patternsTitle}>Journey</Text>
               <Text style={styles.patternsSubtitle}>Every step counts</Text>

@@ -22,6 +22,14 @@ export const homeScreenStyles = StyleSheet.create({
     bottom: 0,
     zIndex: -1,
   },
+  fullScreenBackground: {
+    flex: 1,
+    position: 'relative',
+  },
+  backgroundImageStyle: {
+    opacity: 0.4,
+    transform: [{ translateY: -120 }, { translateX: 80 }],
+  },
 
   // Scroll View
   scrollView: {
@@ -31,25 +39,12 @@ export const homeScreenStyles = StyleSheet.create({
     paddingBottom: 120,
   },
 
-  // Turtle and Input Bar Layout
+  // Input Bar Layout
   inputWithTurtleWrapper: {
     alignItems: 'flex-end',
-    marginTop: height < 700 ? 140 : 160, // Moved chat bar higher up
+    marginTop: height < 700 ? 140 : 160,
     position: 'relative',
     width: '100%',
-  },
-  turtleAtBarContainer: {
-    position: 'absolute',
-    top: -85, // Moved even higher up
-    right: width < 375 ? 25 : 35,
-    zIndex: 2,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  turtleAtBarImage: {
-    width: width < 375 ? 100 : 120,
-    height: width < 375 ? 100 : 120,
-    opacity: 1.0,
   },
 
   // Header Section
@@ -184,15 +179,14 @@ export const homeScreenStyles = StyleSheet.create({
     gap: spacing.components.cardGap,
   },
   exerciseIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 120,
+    height: 120,
   },
   exerciseIconImage: {
-    width: 56,
-    height: 56,
+    width: 120,
+    height: 120,
   },
   exerciseInfo: {
     flex: 1,
