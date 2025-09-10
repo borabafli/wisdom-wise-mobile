@@ -51,7 +51,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     Caveat_400Regular,
   });
 
-  const insets = useSafeAreaInsets();
+  // Safe fallback for when SafeAreaProvider context is not available
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    console.warn('SafeAreaProvider context not available in ChatInterface, using fallback values:', error);
+    // Fallback insets for when context is not available
+    insets = {
+      top: Platform.OS === 'ios' ? 44 : 0,
+      bottom: Platform.OS === 'ios' ? 34 : 0,
+      left: 0,
+      right: 0,
+    };
+  }
 
   // Basic state
   const [inputText, setInputText] = useState('');

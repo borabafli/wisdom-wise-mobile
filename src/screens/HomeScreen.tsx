@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle } from 'lucide-react-native';
+import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle, Waves, X } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { homeScreenStyles as styles } from '../styles/components/HomeScreen.styles';
 import { colors, gradients } from '../styles/tokens';
 import { HomeScreenProps } from '../types/app';
 import { useQuote } from '../hooks/useQuote';
+import { AudioWaveformDemo } from '../components/audio/AudioWaveformDemo';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
   const { width, height } = Dimensions.get('window');
+  const [showWaveformDemo, setShowWaveformDemo] = useState(false);
 
   // Static welcome message
   const welcomeMessage = {
@@ -215,6 +217,22 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <Text style={styles.quickActionText}>View Insights</Text>
               </LinearGradient>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setShowWaveformDemo(true)}
+              style={styles.quickActionButton}
+              activeOpacity={0.9}
+            >
+              <LinearGradient
+                colors={['rgba(6, 182, 212, 0.25)', 'rgba(14, 165, 233, 0.15)', 'rgba(255, 255, 255, 0.8)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.quickActionGradient}
+              >
+                <Waves size={28} color="#06B6D4" />
+                <Text style={styles.quickActionText}>Audio Waves</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -250,6 +268,50 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         </View>
       </ScrollView>
       </ImageBackground>
+
+      {/* Audio Waveform Demo Modal */}
+      <Modal
+        visible={showWaveformDemo}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowWaveformDemo(false)}
+      >
+        <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
+          <View style={{ 
+            flexDirection: 'row', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            paddingHorizontal: 20, 
+            paddingVertical: 16,
+            borderBottomWidth: 1,
+            borderBottomColor: '#E2E8F0',
+            backgroundColor: 'white'
+          }}>
+            <Text style={{ 
+              fontSize: 18, 
+              fontFamily: 'Inter-SemiBold', 
+              color: '#1E293B' 
+            }}>
+              Real-Time Audio Waves
+            </Text>
+            <TouchableOpacity 
+              onPress={() => setShowWaveformDemo(false)}
+              style={{ 
+                width: 32, 
+                height: 32, 
+                borderRadius: 16, 
+                backgroundColor: '#F1F5F9',
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}
+            >
+              <X size={18} color="#64748B" />
+            </TouchableOpacity>
+          </View>
+          
+          <AudioWaveformDemo />
+        </SafeAreaWrapper>
+      </Modal>
     </SafeAreaWrapper>
   );
 };
