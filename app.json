@@ -78,7 +78,9 @@
             "backgroundColor": "#f0f9ff"
           }
         }
-      ]
+      ],
+      "react-native-audio-api",
+      "expo-secure-store"
     ],
     "scheme": "wisdomwise",
     "extra": {

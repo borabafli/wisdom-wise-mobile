@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as NavigationBar from 'expo-navigation-bar';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
@@ -51,7 +52,43 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     Caveat_400Regular,
   });
 
-  const insets = useSafeAreaInsets();
+  // Safe fallback for when SafeAreaProvider context is not available
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    console.warn('SafeAreaProvider context not available in ChatInterface, using fallback values:', error);
+    // Fallback insets for when context is not available
+    insets = {
+      top: Platform.OS === 'ios' ? 44 : 0,
+      bottom: Platform.OS === 'ios' ? 34 : 0,
+      left: 0,
+      right: 0,
+    };
+  }
+
+  // Set navigation bar color to match chat background
+  useEffect(() => {
+    const setupNavigationBar = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          await NavigationBar.setBackgroundColorAsync('#F9FBFD'); // Match chat background
+          await NavigationBar.setButtonStyleAsync('dark'); // Dark buttons for light background
+        } catch (error) {
+          console.warn('Failed to set navigation bar color:', error);
+        }
+      }
+    };
+    
+    setupNavigationBar();
+    
+    // Cleanup when component unmounts
+    return () => {
+      if (Platform.OS === 'android') {
+        NavigationBar.setBackgroundColorAsync('#000000').catch(() => {}); // Reset to default
+      }
+    };
+  }, []);
 
   // Basic state
   const [inputText, setInputText] = useState('');
@@ -307,7 +344,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     );
 
   return (
-    <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
+    <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
       <ImageBackground
         source={require('../../assets/images/background1.png')}
         style={styles.backgroundImage}

@@ -18,13 +18,13 @@ interface MoodSliderProps {
 const SLIDER_WIDTH = 280;
 const THUMB_SIZE = 24;
 
-// Smiley image assets
+// Smiley image assets from Teal Watercolor collection
 const smileyImages = {
-  1: require('../../../assets/images/smiley-1.png'),
-  2: require('../../../assets/images/smiley-2.png'),
-  3: require('../../../assets/images/smiley-3.png'),
-  4: require('../../../assets/images/smiley-4.png'),
-  5: require('../../../assets/images/smiley-5.png'),
+  1: require('../../../assets/images/Teal Watercolor/smiley-1.png'),
+  2: require('../../../assets/images/Teal Watercolor/smiley-2.png'),
+  3: require('../../../assets/images/Teal Watercolor/smiley-3.png'),
+  4: require('../../../assets/images/Teal Watercolor/smiley-4.png'),
+  5: require('../../../assets/images/Teal Watercolor/smiley-5.png'),
 };
 
 export const MoodSlider: React.FC<MoodSliderProps> = ({

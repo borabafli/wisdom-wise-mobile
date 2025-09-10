@@ -241,6 +241,11 @@ class MoodService {
     return this.moodMap[rating as keyof typeof this.moodMap]?.emoji || '😐';
   }
 
+  // Get smiley number for custom smiley images (1-5)
+  getMoodSmiley(rating: number): 1 | 2 | 3 | 4 | 5 {
+    return Math.max(1, Math.min(5, Math.round(rating))) as 1 | 2 | 3 | 4 | 5;
+  }
+
   getRatingLabel(rating: number): string {
     return this.moodMap[rating as keyof typeof this.moodMap]?.label || 'Neutral';
   }

@@ -938,4 +938,43 @@ export const chatInterfaceStyles = StyleSheet.create({
     lineHeight: 18,
   },
 
+  // Recording Interface Layout
+  recordingInterface: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flex: 1,
+    paddingHorizontal: spacing[2],
+  },
+
+  // Cancel Button (X) - Light filled
+  cancelButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#94a3b8', // Light gray fill
+    ...shadows.sm,
+  },
+
+  // Wave with Timer Container
+  waveWithTimer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: spacing[3],
+  },
+
+  // Submit Recording Button (Check) - Filled like send button
+  submitRecordingButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2563eb', // Same as send button
+    ...shadows.sm,
+  },
+
 });
