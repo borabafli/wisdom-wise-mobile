@@ -309,7 +309,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             </TouchableOpacity>
           </View>
           
-          <AudioWaveformDemo />
+          {/* <AudioWaveformDemo /> */}
         </SafeAreaWrapper>
       </Modal>
     </SafeAreaWrapper>

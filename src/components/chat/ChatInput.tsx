@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
-import SoundWaveAnimation from '../SoundWaveAnimation';
+import { RecordingWave } from '../RecordingWave';
 import { SafeAreaWrapper } from '../SafeAreaWrapper';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
 
@@ -71,15 +71,40 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 selectionColor="#3b82f6"
               />
             ) : (
-              <View style={styles.waveInInputContainer}>
-                <SoundWaveAnimation 
-                  isRecording={isRecording} 
-                  audioLevels={audioLevels} 
-                />
+              /* Recording Interface: X button - Wave - Check button */
+              <View style={styles.recordingInterface}>
+                {/* Cancel Button (X) - Left side, light filled */}
+                <TouchableOpacity 
+                  onPress={onCancelRecording}
+                  style={styles.cancelButton}
+                  activeOpacity={0.7}
+                >
+                  <X size={20} color="#ffffff" />
+                </TouchableOpacity>
+
+                {/* Audio Wave with Timer - Center */}
+                <View style={styles.waveWithTimer}>
+                  <RecordingWave
+                    audioLevel={audioLevels.length > 0 ? audioLevels.reduce((sum, level) => sum + level, 0) / audioLevels.length : 0}
+                    isRecording={isRecording}
+                    variant="bars"
+                    size="medium"
+                    showTimer={true}
+                  />
+                </View>
+
+                {/* Submit Button (Check) - Right side, filled like send button */}
+                <TouchableOpacity 
+                  onPress={onStopRecording}
+                  style={styles.submitRecordingButton}
+                  activeOpacity={0.7}
+                >
+                  <Check size={20} color="#ffffff" />
+                </TouchableOpacity>
               </View>
             )}
             
-            {!isRecording ? (
+            {!isRecording && (
               <View style={styles.inputButtonsContainer}>
                 {inputLineCount >= 5 && (
                   <TouchableOpacity 
@@ -108,23 +133,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     <Mic size={26} color="#6b7280" />
                   </TouchableOpacity>
                 )}
-              </View>
-            ) : (
-              <View style={styles.recordingActions}>
-                <TouchableOpacity 
-                  onPress={onCancelRecording}
-                  style={styles.recordingButton}
-                  activeOpacity={0.7}
-                >
-                  <X size={18} color="#3b82f6" />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={onStopRecording}
-                  style={styles.recordingButton}
-                  activeOpacity={0.7}
-                >
-                  <Check size={18} color="#1d4ed8" />
-                </TouchableOpacity>
               </View>
             )}
           </View>
