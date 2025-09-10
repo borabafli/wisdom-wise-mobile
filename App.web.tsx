@@ -1,4 +1,4 @@
-import './global.css';
+// Web-specific App component without CSS imports to avoid lightningcss
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View } from 'react-native';
@@ -32,7 +32,7 @@ export default function App() {
   }, []);
 
   if (!fontsLoaded) {
-    return <View className="flex-1 bg-blue-50" />;
+    return <View style={{ flex: 1, backgroundColor: '#f0f9ff' }} />;
   }
 
   return (
