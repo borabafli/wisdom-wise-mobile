@@ -10,7 +10,7 @@ interface ChatInputProps {
   onInputTextChange: (text: string) => void;
   onSend: (text?: string) => void;
   isRecording: boolean;
-  audioLevels: number[];
+  audioLevel: number; // Single audio level instead of array
   partialTranscript?: string;
   onMicPressIn: () => void;
   onMicPressOut: () => void;
@@ -23,7 +23,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onInputTextChange,
   onSend,
   isRecording,
-  audioLevels,
+  audioLevel,
   partialTranscript,
   onMicPressIn,
   onMicPressOut,
@@ -85,7 +85,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 {/* Audio Wave with Timer - Center */}
                 <View style={styles.waveWithTimer}>
                   <RecordingWave
-                    audioLevel={audioLevels.length > 0 ? audioLevels.reduce((sum, level) => sum + level, 0) / audioLevels.length : 0}
+                    audioLevel={audioLevel} // Use direct audio level
                     isRecording={isRecording}
                     variant="bars"
                     size="medium"

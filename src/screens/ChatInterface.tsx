@@ -616,7 +616,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onInputTextChange={handleInputTextChange}
             onSend={handleSend}
             isRecording={voiceRecording.isRecording}
-            audioLevels={voiceRecording.audioLevels}
+            audioLevel={voiceRecording.audioLevel}
             partialTranscript={voiceRecording.partialTranscript}
             onMicPressIn={async () => {
               // Store current text before starting voice recording

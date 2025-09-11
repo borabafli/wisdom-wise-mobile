@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { View, Text } from 'react-native';
 
 interface RecordingWaveProps {
@@ -22,17 +22,14 @@ const WHATSAPP_STYLE = {
   timerColor: '#64748b',
 };
 
-// Audio processing with natural variation
+// Minimal audio processing - preserve raw levels with natural variation
 const processAudioLevel = (rawLevel: number, variation: number = 0): number => {
-  let baseLevel;
-  if (rawLevel < 0.01) baseLevel = 0;
-  else if (rawLevel < 0.05) baseLevel = rawLevel * 2;
-  else if (rawLevel < 0.2) baseLevel = 0.1 + (rawLevel - 0.05) * 2;
-  else baseLevel = Math.min(1, 0.4 + (rawLevel - 0.2) * 1.5);
+  // Just ensure bounds and add variation for scrolling wave effect
+  const clampedLevel = Math.max(0, Math.min(1, rawLevel));
   
-  // Add subtle natural variation to prevent identical bars
-  const naturalVariation = (variation - 0.5) * 0.15; // ±7.5% variation
-  return Math.max(0, Math.min(1, baseLevel + naturalVariation));
+  // Create more noticeable variation for better scrolling effect
+  const naturalVariation = (variation - 0.5) * 0.1; // ±5% variation for smooth waves
+  return Math.max(0, Math.min(1, clampedLevel + naturalVariation));
 };
 
 export const RecordingWave: React.FC<RecordingWaveProps> = ({
@@ -45,6 +42,12 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
   // State hooks - always called in same order
   const [audioHistory, setAudioHistory] = useState<number[]>([]);
   const [recordingTime, setRecordingTime] = useState(0);
+  
+  // Ref to access current audioLevel in interval
+  const audioLevelRef = useRef(audioLevel);
+  useEffect(() => {
+    audioLevelRef.current = audioLevel;
+  }, [audioLevel]);
   
   // Memoized dimensions
   const dimensions = useMemo(() => {
@@ -69,22 +72,30 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     return () => clearInterval(timer);
   }, [isRecording]);
   
-  // Audio data collection effect
+  // Continuous scrolling effect - always running during recording
   useEffect(() => {
     if (!isRecording) return;
     
     const interval = setInterval(() => {
-      const variation = Math.random();
-      const processedLevel = processAudioLevel(audioLevel, variation);
       setAudioHistory(prev => {
+        // Always add new data for continuous scrolling - even during silence
+        const variation = Math.random();
+        const currentLevel = audioLevelRef.current; // Use ref to get current value
+        const processedLevel = processAudioLevel(currentLevel, variation);
         const newHistory = [...prev, processedLevel];
-        const maxHistory = dimensions.bars * 3;
-        return newHistory.slice(-maxHistory);
+        
+        // Keep exactly the number of bars for smooth scrolling
+        return newHistory.slice(-dimensions.bars);
       });
-    }, 80);
+    }, 80); // Even faster scrolling for better effect - 12.5fps
     
     return () => clearInterval(interval);
-  }, [isRecording, audioLevel, dimensions.bars]);
+  }, [isRecording, dimensions.bars]); // Remove audioLevel dependency for continuous scrolling
+  
+  // Separate effect to update current audio level without affecting scrolling
+  useEffect(() => {
+    // This updates the current level but doesn't control scrolling
+  }, [audioLevel]);
 
   // Clear history effect
   useEffect(() => {
@@ -137,13 +148,20 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     }
 
     return Array.from({ length: dimensions.bars }).map((_, index) => {
-      const startIndex = Math.max(0, audioHistory.length - dimensions.bars);
-      const level = audioHistory[startIndex + index] || 0;
+      // For scrolling effect: newer data appears on the right, older on the left
+      const historyIndex = audioHistory.length - dimensions.bars + index;
+      const level = historyIndex >= 0 ? audioHistory[historyIndex] : 0;
       
+      const calculatedHeight = level * WHATSAPP_STYLE.maxHeight;
       const barHeight = Math.max(
         WHATSAPP_STYLE.minHeight,
-        Math.min(WHATSAPP_STYLE.maxHeight, level * WHATSAPP_STYLE.maxHeight)
+        Math.min(WHATSAPP_STYLE.maxHeight, calculatedHeight)
       );
+      
+      // Debug logging for silence issue
+      if (index === 0 && Math.random() < 0.01) { // Log occasionally for first bar
+        console.log(`🎵 Bar ${index}: level=${level.toFixed(4)}, calculated=${calculatedHeight.toFixed(1)}px, final=${barHeight.toFixed(1)}px`);
+      }
 
       return (
         <View

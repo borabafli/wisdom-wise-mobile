@@ -235,5 +235,5 @@ export const ContinuousWaveform: React.FC<ContinuousWaveformProps> = ({
   );
 };
 
-// Export both components
-export { AudioWaveform, CircularAudioWaveform } from './AudioWaveform';
+// Export default component only
+export default ContinuousWaveform;
