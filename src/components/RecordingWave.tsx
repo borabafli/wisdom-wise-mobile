@@ -9,13 +9,13 @@ interface RecordingWaveProps {
   showTimer?: boolean; // Show recording timer
 }
 
-// WhatsApp-style design constants
+// WhatsApp-style design constants with much higher bars
 const WHATSAPP_STYLE = {
-  barWidth: 2,
+  barWidth: 3, // Width of bars
   barSpacing: 2,
-  barRadius: 1,
-  minHeight: 3,
-  maxHeight: 28,
+  barRadius: 1.5, // Radius for rounded bars
+  minHeight: 3, // Same as barWidth for perfect circles in silence
+  maxHeight: 60, // Increased from 48 to 60 for maximum dynamic range
   color: '#06B6D4',
   inactiveOpacity: 0.3,
   activeOpacity: 0.8,
@@ -31,6 +31,24 @@ const processAudioLevel = (rawLevel: number, variation: number = 0): number => {
   const naturalVariation = (variation - 0.5) * 0.1; // ±5% variation for smooth waves
   return Math.max(0, Math.min(1, clampedLevel + naturalVariation));
 };
+
+// Calculate dynamic color based on audio level
+const getBarColor = (level: number): string => {
+  // Ensure level is between 0 and 1
+  const normalizedLevel = Math.max(0, Math.min(1, level));
+  
+  // Color range from very light blue to darker blue
+  const lightBlue = { r: 173, g: 216, b: 230 }; // #ADD8E6 - Light blue
+  const darkBlue = { r: 6, g: 182, b: 212 };    // #06B6D4 - Current blue (cyan-500)
+  
+  // Interpolate between light and dark blue
+  const r = Math.round(lightBlue.r + (darkBlue.r - lightBlue.r) * normalizedLevel);
+  const g = Math.round(lightBlue.g + (darkBlue.g - lightBlue.g) * normalizedLevel);
+  const b = Math.round(lightBlue.b + (darkBlue.b - lightBlue.b) * normalizedLevel);
+  
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 
 export const RecordingWave: React.FC<RecordingWaveProps> = ({
   audioLevel = 0,
@@ -49,12 +67,12 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     audioLevelRef.current = audioLevel;
   }, [audioLevel]);
   
-  // Memoized dimensions
+  // Memoized dimensions with maximum height and width
   const dimensions = useMemo(() => {
     switch (size) {
-      case 'small': return { width: 140, height: 32, bars: 20 };
-      case 'large': return { width: 280, height: 40, bars: 45 };  
-      default: return { width: 200, height: 36, bars: 32 };
+      case 'small': return { width: 180, height: 64, bars: 20 }; // Even wider and much taller
+      case 'large': return { width: 320, height: 68, bars: 45 }; // Even wider and much taller
+      default: return { width: 260, height: 64, bars: 32 }; // Much wider (240->260) and much taller (52->64)
     }
   }, [size]);
   
@@ -87,7 +105,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
         // Keep exactly the number of bars for smooth scrolling
         return newHistory.slice(-dimensions.bars);
       });
-    }, 80); // Even faster scrolling for better effect - 12.5fps
+    }, 120); // Slower scrolling for longer history - ~8fps
     
     return () => clearInterval(interval);
   }, [isRecording, dimensions.bars]); // Remove audioLevel dependency for continuous scrolling
@@ -110,6 +128,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
 
   // Handle pulse variant
   if (variant === 'pulse') {
@@ -197,6 +216,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           justifyContent: 'center',
           width: dimensions.width,
           height: dimensions.height,
+          position: 'relative',
         }}
       >
         {renderBars()}

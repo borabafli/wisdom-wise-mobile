@@ -13,24 +13,37 @@ interface UseDirectAudioLevelsReturn {
 export const useDirectAudioLevels = (): UseDirectAudioLevelsReturn => {
   const [audioLevel, setAudioLevel] = useState<number>(0);
   
+  // Light moving average for smoothing (5 samples for slightly more smoothing)
+  const recentLevels = useRef<number[]>([]);
+  const maxSamples = 5; // Small but slightly more smoothing
+  
   // Pass through normalized audio levels (0-1) with increased sensitivity
   const updateAudioLevel = useCallback((level: number) => {
     // Input is already normalized amplitude (0-1), apply sensitivity boost
     let amplitude = Math.max(0, Math.min(1, level));
     
-    // Smart sensitivity: boost quiet sounds, compress loud sounds
-    if (amplitude > 0.005) {
-      if (amplitude < 0.3) {
-        // Boost quiet sounds dramatically
-        amplitude = Math.min(0.7, Math.pow(amplitude, 0.3) * 1.5);
+    // Very conservative sensitivity: excellent silence control
+    if (amplitude > 0.05) { // Much higher threshold for excellent silence
+      if (amplitude < 0.5) {
+        // Very conservative boost for quiet sounds
+        amplitude = Math.min(0.4, Math.pow(amplitude, 0.6) * 0.9);
       } else {
-        // Compress loud sounds to prevent hitting maximum
-        amplitude = 0.7 + (amplitude - 0.3) * 0.3; // Gentle compression for loud sounds
+        // Strong compression for loud sounds
+        amplitude = 0.4 + (amplitude - 0.5) * 0.2; // Strong compression
       }
     }
     
-    // Update state immediately - no processing needed
-    setAudioLevel(amplitude);
+    // Apply very light moving average for smoothing
+    recentLevels.current.push(amplitude);
+    if (recentLevels.current.length > maxSamples) {
+      recentLevels.current.shift();
+    }
+    
+    // Calculate average - very responsive (only 3 samples)
+    const smoothedAmplitude = recentLevels.current.reduce((sum, val) => sum + val, 0) / recentLevels.current.length;
+    
+    // Update state with smoothed value
+    setAudioLevel(smoothedAmplitude);
     
     // Debug logging (occasionally)
     if (Math.random() < 0.01) { // 1% of the time
@@ -39,9 +52,10 @@ export const useDirectAudioLevels = (): UseDirectAudioLevelsReturn => {
     
   }, []);
   
-  // Reset to zero
+  // Reset to zero and clear moving average
   const resetLevel = useCallback(() => {
     setAudioLevel(0);
+    recentLevels.current = []; // Clear moving average history
   }, []);
   
   return {
