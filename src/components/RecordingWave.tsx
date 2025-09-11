@@ -9,16 +9,16 @@ interface RecordingWaveProps {
   showTimer?: boolean; // Show recording timer
 }
 
-// WhatsApp-style design constants with much higher bars
+// WhatsApp-style design constants with maximum height bars
 const WHATSAPP_STYLE = {
   barWidth: 3, // Width of bars
   barSpacing: 2,
   barRadius: 1.5, // Radius for rounded bars
   minHeight: 3, // Same as barWidth for perfect circles in silence
-  maxHeight: 60, // Increased from 48 to 60 for maximum dynamic range
+  maxHeight: 80, // Increased for more dramatic visual effect
   color: '#06B6D4',
   inactiveOpacity: 0.3,
-  activeOpacity: 0.8,
+  activeOpacity: 0.95,
   timerColor: '#64748b',
 };
 
@@ -32,19 +32,22 @@ const processAudioLevel = (rawLevel: number, variation: number = 0): number => {
   return Math.max(0, Math.min(1, clampedLevel + naturalVariation));
 };
 
-// Calculate dynamic color based on audio level
+// Calculate dynamic color based on audio level with intense effect
 const getBarColor = (level: number): string => {
   // Ensure level is between 0 and 1
   const normalizedLevel = Math.max(0, Math.min(1, level));
   
-  // Color range from very light blue to darker blue
-  const lightBlue = { r: 173, g: 216, b: 230 }; // #ADD8E6 - Light blue
-  const darkBlue = { r: 6, g: 182, b: 212 };    // #06B6D4 - Current blue (cyan-500)
+  // More intense color range - from pale blue to very deep blue
+  const veryLightBlue = { r: 186, g: 230, b: 253 }; // #BAE6FD - More visible pale blue
+  const deepBlue = { r: 2, g: 82, b: 119 };         // #025277 - Much darker blue for contrast
   
-  // Interpolate between light and dark blue
-  const r = Math.round(lightBlue.r + (darkBlue.r - lightBlue.r) * normalizedLevel);
-  const g = Math.round(lightBlue.g + (darkBlue.g - lightBlue.g) * normalizedLevel);
-  const b = Math.round(lightBlue.b + (darkBlue.b - lightBlue.b) * normalizedLevel);
+  // Apply power curve for more dramatic color transition
+  const intensifiedLevel = Math.pow(normalizedLevel, 0.7); // Makes transition more dramatic
+  
+  // Interpolate between very light and deep blue
+  const r = Math.round(veryLightBlue.r + (deepBlue.r - veryLightBlue.r) * intensifiedLevel);
+  const g = Math.round(veryLightBlue.g + (deepBlue.g - veryLightBlue.g) * intensifiedLevel);
+  const b = Math.round(veryLightBlue.b + (deepBlue.b - veryLightBlue.b) * intensifiedLevel);
   
   return `rgb(${r}, ${g}, ${b})`;
 };
@@ -67,12 +70,12 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     audioLevelRef.current = audioLevel;
   }, [audioLevel]);
   
-  // Memoized dimensions with maximum height and width
+  // Memoized dimensions with maximum width and height
   const dimensions = useMemo(() => {
     switch (size) {
-      case 'small': return { width: 180, height: 64, bars: 20 }; // Even wider and much taller
-      case 'large': return { width: 320, height: 68, bars: 45 }; // Even wider and much taller
-      default: return { width: 260, height: 64, bars: 32 }; // Much wider (240->260) and much taller (52->64)
+      case 'small': return { width: 200, height: 76, bars: 20 }; // Even wider for more presence
+      case 'large': return { width: 340, height: 80, bars: 45 }; // Even wider for more presence
+      default: return { width: 280, height: 68, bars: 32 }; // Reduced height for more compact chatbar
     }
   }, [size]);
   
@@ -156,7 +159,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           style={{
             width: WHATSAPP_STYLE.barWidth,
             height: WHATSAPP_STYLE.minHeight,
-            backgroundColor: WHATSAPP_STYLE.color,
+            backgroundColor: getBarColor(0), // Very light blue for silence baseline
             borderRadius: WHATSAPP_STYLE.barRadius,
             marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
             opacity: WHATSAPP_STYLE.inactiveOpacity,
@@ -188,7 +191,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           style={{
             width: WHATSAPP_STYLE.barWidth,
             height: barHeight,
-            backgroundColor: WHATSAPP_STYLE.color,
+            backgroundColor: getBarColor(level), // Dynamic color based on audio level
             borderRadius: WHATSAPP_STYLE.barRadius,
             marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
             opacity: isRecording ? WHATSAPP_STYLE.activeOpacity : WHATSAPP_STYLE.inactiveOpacity,
@@ -202,12 +205,31 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
   return (
     <View
       style={{
-        flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'transparent',
         paddingHorizontal: 8,
       }}
     >
+      {/* Recording Timer - Inside chatbox, positioned lower */}
+      {showTimer && isRecording && (
+        <View style={{
+          marginBottom: 2,
+          marginTop: 2,
+          alignItems: 'center',
+        }}>
+          <Text style={{
+            fontSize: 13,
+            color: '#374151',
+            fontFamily: 'Inter-Medium',
+            letterSpacing: 0.3,
+            opacity: 0.9,
+            fontWeight: '500',
+          }}>
+            {formatTimer(recordingTime)}
+          </Text>
+        </View>
+      )}
+      
       {/* Audio Wave Bars */}
       <View
         style={{
@@ -221,24 +243,6 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
       >
         {renderBars()}
       </View>
-      
-      {/* Recording Timer - Right side, same height */}
-      {showTimer && isRecording && (
-        <View style={{
-          marginLeft: 12,
-          justifyContent: 'center',
-        }}>
-          <Text style={{
-            fontSize: 12,
-            color: WHATSAPP_STYLE.timerColor,
-            fontFamily: 'Inter-Medium',
-            letterSpacing: 0.5,
-            minWidth: 35,
-          }}>
-            {formatTimer(recordingTime)}
-          </Text>
-        </View>
-      )}
     </View>
   );
 };

@@ -22,7 +22,6 @@ import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
 import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
-import TestButton from '../components/TestButton';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -636,34 +635,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             }}
           />
 
-          {/* Development Test Button */}
-          <TestButton
-            exerciseMode={exerciseMode}
-            exerciseData={exerciseData}
-            isValueReflection={isValueReflection}
-            isThinkingPatternReflection={isThinkingPatternReflection}
-            exerciseStep={exerciseStep}
-            onSendMessage={(message) => handleSendMessage(message, '')}
-            onStartExercise={(exerciseType) => {
-              // Find the exercise in the library and start it
-              const exercises = {
-                'breathing': { type: 'breathing', name: '4-7-8 Breathing' },
-                'automatic-thoughts': { type: 'automatic-thoughts', name: 'Automatic Thoughts CBT' },
-                'gratitude': { type: 'gratitude', name: 'Gratitude Practice' },
-                'vision-of-future': { type: 'vision-of-future', name: 'Vision of the Future' }
-              };
-              const exercise = exercises[exerciseType];
-              if (exercise) {
-                enterExerciseMode();
-                startDynamicAIGuidedExercise(
-                  exercise,
-                  chatSession.setMessages,
-                  chatSession.setIsTyping,
-                  chatSession.setSuggestions
-                );
-              }
-            }}
-          />
         </KeyboardAvoidingView>
       </ImageBackground>
     </SafeAreaWrapper>

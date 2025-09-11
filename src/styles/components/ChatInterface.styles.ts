@@ -521,21 +521,20 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   inputCard: {
     backgroundColor: '#FFFFFF', // Pure white
-    borderWidth: 1,
-    borderColor: 'rgba(107, 114, 128, 0.12)', // Slightly more visible border
-    borderRadius: 25,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[3],
+    borderWidth: 0, // No border
+    borderRadius: 50, // Perfect circle edges - very rounded
+    paddingHorizontal: spacing[4], // Adequate horizontal padding for circular shape
+    paddingVertical: spacing[1], // Minimal vertical padding for lower height
     zIndex: 101, // Ensure card is above welcome text
-    elevation: 5, // Android elevation
-    // No shadow - clean flat design
+    elevation: 0, // No elevation/shadow
+    // Clean flat design with no shadows or borders
 
   },
   inputRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center', // Center items for perfect circular alignment
     gap: spacing[3],
-    minHeight: 48,
+    minHeight: 48, // Reduced height for more compact chatbar
   },
   inputButtonsContainer: {
     flexDirection: 'row',
@@ -625,20 +624,19 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
-    fontFamily: 'Ubuntu-Regular',
+    fontSize: 17, // Slightly larger for better readability
+    fontFamily: 'Inter-Regular', // Match chat font family
     fontWeight: '400',
     color: '#111827', // Match AI message color exactly
-    minHeight: 48,
+    minHeight: 40, // Reduced minimum height
     maxHeight: 200,
-    paddingVertical: spacing[4], // Increased vertical padding
-    paddingHorizontal: spacing[4], // Increased horizontal padding
+    paddingVertical: 0, // Remove vertical padding for true centering
+    paddingHorizontal: spacing[4], // Increased padding to move text inward from edges
     backgroundColor: 'transparent',
-    lineHeight: 24, // Match AI message line height
-    letterSpacing: 0.3, // Match AI message letter spacing
-    textAlignVertical: 'top',
-
-    paddingTop: 14,
+    lineHeight: 22, // Adjusted line height for better centering
+    letterSpacing: 0.2, // Match AI message letter spacing
+    textAlignVertical: 'center', // Center text vertically
+    includeFontPadding: false, // Remove extra font padding on Android
     zIndex: 102, // Highest z-index for text input
 
   },
@@ -941,10 +939,22 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Recording Interface Layout
   recordingInterface: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center', // Center alignment for proper button positioning
     justifyContent: 'space-between',
     flex: 1,
     paddingHorizontal: spacing[2],
+    height: 76, // Match the wave container height for precise alignment
+  },
+
+  // Recording Interface with Timer Inside
+  recordingInterfaceWithTimer: {
+    flexDirection: 'row',
+    alignItems: 'center', // Center align for proper calculation
+    justifyContent: 'space-between',
+    flex: 1,
+    paddingHorizontal: spacing[2],
+    paddingVertical: spacing[2], // Reduced padding for shorter chatbar
+    minHeight: 70, // Reduced height for more compact chatbar
   },
 
   // Cancel Button (X) - Light filled
@@ -956,6 +966,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#94a3b8', // Light gray fill
     ...shadows.sm,
+    marginTop: 10, // Offset down to align with waveform bar center (timer height compensation)
   },
 
   // Wave with Timer Container
@@ -964,6 +975,15 @@ export const chatInterfaceStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: spacing[3],
+  },
+
+  // Wave with Timer Inside Chatbox
+  waveWithTimerInside: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: spacing[3],
+    flexDirection: 'column', // Stack timer and wave vertically
   },
 
   // Submit Recording Button (Check) - Filled like send button
@@ -975,6 +995,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#2563eb', // Same as send button
     ...shadows.sm,
+    marginTop: 10, // Offset down to align with waveform bar center (timer height compensation)
   },
 
 });

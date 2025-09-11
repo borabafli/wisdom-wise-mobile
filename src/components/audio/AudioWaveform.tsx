@@ -50,6 +50,7 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
   
   // Create animated values for each bar for smooth height transitions
   const barAnimations = useRef<Animated.Value[]>([]);
+  const barAges = useRef<number[]>([]); // Track when each bar was last updated for growth animation
   
   // Initialize bar animations when totalBars changes
   useMemo(() => {
@@ -57,11 +58,16 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
       barAnimations.current[i] || new Animated.Value(0)
     );
     barAnimations.current = newAnimations.slice(0, totalBars);
+    
+    // Initialize ages array
+    if (barAges.current.length !== totalBars) {
+      barAges.current = Array.from({ length: totalBars }, () => 0);
+    }
   }, [totalBars]);
   
   // Memoize calculated values to prevent re-renders
   const maxSamples = useMemo(() => bufferDuration * samplesPerSecond, [bufferDuration, samplesPerSecond]);
-  const barWidth = 3; // Thicker bars for better mobile visibility
+  const barWidth = 4; // Slightly wider bars for better visual impact
   const barSpacing = 1; // Minimal spacing for wave continuity
   const totalBars = useMemo(() => Math.floor(width / (barWidth + barSpacing)), [width]);
 
@@ -95,7 +101,7 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
         // Add new sample - use much lower minimum for true silence detection
         // Apply sensitivity
         const mobileSensitivity = Platform.OS === 'ios' || Platform.OS === 'android' ? sensitivity * 1.0 : sensitivity;
-        const rawLevel = Math.max(0.005, Math.min(1.0, currentLevel * mobileSensitivity));
+        const rawLevel = Math.max(0.008, Math.min(1.0, currentLevel * mobileSensitivity));
         
         // Smoothing: Average the last 2-3 samples to remove jitter
         smoothingBuffer.current.push(rawLevel);
@@ -104,7 +110,7 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
         }
         
         const smoothedLevel = smoothingBuffer.current.reduce((sum, val) => sum + val, 0) / smoothingBuffer.current.length;
-        const finalLevel = Math.max(0.005, Math.min(1.0, smoothedLevel));
+        const finalLevel = Math.max(0.008, Math.min(1.0, smoothedLevel));
         
         const newSample: AudioSample = {
           level: finalLevel,
@@ -152,11 +158,11 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
       if (dataPoints >= totalBars) {
         // More data than bars: sample from the end (recent data)
         const dataIndex = dataPoints - totalBars + index;
-        sample = buffer[Math.max(0, dataIndex)] || { level: 0.005, timestamp: 0 };
+        sample = buffer[Math.max(0, dataIndex)] || { level: 0.008, timestamp: 0 };
       } else {
         // Less data than bars: stretch data across all bars
         const dataIndex = Math.floor((index / totalBars) * dataPoints);
-        sample = buffer[Math.min(dataIndex, dataPoints - 1)] || { level: 0.005, timestamp: 0 };
+        sample = buffer[Math.min(dataIndex, dataPoints - 1)] || { level: 0.008, timestamp: 0 };
       }
       
       // Calculate scaled height using same logic as render
@@ -191,27 +197,32 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
     });
   };
 
-  // Simpler animation function for reliable mobile performance
+  // Enhanced animation function with dynamic growth effect
   const animateBarsSimple = (buffer: AudioSample[]) => {
     if (!barAnimations.current) return;
     
     const dataPoints = buffer.length;
     const maxHeight = height * 0.8;
+    const now = Date.now();
     
     barAnimations.current.forEach((anim, index) => {
       if (!anim) return;
       
       let targetHeight = 1; // Default minimum
+      let isNewBar = false;
       
       if (dataPoints > 0) {
         // Calculate target height using same logic as render
         let sample;
         if (dataPoints >= totalBars) {
           const dataIndex = dataPoints - totalBars + index;
-          sample = buffer[Math.max(0, dataIndex)] || { level: 0.005, timestamp: 0 };
+          sample = buffer[Math.max(0, dataIndex)] || { level: 0.008, timestamp: 0 };
+          
+          // Check if this is a newly updated bar (newest bars are at the end)
+          isNewBar = index >= totalBars - 3; // Last 3 bars are considered "new"
         } else {
           const dataIndex = Math.floor((index / totalBars) * dataPoints);
-          sample = buffer[Math.min(dataIndex, dataPoints - 1)] || { level: 0.005, timestamp: 0 };
+          sample = buffer[Math.min(dataIndex, dataPoints - 1)] || { level: 0.008, timestamp: 0 };
         }
         
         // Platform-specific scaling (same as render)
@@ -227,7 +238,7 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
         } else {
           // Mobile animation scaling: match the conservative render scaling
           if (sample.level <= 0.03) {
-            scaledLevel = 0;
+            scaledLevel = 0.005;
           } else if (sample.level <= 0.15) {
             scaledLevel = 0.02 + (sample.level - 0.03) * 0.4;
           } else {
@@ -236,14 +247,39 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
         }
         
         targetHeight = Math.max(1, scaledLevel * maxHeight);
+        
+        // Check if this bar needs a fresh growth animation
+        const lastUpdate = barAges.current[index] || 0;
+        const timeSinceUpdate = now - lastUpdate;
+        
+        if (isNewBar && timeSinceUpdate > 100) { // Reset new bars for growth effect
+          anim.setValue(1); // Start from minimum height
+          barAges.current[index] = now; // Update timestamp
+        }
       }
       
-      // Interpolation/Tweening: animate from previous → new height over 30-40ms
-      Animated.timing(anim, {
-        toValue: targetHeight,
-        duration: 35, // 30-40ms interpolation for smooth gliding
-        useNativeDriver: false,
-      }).start();
+      // Enhanced animation with different timing for new vs old bars
+      if (isNewBar && index === totalBars - 1) {
+        // Use spring animation for the very newest bar for extra liveliness
+        Animated.spring(anim, {
+          toValue: targetHeight,
+          tension: 100,
+          friction: 8,
+          useNativeDriver: false,
+        }).start();
+      } else {
+        const animationDuration = isNewBar ? 250 : 120; // New bars animate slower for dramatic effect
+        const easing = isNewBar ? 
+          Animated.out(Animated.ease) : // Smooth ease-out for new bars
+          Animated.ease; // Standard easing for existing bars
+        
+        Animated.timing(anim, {
+          toValue: targetHeight,
+          duration: animationDuration,
+          easing: easing,
+          useNativeDriver: false,
+        }).start();
+      }
     });
   };
 
@@ -336,14 +372,14 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
       if (dataPoints >= totalBars) {
         // More data than bars: sample from the end (recent data)
         const dataIndex = dataPoints - totalBars + index;
-        const sample = audioBuffer[Math.max(0, dataIndex)] || { level: 0.005, timestamp: 0 };
+        const sample = audioBuffer[Math.max(0, dataIndex)] || { level: 0.008, timestamp: 0 };
         interpolatedLevel = sample.level;
       } else if (dataPoints === 0) {
-        interpolatedLevel = 0.005;
+        interpolatedLevel = 0.008;
       } else {
         // Less data than bars: use nearest data point (no artificial interpolation)
         const dataIndex = Math.round((index / totalBars) * (dataPoints - 1));
-        const sample = audioBuffer[Math.min(dataIndex, dataPoints - 1)] || { level: 0.005, timestamp: 0 };
+        const sample = audioBuffer[Math.min(dataIndex, dataPoints - 1)] || { level: 0.008, timestamp: 0 };
         interpolatedLevel = sample.level;
       }
       
@@ -373,8 +409,8 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
       } else {
         // Mobile scaling: conservative to prevent oversensitivity
         if (sample.level <= 0.03) {
-          // True silence - invisible
-          scaledLevel = 0;
+          // True silence - slightly more visible
+          scaledLevel = 0.005;
         } else if (sample.level <= 0.15) {
           // Quiet speech - small but visible
           scaledLevel = 0.02 + (sample.level - 0.03) * 0.4;
@@ -385,6 +421,14 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
       }
       
       const barHeight = Math.max(minHeight, scaledLevel * maxHeight);
+      
+      // Calculate age-based opacity for "living" effect - newer bars are more prominent
+      const totalBarsFloat = totalBars;
+      const ageRatio = index / totalBarsFloat; // 0 = oldest, 1 = newest
+      const baseOpacity = isRecording ? 0.9 : 0.5;
+      const ageFadeOpacity = isRecording ? 
+        (0.3 + (ageRatio * 0.6)) : // Fade from 0.3 to 0.9 for recording
+        (0.2 + (ageRatio * 0.3)); // Fade from 0.2 to 0.5 for idle
       
       return (
         <Animated.View
@@ -397,7 +441,7 @@ export const AudioWaveform: React.FC<AudioWaveformProps> = ({
               extrapolate: 'clamp'
             }) : barHeight, // Use animation if available, fallback to direct height
             backgroundColor: color,
-            opacity: isRecording ? 0.9 : 0.5,
+            opacity: ageFadeOpacity,
             borderRadius: barWidth / 2, // More rounded edges (half the width for pill shape)
             marginRight: barSpacing,
             alignSelf: 'center',
