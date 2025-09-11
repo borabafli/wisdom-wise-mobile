@@ -13,6 +13,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { 
   MessageItem, 
   AnimatedTypingCursor, 
+  AnimatedTypingDots,
+  TranscribingIndicator,
   SuggestionChips, 
   ChatInput, 
   ExerciseCard 
@@ -71,8 +73,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const setupNavigationBar = async () => {
       if (Platform.OS === 'android') {
         try {
-          await NavigationBar.setBackgroundColorAsync('#F9FBFD'); // Match chat background
+          await NavigationBar.setBackgroundColorAsync('#ffffff'); // Pure white for navigation bar
           await NavigationBar.setButtonStyleAsync('dark'); // Dark buttons for light background
+          // Ensure the navigation bar is completely opaque
+          await NavigationBar.setPositionAsync('absolute');
+          await NavigationBar.setVisibilityAsync('visible');
         } catch (error) {
           console.warn('Failed to set navigation bar color:', error);
         }
@@ -321,8 +326,8 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       }
     }, [canEndReflection]);
 
-    const normalGradient = [...colors.gradients.primaryLight];
-    const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5'];
+    const normalGradient = ['rgba(239, 246, 255, 0.3)', '#ffffff']; // Light blue to white gradient (top to bottom)
+    const exerciseGradient = ['rgba(239, 246, 255, 0.3)', '#ffffff']; // Same light gradient for exercises
 
     const renderMessage = (message: Message) => (
       <MessageItem
@@ -343,14 +348,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     );
 
   return (
-    <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#ffffff"
+        translucent={false}
+      />
+      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
       <ImageBackground
         source={require('../../assets/images/background1.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <LinearGradient
-          colors={['rgba(255, 253, 232, 0.7)', 'rgba(187, 242, 255, 0.7)']}
+          colors={['rgba(239, 246, 255, 0.3)', 'rgba(255, 255, 255, 1.0)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.backgroundOverlay}
@@ -468,18 +479,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                       />
                     </View>
                     <View style={styles.typingTextContainer}>
-                      <View style={styles.typingDots}>
-                        <View style={styles.typingDot} />
-                        <View style={styles.typingDot} />
-                        <View style={styles.typingDot} />
-
-                      </View>
+                      <AnimatedTypingDots isVisible={chatSession.isTyping} />
                     </View>
                   </View>
                 </View>
 
               </View>
             )}
+
 
             {showPreExerciseMoodSlider && exerciseData.currentExercise && (
               <PreExerciseMoodCard
@@ -615,6 +622,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onInputTextChange={handleInputTextChange}
             onSend={handleSend}
             isRecording={voiceRecording.isRecording}
+            isTranscribing={voiceRecording.isTranscribing}
             audioLevel={voiceRecording.audioLevel}
             partialTranscript={voiceRecording.partialTranscript}
             onMicPressIn={async () => {
@@ -638,6 +646,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         </KeyboardAvoidingView>
       </ImageBackground>
     </SafeAreaWrapper>
+    </>
   );
 };
 

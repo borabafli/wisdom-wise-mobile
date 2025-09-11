@@ -9,10 +9,10 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width } = Dimensions.get('window');
 
 export const chatInterfaceStyles = StyleSheet.create({
-  // Container & Layout - Soft Blue-Tint White Background
+  // Container & Layout - White bottom with blue gradient upward
   container: {
     flex: 1,
-    backgroundColor: '#F9FBFD',
+    backgroundColor: '#ffffff', // Pure white base
   },
   backgroundImage: {
     flex: 1,
@@ -92,18 +92,18 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'System',
     fontWeight: '600',
-    color: '#111827', // Almost black for readability
+    color: '#64748b', // Lighter gray-blue for title
     letterSpacing: 0.2,
   },
   exerciseTitle: {
     fontWeight: '700', // Bolder for exercises
-    color: '#64748b', // Subtle grey-blue color for exercise titles
+    color: '#94a3b8', // Even lighter grey-blue for exercise titles
   },
   sessionSubtitle: {
     fontSize: 15,
     fontFamily: 'System',
     fontWeight: '400',
-    color: '#6B7280', // Light gray for secondary text
+    color: '#9ca3af', // Even lighter gray for secondary text
     letterSpacing: 0.1,
   },
   warningContainer: {
@@ -165,7 +165,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
-    color: '#111827', // Match AI message color exactly
+    color: '#475569', // Darker gray-blue for better readability
     textAlign: 'left',
     flexWrap: 'wrap',
     lineHeight: 24,
@@ -248,7 +248,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 26,
     fontFamily: 'Nunito-Bold',
     fontWeight: '700',
-    color: '#6B7280', // Light gray for secondary text
+    color: '#9ca3af', // Even lighter gray for greeting
     letterSpacing: 0.5,
   },
   therapistName: {
@@ -277,7 +277,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Nunito-Regular',
     fontWeight: '500',
-    color: '#111827', // Almost black for readability
+    color: '#64748b', // Lighter gray-blue for welcome text
     textAlign: 'center',
     lineHeight: 26,
     marginBottom: spacing[4],
@@ -299,7 +299,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
     fontWeight: '500',
-    color: '#6B7280', // Light gray for secondary text
+    color: '#9ca3af', // Lighter gray for suggestion text
     textAlign: 'center',
     letterSpacing: 0.3,
   },
@@ -361,7 +361,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
-    color: '#111827', // Almost black for readability
+    color: '#475569', // Darker gray-blue for better readability
     textAlign: 'left',
     lineHeight: 24,
     marginBottom: spacing[2],
@@ -413,7 +413,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   typingContent: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
     gap: spacing.components.cardGap,
   },
   typingAvatar: {
@@ -436,7 +436,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[3],
-    marginBottom: spacing[4],
+    marginTop: spacing[2],
   },
   typingDot: {
     width: 10,
@@ -455,11 +455,19 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Suggestions - Mobile Optimized
   suggestionsContainer: {
-    paddingHorizontal: spacing.layout.screenPadding,
     paddingBottom: spacing[4], // Reduced bottom padding to avoid too much space
     paddingTop: spacing[2], // Small top padding for separation
     gap: spacing[5], // Better spacing between rows
-    flexWrap: 'wrap',
+  },
+
+  suggestionsScroll: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing[2], // Space between suggestion rows
+  },
+
+  suggestionsScrollContent: {
+    gap: spacing[3], // Horizontal gap between chips
+    paddingRight: spacing.layout.screenPadding, // Right padding for last item
   },
 
   suggestionsStack: {
@@ -472,6 +480,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   exerciseButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    paddingHorizontal: spacing.layout.screenPadding,
   },
   suggestionChip: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)', // More transparent white
@@ -479,7 +488,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingVertical: spacing[5], // Generous vertical padding
     minHeight: 44, // Minimum touch target for accessibility
     borderRadius: 20, // Slightly less rounded for cleaner look
-    borderWidth: 0, // Remove border
+    borderWidth: 1, // Add light border
+    borderColor: 'rgba(148, 163, 184, 0.2)', // Very light grey border
     flexShrink: 1,
     alignSelf: 'flex-start',
     // No shadow - completely flat design
@@ -495,7 +505,8 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   exerciseSuggestionButton: {
     backgroundColor: 'rgba(59, 180, 245, 0.04)', // More transparent accent background
-    borderWidth: 0, // Remove border
+    borderWidth: 1, // Add light border
+    borderColor: 'rgba(148, 163, 184, 0.2)', // Very light grey border
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 48, // Slightly larger for special exercise button
@@ -504,7 +515,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     // No shadow - flat design
   },
   exerciseSuggestionText: {
-    color: '#3BB4F5', // Accent color for consistency
+    color: '#475569', // Dark grey color to match icon and user text
     fontWeight: '700', // Even bolder for call-to-action
     fontSize: 15,
     letterSpacing: 0.4,
@@ -512,15 +523,15 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Input Area - Modern Glass
   inputContainer: {
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: spacing.components.cardGap,
+    paddingHorizontal: spacing.layout.screenPadding - 4, // Make chatbar wider by reducing side padding
+    paddingVertical: spacing.components.cardGap + 16, // Position chatbar much lower
 
-    paddingBottom: spacing.components.cardGap + 10, // Extra padding for keyboard
+    paddingBottom: spacing.components.cardGap + 32, // Extra padding for keyboard and much lower position
     zIndex: 100, // Ensure input is above everything else
 
   },
   inputCard: {
-    backgroundColor: '#FFFFFF', // Pure white
+    backgroundColor: '#e2e8f0', // Much lighter gray (slate-200) for lighter appearance
     borderWidth: 0, // No border
     borderRadius: 50, // Perfect circle edges - very rounded
     paddingHorizontal: spacing[4], // Adequate horizontal padding for circular shape
@@ -534,7 +545,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', // Center items for perfect circular alignment
     gap: spacing[3],
-    minHeight: 48, // Reduced height for more compact chatbar
+    minHeight: 60, // Increased height to accommodate properly centered text
   },
   inputButtonsContainer: {
     flexDirection: 'row',
@@ -627,10 +638,10 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 17, // Slightly larger for better readability
     fontFamily: 'Inter-Regular', // Match chat font family
     fontWeight: '400',
-    color: '#111827', // Match AI message color exactly
+    color: '#64748b', // Lighter gray-blue for input text
     minHeight: 40, // Reduced minimum height
     maxHeight: 200,
-    paddingVertical: 0, // Remove vertical padding for true centering
+    paddingVertical: 10, // Add some vertical padding for better touch area
     paddingHorizontal: spacing[4], // Increased padding to move text inward from edges
     backgroundColor: 'transparent',
     lineHeight: 22, // Adjusted line height for better centering
@@ -638,7 +649,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     textAlignVertical: 'center', // Center text vertically
     includeFontPadding: false, // Remove extra font padding on Android
     zIndex: 102, // Highest z-index for text input
-
+    justifyContent: 'center', // Additional centering
+    alignItems: 'center', // Additional centering
   },
   partialTranscriptOverlay: {
     position: 'absolute',
@@ -803,7 +815,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'System',
     fontWeight: '400',
-    color: '#6B7280', // Light gray for secondary text
+    color: '#9ca3af', // Even lighter gray for action text
     textAlign: 'center',
     letterSpacing: 0.2,
   },
@@ -996,6 +1008,35 @@ export const chatInterfaceStyles = StyleSheet.create({
     backgroundColor: '#2563eb', // Same as send button
     ...shadows.sm,
     marginTop: 10, // Offset down to align with waveform bar center (timer height compensation)
+  },
+
+
+  // Transcribing Message Bubble (User Style)
+  transcribingMessageContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+
+  transcribingMessageText: {
+    fontSize: 16,
+    fontFamily: 'System',
+    fontWeight: '400',
+    color: '#FFFFFF',
+    fontStyle: 'italic',
+  },
+
+  transcribingMessageDots: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[1],
+  },
+
+  transcribingMessageDot: {
+    width: 6,
+    height: 6,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 3,
   },
 
 });

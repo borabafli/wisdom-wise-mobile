@@ -10,6 +10,7 @@ interface ChatInputProps {
   onInputTextChange: (text: string) => void;
   onSend: (text?: string) => void;
   isRecording: boolean;
+  isTranscribing?: boolean;
   audioLevel: number; // Single audio level instead of array
   partialTranscript?: string;
   onMicPressIn: () => void;
@@ -23,6 +24,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onInputTextChange,
   onSend,
   isRecording,
+  isTranscribing,
   audioLevel,
   partialTranscript,
   onMicPressIn,
@@ -57,16 +59,17 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               <TextInput
                 value={inputText}
                 onChangeText={handleInputTextChange}
-                placeholder="Type or speak..."
+                placeholder={isTranscribing ? "Transcribing..." : "Type or speak..."}
                 placeholderTextColor="#94a3b8"
                 multiline
                 style={[
                   styles.textInput,
                   {
                     height: Math.min(Math.max(40, inputLineCount * 22), 9 * 22),
+                    textAlign: isTranscribing ? 'center' : 'left',
                   }
                 ]}
-                editable={true}
+                editable={!isTranscribing}
                 allowFontScaling={false}
                 selectionColor="#3b82f6"
               />
@@ -130,7 +133,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     style={styles.micButton}
                     activeOpacity={0.7}
                   >
-                    <Mic size={26} color="#6b7280" />
+                    <Mic size={26} color="#334155" />
                   </TouchableOpacity>
                 )}
               </View>

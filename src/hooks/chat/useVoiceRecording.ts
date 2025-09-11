@@ -6,6 +6,7 @@ import { useDirectAudioLevels } from '../useDirectAudioLevels';
 interface UseVoiceRecordingReturn {
   isRecording: boolean;
   isListening: boolean;
+  isTranscribing: boolean;
   sttError: string | null;
   partialTranscript: string;
   audioLevel: number; // Single audio level instead of array
@@ -21,6 +22,7 @@ export const useVoiceRecording = (
 ): UseVoiceRecordingReturn => {
   const [isRecording, setIsRecording] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
   
@@ -58,9 +60,10 @@ export const useVoiceRecording = (
       // On result
       (result) => {
         if (result.isFinal) {
-          // Final result - update input text
+          // Final result - update input text and clear transcribing state
           onTranscriptUpdate(result.transcript);
           setPartialTranscript('');
+          setIsTranscribing(false);
         } else {
           // Partial result - show as preview
           setPartialTranscript(result.transcript);
@@ -71,6 +74,7 @@ export const useVoiceRecording = (
         setSttError(error);
         setIsRecording(false);
         setIsListening(false);
+        setIsTranscribing(false);
         setPartialTranscript('');
         Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
       },
@@ -80,6 +84,7 @@ export const useVoiceRecording = (
         if (!isRecording) {
           console.log('Updating UI - recording ended');
           setIsListening(false);
+          setIsTranscribing(false);
           setPartialTranscript('');
           resetSoundWaves();
         }
@@ -104,15 +109,18 @@ export const useVoiceRecording = (
 
   const stopRecording = async () => {
     console.log('🛑 stopRecording called - current state:', isRecording);
-    // Always stop the service regardless of current state
-    await sttService.stopRecognition();
-    // Reset all recording-related states
+    
+    // Set transcribing state before stopping
+    setIsTranscribing(true);
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
-    setSttError(null);
     resetLevel(); // Reset direct audio level
     resetSoundWaves();
+    
+    // Always stop the service regardless of current state
+    await sttService.stopRecognition();
+    
     console.log('✅ Recording stopped and state reset');
   };
 
@@ -122,6 +130,7 @@ export const useVoiceRecording = (
       await sttService.cancelRecognition();
       setIsRecording(false);
       setIsListening(false);
+      setIsTranscribing(false);
       setPartialTranscript('');
       setSttError(null);
       resetLevel(); // Reset direct audio level
@@ -174,6 +183,7 @@ export const useVoiceRecording = (
   return {
     isRecording,
     isListening,
+    isTranscribing,
     sttError,
     partialTranscript,
     audioLevel, // Return single audio level instead of array
