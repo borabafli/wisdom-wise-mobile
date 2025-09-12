@@ -47,11 +47,14 @@
         "backgroundColor": "#f0f9ff",
         "translucent": false
       },
-      "navigationBar": {
-        "backgroundColor": "#ffffff",
-        "barStyle": "light-content",
-        "visible": true
+      "androidNavigationBar": {
+        "visible": true,
+        "backgroundColor": "#ffffff"
       },
+      "androidStatusBar": {
+        "translucent": false
+      },
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.wisdomwise.app",
       "permissions": [
         "android.permission.RECORD_AUDIO",

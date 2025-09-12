@@ -26,6 +26,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const [showQuickActions, setShowQuickActions] = useState(false);
   const insets = useSafeAreaInsets();
 
+
   // Debug logging to track modal state
   React.useEffect(() => {
     console.log('QuickActions modal state:', showQuickActions);
@@ -40,9 +41,10 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <>
+      
       <LinearGradient
         colors={[...gradients.card.primary]}
-        style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 50 }]}
+        style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
       >
         <View style={styles.tabBarContent}>
             {/* First 2 tabs */}

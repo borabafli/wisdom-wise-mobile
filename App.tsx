@@ -22,11 +22,10 @@ export default function App() {
       try {
         await loadFonts();
         
-        // Configure Android navigation bar
+        // Proper Android navigation bar configuration
         if (Platform.OS === 'android') {
           await NavigationBar.setBackgroundColorAsync('#ffffff');
           await NavigationBar.setButtonStyleAsync('dark');
-          await NavigationBar.setVisibilityAsync('visible');
         }
       } catch (e) {
         console.warn(e);

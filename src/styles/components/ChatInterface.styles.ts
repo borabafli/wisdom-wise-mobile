@@ -455,9 +455,9 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Suggestions - Mobile Optimized
   suggestionsContainer: {
-    paddingBottom: spacing[4], // Reduced bottom padding to avoid too much space
-    paddingTop: spacing[2], // Small top padding for separation
-    gap: spacing[5], // Better spacing between rows
+    paddingBottom: spacing[2], // Minimal bottom padding to get closer to chat bar
+    paddingTop: spacing[1], // Very small top padding
+    gap: spacing[3], // Tighter spacing between rows
   },
 
   suggestionsScroll: {
@@ -524,9 +524,9 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Input Area - Modern Glass
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding - 4, // Make chatbar wider by reducing side padding
-    paddingVertical: spacing.components.cardGap + 12, // Moderate positioning
-    paddingBottom: spacing.components.cardGap + 12, // Reduced padding to move chat bar higher
+    paddingTop: 0, // Remove top padding to eliminate gap
     zIndex: 10, // Lower z-index to avoid blocking other elements
+    backgroundColor: 'transparent', // Ensure transparent background
   },
   inputCard: {
     backgroundColor: '#e2e8f0', // Much lighter gray (slate-200) for lighter appearance
