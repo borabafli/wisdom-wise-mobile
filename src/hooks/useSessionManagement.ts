@@ -33,7 +33,7 @@ export const useSessionManagement = () => {
       const welcomeMessage: Message = {
         id: 'welcome',
         type: 'welcome',
-        content: "Hello! I'm Anu, your compassionate companion. I'm here to listen without judgment and help you explore your thoughts and feelings. What's on your mind today? 🌱",
+        content: "What's on your mind today? 🌱",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
 import { RecordingWave } from '../RecordingWave';
@@ -10,7 +10,8 @@ interface ChatInputProps {
   onInputTextChange: (text: string) => void;
   onSend: (text?: string) => void;
   isRecording: boolean;
-  audioLevels: number[];
+  isTranscribing?: boolean;
+  audioLevel: number; // Single audio level instead of array
   partialTranscript?: string;
   onMicPressIn: () => void;
   onMicPressOut: () => void;
@@ -23,7 +24,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onInputTextChange,
   onSend,
   isRecording,
-  audioLevels,
+  isTranscribing,
+  audioLevel,
   partialTranscript,
   onMicPressIn,
   onMicPressOut,
@@ -57,22 +59,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               <TextInput
                 value={inputText}
                 onChangeText={handleInputTextChange}
-                placeholder="Type or speak..."
+                placeholder={isTranscribing ? "Transcribing..." : "Type or speak..."}
                 placeholderTextColor="#94a3b8"
                 multiline
                 style={[
                   styles.textInput,
                   {
-                    height: Math.min(Math.max(48, inputLineCount * 22), 9 * 22),
+                    height: Math.min(Math.max(40, inputLineCount * 22), 9 * 22),
+                    textAlign: isTranscribing ? 'center' : 'left',
                   }
                 ]}
-                editable={true}
+                editable={!isTranscribing}
                 allowFontScaling={false}
                 selectionColor="#3b82f6"
               />
             ) : (
-              /* Recording Interface: X button - Wave - Check button */
-              <View style={styles.recordingInterface}>
+              /* Recording Interface: X button - Wave with Timer inside chatbox - Check button */
+              <View style={styles.recordingInterfaceWithTimer}>
                 {/* Cancel Button (X) - Left side, light filled */}
                 <TouchableOpacity 
                   onPress={onCancelRecording}
@@ -82,10 +85,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   <X size={20} color="#ffffff" />
                 </TouchableOpacity>
 
-                {/* Audio Wave with Timer - Center */}
-                <View style={styles.waveWithTimer}>
+                {/* Wave and Timer Container - Center */}
+                <View style={styles.waveWithTimerInside}>
                   <RecordingWave
-                    audioLevel={audioLevels.length > 0 ? audioLevels.reduce((sum, level) => sum + level, 0) / audioLevels.length : 0}
+                    audioLevel={audioLevel} // Use direct audio level
                     isRecording={isRecording}
                     variant="bars"
                     size="medium"
@@ -130,7 +133,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     style={styles.micButton}
                     activeOpacity={0.7}
                   >
-                    <Mic size={26} color="#6b7280" />
+                    <Mic size={26} color="#334155" />
                   </TouchableOpacity>
                 )}
               </View>

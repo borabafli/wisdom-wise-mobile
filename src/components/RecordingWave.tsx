@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { View, Text } from 'react-native';
 
 interface RecordingWaveProps {
@@ -9,31 +9,49 @@ interface RecordingWaveProps {
   showTimer?: boolean; // Show recording timer
 }
 
-// WhatsApp-style design constants
+// WhatsApp-style design constants with maximum height bars
 const WHATSAPP_STYLE = {
-  barWidth: 2,
+  barWidth: 3, // Width of bars
   barSpacing: 2,
-  barRadius: 1,
-  minHeight: 3,
-  maxHeight: 28,
+  barRadius: 1.5, // Radius for rounded bars
+  minHeight: 3, // Same as barWidth for perfect circles in silence
+  maxHeight: 80, // Increased for more dramatic visual effect
   color: '#06B6D4',
   inactiveOpacity: 0.3,
-  activeOpacity: 0.8,
+  activeOpacity: 0.95,
   timerColor: '#64748b',
 };
 
-// Audio processing with natural variation
+// Minimal audio processing - preserve raw levels with natural variation
 const processAudioLevel = (rawLevel: number, variation: number = 0): number => {
-  let baseLevel;
-  if (rawLevel < 0.01) baseLevel = 0;
-  else if (rawLevel < 0.05) baseLevel = rawLevel * 2;
-  else if (rawLevel < 0.2) baseLevel = 0.1 + (rawLevel - 0.05) * 2;
-  else baseLevel = Math.min(1, 0.4 + (rawLevel - 0.2) * 1.5);
+  // Just ensure bounds and add variation for scrolling wave effect
+  const clampedLevel = Math.max(0, Math.min(1, rawLevel));
   
-  // Add subtle natural variation to prevent identical bars
-  const naturalVariation = (variation - 0.5) * 0.15; // ±7.5% variation
-  return Math.max(0, Math.min(1, baseLevel + naturalVariation));
+  // Create more noticeable variation for better scrolling effect
+  const naturalVariation = (variation - 0.5) * 0.1; // ±5% variation for smooth waves
+  return Math.max(0, Math.min(1, clampedLevel + naturalVariation));
 };
+
+// Calculate dynamic color based on audio level with intense effect
+const getBarColor = (level: number): string => {
+  // Ensure level is between 0 and 1
+  const normalizedLevel = Math.max(0, Math.min(1, level));
+  
+  // More intense color range - from pale blue to very deep blue
+  const veryLightBlue = { r: 186, g: 230, b: 253 }; // #BAE6FD - More visible pale blue
+  const deepBlue = { r: 2, g: 82, b: 119 };         // #025277 - Much darker blue for contrast
+  
+  // Apply power curve for more dramatic color transition
+  const intensifiedLevel = Math.pow(normalizedLevel, 0.7); // Makes transition more dramatic
+  
+  // Interpolate between very light and deep blue
+  const r = Math.round(veryLightBlue.r + (deepBlue.r - veryLightBlue.r) * intensifiedLevel);
+  const g = Math.round(veryLightBlue.g + (deepBlue.g - veryLightBlue.g) * intensifiedLevel);
+  const b = Math.round(veryLightBlue.b + (deepBlue.b - veryLightBlue.b) * intensifiedLevel);
+  
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 
 export const RecordingWave: React.FC<RecordingWaveProps> = ({
   audioLevel = 0,
@@ -46,12 +64,18 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
   const [audioHistory, setAudioHistory] = useState<number[]>([]);
   const [recordingTime, setRecordingTime] = useState(0);
   
-  // Memoized dimensions
+  // Ref to access current audioLevel in interval
+  const audioLevelRef = useRef(audioLevel);
+  useEffect(() => {
+    audioLevelRef.current = audioLevel;
+  }, [audioLevel]);
+  
+  // Memoized dimensions with maximum width and height
   const dimensions = useMemo(() => {
     switch (size) {
-      case 'small': return { width: 140, height: 32, bars: 20 };
-      case 'large': return { width: 280, height: 40, bars: 45 };  
-      default: return { width: 200, height: 36, bars: 32 };
+      case 'small': return { width: 200, height: 76, bars: 20 }; // Even wider for more presence
+      case 'large': return { width: 340, height: 80, bars: 45 }; // Even wider for more presence
+      default: return { width: 280, height: 68, bars: 32 }; // Reduced height for more compact chatbar
     }
   }, [size]);
   
@@ -69,22 +93,30 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     return () => clearInterval(timer);
   }, [isRecording]);
   
-  // Audio data collection effect
+  // Continuous scrolling effect - always running during recording
   useEffect(() => {
     if (!isRecording) return;
     
     const interval = setInterval(() => {
-      const variation = Math.random();
-      const processedLevel = processAudioLevel(audioLevel, variation);
       setAudioHistory(prev => {
+        // Always add new data for continuous scrolling - even during silence
+        const variation = Math.random();
+        const currentLevel = audioLevelRef.current; // Use ref to get current value
+        const processedLevel = processAudioLevel(currentLevel, variation);
         const newHistory = [...prev, processedLevel];
-        const maxHistory = dimensions.bars * 3;
-        return newHistory.slice(-maxHistory);
+        
+        // Keep exactly the number of bars for smooth scrolling
+        return newHistory.slice(-dimensions.bars);
       });
-    }, 80);
+    }, 120); // Slower scrolling for longer history - ~8fps
     
     return () => clearInterval(interval);
-  }, [isRecording, audioLevel, dimensions.bars]);
+  }, [isRecording, dimensions.bars]); // Remove audioLevel dependency for continuous scrolling
+  
+  // Separate effect to update current audio level without affecting scrolling
+  useEffect(() => {
+    // This updates the current level but doesn't control scrolling
+  }, [audioLevel]);
 
   // Clear history effect
   useEffect(() => {
@@ -99,6 +131,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
 
   // Handle pulse variant
   if (variant === 'pulse') {
@@ -126,7 +159,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           style={{
             width: WHATSAPP_STYLE.barWidth,
             height: WHATSAPP_STYLE.minHeight,
-            backgroundColor: WHATSAPP_STYLE.color,
+            backgroundColor: getBarColor(0), // Very light blue for silence baseline
             borderRadius: WHATSAPP_STYLE.barRadius,
             marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
             opacity: WHATSAPP_STYLE.inactiveOpacity,
@@ -137,13 +170,20 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
     }
 
     return Array.from({ length: dimensions.bars }).map((_, index) => {
-      const startIndex = Math.max(0, audioHistory.length - dimensions.bars);
-      const level = audioHistory[startIndex + index] || 0;
+      // For scrolling effect: newer data appears on the right, older on the left
+      const historyIndex = audioHistory.length - dimensions.bars + index;
+      const level = historyIndex >= 0 ? audioHistory[historyIndex] : 0;
       
+      const calculatedHeight = level * WHATSAPP_STYLE.maxHeight;
       const barHeight = Math.max(
         WHATSAPP_STYLE.minHeight,
-        Math.min(WHATSAPP_STYLE.maxHeight, level * WHATSAPP_STYLE.maxHeight)
+        Math.min(WHATSAPP_STYLE.maxHeight, calculatedHeight)
       );
+      
+      // Debug logging for silence issue
+      if (index === 0 && Math.random() < 0.01) { // Log occasionally for first bar
+        console.log(`🎵 Bar ${index}: level=${level.toFixed(4)}, calculated=${calculatedHeight.toFixed(1)}px, final=${barHeight.toFixed(1)}px`);
+      }
 
       return (
         <View
@@ -151,7 +191,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           style={{
             width: WHATSAPP_STYLE.barWidth,
             height: barHeight,
-            backgroundColor: WHATSAPP_STYLE.color,
+            backgroundColor: getBarColor(level), // Dynamic color based on audio level
             borderRadius: WHATSAPP_STYLE.barRadius,
             marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
             opacity: isRecording ? WHATSAPP_STYLE.activeOpacity : WHATSAPP_STYLE.inactiveOpacity,
@@ -165,12 +205,31 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
   return (
     <View
       style={{
-        flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'transparent',
         paddingHorizontal: 8,
       }}
     >
+      {/* Recording Timer - Inside chatbox, positioned lower */}
+      {showTimer && isRecording && (
+        <View style={{
+          marginBottom: 2,
+          marginTop: 2,
+          alignItems: 'center',
+        }}>
+          <Text style={{
+            fontSize: 13,
+            color: '#374151',
+            fontFamily: 'Inter-Medium',
+            letterSpacing: 0.3,
+            opacity: 0.9,
+            fontWeight: '500',
+          }}>
+            {formatTimer(recordingTime)}
+          </Text>
+        </View>
+      )}
+      
       {/* Audio Wave Bars */}
       <View
         style={{
@@ -179,28 +238,11 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           justifyContent: 'center',
           width: dimensions.width,
           height: dimensions.height,
+          position: 'relative',
         }}
       >
         {renderBars()}
       </View>
-      
-      {/* Recording Timer - Right side, same height */}
-      {showTimer && isRecording && (
-        <View style={{
-          marginLeft: 12,
-          justifyContent: 'center',
-        }}>
-          <Text style={{
-            fontSize: 12,
-            color: WHATSAPP_STYLE.timerColor,
-            fontFamily: 'Inter-Medium',
-            letterSpacing: 0.5,
-            minWidth: 35,
-          }}>
-            {formatTimer(recordingTime)}
-          </Text>
-        </View>
-      )}
     </View>
   );
 };

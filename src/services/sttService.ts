@@ -4,6 +4,15 @@ import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
 import { AudioContext, AnalyserNode, AudioRecorder, RecorderAdapterNode } from 'react-native-audio-api';
 
+// Import react-native-audio-record for better PCM audio data on mobile
+let AudioRecord: any = null;
+try {
+  // @ts-ignore - Package might not have TypeScript declarations
+  AudioRecord = require('react-native-audio-record').default;
+} catch (error) {
+  console.warn('react-native-audio-record not available:', error);
+}
+
 // Enhanced simulation for mobile audio levels (no native dependencies required)
 
 
@@ -53,6 +62,11 @@ class STTService {
   // Expo Speech Recognition specific properties
   private partialResultBuffer = '';
   private speechRecognitionTask?: any;
+
+  // react-native-audio-record properties for better waveform data
+  private pcmAudioRecord?: any;
+  private pcmRecordingActive = false;
+  private pcmAnalysisInterval?: NodeJS.Timeout;
 
 
   private defaultSettings: STTSettings = {
@@ -339,9 +353,8 @@ class STTService {
         const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.5); // More aggressive curve for bigger waves
         const normalizedLevel = Math.min(1.0, amplifiedLevel);
         
-        // Higher minimum level for more visible waves even in silence
-        const minLevel = 0.12; // Higher baseline for more visible waves
-        frequencyData.push(Math.max(minLevel, normalizedLevel));
+        // Allow true silence (no artificial minimum)
+        frequencyData.push(normalizedLevel);
       }
       
       const overallAverage = frequencyData.reduce((sum, level) => sum + level, 0) / frequencyData.length;
@@ -365,7 +378,7 @@ class STTService {
   // Store the detected recording format for transcription
   private detectedRecordingFormat: any = null;
 
-  // Mobile recording using Expo Audio + Whisper API
+  // Mobile recording using Expo Audio + Whisper API + react-native-audio-record for better waveform
   private async startMobileRecording(
     onResult: (result: STTResult) => void,
     onError: (error: string) => void,
@@ -390,10 +403,10 @@ class STTService {
         playThroughEarpieceAndroid: false,
       });
 
-      // Start recording with enhanced logging
+      // Start Expo Audio recording for STT transcription
       const recording = new Audio.Recording();
       
-      console.log('🎯 Preparing Android M4A recording with REAL metering...');
+      console.log('🎯 Preparing mobile recording with enhanced waveform data...');
       
       // Use HIGH_QUALITY preset which has metering enabled by default
       const recordingOptions = Audio.RecordingOptionsPresets.HIGH_QUALITY;
@@ -401,6 +414,8 @@ class STTService {
       // Override with our specific settings while keeping metering
       const customOptions = {
         ...recordingOptions,
+        // Explicitly enable metering for real-time audio levels
+        isMeteringEnabled: true,
         android: {
           ...recordingOptions.android,
           extension: '.m4a',
@@ -419,7 +434,6 @@ class STTService {
           numberOfChannels: 1, // Mono is sufficient for speech
           bitRate: 64000, // Lower bitrate for speech
         },
-        // HIGH_QUALITY preset already has isMeteringEnabled: true
       };
       
       console.log('📊 Recording options with metering:', customOptions);
@@ -441,9 +455,9 @@ class STTService {
 
       console.log('✅ Mobile audio recording started successfully');
 
-      // Setup real-time metering via status updates callback
+      // Setup enhanced real-time waveform data
       if (onAudioLevel) {
-        this.setupRealTimeMeteringCallback(onAudioLevel, recording);
+        await this.startEnhancedMobileWaveform(onAudioLevel, recording);
       }
 
       return true;
@@ -464,6 +478,102 @@ class STTService {
   
   // Real-time metering callback approach
   private meteringCallbackActive = false;
+
+  // Enhanced mobile waveform method using react-native-audio-record
+  private async startEnhancedMobileWaveform(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void,
+    expoRecording: Audio.Recording
+  ): Promise<void> {
+    console.log('🎵 Starting react-native-audio-record...');
+    
+    if (AudioRecord && this.canUseReactNativeAudioRecord()) {
+      console.log('🔥 Using react-native-audio-record for real PCM data');
+      await this.startPCMBasedWaveform(onAudioLevel);
+    } else {
+      console.error('❌ react-native-audio-record not available - native module required');
+      throw new Error('react-native-audio-record requires native linking or Expo development build');
+    }
+  }
+
+  // Check if react-native-audio-record can be used
+  private canUseReactNativeAudioRecord(): boolean {
+    try {
+      return AudioRecord && (Platform.OS === 'android' || Platform.OS === 'ios');
+    } catch (error) {
+      console.warn('react-native-audio-record check failed:', error);
+      return false;
+    }
+  }
+
+  // Real PCM-based waveform using react-native-audio-record
+  private async startPCMBasedWaveform(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void
+  ): Promise<void> {
+    try {
+      console.log('🎤 Initializing react-native-audio-record...');
+      
+      const audioConfig = {
+        sampleRate: 16000,
+        bitsPerSample: 16,
+        channelCount: 1,
+        wavFile: 'temp.wav'
+      };
+
+      // Initialize AudioRecord with config
+      await AudioRecord.init(audioConfig);
+      
+      // Set up real-time PCM data callback (only 'data' event is supported)
+      AudioRecord.on('data', (data: string) => {
+        if (!this.pcmRecordingActive || !onAudioLevel) return;
+        
+        try {
+          // Process the base64 PCM data
+          const binaryString = atob(data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          
+          // Convert to 16-bit PCM samples
+          const samples = new Int16Array(bytes.buffer);
+          
+          // Calculate simple RMS level
+          let sum = 0;
+          for (let i = 0; i < samples.length; i++) {
+            sum += (samples[i] / 32768) ** 2;
+          }
+          const rms = Math.sqrt(sum / samples.length);
+          
+          // Generate frequency bands from PCM data
+          const bands = Array.from({ length: 7 }, (_, i) => {
+            const start = Math.floor((i / 7) * samples.length);
+            const end = Math.floor(((i + 1) / 7) * samples.length);
+            let bandSum = 0;
+            for (let j = start; j < end; j++) {
+              bandSum += Math.abs(samples[j] / 32768);
+            }
+            return Math.min(1, bandSum / (end - start) * 2);
+          });
+          
+          onAudioLevel(Math.min(1, rms * 3), bands);
+        } catch (error) {
+          console.warn('Error processing PCM data:', error);
+          this.pcmRecordingActive = false;
+        }
+      });
+
+      // Start recording
+      await AudioRecord.start();
+      this.pcmRecordingActive = true;
+      
+      console.log('✅ Real PCM recording started');
+      
+    } catch (error) {
+      console.error('Failed to start PCM recording:', error);
+      throw error;
+    }
+  }
+
   
   // Setup real-time metering using status update callbacks (the proper way)
   private setupRealTimeMeteringCallback(
@@ -485,9 +595,24 @@ class STTService {
         // Convert Expo Audio metering (-160 to 0 dB) to normalized level (0 to 1)
         const dbLevel = status.metering;
         
-        // Enhanced conversion with better sensitivity for voice levels
-        const adjustedDb = Math.max(-80, Math.min(0, dbLevel)); // Clamp to useful range
-        const normalizedLevel = Math.max(0.02, Math.min(1.0, (adjustedDb + 80) / 80));
+        // Debug logging for metering analysis
+        if (Math.random() < 0.05) { // 5% of the time
+          console.log(`🎙️ Raw Expo metering: ${dbLevel.toFixed(1)}dB, type: ${typeof status.metering}, isRecording: ${status.isRecording}`);
+        }
+        
+        // Proper dB to amplitude conversion (logarithmic, not linear)
+        let amplitude: number;
+        if (dbLevel <= -80) {
+          // True silence
+          amplitude = 0;
+        } else {
+          // Convert dB to linear amplitude: amplitude = 10^(dB/20)
+          const clampedDb = Math.max(-80, Math.min(0, dbLevel));
+          amplitude = Math.pow(10, clampedDb / 20);
+          // Light amplification for better visualization
+          amplitude = Math.min(1.0, amplitude * 3);
+        }
+        const normalizedLevel = amplitude;
         
         // Keep history for smoothing (last 3 readings for faster response)
         meteringHistory.push(normalizedLevel);
@@ -743,10 +868,24 @@ class STTService {
           // Convert Expo Audio metering (-160 to 0 dB) to normalized level (0 to 1)
           const dbLevel = status.metering;
           
-          // Enhanced conversion with better sensitivity for voice levels
-          // Most speech is around -60 to -10 dB, so we optimize for that range
-          const adjustedDb = Math.max(-80, Math.min(0, dbLevel)); // Clamp to useful range
-          const normalizedLevel = Math.max(0.02, Math.min(1.0, (adjustedDb + 80) / 80));
+          // Debug logging for metering analysis (fallback)
+          if (Math.random() < 0.05) { // 5% of the time
+            console.log(`🎙️ Raw Expo metering (fallback): ${dbLevel.toFixed(1)}dB, type: ${typeof status.metering}, isRecording: ${status.isRecording}`);
+          }
+          
+          // Proper dB to amplitude conversion (logarithmic, not linear)
+          let amplitude: number;
+          if (dbLevel <= -80) {
+            // True silence
+            amplitude = 0;
+          } else {
+            // Convert dB to linear amplitude: amplitude = 10^(dB/20)
+            const clampedDb = Math.max(-80, Math.min(0, dbLevel));
+            amplitude = Math.pow(10, clampedDb / 20);
+            // Light amplification for better visualization
+            amplitude = Math.min(1.0, amplitude * 3);
+          }
+          const normalizedLevel = amplitude;
           
           // Keep history for smoothing (last 5 readings)
           meteringHistory.push(normalizedLevel);
@@ -773,11 +912,9 @@ class STTService {
             console.warn('⚠️ Expo Audio metering not available - status:', status.isRecording, 'metering:', status.metering);
           }
           
-          // Provide subtle organic movement while we wait for metering to kick in
-          const time = Date.now() / 1000;
-          const organicBase = 0.05 + Math.sin(time * 0.8) * 0.02; // Gentle baseline movement
-          const organicSpectrum = self.generateVoiceOptimizedSpectrum(organicBase);
-          onAudioLevel(organicBase, organicSpectrum);
+          // No fallback movement - wait for real metering data
+          // This prevents artificial audio levels during silence
+          onAudioLevel(0, []);
         }
       } catch (error) {
         console.warn('⚠️ Error getting REAL metering data:', error);
@@ -1045,11 +1182,31 @@ class STTService {
   private async cleanupRealAudioLevelMonitoring(): Promise<void> {
     console.log('🧹 Cleaning up modern audio analysis pipeline...');
     
+    // Stop PCM recording for waveform
+    if (this.pcmRecordingActive) {
+      try {
+        this.pcmRecordingActive = false;
+        if (AudioRecord) {
+          AudioRecord.stop();
+          // Remove data listener by setting empty callback
+          try {
+            AudioRecord.on('data', () => {});
+          } catch (e) {
+            // Ignore listener cleanup errors
+          }
+        }
+        this.pcmAudioRecord = undefined;
+        console.log('✅ PCM waveform recording stopped and cleaned up');
+      } catch (error) {
+        console.warn('⚠️ Error stopping PCM waveform recording:', error);
+      }
+    }
+    
     // Stop real-time analysis interval
     if (this.audioAnalysisInterval) {
       clearInterval(this.audioAnalysisInterval);
       this.audioAnalysisInterval = undefined;
-      console.log('🧹 Cleared real-time audio analysis interval');
+      console.log('✅ Cleared real-time audio analysis interval');
     }
     
     // Stop and cleanup AudioRecorder

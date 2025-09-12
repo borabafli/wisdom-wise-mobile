@@ -77,9 +77,14 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
 
   return (
     <View style={styles.suggestionsContainer}>
-      {/* Regular suggestion chips displayed all together */}
+      {/* Regular suggestion chips in horizontal scroll */}
       {suggestions.length > 0 && (
-        <View style={styles.suggestionsStack}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.suggestionsScrollContent}
+          style={styles.suggestionsScroll}
+        >
           {suggestions.map((suggestion, index) => (
             <TouchableOpacity
               key={index}
@@ -99,7 +104,7 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       )}
       
       {/* Exercise suggestion button in separate row */}
@@ -115,7 +120,7 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
             activeOpacity={isTyping ? 1 : 0.7}
             disabled={isTyping}
           >
-            <Brain size={16} color={isTyping ? "#9CA3AF" : "#6B46C1"} style={{ marginRight: 6 }} />
+            <Brain size={16} color={isTyping ? "#9CA3AF" : "#475569"} style={{ marginRight: 6 }} />
             <Text style={[
               styles.suggestionText,
               styles.exerciseSuggestionText,

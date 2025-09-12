@@ -121,4 +121,9 @@ export const audioWaveformStyles = StyleSheet.create({
     backgroundColor: colors.teal[400] + '10',
     borderColor: colors.teal[400] + '30',
   },
+  
+  // SVG styles
+  svg: {
+    flex: 1,
+  },
 });
