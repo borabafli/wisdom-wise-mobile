@@ -1,5 +1,7 @@
 import { supabase } from '../config/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
 
 export class AuthService {
   // Helper to get the correct redirect URL for current environment
@@ -54,6 +56,84 @@ export class AuthService {
       return data;
     } catch (error: any) {
       console.error('AuthService.signIn error:', error);
+      throw error;
+    }
+  }
+
+  // Sign in with Google OAuth
+  async signInWithGoogle() {
+    try {
+      // Configure the redirect URL for your app scheme
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'wisdomwise',
+        path: '/auth/callback'
+      });
+
+      console.log('OAuth redirect URL:', redirectUrl);
+
+      // Start the OAuth session with Supabase
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Supabase OAuth error:', error);
+        throw new Error(error.message);
+      }
+
+      if (!data.url) {
+        throw new Error('No OAuth URL returned from Supabase');
+      }
+
+      console.log('Opening OAuth URL:', data.url);
+
+      // Open the OAuth URL in the browser
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        redirectUrl
+      );
+
+      console.log('WebBrowser result:', result);
+
+      if (result.type === 'cancel') {
+        throw new Error('Authentication was cancelled');
+      }
+
+      if (result.type === 'dismiss') {
+        throw new Error('Authentication was dismissed');
+      }
+
+      if (result.type !== 'success' || !result.url) {
+        throw new Error('Authentication failed - no success URL returned');
+      }
+
+      // Let Supabase handle the callback URL automatically
+      // The session should be set automatically via the auth state change listener
+      
+      // Wait a moment for the session to be established
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        throw new Error(`Session error: ${sessionError.message}`);
+      }
+
+      if (!session) {
+        throw new Error('No session established after OAuth');
+      }
+
+      return { session, user: session.user };
+    } catch (error: any) {
+      console.error('AuthService.signInWithGoogle error:', error);
       throw error;
     }
   }

@@ -6,6 +6,7 @@ interface AuthContextType {
   isLoading: boolean;
   user: any;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -71,6 +72,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    setIsLoading(true);
+    try {
+      const data = await authService.signInWithGoogle();
+      console.log('Google sign in successful:', data.user?.email);
+    } catch (error: any) {
+      console.error('Google sign in error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     setIsLoading(true);
     try {
@@ -102,6 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     user,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
   };

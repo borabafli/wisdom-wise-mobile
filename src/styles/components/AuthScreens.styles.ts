@@ -208,6 +208,55 @@ export const authScreenStyles = StyleSheet.create({
     fontFamily: 'Inter',
   },
 
+  // Google Sign-In Button
+  googleButton: {
+    backgroundColor: colors.white,
+    borderRadius: 50,
+    paddingVertical: spacing.therapy.lg,
+    paddingHorizontal: spacing.therapy.xl,
+    marginTop: spacing.therapy.md,
+    ...shadows.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 56,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
+    flexDirection: 'row',
+  },
+
+  googleButtonText: {
+    color: colors.text.primary,
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Inter',
+    marginLeft: spacing.therapy.sm,
+  },
+
+  googleIcon: {
+    width: 20,
+    height: 20,
+  },
+
+  // Divider for "or" section
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: spacing.therapy.lg,
+  },
+
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E1E8ED',
+  },
+
+  dividerText: {
+    marginHorizontal: spacing.therapy.md,
+    fontSize: 14,
+    color: colors.text.secondary,
+    fontFamily: 'Inter',
+  },
+
   // Footer Section
   footerContainer: {
     alignItems: 'center',

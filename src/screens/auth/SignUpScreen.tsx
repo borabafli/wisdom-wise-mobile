@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } fro
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../contexts';
 import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
+import { GoogleIcon } from '../../components/GoogleIcon';
 
 export const SignUpScreen: React.FC<{ 
   onNavigateToSignIn: () => void;
@@ -14,7 +15,7 @@ export const SignUpScreen: React.FC<{
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
-  const { signUp, isLoading } = useAuth();
+  const { signUp, signInWithGoogle, isLoading } = useAuth();
 
   const validateForm = () => {
     if (!firstName.trim()) {
@@ -73,6 +74,14 @@ export const SignUpScreen: React.FC<{
     if (strength === 'Medium') return 'text-yellow-500';
     if (strength === 'Strong') return 'text-green-500';
     return '';
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      Alert.alert('Google Sign In Failed', error.message || 'Please try again');
+    }
   };
 
   return (
@@ -219,6 +228,26 @@ export const SignUpScreen: React.FC<{
           >
             <Text style={styles.primaryButtonText}>
               {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Divider */}
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          {/* Google Sign In Button */}
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={handleGoogleSignIn}
+            disabled={isLoading}
+            activeOpacity={0.8}
+          >
+            <GoogleIcon size={20} />
+            <Text style={styles.googleButtonText}>
+              Continue with Google
             </Text>
           </TouchableOpacity>
         </View>

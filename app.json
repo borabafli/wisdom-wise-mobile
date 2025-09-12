@@ -80,7 +80,8 @@
         }
       ],
       "react-native-audio-api",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "scheme": "wisdomwise",
     "extra": {
