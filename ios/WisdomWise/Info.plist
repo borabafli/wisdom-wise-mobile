@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>wisdomwise</string>
           <string>com.wisdomwise.app</string>
         </array>
       </dict>
@@ -50,10 +51,25 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSFaceIDUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow WisdomWise to access your microphone for voice input during therapy sessions.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Allow WisdomWise to securely recognize user speech during therapy sessions.</string>
+    <string>Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions.</string>
+    <key>UIAppFonts</key>
+    <array>
+      <string>ClashGrotesk-Bold.otf</string>
+      <string>ClashGrotesk-Extralight.otf</string>
+      <string>ClashGrotesk-Light.otf</string>
+      <string>ClashGrotesk-Medium.otf</string>
+      <string>ClashGrotesk-Regular.otf</string>
+      <string>ClashGrotesk-Semibold.otf</string>
+    </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>audio</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
