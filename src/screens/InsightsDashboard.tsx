@@ -225,9 +225,11 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
-      {/* Background */}
+      {/* Background Gradient - Consistent with HomeScreen */}
       <LinearGradient
-        colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
+        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
       />
       
@@ -241,7 +243,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           Your progress
         </Text>
         <Text style={styles.subtitle}>
-          Your wellness journey continues ✨
+          Your wellness journey continues
         </Text>
       </View>
 
@@ -520,7 +522,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             ) : (
               <View style={styles.emptyStateContainer}>
                 <Text style={styles.emptyStateText}>
-                  Start a conversation to discover your thought patterns! 🌱
+                  Start a conversation to discover your thought patterns!
                 </Text>
               </View>
             )}

@@ -44,9 +44,11 @@ const ProfileScreen: React.FC = () => {
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
-      {/* Background */}
+      {/* Background Gradient - Consistent with HomeScreen */}
       <LinearGradient
-        colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
+        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
       />
       
@@ -63,7 +65,7 @@ const ProfileScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile</Text>
+          <Text style={styles.headerTitle}>Profile 👤</Text>
         </View>
 
         {/* User Info */}

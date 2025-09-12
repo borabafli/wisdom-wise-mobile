@@ -1,73 +1,100 @@
 /**
  * ExerciseLibrary Component Styles
- * Main library screen for browsing exercises
+ * Consistent design with HomeScreen using shared design patterns
  */
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { colors, typography, spacing, shadows } from '../tokens';
 
+const { width, height } = Dimensions.get('window');
+
 export const exerciseLibraryStyles = StyleSheet.create({
+  // Container & Layout - Consistent with HomeScreen
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    position: 'relative',
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
   },
 
-  // Header
+  // Header Section - Consistent styling
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing[20],
-    paddingTop: spacing[16],
-    paddingBottom: spacing[8],
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[20],
+    paddingBottom: spacing[12],
   },
   headerTitle: {
-    fontSize: typography.fontSize['2xl'],
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#002d14', // Consistent with HomeScreen green theme
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   headerButtons: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[8],
   },
+  // Dev Buttons - Maintain existing functionality
   devButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[4],
     paddingHorizontal: spacing[12],
     paddingVertical: spacing[8],
-    backgroundColor: colors.orange[100],
+    backgroundColor: '#FFE4B5',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.orange[300],
+    borderColor: '#DEB887',
   },
   devButtonText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: 12,
+    fontWeight: '600',
     color: colors.primary[400],
   },
   devButtonSelected: {
-    backgroundColor: colors.primary[600],
-    borderColor: colors.primary[600],
+    backgroundColor: '#446D78',
+    borderColor: '#446D78',
   },
+  // Filter Button - Enhanced styling
   filterButton: {
-    padding: spacing[12],
-    backgroundColor: colors.background.card,
-    borderRadius: 12,
+    padding: spacing[14], // Increased padding for better touch target
+    backgroundColor: 'rgba(161, 214, 242, 0.25)', // Light blue/teal like home screen
+    borderRadius: 50, // Fully rounded
     position: 'relative',
-    ...shadows.small,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(147, 197, 253, 0.3)', // Light blue border matching home
+    minWidth: 56, // Ensure minimum touch target
+    minHeight: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   filterButtonActive: {
-    backgroundColor: colors.teal[100],
+    backgroundColor: 'rgba(186, 230, 253, 0.4)', // Slightly more saturated blue when active
     borderWidth: 1,
-    borderColor: colors.teal[400],
+    borderColor: 'rgba(147, 197, 253, 0.6)',
   },
   filterBadge: {
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: colors.primary[600],
+    backgroundColor: '#002d14', // Dark green badge
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -80,10 +107,11 @@ export const exerciseLibraryStyles = StyleSheet.create({
     color: colors.white,
   },
 
-  // Search
+  // Search Section - Enhanced styling for better visual consistency
   searchSection: {
-    paddingHorizontal: spacing[20],
+    paddingHorizontal: spacing.layout.screenPadding,
     paddingBottom: spacing[16],
+    paddingTop: spacing[8],
   },
   searchRow: {
     flexDirection: 'row',
@@ -94,12 +122,18 @@ export const exerciseLibraryStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.card,
-    borderRadius: 12,
+    backgroundColor: 'rgba(248, 250, 252, 0.95)', // Slightly more opaque for better visibility
+    borderRadius: 50, // Fully rounded like home input
     paddingHorizontal: spacing[16],
-    paddingVertical: spacing[12],
+    paddingVertical: spacing[14], // Slightly more padding for better touch target
     gap: spacing[12],
-    ...shadows.small,
+    shadowColor: '#000000', // Dark shadow like home
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(134, 239, 172, 0.2)', // Subtle green border
   },
   searchInput: {
     flex: 1,
@@ -108,87 +142,102 @@ export const exerciseLibraryStyles = StyleSheet.create({
     fontWeight: typography.fontWeight.regular,
   },
 
-  // Dev Slider
+  // Dev Slider Section
   devSliderSection: {
-    backgroundColor: colors.orange[50],
-    borderRadius: 16,
-    marginHorizontal: spacing[20],
+    backgroundColor: '#FFF9E6',
+    borderRadius: 20, // Consistent with home card styling
+    marginHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing[16],
     padding: spacing[16],
     borderWidth: 2,
-    borderColor: colors.orange[100],
-    ...shadows.small,
+    borderColor: '#FFE4B5',
+    shadowColor: 'rgba(0, 0, 0, 0.15)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
+    elevation: 8,
   },
   devSliderContainer: {
     alignItems: 'center',
   },
 
-  // Filters
+  // Filters Section - Improved styling
   filtersSection: {
-    backgroundColor: colors.background.secondary,
-    paddingVertical: spacing[12],
-    paddingHorizontal: spacing[20],
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glass morphism effect
+    paddingVertical: spacing[16],
+    paddingHorizontal: spacing.layout.screenPadding,
     gap: spacing[12],
+    borderRadius: 24,
+    marginHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing[16],
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
   },
   filtersHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: spacing[4],
+    marginBottom: spacing[8],
   },
   filtersTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text.primary,
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#002d14',
+    fontFamily: 'Poppins-Bold',
   },
   clearFiltersButton: {
     paddingHorizontal: spacing[12],
     paddingVertical: spacing[6],
-    backgroundColor: colors.primary[100],
-    borderRadius: 8,
+    backgroundColor: 'rgba(134, 239, 172, 0.3)', // Light green
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.primary[300],
+    borderColor: 'rgba(134, 239, 172, 0.5)',
   },
   clearFiltersText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.primary[600],
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#002d14',
   },
   filterGroup: {
-    gap: spacing[6],
+    gap: spacing[8],
   },
   filterGroupTitle: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.text.secondary,
+    fontFamily: 'Poppins-SemiBold',
   },
   filterScrollView: {
     flexGrow: 0,
   },
   filterRow: {
     flexDirection: 'row',
-    gap: spacing[6],
+    gap: spacing[8],
     paddingRight: spacing[20],
   },
   filterChip: {
-    paddingHorizontal: spacing[12],
-    paddingVertical: spacing[6],
-    backgroundColor: colors.teal[100],
-    borderRadius: 16,
+    paddingHorizontal: spacing[16], // Increased from 12 for better touch targets
+    paddingVertical: spacing[12], // Increased from 8 for 44px minimum touch target
+    backgroundColor: 'rgba(236, 250, 248, 0.8)', // Light teal background
+    borderRadius: 20, // More rounded
     borderWidth: 1,
-    borderColor: colors.teal[300],
+    borderColor: 'rgba(134, 239, 172, 0.4)',
+    minHeight: 44, // Ensure minimum touch target
   },
   filterChipSelected: {
-    backgroundColor: colors.teal[400],
-    borderColor: colors.teal[400],
+    backgroundColor: '#ECFAF8', // Consistent green theme
+    borderColor: '#86efac',
   },
   filterChipText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral[800],
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#002d14',
   },
   filterChipTextSelected: {
-    color: colors.white,
+    color: '#002d14', // Keep dark text for readability
   },
 
   // Results
@@ -199,70 +248,89 @@ export const exerciseLibraryStyles = StyleSheet.create({
     paddingBottom: 120,
   },
   resultsHeader: {
-    paddingHorizontal: spacing[20],
+    paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing[16],
   },
   resultsCount: {
-    fontSize: typography.fontSize.sm,
+    fontSize: 14,
     color: colors.text.secondary,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: '500',
+    fontFamily: 'Poppins-Regular',
   },
 
-  // Exercise Cards
+  // Exercise Cards - Match HomeScreen exercise card styling
   exercisesGrid: {
-    paddingHorizontal: spacing[20],
-    gap: spacing[12],
-  },
-  exerciseRow: {
-    flexDirection: 'row',
+    paddingHorizontal: spacing.layout.screenPadding,
     gap: spacing[12],
   },
   exerciseCardWrapper: {
-    flex: 1,
+    width: '100%',
   },
   exerciseCard: {
-    borderRadius: 16,
+    borderRadius: 20, // Consistent with home
     overflow: 'hidden',
-    ...shadows.small,
-    height: 160,
+    shadowColor: 'rgba(0, 0, 0, 0.15)', // Darker shadow like home
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
+    elevation: 8,
+    minHeight: width < 375 ? 140 : 160, // Responsive height for smaller screens
+    backgroundColor: 'transparent',
   },
   exerciseCardGradient: {
     flexDirection: 'row',
-    padding: spacing[12],
-    height: 160,
+    padding: width < 375 ? spacing[10] : spacing[12], // Responsive padding
+    minHeight: width < 375 ? 140 : 160, // Match card height
   },
   exerciseImageContainer: {
-    width: 60,
-    height: 136,
+    width: width < 375 ? 50 : 60, // Responsive image width
+    height: width < 375 ? 116 : 136, // Responsive image height
     borderRadius: 12,
     overflow: 'hidden',
-    marginRight: spacing[12],
+    marginRight: width < 375 ? spacing[8] : spacing[12], // Responsive margin
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   exerciseImage: {
-    width: 60,
-    height: 136,
+    width: width < 375 ? 50 : 60, // Match container width
+    height: width < 375 ? 116 : 136, // Match container height
   },
   exerciseContent: {
     flex: 1,
-    gap: spacing[8],
+    gap: spacing[6],
+    justifyContent: 'space-between',
   },
   categoryTag: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing[8],
     paddingVertical: spacing[4],
     borderRadius: 12,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
   categoryTagText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: 10,
+    fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontFamily: 'Poppins-SemiBold',
   },
   exerciseTitle: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[800],
-    lineHeight: 20,
+    fontSize: width < 375 ? 15 : 17, // Increased font size for better readability
+    fontWeight: '700',
+    color: '#001a0e', // Even darker green for better contrast
+    lineHeight: width < 375 ? 18 : 22, // Better line height
+    fontFamily: 'Poppins-Bold',
+    textShadowColor: 'rgba(255, 255, 255, 0.9)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: spacing[2], // Add spacing
   },
   exerciseMeta: {
     flexDirection: 'row',
@@ -275,35 +343,62 @@ export const exerciseLibraryStyles = StyleSheet.create({
     gap: spacing[4],
   },
   exerciseDuration: {
-    fontSize: typography.fontSize.xs,
-    color: colors.neutral[800],
-    fontWeight: typography.fontWeight.medium,
+    fontSize: 11,
+    color: '#001a0e',
+    fontWeight: '600', // Increased font weight
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    opacity: 0.8, // Slightly more visible
   },
   exerciseDescription: {
-    fontSize: typography.fontSize.xs,
-    color: colors.neutral[700],
-    lineHeight: 16,
-    opacity: 0.8,
+    fontSize: 13, // Increased font size
+    color: '#002d14',
+    lineHeight: 17,
+    opacity: 0.9, // Increased opacity for better readability
+    letterSpacing: 0.1,
+    marginTop: spacing[1], // Add spacing
   },
 
-  // Empty State
+  // Empty State - Consistent styling
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 64,
+    paddingVertical: spacing[64],
     paddingHorizontal: spacing[32],
   },
   emptyStateTitle: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: 20,
+    fontWeight: '600',
     color: colors.text.primary,
     marginTop: spacing[16],
     marginBottom: spacing[8],
+    fontFamily: 'Poppins-SemiBold',
   },
   emptyStateDescription: {
-    fontSize: typography.fontSize.base,
+    fontSize: 16,
     color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 24,
+    fontFamily: 'Poppins-Regular',
   },
 });
+
+// Tag colors with enhanced visibility and accessibility
+export const getTagColor = (category: string) => {
+  const tagColors = {
+    'CBT': { bg: 'rgba(22, 163, 74, 0.9)', text: '#ffffff' }, // Strong green background
+    'BREATHING': { bg: 'rgba(34, 197, 94, 0.9)', text: '#ffffff' }, // Medium green
+    'Breathing': { bg: 'rgba(34, 197, 94, 0.9)', text: '#ffffff' }, // Medium green  
+    'Meditation': { bg: 'rgba(21, 128, 61, 0.9)', text: '#ffffff' }, // Dark green
+    'Mindfulness': { bg: 'rgba(5, 150, 105, 0.9)', text: '#ffffff' }, // Teal green
+    'Journaling': { bg: 'rgba(6, 78, 59, 0.9)', text: '#ffffff' }, // Very dark green
+    'ACT': { bg: 'rgba(4, 120, 87, 0.9)', text: '#ffffff' }, // Dark teal
+    'Self-Care': { bg: 'rgba(15, 118, 110, 0.9)', text: '#ffffff' }, // Teal
+  };
+  return tagColors[category] || { bg: 'rgba(22, 163, 74, 0.9)', text: '#ffffff' };
+};
+
+// Exercise card gradients consistent with home
+export const getExerciseCardGradient = () => {
+  return ['#ECFAF8', '#EDF8F8']; // Consistent with home exercise cards
+};
