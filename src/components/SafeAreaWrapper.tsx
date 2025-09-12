@@ -36,13 +36,16 @@ export const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
     };
   }
 
-  // Calculate safe area padding based on edges
+  // Calculate safe area padding - FORCE disable bottom on Android
   const safePadding = {
     paddingTop: edges.includes('top') ? insets.top : 0,
-    paddingBottom: edges.includes('bottom') ? insets.bottom : 0,
+    paddingBottom: edges.includes('bottom') && Platform.OS !== 'android' ? insets.bottom : 0,
     paddingLeft: edges.includes('left') ? insets.left : 0,
     paddingRight: edges.includes('right') ? insets.right : 0,
   };
+
+  // Debug logging removed for cleaner output
+
 
   const containerStyle = {
     flex: 1,

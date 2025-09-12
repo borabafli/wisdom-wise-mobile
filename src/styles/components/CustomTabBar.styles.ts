@@ -19,28 +19,31 @@ export const customTabBarStyles = StyleSheet.create({
   },
   tabBarContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: spacing.components.cardGap,
     paddingHorizontal: spacing.components.cardPadding,
-    flex: 0, // Don't stretch to fill available space
+    flex: 1, // Take full width
   },
 
   // Tab Buttons
   tabButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing[3],
+    gap: spacing[2],
     padding: spacing.components.cardGap,
     borderRadius: spacing.radius.lg,
-    minWidth: 60,
+    flex: 1,
+    maxWidth: 90,
   },
   tabButtonActive: {
-    backgroundColor: 'rgba(59, 180, 245, 0.1)', // Light sky blue background that matches the accent
+    backgroundColor: 'rgba(13, 148, 136, 0.1)', // Light teal background
   },
   tabLabel: {
     ...typography.textStyles.caption,
     fontWeight: typography.fontWeight.medium,
+    textAlign: 'center',
+    numberOfLines: 1,
   },
 
   // Center Plus Button
@@ -58,8 +61,7 @@ export const customTabBarStyles = StyleSheet.create({
     borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.floatingActionButton,
-
+    // Shadow removed
   },
 
 

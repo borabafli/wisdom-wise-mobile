@@ -194,7 +194,7 @@ export const gradients = {
   
   // Button gradients
   button: {
-    primary: ['#4A98BC', '#3A7A9A'],
+    primary: ['#6BB0A5', '#6BB0A5'], // Slightly darker muted teal
     blue: ['#3b82f6', '#1d4ed8'],
     purple: ['#8b5cf6', '#7c3aed'],
     cyan: ['#06b6d4', '#0891b2'],

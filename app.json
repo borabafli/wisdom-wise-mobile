@@ -42,10 +42,13 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f0f9ff"
       },
-      "edgeToEdgeEnabled": true,
+      "edgeToEdgeEnabled": false,
       "statusBar": {
         "backgroundColor": "#f0f9ff",
         "translucent": false
+      },
+      "navigationBar": {
+        "backgroundColor": "transparent"
       },
       "package": "com.wisdomwise.app",
       "permissions": [
@@ -73,7 +76,8 @@
             "./assets/fonts/OTF/ClashGrotesk-Light.otf",
             "./assets/fonts/OTF/ClashGrotesk-Medium.otf",
             "./assets/fonts/OTF/ClashGrotesk-Regular.otf",
-            "./assets/fonts/OTF/ClashGrotesk-Semibold.otf"
+            "./assets/fonts/OTF/ClashGrotesk-Semibold.otf",
+            "./assets/fonts/BubblegumSans-Regular.ttf"
           ]
         }
       ],

@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch } from 're
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
@@ -13,6 +15,9 @@ const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
   const { displayName, profile } = useUserProfile();
+  
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
   
   const stats = [
     { label: 'Sessions', value: '47', icon: Heart },
@@ -38,6 +43,7 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <SafeAreaWrapper style={styles.container}>
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       {/* Background */}
       <LinearGradient
         colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}

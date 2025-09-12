@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, ScrollView, TextInput, StyleSheet, Dimens
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X, Bug } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { exercisesArray } from '../data/exerciseLibrary';
 import { colors, gradients, shadows } from '../styles/tokens';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { MoodSlider } from '../components/chat/MoodSlider';
 
 const { width, height } = Dimensions.get('window');
@@ -22,6 +24,9 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const [showFilters, setShowFilters] = useState(false);
   const [showDevSlider, setShowDevSlider] = useState(false);
   const [sliderVariant, setSliderVariant] = useState<'default' | 'test'>('default');
+
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
   
   // Use unified exercises from exerciseLibrary.ts
   const exercises = exercisesArray;
@@ -179,6 +184,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
   return (
     <SafeAreaWrapper style={styles.container}>
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Exercise Library</Text>

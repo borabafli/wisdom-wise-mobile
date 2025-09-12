@@ -4,6 +4,8 @@ import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
 import { goalService, TherapyGoal } from '../services/goalService';
@@ -31,6 +33,10 @@ interface InsightsDashboardProps {
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
   const { firstName } = useUserProfile();
+  
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.insightsDashboard);
+  
   const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
   const [thinkingPatternReflections, setThinkingPatternReflections] = useState<ThinkingPatternReflectionSummary[]>([]);
   const [memoryInsights, setMemoryInsights] = useState<Insight[]>([]);
@@ -218,6 +224,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
   return (
     <SafeAreaWrapper style={styles.container}>
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       {/* Background */}
       <LinearGradient
         colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
