@@ -66,7 +66,7 @@ export class AuthService {
       // Configure the redirect URL for your app scheme
       const redirectUrl = AuthSession.makeRedirectUri({
         scheme: 'wisdomwise',
-        path: '/auth/callback'
+        path: '/auth/verify'
       });
 
       console.log('OAuth redirect URL:', redirectUrl);
@@ -114,24 +114,33 @@ export class AuthService {
         throw new Error('Authentication failed - no success URL returned');
       }
 
-      // Let Supabase handle the callback URL automatically
-      // The session should be set automatically via the auth state change listener
+      // Extract tokens from the callback URL
+      const url = new URL(result.url);
+      const fragment = url.hash.substring(1); // Remove the '#' character
+      const params = new URLSearchParams(fragment);
       
-      // Wait a moment for the session to be established
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
       
-      // Check if we have a valid session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (!accessToken) {
+        throw new Error('No access token found in OAuth callback');
+      }
+
+      // Set the session manually with the extracted tokens
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken || ''
+      });
       
       if (sessionError) {
         throw new Error(`Session error: ${sessionError.message}`);
       }
 
-      if (!session) {
+      if (!sessionData.session) {
         throw new Error('No session established after OAuth');
       }
 
-      return { session, user: session.user };
+      return { session: sessionData.session, user: sessionData.session.user };
     } catch (error: any) {
       console.error('AuthService.signInWithGoogle error:', error);
       throw error;
