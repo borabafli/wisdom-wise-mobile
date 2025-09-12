@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WisdomWise Mobile Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .viewport-selector {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #333;
+            color: white;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .viewport-selector button {
+            margin: 5px;
+            padding: 5px 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .mobile-frame {
+            position: relative;
+            margin: 50px auto;
+            border: 2px solid #333;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+        }
+        .app-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .android-nav-simulation {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 100;
+        }
+        .android-nav-button {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .android-nav-button.back {
+            clip-path: polygon(50% 0%, 0% 50%, 50% 100%);
+        }
+        .android-nav-button.home {
+            border-radius: 50%;
+        }
+        .android-nav-button.recent {
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport-selector">
+        <button onclick="setViewport(360, 640)">360x640 (Small Android)</button>
+        <button onclick="setViewport(375, 667)">375x667 (iPhone)</button>
+        <button onclick="setViewport(390, 844)">390x844 (Android)</button>
+        <button onclick="setViewport(414, 896)">414x896 (Large Android)</button>
+    </div>
+
+    <div class="mobile-frame" id="mobileFrame">
+        <iframe class="app-iframe" src="http://localhost:8085" id="appFrame"></iframe>
+        <div class="android-nav-simulation" id="androidNav">
+            <div class="android-nav-button back"></div>
+            <div class="android-nav-button home"></div>
+            <div class="android-nav-button recent"></div>
+        </div>
+    </div>
+
+    <script>
+        function setViewport(width, height) {
+            const frame = document.getElementById('mobileFrame');
+            frame.style.width = width + 'px';
+            frame.style.height = height + 'px';
+            
+            // Show/hide Android navigation simulation
+            const androidNav = document.getElementById('androidNav');
+            if (width === 360 || width === 390 || width === 414) {
+                androidNav.style.display = 'flex';
+            } else {
+                androidNav.style.display = 'none';
+            }
+        }
+        
+        // Set initial viewport
+        setViewport(360, 640);
+    </script>
+</body>
+</html>

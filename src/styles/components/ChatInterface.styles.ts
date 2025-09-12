@@ -525,7 +525,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding - 4, // Make chatbar wider by reducing side padding
     paddingVertical: spacing.components.cardGap + 12, // Moderate positioning
-    paddingBottom: spacing.components.cardGap + 24, // Reasonable padding for keyboard
+    paddingBottom: spacing.components.cardGap + 12, // Reduced padding to move chat bar higher
     zIndex: 10, // Lower z-index to avoid blocking other elements
   },
   inputCard: {

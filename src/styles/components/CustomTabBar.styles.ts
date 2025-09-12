@@ -9,7 +9,7 @@ import { colors, typography, spacing, shadows } from '../tokens';
 export const customTabBarStyles = StyleSheet.create({
   // Container
   container: {
-    backgroundColor: colors.white, // Force white background for container
+    backgroundColor: 'transparent', // No background - let LinearGradient handle it
   },
   tabBarGradient: {
     borderTopWidth: 1,
@@ -21,9 +21,10 @@ export const customTabBarStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: spacing.components.cardGap,
+    paddingVertical: 16, // More vertical space for text
     paddingHorizontal: spacing.components.cardPadding,
     flex: 1, // Take full width
+    minHeight: 90, // Taller to accommodate icon + text
   },
 
   // Tab Buttons
@@ -31,10 +32,12 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing[2],
-    padding: spacing.components.cardGap,
+    paddingVertical: 12, // More vertical padding for text
+    paddingHorizontal: 4, // Less horizontal padding for more text space
     borderRadius: spacing.radius.lg,
     flex: 1,
-    maxWidth: 90,
+    maxWidth: 110, // Wider to allow full text
+    minHeight: 60, // Ensure enough height for icon + text
   },
   tabButtonActive: {
     backgroundColor: 'rgba(13, 148, 136, 0.1)', // Light teal background

@@ -40,12 +40,11 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <>
-      <View style={styles.container}>
-        <LinearGradient
-          colors={[...gradients.card.primary]}
-          style={styles.tabBarGradient}
-        >
-          <View style={[styles.tabBarContent, Platform.OS === 'ios' && { paddingBottom: insets.bottom }]}>
+      <LinearGradient
+        colors={[...gradients.card.primary]}
+        style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 50 }]}
+      >
+        <View style={styles.tabBarContent}>
             {/* First 2 tabs */}
             {tabs.slice(0, 2).map((tab, index) => {
               const isFocused = state.index === index;
@@ -83,7 +82,6 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                       styles.tabLabel,
                       { color: isFocused ? '#0d9488' : '#6B7280' }
                     ]}
-                    numberOfLines={1}
                   >
                     {tab.label}
                   </Text>
@@ -143,7 +141,6 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                       styles.tabLabel,
                       { color: isFocused ? '#0d9488' : '#6B7280' }
                     ]}
-                    numberOfLines={1}
                   >
                     {tab.label}
                   </Text>
@@ -151,8 +148,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
               );
             })}
           </View>
-        </LinearGradient>
-      </View>
+      </LinearGradient>
 
       {/* Quick Actions Popup */}
       <QuickActionsPopup 

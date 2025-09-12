@@ -48,7 +48,9 @@
         "translucent": false
       },
       "navigationBar": {
-        "backgroundColor": "transparent"
+        "backgroundColor": "#ffffff",
+        "barStyle": "light-content",
+        "visible": true
       },
       "package": "com.wisdomwise.app",
       "permissions": [
@@ -95,7 +97,8 @@
       "expo-sqlite",
       "expo-image-picker",
       "expo-notifications",
-      "@siteed/expo-audio-studio"
+      "@siteed/expo-audio-studio",
+      "expo-navigation-bar"
     ],
     "extra": {
       "eas": {
