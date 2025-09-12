@@ -109,19 +109,20 @@ class VisionInsightsService {
         .map(msg => `${msg.type}: ${msg.text}`)
         .join('\n');
 
-      if (!relevantMessages.includes('future') && !relevantMessages.includes('vision')) {
-        console.log('📌 [VISION DEBUG] No vision-related content found in messages');
-        return null;
-      }
+      // Since this method is now only called with explicit exercise context,
+      // we don't need to filter by keywords - we know it's a vision exercise
+      console.log('📌 [VISION DEBUG] Processing vision exercise content (called with explicit context)');
 
-      // Prepare messages for API call with better data validation
+      // Prepare messages for API call with proper format for edge function
       const apiMessages = messages.slice(-30)
         .filter(msg => msg.text || msg.content) // Ensure we have content
         .map(msg => ({
-          role: msg.type === 'user' ? 'user' : 'assistant',
-          content: msg.text || msg.content || ''
+          id: msg.id || `msg_${Date.now()}_${Math.random()}`,
+          type: msg.type === 'user' ? 'user' : 'system',
+          text: msg.text || msg.content || '',
+          timestamp: msg.timestamp || new Date().toISOString()
         }))
-        .filter(msg => msg.content.trim().length > 0); // Remove empty messages
+        .filter(msg => msg.text.trim().length > 0); // Remove empty messages
 
       if (apiMessages.length === 0) {
         console.log('📌 [VISION DEBUG] No valid messages to process');
@@ -149,7 +150,7 @@ class VisionInsightsService {
       });
 
       if (!response.data.success || !response.data.visionInsights) {
-        console.log('📌 [VISION DEBUG] No vision insights extracted from API');
+        console.log('📌 [VISION DEBUG] No vision insights generated from API');
         return null;
       }
 
@@ -210,28 +211,57 @@ class VisionInsightsService {
       .map(msg => (msg.text || msg.content || '').toLowerCase())
       .join(' ');
 
-    const visionKeywords = [
+    // Check for explicit exercise context first (most reliable)
+    const exerciseContextIndicators = [
       'vision of the future',
-      'future self',
-      'imagine your future',
-      'envisioning',
-      'future vision',
-      'how will you live',
-      'your future life',
-      'years from now',
-      'future you',
+      'vision exercise',
       'your ideal future',
-      'vision exercise'
+      'imagine your future',
+      'envisioning'
     ];
 
-    const hasKeywords = visionKeywords.some(keyword => relevantText.includes(keyword));
-    console.log('📌 [VISION DEBUG] Checking for vision keywords:', hasKeywords);
+    // Check if there are explicit Vision of the Future exercise indicators
+    const hasExplicitExercise = exerciseContextIndicators.some(keyword => relevantText.includes(keyword));
     
-    if (hasKeywords) {
-      console.log('📌 [VISION DEBUG] Found vision keywords in:', visionKeywords.filter(k => relevantText.includes(k)));
+    // If we find explicit exercise indicators, check for substantial vision content
+    if (hasExplicitExercise) {
+      // Look for substantial future-oriented content (multiple indicators)
+      const visionContentKeywords = [
+        'years from now',
+        'future vision',
+        'how will you live',
+        'your future life',
+        'future you'
+      ];
+      
+      const visionContentCount = visionContentKeywords.filter(keyword => relevantText.includes(keyword)).length;
+      const hasSubstantialContent = visionContentCount >= 2 || relevantText.includes('vision of the future');
+      
+      console.log('📌 [VISION DEBUG] Found explicit exercise context. Content score:', visionContentCount);
+      return hasSubstantialContent;
     }
+
+    // Filter out common false positives from thinking pattern reflections
+    const thinkingPatternIndicators = [
+      'thinking pattern',
+      'cognitive distortion',
+      'reframe',
+      'distortion',
+      'thought pattern',
+      'negative thought',
+      'catastrophic thinking'
+    ];
     
-    return hasKeywords;
+    const hasThinkingPatternContext = thinkingPatternIndicators.some(indicator => relevantText.includes(indicator));
+    
+    if (hasThinkingPatternContext) {
+      console.log('📌 [VISION DEBUG] Detected thinking pattern reflection context - skipping vision extraction');
+      return false;
+    }
+
+    // If no explicit exercise context and no thinking pattern context, be conservative
+    console.log('📌 [VISION DEBUG] No clear exercise context found - skipping vision extraction');
+    return false;
   }
 
   formatVisionForDisplay(insight: VisionInsight): {

@@ -21,9 +21,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#f0f9ff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "statusBar": {
@@ -33,7 +31,10 @@
       "bundleIdentifier": "com.wisdomwise.app",
       "infoPlist": {
         "NSSpeechRecognitionUsageDescription": "Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions.",
-        "NSMicrophoneUsageDescription": "Allow WisdomWise to access your microphone for voice input during therapy sessions."
+        "NSMicrophoneUsageDescription": "Allow WisdomWise to access your microphone for voice input during therapy sessions.",
+        "NSCameraUsageDescription": "Allow WisdomWise to use your camera for journaling photos and media entries.",
+        "NSPhotoLibraryUsageDescription": "Allow WisdomWise to access your photo library to pick journaling images.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to personalize your experience and improve app features."
       }
     },
     "android": {
@@ -48,7 +49,14 @@
       },
       "package": "com.wisdomwise.app",
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.WAKE_LOCK",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
       ]
     },
     "web": {
@@ -57,7 +65,17 @@
     },
     "plugins": [
       [
-        "expo-font"
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/OTF/ClashGrotesk-Bold.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Extralight.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Light.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Medium.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Regular.otf",
+            "./assets/fonts/OTF/ClashGrotesk-Semibold.otf"
+          ]
+        }
       ],
       [
         "expo-splash-screen",
@@ -69,21 +87,16 @@
           }
         }
       ],
-      [
-        "expo-speech-recognition",
-        {
-          "microphonePermission": "Allow WisdomWise to access your microphone for voice input during therapy sessions.",
-          "speechRecognitionPermission": "Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions."
-        }
-      ],
-      [
-        "@react-native-voice/voice",
-        {
-          "microphonePermission": "Allow WisdomWise to access your microphone for voice input during therapy sessions.",
-          "speechRecognitionPermission": "Allow WisdomWise to securely recognize user speech during therapy sessions."
-        }
-      ]
+      "expo-secure-store",
+      "expo-sqlite",
+      "expo-image-picker",
+      "expo-notifications",
+      "@siteed/expo-audio-studio"
+      "react-native-audio-api",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
+    "scheme": "wisdomwise",
     "extra": {
       "eas": {
         "projectId": "bee70e2e-8050-4ef6-ac3b-1d699f00bb47"

@@ -105,16 +105,16 @@ export const insightsDashboardStyles = StyleSheet.create({
   motivationalNumber: {
     fontSize: 20,
     fontWeight: typography.fontWeight.bold,
-    color: '#3b82f6',
+    color: '#6CA0CE',
     marginBottom: spacing[0],
   },
   
   motivationalNumberVision: {
-    color: '#7c3aed', // Purple for vision-related stats
+    color: '#6CA0CE', // Updated to match other numbers
   },
   
   motivationalNumberAchievement: {
-    color: '#059669', // Green for achievement stats
+    color: '#6CA0CE', // Updated to match other numbers
   },
   motivationalLabel: {
     fontSize: 11,
@@ -180,11 +180,11 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   statValue: {
     ...typography.textStyles.h1,
-    color: colors.primary[500],
+    color: '#6CA0CE',
   },
   statValueSky: {
     ...typography.textStyles.h1,
-    color: colors.primary[400],
+    color: '#6CA0CE',
   },
   statLabel: {
     ...typography.textStyles.bodySmall,
@@ -333,12 +333,8 @@ export const insightsDashboardStyles = StyleSheet.create({
     zIndex: 10,
   },
   patternsIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: spacing.radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
   },
   patternsTitleContainer: {
     flex: 1,
@@ -398,31 +394,29 @@ export const insightsDashboardStyles = StyleSheet.create({
     gap: spacing.components.cardGap,
   },
   originalThought: {
-    backgroundColor: 'rgba(254, 242, 242, 0.6)',
     paddingHorizontal: spacing.components.cardGap,
     paddingVertical: spacing.components.cardGap,
     borderRadius: spacing.radius.md,
     borderLeftWidth: 4,
-    borderLeftColor: '#fca5a5',
+    borderLeftColor: '#BE0223',
+    overflow: 'hidden',
   },
   thoughtText: {
     ...typography.textStyles.bodySmall,
     color: colors.text.secondary,
-    fontStyle: 'italic',
     lineHeight: typography.lineHeight.normal,
   },
   reframedThought: {
-    backgroundColor: 'rgba(240, 253, 244, 0.6)',
     paddingHorizontal: spacing.components.cardGap,
     paddingVertical: spacing.components.cardGap,
     borderRadius: spacing.radius.md,
     borderLeftWidth: 4,
-    borderLeftColor: '#86efac',
+    borderLeftColor: '#046B3B',
+    overflow: 'hidden',
   },
   reframedText: {
     ...typography.textStyles.bodySmall,
     color: colors.text.primary,
-    fontStyle: 'italic',
     lineHeight: typography.lineHeight.normal,
   },
   summaryText: {

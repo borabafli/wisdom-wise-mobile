@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
 import { moodRatingService } from '../services/moodRatingService';
@@ -385,33 +387,41 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'strength': return <Star size={16} color="#22c55e" />;
+      case 'strength': return <Star size={16} color="#2563eb" />;
       case 'progress': return <TrendingUp size={16} color="#3b82f6" />;
-      case 'growth': return <Heart size={16} color="#8b5cf6" />;
-      case 'clarity': return <Clock size={16} color="#f59e0b" />;
-      default: return <Star size={16} color="#6b7280" />;
+      case 'growth': return <Heart size={16} color="#1d4ed8" />;
+      case 'clarity': return <Clock size={16} color="#1e40af" />;
+      default: return <Star size={16} color="#64748b" />;
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'strength': return '#22c55e';
-      case 'progress': return '#3b82f6';
-      case 'growth': return '#8b5cf6';
-      case 'clarity': return '#f59e0b';
-      default: return '#6b7280';
+      case 'strength': return '#2563eb'; // Blue shade
+      case 'progress': return '#3b82f6'; // Blue shade
+      case 'growth': return '#1d4ed8'; // Blue shade
+      case 'clarity': return '#1e40af'; // Blue shade
+      default: return '#64748b'; // Blue-gray
     }
   };
 
   return (
-    <View style={styles.insightCard}>
+    <View style={styles.patternsCard}>
+      {/* Background accent */}
+      <View style={[styles.patternsAccent, { backgroundColor: 'rgba(251, 146, 60, 0.15)' }]} />
+      
       {/* Header */}
-      <View style={styles.cardHeader}>
-        <View>
-          <Text style={styles.cardTitle}>Mood</Text>
-          <Text style={styles.cardSubtitle}>
-            {insights ? `${insights.sessionsAnalyzed} sessions tracked` : 'Track your emotional wellness'}
-          </Text>
+      <View style={styles.patternsHeader}>
+        <View style={styles.patternsIcon}>
+          <Image 
+            source={require('../../assets/images/Teal watercolor single element/teal-icon-4.png')}
+            style={{ width: 60, height: 60 }}
+            contentFit="contain"
+          />
+        </View>
+        <View style={styles.patternsTitleContainer}>
+          <Text style={styles.patternsTitle}>Your mood</Text>
+          <Text style={styles.patternsSubtitle}>Track your emotion</Text>
         </View>
       </View>
 
@@ -552,14 +562,25 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
 
       {/* Analysis Date */}
       {insights?.analysisDate && (
-        <Text style={{
-          fontSize: 10,
-          color: '#9ca3af',
-          textAlign: 'center',
-          marginTop: 8,
-        }}>
-          Last updated: {new Date(insights.analysisDate).toLocaleDateString()}
-        </Text>
+        <View style={{ alignItems: 'center', marginTop: 8 }}>
+          <Text style={{
+            fontSize: 10,
+            color: '#9ca3af',
+            textAlign: 'center',
+          }}>
+            Last updated: {new Date(insights.analysisDate).toLocaleDateString()}
+          </Text>
+          {insights && (
+            <Text style={{
+              fontSize: 10,
+              color: '#9ca3af',
+              textAlign: 'center',
+              marginTop: 2,
+            }}>
+              {insights.sessionsAnalyzed} sessions tracked
+            </Text>
+          )}
+        </View>
       )}
     </View>
   );

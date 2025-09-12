@@ -2,32 +2,18 @@ import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
+import { AudioContext, AnalyserNode, AudioRecorder, RecorderAdapterNode } from 'react-native-audio-api';
 
-// Dynamic import for native voice service to avoid crashes in Expo Go
-let nativeVoiceService: any = null;
-
-// Safely check if we can use native modules
-const canUseNativeModules = () => {
-  try {
-    // Check if we're in Expo Go by testing for native module availability
-    require('@react-native-voice/voice');
-    return true;
-  } catch (error) {
-    console.log('Native voice module not available - probably running in Expo Go');
-    return false;
-  }
-};
-
-// Dynamically import native voice service only if available
-if (canUseNativeModules()) {
-  try {
-    const { nativeVoiceService: importedService } = require('./nativeVoiceService');
-    nativeVoiceService = importedService;
-    console.log('✅ Native voice service loaded successfully');
-  } catch (error) {
-    console.log('⚠️ Failed to load native voice service:', error);
-  }
+// Import react-native-audio-record for better PCM audio data on mobile
+let AudioRecord: any = null;
+try {
+  // @ts-ignore - Package might not have TypeScript declarations
+  AudioRecord = require('react-native-audio-record').default;
+} catch (error) {
+  console.warn('react-native-audio-record not available:', error);
 }
+
+// Enhanced simulation for mobile audio levels (no native dependencies required)
 
 
 export interface STTSettings {
@@ -63,6 +49,7 @@ class STTService {
   private onErrorCallback?: (error: string) => void;
   private onEndCallback?: () => void;
   private audioRecording?: Audio.Recording;
+  private recordingUnloaded = false;
 
   private audioContext?: AudioContext;
   private analyser?: AnalyserNode;
@@ -76,6 +63,11 @@ class STTService {
   private partialResultBuffer = '';
   private speechRecognitionTask?: any;
 
+  // react-native-audio-record properties for better waveform data
+  private pcmAudioRecord?: any;
+  private pcmRecordingActive = false;
+  private pcmAnalysisInterval?: NodeJS.Timeout;
+
 
   private defaultSettings: STTSettings = {
     isEnabled: true,
@@ -87,7 +79,7 @@ class STTService {
 
   constructor() {
     this.setupWebSpeechAPI();
-    this.setupExpoSpeechRecognition();
+    this.setupComplete();
   }
 
   // Initialize Web Speech API (for web/browsers)
@@ -181,23 +173,16 @@ class STTService {
     }
   }
 
-  // Setup Expo Speech Recognition for mobile platforms
-  private setupExpoSpeechRecognition() {
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      console.log('✅ Expo Speech Recognition setup completed');
-    }
+  // Setup complete - Whisper API works on all platforms
+  private setupComplete() {
+    console.log('✅ STT Service initialized - using Whisper API for all platforms');
   }
 
 
-  // Check if STT is supported
+  // Check if STT is supported - now always returns true since we use Whisper API
   isSupported(): boolean {
-    if (Platform.OS === 'web') {
-      return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-    } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      // Check if native voice service is available (not in Expo Go)
-      return nativeVoiceService !== null;
-    }
-    return false;
+    // Whisper API works on all platforms through Edge Function
+    return true;
   }
 
 
@@ -226,22 +211,13 @@ class STTService {
     this.isCancelled = false; // Reset cancellation flag
     this.shouldKeepRecording = false; // Simple recording - no auto restart
     this.restartCount = 0; // Reset restart counter
+    this.recordingUnloaded = false; // Reset unload state for new recording
 
     try {
+      console.log('🎤 Starting Whisper-based recording for platform:', Platform.OS);
+      
       if (Platform.OS === 'web') {
-        // Ensure web speech recognition is properly stopped first
-        if (this.recognition) {
-          try {
-            this.recognition.stop();
-            // Wait a bit for it to fully stop
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch (error) {
-            console.log('Previous recognition already stopped');
-          }
-        }
-
-        // For web, we'll use OpenRouter Whisper API too for consistency
-        // But we'll also keep real-time audio visualization using Web Audio API
+        // Web: Use MediaRecorder + Audio API for visualization
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ 
             audio: {
@@ -259,7 +235,7 @@ class STTService {
             await this.setupAudioLevelMonitoring(stream);
           }
           
-          // Start recording audio for transcription (similar to mobile)
+          // Start recording audio for Whisper transcription
           return await this.startWebRecording(stream, onResult, onError, onEnd);
 
         } catch (permissionError) {
@@ -268,20 +244,12 @@ class STTService {
         }
 
       } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Use Native Voice Service for real-time speech recognition if available
-        if (nativeVoiceService) {
-          return await nativeVoiceService.startRecognition(onResult, onError, onEnd, onAudioLevel);
-        } else {
-          // Fallback for Expo Go - use simulation
-          console.log('⚠️ Native voice service not available, using simulation');
-          this.simulateNativeSTT(onResult, onError, onEnd);
-          return true;
-        }
+        // Mobile: Use Expo Audio recording + Whisper API
+        return await this.startMobileRecording(onResult, onError, onEnd, onAudioLevel);
       } else {
-        // Fallback simulation
-
-        this.simulateNativeSTT(onResult, onError, onEnd);
-        return true;
+        // Fallback - shouldn't happen but handle gracefully
+        onError('Platform not supported');
+        return false;
       }
     } catch (error) {
       console.error('Error starting STT:', error);
@@ -377,17 +345,16 @@ class STTService {
           console.log('Band', i, 'average:', average, 'out of 255');
         }
         
-        // More responsive and realistic audio level calculation
+        // Enhanced audio level calculation for bigger, more responsive waves
         const baseLevel = average / 255; // 0 to 1
         
-        // Use a more reasonable sensitivity that responds to actual voice
-        const sensitivity = 2.5; // Moderate sensitivity
-        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.6); // Gentler curve
+        // Increased sensitivity for bigger waves
+        const sensitivity = 4.0; // Higher sensitivity for more dramatic waves
+        const amplifiedLevel = Math.pow(baseLevel * sensitivity, 0.5); // More aggressive curve for bigger waves
         const normalizedLevel = Math.min(1.0, amplifiedLevel);
         
-        // Use a very low baseline that shows true silence
-        const minLevel = 0.05; // Very low baseline for true silence
-        frequencyData.push(Math.max(minLevel, normalizedLevel));
+        // Allow true silence (no artificial minimum)
+        frequencyData.push(normalizedLevel);
       }
       
       const overallAverage = frequencyData.reduce((sum, level) => sum + level, 0) / frequencyData.length;
@@ -408,7 +375,685 @@ class STTService {
     updateLevel();
   }
 
-  // Web recording using MediaRecorder + OpenRouter Whisper
+  // Store the detected recording format for transcription
+  private detectedRecordingFormat: any = null;
+
+  // Mobile recording using Expo Audio + Whisper API + react-native-audio-record for better waveform
+  private async startMobileRecording(
+    onResult: (result: STTResult) => void,
+    onError: (error: string) => void,
+    onEnd: () => void,
+    onAudioLevel?: (level: number, frequencyData?: number[]) => void
+  ): Promise<boolean> {
+    try {
+      console.log('🎤 Starting mobile audio recording for Whisper transcription...');
+      
+      // Request permissions
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) {
+        onError('Microphone permission denied');
+        return false;
+      }
+
+      // Configure audio session
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: false,
+      });
+
+      // Start Expo Audio recording for STT transcription
+      const recording = new Audio.Recording();
+      
+      console.log('🎯 Preparing mobile recording with enhanced waveform data...');
+      
+      // Use HIGH_QUALITY preset which has metering enabled by default
+      const recordingOptions = Audio.RecordingOptionsPresets.HIGH_QUALITY;
+      
+      // Override with our specific settings while keeping metering
+      const customOptions = {
+        ...recordingOptions,
+        // Explicitly enable metering for real-time audio levels
+        isMeteringEnabled: true,
+        android: {
+          ...recordingOptions.android,
+          extension: '.m4a',
+          outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+          audioEncoder: Audio.AndroidAudioEncoder.AAC,
+          sampleRate: 16000, // 16kHz is optimal for speech recognition
+          numberOfChannels: 1, // Mono is sufficient for speech
+          bitRate: 64000, // Lower bitrate for speech
+        },
+        ios: {
+          ...recordingOptions.ios,
+          extension: '.m4a',
+          outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+          audioQuality: Audio.IOSAudioQuality.HIGH,
+          sampleRate: 16000, // 16kHz is optimal for speech recognition
+          numberOfChannels: 1, // Mono is sufficient for speech
+          bitRate: 64000, // Lower bitrate for speech
+        },
+      };
+      
+      console.log('📊 Recording options with metering:', customOptions);
+
+      // Store format info for transcription
+      this.detectedRecordingFormat = {
+        name: 'M4A/AAC',
+        extension: '.m4a',
+        mimeType: 'audio/mp4'
+      };
+
+      await recording.prepareToRecordAsync(customOptions);
+      console.log('✅ M4A recording prepared successfully with HIGH_QUALITY preset')
+      await recording.startAsync();
+      
+      this.audioRecording = recording;
+      this.isRecording = true;
+      this.recordingUnloaded = false;
+
+      console.log('✅ Mobile audio recording started successfully');
+
+      // Setup enhanced real-time waveform data
+      if (onAudioLevel) {
+        await this.startEnhancedMobileWaveform(onAudioLevel, recording);
+      }
+
+      return true;
+      
+    } catch (error: any) {
+      console.error('Error starting mobile recording:', error);
+      onError(`Failed to start mobile recording: ${error?.message || 'Unknown error'}`);
+      return false;
+    }
+  }
+
+  // Modern real-time audio monitoring with react-native-audio-api
+  private audioContext?: AudioContext;
+  private audioRecorder?: AudioRecorder;
+  private recorderAdapterNode?: RecorderAdapterNode;
+  private analyserNode?: AnalyserNode;
+  private audioAnalysisInterval?: NodeJS.Timeout;
+  
+  // Real-time metering callback approach
+  private meteringCallbackActive = false;
+
+  // Enhanced mobile waveform method using react-native-audio-record
+  private async startEnhancedMobileWaveform(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void,
+    expoRecording: Audio.Recording
+  ): Promise<void> {
+    console.log('🎵 Starting react-native-audio-record...');
+    
+    if (AudioRecord && this.canUseReactNativeAudioRecord()) {
+      console.log('🔥 Using react-native-audio-record for real PCM data');
+      await this.startPCMBasedWaveform(onAudioLevel);
+    } else {
+      console.error('❌ react-native-audio-record not available - native module required');
+      throw new Error('react-native-audio-record requires native linking or Expo development build');
+    }
+  }
+
+  // Check if react-native-audio-record can be used
+  private canUseReactNativeAudioRecord(): boolean {
+    try {
+      return AudioRecord && (Platform.OS === 'android' || Platform.OS === 'ios');
+    } catch (error) {
+      console.warn('react-native-audio-record check failed:', error);
+      return false;
+    }
+  }
+
+  // Real PCM-based waveform using react-native-audio-record
+  private async startPCMBasedWaveform(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void
+  ): Promise<void> {
+    try {
+      console.log('🎤 Initializing react-native-audio-record...');
+      
+      const audioConfig = {
+        sampleRate: 16000,
+        bitsPerSample: 16,
+        channelCount: 1,
+        wavFile: 'temp.wav'
+      };
+
+      // Initialize AudioRecord with config
+      await AudioRecord.init(audioConfig);
+      
+      // Set up real-time PCM data callback (only 'data' event is supported)
+      AudioRecord.on('data', (data: string) => {
+        if (!this.pcmRecordingActive || !onAudioLevel) return;
+        
+        try {
+          // Process the base64 PCM data
+          const binaryString = atob(data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          
+          // Convert to 16-bit PCM samples
+          const samples = new Int16Array(bytes.buffer);
+          
+          // Calculate simple RMS level
+          let sum = 0;
+          for (let i = 0; i < samples.length; i++) {
+            sum += (samples[i] / 32768) ** 2;
+          }
+          const rms = Math.sqrt(sum / samples.length);
+          
+          // Generate frequency bands from PCM data
+          const bands = Array.from({ length: 7 }, (_, i) => {
+            const start = Math.floor((i / 7) * samples.length);
+            const end = Math.floor(((i + 1) / 7) * samples.length);
+            let bandSum = 0;
+            for (let j = start; j < end; j++) {
+              bandSum += Math.abs(samples[j] / 32768);
+            }
+            return Math.min(1, bandSum / (end - start) * 2);
+          });
+          
+          onAudioLevel(Math.min(1, rms * 3), bands);
+        } catch (error) {
+          console.warn('Error processing PCM data:', error);
+          this.pcmRecordingActive = false;
+        }
+      });
+
+      // Start recording
+      await AudioRecord.start();
+      this.pcmRecordingActive = true;
+      
+      console.log('✅ Real PCM recording started');
+      
+    } catch (error) {
+      console.error('Failed to start PCM recording:', error);
+      throw error;
+    }
+  }
+
+  
+  // Setup real-time metering using status update callbacks (the proper way)
+  private setupRealTimeMeteringCallback(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void,
+    recording: Audio.Recording
+  ) {
+    console.log('🎤 Setting up REAL-TIME metering via status callbacks...');
+    
+    this.meteringCallbackActive = true;
+    let meteringHistory: number[] = []; // Track recent levels for smoothing
+    
+    // Set up status update callback for real-time metering
+    recording.setOnRecordingStatusUpdate((status) => {
+      if (!this.meteringCallbackActive || !onAudioLevel || !this.isRecording) {
+        return;
+      }
+      
+      if (status.isRecording && typeof status.metering === 'number') {
+        // Convert Expo Audio metering (-160 to 0 dB) to normalized level (0 to 1)
+        const dbLevel = status.metering;
+        
+        // Debug logging for metering analysis
+        if (Math.random() < 0.05) { // 5% of the time
+          console.log(`🎙️ Raw Expo metering: ${dbLevel.toFixed(1)}dB, type: ${typeof status.metering}, isRecording: ${status.isRecording}`);
+        }
+        
+        // Proper dB to amplitude conversion (logarithmic, not linear)
+        let amplitude: number;
+        if (dbLevel <= -80) {
+          // True silence
+          amplitude = 0;
+        } else {
+          // Convert dB to linear amplitude: amplitude = 10^(dB/20)
+          const clampedDb = Math.max(-80, Math.min(0, dbLevel));
+          amplitude = Math.pow(10, clampedDb / 20);
+          // Light amplification for better visualization
+          amplitude = Math.min(1.0, amplitude * 3);
+        }
+        const normalizedLevel = amplitude;
+        
+        // Keep history for smoothing (last 3 readings for faster response)
+        meteringHistory.push(normalizedLevel);
+        if (meteringHistory.length > 3) {
+          meteringHistory.shift();
+        }
+        
+        // Smooth the audio level using recent history
+        const smoothedLevel = meteringHistory.reduce((sum, val) => sum + val, 0) / meteringHistory.length;
+        
+        // Generate 7-band frequency spectrum based on REAL metering level
+        const frequencyData = this.generateVoiceOptimizedSpectrum(smoothedLevel);
+        
+        // Call the callback with REAL audio data
+        onAudioLevel(smoothedLevel, frequencyData);
+        
+        // Debug logging with real values (occasional)
+        if (Math.random() < 0.02) { // 2% of the time
+          console.log(`🔊 REAL metering callback: dB=${dbLevel.toFixed(1)}, normalized=${normalizedLevel.toFixed(3)}, smoothed=${smoothedLevel.toFixed(3)}`);
+        }
+      }
+    });
+    
+    console.log('✅ Real-time metering callback established');
+  }
+  
+  private startMobileAudioLevelMonitoring(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void, 
+    recording: Audio.Recording
+  ) {
+    console.log('🎵 Starting mobile audio monitoring...');
+    
+    // Try react-native-audio-api first, fallback to Expo Audio metering if it fails
+    console.log('🔬 Attempting react-native-audio-api initialization...');
+    
+    this.startModernAudioAnalysis(onAudioLevel)
+      .then(() => {
+        console.log('✅ react-native-audio-api initialized successfully');
+      })
+      .catch((error) => {
+        console.warn('⚠️ react-native-audio-api failed, falling back to Expo Audio metering:', error.message);
+        console.log('🔄 Starting Expo Audio metering fallback...');
+        this.startExpoAudioMeteringVisualization(onAudioLevel, recording);
+      });
+  }
+
+  private async startModernAudioAnalysis(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void
+  ) {
+    try {
+      console.log('🎤 Initializing modern audio pipeline: AudioRecorder → RecorderAdapterNode → AnalyserNode');
+      
+      // Debug: Check what objects are actually imported
+      console.log('🔍 Debugging react-native-audio-api imports:', {
+        AudioContextType: typeof AudioContext,
+        AudioRecorderType: typeof AudioRecorder,
+        RecorderAdapterNodeType: typeof RecorderAdapterNode,
+        AnalyserNodeType: typeof AnalyserNode,
+        AudioContextConstructor: AudioContext?.constructor?.name,
+        AudioRecorderConstructor: AudioRecorder?.constructor?.name
+      });
+      
+      // Create AudioContext with proper options
+      this.audioContext = new AudioContext({
+        sampleRate: 48000,
+        initSuspended: false
+      });
+      
+      console.log('📊 AudioContext created:', {
+        state: this.audioContext.state,
+        sampleRate: this.audioContext.sampleRate,
+        currentTime: this.audioContext.currentTime,
+        prototype: Object.getPrototypeOf(this.audioContext)
+      });
+      
+      // Create AudioRecorder for microphone input with proper options
+      this.audioRecorder = new AudioRecorder({
+        sampleRate: 48000,
+        bufferLengthInSamples: 1024
+      });
+      
+      console.log('🎙️ AudioRecorder created:', {
+        recorder: this.audioRecorder,
+        recorderType: typeof this.audioRecorder,
+        recorderKeys: Object.keys(this.audioRecorder),
+        prototype: Object.getPrototypeOf(this.audioRecorder)
+      });
+      
+      // Create RecorderAdapterNode to connect recorder to audio graph
+      console.log('🔌 About to create RecorderAdapterNode...');
+      this.recorderAdapterNode = new RecorderAdapterNode(this.audioContext);
+      
+      console.log('🔌 RecorderAdapterNode created:', {
+        node: this.recorderAdapterNode,
+        nodeType: typeof this.recorderAdapterNode,
+        nodeKeys: Object.keys(this.recorderAdapterNode),
+        nodePrototype: Object.getPrototypeOf(this.recorderAdapterNode),
+        hasNumberOfInputs: 'numberOfInputs' in this.recorderAdapterNode,
+        numberOfInputsValue: this.recorderAdapterNode.numberOfInputs,
+        numberOfInputsType: typeof this.recorderAdapterNode.numberOfInputs
+      });
+      
+      // Create AnalyserNode for frequency analysis
+      this.analyserNode = new AnalyserNode(this.audioContext, {
+        fftSize: 512,
+        smoothingTimeConstant: 0.3,
+      });
+      
+      console.log('📈 AnalyserNode created:', {
+        fftSize: this.analyserNode.fftSize,
+        frequencyBinCount: this.analyserNode.frequencyBinCount
+      });
+      
+      // Connect AudioRecorder to RecorderAdapterNode
+      console.log('🔗 Connecting AudioRecorder to RecorderAdapterNode...');
+      this.audioRecorder.connect(this.recorderAdapterNode);
+      console.log('✅ AudioRecorder connected to RecorderAdapterNode');
+      
+      // Connect RecorderAdapterNode to AnalyserNode
+      console.log('🔗 Connecting RecorderAdapterNode to AnalyserNode...');
+      this.recorderAdapterNode.connect(this.analyserNode);
+      console.log('✅ RecorderAdapterNode connected to AnalyserNode');
+      
+      // Start recording
+      console.log('▶️ Starting AudioRecorder...');
+      this.audioRecorder.start();
+      console.log('✅ AudioRecorder started');
+      
+      console.log('✅ Modern audio pipeline started successfully');
+      
+      // Start real-time analysis
+      this.startRealTimeFrequencyAnalysis(onAudioLevel);
+      
+    } catch (error) {
+      console.error('❌ Failed to start modern audio analysis:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
+      // Don't use fallback - let the error show so we can debug
+      throw error;
+    }
+  }
+  
+  private startRealTimeFrequencyAnalysis(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void
+  ) {
+    if (!this.analyserNode) return;
+    
+    // Create data arrays for frequency analysis
+    const bufferLength = this.analyserNode.frequencyBinCount;
+    const frequencyData = new Uint8Array(bufferLength);
+    
+    console.log(`🔍 Starting real-time frequency analysis with ${bufferLength} frequency bins`);
+    
+    const analyzeAudio = () => {
+      if (!this.isRecording || !this.analyserNode || !onAudioLevel) {
+        return;
+      }
+      
+      try {
+        // Get real-time frequency data from the analyser
+        this.analyserNode.getByteFrequencyData(frequencyData);
+        
+        // Calculate overall audio level (RMS)
+        let sum = 0;
+        for (let i = 0; i < frequencyData.length; i++) {
+          sum += frequencyData[i] * frequencyData[i];
+        }
+        const rmsLevel = Math.sqrt(sum / frequencyData.length) / 255; // Normalize to 0-1
+        
+        // Create 7-band frequency spectrum for visualization
+        const visualBands = this.createSevenBandSpectrum(frequencyData);
+        
+        // Debug logging (reduce frequency)
+        if (Math.random() < 0.02) { // 2% of the time
+          console.log(`🔥 REAL-TIME audio: RMS=${rmsLevel.toFixed(3)}, bands=[${visualBands.map(b => b.toFixed(2)).join(',')}]`);
+        }
+        
+        onAudioLevel(rmsLevel, visualBands);
+        
+      } catch (error) {
+        console.warn('⚠️ Error in real-time frequency analysis:', error);
+      }
+    };
+    
+    // Start analysis loop at 60fps
+    this.audioAnalysisInterval = setInterval(analyzeAudio, 16);
+  }
+  
+  private createSevenBandSpectrum(fullFrequencyData: Uint8Array): number[] {
+    const bands = [];
+    const bandSize = Math.floor(fullFrequencyData.length / 7);
+    
+    for (let band = 0; band < 7; band++) {
+      const startIndex = band * bandSize;
+      const endIndex = Math.min(startIndex + bandSize, fullFrequencyData.length);
+      
+      let sum = 0;
+      for (let i = startIndex; i < endIndex; i++) {
+        sum += fullFrequencyData[i];
+      }
+      
+      // Normalize to 0-1 range with minimum visibility
+      const normalizedLevel = Math.max(0.03, (sum / (endIndex - startIndex)) / 255);
+      bands.push(normalizedLevel);
+    }
+    
+    return bands;
+  }
+
+
+  // Real-time audio level monitoring using Expo Audio metering
+  private realAudioMeteringInterval?: NodeJS.Timeout;
+  private meteringFallbackActive = false;
+
+  // Expo Audio metering visualization (fallback when react-native-audio-api fails)
+  private startExpoAudioMeteringVisualization(
+    onAudioLevel: (level: number, frequencyData?: number[]) => void,
+    recording: Audio.Recording
+  ) {
+    console.log('📊 Starting Expo Audio metering visualization with REAL microphone data...');
+    
+    this.meteringFallbackActive = true;
+    let meteringHistory: number[] = []; // Track recent levels for smoothing
+    
+    // Store reference to this for use in async function
+    const self = this;
+    
+    const getMeteringData = async () => {
+      if (!self.isRecording || !onAudioLevel || !self.meteringFallbackActive) {
+        return;
+      }
+      
+      try {
+        // Get REAL metering data from Expo Audio
+        const status = await recording.getStatusAsync();
+        
+        // Enhanced debugging for metering
+        if (Math.random() < 0.005) { // Very occasional detailed logging
+          console.log('📊 Recording status debug:', {
+            isRecording: status.isRecording,
+            meteringType: typeof status.metering,
+            meteringValue: status.metering,
+            canRecord: status.canRecord,
+            isDoneRecording: status.isDoneRecording
+          });
+        }
+        
+        if (status.isRecording && typeof status.metering === 'number') {
+          // Convert Expo Audio metering (-160 to 0 dB) to normalized level (0 to 1)
+          const dbLevel = status.metering;
+          
+          // Debug logging for metering analysis (fallback)
+          if (Math.random() < 0.05) { // 5% of the time
+            console.log(`🎙️ Raw Expo metering (fallback): ${dbLevel.toFixed(1)}dB, type: ${typeof status.metering}, isRecording: ${status.isRecording}`);
+          }
+          
+          // Proper dB to amplitude conversion (logarithmic, not linear)
+          let amplitude: number;
+          if (dbLevel <= -80) {
+            // True silence
+            amplitude = 0;
+          } else {
+            // Convert dB to linear amplitude: amplitude = 10^(dB/20)
+            const clampedDb = Math.max(-80, Math.min(0, dbLevel));
+            amplitude = Math.pow(10, clampedDb / 20);
+            // Light amplification for better visualization
+            amplitude = Math.min(1.0, amplitude * 3);
+          }
+          const normalizedLevel = amplitude;
+          
+          // Keep history for smoothing (last 5 readings)
+          meteringHistory.push(normalizedLevel);
+          if (meteringHistory.length > 5) {
+            meteringHistory.shift();
+          }
+          
+          // Smooth the audio level using recent history
+          const smoothedLevel = meteringHistory.reduce((sum, val) => sum + val, 0) / meteringHistory.length;
+          
+          // Generate 7-band frequency spectrum based on REAL metering level
+          const frequencyData = self.generateVoiceOptimizedSpectrum(smoothedLevel);
+          
+          // Call the callback with REAL audio data
+          onAudioLevel(smoothedLevel, frequencyData);
+          
+          // Debug logging with real values
+          if (Math.random() < 0.03) { // 3% of the time
+            console.log(`🔊 REAL mic data: dB=${dbLevel.toFixed(1)}, normalized=${normalizedLevel.toFixed(3)}, smoothed=${smoothedLevel.toFixed(3)}`);
+          }
+        } else {
+          // If metering not available, provide organic movement without fake levels
+          if (Math.random() < 0.02) { // Only log occasionally
+            console.warn('⚠️ Expo Audio metering not available - status:', status.isRecording, 'metering:', status.metering);
+          }
+          
+          // No fallback movement - wait for real metering data
+          // This prevents artificial audio levels during silence
+          onAudioLevel(0, []);
+        }
+      } catch (error) {
+        console.warn('⚠️ Error getting REAL metering data:', error);
+        
+        // Only as last resort - provide minimal levels
+        const minimalSpectrum = self.generateVoiceOptimizedSpectrum(0.02);
+        onAudioLevel(0.02, minimalSpectrum);
+      }
+    };
+    
+    // Start metering loop at 60fps for smooth real-time visualization
+    this.realAudioMeteringInterval = setInterval(getMeteringData, 16);
+    console.log('✅ Expo Audio metering visualization started - using REAL microphone levels');
+  }
+
+  // Generate voice-optimized frequency spectrum based on REAL audio level
+  private generateVoiceOptimizedSpectrum(audioLevel: number): number[] {
+    const spectrum: number[] = [];
+    const time = Date.now() / 1000;
+    
+    // Voice frequency distribution optimized for human speech (125Hz - 8kHz range)
+    // Lower frequencies (bass, fundamental) have more energy in voice
+    const voiceFrequencyWeights = [
+      1.0,    // 125-250Hz - Fundamental frequency range
+      0.9,    // 250-500Hz - First harmonic range  
+      0.75,   // 500-1kHz - Formant clarity range
+      0.6,    // 1-2kHz - Consonant definition
+      0.45,   // 2-4kHz - Presence and clarity
+      0.3,    // 4-6kHz - Sibilance and details
+      0.15    // 6-8kHz - High frequency harmonics
+    ];
+    
+    for (let i = 0; i < 7; i++) {
+      const frequencyWeight = voiceFrequencyWeights[i];
+      
+      // Add organic movement that responds to real audio level
+      const levelResponsive = audioLevel > 0.1 ? audioLevel * 2 : 0.2; // More movement with higher levels
+      const primaryWave = Math.sin(time * (0.8 + i * 0.25)) * (0.03 * levelResponsive);
+      const secondaryWave = Math.sin(time * (1.5 + i * 0.4)) * (0.02 * levelResponsive);
+      const movement = primaryWave + secondaryWave;
+      
+      // Calculate base band level from REAL audio data
+      const baseLevel = audioLevel * frequencyWeight;
+      
+      // Voice-realistic variation (less random, more structured)
+      const voiceVariation = 0.85 + (Math.sin(time * (0.5 + i * 0.1)) * 0.15); // 0.7 to 1.0
+      let bandLevel = baseLevel * voiceVariation + movement;
+      
+      // Inter-band correlation - voice frequencies are related
+      if (i > 0) {
+        const prevInfluence = spectrum[i - 1] * 0.25; // Stronger correlation for voice
+        bandLevel += prevInfluence;
+      }
+      
+      // Voice-specific level mapping with better visual response
+      if (audioLevel > 0.2) {
+        // Enhance higher levels for better visual feedback
+        bandLevel *= (1 + (audioLevel - 0.2) * 0.5);
+      }
+      
+      // Ensure reasonable bounds with good minimum visibility
+      spectrum.push(Math.max(0.03, Math.min(0.95, bandLevel)));
+    }
+    
+    return spectrum;
+  }
+
+  // Generate realistic frequency spectrum based on audio level (legacy method)
+  private generateRealisticFrequencySpectrum(audioLevel: number): number[] {
+    return this.generateVoiceOptimizedSpectrum(audioLevel);
+  }
+  
+  
+  // Generate frequency spectrum based on real audio level
+  private generateFrequencySpectrum(realLevel: number): number[] {
+    // Create 7 frequency bands with realistic distribution
+    const spectrum: number[] = [];
+    
+    for (let i = 0; i < 7; i++) {
+      // Voice energy is typically concentrated in lower frequencies
+      const frequencyWeight = Math.pow(0.85, i); // Decreases with frequency
+      const randomVariation = 0.7 + (Math.random() * 0.6); // 0.7 to 1.3
+      
+      let bandLevel = realLevel * frequencyWeight * randomVariation;
+      
+      // Add some organic movement
+      const time = Date.now() / 1000;
+      const organicMovement = Math.sin(time * (0.5 + i * 0.3)) * 0.1;
+      bandLevel += organicMovement;
+      
+      // Ensure reasonable bounds
+      spectrum.push(Math.max(0.02, Math.min(1.0, bandLevel)));
+    }
+    
+    return spectrum;
+  }
+
+  // Enhanced frequency spectrum for better visual appearance
+  private generateEnhancedFrequencySpectrum(realLevel: number): number[] {
+    const spectrum: number[] = [];
+    const time = Date.now() / 1000;
+    
+    for (let i = 0; i < 7; i++) {
+      // More sophisticated frequency distribution for voice
+      const voiceFrequencyWeights = [1.0, 0.9, 0.85, 0.7, 0.55, 0.4, 0.25]; // Voice-optimized
+      const frequencyWeight = voiceFrequencyWeights[i];
+      
+      // Enhanced organic movement with multiple sine waves
+      const primaryWave = Math.sin(time * (0.8 + i * 0.4)) * 0.12;
+      const secondaryWave = Math.sin(time * (1.5 + i * 0.2)) * 0.06;
+      const tertiaryWave = Math.sin(time * (0.3 + i * 0.6)) * 0.03;
+      const organicMovement = primaryWave + secondaryWave + tertiaryWave;
+      
+      // Random variation with controlled bounds
+      const randomVariation = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2
+      
+      // Calculate base level with real audio influence
+      let bandLevel = realLevel * frequencyWeight * randomVariation + organicMovement;
+      
+      // Add subtle inter-band correlation for more natural look
+      if (i > 0) {
+        const prevBandInfluence = spectrum[i - 1] * 0.15;
+        bandLevel += prevBandInfluence;
+      }
+      
+      // Apply smooth compression curve for better visual range
+      if (bandLevel > 0.3) {
+        bandLevel = 0.3 + Math.pow((bandLevel - 0.3) / 0.7, 0.8) * 0.7;
+      }
+      
+      // Ensure reasonable bounds with higher minimum for visibility
+      spectrum.push(Math.max(0.04, Math.min(1.0, bandLevel)));
+    }
+    
+    return spectrum;
+  }
+  
+
+  // Web recording using MediaRecorder + Whisper API
   private async startWebRecording(
     stream: MediaStream,
     onResult: (result: STTResult) => void,
@@ -467,22 +1112,19 @@ class STTService {
     }
   }
 
-  // Transcribe web audio blob using Edge Function
+  // Transcribe web audio blob using Edge Function with file upload
   private async transcribeWebAudio(
     audioBlob: Blob,
     onResult: (result: STTResult) => void,
     onError: (error: string) => void
   ): Promise<void> {
     try {
-      console.log('🎤 TRANSCRIBING WITH EDGE FUNCTION 🎤');
+      console.log('🎤 TRANSCRIBING WEB AUDIO WITH FILE UPLOAD 🎤');
       console.log('Audio blob size:', audioBlob.size, 'bytes, type:', audioBlob.type);
       
-      // Convert blob to base64 for transmission to Edge Function
-      const base64Audio = await this.blobToBase64(audioBlob);
-      
-      console.log('📡 Sending request to Edge Function...');
-      const result = await apiService.transcribeAudioWithContext(
-        base64Audio,
+      // Use file upload approach instead of base64 for consistency and better error handling
+      const result = await this.transcribeWithFileUploadFromBlob(
+        audioBlob,
         this.defaultSettings.language.split('-')[0],
         'webm'
       );
@@ -536,148 +1178,93 @@ class STTService {
     this.analyser = undefined;
   }
 
-  // Native speech recognition using Expo Speech Recognition
-  private async startNativeSpeechRecognition(
-    onResult: (result: STTResult) => void,
-    onError: (error: string) => void,
-    onEnd: () => void
-  ): Promise<boolean> {
-    try {
-      console.log('🎤 Starting native speech recognition with Expo Speech Recognition...');
-      
-      // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
-      // Fallback to simulation for now
-      console.log('⚠️ expo-speech-recognition temporarily disabled, using simulation');
-      this.simulateNativeSTT(onResult, onError, onEnd);
-      return true;
-
-      // TODO: Re-enable when expo-speech-recognition issues are resolved
-      // // Request permissions first
-      // const { status } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
-      // if (status !== 'granted') {
-      //   onError('Microphone permission denied');
-      //   return false;
-      // }
-
-      // // Check if speech recognition is available
-      // const isAvailable = await ExpoSpeechRecognitionModule.getAvailableVoiceRecognitionServicesAsync();
-      // console.log('📱 Available speech recognition services:', isAvailable);
-      
-      // // Stop any existing recognition
-      // try {
-      //   await ExpoSpeechRecognitionModule.stop();
-      // } catch (stopError) {
-      //   console.log('⚠️ No existing recognition to stop');
-      // }
-      
-      // Clear partial result buffer
-      this.partialResultBuffer = '';
-      
-      // TEMPORARILY DISABLED: expo-speech-recognition causing expo start issues
-      // TODO: Re-enable this block when package issues are resolved
-      // // Start speech recognition
-      // const options = {
-      //   lang: this.defaultSettings.language,
-      //   interimResults: this.defaultSettings.interimResults,
-      //   maxAlternatives: this.defaultSettings.maxAlternatives,
-      //   continuous: this.defaultSettings.continuous,
-      //   requiresOnDeviceRecognition: false,
-      //   addsPunctuation: true,
-      //   contextualStrings: []
-      // };
-      
-      // this.speechRecognitionTask = await ExpoSpeechRecognitionModule.start(options);
-      
-      // // Set up event listeners
-      // this.setupSpeechRecognitionListeners(onResult, onError, onEnd);
-      
-      // console.log('✅ Expo speech recognition started successfully');
-      // this.isRecording = true;
-      // return true;
-      
-    } catch (error: any) {
-      console.error('❌ Error starting Expo speech recognition:', error);
-      onError(`Failed to start speech recognition: ${error?.message || 'Unknown error'}`);
-      return false;
-    }
-  }
-
-  // Setup speech recognition event listeners
-  private setupSpeechRecognitionListeners(
-    onResult: (result: STTResult) => void,
-    onError: (error: string) => void,
-    onEnd: () => void
-  ) {
-    // Handle speech recognition results
-    const handleResult = (event: any) => {
-      console.log('🎯 Speech recognition result:', event);
-      
-      if (event.results && event.results.length > 0) {
-        const result = event.results[0];
-        const transcript = result.transcript || '';
-        const confidence = result.confidence || 0.95;
-        const isFinal = event.isFinal || false;
-        
-        if (transcript.trim()) {
-          onResult({
-            transcript: transcript.trim(),
-            confidence,
-            isFinal
-          });
+  // Cleanup modern audio monitoring
+  private async cleanupRealAudioLevelMonitoring(): Promise<void> {
+    console.log('🧹 Cleaning up modern audio analysis pipeline...');
+    
+    // Stop PCM recording for waveform
+    if (this.pcmRecordingActive) {
+      try {
+        this.pcmRecordingActive = false;
+        if (AudioRecord) {
+          AudioRecord.stop();
+          // Remove data listener by setting empty callback
+          try {
+            AudioRecord.on('data', () => {});
+          } catch (e) {
+            // Ignore listener cleanup errors
+          }
         }
+        this.pcmAudioRecord = undefined;
+        console.log('✅ PCM waveform recording stopped and cleaned up');
+      } catch (error) {
+        console.warn('⚠️ Error stopping PCM waveform recording:', error);
       }
-    };
-    
-    // Handle speech recognition errors
-    const handleError = (event: any) => {
-      console.error('❌ Speech recognition error:', event);
-      this.isRecording = false;
-      this.shouldKeepRecording = false;
-      
-      let errorMessage = 'Speech recognition failed';
-      if (event.error) {
-        errorMessage = `Speech recognition error: ${event.error}`;
-      }
-      
-      onError(errorMessage);
-    };
-    
-    // Handle speech recognition end
-    const handleEnd = (event: any) => {
-      console.log('🏁 Speech recognition ended:', event);
-      this.isRecording = false;
-      
-      if (!this.shouldKeepRecording || this.isCancelled) {
-        onEnd();
-      }
-    };
-    
-    // Handle audio level changes for sound wave visualization
-    const handleAudioLevel = (event: any) => {
-      if (this.audioLevelCallback && event.db !== undefined) {
-        // Convert decibel level to 0-1 range (typical range is -160 to 0 dB)
-        const normalizedLevel = Math.min(1, Math.max(0.1, (event.db + 160) / 160));
-        
-        // Create frequency data for sound wave visualization
-        const frequencyData = Array.from({ length: 7 }, (_, i) => {
-          const variance = (Math.random() - 0.5) * 0.3;
-          return Math.max(0.1, normalizedLevel + variance);
-        });
-        
-        this.audioLevelCallback(normalizedLevel, frequencyData);
-      }
-    };
-    
-    // Note: Actual event listener setup would depend on the specific API
-    // This is a placeholder for the event handling structure
-    if (this.speechRecognitionTask) {
-      // Set up listeners based on expo-speech-recognition API
-      console.log('📡 Speech recognition listeners set up');
     }
+    
+    // Stop real-time analysis interval
+    if (this.audioAnalysisInterval) {
+      clearInterval(this.audioAnalysisInterval);
+      this.audioAnalysisInterval = undefined;
+      console.log('✅ Cleared real-time audio analysis interval');
+    }
+    
+    // Stop and cleanup AudioRecorder
+    if (this.audioRecorder) {
+      try {
+        this.audioRecorder.stop();
+        this.audioRecorder = undefined;
+        console.log('✅ AudioRecorder stopped');
+      } catch (error) {
+        console.warn('⚠️ Error stopping AudioRecorder:', error);
+      }
+    }
+    
+    // Disconnect and cleanup audio nodes
+    if (this.recorderAdapterNode) {
+      try {
+        this.recorderAdapterNode.disconnect();
+        this.recorderAdapterNode = undefined;
+        console.log('✅ RecorderAdapterNode disconnected');
+      } catch (error) {
+        console.warn('⚠️ Error disconnecting RecorderAdapterNode:', error);
+      }
+    }
+    
+    if (this.analyserNode) {
+      this.analyserNode = undefined;
+      console.log('✅ AnalyserNode cleaned up');
+    }
+    
+    // Cleanup AudioContext
+    if (this.audioContext) {
+      try {
+        this.audioContext.close();
+        this.audioContext = undefined;
+        console.log('✅ AudioContext closed');
+      } catch (error) {
+        console.warn('⚠️ Error closing AudioContext:', error);
+      }
+    }
+    
+    // Cleanup Expo Audio metering fallback
+    if (this.realAudioMeteringInterval) {
+      clearInterval(this.realAudioMeteringInterval);
+      this.realAudioMeteringInterval = undefined;
+      console.log('✅ Expo Audio metering interval cleared');
+    }
+    
+    // Cleanup metering callback
+    this.meteringCallbackActive = false;
+    this.meteringFallbackActive = false;
+    
+    console.log('✅ Modern audio analysis pipeline cleaned up completely');
   }
+
 
   // Cancel recording without processing
   async cancelRecognition(): Promise<void> {
+    console.log('🚫 Cancelling recording...');
     this.isCancelled = true;
     this.shouldKeepRecording = false;
     if (this.restartTimeout) {
@@ -685,12 +1272,8 @@ class STTService {
       this.restartTimeout = undefined;
     }
     
-    // Cancel native voice service on mobile if available
-    if ((Platform.OS === 'ios' || Platform.OS === 'android') && nativeVoiceService) {
-      await nativeVoiceService.cancelRecognition();
-    } else {
-      await this.stopRecognition();
-    }
+    // Always use the same stop logic, just mark as cancelled
+    await this.stopRecognition();
   }
 
   // Stop speech recognition
@@ -710,39 +1293,47 @@ class STTService {
     }
 
     try {
-      // Cleanup audio monitoring
+      // Cleanup audio monitoring for web
       this.cleanupAudioMonitoring();
       
-      if (Platform.OS === 'web' && this.audioRecording) {
-        // Stop MediaRecorder for web
-        if (this.audioRecording.state !== 'inactive') {
-          this.audioRecording.stop();
-        }
-      } else if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // Stop Native Voice Service if available
-        if (nativeVoiceService) {
-          console.log('🛑 Stopping native voice recognition...');
-          await nativeVoiceService.stopRecognition();
-        }
-      } else if (this.audioRecording) {
-        // Legacy audio recording cleanup (fallback)
-        console.log('Stopping audio recording...');
-        await this.audioRecording.stopAndUnloadAsync();
-        const uri = this.audioRecording.getURI();
-        
-        // Only transcribe if not cancelled
-        if (uri && this.onResultCallback && !this.isCancelled) {
-          console.log('Processing recording...');
-          this.transcribeAudioFile(uri, this.onResultCallback, this.onErrorCallback || (() => {}));
-        } else if (this.isCancelled) {
-          console.log('Recording was cancelled, skipping transcription');
-          if (this.onEndCallback) this.onEndCallback();
+      // Cleanup real audio level monitoring
+      await this.cleanupRealAudioLevelMonitoring();
+      
+      if (this.audioRecording) {
+        if (Platform.OS === 'web' && (this.audioRecording as any).state !== 'inactive') {
+          // Stop MediaRecorder for web
+          console.log('🛑 Stopping web MediaRecorder...');
+          (this.audioRecording as any).stop();
+        } else if ((Platform.OS === 'ios' || Platform.OS === 'android')) {
+          // Stop Expo Audio recording for mobile
+          console.log('🛑 Stopping mobile audio recording...');
+          
+          // Prevent double unload
+          if (!this.recordingUnloaded) {
+            await this.audioRecording.stopAndUnloadAsync();
+            this.recordingUnloaded = true;
+            
+            const uri = this.audioRecording.getURI();
+            
+            // Only transcribe if not cancelled
+            if (uri && this.onResultCallback && !this.isCancelled) {
+              console.log('📱 Processing mobile recording with Whisper...');
+              await this.transcribeAudioFile(uri, this.onResultCallback, this.onErrorCallback || (() => {}));
+            } else if (this.isCancelled) {
+              console.log('Recording was cancelled, skipping transcription');
+              if (this.onEndCallback) this.onEndCallback();
+            }
+          } else {
+            console.log('⚠️ Recording already unloaded, skipping double unload');
+            if (this.onEndCallback) this.onEndCallback();
+          }
         }
         
         this.audioRecording = undefined;
       }
       
       this.isRecording = false;
+      console.log('✅ Recording stopped and cleaned up');
     } catch (error) {
       console.error('Error stopping STT:', error);
     }
@@ -756,17 +1347,30 @@ class STTService {
     onError: (error: string) => void
   ): Promise<void> {
     try {
-      console.log('Transcribing audio with Edge Function...');
+      console.log('=== TRANSCRIBING AUDIO FILE ===');
       console.log('Audio file URI:', audioUri);
       
-      // For mobile platforms, read the file as base64 directly
-      const base64Audio = await this.fileUriToBase64(audioUri);
+      // Get file info for debugging
+      try {
+        const response = await fetch(audioUri);
+        const blob = await response.blob();
+        console.log('📁 File details:', {
+          size: blob.size,
+          type: blob.type,
+          uri: audioUri
+        });
+      } catch (infoError) {
+        console.warn('Could not get file info:', infoError);
+      }
       
-      // Use Edge Function for transcription (mobile uses m4a format)
-      const result = await apiService.transcribeAudioWithContext(
-        base64Audio,
+      // For mobile platforms, send the file directly as multipart/form-data
+      const fileType = this.detectedRecordingFormat ? this.detectedRecordingFormat.extension.replace('.', '') : 'm4a';
+      console.log(`🎯 Transcribing with detected format: ${fileType}`);
+      
+      const result = await this.transcribeWithFileUpload(
+        audioUri,
         this.defaultSettings.language.split('-')[0],
-        'm4a'
+        fileType
       );
       
       if (result.success && result.transcript) {
@@ -794,6 +1398,149 @@ class STTService {
     }
   }
 
+  // New method to handle file upload to Edge Function
+  private async transcribeWithFileUpload(
+    audioUri: string,
+    language: string,
+    fileType: string
+  ): Promise<{ success: boolean; transcript?: string; error?: string }> {
+    try {
+      console.log('🎤 Uploading audio file to Edge Function...');
+      
+      // Create FormData for multipart upload
+      const formData = new FormData();
+      
+      // Get the proper MIME type and filename based on detected format
+      const mimeType = this.detectedRecordingFormat ? this.detectedRecordingFormat.mimeType : 'audio/mp4';
+      const filename = `recording${this.detectedRecordingFormat ? this.detectedRecordingFormat.extension : '.m4a'}`;
+      
+      console.log(`📎 Upload details: MIME=${mimeType}, filename=${filename}`);
+      
+      // Add the audio file with proper MIME type
+      formData.append('file', {
+        uri: audioUri,
+        type: mimeType,
+        name: filename
+      } as any);
+      
+      // Add other parameters
+      formData.append('action', 'transcribe');
+      formData.append('language', language);
+      formData.append('fileType', fileType);
+
+      console.log('📡 Sending multipart request to Edge Function...');
+      console.log('FormData contents:', {
+        language,
+        fileType,
+        audioUri: audioUri.substring(0, 100) + '...'
+      });
+      
+      const response = await fetch(`${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`,
+          'apikey': API_CONFIG.SUPABASE_ANON_KEY,
+          // Don't set Content-Type - let FormData set it with boundary
+        },
+        body: formData,
+      });
+
+      console.log('📨 Edge Function response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Edge Function error:', errorText);
+        return {
+          success: false,
+          error: `Edge Function error: ${response.status} - ${errorText}`
+        };
+      }
+
+      const result = await response.json();
+      console.log('✅ Edge Function response:', result);
+      
+      return result;
+      
+    } catch (error: any) {
+      console.error('❌ File upload error:', error);
+      return {
+        success: false,
+        error: `File upload failed: ${error?.message || 'Unknown error'}`
+      };
+    }
+  }
+
+  // Method to handle file upload from Blob (for web platform)
+  private async transcribeWithFileUploadFromBlob(
+    audioBlob: Blob,
+    language: string,
+    fileType: string
+  ): Promise<{ success: boolean; transcript?: string; error?: string }> {
+    try {
+      console.log('🎤 Uploading audio blob to Edge Function...');
+      
+      // Create FormData for multipart upload
+      const formData = new FormData();
+      
+      // Create a File from the Blob with proper metadata
+      const filename = `recording.${fileType}`;
+      const audioFile = new File([audioBlob], filename, { 
+        type: audioBlob.type || `audio/${fileType}` 
+      });
+      
+      console.log(`📎 Upload details: size=${audioBlob.size}, type=${audioBlob.type}, filename=${filename}`);
+      
+      // Add the audio file
+      formData.append('file', audioFile);
+      
+      // Add other parameters
+      formData.append('action', 'transcribe');
+      formData.append('language', language);
+      formData.append('fileType', fileType);
+
+      console.log('📡 Sending multipart request to Edge Function...');
+      console.log('FormData contents:', {
+        language,
+        fileType,
+        audioSize: audioBlob.size,
+        audioType: audioBlob.type
+      });
+      
+      const response = await fetch(`${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`,
+          'apikey': API_CONFIG.SUPABASE_ANON_KEY,
+          // Don't set Content-Type - let FormData set it with boundary
+        },
+        body: formData,
+      });
+
+      console.log('📨 Edge Function response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Edge Function error:', errorText);
+        return {
+          success: false,
+          error: `Edge Function error: ${response.status} - ${errorText}`
+        };
+      }
+
+      const result = await response.json();
+      console.log('✅ Edge Function response:', result);
+      
+      return result;
+      
+    } catch (error: any) {
+      console.error('❌ Blob upload error:', error);
+      return {
+        success: false,
+        error: `Blob upload failed: ${error?.message || 'Unknown error'}`
+      };
+    }
+  }
+
   // Convert file URI to base64 (for React Native)
   private async fileUriToBase64(uri: string): Promise<string> {
     try {
@@ -807,70 +1554,6 @@ class STTService {
   }
 
 
-  // Simulate STT for native platforms (placeholder)
-  private simulateNativeSTT(
-    onResult: (result: STTResult) => void,
-    onError: (error: string) => void,
-    onEnd: () => void
-  ) {
-    // This is a placeholder for native STT
-    // In a real implementation, we'd use react-native-voice or similar
-    
-
-    console.log('Starting STT simulation...');
-    this.isRecording = true;
-    
-    // Sample responses for simulation
-    const sampleResponses = [
-      "I've been feeling stressed about work lately",
-      "I need help with managing my anxiety",
-      "Can you guide me through a breathing exercise?",
-      "I'm feeling overwhelmed and need some support",
-      "I'd like to talk about my feelings today",
-      "Help me find some peace and calm",
-      "I'm struggling with negative thoughts",
-      "I want to practice mindfulness and meditation"
-    ];
-    
-    const randomResponse = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
-    
-    // Show interim results for better UX
-    let currentText = '';
-    const words = randomResponse.split(' ');
-    let wordIndex = 0;
-    
-    const showNextWord = () => {
-      if (wordIndex < words.length && this.isRecording) {
-        currentText += (wordIndex > 0 ? ' ' : '') + words[wordIndex];
-        wordIndex++;
-        
-        onResult({
-          transcript: currentText,
-          confidence: 0.8,
-          isFinal: false
-        });
-        
-        // Continue showing words every 300ms
-        setTimeout(showNextWord, 300);
-      } else if (this.isRecording) {
-        // Final result
-        onResult({
-          transcript: randomResponse,
-
-          confidence: 0.95,
-          isFinal: true
-        });
-        this.isRecording = false;
-        onEnd();
-
-        console.log('STT simulation completed:', randomResponse);
-      }
-    };
-    
-    // Start showing words after a brief delay
-    setTimeout(showNextWord, 500);
-
-  }
 
   // Get current recording status
   getStatus() {
@@ -905,12 +1588,14 @@ class STTService {
 
   // Clean up
   async destroy() {
+    console.log('🧹 Destroying STT service...');
     this.shouldKeepRecording = false;
     if (this.restartTimeout) {
       clearTimeout(this.restartTimeout);
       this.restartTimeout = undefined;
     }
     
+    // Clean up web recognition if exists
     if (this.recognition) {
       this.recognition.onresult = null;
       this.recognition.onerror = null;
@@ -918,12 +1603,13 @@ class STTService {
       this.recognition.onstart = null;
     }
     
-    // Clean up Native Voice Service if available
-    if ((Platform.OS === 'ios' || Platform.OS === 'android') && nativeVoiceService) {
-      await nativeVoiceService.destroy();
-    }
-    
+    // Stop any ongoing recording
     await this.stopRecognition();
+    
+    // Final cleanup
+    await this.cleanupRealAudioLevelMonitoring();
+    
+    console.log('✅ STT service destroyed');
   }
 }
 

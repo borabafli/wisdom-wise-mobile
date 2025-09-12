@@ -6,6 +6,7 @@ import { getExerciseFlow } from '../data/exerciseLibrary';
 import { ttsService } from '../services/ttsService';
 import { memoryService } from '../services/memoryService';
 import { valuesService } from '../services/valuesService';
+import { thinkingPatternsService } from '../services/thinkingPatternsService';
 
 export const useExerciseFlow = (initialExercise?: any) => {
   const [exerciseMode, setExerciseMode] = useState(false);
@@ -19,7 +20,10 @@ export const useExerciseFlow = (initialExercise?: any) => {
   const [showValueReflectionSummary, setShowValueReflectionSummary] = useState(false);
   const [valueReflectionSummary, setValueReflectionSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
   const [showThinkingPatternSummary, setShowThinkingPatternSummary] = useState(false);
-  const [thinkingPatternSummary, setThinkingPatternSummary] = useState<string | null>(null);
+  const [thinkingPatternSummary, setThinkingPatternSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
+  const [thinkingPatternContext, setThinkingPatternContext] = useState<{originalThought: string; distortionType: string; reframedThought: string; prompt: string} | null>(null);
+  const [showVisionSummary, setShowVisionSummary] = useState(false);
+  const [visionSummary, setVisionSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
   
   // Reflection session tracking
   const [reflectionMessageCount, setReflectionMessageCount] = useState(0);
@@ -60,8 +64,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
     currentExercise: any,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setIsTyping: (isTyping: boolean) => void,
-    setSuggestions: (suggestions: string[]) => void,
-    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+    setSuggestions: (suggestions: string[]) => void
   ) => {
     try {
       const currentStep = flow.steps[exerciseStep];
@@ -113,8 +116,23 @@ export const useExerciseFlow = (initialExercise?: any) => {
           setMessages(prev => [...prev, completion]);
           await storageService.addMessage(completion);
           
-          // Show mood rating after exercise completion
-          setShowMoodRating(true);
+          // Check if this is a Vision of the Future exercise and generate summary
+          if (currentExercise.type === 'vision-of-future') {
+            try {
+              const recentMessages = await storageService.getLastMessages(15);
+              const visionSummary = await contextService.generateVisionSummary(recentMessages);
+              setVisionSummary(visionSummary);
+              setShowVisionSummary(true);
+            } catch (error) {
+              console.error('Error generating vision summary:', error);
+              // Still show mood rating even if summary fails
+              setShowMoodRating(true);
+            }
+          } else {
+            // Show mood rating for other exercises
+            setShowMoodRating(true);
+          }
+          
           setExerciseMode(false);
           setSuggestions([]);
           
@@ -137,7 +155,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
         const aiResponse: Message = {
           id: Date.now().toString(),
           type: 'exercise',
-          title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+          title: `Step ${exerciseStep + 1}: ${currentStep.title}`,
           content: response.message,
           exerciseType: currentExercise.type,
           color: flow.color,
@@ -145,7 +163,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
           isAIGuided: true
         };
 
-        await addAIMessageWithTypewriter(aiResponse);
+        setMessages(prev => [...prev, aiResponse]);
+        await storageService.addMessage(aiResponse);
         setSuggestions(response.suggestions ?? []);
         await ttsService.speakIfAutoPlay(response.message);
       }
@@ -196,7 +215,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
       const aiMessage: Message = {
         id: Date.now().toString(),
         type: 'exercise',
-        title: `Step ${currentStep.stepNumber}: ${currentStep.title}`,
+        title: `Step 1: ${currentStep.title}`,
         content: response.message,
         exerciseType: currentExercise.type,
         color: flow.color,
@@ -216,8 +235,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
     valueContext: any,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setIsTyping: (isTyping: boolean) => void,
-    setSuggestions: (suggestions: string[]) => void,
-    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+    setSuggestions: (suggestions: string[]) => void
   ) => {
     try {
       console.log('Starting value reflection with context:', valueContext);
@@ -247,7 +265,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
           context: { type: 'value_reflection', value: valueContext.valueName }
         };
 
-        await addAIMessageWithTypewriter(aiMessage);
+        setMessages(prev => [...prev, aiMessage]);
+        await storageService.addMessage(aiMessage);
         
         if (response.suggestions) {
           setSuggestions(response.suggestions);
@@ -268,8 +287,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
     userText: string,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setIsTyping: (isTyping: boolean) => void,
-    setSuggestions: (suggestions: string[]) => void,
-    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+    setSuggestions: (suggestions: string[]) => void
   ) => {
     try {
       // Check if user wants to end the reflection
@@ -329,7 +347,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
           context: { type: 'value_reflection', value: exerciseData.valueContext?.valueName }
         };
 
-        await addAIMessageWithTypewriter(aiMessage);
+        setMessages(prev => [...prev, aiMessage]);
+        await storageService.addMessage(aiMessage);
         
         if (response.suggestions) {
           setSuggestions(response.suggestions);
@@ -418,24 +437,59 @@ export const useExerciseFlow = (initialExercise?: any) => {
   ) => {
     try {
       console.log('Ending thinking pattern reflection and generating summary...');
+      console.log('Current exerciseData:', exerciseData);
+      console.log('Current thinkingPatternContext:', thinkingPatternContext);
+      
+      // Validate that we have the pattern context before proceeding
+      const patternContext = exerciseData.patternContext || thinkingPatternContext;
+      if (!patternContext) {
+        console.error('Pattern context is missing from both exerciseData and thinkingPatternContext, cannot generate summary');
+        setIsThinkingPatternReflection(false);
+        setThinkingPatternContext(null);
+        setExerciseData({});
+        return;
+      }
       
       // Get recent messages for summary generation
       const recentMessages = await storageService.getLastMessages(15);
       
-      // Generate a session summary using the memoryService
+      // Generate a proper thinking pattern reflection summary using contextService
       setIsTyping(true);
-      const summaryResult = await memoryService.generateSessionSummary('temp_session_' + Date.now(), recentMessages);
+      const summaryResult = await contextService.generateThinkingPatternReflectionSummary(
+        recentMessages.map(msg => ({
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.text || msg.content || ''
+        })),
+        patternContext
+      );
       setIsTyping(false);
       
-      if (summaryResult.success && summaryResult.summary) {
+      if (summaryResult && summaryResult.summary) {
         // Store the summary for display
-        setThinkingPatternSummary(summaryResult.summary);
+        setThinkingPatternSummary(summaryResult);
         setShowThinkingPatternSummary(true);
         setSuggestions([]);
+        
+        // Save the reflection summary to persistent storage for insights tab
+        try {
+          await thinkingPatternsService.saveReflectionSummary({
+            originalThought: patternContext.originalThought,
+            distortionType: patternContext.distortionType,
+            reframedThought: patternContext.reframedThought,
+            prompt: patternContext.prompt,
+            summary: summaryResult.summary,
+            keyInsights: summaryResult.keyInsights,
+            sessionId: `session_${Date.now()}`
+          });
+          console.log('✅ Thinking pattern reflection saved to insights');
+        } catch (storageError) {
+          console.error('❌ Failed to save thinking pattern reflection to insights:', storageError);
+        }
       } else {
         console.error('Failed to generate thinking pattern summary');
         // Fallback to ending without summary
         setIsThinkingPatternReflection(false);
+        setThinkingPatternContext(null);
         setExerciseData({});
       }
       
@@ -444,35 +498,70 @@ export const useExerciseFlow = (initialExercise?: any) => {
       setIsTyping(false);
       // Fallback to ending without summary
       setIsThinkingPatternReflection(false);
+      setThinkingPatternContext(null);
       setExerciseData({});
     }
-  }, []);
+  }, [exerciseData, thinkingPatternContext]);
 
   const saveThinkingPatternSummary = useCallback(async () => {
     try {
-      if (!thinkingPatternSummary) return;
+      const patternContext = exerciseData.patternContext || thinkingPatternContext;
+      if (!thinkingPatternSummary || !patternContext) return;
       
-      // Save the summary to memory service
-      const recentMessages = await storageService.getLastMessages(15);
-      await memoryService.generateSessionSummary('reflection_session_' + Date.now(), recentMessages);
+      // Save the reflection summary using the dedicated ThinkingPatternsService
+      await thinkingPatternsService.saveReflectionSummary({
+        originalThought: patternContext.originalThought,
+        distortionType: patternContext.distortionType,
+        reframedThought: patternContext.reframedThought,
+        prompt: patternContext.prompt,
+        summary: thinkingPatternSummary.summary,
+        keyInsights: thinkingPatternSummary.keyInsights,
+        sessionId: Date.now().toString()
+      });
       
       console.log('Thinking pattern reflection summary saved successfully');
       
       // Reset states
       setShowThinkingPatternSummary(false);
       setThinkingPatternSummary(null);
+      setThinkingPatternContext(null);
       setIsThinkingPatternReflection(false);
       setExerciseData({});
       
     } catch (error) {
       console.error('Error saving thinking pattern summary:', error);
     }
-  }, [thinkingPatternSummary]);
+  }, [thinkingPatternSummary, exerciseData]);
 
   const cancelThinkingPatternSummary = useCallback(() => {
     setShowThinkingPatternSummary(false);
     setThinkingPatternSummary(null);
     // Don't reset isThinkingPatternReflection - user can continue the conversation
+  }, []);
+
+  const saveVisionSummary = useCallback(async () => {
+    try {
+      if (!visionSummary) return;
+      
+      console.log('Vision summary saved successfully');
+      
+      // Reset states
+      setShowVisionSummary(false);
+      setVisionSummary(null);
+      
+      // Now show mood rating after saving vision summary
+      setShowMoodRating(true);
+      
+    } catch (error) {
+      console.error('Error saving vision summary:', error);
+    }
+  }, [visionSummary]);
+
+  const cancelVisionSummary = useCallback(() => {
+    setShowVisionSummary(false);
+    setVisionSummary(null);
+    // Show mood rating when canceling
+    setShowMoodRating(true);
   }, []);
 
   const startThinkingPatternReflection = useCallback(async (
@@ -484,14 +573,15 @@ export const useExerciseFlow = (initialExercise?: any) => {
     },
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setIsTyping: (isTyping: boolean) => void,
-    setSuggestions: (suggestions: string[]) => void,
-    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+    setSuggestions: (suggestions: string[]) => void
   ) => {
     try {
       console.log('Starting thinking pattern reflection with context:', patternContext);
       
       setIsThinkingPatternReflection(true);
+      setThinkingPatternContext(patternContext);
       setExerciseData({ patternContext });
+      console.log('✅ Thinking pattern context set:', patternContext);
       
       // Initialize reflection tracking
       setReflectionMessageCount(0);
@@ -519,7 +609,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
           }
         };
 
-        await addAIMessageWithTypewriter(aiMessage);
+        setMessages(prev => [...prev, aiMessage]);
+        await storageService.addMessage(aiMessage);
         
         if (response.suggestions) {
           setSuggestions(response.suggestions);
@@ -540,8 +631,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
     userText: string,
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     setIsTyping: (isTyping: boolean) => void,
-    setSuggestions: (suggestions: string[]) => void,
-    addAIMessageWithTypewriter: (message: Message) => Promise<void>
+    setSuggestions: (suggestions: string[]) => void
   ) => {
     try {
       // Check if user wants to end the reflection
@@ -577,7 +667,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
       const recentMessages = await storageService.getLastMessages(10);
       
       // For thinking pattern reflection, we need to maintain the pattern context throughout the conversation
-      const patternContext = exerciseData.patternContext;
+      const patternContext = exerciseData.patternContext || thinkingPatternContext;
       const context = await contextService.assembleThinkingPatternReflectionContext(patternContext);
       
       // Add the recent conversation messages to the context
@@ -601,12 +691,13 @@ export const useExerciseFlow = (initialExercise?: any) => {
           isAIGuided: true,
           context: { 
             type: 'thinking_pattern_reflection', 
-            distortionType: exerciseData.patternContext?.distortionType,
-            originalThought: exerciseData.patternContext?.originalThought
+            distortionType: patternContext?.distortionType,
+            originalThought: patternContext?.originalThought
           }
         };
 
-        await addAIMessageWithTypewriter(aiMessage);
+        setMessages(prev => [...prev, aiMessage]);
+        await storageService.addMessage(aiMessage);
         
         if (response.suggestions) {
           setSuggestions(response.suggestions);
@@ -624,7 +715,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
     } catch (error) {
       console.error('Error handling thinking pattern reflection response:', error);
     }
-  }, [exerciseData]);
+  }, [exerciseData, thinkingPatternContext, reflectionMessageCount, reflectionStartTime]);
 
   return {
     exerciseMode,
@@ -638,6 +729,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
     valueReflectionSummary,
     showThinkingPatternSummary,
     thinkingPatternSummary,
+    showVisionSummary,
+    visionSummary,
     reflectionMessageCount,
     canEndReflection,
     startDynamicAIGuidedExercise,
@@ -652,6 +745,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
     endThinkingPatternReflection,
     saveThinkingPatternSummary,
     cancelThinkingPatternSummary,
+    saveVisionSummary,
+    cancelVisionSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,

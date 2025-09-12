@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as NavigationBar from 'expo-navigation-bar';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
@@ -12,6 +13,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { 
   MessageItem, 
   AnimatedTypingCursor, 
+  AnimatedTypingDots,
+  TranscribingIndicator,
   SuggestionChips, 
   ChatInput, 
   ExerciseCard 
@@ -20,6 +23,7 @@ import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
+import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
 import { 
   useTypewriterAnimation, 
   useVoiceRecording, 
@@ -49,7 +53,46 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     Caveat_400Regular,
   });
 
-  const insets = useSafeAreaInsets();
+  // Safe fallback for when SafeAreaProvider context is not available
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    console.warn('SafeAreaProvider context not available in ChatInterface, using fallback values:', error);
+    // Fallback insets for when context is not available
+    insets = {
+      top: Platform.OS === 'ios' ? 44 : 0,
+      bottom: Platform.OS === 'ios' ? 34 : 0,
+      left: 0,
+      right: 0,
+    };
+  }
+
+  // Set navigation bar color to match chat background
+  useEffect(() => {
+    const setupNavigationBar = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          await NavigationBar.setBackgroundColorAsync('#ffffff'); // Pure white for navigation bar
+          await NavigationBar.setButtonStyleAsync('dark'); // Dark buttons for light background
+          // Ensure the navigation bar is completely opaque
+          await NavigationBar.setPositionAsync('absolute');
+          await NavigationBar.setVisibilityAsync('visible');
+        } catch (error) {
+          console.warn('Failed to set navigation bar color:', error);
+        }
+      }
+    };
+    
+    setupNavigationBar();
+    
+    // Cleanup when component unmounts
+    return () => {
+      if (Platform.OS === 'android') {
+        NavigationBar.setBackgroundColorAsync('#000000').catch(() => {}); // Reset to default
+      }
+    };
+  }, []);
 
   // Basic state
   const [inputText, setInputText] = useState('');
@@ -87,6 +130,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     valueReflectionSummary,
     showThinkingPatternSummary,
     thinkingPatternSummary,
+    showVisionSummary,
+    visionSummary,
     reflectionMessageCount,
     canEndReflection,
     startDynamicAIGuidedExercise,
@@ -101,6 +146,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     endThinkingPatternReflection,
     saveThinkingPatternSummary,
     cancelThinkingPatternSummary,
+    saveVisionSummary,
+    cancelVisionSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,
@@ -124,8 +171,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           currentExercise.context,
           chatSession.setMessages,
           chatSession.setIsTyping,
-          chatSession.setSuggestions,
-          addAIMessageWithTypewriter
+          chatSession.setSuggestions
         );
       } else if (currentExercise.type === 'thinking_pattern_reflection') {
         console.log('Starting thinking pattern reflection with context:', currentExercise.context);
@@ -133,8 +179,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           currentExercise.context,
           chatSession.setMessages,
           chatSession.setIsTyping,
-          chatSession.setSuggestions,
-          addAIMessageWithTypewriter
+          chatSession.setSuggestions
         );
       } else {
         enterExerciseMode();
@@ -174,8 +219,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         text,
         chatSession.setMessages,
         chatSession.setIsTyping,
-        chatSession.setSuggestions,
-        addAIMessageWithTypewriter
+        chatSession.setSuggestions
       );
       return;
     }
@@ -185,8 +229,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         text,
         chatSession.setMessages,
         chatSession.setIsTyping,
-        chatSession.setSuggestions,
-        addAIMessageWithTypewriter
+        chatSession.setSuggestions
       );
       return;
     }
@@ -198,8 +241,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         exerciseData.currentExercise,   // ✅ use currentExercise from exerciseData
         chatSession.setMessages,
         chatSession.setIsTyping,
-        chatSession.setSuggestions,
-        addAIMessageWithTypewriter
+        chatSession.setSuggestions
       );
       return;
     }
@@ -284,8 +326,8 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       }
     }, [canEndReflection]);
 
-    const normalGradient = [...colors.gradients.primaryLight];
-    const exerciseGradient = ['#f0fdf4', '#ecfdf5', '#d1fae5'];
+    const normalGradient = ['rgba(239, 246, 255, 0.3)', '#ffffff']; // Light blue to white gradient (top to bottom)
+    const exerciseGradient = ['rgba(239, 246, 255, 0.3)', '#ffffff']; // Same light gradient for exercises
 
     const renderMessage = (message: Message) => (
       <MessageItem
@@ -306,14 +348,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     );
 
   return (
-    <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#ffffff"
+        translucent={false}
+      />
+      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
       <ImageBackground
         source={require('../../assets/images/background1.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <LinearGradient
-          colors={['rgba(255, 253, 232, 0.7)', 'rgba(187, 242, 255, 0.7)']}
+          colors={['rgba(239, 246, 255, 0.3)', 'rgba(255, 255, 255, 1.0)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.backgroundOverlay}
@@ -346,7 +394,16 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             <View style={styles.headerContent}>
               <View style={styles.headerLeft}>
                 <TouchableOpacity 
-                  onPress={() => chatSession.handleEndSession(onBack)}
+                  onPress={() => {
+                    const exerciseContext = {
+                      exerciseMode,
+                      exerciseType: exerciseData.currentExercise?.type,
+                      isValueReflection,
+                      isThinkingPatternReflection,
+                      isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
+                    };
+                    chatSession.handleEndSession(onBack, exerciseContext);
+                  }}
                   style={styles.backButton}
                   activeOpacity={0.7}
                 >
@@ -422,18 +479,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                       />
                     </View>
                     <View style={styles.typingTextContainer}>
-                      <View style={styles.typingDots}>
-                        <View style={styles.typingDot} />
-                        <View style={styles.typingDot} />
-                        <View style={styles.typingDot} />
-
-                      </View>
+                      <AnimatedTypingDots isVisible={chatSession.isTyping} />
                     </View>
                   </View>
                 </View>
 
               </View>
             )}
+
 
             {showPreExerciseMoodSlider && exerciseData.currentExercise && (
               <PreExerciseMoodCard
@@ -478,6 +531,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                 summary={thinkingPatternSummary}
                 onSave={saveThinkingPatternSummary}
                 onCancel={cancelThinkingPatternSummary}
+              />
+            )}
+
+            {showVisionSummary && visionSummary && (
+              <VisionSummaryCard
+                summary={visionSummary}
+                onSave={saveVisionSummary}
+                onCancel={cancelVisionSummary}
               />
             )}
           </ScrollView>
@@ -561,7 +622,8 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onInputTextChange={handleInputTextChange}
             onSend={handleSend}
             isRecording={voiceRecording.isRecording}
-            audioLevels={voiceRecording.audioLevels}
+            isTranscribing={voiceRecording.isTranscribing}
+            audioLevel={voiceRecording.audioLevel}
             partialTranscript={voiceRecording.partialTranscript}
             onMicPressIn={async () => {
               // Store current text before starting voice recording
@@ -580,9 +642,11 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               setInputText(textBeforeVoiceRef.current);
             }}
           />
+
         </KeyboardAvoidingView>
       </ImageBackground>
     </SafeAreaWrapper>
+    </>
   );
 };
 

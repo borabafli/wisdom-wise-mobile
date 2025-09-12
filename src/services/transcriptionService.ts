@@ -48,15 +48,80 @@ class TranscriptionService {
     }
 
     try {
-      const response = await this.client.post('/ai-chat', {
+      // Comprehensive input validation and debugging
+      console.log('🎤 TranscriptionService: Starting transcription request');
+      console.log('📊 Request parameters:', {
+        audioDataLength: audioData?.length || 0,
+        audioDataType: typeof audioData,
+        audioDataPreview: audioData?.substring(0, 50) + '...',
+        language,
+        fileType
+      });
+
+      // Validate input data
+      if (!audioData || typeof audioData !== 'string') {
+        console.error('❌ Invalid audio data:', { audioData: typeof audioData, length: audioData?.length });
+        return {
+          success: false,
+          error: 'Invalid audio data provided'
+        };
+      }
+
+      if (audioData.length === 0) {
+        console.error('❌ Empty audio data');
+        return {
+          success: false,
+          error: 'Audio data is empty'
+        };
+      }
+
+      // Check if it looks like valid base64
+      const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+      if (!base64Regex.test(audioData)) {
+        console.error('❌ Audio data does not look like valid base64');
+        return {
+          success: false,
+          error: 'Audio data is not valid base64'
+        };
+      }
+
+      const payload = {
         action: 'transcribe',
         audioData: audioData,
         language: language,
         fileType: fileType
+      };
+
+      console.log('📡 Sending request to Edge Function:', {
+        url: `${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`,
+        payloadSize: JSON.stringify(payload).length,
+        action: payload.action,
+        language: payload.language,
+        fileType: payload.fileType,
+        audioDataLength: payload.audioData.length
+      });
+
+      const response = await this.client.post('/ai-chat', payload);
+
+      console.log('✅ Edge Function response received:', {
+        status: response.status,
+        data: response.data
       });
 
       return response.data;
     } catch (error: any) {
+      console.error('❌ TranscriptionService error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data,
+        requestData: {
+          audioDataLength: audioData?.length || 0,
+          language,
+          fileType
+        }
+      });
+
       const apiError = APIErrorHandler.handleTranscriptionError(error);
       return {
         success: false,

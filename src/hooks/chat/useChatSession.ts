@@ -4,7 +4,7 @@ import { contextService } from '../../services/contextService';
 import { apiService } from '../../services/apiService';
 import { rateLimitService } from '../../services/rateLimitService';
 import { ttsService } from '../../services/ttsService';
-import { useSessionManagement } from '../useSessionManagement';
+import { useSessionManagement, ExerciseContext } from '../useSessionManagement';
 import { getExerciseFlow, exerciseLibraryData } from '../../data/exerciseLibrary';
 import { memoryService } from '../../services/memoryService';
 
@@ -32,7 +32,7 @@ interface UseChatSessionReturn extends ChatSessionState {
   initializeChatSession: () => Promise<void>;
   handleSendMessage: (text: string) => Promise<void>;
   handleSuggestExercise: () => Promise<void>;
-  handleEndSession: (onBack: () => void) => void;
+  handleEndSession: (onBack: () => void, exerciseContext?: ExerciseContext) => void;
   handleExerciseSendMessage: (text: string, currentStep: number) => Promise<void>;
   handleStartExercise: (exercise: any, preserveChat?: boolean) => Promise<void>;
   handleConfirmExerciseTransition: (exercise: any) => Promise<void>;
@@ -333,8 +333,8 @@ const handleConfirmExerciseTransition = async (exercise: any) => {
 };
 
 
-  const handleEndSession = useCallback((onBack: () => void) => {
-    sessionEndHandler(onBack, messages);
+  const handleEndSession = useCallback((onBack: () => void, exerciseContext?: ExerciseContext) => {
+    sessionEndHandler(onBack, messages, exerciseContext);
   }, [sessionEndHandler, messages]);
 
   return {

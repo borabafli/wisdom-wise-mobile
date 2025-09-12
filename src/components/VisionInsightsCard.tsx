@@ -49,16 +49,24 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
   if (isLoading) {
     return (
       <View style={styles.card}>
+        <LinearGradient
+          colors={['rgba(240, 249, 255, 0.8)', 'rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.6)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientBackground}
+        />
         <View style={styles.accent} />
         <View style={styles.header}>
           <LinearGradient
-            colors={['#E0F2FE', '#7DD3FC']}
+            colors={['#A4CEDC', '#599BC1', '#4A8AAE', '#3C7A9B']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={styles.icon}
           >
-            <Star size={24} color="#0369A1" />
+            <Star size={24} color="white" />
           </LinearGradient>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Vision of the Future</Text>
+            <Text style={styles.title}>Vision of Myself</Text>
             <Text style={styles.subtitle}>Loading your inspiring vision...</Text>
           </View>
         </View>
@@ -69,16 +77,24 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
   if (!latestVision) {
     return (
       <View style={styles.card}>
+        <LinearGradient
+          colors={['rgba(240, 249, 255, 0.8)', 'rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.6)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientBackground}
+        />
         <View style={styles.accent} />
         <View style={styles.header}>
           <LinearGradient
-            colors={['#E0F2FE', '#7DD3FC']}
+            colors={['#A4CEDC', '#599BC1', '#4A8AAE', '#3C7A9B']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={styles.icon}
           >
-            <Star size={24} color="#0369A1" />
+            <Star size={24} color="white" />
           </LinearGradient>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Vision of the Future</Text>
+            <Text style={styles.title}>Vision of Myself</Text>
             <Text style={styles.subtitle}>Create an inspiring vision of your future self</Text>
           </View>
         </View>
@@ -105,6 +121,12 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
 
   return (
     <View style={styles.card}>
+      <LinearGradient
+        colors={['rgba(240, 249, 255, 0.8)', 'rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.6)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientBackground}
+      />
       <View style={styles.accent} />
       
       <View style={styles.header}>
@@ -115,7 +137,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
           <Star size={24} color="#0369A1" />
         </LinearGradient>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Vision of the Future</Text>
+          <Text style={styles.title}>Vision of Myself</Text>
           <Text style={styles.subtitle}>Your inspiring future self</Text>
         </View>
       </View>
@@ -191,10 +213,10 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
               style={styles.viewAllButton}
               activeOpacity={0.8}
             >
+              <Eye size={14} color="#0369A1" />
               <Text style={styles.viewAllText}>
-                View all visions ({visionStats.totalVisions})
+                View {visionStats.totalVisions} vision{visionStats.totalVisions > 1 ? 's' : ''}
               </Text>
-              <ArrowRight size={14} color="#0369A1" />
             </TouchableOpacity>
           )}
         </View>
@@ -205,24 +227,34 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
 
 const styles = {
   card: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    marginHorizontal: 20,
-    marginVertical: 8,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(226, 232, 240, 0.5)',
+    marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 8,
     overflow: 'hidden' as const,
+    position: 'relative' as const,
   },
-  accent: {
+  gradientBackground: {
     position: 'absolute' as const,
     top: 0,
     left: 0,
     right: 0,
-    height: 4,
-    backgroundColor: '#0EA5E9',
+    bottom: 0,
+  },
+  accent: {
+    position: 'absolute' as const,
+    bottom: 0,
+    right: 0,
+    width: 128,
+    height: 128,
+    backgroundColor: 'rgba(165, 180, 252, 0.15)',
+    borderRadius: 64,
+    transform: [{ translateY: 64 }, { translateX: 64 }],
   },
   header: {
     flexDirection: 'row' as const,
@@ -242,14 +274,19 @@ const styles = {
     flex: 1,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: '#1e40af',
+    fontSize: 20,
+    fontWeight: '500' as const,
+    lineHeight: 28,
+    fontFamily: 'Nunito-Medium',
+    color: '#111827',
     marginBottom: 2,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#64748b',
+    fontSize: 16,
+    fontWeight: '400' as const,
+    lineHeight: 24,
+    fontFamily: 'Nunito-Regular',
+    color: '#374151',
   },
   content: {
     paddingHorizontal: 20,
@@ -267,7 +304,7 @@ const styles = {
     fontSize: 16,
     lineHeight: 24,
     color: '#1e293b',
-    fontStyle: 'italic' as const,
+    fontFamily: 'ClashGrotesk-Regular',
     marginBottom: 8,
   },
   visionDate: {
@@ -327,7 +364,7 @@ const styles = {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    backgroundColor: '#0EA5E9',
+    backgroundColor: '#599BC1',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -342,13 +379,13 @@ const styles = {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    backgroundColor: '#f0f9ff',
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    gap: 6,
+    backgroundColor: '#f8fafc',
+    borderColor: '#0369A1',
     borderWidth: 1,
-    borderColor: '#bae6fd',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 6,
   },
   viewAllText: {
     color: '#0369A1',
@@ -370,7 +407,7 @@ const styles = {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    backgroundColor: '#0EA5E9',
+    backgroundColor: '#599BC1',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,

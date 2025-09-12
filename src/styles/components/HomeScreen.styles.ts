@@ -22,6 +22,14 @@ export const homeScreenStyles = StyleSheet.create({
     bottom: 0,
     zIndex: -1,
   },
+  fullScreenBackground: {
+    flex: 1,
+    position: 'relative',
+  },
+  backgroundImageStyle: {
+    opacity: 0.15,
+    transform: [{ scale: 0.8 }],
+  },
 
   // Scroll View
   scrollView: {
@@ -31,33 +39,20 @@ export const homeScreenStyles = StyleSheet.create({
     paddingBottom: 120,
   },
 
-  // Turtle and Input Bar Layout
+  // Input Bar Layout
   inputWithTurtleWrapper: {
     alignItems: 'flex-end',
-    marginTop: height < 700 ? 140 : 160, // Moved chat bar higher up
+    marginTop: height < 700 ? 120 : 140,
     position: 'relative',
     width: '100%',
-  },
-  turtleAtBarContainer: {
-    position: 'absolute',
-    top: -85, // Moved even higher up
-    right: width < 375 ? 25 : 35,
-    zIndex: 2,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  turtleAtBarImage: {
-    width: width < 375 ? 100 : 120,
-    height: width < 375 ? 100 : 120,
-    opacity: 1.0,
   },
 
   // Header Section
   headerSection: {
     paddingHorizontal: width < 375 ? spacing[16] : spacing.layout.screenPadding,
     paddingTop: spacing[32],
-    marginBottom: height < 700 ? 80 : 90, // Much reduced spacing below header
-    minHeight: height < 700 ? 180 : 200, // Increased for deeper header
+    marginBottom: height < 700 ? 60 : 70, // Further reduced spacing below header
+    minHeight: height < 700 ? 160 : 180, // Reduced for more compact layout
   },
   headerText: {
     position: 'absolute',
@@ -133,7 +128,7 @@ export const homeScreenStyles = StyleSheet.create({
   exercisesSection: {
     paddingHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
-    marginTop: height < 700 ? 40 : 50, // Reduced spacing below chatbar
+    marginTop: height < 700 ? 20 : 30, // Further reduced spacing below chatbar
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -184,15 +179,14 @@ export const homeScreenStyles = StyleSheet.create({
     gap: spacing.components.cardGap,
   },
   exerciseIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 80,
+    height: 80,
   },
   exerciseIconImage: {
-    width: 56,
-    height: 56,
+    width: 80,
+    height: 80,
   },
   exerciseInfo: {
     flex: 1,
@@ -200,11 +194,11 @@ export const homeScreenStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   exerciseName: {
-    fontSize: 28,
+    fontSize: 20,
     color: '#002244',
     fontWeight: 'bold',
     fontFamily: 'Poppins-Bold',
-    marginBottom: spacing[2],
+    marginBottom: spacing[1],
     textAlign: 'center',
     letterSpacing: -0.3,
     textShadowColor: 'rgba(255, 255, 255, 0.8)',
@@ -212,24 +206,24 @@ export const homeScreenStyles = StyleSheet.create({
     textShadowRadius: 2,
   },
   exerciseTime: {
-    fontSize: 13,
+    fontSize: 11,
     color: '#475569',
     fontWeight: '600',
-    marginTop: spacing[2],
+    marginTop: spacing[1],
     textAlign: 'center',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 0.6,
     opacity: 0.8,
   },
   exerciseDescription: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#1e293b',
     fontWeight: '500',
-    lineHeight: 22,
+    lineHeight: 18,
     textAlign: 'center',
     marginBottom: spacing[1],
     opacity: 0.9,
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   },
   exerciseAction: {
     marginLeft: 'auto',
@@ -329,7 +323,7 @@ export const homeScreenStyles = StyleSheet.create({
     minHeight: 160,
   },
   quoteBackgroundImageStyle: {
-    opacity: 0.60,
+    opacity: 0.25,
     borderRadius: 24,
   },
   quoteText: {

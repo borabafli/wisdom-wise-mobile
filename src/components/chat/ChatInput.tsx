@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
-import SoundWaveAnimation from '../SoundWaveAnimation';
+import { RecordingWave } from '../RecordingWave';
 import { SafeAreaWrapper } from '../SafeAreaWrapper';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
 
@@ -10,7 +10,8 @@ interface ChatInputProps {
   onInputTextChange: (text: string) => void;
   onSend: (text?: string) => void;
   isRecording: boolean;
-  audioLevels: number[];
+  isTranscribing?: boolean;
+  audioLevel: number; // Single audio level instead of array
   partialTranscript?: string;
   onMicPressIn: () => void;
   onMicPressOut: () => void;
@@ -23,7 +24,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onInputTextChange,
   onSend,
   isRecording,
-  audioLevels,
+  isTranscribing,
+  audioLevel,
   partialTranscript,
   onMicPressIn,
   onMicPressOut,
@@ -57,29 +59,55 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               <TextInput
                 value={inputText}
                 onChangeText={handleInputTextChange}
-                placeholder="Type or speak..."
+                placeholder={isTranscribing ? "Transcribing..." : "Type or speak..."}
                 placeholderTextColor="#94a3b8"
                 multiline
                 style={[
                   styles.textInput,
                   {
-                    height: Math.min(Math.max(48, inputLineCount * 22), 9 * 22),
+                    height: Math.min(Math.max(40, inputLineCount * 22), 9 * 22),
+                    textAlign: isTranscribing ? 'center' : 'left',
                   }
                 ]}
-                editable={true}
+                editable={!isTranscribing}
                 allowFontScaling={false}
                 selectionColor="#3b82f6"
               />
             ) : (
-              <View style={styles.waveInInputContainer}>
-                <SoundWaveAnimation 
-                  isRecording={isRecording} 
-                  audioLevels={audioLevels} 
-                />
+              /* Recording Interface: X button - Wave with Timer inside chatbox - Check button */
+              <View style={styles.recordingInterfaceWithTimer}>
+                {/* Cancel Button (X) - Left side, light filled */}
+                <TouchableOpacity 
+                  onPress={onCancelRecording}
+                  style={styles.cancelButton}
+                  activeOpacity={0.7}
+                >
+                  <X size={20} color="#ffffff" />
+                </TouchableOpacity>
+
+                {/* Wave and Timer Container - Center */}
+                <View style={styles.waveWithTimerInside}>
+                  <RecordingWave
+                    audioLevel={audioLevel} // Use direct audio level
+                    isRecording={isRecording}
+                    variant="bars"
+                    size="medium"
+                    showTimer={true}
+                  />
+                </View>
+
+                {/* Submit Button (Check) - Right side, filled like send button */}
+                <TouchableOpacity 
+                  onPress={onStopRecording}
+                  style={styles.submitRecordingButton}
+                  activeOpacity={0.7}
+                >
+                  <Check size={20} color="#ffffff" />
+                </TouchableOpacity>
               </View>
             )}
             
-            {!isRecording ? (
+            {!isRecording && (
               <View style={styles.inputButtonsContainer}>
                 {inputLineCount >= 5 && (
                   <TouchableOpacity 
@@ -105,26 +133,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     style={styles.micButton}
                     activeOpacity={0.7}
                   >
-                    <Mic size={26} color="#6b7280" />
+                    <Mic size={26} color="#334155" />
                   </TouchableOpacity>
                 )}
-              </View>
-            ) : (
-              <View style={styles.recordingActions}>
-                <TouchableOpacity 
-                  onPress={onCancelRecording}
-                  style={styles.recordingButton}
-                  activeOpacity={0.7}
-                >
-                  <X size={18} color="#3b82f6" />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={onStopRecording}
-                  style={styles.recordingButton}
-                  activeOpacity={0.7}
-                >
-                  <Check size={18} color="#1d4ed8" />
-                </TouchableOpacity>
               </View>
             )}
           </View>

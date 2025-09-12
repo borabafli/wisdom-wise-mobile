@@ -1,33 +1,117 @@
+/**
+ * SafeAreaWrapper - Consistent safe area handling across platforms
+ */
 import React from 'react';
-import { View, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, View, StatusBar, Platform } from 'react-native';
+import { useSafeAreaInsets, useSafeAreaFrame } from 'react-native-safe-area-context';
+import { containerStyles, isWeb, screenDimensions } from '../utils/crossPlatform';
 
 interface SafeAreaWrapperProps {
   children: React.ReactNode;
+  backgroundColor?: string;
+  statusBarStyle?: 'default' | 'dark-content' | 'light-content';
+  edges?: ('top' | 'bottom' | 'left' | 'right')[];
   style?: any;
-  edges?: Array<'top' | 'right' | 'bottom' | 'left'>;
 }
 
-/**
- * Cross-platform SafeAreaView wrapper that handles web compatibility issues.
- * Uses SafeAreaView on mobile platforms and regular View on web.
- */
-export const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({ 
-  children, 
-  style, 
-  edges 
+export const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
+  children,
+  backgroundColor = '#ffffff',
+  statusBarStyle = 'dark-content',
+  edges = ['top', 'bottom'],
+  style,
 }) => {
-  if (Platform.OS === 'web') {
-    // On web, use regular View to avoid SafeAreaView compatibility issues
-    return <View style={style}>{children}</View>;
+  // Safe fallback for when SafeAreaProvider context is not available
+  let insets;
+  try {
+    insets = useSafeAreaInsets();
+  } catch (error) {
+    console.warn('SafeAreaProvider context not available, using fallback values:', error);
+    // Fallback insets for when context is not available
+    insets = {
+      top: Platform.OS === 'ios' ? 44 : 0,
+      bottom: Platform.OS === 'ios' ? 34 : 0,
+      left: 0,
+      right: 0,
+    };
   }
-  
-  // On mobile platforms, use SafeAreaView for proper safe area handling
+
+  // Calculate safe area padding based on edges
+  const safePadding = {
+    paddingTop: edges.includes('top') ? insets.top : 0,
+    paddingBottom: edges.includes('bottom') ? insets.bottom : 0,
+    paddingLeft: edges.includes('left') ? insets.left : 0,
+    paddingRight: edges.includes('right') ? insets.right : 0,
+  };
+
+  const containerStyle = {
+    flex: 1,
+    backgroundColor,
+    ...safePadding,
+    ...style,
+  };
+
+  if (isWeb) {
+    // Web-specific container with max width for desktop
+    const webContainerStyle = {
+      ...containerStyle,
+      maxWidth: screenDimensions.isDesktop ? 1200 : '100%',
+      marginHorizontal: screenDimensions.isDesktop ? 'auto' : 0,
+    };
+
+    return (
+      <View style={webContainerStyle}>
+        {children}
+      </View>
+    );
+  }
+
   return (
-    <SafeAreaView style={style} edges={edges}>
-      {children}
-    </SafeAreaView>
+    <>
+      <StatusBar
+        barStyle={statusBarStyle}
+        backgroundColor={backgroundColor}
+        translucent={Platform.OS === 'android'}
+      />
+      <SafeAreaView style={containerStyle}>
+        {children}
+      </SafeAreaView>
+    </>
   );
 };
 
-export default SafeAreaWrapper;
+// Specialized wrapper for screens
+export const ScreenWrapper: React.FC<SafeAreaWrapperProps> = ({
+  children,
+  backgroundColor = '#f8fafc', // Default app background
+  ...props
+}) => {
+  return (
+    <SafeAreaWrapper 
+      backgroundColor={backgroundColor}
+      edges={['top', 'bottom', 'left', 'right']}
+      {...props}
+    >
+      <View style={containerStyles.screenPadding}>
+        {children}
+      </View>
+    </SafeAreaWrapper>
+  );
+};
+
+// Modal wrapper that handles different safe areas
+export const ModalWrapper: React.FC<SafeAreaWrapperProps> = ({
+  children,
+  backgroundColor = '#ffffff',
+  ...props
+}) => {
+  return (
+    <SafeAreaWrapper
+      backgroundColor={backgroundColor}
+      edges={['top', 'bottom']}
+      {...props}
+    >
+      {children}
+    </SafeAreaWrapper>
+  );
+};

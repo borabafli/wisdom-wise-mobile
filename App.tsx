@@ -1,4 +1,4 @@
-import "./global.css";
+import './global.css';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View } from 'react-native';
@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 
 // Import components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
-import { AppProvider } from './src/contexts';
+import { AppProvider, AuthProvider } from './src/contexts';
 import { AppContent } from './src/components/AppContent';
 
 // Prevent splash screen from auto-hiding
@@ -38,9 +38,11 @@ export default function App() {
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
-        <AppProvider>
-          <AppContent />
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <AppContent />
+          </AppProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </ErrorBoundary>
   );

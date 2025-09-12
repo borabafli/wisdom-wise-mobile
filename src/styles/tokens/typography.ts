@@ -12,6 +12,12 @@ export const typography = {
     serif: 'Nunito-Regular', // Elegant, readable
     display: 'Nunito-SemiBold', // Beautiful for headings
     decorative: 'Nunito-Regular', // Sophisticated, calming
+    clash: 'ClashGrotesk-Regular', // For quoted content
+    clashMedium: 'ClashGrotesk-Medium', // For quoted content emphasis
+    clashBold: 'ClashGrotesk-Bold', // For quoted content emphasis
+    ubuntu: 'Ubuntu-Regular', // For quoted content and chat
+    ubuntuMedium: 'Ubuntu-Medium', // For quoted content emphasis
+    ubuntuBold: 'Ubuntu-Bold', // For quoted content emphasis
     system: 'System', // Fallback
   },
 
@@ -133,7 +139,7 @@ export const typography = {
       fontSize: 16,
       fontWeight: '400',
       lineHeight: 24,
-      fontFamily: 'Nunito-Regular',
+      fontFamily: 'Ubuntu-Regular',
     },
     chatTimestamp: {
       fontSize: 12,
@@ -182,6 +188,26 @@ export const typography = {
       fontWeight: '400',
       lineHeight: 20,
       fontFamily: 'Nunito-Regular',
+    },
+
+    // Quoted Content - Ubuntu
+    quote: {
+      fontSize: 16,
+      fontWeight: '400',
+      lineHeight: 24,
+      fontFamily: 'Ubuntu-Regular',
+    },
+    quoteMedium: {
+      fontSize: 16,
+      fontWeight: '500',
+      lineHeight: 24,
+      fontFamily: 'Ubuntu-Medium',
+    },
+    quoteLarge: {
+      fontSize: 18,
+      fontWeight: '400',
+      lineHeight: 26,
+      fontFamily: 'Ubuntu-Regular',
     },
   },
 

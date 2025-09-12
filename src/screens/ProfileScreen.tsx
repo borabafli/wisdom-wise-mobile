@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
-import { useUserProfile } from '../hooks';
+import { useAuth } from '../contexts';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
-  const { displayName, profile } = useUserProfile();
+  const { user, profile, signOut } = useAuth();
   
   const stats = [
     { label: 'Sessions', value: '47', icon: Heart },
@@ -25,6 +25,35 @@ const ProfileScreen: React.FC = () => {
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
 
+  // Get display name from auth profile
+  const displayName = profile 
+    ? `${profile.first_name} ${profile.last_name}`.trim() || 'Friend'
+    : user?.email?.split('@')[0] || 'Friend';
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut();
+            } catch (error) {
+              Alert.alert('Error', 'Failed to sign out. Please try again.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const menuItems = [
     { icon: Edit3, label: 'Edit Profile', action: () => setShowEditProfile(true) },
     { icon: History, label: 'Chat History', action: () => setShowChatHistory(true) },
@@ -33,7 +62,7 @@ const ProfileScreen: React.FC = () => {
     { icon: Shield, label: 'Privacy & Security' },
     { icon: Moon, label: 'Dark Mode', toggle: true },
     { icon: HelpCircle, label: 'Help & Support' },
-    { icon: LogOut, label: 'Sign Out', danger: true }
+    { icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }
   ];
 
   return (
@@ -75,7 +104,7 @@ const ProfileScreen: React.FC = () => {
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>{displayName}</Text>
                 <Text style={styles.memberSince}>
-                  {profile ? `Member since ${new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : 'Welcome to WisdomWise'}
+                  {profile ? `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : user?.email || 'Welcome to WisdomWise'}
                 </Text>
                 <Text style={styles.premiumBadge}>Premium Member</Text>
               </View>

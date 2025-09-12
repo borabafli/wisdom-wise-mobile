@@ -18,13 +18,13 @@ interface MoodSliderProps {
 const SLIDER_WIDTH = 280;
 const THUMB_SIZE = 24;
 
-// Smiley image assets
+// Smiley image assets from Teal Watercolor collection
 const smileyImages = {
-  1: require('../../../assets/images/smiley-1.png'),
-  2: require('../../../assets/images/smiley-2.png'),
-  3: require('../../../assets/images/smiley-3.png'),
-  4: require('../../../assets/images/smiley-4.png'),
-  5: require('../../../assets/images/smiley-5.png'),
+  1: require('../../../assets/images/Teal Watercolor/smiley-1.png'),
+  2: require('../../../assets/images/Teal Watercolor/smiley-2.png'),
+  3: require('../../../assets/images/Teal Watercolor/smiley-3.png'),
+  4: require('../../../assets/images/Teal Watercolor/smiley-4.png'),
+  5: require('../../../assets/images/Teal Watercolor/smiley-5.png'),
 };
 
 export const MoodSlider: React.FC<MoodSliderProps> = ({
@@ -162,13 +162,13 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
   const getColors = () => {
     if (variant === 'test') {
       return {
-        fillColor: '#10597B',
-        borderColor: '#10597B'
+        fillColor: '#9AC0DF',
+        borderColor: '#9AC0DF'
       };
     }
     return {
-      fillColor: '#446D78',
-      borderColor: '#446D78'
+      fillColor: '#9AC0DF',
+      borderColor: '#9AC0DF'
     };
   };
 

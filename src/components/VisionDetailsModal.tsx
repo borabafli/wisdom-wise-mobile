@@ -211,7 +211,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
               <Star size={24} color="#0369A1" />
             </LinearGradient>
             <View>
-              <Text style={styles.headerTitle}>Vision of the Future</Text>
+              <Text style={styles.headerTitle}>Vision of Myself</Text>
               <Text style={styles.headerSubtitle}>
                 {visions.length} vision{visions.length !== 1 ? 's' : ''} created
               </Text>

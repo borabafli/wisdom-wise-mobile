@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, Modal, ScrollView, Alert } fro
 import { X, Target, TrendingUp, Lightbulb, CheckCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TherapyGoal, goalService } from '../services/goalService';
+import { SmileyImage } from './SmileyImage';
 import { goalCheckInStyles as styles } from '../styles/components/GoalCheckIn.styles';
 
 interface GoalCheckInModalProps {
@@ -94,7 +95,7 @@ export const GoalCheckInModal: React.FC<GoalCheckInModalProps> = ({
               onPress={() => setProgressRating(rating.value)}
               activeOpacity={0.7}
             >
-              <Text style={styles.ratingEmoji}>{rating.emoji}</Text>
+              <SmileyImage emoji={rating.emoji} size={24} />
               <Text style={[
                 styles.ratingLabel,
                 progressRating === rating.value && styles.ratingLabelSelected

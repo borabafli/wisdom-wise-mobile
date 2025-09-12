@@ -4,40 +4,40 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // Primary UI font - Clean, readable for interface elements
-        'sans': ['System', 'system-ui'],
-        'sans-light': ['System'],
-        'sans-medium': ['System'],
-        'sans-semibold': ['System'],
-        'sans-bold': ['System'],
+        // Primary UI font - Clean, readable for interface elements  
+        'sans': ['Nunito-Regular', 'system-ui', 'sans-serif'],
+        'sans-light': ['Nunito-Light', 'system-ui', 'sans-serif'],
+        'sans-medium': ['Nunito-Medium', 'system-ui', 'sans-serif'],
+        'sans-semibold': ['Nunito-SemiBold', 'system-ui', 'sans-serif'],
+        'sans-bold': ['Nunito-Bold', 'system-ui', 'sans-serif'],
         
         // Display font - Friendly, warm for main headings and welcome messages
-        'display': ['System'],
-        'display-medium': ['System'],
-        'display-semibold': ['System'],
-        'display-bold': ['System'],
-        'display-extrabold': ['System'],
+        'display': ['ClashGrotesk-Regular', 'Nunito-Regular', 'system-ui', 'sans-serif'],
+        'display-medium': ['ClashGrotesk-Medium', 'Nunito-Medium', 'system-ui', 'sans-serif'],
+        'display-semibold': ['ClashGrotesk-Semibold', 'Nunito-SemiBold', 'system-ui', 'sans-serif'],
+        'display-bold': ['ClashGrotesk-Bold', 'Nunito-Bold', 'system-ui', 'sans-serif'],
+        'display-extrabold': ['ClashGrotesk-ExtraBold', 'Nunito-ExtraBold', 'system-ui', 'sans-serif'],
         
         // Body font - Comfortable reading for longer text content
-        'body': ['System'],
-        'body-medium': ['System'],
-        'body-semibold': ['System'],
-        'body-bold': ['System'],
+        'body': ['Nunito-Regular', 'system-ui', 'sans-serif'],
+        'body-medium': ['Nunito-Medium', 'system-ui', 'sans-serif'],
+        'body-semibold': ['Nunito-SemiBold', 'system-ui', 'sans-serif'],
+        'body-bold': ['Nunito-Bold', 'system-ui', 'sans-serif'],
         
-        // Meditation/Therapy font - Calming, therapeutic for exercise content
-        'meditation': ['System'],
-        'meditation-semibold': ['System'],
-        'meditation-bold': ['System'],
+        // Chat/Ubuntu font - For conversational UI elements
+        'chat': ['Ubuntu-Regular', 'Nunito-Regular', 'system-ui', 'sans-serif'],
+        'chat-medium': ['Ubuntu-Medium', 'Nunito-Medium', 'system-ui', 'sans-serif'],
+        'chat-bold': ['Ubuntu-Bold', 'Nunito-Bold', 'system-ui', 'sans-serif'],
         
         // Mindful/Quotes font - Elegant, inspirational for quotes and reflections
-        'mindful': ['System'],
-        'mindful-medium': ['System'],
-        'mindful-semibold': ['System'],
-        'mindful-bold': ['System'],
+        'mindful': ['Source-Serif-Pro', 'Lora-Regular', 'serif'],
+        'mindful-medium': ['Lora-Medium', 'serif'],
+        'mindful-semibold': ['Lora-SemiBold', 'serif'],
+        'mindful-bold': ['Lora-Bold', 'serif'],
         
         // Emphasis font - Gentle serif for special content
-        'accent': ['System'],
-        'accent-semibold': ['System'],
+        'accent': ['Crimson-Text', 'Lora-Regular', 'serif'],
+        'accent-semibold': ['Crimson-Text-SemiBold', 'Lora-SemiBold', 'serif'],
       },
       fontSize: {
         'xs': ['11px', { lineHeight: '16px' }],

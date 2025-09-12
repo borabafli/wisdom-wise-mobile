@@ -239,7 +239,7 @@ export const visionDetailsModalStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#599BC1',
     borderRadius: 12,
     paddingVertical: spacing[12],
     paddingHorizontal: spacing[16],

@@ -89,8 +89,8 @@ export const thinkingPatternSummaryCardStyles = StyleSheet.create({
   originalThought: {
     ...typography.textStyles.body,
     color: colors.text.secondary,
-    fontStyle: 'italic',
     lineHeight: 20,
+    fontFamily: 'ClashGrotesk-Regular',
   },
 
   summaryText: {
@@ -101,6 +101,34 @@ export const thinkingPatternSummaryCardStyles = StyleSheet.create({
     paddingVertical: spacing.therapy.sm,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
+    fontStyle: 'italic',
+  },
+
+  insightsSection: {
+    marginTop: spacing.therapy.md,
+  },
+
+  insightItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing.therapy.sm,
+    paddingLeft: spacing.therapy.sm,
+  },
+
+  insightBullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.purple[500],
+    marginRight: spacing.therapy.sm,
+    marginTop: 8, // Align with text
+  },
+
+  insightText: {
+    ...typography.textStyles.body,
+    color: colors.text.secondary,
+    flex: 1,
+    lineHeight: 22,
   },
 
   actions: {

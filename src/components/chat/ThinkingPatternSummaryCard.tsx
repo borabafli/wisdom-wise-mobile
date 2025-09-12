@@ -11,7 +11,10 @@ interface ThinkingPatternSummaryCardProps {
     distortionType: string;
     reframedThought: string;
   };
-  summary: string;
+  summary: {
+    summary: string;
+    keyInsights: string[];
+  };
   onSave: () => void;
   onCancel: () => void;
 }
@@ -40,7 +43,8 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
       style={styles.container}
     >
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)']}
+        colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0)']}
+        locations={[0, 0.4, 1]}
         style={styles.glassOverlay}
       >
         <View style={styles.header}>
@@ -61,9 +65,21 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
           </View>
 
           <View style={styles.summarySection}>
-            <Text style={styles.sectionTitle}>Key Insights</Text>
-            <Text style={styles.summaryText}>{summary}</Text>
+            <Text style={styles.sectionTitle}>Reflection Summary</Text>
+            <Text style={styles.summaryText}>"{summary.summary}"</Text>
           </View>
+
+          {summary.keyInsights && summary.keyInsights.length > 0 && (
+            <View style={styles.insightsSection}>
+              <Text style={styles.sectionTitle}>Key Insights</Text>
+              {summary.keyInsights.map((insight, index) => (
+                <View key={index} style={styles.insightItem}>
+                  <View style={styles.insightBullet} />
+                  <Text style={styles.insightText}>{insight}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </ScrollView>
 
         <View style={styles.actions}>

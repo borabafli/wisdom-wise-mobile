@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal, Dimensions, PanResponder, Animated
 import { X, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
+import { SmileyImage } from './SmileyImage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -117,7 +118,7 @@ const ExerciseCompletionRating: React.FC<ExerciseCompletionRatingProps> = ({
           <View style={styles.ratingContainer}>
             <Text style={styles.ratingLabel}>Today</Text>
             <Text style={styles.ratingText}>{getRatingText(rating)}</Text>
-            <Text style={styles.ratingEmoji}>{getRatingEmoji(rating)}</Text>
+            <SmileyImage emoji={getRatingEmoji(rating)} size={32} />
           </View>
           
           {/* Slider */}

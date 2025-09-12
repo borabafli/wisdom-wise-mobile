@@ -1,13 +1,15 @@
 import { useState, useRef } from 'react';
 import { Alert, Animated } from 'react-native';
 import { sttService } from '../../services/sttService';
+import { useDirectAudioLevels } from '../useDirectAudioLevels';
 
 interface UseVoiceRecordingReturn {
   isRecording: boolean;
   isListening: boolean;
+  isTranscribing: boolean;
   sttError: string | null;
   partialTranscript: string;
-  audioLevels: number[];
+  audioLevel: number; // Single audio level instead of array
   waveAnimations: Animated.Value[];
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
@@ -20,9 +22,12 @@ export const useVoiceRecording = (
 ): UseVoiceRecordingReturn => {
   const [isRecording, setIsRecording] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
-  const [audioLevels, setAudioLevels] = useState<number[]>(Array(7).fill(0.05));
+  
+  // Use direct audio levels hook
+  const { audioLevel, updateAudioLevel, resetLevel } = useDirectAudioLevels();
 
   // Audio level animations for real sound wave visualization
   const waveAnimations = useRef(
@@ -55,9 +60,10 @@ export const useVoiceRecording = (
       // On result
       (result) => {
         if (result.isFinal) {
-          // Final result - update input text
+          // Final result - update input text and clear transcribing state
           onTranscriptUpdate(result.transcript);
           setPartialTranscript('');
+          setIsTranscribing(false);
         } else {
           // Partial result - show as preview
           setPartialTranscript(result.transcript);
@@ -68,6 +74,7 @@ export const useVoiceRecording = (
         setSttError(error);
         setIsRecording(false);
         setIsListening(false);
+        setIsTranscribing(false);
         setPartialTranscript('');
         Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
       },
@@ -77,13 +84,20 @@ export const useVoiceRecording = (
         if (!isRecording) {
           console.log('Updating UI - recording ended');
           setIsListening(false);
+          setIsTranscribing(false);
           setPartialTranscript('');
           resetSoundWaves();
         }
       },
-      // On audio level
+      // On audio level - use direct STT metering
       (level, frequencyData) => {
-        updateSoundWaves(level, frequencyData);
+        updateAudioLevel(level); // Pass normalized level (0-1) to direct audio levels hook
+        updateSoundWaves(audioLevel); // Update wave animations with processed level
+        
+        // Debug logging for silence issue
+        if (Math.random() < 0.02) { // 2% of the time
+          console.log(`🎤 Voice recording: level=${level.toFixed(4)}, audioLevel=${audioLevel.toFixed(4)}`);
+        }
       }
     );
 
@@ -95,14 +109,18 @@ export const useVoiceRecording = (
 
   const stopRecording = async () => {
     console.log('🛑 stopRecording called - current state:', isRecording);
-    // Always stop the service regardless of current state
-    await sttService.stopRecognition();
-    // Reset all recording-related states
+    
+    // Set transcribing state before stopping
+    setIsTranscribing(true);
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
-    setSttError(null);
+    resetLevel(); // Reset direct audio level
     resetSoundWaves();
+    
+    // Always stop the service regardless of current state
+    await sttService.stopRecognition();
+    
     console.log('✅ Recording stopped and state reset');
   };
 
@@ -112,8 +130,10 @@ export const useVoiceRecording = (
       await sttService.cancelRecognition();
       setIsRecording(false);
       setIsListening(false);
+      setIsTranscribing(false);
       setPartialTranscript('');
       setSttError(null);
+      resetLevel(); // Reset direct audio level
       resetSoundWaves();
       console.log('Recording cancelled successfully');
     } catch (error) {
@@ -122,71 +142,51 @@ export const useVoiceRecording = (
     }
   };
 
-  // Update sound waves based on real frequency spectrum data
-  const updateSoundWaves = (audioLevel: number, frequencyData?: number[]) => {
-    if (frequencyData && frequencyData.length >= 7) {
-      // Use real frequency data for each bar - animate smoothly to new values
-      frequencyData.forEach((level, index) => {
-        if (index < waveAnimations.length) {
-          const targetHeight = Math.max(0.05, Math.min(1, level)); // Lower minimum for true silence
-          
-          // Animate to the new frequency level with smooth transition
-          Animated.timing(waveAnimations[index], {
-            toValue: targetHeight,
-            duration: 80, // Fast response for real-time feel
-            useNativeDriver: false,
-          }).start();
-        }
-      });
-      
-      // Also update state for immediate rendering (fallback)
-      setAudioLevels(frequencyData.map(level => Math.max(0.05, Math.min(1, level))));
-    } else {
-      // Fallback to single level distributed across bars with animation
-      const baseLevel = Math.max(0.05, Math.min(1, audioLevel)); // Lower baseline
-      const newLevels = Array.from({ length: 7 }, (_, i) => {
-        if (baseLevel < 0.1) {
-          // During silence, keep all bars very low
-          return Math.max(0.05, baseLevel * (0.8 + Math.random() * 0.4));
-        } else {
-          // During speech, create natural variation
-          const variation = (Math.random() - 0.5) * 0.2; // Less random variation
-          return Math.max(0.05, Math.min(1, baseLevel + variation));
-        }
-      });
-      
-      // Animate all bars
-      newLevels.forEach((targetLevel, index) => {
-        Animated.timing(waveAnimations[index], {
-          toValue: targetLevel,
-          duration: 80,
-          useNativeDriver: false,
-        }).start();
-      });
-      
-      setAudioLevels(newLevels);
-    }
+  // Update sound waves - simplified to just animate wave bars based on single audio level
+  const updateSoundWaves = (currentAudioLevel: number) => {
+    // Use the processed audio level from direct audio levels hook
+    const baseLevel = Math.max(0.02, Math.min(1, currentAudioLevel));
+    
+    // Create minimal variation across bars for visual interest only
+    const newLevels = Array.from({ length: 7 }, (_, i) => {
+      if (baseLevel < 0.05) {
+        // True silence - all bars very low
+        return 0.02;
+      } else {
+        // During speech, minimal natural variation (±10%)
+        const variation = (Math.random() - 0.5) * 0.1;
+        return Math.max(0.02, Math.min(1, baseLevel + variation));
+      }
+    });
+    
+    // Animate all bars with very fast response for continuous movement
+    newLevels.forEach((targetLevel, index) => {
+      Animated.timing(waveAnimations[index], {
+        toValue: targetLevel,
+        duration: 100, // Fast but smooth animation
+        useNativeDriver: false,
+      }).start();
+    });
   };
 
   const resetSoundWaves = () => {
     // Reset all animations to true baseline for silence
     waveAnimations.forEach(anim => {
       Animated.timing(anim, {
-        toValue: 0.05, // Much lower baseline to show true silence
+        toValue: 0.02, // True silence baseline
         duration: 200,
         useNativeDriver: false,
       }).start();
     });
-    
-    setAudioLevels(Array(7).fill(0.05)); // Lower baseline values
   };
 
   return {
     isRecording,
     isListening,
+    isTranscribing,
     sttError,
     partialTranscript,
-    audioLevels,
+    audioLevel, // Return single audio level instead of array
     waveAnimations,
     startRecording,
     stopRecording,

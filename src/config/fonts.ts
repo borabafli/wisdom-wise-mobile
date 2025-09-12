@@ -79,6 +79,12 @@ export const fontConfig = {
   // Emphasis font - Gentle serif for special content
   'CrimsonText-Regular': CrimsonText_400Regular,
   'CrimsonText-SemiBold': CrimsonText_600SemiBold,
+
+  // Ubuntu font - Modern, clean for quotes and chat
+  'Ubuntu-Light': require('../../assets/fonts/Ubuntu/Ubuntu-Light.ttf'),
+  'Ubuntu-Regular': require('../../assets/fonts/Ubuntu/Ubuntu-Regular.ttf'),
+  'Ubuntu-Medium': require('../../assets/fonts/Ubuntu/Ubuntu-Medium.ttf'),
+  'Ubuntu-Bold': require('../../assets/fonts/Ubuntu/Ubuntu-Bold.ttf'),
 };
 
 export const loadFonts = async () => {
