@@ -4,6 +4,7 @@ import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, User, Check, AlertCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserProfile } from '../hooks';
+import { useAuth } from '../contexts';
 import { editProfileModalStyles as styles } from '../styles/components/EditProfileModal.styles';
 
 interface EditProfileModalProps {
@@ -12,36 +13,40 @@ interface EditProfileModalProps {
 }
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose }) => {
-  const { profile, updateProfile, isLoading, error } = useUserProfile();
+  const { profile: userProfile, updateProfile, isLoading, error } = useUserProfile();
+  const { profile: authProfile, isAnonymous } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{firstName?: string; lastName?: string}>({});
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Use auth profile for authenticated users, userProfile for local storage
+  const currentProfile = isAnonymous ? userProfile : authProfile;
+
   // Initialize form with current profile data
   useEffect(() => {
-    if (visible && profile) {
-      setFirstName(profile.firstName || '');
-      setLastName(profile.lastName || '');
+    if (visible && currentProfile) {
+      setFirstName(currentProfile.firstName || currentProfile.first_name || '');
+      setLastName(currentProfile.lastName || currentProfile.last_name || '');
       setValidationErrors({});
       setHasChanges(false);
-    } else if (visible && !profile) {
-      // New profile - start with empty fields
-      setFirstName('');
+    } else if (visible && !currentProfile) {
+      // New profile - start with empty fields or default for anonymous
+      setFirstName(isAnonymous ? 'Friend' : '');
       setLastName('');
       setValidationErrors({});
       setHasChanges(false);
     }
-  }, [visible, profile]);
+  }, [visible, currentProfile, isAnonymous]);
 
   // Track changes
   useEffect(() => {
-    const currentFirstName = profile?.firstName || '';
-    const currentLastName = profile?.lastName || '';
+    const currentFirstName = currentProfile?.firstName || currentProfile?.first_name || '';
+    const currentLastName = currentProfile?.lastName || currentProfile?.last_name || '';
     const hasChanged = firstName !== currentFirstName || lastName !== currentLastName;
     setHasChanges(hasChanged);
-  }, [firstName, lastName, profile]);
+  }, [firstName, lastName, currentProfile]);
 
   // Validate input in real-time
   const validateField = (field: 'firstName' | 'lastName', value: string) => {
@@ -165,7 +170,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
 
             {/* Description */}
             <Text style={styles.description}>
-              Let Anu, your turtle therapist, know what to call you during your sessions.
+              {isAnonymous 
+                ? "Customize what Anu calls you during your sessions. Your profile is stored locally on your device."
+                : "Let Anu, your turtle therapist, know what to call you during your sessions."
+              }
             </Text>
 
             {/* Form */}
