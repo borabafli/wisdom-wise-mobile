@@ -1,10 +1,9 @@
-import './global.css';
+// Web-specific App component without CSS imports to avoid lightningcss
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Platform } from 'react-native';
+import { View } from 'react-native';
 import { loadFonts } from './src/config/fonts';
 import * as SplashScreen from 'expo-splash-screen';
-import * as NavigationBar from 'expo-navigation-bar';
 
 // Import components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
@@ -21,12 +20,6 @@ export default function App() {
     async function prepare() {
       try {
         await loadFonts();
-        
-        // Proper Android navigation bar configuration
-        if (Platform.OS === 'android') {
-          await NavigationBar.setBackgroundColorAsync('#ffffff');
-          await NavigationBar.setButtonStyleAsync('dark');
-        }
       } catch (e) {
         console.warn(e);
       } finally {
@@ -39,7 +32,7 @@ export default function App() {
   }, []);
 
   if (!fontsLoaded) {
-    return <View className="flex-1 bg-blue-50" />;
+    return <View style={{ flex: 1, backgroundColor: '#f0f9ff' }} />;
   }
 
   return (

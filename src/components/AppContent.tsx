@@ -2,8 +2,10 @@ import React, { createContext, useContext, ReactNode, useState, useEffect, useCa
 import { NavigationContainer, useNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
+
 import { View, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -14,8 +16,12 @@ import ChatInterface from '../screens/ChatInterface';
 import BreathingScreen from '../screens/BreathingScreen';
 import CustomTabBar from './CustomTabBar';
 
-// Import context
+// Import auth navigator
+import { AuthNavigator } from '../navigation/AuthNavigator';
+
+// Import contexts
 import { useApp } from '../contexts';
+import { useAuth } from '../contexts';
 
 // Import types
 import { RootTabParamList } from '../types';
@@ -38,7 +44,11 @@ const customTheme = {
 };
 
 export const AppContent: React.FC = () => {
+
   const insets = useSafeAreaInsets();
+
+  const { isAuthenticated, isLoading } = useAuth();
+
   const {
     showChat,
     showBreathing,
@@ -53,7 +63,7 @@ export const AppContent: React.FC = () => {
     handleActionSelect,
   } = useApp();
 
-  // Navigation ref for tab navigation
+  // Navigation ref for tab navigation - must be called before any conditional returns
   const navigationRef = useNavigationContainerRef();
 
   const handleNavigateToExercises = useCallback(() => {
@@ -80,6 +90,20 @@ export const AppContent: React.FC = () => {
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
+
+  // Show loading screen while checking auth
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-blue-50 justify-center items-center">
+        {/* Add loading indicator if needed */}
+      </View>
+    );
+  }
+
+  // Show auth screen if not authenticated
+  if (!isAuthenticated) {
+    return <AuthNavigator />;
+  }
 
   if (showBreathing) {
     return (

@@ -27,6 +27,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Brand style guide in '/docs/style-guide.md'
 - When making visual (front-end, UI/UX) changes, always refer to these files for guidance
 - Do not write style codes inside of the components. You can write their stylings in /src/styles.
+-All styling codes MUST BE in the /src/styles folder not in component itself.
 
 ### Visual Development & UI Actions
 Only if you are prompted to do, while implementing front-end change do those:
