@@ -426,8 +426,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       </View>
 
       {/* Main Mood Chart - Always visible at top */}
-      <View style={{ marginBottom: 20 }}>
-        <MoodChart days={14} height={250} />
+      <View style={{ marginBottom: 16 }}>
+        <MoodChart days={14} height={220} />
       </View>
 
       {/* Weekly Mood Comparison */}

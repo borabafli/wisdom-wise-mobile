@@ -9,7 +9,8 @@ export const moodChartStyles = {
   // Container styles - transparent for clean look
   chartContainer: {
     backgroundColor: 'transparent',
-    padding: tokens.spacing.therapy.sm,
+    paddingVertical: tokens.spacing.therapy.sm,
+    paddingHorizontal: 0,
   },
 
   // Loading states with calm aesthetics
@@ -105,8 +106,8 @@ export const moodChartStyles = {
 
   // Weekly comparison styles - New unified design
   weeklyContainer: {
-    paddingHorizontal: tokens.spacing.therapy.sm,
-    paddingVertical: tokens.spacing.therapy.xs,
+    paddingHorizontal: tokens.spacing.therapy.lg,
+    paddingVertical: tokens.spacing.therapy.md,
     backgroundColor: 'transparent' as const,
   },
 
@@ -207,12 +208,12 @@ export const moodChartStyles = {
   },
 
   previousWeekFill: {
-    backgroundColor: '#88b5da', // Previous week using #88b5da with reduced opacity
+    backgroundColor: '#87BAA3', // Previous week using sage green with reduced opacity
     opacity: 0.6,
   },
 
   currentWeekFill: {
-    backgroundColor: '#88b5da', // Current week using #88b5da
+    backgroundColor: '#87BAA3', // Current week using sage green
   },
 
   // Chart SVG colors following therapeutic palette

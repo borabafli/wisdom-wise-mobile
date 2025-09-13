@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, PanResponder, Dimensions, Image, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { moodSliderStyles as styles } from '../../styles/components/MoodSlider.styles';
 
@@ -15,16 +14,13 @@ interface MoodSliderProps {
   variant?: 'default' | 'test';
 }
 
-const SLIDER_WIDTH = 280;
-const THUMB_SIZE = 24;
-
-// Smiley image assets from Teal Watercolor collection
-const smileyImages = {
-  1: require('../../../assets/images/Teal Watercolor/smiley-1.png'),
-  2: require('../../../assets/images/Teal Watercolor/smiley-2.png'),
-  3: require('../../../assets/images/Teal Watercolor/smiley-3.png'),
-  4: require('../../../assets/images/Teal Watercolor/smiley-4.png'),
-  5: require('../../../assets/images/Teal Watercolor/smiley-5.png'),
+// Emoji image assets
+const emojiImages = {
+  1: require('../../../assets/images/Teal watercolor single element/emojis-1.png'),
+  2: require('../../../assets/images/Teal watercolor single element/emojis-2.png'),
+  3: require('../../../assets/images/Teal watercolor single element/emojis-3.png'),
+  4: require('../../../assets/images/Teal watercolor single element/emojis-4.png'),
+  5: require('../../../assets/images/Teal watercolor single element/emojis-5.png'),
 };
 
 export const MoodSlider: React.FC<MoodSliderProps> = ({
@@ -33,215 +29,163 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
   onSkip,
   title = "How are you feeling right now?",
   subtitle = "Rate your current mood",
-  initialValue = 2.5,
+  initialValue = 3,
   type = 'mood',
   variant = 'default'
 }) => {
-  const [currentRating, setCurrentRating] = useState(initialValue);
-  const [thumbPosition, setThumbPosition] = useState((initialValue / 5) * SLIDER_WIDTH);
-  const [isDragging, setIsDragging] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
+  const bounceAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
+  const savedAnim = useRef(new Animated.Value(0)).current;
 
-  const handleSliderTouch = (evt: any) => {
-    const touchX = evt.nativeEvent.locationX;
-    const newPosition = Math.max(0, Math.min(SLIDER_WIDTH, touchX));
-    setThumbPosition(newPosition);
+  const handleEmojiPress = (rating: number) => {
+    if (isLocked) return; // Prevent multiple selections
     
-    const rating = (newPosition / SLIDER_WIDTH) * 5;
-    setCurrentRating(rating);
+    setSelectedRating(rating);
+    setIsLocked(true);
     onRatingChange(rating);
-  };
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (evt) => {
-        setIsDragging(true);
-        // Handle initial touch
-        const touchX = evt.nativeEvent.locationX;
-        const newPosition = Math.max(0, Math.min(SLIDER_WIDTH, touchX));
-        setThumbPosition(newPosition);
-        
-        const rating = (newPosition / SLIDER_WIDTH) * 5;
-        setCurrentRating(rating);
-        onRatingChange(rating);
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        const touchX = evt.nativeEvent.locationX;
-        const newPosition = Math.max(0, Math.min(SLIDER_WIDTH, touchX));
-        setThumbPosition(newPosition);
-        
-        const rating = (newPosition / SLIDER_WIDTH) * 5;
-        setCurrentRating(rating);
-        onRatingChange(rating);
-      },
-      onPanResponderRelease: () => {
-        setIsDragging(false);
-      },
-    })
-  ).current;
-
-  const getMoodLabel = (rating: number): string => {
-    const labels = {
-      mood: {
-        1: 'Terrible', 2: 'Poor', 3: 'Okay', 4: 'Good', 5: 'Great'
-      },
-      helpfulness: {
-        1: 'Not helpful', 2: 'Slightly helpful', 3: 'Moderately helpful', 4: 'Very helpful', 5: 'Extremely helpful'
-      },
-      sleep: {
-        1: 'Awful', 2: 'Poor', 3: 'Okay', 4: 'Good', 5: 'Excellent'
-      },
-      energy: {
-        1: 'Exhausted', 2: 'Low', 3: 'Moderate', 4: 'High', 5: 'Energetic'
-      },
-      anxiety: {
-        1: 'Very calm', 2: 'Calm', 3: 'Neutral', 4: 'Anxious', 5: 'Very anxious'
-      },
-      custom: {
-        1: 'Not at all', 2: 'Slightly', 3: 'Moderately', 4: 'Quite a bit', 5: 'Very much'
-      }
-    };
     
-    const typeLabels = labels[type] || labels.custom;
-    const index = Math.max(1, Math.min(5, Math.round(rating)));
-    return typeLabels[index as keyof typeof typeLabels];
+    // Start animations
+    Animated.parallel([
+      // Bounce animation
+      Animated.sequence([
+        Animated.timing(bounceAnim, {
+          toValue: 1.2,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(bounceAnim, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Glow pulse animation
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0.3,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start(() => {
+      // Show "Saved!" feedback
+      setShowSaved(true);
+      Animated.timing(savedAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        // Hide "Saved!" after 1 second and complete
+        setTimeout(() => {
+          Animated.timing(savedAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
+            onComplete(rating);
+          });
+        }, 1000);
+      });
+    });
   };
-
-  const getThumbColor = (rating: number): string => {
-    if (type === 'anxiety') {
-      // Reverse colors for anxiety (calm = green, anxious = red)
-      if (rating < 1) return '#10b981'; // Emerald
-      if (rating < 2) return '#84cc16'; // Lime
-      if (rating < 3) return '#eab308'; // Yellow
-      if (rating < 4) return '#f97316'; // Orange
-      return '#ef4444'; // Red
-    }
-    
-    // Standard colors (low = red, high = therapeutic blue)
-    if (rating < 1) return '#ef4444'; // Red
-    if (rating < 2) return '#f97316'; // Orange
-    if (rating < 3) return '#eab308'; // Yellow
-    if (rating < 4) return '#10b981'; // Emerald
-    return '#006A8F'; // Therapeutic blue (matches home page theme)
-  };
-
-  const getEmojiForRating = (rating: number): string => {
-    const emojis = {
-      mood: {
-        1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊'
-      },
-      helpfulness: {
-        1: '😐', 2: '🤔', 3: '👍', 4: '😊', 5: '🌟'
-      },
-      sleep: {
-        1: '😴', 2: '😪', 3: '😐', 4: '🙂', 5: '😊'
-      },
-      energy: {
-        1: '😴', 2: '😪', 3: '😐', 4: '⚡', 5: '🔥'
-      },
-      anxiety: {
-        1: '😌', 2: '🙂', 3: '😐', 4: '😰', 5: '😱'
-      },
-      custom: {
-        1: '😞', 2: '😕', 3: '😐', 4: '🙂', 5: '😊'
-      }
-    };
-    
-    const typeEmojis = emojis[type] || emojis.custom;
-    const index = Math.max(1, Math.min(5, Math.round(rating)));
-    return typeEmojis[index as keyof typeof typeEmojis];
-  };
-
-  const getCurrentSmileyImage = (rating: number) => {
-    const index = Math.max(1, Math.min(5, Math.round(rating)));
-    return smileyImages[index as keyof typeof smileyImages];
-  };
-
-  // Get colors based on variant
-  const getColors = () => {
-    if (variant === 'test') {
-      return {
-        fillColor: '#9AC0DF',
-        borderColor: '#9AC0DF'
-      };
-    }
-    return {
-      fillColor: '#9AC0DF',
-      borderColor: '#9AC0DF'
-    };
-  };
-
-  const colors = getColors();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {title ? <Text style={styles.title}>{title}</Text> : null}
+    <>
+      {(title || variant === 'test') && (
         <Text style={styles.promptText}>
-          {variant === 'test' ? 'How helpful was this?' : 'I feel...'}
+          {variant === 'test' ? 'How helpful was this?' : title ? 'I feel...' : ''}
         </Text>
-      </View>
-      <View style={styles.smileyContainer}>
-        {variant === 'test' ? (
-          <Image 
-            source={require('../../../assets/images/icons-effectiveness.png')}
-            style={styles.effectivenessImage}
-            resizeMode="contain"
-          />
-        ) : (
-          <Image 
-            source={getCurrentSmileyImage(currentRating)}
-            style={styles.smileyImage}
-            resizeMode="contain"
-          />
-        )}
-      </View>
-      <View style={styles.sliderContainer} {...panResponder.panHandlers}>
-        <View style={styles.trackBackground}>
-          <View 
+      )}
+      
+      {/* Main emoji display with animations */}
+      {selectedRating && (
+        <View style={styles.mainEmojiContainer}>
+          {/* Glow effect */}
+          <Animated.View 
             style={[
-              styles.filledTrack, 
-              { 
-                width: thumbPosition,
-                backgroundColor: colors.fillColor,
+              styles.glowEffect,
+              {
+                opacity: glowAnim,
+                transform: [{ scale: glowAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.8, 1.2]
+                })}]
               }
-            ]} 
+            ]}
           />
+          {/* Animated emoji */}
+          <Animated.Image 
+            source={emojiImages[selectedRating as keyof typeof emojiImages]}
+            style={[
+              styles.mainEmojiImage,
+              {
+                transform: [{ scale: bounceAnim }]
+              }
+            ]}
+            resizeMode="contain"
+          />
+          {/* Saved feedback */}
+          {showSaved && (
+            <Animated.View 
+              style={[
+                styles.savedFeedback,
+                {
+                  opacity: savedAnim,
+                  transform: [{ 
+                    translateY: savedAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0]
+                    })
+                  }]
+                }
+              ]}
+            >
+              <Text style={styles.savedText}>Saved! ✓</Text>
+            </Animated.View>
+          )}
         </View>
-        <View
-          style={[
-            styles.thumb,
-            {
-              left: Math.max(-THUMB_SIZE/2, Math.min(SLIDER_WIDTH - THUMB_SIZE/2, thumbPosition - THUMB_SIZE / 2)),
-              transform: [{ scale: isDragging ? 1.1 : 1 }],
-              borderColor: colors.borderColor,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.extremeLabels}>
-        <Text style={styles.extremeLabel}>
-          {variant === 'test' ? 'Not at all' : 'Terrible'}
-        </Text>
-        <Text style={styles.extremeLabel}>
-          {variant === 'test' ? 'Very helpful' : 'Great'}
-        </Text>
-      </View>
-      <View style={styles.submitSection}>
-        {onSkip ? (
-          <TouchableOpacity onPress={onSkip}>
-            <Text style={styles.skipText}>Skip for now</Text>
+      )}
+
+      {/* Emoji selection row */}
+      <View style={styles.emojiSelectionRow}>
+        {[1, 2, 3, 4, 5].map((rating) => (
+          <TouchableOpacity
+            key={rating}
+            onPress={() => handleEmojiPress(rating)}
+            disabled={isLocked}
+            style={[
+              styles.emojiOption,
+              selectedRating === rating && styles.selectedEmojiOption,
+              isLocked && rating !== selectedRating && styles.unselectedEmojiOption
+            ]}
+          >
+            <Image 
+              source={emojiImages[rating as keyof typeof emojiImages]}
+              style={[
+                styles.optionEmojiImage,
+                isLocked && rating !== selectedRating && styles.unselectedEmojiImage
+              ]}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity 
-          style={[styles.submitButton, { backgroundColor: colors.fillColor }]}
-          onPress={() => onComplete(currentRating)}
-          activeOpacity={0.8}
-        >
-          <ChevronRight size={20} color="white" />
-        </TouchableOpacity>
+        ))}
       </View>
-    </View>
+
+      {/* Skip option */}
+      {onSkip && (
+        <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
+          <Text style={styles.skipText}>Skip</Text>
+          <ChevronRight size={16} color="#9CA3AF" />
+        </TouchableOpacity>
+      )}
+    </>
   );
 };

@@ -89,15 +89,15 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   }
 
   // Fixed chart dimensions to prevent width overflow
-  const containerPadding = 20; // Reduced container padding
+  const containerPadding = 40; // Increased container padding for better spacing
   const chartWidth = screenWidth - containerPadding; // Use remaining space after padding
-  const chartHeight = height - 40;
+  const chartHeight = height - 20; // Reduced to minimize top space
   
   // Padding with space for smiley Y-axis
-  const paddingLeft = 55; // Adjusted space for smaller smiley images with padding
+  const paddingLeft = 50; // Adjusted space for smaller smiley images with padding
   const paddingRight = 20; // Adequate padding
-  const paddingTop = 30;
-  const paddingBottom = 40; // Space for date labels
+  const paddingTop = 20; // Reduced top padding
+  const paddingBottom = 30; // Space for date labels
   
   const graphWidth = Math.max(200, chartWidth - paddingLeft - paddingRight);
   const graphHeight = Math.max(120, chartHeight - paddingTop - paddingBottom);
@@ -232,23 +232,23 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       }}>
         <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{marginLeft: 0}}>
           <Defs>
-            {/* Improved line gradient with softer edge fading - Updated to match home colors */}
+            {/* Improved line gradient with softer edge fading - Updated to use sage green */}
             <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor="#6CA0CE" stopOpacity="0.2" />
-              <Stop offset="5%" stopColor="#6CA0CE" stopOpacity="0.6" />
-              <Stop offset="15%" stopColor="#6CA0CE" stopOpacity="1" />
-              <Stop offset="85%" stopColor="#6CA0CE" stopOpacity="1" />
-              <Stop offset="95%" stopColor="#6CA0CE" stopOpacity="0.6" />
-              <Stop offset="100%" stopColor="#6CA0CE" stopOpacity="0.2" />
+              <Stop offset="0%" stopColor="#87BAA3" stopOpacity="0.2" />
+              <Stop offset="5%" stopColor="#87BAA3" stopOpacity="0.6" />
+              <Stop offset="15%" stopColor="#87BAA3" stopOpacity="1" />
+              <Stop offset="85%" stopColor="#87BAA3" stopOpacity="1" />
+              <Stop offset="95%" stopColor="#87BAA3" stopOpacity="0.6" />
+              <Stop offset="100%" stopColor="#87BAA3" stopOpacity="0.2" />
             </LinearGradient>
             
-            {/* Smoother area gradient fill - Updated to match home colors */}
+            {/* Smoother area gradient fill - Updated to use sage green */}
             <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor="#6CA0CE" stopOpacity="0.6" />
-              <Stop offset="20%" stopColor="#6CA0CE" stopOpacity="0.4" />
-              <Stop offset="50%" stopColor="#6CA0CE" stopOpacity="0.2" />
-              <Stop offset="80%" stopColor="#6CA0CE" stopOpacity="0.08" />
-              <Stop offset="100%" stopColor="#6CA0CE" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#87BAA3" stopOpacity="0.6" />
+              <Stop offset="20%" stopColor="#87BAA3" stopOpacity="0.4" />
+              <Stop offset="50%" stopColor="#87BAA3" stopOpacity="0.2" />
+              <Stop offset="80%" stopColor="#87BAA3" stopOpacity="0.08" />
+              <Stop offset="100%" stopColor="#87BAA3" stopOpacity="0" />
             </LinearGradient>
             
             {/* Mask for softer horizontal edge fading */}
@@ -300,7 +300,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
                 cx={point.x}
                 cy={point.y}
                 r={4}
-                fill="#6CA0CE"
+                fill="#87BAA3"
                 stroke="white"
                 strokeWidth={1.5}
                 opacity={opacity}

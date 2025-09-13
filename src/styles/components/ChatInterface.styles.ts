@@ -40,7 +40,6 @@ export const chatInterfaceStyles = StyleSheet.create({
   keyboardView: {
     flex: 1,
     zIndex: 2,
-    justifyContent: 'space-between',
   },
 
   // Header - Clean Minimal Design
@@ -89,15 +88,18 @@ export const chatInterfaceStyles = StyleSheet.create({
     flex: 1,
   },
   sessionTitle: {
-    fontSize: 20,
+    fontSize: 17,
     fontFamily: 'System',
     fontWeight: '600',
-    color: '#64748b', // Lighter gray-blue for title
+    color: '#145458', // Updated to requested color
     letterSpacing: 0.2,
+    flexShrink: 1,
   },
   exerciseTitle: {
+    fontSize: 16,
     fontWeight: '700', // Bolder for exercises
-    color: '#94a3b8', // Even lighter grey-blue for exercise titles
+    color: '#145458', // Updated to requested color
+    flexShrink: 1,
   },
   sessionSubtitle: {
     fontSize: 15,
@@ -286,22 +288,25 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: spacing[4],
   },
   promptSuggestionCard: {
-    backgroundColor: '#FFFFFF', // Pure white
-    borderWidth: 0, // No border for cleaner look
-    borderRadius: spacing.radius.lg,
-    paddingHorizontal: spacing[10],
-    paddingVertical: spacing[8],
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Match suggestion chip background
+    borderWidth: 1, // Add border like suggestion chips
+    borderColor: '#145458', // Use the requested color for border
+    borderRadius: 20, // Match suggestion chip border radius
+    paddingHorizontal: spacing[6], // Match suggestion chip padding
+    paddingVertical: spacing[5], // Match suggestion chip padding
     marginTop: spacing[8],
     alignSelf: 'center',
-    // No shadow - flat minimal design
+    minHeight: 44, // Match suggestion chip min height
+    // No shadow - flat minimal design like suggestion chips
   },
   promptSuggestionText: {
-    fontSize: 16,
+    fontSize: 15, // Match suggestion chip text size
     fontFamily: 'System',
-    fontWeight: '500',
-    color: '#9ca3af', // Lighter gray for suggestion text
+    fontWeight: '600', // Match suggestion chip text weight
+    color: '#145458', // Use the requested color
     textAlign: 'center',
     letterSpacing: 0.3,
+    lineHeight: 22, // Match suggestion chip line height
   },
   orDividerContainer: {
     alignItems: 'center',
@@ -403,13 +408,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   typingBubble: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'transparent', // Removed background
     borderRadius: spacing.radius['2xl'],
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderWidth: 0, // Removed border
+    borderColor: 'transparent',
     paddingHorizontal: spacing.components.messagePadding,
     paddingVertical: spacing.components.messagePadding,
-    ...shadows.components.floating,
+    // Removed shadow
   },
   typingContent: {
     flexDirection: 'row',
@@ -422,7 +427,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.md,
+    // Removed shadow
   },
   typingTurtleAvatar: {
     width: '100%',
@@ -441,7 +446,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   typingDot: {
     width: 10,
     height: 10,
-    backgroundColor: colors.primary[400],
+    backgroundColor: '#9fcbc4', // Updated to requested color
     borderRadius: 5,
   },
   typingText: {
@@ -504,18 +509,18 @@ export const chatInterfaceStyles = StyleSheet.create({
     lineHeight: 22, // More line height for better spacing
   },
   exerciseSuggestionButton: {
-    backgroundColor: 'rgba(59, 180, 245, 0.04)', // More transparent accent background
-    borderWidth: 1, // Add light border
-    borderColor: 'rgba(148, 163, 184, 0.2)', // Very light grey border
+    backgroundColor: 'rgba(20, 84, 88, 0.04)', // Updated to match #145458 color
+    borderWidth: 1,
+    borderColor: '#145458', // Updated border color to match requested color
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 48, // Slightly larger for special exercise button
-    paddingHorizontal: spacing[7], // Generous padding
-    paddingVertical: spacing[5], // Generous vertical padding
+    minHeight: 44, // Same size as regular suggestion chips
+    paddingHorizontal: spacing[6], // Same padding as regular suggestion chips
+    paddingVertical: spacing[5], // Same padding as regular suggestion chips
     // No shadow - flat design
   },
   exerciseSuggestionText: {
-    color: '#475569', // Dark grey color to match icon and user text
+    color: '#145458', // Updated to requested color
     fontWeight: '700', // Even bolder for call-to-action
     fontSize: 15,
     letterSpacing: 0.4,

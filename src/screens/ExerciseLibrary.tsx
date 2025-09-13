@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X, Bug } from 'lucide-react-native';
+import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { exercisesArray } from '../data/exerciseLibrary';
-import { colors, gradients, shadows } from '../styles/tokens';
+import { colors, gradients, shadows, spacing } from '../styles/tokens';
 import { exerciseLibraryStyles, getTagColor, getExerciseCardGradient } from '../styles/components/ExerciseLibrary.styles';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
-import { MoodSlider } from '../components/chat/MoodSlider';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,8 +22,6 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const [selectedBenefitFilter, setSelectedBenefitFilter] = useState('All');
   const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
-  const [showDevSlider, setShowDevSlider] = useState(false);
-  const [sliderVariant, setSliderVariant] = useState<'default' | 'test'>('default');
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
@@ -161,8 +158,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               </View>
             </View>
             
-            <Text style={exerciseLibraryStyles.exerciseDescription} numberOfLines={2}>
-              {exercise.description}
+            <Text style={exerciseLibraryStyles.exerciseDescription} numberOfLines={1}>
+              {exercise.description.length > 50 ? `${exercise.description.substring(0, 50)}...` : exercise.description}
             </Text>
           </View>
         </LinearGradient>
@@ -185,31 +182,6 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       {/* Header */}
       <View style={exerciseLibraryStyles.header}>
         <Text style={exerciseLibraryStyles.headerTitle}>Exercise Library</Text>
-        <View style={exerciseLibraryStyles.headerButtons}>
-          {/* Slider Variant Toggle */}
-          {showDevSlider && (
-            <TouchableOpacity
-              style={[exerciseLibraryStyles.devButton, sliderVariant === 'test' && exerciseLibraryStyles.devButtonSelected]}
-              onPress={() => setSliderVariant(sliderVariant === 'default' ? 'test' : 'default')}
-              activeOpacity={0.7}
-            >
-              <Text style={exerciseLibraryStyles.devButtonText}>
-                {sliderVariant === 'default' ? '#446D78' : '#10597B'}
-              </Text>
-            </TouchableOpacity>
-          )}
-          
-          {/* Dev Test Button */}
-          <TouchableOpacity
-            style={exerciseLibraryStyles.devButton}
-            onPress={() => setShowDevSlider(!showDevSlider)}
-            activeOpacity={0.7}
-          >
-            <Bug size={16} color={colors.primary[400]} />
-            <Text style={exerciseLibraryStyles.devButtonText}>Test Slider</Text>
-          </TouchableOpacity>
-          
-        </View>
       </View>
 
       {/* Search Bar */}
@@ -258,26 +230,6 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         </View>
       </View>
 
-      {/* Dev Slider Test */}
-      {showDevSlider && (
-        <View style={exerciseLibraryStyles.devSliderSection}>
-          <View style={exerciseLibraryStyles.devSliderContainer}>
-            <MoodSlider
-              title={sliderVariant === 'default' ? "How are you feeling right now?" : "How effective was this session?"}
-              subtitle={sliderVariant === 'default' ? "Testing mood slider" : "Testing effectiveness slider"}
-              onRatingChange={(rating) => console.log(`${sliderVariant} slider changed:`, rating)}
-              onComplete={(rating) => {
-                console.log(`${sliderVariant} slider completed:`, rating);
-                // Auto-hide after completion for better UX
-                setTimeout(() => setShowDevSlider(false), 2000);
-              }}
-              type={sliderVariant === 'default' ? 'mood' : 'helpfulness'}
-              variant={sliderVariant}
-              initialValue={2.5}
-            />
-          </View>
-        </View>
-      )}
 
       {/* Filters */}
       {showFilters && (

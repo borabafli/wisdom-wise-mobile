@@ -5,52 +5,52 @@ import { typography } from '../tokens/typography';
 
 export const moodRatingCardStyles = StyleSheet.create({
   container: {
-    borderRadius: 20,
-    marginVertical: spacing.md,
-    marginHorizontal: spacing.md,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    elevation: 8,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-  },
-
-  glassOverlay: {
-    padding: spacing.xl,
-    borderRadius: 20,
+    borderRadius: 16,
+    marginVertical: spacing[4],
+    marginHorizontal: 0, // Remove all horizontal margins for maximum width
+    paddingVertical: spacing[20],
+    paddingHorizontal: spacing[8], // Minimal padding
+    borderWidth: 3, // Very thick border to be clearly visible
+    borderColor: colors.text.primary, // Edge lines in same color as text
+    overflow: 'hidden', // Needed for gradient
   },
   
-  header: {
-    alignItems: 'center',
-    marginBottom: spacing.lg,
+  gradientBackground: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   
   title: {
-    ...typography.textStyles.h4,
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: spacing[6],
+    marginHorizontal: spacing[2], // Use more horizontal space
+    paddingHorizontal: spacing[4],
+    lineHeight: 24,
   },
   
   subtitle: {
-    ...typography.textStyles.bodySmall,
+    fontSize: 14,
+    fontWeight: '400',
     color: colors.text.secondary,
     textAlign: 'center',
+    lineHeight: 20,
   },
   
   slidersContainer: {
-    marginBottom: 0,
+    marginBottom: spacing[8],
   },
   
   progressIndicator: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.lg,
-    gap: spacing.sm,
+    gap: spacing[8],
   },
   
   progressDot: {
@@ -61,10 +61,10 @@ export const moodRatingCardStyles = StyleSheet.create({
   },
   
   activeDot: {
-    backgroundColor: colors.blue[500],
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    backgroundColor: '#87BAA3',
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   
   actions: {
@@ -72,16 +72,14 @@ export const moodRatingCardStyles = StyleSheet.create({
   },
   
   skipButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing[8],
+    paddingHorizontal: spacing[16],
   },
   
   skipText: {
-    ...typography.textStyles.body,
-    color: colors.text.secondary,
     fontSize: 14,
     fontWeight: '500',
+    color: colors.text.secondary,
     textAlign: 'center',
-    paddingVertical: spacing.md,
   },
 });

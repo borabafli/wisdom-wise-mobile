@@ -77,59 +77,65 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   // Enhanced Motivational Header Card
   motivationalCard: {
-    borderRadius: spacing.radius.xl,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: spacing.radius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(251, 146, 60, 0.15)',
-    ...shadows.components.modal,
+    borderColor: 'rgba(135, 186, 163, 0.2)',
+    shadowColor: 'rgba(0, 0, 0, 0.08)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
   },
   
   motivationalGradient: {
-    padding: spacing.layout.screenPadding,
+    // No padding here to avoid double padding
   },
   motivationalContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.layout.screenPadding,
+    padding: spacing[20],
+    gap: spacing[16],
   },
   motivationalText: {
     flex: 1,
-    marginRight: spacing[4],
+    marginBottom: spacing[8],
   },
   motivationalTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text.primary,
-    marginBottom: spacing[1],
+    marginBottom: spacing[4],
+    lineHeight: 24,
   },
   motivationalSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.text.secondary,
     fontWeight: typography.fontWeight.medium,
+    lineHeight: 20,
   },
   motivationalStats: {
     flexDirection: 'row',
-    gap: spacing[4],
+    justifyContent: 'space-around',
+    gap: spacing[12],
   },
   motivationalStat: {
     alignItems: 'center',
-    minWidth: 50,
+    flex: 1,
   },
   motivationalNumber: {
     fontSize: 20,
     fontWeight: typography.fontWeight.bold,
-    color: '#6CA0CE',
-    marginBottom: spacing[0],
+    color: '#87BAA3',
+    marginBottom: spacing[2],
   },
   
   motivationalNumberVision: {
-    color: '#6CA0CE', // Updated to match other numbers
+    color: '#87BAA3', // Updated to match sage green theme
   },
   
   motivationalNumberAchievement: {
-    color: '#6CA0CE', // Updated to match other numbers
+    color: '#87BAA3', // Updated to match sage green theme
   },
   motivationalLabel: {
     fontSize: 11,
@@ -195,11 +201,11 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   statValue: {
     ...typography.textStyles.h1,
-    color: '#6CA0CE',
+    color: '#87BAA3',
   },
   statValueSky: {
     ...typography.textStyles.h1,
-    color: '#6CA0CE',
+    color: '#87BAA3',
   },
   statLabel: {
     ...typography.textStyles.bodySmall,
