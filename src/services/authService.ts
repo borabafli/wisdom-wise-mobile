@@ -270,6 +270,33 @@ export class AuthService {
     return supabase.auth.onAuthStateChange(callback);
   }
 
+  // Anonymous mode management
+  async setAnonymousMode() {
+    try {
+      await AsyncStorage.setItem('anonymous_mode', 'true');
+    } catch (error) {
+      console.error('Error setting anonymous mode:', error);
+    }
+  }
+
+  async getAnonymousMode(): Promise<boolean> {
+    try {
+      const anonymousMode = await AsyncStorage.getItem('anonymous_mode');
+      return anonymousMode === 'true';
+    } catch (error) {
+      console.error('Error getting anonymous mode:', error);
+      return false;
+    }
+  }
+
+  async clearAnonymousMode() {
+    try {
+      await AsyncStorage.removeItem('anonymous_mode');
+    } catch (error) {
+      console.error('Error clearing anonymous mode:', error);
+    }
+  }
+
   // Utility method to clear specific data on signout (if needed)
   async clearUserData(options: {
     clearChatHistory?: boolean;

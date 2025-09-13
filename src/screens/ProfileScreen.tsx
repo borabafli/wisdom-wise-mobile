@@ -14,7 +14,7 @@ import { profileScreenStyles as styles } from '../styles/components/ProfileScree
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAnonymous, signOut } = useAuth();
   
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
@@ -112,9 +112,16 @@ const ProfileScreen: React.FC = () => {
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>{displayName}</Text>
                 <Text style={styles.memberSince}>
-                  {profile ? `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : user?.email || 'Welcome to WisdomWise'}
+                  {isAnonymous 
+                    ? 'Anonymous Guest' 
+                    : profile 
+                      ? `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` 
+                      : user?.email || 'Welcome to WisdomWise'
+                  }
                 </Text>
-                <Text style={styles.premiumBadge}>Premium Member</Text>
+                <Text style={styles.premiumBadge}>
+                  {isAnonymous ? 'Guest User' : 'Premium Member'}
+                </Text>
               </View>
               <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
                 <Settings size={20} color="#6b7280" />

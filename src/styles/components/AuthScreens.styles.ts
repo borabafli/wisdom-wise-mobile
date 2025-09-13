@@ -272,6 +272,18 @@ export const authScreenStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  skipButton: {
+    marginTop: spacing.therapy.md,
+  },
+
+  skipButtonText: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    fontWeight: '500',
+    fontFamily: 'Inter',
+    textAlign: 'center',
+  },
+
   // Gesture and Animation
   touchableOpacity: {
     // activeOpacity is handled by TouchableOpacity component, not style

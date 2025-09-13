@@ -5,10 +5,13 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: any;
+  profile: any;
+  isAnonymous: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   signOut: () => Promise<void>;
+  skipAuth: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +24,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Start as true to check initial session
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // Check for existing session on app start
   useEffect(() => {
@@ -34,6 +39,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (session?.user) {
         setIsAuthenticated(true);
         setUser(session.user);
+        setIsAnonymous(false);
+        // Set user profile data if available
+        setProfile({
+          first_name: session.user.user_metadata?.first_name || '',
+          last_name: session.user.user_metadata?.last_name || '',
+          created_at: session.user.created_at
+        });
+      } else {
+        // Check if user was in anonymous mode
+        const anonymousMode = await authService.getAnonymousMode();
+        if (anonymousMode) {
+          setIsAuthenticated(true);
+          setIsAnonymous(true);
+          setUser(null);
+          setProfile({ first_name: 'Friend', last_name: '', created_at: new Date().toISOString() });
+        }
       }
     } catch (error) {
       console.error('Error checking initial session:', error);
@@ -49,9 +70,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (session?.user) {
         setIsAuthenticated(true);
         setUser(session.user);
+        setIsAnonymous(false);
+        setProfile({
+          first_name: session.user.user_metadata?.first_name || '',
+          last_name: session.user.user_metadata?.last_name || '',
+          created_at: session.user.created_at
+        });
       } else {
-        setIsAuthenticated(false);
-        setUser(null);
+        // Don't change authenticated status if in anonymous mode
+        const checkAnonymous = async () => {
+          const anonymousMode = await authService.getAnonymousMode();
+          if (!anonymousMode) {
+            setIsAuthenticated(false);
+            setUser(null);
+            setProfile(null);
+            setIsAnonymous(false);
+          }
+        };
+        checkAnonymous();
       }
       setIsLoading(false);
     });
@@ -102,6 +138,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       await authService.signOut();
+      // Clear anonymous mode
+      await authService.clearAnonymousMode();
+      setIsAuthenticated(false);
+      setUser(null);
+      setProfile(null);
+      setIsAnonymous(false);
       console.log('Sign out successful');
     } catch (error: any) {
       console.error('Sign out error:', error);
@@ -111,14 +153,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const skipAuth = () => {
+    setIsAuthenticated(true);
+    setIsAnonymous(true);
+    setUser(null);
+    setProfile({ first_name: 'Friend', last_name: '', created_at: new Date().toISOString() });
+    authService.setAnonymousMode();
+  };
+
   const value = {
     isAuthenticated,
     isLoading,
     user,
+    profile,
+    isAnonymous,
     signIn,
     signInWithGoogle,
     signUp,
     signOut,
+    skipAuth,
   };
 
   return (
