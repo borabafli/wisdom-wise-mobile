@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { Home, BookOpen, Brain, User, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,6 +24,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   onActionSelect 
 }) => {
   const [showQuickActions, setShowQuickActions] = useState(false);
+  const insets = useSafeAreaInsets();
+
+
+  // Debug logging to track modal state
+  React.useEffect(() => {
+    console.log('QuickActions modal state:', showQuickActions);
+  }, [showQuickActions]);
 
   const tabs = [
     { name: 'Home', icon: Home, label: 'Home' },
@@ -33,12 +41,12 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <>
-      <View style={styles.container}>
-        <LinearGradient
-          colors={[...gradients.card.primary]}
-          style={styles.tabBarGradient}
-        >
-          <SafeAreaWrapper style={styles.tabBarContent} edges={['bottom']}>
+      
+      <LinearGradient
+        colors={[...gradients.card.primary]}
+        style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
+      >
+        <View style={styles.tabBarContent}>
             {/* First 2 tabs */}
             {tabs.slice(0, 2).map((tab, index) => {
               const isFocused = state.index === index;
@@ -68,13 +76,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 >
                   <Icon 
                     size={22} 
-                    color={isFocused ? '#009EBB' : '#6B7280'} 
+                    color={isFocused ? '#0d9488' : '#6B7280'} 
                     strokeWidth={isFocused ? 2.5 : 2} 
                   />
                   <Text 
                     style={[
                       styles.tabLabel,
-                      { color: isFocused ? '#009EBB' : '#6B7280' }
+                      { color: isFocused ? '#0d9488' : '#6B7280' }
                     ]}
                   >
                     {tab.label}
@@ -127,13 +135,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 >
                   <Icon 
                     size={22} 
-                    color={isFocused ? '#009EBB' : '#6B7280'} 
+                    color={isFocused ? '#0d9488' : '#6B7280'} 
                     strokeWidth={isFocused ? 2.5 : 2} 
                   />
                   <Text 
                     style={[
                       styles.tabLabel,
-                      { color: isFocused ? '#009EBB' : '#6B7280' }
+                      { color: isFocused ? '#0d9488' : '#6B7280' }
                     ]}
                   >
                     {tab.label}
@@ -141,9 +149,8 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 </TouchableOpacity>
               );
             })}
-          </SafeAreaWrapper>
-        </LinearGradient>
-      </View>
+          </View>
+      </LinearGradient>
 
       {/* Quick Actions Popup */}
       <QuickActionsPopup 

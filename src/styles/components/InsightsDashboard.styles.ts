@@ -9,8 +9,10 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width, height } = Dimensions.get('window');
 
 export const insightsDashboardStyles = StyleSheet.create({
+  // Container & Layout - Consistent with HomeScreen
   container: {
     flex: 1,
+    position: 'relative',
   },
   backgroundGradient: {
     position: 'absolute',
@@ -18,6 +20,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: -1,
   },
   watercolorBlob: {
     position: 'absolute',
@@ -38,20 +41,32 @@ export const insightsDashboardStyles = StyleSheet.create({
     height: 384,
     backgroundColor: 'rgba(147, 197, 253, 0.12)', // Lighter complement
   },
+  // Header Section - Consistent with HomeScreen
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[8],
+    paddingTop: spacing[32],
     paddingBottom: spacing.layout.screenPadding,
   },
   title: {
-    ...typography.textStyles.h1,
-    color: colors.text.primary,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#002d14', // Consistent with HomeScreen green theme
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    textAlign: 'center',
   },
   subtitle: {
-    ...typography.textStyles.h4,
-    color: colors.text.secondary,
-    marginTop: spacing[2],
-    fontWeight: typography.fontWeight.medium,
+    fontSize: width < 375 ? 16 : 18,
+    fontWeight: 'normal',
+    color: '#002d14',
+    marginTop: spacing[4],
+    textAlign: 'center',
+    fontFamily: 'Poppins-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   scrollView: {
     flex: 1,

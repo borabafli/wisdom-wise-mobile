@@ -2,7 +2,10 @@ import React, { createContext, useContext, ReactNode, useState, useEffect, useCa
 import { NavigationContainer, useNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+
+import { View, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -41,8 +44,11 @@ const customTheme = {
 };
 
 export const AppContent: React.FC = () => {
+
+  const insets = useSafeAreaInsets();
+
   const { isAuthenticated, isLoading } = useAuth();
-  
+
   const {
     showChat,
     showBreathing,
@@ -126,8 +132,8 @@ export const AppContent: React.FC = () => {
 
   return (
     <NavigationContainer ref={navigationRef} theme={customTheme}>
-      <StatusBar style="dark" backgroundColor="#f0f9ff" />
-      <Tab.Navigator
+        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <Tab.Navigator
         tabBar={(props: any) => (
           <CustomTabBar 
             {...props} 

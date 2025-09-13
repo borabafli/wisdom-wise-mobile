@@ -4,6 +4,8 @@ import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { insightService, ThoughtPattern } from '../services/insightService';
 import { memoryService, Insight, Summary } from '../services/memoryService';
 import { goalService, TherapyGoal } from '../services/goalService';
@@ -31,6 +33,10 @@ interface InsightsDashboardProps {
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
   const { firstName } = useUserProfile();
+  
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.insightsDashboard);
+  
   const [thinkingPatterns, setThinkingPatterns] = useState<ThoughtPattern[]>([]);
   const [thinkingPatternReflections, setThinkingPatternReflections] = useState<ThinkingPatternReflectionSummary[]>([]);
   const [memoryInsights, setMemoryInsights] = useState<Insight[]>([]);
@@ -218,9 +224,12 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      {/* Background */}
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+      {/* Background Gradient - Consistent with HomeScreen */}
       <LinearGradient
-        colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
+        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
       />
       
@@ -234,7 +243,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           Your progress
         </Text>
         <Text style={styles.subtitle}>
-          Your wellness journey continues ✨
+          Your wellness journey continues
         </Text>
       </View>
 
@@ -513,7 +522,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             ) : (
               <View style={styles.emptyStateContainer}>
                 <Text style={styles.emptyStateText}>
-                  Start a conversation to discover your thought patterns! 🌱
+                  Start a conversation to discover your thought patterns!
                 </Text>
               </View>
             )}

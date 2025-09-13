@@ -186,31 +186,31 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return `${linePath} L${lastPoint.x},${paddingTop + graphHeight} L${firstPoint.x},${paddingTop + graphHeight} Z`;
   };
 
-  // Smiley Y-axis positions (5 smileys for mood scale 1-5)
+  // Smiley Y-axis positions (5 smileys for mood scale 1-5) - Updated to use Teal Watercolor versions
   const smileyPositions = [
     { 
       mood: 5, 
-      image: require('../../assets/images/smiley-5.png'), // Happiest
+      image: require('../../assets/images/Teal Watercolor/smiley-5.png'), // Happiest
       y: paddingTop + graphHeight - ((5 - minValue) / valueRange) * graphHeight
     },
     { 
       mood: 4, 
-      image: require('../../assets/images/smiley-4.png'), 
+      image: require('../../assets/images/Teal Watercolor/smiley-4.png'), 
       y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight 
     },
     { 
       mood: 3, 
-      image: require('../../assets/images/smiley-3.png'), // Neutral
+      image: require('../../assets/images/Teal Watercolor/smiley-3.png'), // Neutral
       y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight 
     },
     { 
       mood: 2, 
-      image: require('../../assets/images/smiley-2.png'), 
+      image: require('../../assets/images/Teal Watercolor/smiley-2.png'), 
       y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight 
     },
     { 
       mood: 1, 
-      image: require('../../assets/images/smiley-1.png'), // Worst
+      image: require('../../assets/images/Teal Watercolor/smiley-1.png'), // Worst
       y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight 
     }
   ];
@@ -232,23 +232,23 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       }}>
         <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{marginLeft: 0}}>
           <Defs>
-            {/* Improved line gradient with softer edge fading */}
+            {/* Improved line gradient with softer edge fading - Updated to match home colors */}
             <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor="#88b5da" stopOpacity="0.2" />
-              <Stop offset="5%" stopColor="#88b5da" stopOpacity="0.6" />
-              <Stop offset="15%" stopColor="#88b5da" stopOpacity="1" />
-              <Stop offset="85%" stopColor="#88b5da" stopOpacity="1" />
-              <Stop offset="95%" stopColor="#88b5da" stopOpacity="0.6" />
-              <Stop offset="100%" stopColor="#88b5da" stopOpacity="0.2" />
+              <Stop offset="0%" stopColor="#6CA0CE" stopOpacity="0.2" />
+              <Stop offset="5%" stopColor="#6CA0CE" stopOpacity="0.6" />
+              <Stop offset="15%" stopColor="#6CA0CE" stopOpacity="1" />
+              <Stop offset="85%" stopColor="#6CA0CE" stopOpacity="1" />
+              <Stop offset="95%" stopColor="#6CA0CE" stopOpacity="0.6" />
+              <Stop offset="100%" stopColor="#6CA0CE" stopOpacity="0.2" />
             </LinearGradient>
             
-            {/* Smoother area gradient fill */}
+            {/* Smoother area gradient fill - Updated to match home colors */}
             <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor="#88b5da" stopOpacity="0.6" />
-              <Stop offset="20%" stopColor="#88b5da" stopOpacity="0.4" />
-              <Stop offset="50%" stopColor="#88b5da" stopOpacity="0.2" />
-              <Stop offset="80%" stopColor="#88b5da" stopOpacity="0.08" />
-              <Stop offset="100%" stopColor="#88b5da" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#6CA0CE" stopOpacity="0.6" />
+              <Stop offset="20%" stopColor="#6CA0CE" stopOpacity="0.4" />
+              <Stop offset="50%" stopColor="#6CA0CE" stopOpacity="0.2" />
+              <Stop offset="80%" stopColor="#6CA0CE" stopOpacity="0.08" />
+              <Stop offset="100%" stopColor="#6CA0CE" stopOpacity="0" />
             </LinearGradient>
             
             {/* Mask for softer horizontal edge fading */}
@@ -300,7 +300,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
                 cx={point.x}
                 cy={point.y}
                 r={4}
-                fill="#88b5da"
+                fill="#6CA0CE"
                 stroke="white"
                 strokeWidth={1.5}
                 opacity={opacity}
@@ -462,12 +462,12 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
   
   const getMoodImage = (rating: number) => {
     let imageSource;
-    if (rating >= 4.5) imageSource = require('../../assets/images/smiley-5.png');
-    else if (rating >= 3.5) imageSource = require('../../assets/images/smiley-4.png');
-    else if (rating >= 2.5) imageSource = require('../../assets/images/smiley-3.png');
-    else if (rating >= 1.5) imageSource = require('../../assets/images/smiley-2.png');
-    else if (rating > 0) imageSource = require('../../assets/images/smiley-1.png');
-    else imageSource = require('../../assets/images/smiley-3.png'); // Default to neutral
+    if (rating >= 4.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-5.png');
+    else if (rating >= 3.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-4.png');
+    else if (rating >= 2.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-3.png');
+    else if (rating >= 1.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-2.png');
+    else if (rating > 0) imageSource = require('../../assets/images/Teal Watercolor/smiley-1.png');
+    else imageSource = require('../../assets/images/Teal Watercolor/smiley-3.png'); // Default to neutral
     
     return (
       <Image 

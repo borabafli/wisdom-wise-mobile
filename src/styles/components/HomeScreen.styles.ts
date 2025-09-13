@@ -26,9 +26,20 @@ export const homeScreenStyles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  backgroundImageStyle: {
-    opacity: 0.15,
-    transform: [{ scale: 0.8 }],
+  // Scrollable turtle styles
+  scrollableTurtleContainer: {
+    position: 'absolute',
+    alignItems: 'center',
+    zIndex: 0,
+    pointerEvents: 'none',
+    top: height < 700 ? 100 : 120,
+    left: 0,
+    right: 0,
+  },
+  scrollableTurtleImage: {
+    width: width * 0.45,
+    height: width * 0.45,
+    opacity: 1,
   },
 
   // Scroll View
@@ -41,8 +52,8 @@ export const homeScreenStyles = StyleSheet.create({
 
   // Input Bar Layout
   inputWithTurtleWrapper: {
-    alignItems: 'flex-end',
-    marginTop: height < 700 ? 120 : 140,
+    alignItems: 'center',
+    marginTop: height < 700 ? 190 : 210, // Lowered chatbar position
     position: 'relative',
     width: '100%',
   },
@@ -57,18 +68,18 @@ export const homeScreenStyles = StyleSheet.create({
   headerText: {
     position: 'absolute',
     left: width < 375 ? width * 0.08 : width * 0.1, // Moved more to the left
-    top: height < 700 ? 60 : 80, // Higher up in the blue header area
+    top: height < 700 ? 20 : 40, // Even higher up in the blue header area
     zIndex: 2, // Above wave header
     maxWidth: width * 0.8, // Increased max width for left positioning
   },
   ctaTitle: {
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'BubblegumSans-Regular',
     fontSize: width < 375 ? 28 : 32, // Responsive font size - much bigger
-    fontWeight: 'bold',
-    color: '#002244', // Dark blue color
+    fontWeight: 'normal', // Changed to normal since BubblegumSans is already styled
+    color: '#002d14', // Even darker green color
     marginTop: spacing[2],
     marginBottom: spacing[4],
-    textAlign: 'left',
+    textAlign: 'center',
     letterSpacing: -0.5,
     lineHeight: width < 375 ? 32 : 38, // Better line height
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
@@ -79,27 +90,25 @@ export const homeScreenStyles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: width < 375 ? 17 : 19, // Bigger subtitle
     fontWeight: 'normal',
-    color: '#002244', // Dark blue color
+    color: '#002d14', // Even darker green color
     marginBottom: spacing[8],
-    textAlign: 'left',
+    textAlign: 'center',
     lineHeight: width < 375 ? 22 : 26, // Better line height
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
 
-  // Input Container - Clean design without borders
+  // Input Container - Clean design with silver gradient
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // More white background
     paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding,
     paddingVertical: spacing.components.cardGap,
     borderRadius: 50,
     gap: spacing.components.cardGap,
-    width: '90%',
-    alignSelf: 'flex-end',
-    marginRight: spacing[8],
+    width: '96%',
+    alignSelf: 'center',
     paddingTop: spacing[8],
     shadowColor: '#000000', // Dark shadow instead of light blue
     shadowOffset: { width: 0, height: 6 }, // Slightly more offset
@@ -110,25 +119,26 @@ export const homeScreenStyles = StyleSheet.create({
   inputText: {
     flex: 1,
     fontSize: 18,
-    color: '#1F2937', // Dark text for better contrast on white background
-    fontWeight: '500', // Slightly bolder for better visibility
+    color: '#64748B', // Lighter gray color
+    fontWeight: '400', // Lighter weight
     textAlign: 'left',
-    marginLeft: spacing[4],
+    marginLeft: spacing[2], // Start with less margin
+    paddingLeft: spacing[4], // Use padding instead of margin for better control
   },
   micButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36, // Slightly smaller
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing[2],
+    marginRight: spacing[1], // Less margin
   },
 
   // Exercises Section
   exercisesSection: {
     paddingHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
-    marginTop: height < 700 ? 20 : 30, // Further reduced spacing below chatbar
+    marginTop: height < 700 ? 4 : 6, // Further reduced spacing below chatbar
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -139,7 +149,7 @@ export const homeScreenStyles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#002244',
+    color: '#002d14',
     textTransform: 'uppercase',
     letterSpacing: 1,
     fontFamily: 'Poppins-Bold',
@@ -150,7 +160,7 @@ export const homeScreenStyles = StyleSheet.create({
   },
   seeAllText: {
     fontSize: 14,
-    color: '#002244',
+    color: '#002d14',
     fontWeight: 'normal',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -162,16 +172,18 @@ export const homeScreenStyles = StyleSheet.create({
   },
   exerciseCard: {
     backgroundColor: 'transparent',
+    minHeight: 100, // Fixed height for all cards
   },
   exerciseCardGradient: {
-    padding: spacing[16],
-    marginBottom: spacing[4],
+    padding: spacing[12], // Reduced padding for less height
+    marginBottom: spacing[3], // Reduced margin
     borderRadius: 20,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
+    minHeight: 100, // Fixed height for uniform appearance
+    shadowColor: 'rgba(0, 0, 0, 0.15)', // Darker shadow
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2, // Higher opacity
+    shadowRadius: 15,
+    elevation: 8, // Higher elevation
   },
   exerciseCardContent: {
     flexDirection: 'row',
@@ -181,12 +193,12 @@ export const homeScreenStyles = StyleSheet.create({
   exerciseIcon: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 80,
-    height: 80,
+    width: 60, // Even smaller icon container for more text space
+    height: 60,
   },
   exerciseIconImage: {
-    width: 80,
-    height: 80,
+    width: 60, // Even smaller icon for more text space
+    height: 60,
   },
   exerciseInfo: {
     flex: 1,
@@ -195,7 +207,7 @@ export const homeScreenStyles = StyleSheet.create({
   },
   exerciseName: {
     fontSize: 20,
-    color: '#002244',
+    color: '#002d14',
     fontWeight: 'bold',
     fontFamily: 'Poppins-Bold',
     marginBottom: spacing[1],
@@ -207,22 +219,22 @@ export const homeScreenStyles = StyleSheet.create({
   },
   exerciseTime: {
     fontSize: 11,
-    color: '#475569',
-    fontWeight: '600',
+    color: '#002d14',
+    fontWeight: '500',
     marginTop: spacing[1],
     textAlign: 'center',
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    opacity: 0.8,
+    letterSpacing: 0.4,
+    opacity: 0.7,
   },
   exerciseDescription: {
-    fontSize: 13,
-    color: '#1e293b',
-    fontWeight: '500',
-    lineHeight: 18,
+    fontSize: 12,
+    color: '#002d14',
+    fontWeight: '400',
+    lineHeight: 17,
     textAlign: 'center',
     marginBottom: spacing[1],
-    opacity: 0.9,
+    opacity: 0.8,
     letterSpacing: 0.1,
   },
   exerciseAction: {
@@ -271,7 +283,7 @@ export const homeScreenStyles = StyleSheet.create({
     elevation: 4,
   },
   quickActionText: {
-    color: '#1e293b',
+    color: '#002d14',
     fontSize: 16,
     fontWeight: typography.fontWeight.semibold,
     textAlign: 'center',
@@ -328,14 +340,14 @@ export const homeScreenStyles = StyleSheet.create({
   },
   quoteText: {
     ...typography.textStyles.h4,
-    color: '#002244',
+    color: '#002d14',
     textAlign: 'center',
     lineHeight: typography.lineHeight.loose,
     marginBottom: spacing[6],
   },
   quoteAuthor: {
     ...typography.textStyles.bodySmall,
-    color: '#003355',
+    color: '#002d14',
     fontWeight: typography.fontWeight.medium,
     textAlign: 'center',
   },

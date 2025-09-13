@@ -1,9 +1,10 @@
 import './global.css';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { loadFonts } from './src/config/fonts';
 import * as SplashScreen from 'expo-splash-screen';
+import * as NavigationBar from 'expo-navigation-bar';
 
 // Import components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
@@ -20,6 +21,12 @@ export default function App() {
     async function prepare() {
       try {
         await loadFonts();
+        
+        // Proper Android navigation bar configuration
+        if (Platform.OS === 'android') {
+          await NavigationBar.setBackgroundColorAsync('#ffffff');
+          await NavigationBar.setButtonStyleAsync('dark');
+        }
       } catch (e) {
         console.warn(e);
       } finally {

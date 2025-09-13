@@ -30,7 +30,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 -All styling codes MUST BE in the /src/styles folder not in component itself.
 
 ### Visual Development & UI Actions
-If you have prompred to do, while implementing front-end change do those:
+Only if you are prompted to do, while implementing front-end change do those:
 1. **Identify what changed** - Review the modified components/pages
 2. **Navigate to affected pages** - Use 'mcp_playwright_browser_navigate' to visit each changed view
 3. **Mobile-first viewport testing** - Test at key mobile breakpoints (375px, 390px, 414px) using mcp_playwright_browser_resize
