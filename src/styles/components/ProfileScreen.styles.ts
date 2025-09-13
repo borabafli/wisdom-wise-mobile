@@ -9,8 +9,10 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width, height } = Dimensions.get('window');
 
 export const profileScreenStyles = StyleSheet.create({
+  // Container & Layout - Consistent with HomeScreen
   container: {
     flex: 1,
+    position: 'relative',
   },
   backgroundGradient: {
     position: 'absolute',
@@ -18,6 +20,7 @@ export const profileScreenStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: -1,
   },
   watercolorBlob: {
     position: 'absolute',
@@ -58,14 +61,21 @@ export const profileScreenStyles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 120,
   },
+  // Header Section - Consistent with HomeScreen
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing.layout.screenPadding,
-    paddingBottom: spacing.components.cardGap,
+    paddingTop: spacing[32],
+    paddingBottom: spacing.layout.screenPadding,
   },
   headerTitle: {
-    ...typography.textStyles.h1,
-    color: colors.text.primary,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#002d14', // Consistent with HomeScreen green theme
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    textAlign: 'center',
     letterSpacing: -0.5,
   },
   userInfoSection: {

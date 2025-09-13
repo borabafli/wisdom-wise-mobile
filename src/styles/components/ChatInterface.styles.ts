@@ -12,7 +12,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Container & Layout - White bottom with blue gradient upward
   container: {
     flex: 1,
-    backgroundColor: '#ffffff', // Pure white base
+    backgroundColor: '#FFFFFE', // Even closer to pure white
   },
   backgroundImage: {
     flex: 1,
@@ -45,7 +45,7 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Header - Clean Minimal Design
   header: {
-    backgroundColor: '#FFFFFF', // Pure white
+    backgroundColor: '#FFFFFE', // Even closer to pure white
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(107, 114, 128, 0.04)', // Subtle separator line
     paddingHorizontal: spacing.layout.screenPadding,
@@ -255,14 +255,14 @@ export const chatInterfaceStyles = StyleSheet.create({
     fontSize: 48,
     fontFamily: 'Caveat_400Regular',
     fontWeight: '400',
-    color: '#3BB4F5', // Light sky blue accent
+    color: '#9FCBC4', // Requested teal color
     letterSpacing: 0.5,
   },
   therapistNameSmall: {
     fontSize: 20,
     fontFamily: 'Caveat_400Regular',
     fontWeight: '400',
-    color: '#3BB4F5', // Light sky blue accent
+    color: '#9FCBC4', // Requested teal color
     letterSpacing: 0.3,
   },
   welcomeMessageTextContainer: {
@@ -455,9 +455,9 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Suggestions - Mobile Optimized
   suggestionsContainer: {
-    paddingBottom: spacing[4], // Reduced bottom padding to avoid too much space
-    paddingTop: spacing[2], // Small top padding for separation
-    gap: spacing[5], // Better spacing between rows
+    paddingBottom: spacing[2], // Minimal bottom padding to get closer to chat bar
+    paddingTop: spacing[1], // Very small top padding
+    gap: spacing[3], // Tighter spacing between rows
   },
 
   suggestionsScroll: {
@@ -524,11 +524,9 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Input Area - Modern Glass
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding - 4, // Make chatbar wider by reducing side padding
-    paddingVertical: spacing.components.cardGap + 16, // Position chatbar much lower
-
-    paddingBottom: spacing.components.cardGap + 32, // Extra padding for keyboard and much lower position
-    zIndex: 100, // Ensure input is above everything else
-
+    paddingTop: 0, // Remove top padding to eliminate gap
+    zIndex: 10, // Lower z-index to avoid blocking other elements
+    backgroundColor: 'transparent', // Ensure transparent background
   },
   inputCard: {
     backgroundColor: '#e2e8f0', // Much lighter gray (slate-200) for lighter appearance
@@ -536,10 +534,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 50, // Perfect circle edges - very rounded
     paddingHorizontal: spacing[4], // Adequate horizontal padding for circular shape
     paddingVertical: spacing[1], // Minimal vertical padding for lower height
-    zIndex: 101, // Ensure card is above welcome text
+    zIndex: 11, // Slightly above container, but not too high
     elevation: 0, // No elevation/shadow
-    // Clean flat design with no shadows or borders
-
   },
   inputRow: {
     flexDirection: 'row',
@@ -569,7 +565,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     height: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 103, // Higher z-index for buttons
+    zIndex: 12, // Moderate z-index for buttons
     marginRight: spacing[2],
   },
   iconButton: {
@@ -642,13 +638,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     minHeight: 40, // Reduced minimum height
     maxHeight: 200,
     paddingVertical: 10, // Add some vertical padding for better touch area
-    paddingHorizontal: spacing[4], // Increased padding to move text inward from edges
+    paddingHorizontal: spacing[6], // Further increased padding to move text more to the right
     backgroundColor: 'transparent',
     lineHeight: 22, // Adjusted line height for better centering
     letterSpacing: 0.2, // Match AI message letter spacing
     textAlignVertical: 'center', // Center text vertically
     includeFontPadding: false, // Remove extra font padding on Android
-    zIndex: 102, // Highest z-index for text input
+    zIndex: 11, // Moderate z-index for text input
     justifyContent: 'center', // Additional centering
     alignItems: 'center', // Additional centering
   },
@@ -834,7 +830,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 2,
     elevation: 2,
-    zIndex: 103, // Higher z-index for buttons
+    zIndex: 12, // Moderate z-index for buttons
   },
   sendButtonActive: {
     backgroundColor: '#2563eb',

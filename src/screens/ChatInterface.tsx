@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platfor
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as Clipboard from 'expo-clipboard';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
 import { ChevronLeft, AlertCircle } from 'lucide-react-native';
@@ -53,6 +54,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     Caveat_400Regular,
   });
 
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.chatInterface);
+
   // Safe fallback for when SafeAreaProvider context is not available
   let insets;
   try {
@@ -68,18 +72,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     };
   }
 
-  // Set navigation bar color to match chat background
+  // Set navigation bar color to match chat background - modern approach
   useEffect(() => {
     const setupNavigationBar = async () => {
       if (Platform.OS === 'android') {
         try {
-          await NavigationBar.setBackgroundColorAsync('#ffffff'); // Pure white for navigation bar
-          await NavigationBar.setButtonStyleAsync('dark'); // Dark buttons for light background
-          // Ensure the navigation bar is completely opaque
-          await NavigationBar.setPositionAsync('absolute');
-          await NavigationBar.setVisibilityAsync('visible');
+          // Set navigation bar to match screen background
+          await NavigationBar.setBackgroundColorAsync('#FFFFFE');
+          await NavigationBar.setButtonStyleAsync('dark');
+          // Use standard positioning for better compatibility
+          await NavigationBar.setPositionAsync('relative');
         } catch (error) {
-          console.warn('Failed to set navigation bar color:', error);
+          console.warn('Failed to set navigation bar styling:', error);
         }
       }
     };
@@ -89,7 +93,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     // Cleanup when component unmounts
     return () => {
       if (Platform.OS === 'android') {
-        NavigationBar.setBackgroundColorAsync('#000000').catch(() => {}); // Reset to default
+        // Reset to system default (usually matches app theme)
+        NavigationBar.setBackgroundColorAsync('transparent').catch(() => {});
+        NavigationBar.setButtonStyleAsync('dark').catch(() => {});
       }
     };
   }, []);
@@ -326,8 +332,8 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       }
     }, [canEndReflection]);
 
-    const normalGradient = ['rgba(239, 246, 255, 0.3)', '#ffffff']; // Light blue to white gradient (top to bottom)
-    const exerciseGradient = ['rgba(239, 246, 255, 0.3)', '#ffffff']; // Same light gradient for exercises
+    const normalGradient = ['rgba(255, 255, 254, 0.9)', '#FFFFFE']; // Even closer to white
+    const exerciseGradient = ['rgba(255, 255, 254, 0.9)', '#FFFFFE']; // Same subtle gradient for exercises
 
     const renderMessage = (message: Message) => (
       <MessageItem
@@ -350,18 +356,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
   return (
     <>
       <StatusBar
-        barStyle="dark-content"
+        barStyle={statusBarStyle}
         backgroundColor="#ffffff"
         translucent={false}
       />
       <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
-      <ImageBackground
-        source={require('../../assets/images/background1.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      >
+      <View style={styles.backgroundImage}>
         <LinearGradient
-          colors={['rgba(239, 246, 255, 0.3)', 'rgba(255, 255, 255, 1.0)']}
+          colors={['rgba(255, 255, 254, 0.9)', 'rgba(255, 255, 254, 1.0)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.backgroundOverlay}
@@ -384,7 +386,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         <KeyboardAvoidingView 
           style={styles.keyboardView} 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
         >
           {/* Header */}
           <Animated.View style={[
@@ -473,7 +474,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                   <View style={styles.typingContent}>
                     <View style={styles.typingAvatar}>
                       <Image 
-                        source={require('../../assets/images/turtle-simple-3a.png')}
+                        source={require('../../assets/images/Teal watercolor single element/chat-background.png')}
                         style={styles.typingTurtleAvatar}
                         contentFit="contain"
                       />
@@ -644,7 +645,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           />
 
         </KeyboardAvoidingView>
-      </ImageBackground>
+      </View>
     </SafeAreaWrapper>
     </>
   );

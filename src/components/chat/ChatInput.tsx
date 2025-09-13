@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RecordingWave } from '../RecordingWave';
 import { SafeAreaWrapper } from '../SafeAreaWrapper';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
@@ -33,6 +34,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onCancelRecording,
 }) => {
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
+  const insets = useSafeAreaInsets();
   
   // Count lines by splitting on newlines and adding 1
   const inputLineCount = Math.min(inputText.split('\n').length, 9);
@@ -52,7 +54,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <>
       {/* Input Area */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 0 }]}>
         <View style={styles.inputCard}>
           <View style={styles.inputRow}>
             {!isRecording ? (

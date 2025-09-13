@@ -62,6 +62,11 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
     },
   ];
 
+  // Don't render anything if not visible
+  if (!visible) {
+    return null;
+  }
+
   return (
     <Modal
       visible={visible}

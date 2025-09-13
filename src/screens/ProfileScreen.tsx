@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } f
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
@@ -13,6 +15,9 @@ const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
   const { user, profile, signOut } = useAuth();
+  
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
   
   const stats = [
     { label: 'Sessions', value: '47', icon: Heart },
@@ -67,9 +72,12 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      {/* Background */}
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+      {/* Background Gradient - Consistent with HomeScreen */}
       <LinearGradient
-        colors={['#dbeafe', '#f0f9ff', '#bfdbfe']}
+        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
       />
       
@@ -86,7 +94,7 @@ const ProfileScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile</Text>
+          <Text style={styles.headerTitle}>Profile 👤</Text>
         </View>
 
         {/* User Info */}

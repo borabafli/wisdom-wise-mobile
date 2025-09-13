@@ -50,7 +50,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       <View style={styles.userMessageContainer}>
         <View style={styles.userMessageWrapper}>
           <LinearGradient
-            colors={['#BCDCFC', '#C9EBFE']}
+            colors={['#C4E6E0', '#E5F1F0']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.userMessageBubble}
@@ -88,7 +88,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             <View style={styles.avatarSection}>
               <View style={turtleContainerStyle}>
                 <Image 
-                  source={require('../../../assets/images/turtle-simple-3a.png')}
+                  source={require('../../../assets/images/Teal watercolor single element/chat-background.png')}
                   style={turtleStyle}
                   contentFit="contain"
                 />
@@ -105,7 +105,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             <View style={styles.avatarRowSmall}>
               <View style={turtleContainerStyle}>
                 <Image 
-                  source={require('../../../assets/images/turtle-simple-3a.png')}
+                  source={require('../../../assets/images/Teal watercolor single element/chat-background.png')}
                   style={turtleStyle}
                   contentFit="contain"
                 />

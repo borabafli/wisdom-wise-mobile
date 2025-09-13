@@ -1,54 +1,66 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle, Waves, X } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import { homeScreenStyles as styles } from '../styles/components/HomeScreen.styles';
 import { colors, gradients } from '../styles/tokens';
 import { HomeScreenProps } from '../types/app';
 import { useQuote } from '../hooks/useQuote';
+import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { AudioWaveformDemo } from '../components/audio/AudioWaveformDemo';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
   const { width, height } = Dimensions.get('window');
   const [showWaveformDemo, setShowWaveformDemo] = useState(false);
+  const insets = useSafeAreaInsets();
+
+  // Apply dynamic navigation bar styling
+  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.homeScreen);
 
   // Static welcome message
   const welcomeMessage = {
-    title: "Begin your journey",
-    subtitle: "How are you feeling today?"
+    title: "Let's begin with you",
+    subtitle: "How are you right now?"
   };
 
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      {/* Bird Background */}
-      <ImageBackground
-        source={require('../../assets/images/Teal watercolor single element/home-background.png')}
-        style={styles.fullScreenBackground}
-        imageStyle={styles.backgroundImageStyle}
-        resizeMode="cover"
-      >
-        <LinearGradient
-          colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.backgroundGradient}
-        />
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+      <LinearGradient
+        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.backgroundGradient}
+      />
 
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          Platform.OS === 'android' && { paddingBottom: insets.bottom }
+        ]}
       >
-
         {/* Header Text and Chat Input */}
         <View style={styles.headerSection}>
           <View style={styles.headerText}>
             <Text style={styles.ctaTitle}>{welcomeMessage.title}</Text>
             <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>
+          </View>
+          
+          {/* Scrollable Turtle Background - positioned between text and chatbar */}
+          <View style={styles.scrollableTurtleContainer}>
+            <Image 
+              source={require('../../assets/images/Teal watercolor single element/home-background.png')}
+              style={styles.scrollableTurtleImage}
+              contentFit="contain"
+            />
           </View>
           
           {/* Container for turtle and input bar */}
@@ -59,12 +71,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           >
             
             {/* Input area */}
-            <View style={styles.inputContainer}>
+            <LinearGradient
+              colors={['rgba(248, 250, 252, 0.7)', 'rgba(241, 245, 249, 0.8)', 'rgba(255, 255, 255, 0.9)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.inputContainer}
+            >
               <View style={styles.micButton}>
-                <Mic size={32} color="#374151" strokeWidth={1.5} />
+                <Mic size={28} color="#374151" strokeWidth={1.5} />
               </View>
-              <Text style={styles.inputText}>Share a thought...</Text>
-            </View>
+              <Text style={styles.inputText} numberOfLines={1}>Share how you feel...</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
 
@@ -89,7 +106,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#edf5f5', '#fafbfc', '#f8f9fa']}
+                colors={['#ECFAF8', '#EDF8F8']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -97,15 +114,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/Teal watercolor single element/teal-icon-1.png')}
+                      source={require('../../assets/images/Teal watercolor single element/green-icon-2.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
                   </View>
                   <View style={styles.exerciseInfo}>
-                    <Text style={styles.exerciseName}>Morning Mindfulness</Text>
-                    <Text style={styles.exerciseDescription}>Start your day with gentle awareness</Text>
-                    <Text style={styles.exerciseTime}>8 min session</Text>
+                    <Text style={styles.exerciseName} numberOfLines={1}>Morning Mindfulness</Text>
+                    <Text style={styles.exerciseDescription}>Gentle awareness</Text>
+                    <Text style={styles.exerciseTime}>8 min</Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -118,7 +135,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#edf5f5', '#fafbfc', '#f8f9fa']}
+                colors={['#ECFAF8', '#EDF8F8']}
                 start={{ x: 0, y: 0.3 }}
                 end={{ x: 1, y: 0.8 }}
                 style={styles.exerciseCardGradient}
@@ -126,15 +143,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/Teal watercolor single element/teal-icon-2.png')}
+                      source={require('../../assets/images/Teal watercolor single element/green-icon-7.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
                   </View>
                   <View style={styles.exerciseInfo}>
-                    <Text style={styles.exerciseName}>Stress Relief</Text>
-                    <Text style={styles.exerciseDescription}>Release tension and find calm</Text>
-                    <Text style={styles.exerciseTime}>3 min relaxation</Text>
+                    <Text style={styles.exerciseName} numberOfLines={1}>Stress Relief</Text>
+                    <Text style={styles.exerciseDescription}>Release tension</Text>
+                    <Text style={styles.exerciseTime}>3 min</Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -147,7 +164,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#edf5f5', '#fafbfc', '#f8f9fa']}
+                colors={['#ECFAF8', '#EDF8F8']}
                 start={{ x: 0.2, y: 0 }}
                 end={{ x: 0.8, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -155,15 +172,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/Teal watercolor single element/teal-icon-3.png')}
+                      source={require('../../assets/images/Teal watercolor single element/green-icon-8.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
                   </View>
                   <View style={styles.exerciseInfo}>
-                    <Text style={styles.exerciseName}>Gratitude Practice</Text>
-                    <Text style={styles.exerciseDescription}>Cultivate appreciation and positivity</Text>
-                    <Text style={styles.exerciseTime}>2 min reflection</Text>
+                    <Text style={styles.exerciseName} numberOfLines={1}>Gratitude Practice</Text>
+                    <Text style={styles.exerciseDescription}>Cultivate positivity</Text>
+                    <Text style={styles.exerciseTime}>2 min</Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -190,7 +207,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.quickActionGradient}
               >
                 <Image 
-                  source={require('../../assets/images/Teal watercolor single element/teal-icon-4.png')}
+                  source={require('../../assets/images/Teal watercolor single element/green-icon-9.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -210,7 +227,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.quickActionGradient}
               >
                 <Image 
-                  source={require('../../assets/images/Teal watercolor single element/teal-icon-5.png')}
+                  source={require('../../assets/images/Teal watercolor single element/green-icon-10.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -218,21 +235,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => setShowWaveformDemo(true)}
-              style={styles.quickActionButton}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['rgba(6, 182, 212, 0.25)', 'rgba(14, 165, 233, 0.15)', 'rgba(255, 255, 255, 0.8)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.quickActionGradient}
-              >
-                <Waves size={28} color="#06B6D4" />
-                <Text style={styles.quickActionText}>Audio Waves</Text>
-              </LinearGradient>
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -251,13 +253,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 end={{ x: 1, y: 1 }}
                 style={styles.quoteOverlayGradient}
               >
-                <View style={styles.quoteIcon}>
-                  <Image 
-                    source={require('../../assets/images/Teal watercolor single element/teal-icon-6.png')}
-                    style={styles.quoteIconImage}
-                    contentFit="contain"
-                  />
-                </View>
                 <Text style={styles.quoteText}>
                   {currentQuote?.text || 'Progress is progress, no matter how small'}
                 </Text>
@@ -267,7 +262,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
         </View>
       </ScrollView>
-      </ImageBackground>
 
       {/* Audio Waveform Demo Modal */}
       <Modal
