@@ -8,7 +8,7 @@ import { GoogleIcon } from '../../components/GoogleIcon';
 export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onNavigateToSignUp }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn, signInWithGoogle, isLoading } = useAuth();
+  const { signIn, signInWithGoogle, skipAuth, isLoading } = useAuth();
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -29,6 +29,10 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
     } catch (error: any) {
       Alert.alert('Google Sign In Failed', error.message || 'Please try again');
     }
+  };
+
+  const handleSkipAuth = () => {
+    skipAuth();
   };
 
   return (
@@ -126,6 +130,15 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
           <TouchableOpacity onPress={onNavigateToSignUp} activeOpacity={0.7}>
             <Text style={styles.footerText}>
               Don't have an account? Sign up
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={handleSkipAuth} 
+            activeOpacity={0.7}
+            style={styles.skipButton}
+          >
+            <Text style={styles.skipButtonText}>
+              Skip for now
             </Text>
           </TouchableOpacity>
         </View>

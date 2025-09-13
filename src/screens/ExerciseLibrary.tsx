@@ -362,7 +362,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
         <View style={exerciseLibraryStyles.exercisesGrid}>
           {filteredExercises.map((exercise, index) => (
-            <View key={exercise.id || index} style={exerciseLibraryStyles.exerciseCardWrapper}>
+            <View key={`exercise-${exercise.id}-${exercise.type}-${index}`} style={exerciseLibraryStyles.exerciseCardWrapper}>
               <ExerciseCard exercise={exercise} />
             </View>
           ))}
