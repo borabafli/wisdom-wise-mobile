@@ -15,7 +15,7 @@ export const moodChartStyles = {
 
   // Loading states with calm aesthetics
   loadingContainer: {
-    backgroundColor: tokens.colors.background.glass,
+    backgroundColor: 'transparent',
     borderRadius: tokens.spacing.radius.lg,
     paddingVertical: tokens.spacing.therapy.lg,
     alignItems: 'center' as const,
@@ -30,14 +30,14 @@ export const moodChartStyles = {
 
   // Empty state with supportive messaging
   emptyContainer: {
-    backgroundColor: tokens.colors.background.glass,
+    backgroundColor: 'transparent',
     borderRadius: tokens.spacing.radius.lg,
     paddingVertical: tokens.spacing.therapy.lg,
     paddingHorizontal: tokens.spacing.therapy.md,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
     borderWidth: 1,
-    borderColor: tokens.colors.gray[200],
+    borderColor: 'rgba(229, 231, 235, 0.4)',
     borderStyle: 'dashed' as const,
   },
 
@@ -134,10 +134,10 @@ export const moodChartStyles = {
   },
 
   comparisonTitle: {
-    fontSize: tokens.typography.fontSize.md,
+    fontSize: 16,
     fontWeight: '600' as const,
-    color: tokens.colors.text.primary,
-    fontFamily: tokens.typography.fontFamily.heading,
+    color: '#374151',
+    fontFamily: 'Inter-SemiBold',
   },
 
   trendIndicator: {

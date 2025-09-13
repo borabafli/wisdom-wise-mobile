@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, Platform } from 'react-native';
+import { View, TouchableOpacity, Text, Platform, Image, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
-import { Home, BookOpen, Brain, User, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import QuickActionsPopup from './QuickActionsPopup';
 import { customTabBarStyles as styles } from '../styles/components/CustomTabBar.styles';
@@ -32,11 +31,80 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     console.log('QuickActions modal state:', showQuickActions);
   }, [showQuickActions]);
 
+  // Tab icon component with smooth fade transition
+  const TabIcon: React.FC<{ 
+    selectedIcon: any; 
+    unselectedIcon: any; 
+    isFocused: boolean; 
+  }> = ({ selectedIcon, unselectedIcon, isFocused }) => {
+    const fadeAnim = React.useRef(new Animated.Value(isFocused ? 1 : 0)).current;
+    
+    React.useEffect(() => {
+      Animated.timing(fadeAnim, {
+        toValue: isFocused ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, [isFocused]);
+
+    return (
+      <View style={{ width: 44, height: 44, position: 'relative' }}>
+        <Animated.View
+          style={{
+            position: 'absolute',
+            opacity: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 0],
+            }),
+          }}
+        >
+          <Image 
+            source={unselectedIcon} 
+            style={{ width: 44, height: 44 }}
+            resizeMode="contain"
+          />
+        </Animated.View>
+        <Animated.View
+          style={{
+            position: 'absolute',
+            opacity: fadeAnim,
+          }}
+        >
+          <Image 
+            source={selectedIcon} 
+            style={{ width: 44, height: 44 }}
+            resizeMode="contain"
+          />
+        </Animated.View>
+      </View>
+    );
+  };
+
   const tabs = [
-    { name: 'Home', icon: Home, label: 'Home' },
-    { name: 'Exercises', icon: BookOpen, label: 'Exercises' },
-    { name: 'Insights', icon: Brain, label: 'Insights' },
-    { name: 'Profile', icon: User, label: 'Profile' }
+    { 
+      name: 'Home', 
+      label: 'Home',
+      selectedIcon: require('../../assets/navigation-icons/selected-home.png'),
+      unselectedIcon: require('../../assets/navigation-icons/unselected-home.png')
+    },
+    { 
+      name: 'Exercises', 
+      label: 'Exercises',
+      selectedIcon: require('../../assets/navigation-icons/selected-exercises.png'),
+      unselectedIcon: require('../../assets/navigation-icons/unselected-exercises.png')
+    },
+    { 
+      name: 'Insights', 
+      label: 'Insights',
+      selectedIcon: require('../../assets/navigation-icons/selected-insights.png'),
+      unselectedIcon: require('../../assets/navigation-icons/unselected-insights.png')
+    },
+    { 
+      name: 'Profile', 
+      label: 'Profile',
+      selectedIcon: require('../../assets/navigation-icons/selected-profile.png'),
+      unselectedIcon: require('../../assets/navigation-icons/unselected-profile.png')
+    }
   ];
 
   return (
@@ -50,7 +118,6 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
             {/* First 2 tabs */}
             {tabs.slice(0, 2).map((tab, index) => {
               const isFocused = state.index === index;
-              const Icon = tab.icon;
 
               const onPress = () => {
                 const event = navigation.emit({
@@ -68,16 +135,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 <TouchableOpacity
                   key={tab.name}
                   onPress={onPress}
-                  style={[
-                    styles.tabButton,
-                    isFocused && styles.tabButtonActive
-                  ]}
+                  style={styles.tabButton}
                   activeOpacity={0.7}
                 >
-                  <Icon 
-                    size={22} 
-                    color={isFocused ? '#0d9488' : '#6B7280'} 
-                    strokeWidth={isFocused ? 2.5 : 2} 
+                  <TabIcon 
+                    selectedIcon={tab.selectedIcon}
+                    unselectedIcon={tab.unselectedIcon}
+                    isFocused={isFocused}
                   />
                   <Text 
                     style={[
@@ -97,19 +161,17 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
               style={styles.centerButton}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={[...gradients.button.primary]}
-                style={styles.plusButton}
-              >
-                <Plus size={24} color="#ffffff" strokeWidth={2.5} />
-              </LinearGradient>
+              <Image 
+                source={require('../../assets/navigation-icons/plus-button.png')} 
+                style={{ width: 64, height: 64 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
 
             {/* Last 2 tabs */}
             {tabs.slice(2).map((tab, index) => {
               const actualIndex = index + 2; // Adjust for slice
               const isFocused = state.index === actualIndex;
-              const Icon = tab.icon;
 
               const onPress = () => {
                 const event = navigation.emit({
@@ -127,16 +189,13 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 <TouchableOpacity
                   key={tab.name}
                   onPress={onPress}
-                  style={[
-                    styles.tabButton,
-                    isFocused && styles.tabButtonActive
-                  ]}
+                  style={styles.tabButton}
                   activeOpacity={0.7}
                 >
-                  <Icon 
-                    size={22} 
-                    color={isFocused ? '#0d9488' : '#6B7280'} 
-                    strokeWidth={isFocused ? 2.5 : 2} 
+                  <TabIcon 
+                    selectedIcon={tab.selectedIcon}
+                    unselectedIcon={tab.unselectedIcon}
+                    isFocused={isFocused}
                   />
                   <Text 
                     style={[
