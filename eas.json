@@ -6,19 +6,24 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "image": "ubuntu-22.04-jdk-17-ndk-r26c"
+      "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "image": "ubuntu-22.04-jdk-17-ndk-r26c"
+      "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true,
-      "image": "ubuntu-22.04-jdk-17-ndk-r26c"
+      "autoIncrement": true
     }
   },
   "submit": {
     "production": {}
+  },
+  "builds": {
+    "android": {
+      "image": "default-jdk-17"
+    },
+    "ios": {
+      "image": "default-macos-14"
+    }
   }
 }
