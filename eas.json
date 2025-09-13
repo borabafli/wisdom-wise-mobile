@@ -6,24 +6,25 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "image": "default-jdk-17"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "image": "default-jdk-17"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "android": {
+        "image": "default-jdk-17"
+      }
     }
   },
   "submit": {
     "production": {}
-  },
-  "builds": {
-    "android": {
-      "image": "default-jdk-17"
-    },
-    "ios": {
-      "image": "default-macos-14"
-    }
   }
 }
