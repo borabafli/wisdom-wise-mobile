@@ -86,6 +86,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@expo/config-plugins": "^54.0.1",
     "@types/react": "~19.0.0",
     "lightningcss": "^1.25.1",
     "metro-transform-plugins": "^0.83.1",
