@@ -25,23 +25,24 @@ export const AnimatedTypingDots: React.FC<AnimatedTypingDotsProps> = ({ isVisibl
         Animated.sequence([
           Animated.delay(initialDelay), // Initial stagger delay
           Animated.timing(dotTranslateY, {
-            toValue: -8, // Jump up by 8 pixels
-            duration: 300,
+            toValue: -6, // Smaller jump for more subtle effect
+            duration: 400, // Slower animation
             useNativeDriver: true,
           }),
           Animated.timing(dotTranslateY, {
             toValue: 0, // Return to original position
-            duration: 300,
+            duration: 400, // Slower animation
             useNativeDriver: true,
           }),
+          Animated.delay(600), // Pause between cycles for WhatsApp-like effect
         ])
       );
     };
 
-    // Start animations with staggered delays for wave effect
+    // Start animations with sequential delays for WhatsApp-like effect
     const dot1Animation = createJumpAnimation(dot1TranslateY, 0);
-    const dot2Animation = createJumpAnimation(dot2TranslateY, 150);
-    const dot3Animation = createJumpAnimation(dot3TranslateY, 300);
+    const dot2Animation = createJumpAnimation(dot2TranslateY, 200); // Slower sequential timing
+    const dot3Animation = createJumpAnimation(dot3TranslateY, 400); // Even more spaced out
 
     dot1Animation.start();
     dot2Animation.start();

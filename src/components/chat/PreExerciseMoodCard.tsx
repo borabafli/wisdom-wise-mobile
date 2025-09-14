@@ -32,32 +32,25 @@ export const PreExerciseMoodCard: React.FC<PreExerciseMoodCardProps> = ({
   };
 
   return (
-    <BlurView
-      intensity={20}
-      tint="light"
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)']}
-        style={styles.glassOverlay}
-      >
-        <View style={styles.header}>
-          <Text style={styles.title}>Before we start the {exerciseName}</Text>
-          <Text style={styles.subtitle}>How are you feeling right now?</Text>
-        </View>
-
-        <View style={styles.slidersContainer}>
-          <MoodSlider
-            title=""
-            subtitle=""
-            initialValue={moodRating}
-            type="mood"
-            onRatingChange={setMoodRating}
-            onComplete={handleComplete}
-            onSkip={onSkip ? handleSkip : undefined}
-          />
-        </View>
-      </LinearGradient>
-    </BlurView>
+        colors={['#D5E8E8', '#C0DDD7', '#E0F0F0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientBackground}
+      />
+      <Text style={styles.title}>Before we start...</Text>
+      <Text style={styles.subtitle}>How do you fee right now?</Text>
+      
+      <MoodSlider
+        title=""
+        subtitle=""
+        initialValue={moodRating}
+        type="mood"
+        onRatingChange={setMoodRating}
+        onComplete={handleComplete}
+        onSkip={onSkip ? handleSkip : undefined}
+      />
+    </View>
   );
 };

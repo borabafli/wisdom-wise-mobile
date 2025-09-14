@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Star, ArrowRight, Eye, Lightbulb } from 'lucide-react-native';
 import { visionInsightsService, VisionInsight } from '../services/visionInsightsService';
+import { insightsDashboardStyles } from '../styles/components/InsightsDashboard.styles';
 
 interface VisionInsightsCardProps {
   onReflectPress: (visionInsight: VisionInsight) => void;
@@ -48,26 +50,20 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
 
   if (isLoading) {
     return (
-      <View style={styles.card}>
-        <LinearGradient
-          colors={['rgba(240, 249, 255, 0.8)', 'rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.6)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientBackground}
-        />
-        <View style={styles.accent} />
-        <View style={styles.header}>
-          <LinearGradient
-            colors={['#A4CEDC', '#599BC1', '#4A8AAE', '#3C7A9B']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.icon}
-          >
-            <Star size={24} color="white" />
-          </LinearGradient>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Vision of Myself</Text>
-            <Text style={styles.subtitle}>Loading your inspiring vision...</Text>
+      <View style={insightsDashboardStyles.patternsCard}>
+        <View style={[insightsDashboardStyles.patternsAccent, { backgroundColor: 'rgba(135, 186, 163, 0.15)' }]} />
+        
+        <View style={insightsDashboardStyles.patternsHeader}>
+          <View style={insightsDashboardStyles.patternsIcon}>
+            <Image 
+              source={require('../../assets/images/New Icons/icon-5.png')}
+              style={{ width: 60, height: 60 }}
+              contentFit="contain"
+            />
+          </View>
+          <View style={insightsDashboardStyles.patternsTitleContainer}>
+            <Text style={insightsDashboardStyles.patternsTitle}>Vision of Myself</Text>
+            <Text style={insightsDashboardStyles.patternsSubtitle}>Loading your inspiring vision...</Text>
           </View>
         </View>
       </View>
@@ -76,73 +72,74 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
 
   if (!latestVision) {
     return (
-      <View style={styles.card}>
-        <LinearGradient
-          colors={['rgba(240, 249, 255, 0.8)', 'rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.6)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientBackground}
-        />
-        <View style={styles.accent} />
-        <View style={styles.header}>
-          <LinearGradient
-            colors={['#A4CEDC', '#599BC1', '#4A8AAE', '#3C7A9B']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.icon}
-          >
-            <Star size={24} color="white" />
-          </LinearGradient>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Vision of Myself</Text>
-            <Text style={styles.subtitle}>Create an inspiring vision of your future self</Text>
+      <View style={insightsDashboardStyles.patternsCard}>
+        <View style={[insightsDashboardStyles.patternsAccent, { backgroundColor: 'rgba(135, 186, 163, 0.15)' }]} />
+        
+        <View style={insightsDashboardStyles.patternsHeader}>
+          <View style={insightsDashboardStyles.patternsIcon}>
+            <Image 
+              source={require('../../assets/images/New Icons/icon-5.png')}
+              style={{ width: 60, height: 60 }}
+              contentFit="contain"
+            />
+          </View>
+          <View style={insightsDashboardStyles.patternsTitleContainer}>
+            <Text style={insightsDashboardStyles.patternsTitle}>Vision of Myself</Text>
+            <Text style={insightsDashboardStyles.patternsSubtitle}>Create an inspiring vision of your future self</Text>
           </View>
         </View>
         
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>
-            Create an inspiring vision of your future self! ✨
-          </Text>
-          {onStartExercise && (
-            <TouchableOpacity
-              onPress={onStartExercise}
-              style={styles.startExerciseButton}
-              activeOpacity={0.8}
-            >
-              <Star size={16} color="white" />
-              <Text style={styles.startExerciseText}>Start Vision Exercise</Text>
-              <ArrowRight size={14} color="white" />
-            </TouchableOpacity>
-          )}
+        <View style={insightsDashboardStyles.patternsContainer}>
+          <View style={insightsDashboardStyles.emptyStateContainer}>
+            <Text style={insightsDashboardStyles.emptyStateText}>
+              Create an inspiring vision of your future self! ✨
+            </Text>
+            {onStartExercise && (
+              <TouchableOpacity
+                onPress={onStartExercise}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#87BAA3',
+                  borderRadius: 12,
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  gap: 8,
+                  marginTop: 16,
+                }}
+                activeOpacity={0.8}
+              >
+                <Star size={16} color="white" />
+                <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Start Vision Exercise</Text>
+                <ArrowRight size={14} color="white" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.card}>
-      <LinearGradient
-        colors={['rgba(240, 249, 255, 0.8)', 'rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.6)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradientBackground}
-      />
-      <View style={styles.accent} />
+    <View style={insightsDashboardStyles.patternsCard}>
+      <View style={[insightsDashboardStyles.patternsAccent, { backgroundColor: 'rgba(135, 186, 163, 0.15)' }]} />
       
-      <View style={styles.header}>
-        <LinearGradient
-          colors={['#E0F2FE', '#7DD3FC']}
-          style={styles.icon}
-        >
-          <Star size={24} color="#0369A1" />
-        </LinearGradient>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Vision of Myself</Text>
-          <Text style={styles.subtitle}>Your inspiring future self</Text>
+      <View style={insightsDashboardStyles.patternsHeader}>
+        <View style={insightsDashboardStyles.patternsIcon}>
+          <Image 
+            source={require('../../assets/images/Teal watercolor single element/teal-icon-5.png')}
+            style={{ width: 60, height: 60 }}
+            contentFit="contain"
+          />
+        </View>
+        <View style={insightsDashboardStyles.patternsTitleContainer}>
+          <Text style={insightsDashboardStyles.patternsTitle}>Vision of Myself</Text>
+          <Text style={insightsDashboardStyles.patternsSubtitle}>Your inspiring future self</Text>
         </View>
       </View>
 
-      <View style={styles.content}>
+      <View style={insightsDashboardStyles.patternsContainer}>
         {/* Vision Description */}
         <View style={styles.visionDescription}>
           <Text style={styles.descriptionText}>
@@ -196,25 +193,45 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
         )}
 
         {/* Action Buttons */}
-        <View style={styles.buttonsContainer}>
+        <View style={{ gap: 12 }}>
           <TouchableOpacity
             onPress={() => onReflectPress(latestVision)}
-            style={styles.reflectButton}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#87BAA3',
+              borderRadius: 12,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              gap: 8,
+            }}
             activeOpacity={0.8}
           >
             <Lightbulb size={16} color="white" />
-            <Text style={styles.reflectButtonText}>Reflect on Vision</Text>
+            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Reflect on Vision</Text>
             <ArrowRight size={14} color="white" />
           </TouchableOpacity>
 
           {visionStats.totalVisions > 1 && onViewAllPress && (
             <TouchableOpacity
               onPress={onViewAllPress}
-              style={styles.viewAllButton}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#f8fafc',
+                borderColor: '#87BAA3',
+                borderWidth: 1,
+                borderRadius: 10,
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+                gap: 6,
+              }}
               activeOpacity={0.8}
             >
-              <Eye size={14} color="#0369A1" />
-              <Text style={styles.viewAllText}>
+              <Eye size={14} color="#87BAA3" />
+              <Text style={{ color: '#87BAA3', fontSize: 13, fontWeight: '500' }}>
                 View {visionStats.totalVisions} vision{visionStats.totalVisions > 1 ? 's' : ''}
               </Text>
             </TouchableOpacity>
@@ -298,7 +315,7 @@ const styles = {
     padding: 16,
     marginBottom: 16,
     borderLeftWidth: 3,
-    borderLeftColor: '#0EA5E9',
+    borderLeftColor: '#87BAA3',
   },
   descriptionText: {
     fontSize: 16,
@@ -326,14 +343,14 @@ const styles = {
     gap: 6,
   },
   qualityTag: {
-    backgroundColor: '#dbeafe',
+    backgroundColor: 'rgba(135, 186, 163, 0.1)',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
   qualityText: {
     fontSize: 12,
-    color: '#1e40af',
+    color: '#87BAA3',
     fontWeight: '500' as const,
   },
   domainsContainer: {
@@ -345,16 +362,16 @@ const styles = {
     gap: 6,
   },
   domainBadge: {
-    backgroundColor: '#f0f9ff',
+    backgroundColor: 'rgba(135, 186, 163, 0.08)',
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderWidth: 1,
-    borderColor: '#bae6fd',
+    borderColor: 'rgba(135, 186, 163, 0.2)',
   },
   domainText: {
     fontSize: 12,
-    color: '#0369a1',
+    color: '#87BAA3',
     fontWeight: '500' as const,
   },
   buttonsContainer: {

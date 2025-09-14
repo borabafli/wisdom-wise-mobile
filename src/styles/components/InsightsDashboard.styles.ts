@@ -14,13 +14,31 @@ export const insightsDashboardStyles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  backgroundGradient: {
+  backgroundImage: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: -1,
+    zIndex: 0,
+    width: width,
+    height: height,
+  },
+  blurOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  blueOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 2,
   },
   watercolorBlob: {
     position: 'absolute',
@@ -57,6 +75,14 @@ export const insightsDashboardStyles = StyleSheet.create({
     textShadowRadius: 3,
     textAlign: 'center',
   },
+  compactTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#002d14',
+    fontFamily: 'Poppins-SemiBold',
+    textAlign: 'center',
+    marginBottom: spacing[2],
+  },
   subtitle: {
     fontSize: width < 375 ? 16 : 18,
     fontWeight: 'normal',
@@ -70,66 +96,78 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingHorizontal: spacing.layout.screenPadding,
+    paddingHorizontal: spacing[8], // Further reduced to make cards even wider
+    zIndex: 3,
   },
   scrollContent: {
+    paddingTop: spacing[8], // Reduced top padding since header is now scrollable
     paddingBottom: 120,
+  },
+  scrollableHeader: {
+    paddingVertical: spacing[12], // Much less space than the fixed header
+    alignItems: 'center',
   },
   // Enhanced Motivational Header Card
   motivationalCard: {
-    borderRadius: spacing.radius.xl,
+    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    borderRadius: spacing.radius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(251, 146, 60, 0.15)',
-    ...shadows.components.modal,
+    borderColor: 'rgba(135, 186, 163, 0.3)',
+    shadowColor: 'rgba(0, 0, 0, 0.15)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
   },
   
   motivationalGradient: {
-    padding: spacing.layout.screenPadding,
+    // No padding here to avoid double padding
   },
   motivationalContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.layout.screenPadding,
+    padding: spacing[20],
+    gap: spacing[16],
   },
   motivationalText: {
     flex: 1,
-    marginRight: spacing[4],
+    marginBottom: spacing[8],
   },
   motivationalTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text.primary,
-    marginBottom: spacing[1],
+    marginBottom: spacing[4],
+    lineHeight: 24,
   },
   motivationalSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.text.secondary,
     fontWeight: typography.fontWeight.medium,
+    lineHeight: 20,
   },
   motivationalStats: {
     flexDirection: 'row',
-    gap: spacing[4],
+    justifyContent: 'space-around',
+    gap: spacing[12],
   },
   motivationalStat: {
     alignItems: 'center',
-    minWidth: 50,
+    flex: 1,
   },
   motivationalNumber: {
     fontSize: 20,
     fontWeight: typography.fontWeight.bold,
-    color: '#6CA0CE',
-    marginBottom: spacing[0],
+    color: '#87BAA3',
+    marginBottom: spacing[2],
   },
   
   motivationalNumberVision: {
-    color: '#6CA0CE', // Updated to match other numbers
+    color: '#87BAA3', // Updated to match sage green theme
   },
   
   motivationalNumberAchievement: {
-    color: '#6CA0CE', // Updated to match other numbers
+    color: '#87BAA3', // Updated to match sage green theme
   },
   motivationalLabel: {
     fontSize: 11,
@@ -139,11 +177,15 @@ export const insightsDashboardStyles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   journeyCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.65)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
-    borderColor: colors.border.primary,
-    ...shadows.components.modal,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 6,
     padding: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
@@ -195,11 +237,11 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   statValue: {
     ...typography.textStyles.h1,
-    color: '#6CA0CE',
+    color: '#87BAA3',
   },
   statValueSky: {
     ...typography.textStyles.h1,
-    color: '#6CA0CE',
+    color: '#87BAA3',
   },
   statLabel: {
     ...typography.textStyles.bodySmall,
@@ -232,11 +274,15 @@ export const insightsDashboardStyles = StyleSheet.create({
     marginBottom: spacing.layout.screenPadding,
   },
   insightCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.65)',
     borderRadius: spacing.radius.lg,
     borderWidth: 1,
-    borderColor: colors.border.primary,
-    ...shadows.components.card,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
     padding: spacing.components.cardPadding,
     marginBottom: spacing.components.cardGap,
   },
@@ -321,14 +367,18 @@ export const insightsDashboardStyles = StyleSheet.create({
     color: colors.primary[400],
   },
   patternsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.65)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
-    borderColor: colors.border.primary,
-    ...shadows.components.modal,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
     padding: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   patternsAccent: {
     position: 'absolute',
@@ -336,7 +386,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     right: 0,
     width: 128,
     height: 128,
-    backgroundColor: 'rgba(165, 180, 252, 0.15)', // Indigo accent for thinking patterns
+    backgroundColor: 'rgba(135, 186, 163, 0.15)', // Green accent to match mood card
     borderRadius: 64,
     transform: [{ translateY: 64 }, { translateX: 64 }],
   },
@@ -368,12 +418,15 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   patternCard: {
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: spacing.radius.lg,
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.1)',
-    ...shadows.components.card,
-    padding: spacing.components.cardGap,
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    borderWidth: 0,
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+    padding: 0,
     zIndex: 10,
   },
   patternContent: {
@@ -454,23 +507,27 @@ export const insightsDashboardStyles = StyleSheet.create({
     width: '100%',
     paddingVertical: spacing.components.cardGap,
     borderRadius: spacing.radius.lg,
-    backgroundColor: 'rgba(99, 102, 241, 0.08)',
+    backgroundColor: 'rgba(135, 186, 163, 0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.2)',
+    borderColor: 'rgba(135, 186, 163, 0.2)',
     ...shadows.components.actionButton,
   },
   viewAllText: {
     textAlign: 'center',
     ...typography.textStyles.body,
     fontWeight: typography.fontWeight.semibold,
-    color: '#6366f1',
+    color: '#87BAA3',
   },
   achievementsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(255, 255, 255, 0.65)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
-    borderColor: colors.border.primary,
-    ...shadows.components.modal,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 6,
     padding: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
@@ -519,10 +576,10 @@ export const insightsDashboardStyles = StyleSheet.create({
     padding: spacing[8],
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(239, 246, 255, 0.5)',
+    backgroundColor: 'rgba(248, 251, 249, 0.6)',
     borderRadius: spacing.radius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.1)',
+    borderColor: 'rgba(135, 186, 163, 0.3)',
   },
   emptyStateText: {
     ...typography.textStyles.body,
@@ -538,16 +595,16 @@ export const insightsDashboardStyles = StyleSheet.create({
     marginTop: spacing[2],
   },
   distortionTag: {
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    backgroundColor: 'rgba(135, 186, 163, 0.1)',
     paddingHorizontal: spacing[2],
     paddingVertical: spacing[1],
     borderRadius: spacing.radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(135, 186, 163, 0.2)',
   },
   distortionTagText: {
     ...typography.textStyles.caption,
-    color: colors.primary[500],
+    color: '#87BAA3',
     fontWeight: typography.fontWeight.semibold,
   },
 

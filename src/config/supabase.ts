@@ -12,6 +12,9 @@ if (!supabaseAnonKey) {
   throw new Error('Missing EXPO_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
+console.log("ENV URL:", process.env.EXPO_PUBLIC_SUPABASE_URL);
+console.log("ENV KEY (first 6 chars):", process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 6));
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,

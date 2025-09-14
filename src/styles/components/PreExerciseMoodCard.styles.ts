@@ -5,21 +5,21 @@ import { typography } from '../tokens/typography';
 
 export const preExerciseMoodCardStyles = StyleSheet.create({
   container: {
-    borderRadius: 20,
-    margin: 16,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    elevation: 8,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
+    borderRadius: 16,
+    marginVertical: spacing[6],
+    marginHorizontal: 0, // Full width card
+    paddingVertical: spacing[20],
+    paddingHorizontal: spacing[8], // Minimal padding for more text space
+    // No border
+    overflow: 'hidden', // For gradient
   },
-
-  glassOverlay: {
-    padding: 24,
-    borderRadius: 20,
+  
+  gradientBackground: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
 
   header: {
@@ -28,20 +28,29 @@ export const preExerciseMoodCardStyles = StyleSheet.create({
   },
 
   title: {
-    ...typography.textStyles.h3,
+    fontSize: 18, // Smaller text (swapped)
+    fontWeight: '600',
     color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: spacing.xs,
-    fontSize: 20,
-    fontWeight: '600',
+    marginBottom: spacing[6],
+    marginHorizontal: spacing[2], // Use more horizontal space
+    paddingHorizontal: spacing[4],
+    lineHeight: 26, // More vertical space
+    fontFamily: 'Inter_600SemiBold', // Different font
+    letterSpacing: -0.3,
   },
 
   subtitle: {
-    ...typography.textStyles.body,
+    fontSize: 22, // Bigger text (swapped)
+    fontWeight: '700',
     color: colors.text.secondary,
     textAlign: 'center',
-    fontSize: 16,
-    lineHeight: 22,
+    marginBottom: spacing[12],
+    marginHorizontal: spacing[2], // Use more horizontal space
+    paddingHorizontal: spacing[4],
+    lineHeight: 30, // More vertical space
+    fontFamily: 'Lora_700Bold', // Different font
+    letterSpacing: -0.2,
   },
 
   slidersContainer: {

@@ -74,14 +74,14 @@ export const homeScreenStyles = StyleSheet.create({
   },
   ctaTitle: {
     fontFamily: 'BubblegumSans-Regular',
-    fontSize: width < 375 ? 28 : 32, // Responsive font size - much bigger
+    fontSize: width < 375 ? 34 : 38, // Even bigger font size
     fontWeight: 'normal', // Changed to normal since BubblegumSans is already styled
     color: '#002d14', // Even darker green color
     marginTop: spacing[2],
     marginBottom: spacing[4],
     textAlign: 'center',
     letterSpacing: -0.5,
-    lineHeight: width < 375 ? 32 : 38, // Better line height
+    lineHeight: width < 375 ? 38 : 44, // Better line height for bigger text
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,

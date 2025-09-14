@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { MoodSlider } from './MoodSlider';
 import { moodRatingService, MoodRating } from '../../services/moodRatingService';
 import { moodRatingCardStyles as styles } from '../../styles/components/MoodRatingCard.styles';
@@ -88,52 +87,39 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
   };
 
   return (
-    <BlurView
-      intensity={20}
-      tint="light"
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)']}
-        style={styles.glassOverlay}
-      >
-        <View style={styles.header}>
-          <Text style={styles.title}>How did this exercise affect you?</Text>
-          <Text style={styles.subtitle}>Your feedback helps us personalize your experience</Text>
-        </View>
-
-        <View style={styles.slidersContainer}>
-          {currentSlider === 'mood' && (
-            <MoodSlider
-              title="How are you feeling right now?"
-              subtitle="Rate your current mood"
-              initialValue={moodRating}
-              type="mood"
-              onRatingChange={setMoodRating}
-              onComplete={handleMoodComplete}
-              onSkip={onSkip ? handleSkip : undefined}
-            />
-          )}
-          
-          {currentSlider === 'helpfulness' && (
-            <MoodSlider
-              title="How effective was this session?"
-              subtitle="Rate the effectiveness"
-              initialValue={helpfulnessRating}
-              type="helpfulness"
-              variant="test"
-              onRatingChange={setHelpfulnessRating}
-              onComplete={handleHelpfulnessComplete}
-              onSkip={onSkip ? handleSkip : undefined}
-            />
-          )}
-        </View>
-
-        <View style={styles.progressIndicator}>
-          <View style={[styles.progressDot, currentSlider === 'mood' && styles.activeDot]} />
-          <View style={[styles.progressDot, currentSlider === 'helpfulness' && styles.activeDot]} />
-        </View>
-      </LinearGradient>
-    </BlurView>
+        colors={['rgba(59, 130, 246, 0.25)', 'rgba(147, 197, 253, 0.18)', 'rgba(186, 230, 253, 0.22)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientBackground}
+      />
+      <Text style={styles.title}>Before we start...</Text>
+      
+      {currentSlider === 'mood' && (
+        <MoodSlider
+          title=""
+          subtitle=""
+          initialValue={moodRating}
+          type="mood"
+          onRatingChange={setMoodRating}
+          onComplete={handleMoodComplete}
+          onSkip={onSkip ? handleSkip : undefined}
+        />
+      )}
+      
+      {currentSlider === 'helpfulness' && (
+        <MoodSlider
+          title=""
+          subtitle=""
+          initialValue={helpfulnessRating}
+          type="helpfulness"
+          variant="test"
+          onRatingChange={setHelpfulnessRating}
+          onComplete={handleHelpfulnessComplete}
+          onSkip={onSkip ? handleSkip : undefined}
+        />
+      )}
+    </View>
   );
 };

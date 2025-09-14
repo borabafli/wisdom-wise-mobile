@@ -69,32 +69,32 @@ export const exerciseLibraryStyles = StyleSheet.create({
   },
   // Filter Button - Enhanced styling
   filterButton: {
-    padding: spacing[14], // Increased padding for better touch target
-    backgroundColor: 'rgba(161, 214, 242, 0.25)', // Light blue/teal like home screen
-    borderRadius: 50, // Fully rounded
+    padding: spacing[14],
+    backgroundColor: 'rgba(135, 186, 163, 0.15)',
+    borderRadius: 25,
     position: 'relative',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 15,
-    elevation: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 6,
     borderWidth: 1,
-    borderColor: 'rgba(147, 197, 253, 0.3)', // Light blue border matching home
-    minWidth: 56, // Ensure minimum touch target
+    borderColor: 'rgba(135, 186, 163, 0.3)',
+    minWidth: 56,
     minHeight: 56,
     alignItems: 'center',
     justifyContent: 'center',
   },
   filterButtonActive: {
-    backgroundColor: 'rgba(186, 230, 253, 0.4)', // Slightly more saturated blue when active
+    backgroundColor: 'rgba(135, 186, 163, 0.25)',
     borderWidth: 1,
-    borderColor: 'rgba(147, 197, 253, 0.6)',
+    borderColor: 'rgba(135, 186, 163, 0.5)',
   },
   filterBadge: {
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: '#002d14', // Dark green badge
+    backgroundColor: '#87BAA3',
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -116,24 +116,25 @@ export const exerciseLibraryStyles = StyleSheet.create({
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[12],
+    gap: spacing[16],
+    marginBottom: spacing[4],
   },
   searchBar: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(248, 250, 252, 0.95)', // Slightly more opaque for better visibility
-    borderRadius: 50, // Fully rounded like home input
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 25,
     paddingHorizontal: spacing[16],
-    paddingVertical: spacing[14], // Slightly more padding for better touch target
+    paddingVertical: spacing[12],
     gap: spacing[12],
-    shadowColor: '#000000', // Dark shadow like home
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 15,
-    elevation: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 6,
     borderWidth: 1,
-    borderColor: 'rgba(134, 239, 172, 0.2)', // Subtle green border
+    borderColor: 'rgba(135, 186, 163, 0.3)',
   },
   searchInput: {
     flex: 1,
@@ -274,20 +275,20 @@ export const exerciseLibraryStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 15,
     elevation: 8,
-    minHeight: width < 375 ? 140 : 160, // Responsive height for smaller screens
+    height: 144, // Fixed height to match image container + padding
     backgroundColor: 'transparent',
   },
   exerciseCardGradient: {
     flexDirection: 'row',
-    padding: width < 375 ? spacing[10] : spacing[12], // Responsive padding
-    minHeight: width < 375 ? 140 : 160, // Match card height
+    padding: spacing[12],
+    height: 144, // Match card height
   },
   exerciseImageContainer: {
-    width: width < 375 ? 50 : 60, // Responsive image width
-    height: width < 375 ? 116 : 136, // Responsive image height
+    width: 70, // Fixed width for consistency
+    height: 120, // Fixed height for consistency
     borderRadius: 12,
     overflow: 'hidden',
-    marginRight: width < 375 ? spacing[8] : spacing[12], // Responsive margin
+    marginRight: spacing[12],
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -295,19 +296,20 @@ export const exerciseLibraryStyles = StyleSheet.create({
     elevation: 2,
   },
   exerciseImage: {
-    width: width < 375 ? 50 : 60, // Match container width
-    height: width < 375 ? 116 : 136, // Match container height
+    width: 70, // Match container width
+    height: 120, // Match container height
   },
   exerciseContent: {
     flex: 1,
-    gap: spacing[6],
     justifyContent: 'space-between',
+    paddingVertical: spacing[4],
   },
   categoryTag: {
     alignSelf: 'flex-start',
-    paddingHorizontal: spacing[8],
-    paddingVertical: spacing[4],
-    borderRadius: 12,
+    paddingHorizontal: spacing[10],
+    paddingVertical: spacing[6],
+    borderRadius: 14,
+    marginBottom: spacing[8],
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -400,5 +402,5 @@ export const getTagColor = (category: string) => {
 
 // Exercise card gradients consistent with home
 export const getExerciseCardGradient = () => {
-  return ['#ECFAF8', '#EDF8F8']; // Consistent with home exercise cards
+  return ['#F8FCFC', '#F4FAFA']; // Lighter colors for exercise cards
 };
