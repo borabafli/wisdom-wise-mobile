@@ -9,11 +9,60 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width, height } = Dimensions.get('window');
 
 export const profileScreenStyles = StyleSheet.create({
-  // Container & Layout - Consistent with HomeScreen
+  // Container & Layout - Consistent with Insights
   container: {
     flex: 1,
     position: 'relative',
   },
+  
+  // Scrollable Background - Match Insights Pattern
+  scrollableBackgroundContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
+  },
+  scrollableBackgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  
+  // Content Container - Positioned above background
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
+    zIndex: 1,
+  },
+  
+  // Header Styles - Match Insights
+  scrollableHeader: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[16],
+    paddingBottom: spacing[8],
+    alignItems: 'flex-start',
+  },
+  compactTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#002d14',
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: spacing[2],
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6b7280',
+    fontFamily: 'Inter-Medium',
+    letterSpacing: 0.2,
+  },
+  
+  // Legacy styles for backward compatibility
   backgroundGradient: {
     position: 'absolute',
     top: 0,
@@ -80,19 +129,23 @@ export const profileScreenStyles = StyleSheet.create({
   },
   userInfoSection: {
     paddingHorizontal: spacing.layout.screenPadding,
-    marginBottom: spacing.layout.screenPadding,
+    marginBottom: spacing[8],
   },
   userInfoCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: spacing.radius['2xl'],
-    ...shadows.components.modal,
+    borderWidth: 1,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
+    padding: spacing[12],
+    marginBottom: spacing[8],
     overflow: 'hidden',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   userInfoContent: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderWidth: 1,
-    borderColor: colors.border.primary,
-    paddingVertical: spacing.components.cardPadding,
-    paddingHorizontal: spacing.components.cardPadding,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.components.cardGap,
@@ -125,6 +178,22 @@ export const profileScreenStyles = StyleSheet.create({
     ...typography.textStyles.caption,
     color: colors.blue[600],
     fontWeight: typography.fontWeight.medium,
+  },
+  // Stats Card - Insights Style
+  statsCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: spacing.radius['2xl'],
+    borderWidth: 1,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
+    padding: spacing[12],
+    marginHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing[8],
+    overflow: 'hidden',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   statsSection: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -167,9 +236,65 @@ export const profileScreenStyles = StyleSheet.create({
     color: colors.text.secondary,
     fontWeight: typography.fontWeight.medium,
   },
+  menuCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: spacing.radius['2xl'],
+    borderWidth: 1,
+    borderColor: 'rgba(226, 232, 240, 0.4)',
+    padding: spacing[12],
+    marginHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing[8],
+    overflow: 'hidden',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
   menuSection: {
-    paddingHorizontal: spacing.layout.screenPadding,
     gap: spacing.components.cardGap,
+  },
+  
+  // Insights-style menu items
+  menuItemInsights: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.components.cardGap,
+    paddingVertical: spacing[4],
+  },
+  menuIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuIconBackground: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(107, 114, 128, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuTitleContainer: {
+    flex: 1,
+  },
+  menuTitle: {
+    ...typography.textStyles.h4,
+    color: colors.text.primary,
+    marginBottom: spacing[1],
+  },
+  menuTitleDanger: {
+    color: '#ef4444',
+  },
+  menuSubtitle: {
+    ...typography.textStyles.body,
+    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.medium,
+    fontSize: 14,
+  },
+  menuArrow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing[2],
   },
   menuItem: {
     borderRadius: spacing.radius.lg,

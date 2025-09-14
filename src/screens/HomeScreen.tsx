@@ -106,7 +106,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#F8FCFC', '#F4FAFA']}
+                colors={['#D8E9E9', '#E7F3F1']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -135,7 +135,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#F8FCFC', '#F4FAFA']}
+                colors={['#D8E9E9', '#E7F3F1']}
                 start={{ x: 0, y: 0.3 }}
                 end={{ x: 1, y: 0.8 }}
                 style={styles.exerciseCardGradient}
@@ -164,7 +164,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#F8FCFC', '#F4FAFA']}
+                colors={['#D8E9E9', '#E7F3F1']}
                 start={{ x: 0.2, y: 0 }}
                 end={{ x: 0.8, y: 1 }}
                 style={styles.exerciseCardGradient}

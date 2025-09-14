@@ -22,7 +22,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     bottom: 0,
     zIndex: 0,
     width: width,
-    height: height,
+    minHeight: height, // Changed from fixed height to minHeight
   },
   blurOverlay: {
     position: 'absolute',
@@ -100,8 +100,43 @@ export const insightsDashboardStyles = StyleSheet.create({
     zIndex: 3,
   },
   scrollContent: {
-    paddingTop: spacing[8], // Reduced top padding since header is now scrollable
+    paddingTop: 0, // No top padding needed anymore
     paddingBottom: 120,
+  },
+  // New scrollable background styles
+  scrollableBackgroundContainer: {
+    position: 'absolute',
+    top: 0,
+    left: -spacing[8], // Compensate for scrollView padding
+    right: -spacing[8],
+    zIndex: 0,
+  },
+  scrollableBackgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: width,
+    zIndex: 0,
+  },
+  scrollableBlurOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  scrollableBlueOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 2,
+  },
+  contentContainer: {
+    position: 'relative',
+    zIndex: 3,
+    paddingTop: spacing[8],
   },
   scrollableHeader: {
     paddingVertical: spacing[12], // Much less space than the fixed header
@@ -109,7 +144,7 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   // Enhanced Motivational Header Card
   motivationalCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: spacing.radius.lg,
     borderWidth: 1,
     borderColor: 'rgba(135, 186, 163, 0.3)',
@@ -126,8 +161,8 @@ export const insightsDashboardStyles = StyleSheet.create({
     // No padding here to avoid double padding
   },
   motivationalContent: {
-    padding: spacing[20],
-    gap: spacing[16],
+    padding: spacing[16], // Reduced from 20 to 16
+    gap: spacing[12], // Reduced from 16 to 12
   },
   motivationalText: {
     flex: 1,
@@ -177,7 +212,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   journeyCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
     borderColor: 'rgba(226, 232, 240, 0.4)',
@@ -189,16 +224,6 @@ export const insightsDashboardStyles = StyleSheet.create({
     padding: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
-  },
-  journeyAccent: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 96,
-    height: 96,
-    backgroundColor: 'rgba(96, 165, 250, 0.15)', // Updated blue for journey
-    borderRadius: 48,
-    transform: [{ translateY: -48 }, { translateX: 48 }],
   },
   journeyHeader: {
     flexDirection: 'row',
@@ -274,7 +299,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     marginBottom: spacing.layout.screenPadding,
   },
   insightCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: spacing.radius.lg,
     borderWidth: 1,
     borderColor: 'rgba(226, 232, 240, 0.4)',
@@ -367,12 +392,12 @@ export const insightsDashboardStyles = StyleSheet.create({
     color: colors.primary[400],
   },
   patternsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
     borderColor: 'rgba(226, 232, 240, 0.4)',
-    padding: spacing.layout.screenPadding,
-    marginBottom: spacing.layout.screenPadding,
+    padding: spacing[12], // Reduced from spacing.layout.screenPadding for less height
+    marginBottom: spacing[8], // Reduced from spacing.layout.screenPadding for tighter spacing
     overflow: 'hidden',
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOffset: { width: 0, height: 2 },
@@ -380,21 +405,11 @@ export const insightsDashboardStyles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  patternsAccent: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 128,
-    height: 128,
-    backgroundColor: 'rgba(135, 186, 163, 0.15)', // Green accent to match mood card
-    borderRadius: 64,
-    transform: [{ translateY: 64 }, { translateX: 64 }],
-  },
   patternsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.components.cardGap,
-    marginBottom: spacing.components.cardPadding,
+    marginBottom: spacing[8], // Reduced from spacing.components.cardPadding for less height
     zIndex: 10,
   },
   patternsIcon: {
@@ -519,7 +534,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     color: '#87BAA3',
   },
   achievementsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: spacing.radius['2xl'],
     borderWidth: 1,
     borderColor: 'rgba(226, 232, 240, 0.4)',
@@ -531,16 +546,6 @@ export const insightsDashboardStyles = StyleSheet.create({
     padding: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
     overflow: 'hidden',
-  },
-  achievementsAccent: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 80,
-    height: 80,
-    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-    borderRadius: 40,
-    transform: [{ translateY: -40 }, { translateX: -40 }],
   },
   achievementsTitle: {
     ...typography.textStyles.actionTitle,
@@ -708,4 +713,5 @@ export const insightsDashboardStyles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     textAlign: 'center',
   },
+
 });

@@ -18,6 +18,7 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   displayName?: string;
+  emojiPreference?: 'female' | 'male' | 'neutral';
   createdAt: string;
   updatedAt: string;
 }

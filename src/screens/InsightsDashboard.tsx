@@ -86,6 +86,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     stats: Array<{ value: string; label: string }>;
     data: MotivationalData;
   } | null>(null);
+  const [contentHeight, setContentHeight] = useState(0);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
@@ -262,36 +263,35 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Background Image */}
-      <Image
-        source={require('../../assets/images/insights-background.png')}
-        style={styles.backgroundImage}
-        contentFit="cover"
-      />
-      
-      {/* Blur Overlay */}
-      <BlurView intensity={8} style={styles.blurOverlay} />
-      
-      {/* Blue Overlay */}
-      <LinearGradient
-        colors={['rgba(248, 250, 252, 0.7)', 'rgba(241, 245, 249, 0.8)']}
-        style={styles.blueOverlay}
-      />
-      
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        onContentSizeChange={(width, height) => setContentHeight(height)}
       >
-        {/* Header - Now inside ScrollView so it scrolls away */}
-        <View style={styles.scrollableHeader}>
-          <Text style={styles.compactTitle}>
-            Your progress
-          </Text>
-          <Text style={styles.subtitle}>
-            Your wellness journey continues
-          </Text>
+        {/* Background Image - Full width, no overlays */}
+        <View style={styles.scrollableBackgroundContainer}>
+          <Image
+            source={require('../../assets/images/insights-background.png')}
+            style={[styles.scrollableBackgroundImage, { 
+              height: Math.max(Dimensions.get('window').height, contentHeight),
+              width: Dimensions.get('window').width // Full width
+            }]}
+            contentFit="cover"
+          />
         </View>
+        
+        {/* All content container - positioned above background */}
+        <View style={styles.contentContainer}>
+          {/* Header - Now inside ScrollView so it scrolls away */}
+          <View style={styles.scrollableHeader}>
+            <Text style={styles.compactTitle}>
+              Your progress
+            </Text>
+            <Text style={styles.subtitle}>
+              Your wellness journey continues
+            </Text>
+          </View>
         {/* Enhanced Motivational Header Card */}
         <Animated.View 
           style={[
@@ -311,25 +311,24 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             <View style={styles.motivationalContent}>
               <View style={styles.motivationalText}>
                 <Text style={styles.motivationalTitle}>
-                  {motivationalCard?.message.emoji} {motivationalCard?.message.text || 'Your wellness journey continues'}
-                </Text>
-                <Text style={styles.motivationalSubtitle}>
-                  {motivationalCard?.statsText || 'Every step counts'}
+                  {motivationalCard?.message.emoji ? `${motivationalCard.message.emoji} ` : ''}{motivationalCard?.message.text || 'Your wellness journey continues'}
                 </Text>
               </View>
               <View style={styles.motivationalStats}>
-                {motivationalCard?.stats.map((stat, index) => (
-                  <View key={index} style={styles.motivationalStat}>
-                    <Text style={[
-                      styles.motivationalNumber,
-                      motivationalCard.message.category === 'vision' && styles.motivationalNumberVision,
-                      motivationalCard.message.category === 'achievement' && styles.motivationalNumberAchievement
-                    ]}>
-                      {stat.value}
-                    </Text>
-                    <Text style={styles.motivationalLabel}>{stat.label}</Text>
-                  </View>
-                )) || (
+                {motivationalCard?.stats && motivationalCard.stats.length > 0 ? (
+                  motivationalCard.stats.map((stat, index) => (
+                    <View key={index} style={styles.motivationalStat}>
+                      <Text style={[
+                        styles.motivationalNumber,
+                        motivationalCard.message.category === 'vision' && styles.motivationalNumberVision,
+                        motivationalCard.message.category === 'achievement' && styles.motivationalNumberAchievement
+                      ]}>
+                        {stat.value}
+                      </Text>
+                      <Text style={styles.motivationalLabel}>{stat.label}</Text>
+                    </View>
+                  ))
+                ) : (
                   <View style={styles.motivationalStat}>
                     <Text style={styles.motivationalNumber}>1</Text>
                     <Text style={styles.motivationalLabel}>starting today</Text>
@@ -344,8 +343,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
         {/* Thinking Patterns Section - Second */}
         <View style={styles.patternsCard}>
-          {/* Background accent */}
-          <View style={styles.patternsAccent} />
           
           <View style={styles.patternsHeader}>
             <View style={styles.patternsIcon}>
@@ -419,7 +416,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                 )}
 
                 {/* Swipeable Pattern List */}
-                <View style={{ minHeight: 400 }}>
+                <View style={{ minHeight: 300 }}> {/* Reduced from 400 to 300 */}
                   <FlatList
                     data={displayPatterns}
                     renderItem={({ item: currentPattern }) => (
@@ -429,7 +426,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                           width: width - 32,
                           marginHorizontal: 0,
                           paddingHorizontal: 16,
-                          paddingBottom: 20
+                          paddingBottom: 8 // Reduced from 20 to 8
                         }}
                       >
                         <TouchableOpacity
@@ -497,7 +494,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                 </View>
 
                 {/* Reflect on This Button - Centered and visible */}
-                <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 8 }}>
+                <View style={{ paddingHorizontal: 16, marginTop: -8, marginBottom: 8 }}>
                   <ValuesReflectButton
                     onPress={() => {
                       const currentPatternForButton = displayPatterns[currentPatternIndex] || displayPatterns[0];
@@ -509,6 +506,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                         prompt: prompt
                       });
                     }}
+                    text="Reflect on This"
                   />
                 </View>
 
@@ -587,7 +585,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
         {/* Values Section - Third */}
         <View style={styles.patternsCard}>
-          <View style={[styles.patternsAccent, { backgroundColor: 'rgba(153, 246, 228, 0.15)' }]} />
           
           <View style={styles.patternsHeader}>
             <View style={styles.patternsIcon}>
@@ -640,7 +637,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
         {/* Session Summaries Section */}
         <View style={styles.patternsCard}>
-          <View style={styles.patternsAccent} />
           
           <TouchableOpacity 
             style={styles.patternsHeader}
@@ -666,7 +662,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
         {/* Memory Insights Section - Collapsible */}
         <View style={styles.patternsCard}>
-          <View style={styles.patternsAccent} />
           
           <TouchableOpacity 
             style={styles.patternsHeader}
@@ -778,8 +773,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
 
         {/* Your Journey Section - Moved to bottom */}
         <View style={styles.patternsCard}>
-          {/* Background accent */}
-          <View style={[styles.patternsAccent, { backgroundColor: 'rgba(96, 165, 250, 0.15)' }]} />
           
           <View style={styles.patternsHeader}>
             <View style={styles.patternsIcon}>
@@ -833,6 +826,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             </View>
           </View>
         </View>
+        </View> {/* Close contentContainer */}
       </ScrollView>
 
       {/* Thinking Patterns Modal */}
