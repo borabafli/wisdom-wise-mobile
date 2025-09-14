@@ -186,31 +186,31 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return `${linePath} L${lastPoint.x},${paddingTop + graphHeight} L${firstPoint.x},${paddingTop + graphHeight} Z`;
   };
 
-  // Smiley Y-axis positions (5 smileys for mood scale 1-5) - Updated to use new Teal watercolor single element emojis
+  // Smiley Y-axis positions (5 smileys for mood scale 1-5) - Using custom emoji images
   const smileyPositions = [
     { 
       mood: 5, 
-      image: require('../../assets/images/Teal watercolor single element/emojis-5.png'), // Best
+      image: require('../../assets/images/emojis/5.png'), // Best
       y: paddingTop + graphHeight - ((5 - minValue) / valueRange) * graphHeight
     },
     { 
       mood: 4, 
-      image: require('../../assets/images/Teal watercolor single element/emojis-4.png'), 
+      image: require('../../assets/images/emojis/4.png'), 
       y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight 
     },
     { 
       mood: 3, 
-      image: require('../../assets/images/Teal watercolor single element/emojis-3.png'), // Neutral
+      image: require('../../assets/images/emojis/3.png'), // Neutral
       y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight 
     },
     { 
       mood: 2, 
-      image: require('../../assets/images/Teal watercolor single element/emojis-2.png'), 
+      image: require('../../assets/images/emojis/2.png'), 
       y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight 
     },
     { 
       mood: 1, 
-      image: require('../../assets/images/Teal watercolor single element/emojis-1.png'), // Lowest
+      image: require('../../assets/images/emojis/1.png'), // Lowest
       y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight 
     }
   ];
@@ -320,12 +320,12 @@ export const MoodChart: React.FC<MoodChartProps> = ({
             source={smiley.image}
             style={{
               position: 'absolute',
-              top: smiley.y - 12, // Centered for 24px image
-              left: 13, // Centered with padding and additional spacing
-              width: 24, // Size to fit well
-              height: 24,
+              top: smiley.y - 10, // Centered for 20px image
+              left: 15, // Centered with padding and additional spacing
+              width: 20, // Smaller size for better fit
+              height: 20,
               opacity: 0.85,
-              borderRadius: 12,
+              borderRadius: 10,
               shadowColor: '#87BAA3', // Sage green tint
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.08, // Much lighter
@@ -462,20 +462,20 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
   
   const getMoodImage = (rating: number) => {
     let imageSource;
-    if (rating >= 4.5) imageSource = require('../../assets/images/Teal watercolor single element/emojis-5.png');
-    else if (rating >= 3.5) imageSource = require('../../assets/images/Teal watercolor single element/emojis-4.png');
-    else if (rating >= 2.5) imageSource = require('../../assets/images/Teal watercolor single element/emojis-3.png');
-    else if (rating >= 1.5) imageSource = require('../../assets/images/Teal watercolor single element/emojis-2.png');
-    else if (rating > 0) imageSource = require('../../assets/images/Teal watercolor single element/emojis-1.png');
-    else imageSource = require('../../assets/images/Teal watercolor single element/emojis-3.png'); // Default to neutral
+    if (rating >= 4.5) imageSource = require('../../assets/images/emojis/5.png');
+    else if (rating >= 3.5) imageSource = require('../../assets/images/emojis/4.png');
+    else if (rating >= 2.5) imageSource = require('../../assets/images/emojis/3.png');
+    else if (rating >= 1.5) imageSource = require('../../assets/images/emojis/2.png');
+    else if (rating > 0) imageSource = require('../../assets/images/emojis/1.png');
+    else imageSource = require('../../assets/images/emojis/3.png'); // Default to neutral
     
     return (
       <Image 
         source={imageSource} 
         style={{ 
-          width: 24, 
-          height: 24,
-          borderRadius: 12,
+          width: 20, 
+          height: 20,
+          borderRadius: 10,
           shadowColor: '#87BAA3', // Sage green tint
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.08, // Much lighter

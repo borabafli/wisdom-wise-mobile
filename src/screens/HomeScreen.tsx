@@ -106,7 +106,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#ECFAF8', '#EDF8F8']}
+                colors={['#F8FCFC', '#F4FAFA']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -114,7 +114,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/Teal watercolor single element/green-icon-2.png')}
+                      source={require('../../assets/images/New Icons/icon-1.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
@@ -135,7 +135,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#ECFAF8', '#EDF8F8']}
+                colors={['#F8FCFC', '#F4FAFA']}
                 start={{ x: 0, y: 0.3 }}
                 end={{ x: 1, y: 0.8 }}
                 style={styles.exerciseCardGradient}
@@ -143,7 +143,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/Teal watercolor single element/green-icon-7.png')}
+                      source={require('../../assets/images/New Icons/icon-2.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
@@ -164,7 +164,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#ECFAF8', '#EDF8F8']}
+                colors={['#F8FCFC', '#F4FAFA']}
                 start={{ x: 0.2, y: 0 }}
                 end={{ x: 0.8, y: 1 }}
                 style={styles.exerciseCardGradient}
@@ -172,7 +172,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
                     <Image 
-                      source={require('../../assets/images/Teal watercolor single element/green-icon-8.png')}
+                      source={require('../../assets/images/New Icons/icon-3.png')}
                       style={styles.exerciseIconImage}
                       contentFit="contain"
                     />
@@ -207,7 +207,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.quickActionGradient}
               >
                 <Image 
-                  source={require('../../assets/images/Teal watercolor single element/green-icon-9.png')}
+                  source={require('../../assets/images/New Icons/icon-4.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -227,7 +227,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 style={styles.quickActionGradient}
               >
                 <Image 
-                  source={require('../../assets/images/Teal watercolor single element/green-icon-10.png')}
+                  source={require('../../assets/images/New Icons/icon-5.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />

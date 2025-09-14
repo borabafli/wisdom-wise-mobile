@@ -159,12 +159,12 @@ export const moodSliderStyles = StyleSheet.create({
     paddingHorizontal: spacing[4],
     marginBottom: spacing[8],
     marginTop: spacing[4], // Add top margin to replace question mark space
-    gap: -8, // Much closer together
+    gap: 8, // Increased spacing between emojis
   },
   
   emojiOption: {
-    width: 58, // Bigger touch area
-    height: 58,
+    width: 52, // Slightly smaller touch area
+    height: 52,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -178,8 +178,8 @@ export const moodSliderStyles = StyleSheet.create({
   },
   
   optionEmojiImage: {
-    width: 60, // Bigger emojis
-    height: 60,
+    width: 48, // Smaller emojis for better fit
+    height: 48,
   },
   
   unselectedEmojiImage: {

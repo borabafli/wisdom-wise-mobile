@@ -36,7 +36,7 @@ const ExerciseCompletionRating: React.FC<ExerciseCompletionRatingProps> = ({
     if (rating <= 2) return '😐';
     if (rating <= 3) return '🙂';
     if (rating <= 4) return '😊';
-    return '🤩';
+    return '😊'; // Use happy instead of star eyes
   };
 
   const panResponder = PanResponder.create({

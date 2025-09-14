@@ -56,7 +56,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
         <View style={insightsDashboardStyles.patternsHeader}>
           <View style={insightsDashboardStyles.patternsIcon}>
             <Image 
-              source={require('../../assets/images/Teal watercolor single element/teal-icon-5.png')}
+              source={require('../../assets/images/New Icons/icon-5.png')}
               style={{ width: 60, height: 60 }}
               contentFit="contain"
             />
@@ -78,7 +78,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
         <View style={insightsDashboardStyles.patternsHeader}>
           <View style={insightsDashboardStyles.patternsIcon}>
             <Image 
-              source={require('../../assets/images/Teal watercolor single element/teal-icon-5.png')}
+              source={require('../../assets/images/New Icons/icon-5.png')}
               style={{ width: 60, height: 60 }}
               contentFit="contain"
             />

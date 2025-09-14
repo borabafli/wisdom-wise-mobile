@@ -402,5 +402,5 @@ export const getTagColor = (category: string) => {
 
 // Exercise card gradients consistent with home
 export const getExerciseCardGradient = () => {
-  return ['#ECFAF8', '#EDF8F8']; // Consistent with home exercise cards
+  return ['#F8FCFC', '#F4FAFA']; // Lighter colors for exercise cards
 };

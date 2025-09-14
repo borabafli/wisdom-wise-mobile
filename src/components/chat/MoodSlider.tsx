@@ -16,11 +16,11 @@ interface MoodSliderProps {
 
 // Emoji image assets
 const emojiImages = {
-  1: require('../../../assets/images/Teal watercolor single element/emojis-1.png'),
-  2: require('../../../assets/images/Teal watercolor single element/emojis-2.png'),
-  3: require('../../../assets/images/Teal watercolor single element/emojis-3.png'),
-  4: require('../../../assets/images/Teal watercolor single element/emojis-4.png'),
-  5: require('../../../assets/images/Teal watercolor single element/emojis-5.png'),
+  1: require('../../../assets/images/emojis/1.png'),
+  2: require('../../../assets/images/emojis/2.png'),
+  3: require('../../../assets/images/emojis/3.png'),
+  4: require('../../../assets/images/emojis/4.png'),
+  5: require('../../../assets/images/emojis/5.png'),
 };
 
 export const MoodSlider: React.FC<MoodSliderProps> = ({

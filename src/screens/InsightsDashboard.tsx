@@ -262,24 +262,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Insights Background Image with Blue Tint */}
-      <Image 
+      {/* Background Image */}
+      <Image
         source={require('../../assets/images/insights-background.png')}
         style={styles.backgroundImage}
         contentFit="cover"
       />
       
-      {/* Blur Effect over Background */}
-      <BlurView
-        intensity={60}
-        style={styles.blurOverlay}
-      />
+      {/* Blur Overlay */}
+      <BlurView intensity={8} style={styles.blurOverlay} />
       
-      {/* Lighter Blue Tint Overlay */}
+      {/* Blue Overlay */}
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.7)', 'rgba(147, 197, 253, 0.3)', 'rgba(196, 216, 255, 0.4)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        colors={['rgba(248, 250, 252, 0.7)', 'rgba(241, 245, 249, 0.8)']}
         style={styles.blueOverlay}
       />
       
@@ -355,7 +350,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           <View style={styles.patternsHeader}>
             <View style={styles.patternsIcon}>
               <Image 
-                source={require('../../assets/images/Teal watercolor single element/teal-icon-7.png')}
+                source={require('../../assets/images/New Icons/icon-8.png')}
                 style={{ width: 60, height: 60 }}
                 contentFit="contain"
               />
@@ -597,7 +592,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           <View style={styles.patternsHeader}>
             <View style={styles.patternsIcon}>
               <Image 
-                source={require('../../assets/images/Teal watercolor single element/teal-icon-8.png')}
+                source={require('../../assets/images/New Icons/icon-9.png')}
                 style={{ width: 60, height: 60 }}
                 contentFit="contain"
               />
@@ -654,7 +649,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           >
             <View style={styles.patternsIcon}>
               <Image 
-                source={require('../../assets/images/Teal watercolor single element/teal-icon-1.png')}
+                source={require('../../assets/images/New Icons/icon-10.png')}
                 style={{ width: 60, height: 60 }}
                 contentFit="contain"
               />
@@ -680,7 +675,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           >
             <View style={styles.patternsIcon}>
               <Image 
-                source={require('../../assets/images/Teal watercolor single element/teal-icon-2.png')}
+                source={require('../../assets/images/New Icons/icon-7.png')}
                 style={{ width: 60, height: 60 }}
                 contentFit="contain"
               />
@@ -789,7 +784,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
           <View style={styles.patternsHeader}>
             <View style={styles.patternsIcon}>
               <Image 
-                source={require('../../assets/images/Teal watercolor single element/teal-icon-3.png')}
+                source={require('../../assets/images/New Icons/icon-14.png')}
                 style={{ width: 60, height: 60 }}
                 contentFit="contain"
               />

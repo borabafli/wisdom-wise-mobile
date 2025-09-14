@@ -12,35 +12,71 @@ export const customTabBarStyles = StyleSheet.create({
     backgroundColor: 'transparent', // No background - let LinearGradient handle it
   },
   tabBarGradient: {
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[200], // Use more visible border color
-    ...shadows.components.tabBar,
     backgroundColor: colors.white, // Force white background to override dark mode
+    paddingTop: 4, // More space at the top
+    paddingBottom: 8, // More space at the bottom
+    overflow: 'visible', // Allow plus button to extend outside
   },
   tabBarContent: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 12, // Reduced vertical space for more condensed look
+    alignItems: 'flex-start', // Align to top
+    paddingVertical: 8, // More vertical space for text
     paddingHorizontal: spacing.components.cardPadding,
     flex: 1, // Take full width
-    minHeight: 75, // Reduced height for more compact design
+    minHeight: 90, // Much more height for text
+    overflow: 'visible', // Allow plus button to extend outside
   },
 
   // Tab Buttons
   tabButton: {
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing[1], // Reduced gap between icon and text
-    paddingVertical: 8, // Reduced vertical padding for more condensed look
-    paddingHorizontal: 4, // Less horizontal padding for more text space
-    borderRadius: spacing.radius.lg,
+    justifyContent: 'flex-start',
+    gap: spacing[1],
+    paddingTop: 0, // Remove top padding to move content up
+    paddingBottom: 14, // More bottom padding to prevent text cutoff
+    paddingHorizontal: 4,
+    borderRadius: spacing.radius.xl,
     flex: 1,
-    maxWidth: 110, // Wider to allow full text
-    minHeight: 50, // Reduced height for more compact design
+    maxWidth: 110,
+    minHeight: 78, // Slightly more height for text
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    shadowColor: 'transparent',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+    position: 'relative',
+    overflow: 'hidden', // Cut off tap circles at tab button level only
   },
   tabButtonActive: {
-    backgroundColor: 'rgba(13, 148, 136, 0.1)', // Light teal background
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    shadowColor: 'transparent',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  // Simple single circle animation effect
+  tabCircle1: {
+    position: 'absolute',
+    backgroundColor: 'rgba(20, 184, 166, 0.15)', // Light teal
+    width: 100, // Bigger circle
+    height: 100,
+    borderRadius: 50, // Exactly half of width/height for perfect circle
+    left: '50%', // Centered horizontally
+    top: '25%', // Even higher position to be cut off at optimal point
+    marginLeft: -50, // Exactly half of width for perfect centering
+    marginTop: -50, // Exactly half of height for perfect centering
+    zIndex: -1, // Behind all icons and text
   },
   tabLabel: {
     ...typography.textStyles.caption,
@@ -54,9 +90,9 @@ export const customTabBarStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing[4],
-
-    marginTop: -8,
-
+    marginTop: -20, // Even less negative margin to move it lower
+    zIndex: 999, // Highest z-index to ensure it's on top
+    elevation: 999, // For Android
   },
   plusButton: {
     width: 64,

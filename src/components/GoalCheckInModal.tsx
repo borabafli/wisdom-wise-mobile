@@ -77,7 +77,7 @@ export const GoalCheckInModal: React.FC<GoalCheckInModalProps> = ({
       { value: 2, label: 'Some challenges', color: '#f97316', emoji: '😐' },
       { value: 3, label: 'Making progress', color: '#eab308', emoji: '🙂' },
       { value: 4, label: 'Going well', color: '#22c55e', emoji: '😊' },
-      { value: 5, label: 'Excellent progress', color: '#10b981', emoji: '🤩' }
+      { value: 5, label: 'Excellent progress', color: '#10b981', emoji: '😊' }
     ];
 
     return (

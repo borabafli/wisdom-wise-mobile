@@ -389,7 +389,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       <View style={styles.patternsHeader}>
         <View style={styles.patternsIcon}>
           <Image 
-            source={require('../../assets/images/Teal watercolor single element/teal-icon-4.png')}
+            source={require('../../assets/images/New Icons/icon-4.png')}
             style={{ width: 60, height: 60 }}
             contentFit="contain"
           />
