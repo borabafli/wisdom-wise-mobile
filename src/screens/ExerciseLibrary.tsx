@@ -9,6 +9,8 @@ import { exercisesArray } from '../data/exerciseLibrary';
 import { colors, gradients, shadows, spacing } from '../styles/tokens';
 import { exerciseLibraryStyles, getTagColor, getExerciseCardGradient } from '../styles/components/ExerciseLibrary.styles';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
+import { getExerciseEmojis } from '../utils/emojiUtils';
+import { useUserProfile } from '../hooks/useUserProfile';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,12 +28,16 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
   
+  // Get user profile for emoji preferences
+  const { profile } = useUserProfile();
+  const emojis = getExerciseEmojis(profile?.emojiPreference || 'neutral');
+  
   // Use unified exercises from exerciseLibrary.ts
   const exercises = exercisesArray;
 
   // Filter options
   const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
-  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-exploration', 'Clarity', 'Stress', 'Focus', 'Sleep'];
+  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-Discovery', 'Mental Clarity', 'Stress Relief', 'Focus', 'Emotional Balance'];
   const styleFilters = ['All', 'CBT', 'Breathing', 'Meditation', 'Journaling', 'Mindfulness', 'ACT'];
 
   // Helper function to get duration in minutes
@@ -54,6 +60,32 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     setSelectedTimeFilter('All');
     setSelectedBenefitFilter('All');
     setSelectedStyleFilter('All');
+  };
+
+  // Extract benefit from exercise description or category
+  const getBenefitFromExercise = (exercise: any) => {
+    const description = exercise.description.toLowerCase();
+    const name = exercise.name.toLowerCase();
+    
+    if (description.includes('anxiety') || description.includes('anxious')) return 'Anxiety';
+    if (description.includes('depression') || description.includes('mood') || description.includes('happiness')) return 'Mood';
+    if (description.includes('discover') || description.includes('explore') || description.includes('journey') || description.includes('story') || name.includes('story')) return 'Self-Discovery';
+    if (description.includes('clarity') || description.includes('clear') || description.includes('organize') || description.includes('clutter')) return 'Mental Clarity';
+    if (description.includes('stress') || description.includes('tension') || description.includes('calm') || description.includes('relax')) return 'Stress Relief';
+    if (description.includes('focus') || description.includes('concentration') || description.includes('attention')) return 'Focus';
+    if (description.includes('balance') || description.includes('compassion') || description.includes('kindness') || description.includes('emotional')) return 'Emotional Balance';
+    
+    // Category-based mapping
+    if (exercise.category.toLowerCase() === 'breathing') return 'Stress Relief';
+    if (exercise.category.toLowerCase() === 'cbt') return 'Mental Clarity';
+    if (exercise.category.toLowerCase() === 'mindfulness') return 'Focus';
+    if (exercise.category.toLowerCase() === 'self-care') return 'Emotional Balance';
+    if (exercise.category.toLowerCase() === 'act') return 'Self-Discovery';
+    if (exercise.category.toLowerCase() === 'self-discovery') return 'Self-Discovery';
+    if (exercise.category.toLowerCase() === 'self-growth') return 'Self-Discovery';
+    
+    // Default fallback
+    return 'Focus';
   };
 
   // Filter exercises based on all criteria
@@ -104,20 +136,72 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
 
 
-  const FilterChip = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) => (
-    <TouchableOpacity
-      style={[exerciseLibraryStyles.filterChip, selected && exerciseLibraryStyles.filterChipSelected]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Text style={[exerciseLibraryStyles.filterChipText, selected && exerciseLibraryStyles.filterChipTextSelected]}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+  const FilterChip = ({ label, selected, onPress, filterType }: { 
+    label: string; 
+    selected: boolean; 
+    onPress: () => void; 
+    filterType: 'duration' | 'benefits' | 'approach';
+  }) => {
+    // Get button image based on filter type
+    const getButtonImage = () => {
+      switch (filterType) {
+        case 'duration': return require('../../assets/images/Buttons/1.png');
+        case 'benefits': return require('../../assets/images/Buttons/3.png');
+        case 'approach': return require('../../assets/images/Buttons/7.png');
+        default: return require('../../assets/images/Buttons/1.png');
+      }
+    };
 
-  const ExerciseCard = ({ exercise }: { exercise: any }) => {
-    const tagColor = getTagColor(exercise.category);
+    // Calculate dynamic width based on text length
+    const getButtonWidth = (text: string) => {
+      const baseWidth = 50; // Reduced base width for compactness
+      const charWidth = 7; // Reduced character width for tighter spacing
+      return Math.max(baseWidth, text.length * charWidth + 16); // Reduced padding
+    };
+
+    const buttonWidth = getButtonWidth(label);
+
+    return (
+      <TouchableOpacity
+        style={[exerciseLibraryStyles.filterChipImage, { width: buttonWidth }]}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        <Image 
+          source={getButtonImage()}
+          style={[exerciseLibraryStyles.filterChipImageBackground, { width: buttonWidth }]}
+          contentFit="cover"
+        />
+        <Text style={[
+          exerciseLibraryStyles.filterChipTextOverlay,
+          selected && exerciseLibraryStyles.filterChipTextOverlaySelected
+        ]}>
+          {label}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const ExerciseCard = ({ exercise, index }: { exercise: any; index: number }) => {
+    const benefit = getBenefitFromExercise(exercise);
+    
+    // Choose button image based on benefit name length
+    const getButtonImage = (benefitName: string, cardIndex: number) => {
+      if (benefitName.length > 8) {
+        // Use larger buttons for longer names
+        return cardIndex % 2 === 0 
+          ? require('../../assets/images/Buttons/3.png')
+          : require('../../assets/images/Buttons/4.png');
+      } else {
+        // Use smaller buttons for shorter names
+        return cardIndex % 2 === 0 
+          ? require('../../assets/images/Buttons/1.png')
+          : require('../../assets/images/Buttons/2.png');
+      }
+    };
+    
+    const buttonImage = getButtonImage(benefit, index);
+    const isLargeButton = benefit.length > 8;
     
     return (
       <TouchableOpacity
@@ -140,26 +224,39 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
           
           {/* Right side content */}
           <View style={exerciseLibraryStyles.exerciseContent}>
-            {/* Category tag */}
-            <View style={[exerciseLibraryStyles.categoryTag, { backgroundColor: tagColor.bg }]}>
-              <Text style={[exerciseLibraryStyles.categoryTagText, { color: tagColor.text }]}>
-                {exercise.category}
-              </Text>
-            </View>
-            
-            <Text style={exerciseLibraryStyles.exerciseTitle} numberOfLines={2}>
-              {exercise.name}
-            </Text>
-            
-            <View style={exerciseLibraryStyles.exerciseMeta}>
+            {/* Top row: Benefit tag and time */}
+            <View style={exerciseLibraryStyles.tagAndTimeRow}>
+              {/* Benefit tag with button image background */}
+              <View style={exerciseLibraryStyles.categoryTagImageContainer}>
+                <Image 
+                  source={buttonImage}
+                  style={[
+                    exerciseLibraryStyles.categoryTagImage,
+                    isLargeButton && exerciseLibraryStyles.categoryTagImageLarge
+                  ]}
+                  contentFit="cover"
+                />
+                <Text style={[
+                  exerciseLibraryStyles.categoryTagTextOverlay,
+                  isLargeButton && exerciseLibraryStyles.categoryTagTextOverlayLarge
+                ]}>
+                  {benefit}
+                </Text>
+              </View>
+              
+              {/* Time display */}
               <View style={exerciseLibraryStyles.durationContainer}>
                 <Clock size={12} color="#002244" />
                 <Text style={exerciseLibraryStyles.exerciseDuration}>{exercise.duration}</Text>
               </View>
             </View>
             
-            <Text style={exerciseLibraryStyles.exerciseDescription} numberOfLines={1}>
-              {exercise.description.length > 50 ? `${exercise.description.substring(0, 50)}...` : exercise.description}
+            <Text style={exerciseLibraryStyles.exerciseTitle} numberOfLines={2}>
+              {exercise.name}
+            </Text>
+            
+            <Text style={exerciseLibraryStyles.exerciseDescription} numberOfLines={2}>
+              {exercise.description}
             </Text>
           </View>
         </LinearGradient>
@@ -179,147 +276,154 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         style={exerciseLibraryStyles.backgroundGradient}
       />
 
-      {/* Header */}
-      <View style={exerciseLibraryStyles.header}>
-        <Text style={exerciseLibraryStyles.headerTitle}>Exercise Library</Text>
-      </View>
-
-      {/* Search Bar */}
-      <View style={exerciseLibraryStyles.searchSection}>
-        <View style={exerciseLibraryStyles.searchRow}>
-          <View style={exerciseLibraryStyles.searchBar}>
-            <Search size={20} color={colors.text.secondary} />
-            <TextInput
-              style={exerciseLibraryStyles.searchInput}
-              placeholder="Search exercises..."
-              value={searchText}
-              onChangeText={setSearchText}
-              placeholderTextColor={colors.text.secondary}
-            />
-            {searchText ? (
-              <TouchableOpacity 
-                onPress={() => setSearchText('')} 
-                activeOpacity={0.7}
-                style={{
-                  padding: spacing[8], // Add padding for better touch target
-                  borderRadius: 16,
-                  minWidth: 44, // Ensure minimum touch target
-                  minHeight: 44,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <X size={18} color={colors.text.secondary} />
-              </TouchableOpacity>
-            ) : null}
+      {/* Main Scrollable Content */}
+      <ScrollView
+        style={exerciseLibraryStyles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={exerciseLibraryStyles.scrollContent}
+      >
+        {/* Header */}
+        <View style={exerciseLibraryStyles.header}>
+          <View style={exerciseLibraryStyles.headerContent}>
+            <Text style={exerciseLibraryStyles.headerTitle}>{emojis.title} Exercises</Text>
+            <Text style={exerciseLibraryStyles.headerSubtitle}>{emojis.subtitle} Guided activities for your wellbeing</Text>
           </View>
-          
-          {/* Filter Button */}
-          <TouchableOpacity
-            style={[exerciseLibraryStyles.filterButton, activeFiltersCount > 0 && exerciseLibraryStyles.filterButtonActive]}
-            onPress={() => setShowFilters(!showFilters)}
-            activeOpacity={0.7}
-          >
-            <Filter size={20} color={colors.primary[400]} />
-            {activeFiltersCount > 0 && (
-              <View style={exerciseLibraryStyles.filterBadge}>
-                <Text style={exerciseLibraryStyles.filterBadgeText}>{activeFiltersCount}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
         </View>
-      </View>
 
-
-      {/* Filters */}
-      {showFilters && (
-        <View style={exerciseLibraryStyles.filtersSection}>
-          {/* Filters Header */}
-          <View style={exerciseLibraryStyles.filtersHeader}>
-            <Text style={exerciseLibraryStyles.filtersTitle}>Filters</Text>
-            {activeFiltersCount > 0 && (
-              <TouchableOpacity
-                style={exerciseLibraryStyles.clearFiltersButton}
-                onPress={clearAllFilters}
-                activeOpacity={0.7}
-              >
-                <Text style={exerciseLibraryStyles.clearFiltersText}>Clear All</Text>
-              </TouchableOpacity>
-            )}
+        {/* Search Bar */}
+        <View style={exerciseLibraryStyles.searchSection}>
+          <View style={exerciseLibraryStyles.searchRow}>
+            <View style={exerciseLibraryStyles.searchBar}>
+              <Search size={20} color={colors.text.secondary} />
+              <TextInput
+                style={[exerciseLibraryStyles.searchInput, { color: '#000000' }]}
+                placeholder="Search exercises..."
+                value={searchText}
+                onChangeText={setSearchText}
+                placeholderTextColor="#6B7280"
+                selectionColor="#000000"
+              />
+              {searchText ? (
+                <TouchableOpacity 
+                  onPress={() => setSearchText('')} 
+                  activeOpacity={0.7}
+                  style={{
+                    padding: spacing[8], // Add padding for better touch target
+                    borderRadius: 16,
+                    minWidth: 44, // Ensure minimum touch target
+                    minHeight: 44,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <X size={18} color={colors.text.secondary} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+            
+            {/* Filter Button - Next to search bar with circle background */}
+            <TouchableOpacity
+              style={exerciseLibraryStyles.filterButtonCircle}
+              onPress={() => setShowFilters(!showFilters)}
+              activeOpacity={0.7}
+            >
+              <Image 
+                source={require('../../assets/images/Buttons/filter-2.png')}
+                style={{ width: 32, height: 32 }}
+                contentFit="contain"
+              />
+              {activeFiltersCount > 0 && (
+                <View style={exerciseLibraryStyles.filterBadge}>
+                  <Text style={exerciseLibraryStyles.filterBadgeText}>{activeFiltersCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
           </View>
-          {/* Time Filter */}
-          <View style={exerciseLibraryStyles.filterGroup}>
-            <Text style={exerciseLibraryStyles.filterGroupTitle}>Duration</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={exerciseLibraryStyles.filterScrollView}>
-              <View style={exerciseLibraryStyles.filterRow}>
+        </View>
+
+        {/* Filters */}
+        {showFilters && (
+          <View style={exerciseLibraryStyles.filtersSection}>
+            {/* Filters Header */}
+            <View style={exerciseLibraryStyles.filtersHeader}>
+              <Text style={exerciseLibraryStyles.filtersTitle}>Filters</Text>
+              {activeFiltersCount > 0 && (
+                <TouchableOpacity
+                  style={exerciseLibraryStyles.clearFiltersButton}
+                  onPress={clearAllFilters}
+                  activeOpacity={0.7}
+                >
+                  <Text style={exerciseLibraryStyles.clearFiltersText}>Clear All</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            {/* Time Filter - Compact */}
+            <View style={exerciseLibraryStyles.filterGroupCompact}>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.duration} Duration</Text>
+              <View style={exerciseLibraryStyles.filterRowCompact}>
                 {timeFilters.map((filter) => (
                   <FilterChip
                     key={filter}
                     label={filter}
                     selected={selectedTimeFilter === filter}
                     onPress={() => setSelectedTimeFilter(filter)}
+                    filterType="duration"
                   />
                 ))}
               </View>
-            </ScrollView>
-          </View>
+            </View>
 
-          {/* Benefit Filter */}
-          <View style={exerciseLibraryStyles.filterGroup}>
-            <Text style={exerciseLibraryStyles.filterGroupTitle}>Benefits</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={exerciseLibraryStyles.filterScrollView}>
-              <View style={exerciseLibraryStyles.filterRow}>
+            {/* Benefit Filter - Compact */}
+            <View style={exerciseLibraryStyles.filterGroupCompact}>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.benefits} Benefits</Text>
+              <View style={exerciseLibraryStyles.filterRowCompact}>
                 {benefitFilters.map((filter) => (
                   <FilterChip
                     key={filter}
                     label={filter}
                     selected={selectedBenefitFilter === filter}
                     onPress={() => setSelectedBenefitFilter(filter)}
+                    filterType="benefits"
                   />
                 ))}
               </View>
-            </ScrollView>
-          </View>
+            </View>
 
-          {/* Style Filter */}
-          <View style={exerciseLibraryStyles.filterGroup}>
-            <Text style={exerciseLibraryStyles.filterGroupTitle}>Approach</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={exerciseLibraryStyles.filterScrollView}>
-              <View style={exerciseLibraryStyles.filterRow}>
+            {/* Style Filter - Compact */}
+            <View style={exerciseLibraryStyles.filterGroupCompact}>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.approach} Approach</Text>
+              <View style={exerciseLibraryStyles.filterRowCompact}>
                 {styleFilters.map((filter) => (
                   <FilterChip
                     key={filter}
                     label={filter}
                     selected={selectedStyleFilter === filter}
                     onPress={() => setSelectedStyleFilter(filter)}
+                    filterType="approach"
                   />
                 ))}
               </View>
-            </ScrollView>
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      {/* Results */}
-      <ScrollView
-        style={exerciseLibraryStyles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={exerciseLibraryStyles.scrollContent}
-      >
+        {/* Results Header */}
         <View style={exerciseLibraryStyles.resultsHeader}>
           <Text style={exerciseLibraryStyles.resultsCount}>
             {filteredExercises.length} exercise{filteredExercises.length !== 1 ? 's' : ''} found
           </Text>
         </View>
 
+        {/* Exercise Cards */}
         <View style={exerciseLibraryStyles.exercisesGrid}>
           {filteredExercises.map((exercise, index) => (
             <View key={`exercise-${exercise.id}-${exercise.type}-${index}`} style={exerciseLibraryStyles.exerciseCardWrapper}>
-              <ExerciseCard exercise={exercise} />
+              <ExerciseCard exercise={exercise} index={index} />
             </View>
           ))}
         </View>
 
+        {/* Empty State */}
         {filteredExercises.length === 0 && (
           <View style={exerciseLibraryStyles.emptyState}>
             <Sparkles size={48} color={colors.text.tertiary} />

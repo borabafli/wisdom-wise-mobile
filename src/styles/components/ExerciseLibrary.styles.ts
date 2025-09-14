@@ -25,21 +25,29 @@ export const exerciseLibraryStyles = StyleSheet.create({
 
   // Header Section - Consistent styling
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[20],
-    paddingBottom: spacing[12],
+    paddingTop: spacing[16], // Reduced from spacing[20]
+    paddingBottom: spacing[8], // Reduced from spacing[12]
+  },
+  headerContent: {
+    alignItems: 'flex-start',
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
     color: '#002d14', // Consistent with HomeScreen green theme
     fontFamily: 'BubblegumSans-Regular',
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
+    marginBottom: spacing[2],
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6b7280',
+    fontFamily: 'Inter-Medium',
+    letterSpacing: 0.2,
   },
   headerButtons: {
     flexDirection: 'row',
@@ -106,41 +114,78 @@ export const exerciseLibraryStyles = StyleSheet.create({
     fontWeight: typography.fontWeight.bold,
     color: colors.white,
   },
+  
+  // New filter button below search bar
+  filterButtonBelow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing[4],
+    paddingHorizontal: spacing[4],
+    marginTop: spacing[8],
+    alignSelf: 'flex-start',
+    position: 'relative',
+  },
+  
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#87BAA3',
+    fontFamily: 'Poppins-SemiBold',
+  },
+  
+  // New circular filter button next to search bar
+  filterButtonCircle: {
+    width: 48, // Made bigger to match search bar height
+    height: 48, // Made bigger to match search bar height
+    borderRadius: 24, // Half of width/height for perfect circle
+    backgroundColor: '#F3F4F6', // Same as search bar background
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB', // Same as search bar border
+    position: 'relative',
+  },
 
   // Search Section - Enhanced styling for better visual consistency
   searchSection: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingBottom: spacing[16],
-    paddingTop: spacing[8],
+    paddingBottom: spacing[8], // Reduced from spacing[16]
+    paddingTop: spacing[4], // Reduced from spacing[8]
   },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[16],
+    gap: spacing[8], // Even smaller gap between search and filter
     marginBottom: spacing[4],
   },
   searchBar: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 25,
-    paddingHorizontal: spacing[16],
-    paddingVertical: spacing[12],
-    gap: spacing[12],
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 6,
+    backgroundColor: '#F3F4F6', // Much lighter grey
+    borderRadius: 24, // Match filter button radius
+    paddingHorizontal: spacing[12], // Reduced from 16 to 12 to move elements left
+    paddingVertical: spacing[8], // Increased to match filter button height
+    gap: spacing[8], // Reduced from 12 to 8 to move elements closer
     borderWidth: 1,
-    borderColor: 'rgba(135, 186, 163, 0.3)',
+    borderColor: '#E5E7EB', // Light grey border
+    height: 48, // Fixed height instead of minHeight
   },
   searchInput: {
     flex: 1,
-    fontSize: typography.fontSize.base,
-    color: colors.text.primary,
-    fontWeight: typography.fontWeight.regular,
+    fontSize: 14, // Reduced from 16 to make placeholder text smaller
+    color: '#000000', // Pure black for maximum visibility
+    fontWeight: '500', // Reduced from 600 to make it less bold
+    fontFamily: 'Inter-Medium', // Slightly lighter font family
+    includeFontPadding: false, // Remove extra padding for better text alignment
+    height: 48, // Fixed height to match container
+    paddingVertical: 0, // Remove vertical padding that could cause line breaks
+    paddingLeft: 4, // Reduced from 8 to 4 to move text more to the left
+    paddingRight: 0, // No right padding
+    textAlignVertical: 'center', // Center text vertically
+    backgroundColor: 'transparent', // Ensure transparent background
+    multiline: false, // Ensure single line
+    numberOfLines: 1, // Force single line
   },
 
   // Dev Slider Section
@@ -164,18 +209,18 @@ export const exerciseLibraryStyles = StyleSheet.create({
 
   // Filters Section - Improved styling
   filtersSection: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glass morphism effect
-    paddingVertical: spacing[16],
+    backgroundColor: 'transparent', // Remove background
+    paddingVertical: spacing[12], // Reduced from spacing[16]
     paddingHorizontal: spacing.layout.screenPadding,
-    gap: spacing[12],
-    borderRadius: 24,
-    marginHorizontal: spacing.layout.screenPadding,
-    marginBottom: spacing[16],
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
+    gap: spacing[8], // Reduced from spacing[12]
+    borderRadius: 0, // Remove border radius
+    marginHorizontal: 0, // Remove horizontal margin
+    marginBottom: spacing[8], // Reduced from spacing[16]
+    shadowColor: 'transparent', // Remove shadow
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   filtersHeader: {
     flexDirection: 'row',
@@ -241,6 +286,60 @@ export const exerciseLibraryStyles = StyleSheet.create({
     color: '#002d14', // Keep dark text for readability
   },
 
+  // New image-based filter chip styles
+  filterChipImage: {
+    position: 'relative',
+    height: 32, // Reduced height for compactness
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 1, // Reduced horizontal margin
+    marginVertical: 2, // Small vertical margin for multi-row spacing
+  },
+  filterChipImageBackground: {
+    height: 32, // Match reduced height
+    borderRadius: 16, // Adjusted border radius
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  filterChipTextOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    fontSize: 11, // Reduced font size for compactness
+    fontWeight: '700',
+    fontFamily: 'Ubuntu-Bold',
+    color: '#0A2A0D',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    lineHeight: 32, // Match reduced height
+    letterSpacing: 0.1, // Reduced letter spacing
+  },
+  filterChipTextOverlaySelected: {
+    color: '#0A2A0D', // Keep same color for selected state
+    fontWeight: '800',
+  },
+
+  // Compact filter group styles
+  filterGroupCompact: {
+    gap: 4, // Reduced gap between title and chips
+  },
+  filterGroupTitleCompact: {
+    fontSize: 16, // Larger title font for better visibility
+    fontWeight: '700',
+    color: colors.text.primary,
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 6, // Slightly more bottom margin
+  },
+  filterRowCompact: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Allow wrapping to multiple lines
+    gap: 4, // Small gap between chips
+    marginBottom: 8, // Small bottom margin between categories
+  },
+
   // Results
   scrollView: {
     flex: 1,
@@ -250,7 +349,7 @@ export const exerciseLibraryStyles = StyleSheet.create({
   },
   resultsHeader: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: spacing[16],
+    paddingVertical: spacing[4], // Further reduced from spacing[8]
   },
   resultsCount: {
     fontSize: 14,
@@ -268,25 +367,34 @@ export const exerciseLibraryStyles = StyleSheet.create({
     width: '100%',
   },
   exerciseCard: {
-    borderRadius: 20, // Consistent with home
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderTopRightRadius: 0, // Remove right rounding
+    borderBottomRightRadius: 0, // Remove right rounding
     overflow: 'hidden',
     shadowColor: 'rgba(0, 0, 0, 0.15)', // Darker shadow like home
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 15,
     elevation: 8,
-    height: 144, // Fixed height to match image container + padding
+    height: 110, // Reduced from 144 to 110
     backgroundColor: 'transparent',
   },
   exerciseCardGradient: {
     flexDirection: 'row',
-    padding: spacing[12],
-    height: 144, // Match card height
+    paddingTop: 0, // Remove top padding
+    paddingBottom: 0, // Remove bottom padding  
+    paddingLeft: 0, // Remove left padding
+    paddingRight: spacing[12], // Keep only right padding
+    height: 110, // Match reduced card height
   },
   exerciseImageContainer: {
-    width: 70, // Fixed width for consistency
-    height: 120, // Fixed height for consistency
-    borderRadius: 12,
+    width: 55, // Reduced from 70 to 55 to give more space for text
+    height: 110, // Match reduced card height
+    borderTopLeftRadius: 20, // Match card corner
+    borderBottomLeftRadius: 20, // Match card corner
+    borderTopRightRadius: 0, // No right rounding
+    borderBottomRightRadius: 0, // No right rounding
     overflow: 'hidden',
     marginRight: spacing[12],
     shadowColor: 'rgba(0, 0, 0, 0.1)',
@@ -296,13 +404,21 @@ export const exerciseLibraryStyles = StyleSheet.create({
     elevation: 2,
   },
   exerciseImage: {
-    width: 70, // Match container width
-    height: 120, // Match container height
+    width: 55, // Match reduced container width
+    height: 110, // Match reduced container height
   },
   exerciseContent: {
     flex: 1,
     justifyContent: 'space-between',
     paddingVertical: spacing[4],
+  },
+  
+  // New style for tag and time row
+  tagAndTimeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing[6],
   },
   categoryTag: {
     alignSelf: 'flex-start',
@@ -322,6 +438,53 @@ export const exerciseLibraryStyles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     fontFamily: 'Poppins-SemiBold',
+  },
+  
+  // New styles for category tag with image background
+  categoryTagImageContainer: {
+    position: 'relative',
+    alignSelf: 'flex-start',
+    marginBottom: 0, // Removed bottom margin since it's now in a row
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  
+  categoryTagImage: {
+    width: 85, // Increased from 70 to 85
+    height: 28, // Increased from 24 to 28
+    borderRadius: 14,
+  },
+  
+  categoryTagTextOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    fontSize: 12, // Increased from 10 to 12
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#0A2A0D', // Dark green close to black
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    lineHeight: 28, // Updated to match new height
+  },
+  
+  // Large button styles for longer benefit names
+  categoryTagImageLarge: {
+    width: 110, // Larger width for longer text
+    height: 28, // Keep same height
+  },
+  
+  categoryTagTextOverlayLarge: {
+    fontSize: 11, // Slightly smaller font for longer text
+    letterSpacing: 0.3, // Tighter letter spacing
+    lineHeight: 28, // Match height
   },
   exerciseTitle: {
     fontSize: width < 375 ? 15 : 17, // Increased font size for better readability

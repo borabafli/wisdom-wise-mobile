@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3 } from 'lucide-react-native';
+import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import { Image } from 'expo-image';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
@@ -73,29 +74,30 @@ const ProfileScreen: React.FC = () => {
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
-      {/* Background Gradient - Consistent with HomeScreen */}
+      
+      {/* Background Gradient - Clean like Exercise screen */}
       <LinearGradient
         colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
       />
-      
-      {/* Background watercolor blobs */}
-      <View style={[styles.watercolorBlob, styles.blob1]} />
-      <View style={[styles.watercolorBlob, styles.blob2]} />
-      <View style={[styles.watercolorBlob, styles.blob3]} />
-      <View style={[styles.watercolorBlob, styles.blob4]} />
 
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile 👤</Text>
-        </View>
+        <View style={styles.contentContainer}>
+          {/* Header - Now inside ScrollView so it scrolls away */}
+          <View style={styles.scrollableHeader}>
+            <Text style={styles.compactTitle}>
+              Profile 👤
+            </Text>
+            <Text style={styles.subtitle}>
+              Your wellness companion
+            </Text>
+          </View>
 
         {/* User Info */}
         <View style={styles.userInfoSection}>
@@ -130,8 +132,8 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Stats Grid */}
-        <View style={styles.statsSection}>
+        {/* Stats Grid - Insights Card Style */}
+        <View style={styles.statsCard}>
           <View style={styles.statsGrid}>
             {/* First Row: Sessions and Streak */}
             <View style={styles.statsRow}>
@@ -180,65 +182,79 @@ const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Menu Items */}
-        <View style={styles.menuSection}>
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
+        {/* Menu Items - Insights Pattern */}
+        {menuItems.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <View key={index} style={styles.menuCard}>
               <TouchableOpacity
-                key={index}
                 style={[
-                  styles.menuItem,
+                  styles.menuItemInsights,
                   item.danger && styles.menuItemDanger
                 ]}
                 activeOpacity={0.7}
                 onPress={item.action}
               >
-                <LinearGradient
-                  colors={
-                    item.danger 
-                      ? ['rgba(254, 242, 242, 0.9)', 'rgba(254, 226, 226, 0.8)']
-                      : ['rgba(255, 255, 255, 0.9)', 'rgba(239, 246, 255, 0.8)']
-                  }
-                  style={styles.menuItemGradient}
-                >
-                  <View style={styles.menuItemContent}>
+                <View style={styles.menuIconContainer}>
+                  <View style={styles.menuIconBackground}>
                     <Icon 
-                      size={20} 
+                      size={24} 
                       color={item.danger ? '#ef4444' : '#6b7280'} 
                     />
-                    <Text style={[
-                      styles.menuItemLabel,
-                      item.danger && styles.menuItemLabelDanger
-                    ]}>
-                      {item.label}
-                    </Text>
-                    {item.badge && (
-                      <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{item.badge}</Text>
-                      </View>
-                    )}
-                    {item.toggle && (
-                      <Switch
-                        value={false}
-                        trackColor={{ false: '#d1d5db', true: '#3b82f6' }}
-                        thumbColor="#ffffff"
-                        ios_backgroundColor="#d1d5db"
-                        style={styles.switch}
-                      />
-                    )}
                   </View>
-                </LinearGradient>
+                </View>
+                <View style={styles.menuTitleContainer}>
+                  <Text style={[
+                    styles.menuTitle,
+                    item.danger && styles.menuTitleDanger
+                  ]}>
+                    {item.label}
+                  </Text>
+                  <Text style={styles.menuSubtitle}>
+                    {item.label === 'Edit Profile' ? 'Update your information' :
+                     item.label === 'Chat History' ? 'View past conversations' :
+                     item.label === 'Voice Settings' ? 'Configure speech options' :
+                     item.label === 'Notifications' ? 'Manage alerts' :
+                     item.label === 'Privacy & Security' ? 'Control your data' :
+                     item.label === 'Dark Mode' ? 'Toggle dark theme' :
+                     item.label === 'Help & Support' ? 'Get assistance' :
+                     item.label === 'Sign Out' ? 'Leave your account' :
+                     'Tap to access'}
+                  </Text>
+                </View>
+                {item.badge && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{item.badge}</Text>
+                  </View>
+                )}
+                {item.toggle && (
+                  <Switch
+                    value={false}
+                    trackColor={{ false: '#d1d5db', true: '#3b82f6' }}
+                    thumbColor="#ffffff"
+                    ios_backgroundColor="#d1d5db"
+                    style={styles.switch}
+                  />
+                )}
+                {!item.toggle && (
+                  <View style={styles.menuArrow}>
+                    <ArrowRight 
+                      size={16} 
+                      color={item.danger ? '#ef4444' : '#1e40af'} 
+                    />
+                  </View>
+                )}
               </TouchableOpacity>
-            );
-          })}
-        </View>
+            </View>
+          );
+        })}
 
         {/* App Version */}
         <View style={styles.versionSection}>
           <Text style={styles.versionText}>Version 1.0.0</Text>
           <Text style={styles.versionSubtext}>Made with 💙 for your wellness</Text>
         </View>
+        </View> {/* Close contentContainer */}
       </ScrollView>
 
       {/* Chat History Modal */}
