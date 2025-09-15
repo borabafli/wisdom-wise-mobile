@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { X, Sparkles } from 'lucide-react-native';
-import { onboardingWelcomeStyles as styles } from '../styles/components/OnboardingWelcome.styles';
+import { onboardingWelcomeStyles as styles } from '../../styles/components/onboarding/OnboardingWelcome.styles';
 
 const { height } = Dimensions.get('window');
 
@@ -137,7 +137,7 @@ const OnboardingWelcomeScreen: React.FC<OnboardingWelcomeScreenProps> = ({ onCon
               ]}
             >
               <Image
-                source={require('../../assets/images/Teal watercolor single element/home-background.png')}
+                source={require('../../../assets/images/Teal watercolor single element/home-background.png')}
                 style={styles.turtleImage}
                 resizeMode="contain"
               />
@@ -205,6 +205,15 @@ const OnboardingWelcomeScreen: React.FC<OnboardingWelcomeScreenProps> = ({ onCon
               {/* Modal Content */}
               <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator={false}>
                 <View style={styles.modalBodyContainer}>
+                  {/* Anu Image */}
+                  <View style={styles.modalAnuContainer}>
+                    <Image
+                      source={require('../../../assets/images/Teal watercolor single element/home-background.png')}
+                      style={styles.modalAnuImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+
                   <Text style={styles.modalDescription}>
                     I'm your personalized AI therapist powered by advanced AI models. 
                     Here's what makes me special:

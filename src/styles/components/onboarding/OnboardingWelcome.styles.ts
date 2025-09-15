@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors } from '../tokens/colors';
+import { colors } from '../../tokens/colors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,7 +39,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   progressText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
   },
 
@@ -59,7 +59,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   headline: {
     fontSize: 32,
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'BubblegumSans-Regular',
     color: colors.teal[800],
     textAlign: 'center',
     marginBottom: 16,
@@ -68,7 +68,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   subtext: {
     fontSize: 17,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[600],
     textAlign: 'center',
     lineHeight: 24,
@@ -151,7 +151,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   primaryButtonText: {
     fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'Ubuntu-Bold',
     color: colors.white,
     letterSpacing: 0.3,
   },
@@ -163,7 +163,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   secondaryButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
     textDecorationLine: 'underline',
     textDecorationColor: colors.teal[400],
@@ -195,7 +195,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   modalTitle: {
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: colors.teal[800],
   },
 
@@ -215,10 +215,20 @@ export const onboardingWelcomeStyles = StyleSheet.create({
   modalBodyContainer: {
     paddingBottom: 40,
   },
+  
+  modalAnuContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  
+  modalAnuImage: {
+    width: 120,
+    height: 120,
+  },
 
   modalDescription: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[700],
     lineHeight: 24,
     marginBottom: 28,
@@ -248,21 +258,21 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   checkmarkText: {
     fontSize: 14,
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: colors.white,
   },
 
   featureText: {
     flex: 1,
     fontSize: 15,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[700],
     lineHeight: 22,
   },
 
   modalFooter: {
     fontSize: 15,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[600],
     lineHeight: 22,
     textAlign: 'center',

@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Shield, CheckCircle } from 'lucide-react-native';
-import { onboardingPrivacyStyles as styles } from '../styles/components/OnboardingPrivacy.styles';
+import { onboardingPrivacyStyles as styles } from '../../styles/components/onboarding/OnboardingPrivacy.styles';
 
 const { height } = Dimensions.get('window');
 
@@ -23,7 +23,6 @@ interface OnboardingPrivacyScreenProps {
 const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({ 
   onContinue 
 }) => {
-  const [consentChecked, setConsentChecked] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const shieldPulseAnim = useRef(new Animated.Value(1)).current;
@@ -85,14 +84,8 @@ const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({
     }
   };
 
-  const handleConsentToggle = () => {
-    setConsentChecked(!consentChecked);
-  };
-
   const handleContinue = () => {
-    if (consentChecked) {
-      onContinue();
-    }
+    onContinue();
   };
 
   return (
@@ -108,10 +101,8 @@ const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
-          <Text style={styles.progressText}>2/10</Text>
         </View>
 
-        {/* Main Content */}
         <Animated.View 
           style={[
             styles.contentContainer,
@@ -121,11 +112,6 @@ const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({
             }
           ]}
         >
-          {/* Header */}
-          <View style={styles.headerContainer}>
-            <Text style={styles.headline}>Your Privacy Matters</Text>
-          </View>
-
           {/* Privacy Character & Shield */}
           <View style={styles.characterContainer}>
             <Animated.View
@@ -144,7 +130,7 @@ const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({
             
             <View style={styles.turtleContainer}>
               <Image
-                source={require('../../assets/images/turtle-for-privacy-secret1.png')}
+                source={require('../../../assets/images/turtle-for-privacy-secret1.png')}
                 style={styles.turtleImage}
                 resizeMode="contain"
               />
@@ -157,44 +143,24 @@ const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({
               <View style={styles.privacyItem}>
                 <CheckCircle size={20} color="#059669" />
                 <Text style={styles.privacyText}>
-                  End-to-end encryption protects your data
+                  Your conversations are kept private and secure
                 </Text>
               </View>
 
               <View style={styles.privacyItem}>
                 <CheckCircle size={20} color="#059669" />
                 <Text style={styles.privacyText}>
-                  We never share your personal information
+                  We only use your data to provide better support
                 </Text>
               </View>
 
               <View style={styles.privacyItem}>
                 <CheckCircle size={20} color="#059669" />
                 <Text style={styles.privacyText}>
-                  You can delete your data anytime
+                  You control your information and can delete it anytime
                 </Text>
               </View>
             </View>
-
-
-            {/* Consent Checkbox */}
-            <TouchableOpacity 
-              style={styles.consentContainer}
-              onPress={handleConsentToggle}
-              activeOpacity={0.7}
-            >
-              <View style={[
-                styles.checkbox,
-                consentChecked && styles.checkboxChecked
-              ]}>
-                {consentChecked && (
-                  <CheckCircle size={16} color="#ffffff" />
-                )}
-              </View>
-              <Text style={styles.consentText}>
-                I consent to processing of health-related data for personalization
-              </Text>
-            </TouchableOpacity>
 
             {/* Legal Links */}
             <View style={styles.legalLinksContainer}>
@@ -211,24 +177,18 @@ const OnboardingPrivacyScreen: React.FC<OnboardingPrivacyScreenProps> = ({
           {/* Action Buttons */}
           <View style={styles.actionContainer}>
             <TouchableOpacity 
-              style={[
-                styles.primaryButton,
-                !consentChecked && styles.primaryButtonDisabled
-              ]} 
+              style={styles.primaryButton}
               onPress={handleContinue}
-              disabled={!consentChecked}
+              activeOpacity={0.8}
             >
               <LinearGradient
-                colors={consentChecked ? ['#14b8a6', '#0d9488'] : ['#94a3b8', '#64748b']}
+                colors={['#5BA3B8', '#357A8A']}
                 style={styles.buttonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={[
-                  styles.primaryButtonText,
-                  !consentChecked && styles.primaryButtonTextDisabled
-                ]}>
-                  I Understand & Agree
+                <Text style={styles.primaryButtonText}>
+                  Got it, let's continue
                 </Text>
               </LinearGradient>
             </TouchableOpacity>

@@ -13,7 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User, Heart } from 'lucide-react-native';
-import { onboardingPersonalizationStyles as styles } from '../styles/components/OnboardingPersonalization.styles';
+import { onboardingPersonalizationStyles as styles } from '../../styles/components/onboarding/OnboardingPersonalization.styles';
 
 const { height } = Dimensions.get('window');
 
@@ -109,17 +109,7 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
           style={styles.keyboardContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {/* Progress Indicator */}
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={styles.progressFill} />
-            </View>
-            <Text style={styles.progressText}>3/10</Text>
-          </View>
-
-
-          {/* Main Content */}
-          <Animated.View 
+          <Animated.View
             style={[
               styles.contentContainer,
               {
@@ -128,34 +118,26 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
               }
             ]}
           >
-            {/* Header */}
-            <View style={styles.headerContainer}>
-              <Text style={styles.headline}>Let's personalize your experience</Text>
+            {/* Progress Indicator */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View style={styles.progressFill} />
+              </View>
+            </View>
               
-              {/* Anu Avatar with Message */}
-              <View style={styles.anuContainer}>
-                <View style={styles.anuAvatarContainer}>
-                  <Image
-                    source={require('../../assets/images/Teal watercolor single element/home-background.png')}
-                    style={styles.anuAvatar}
-                    resizeMode="contain"
-                  />
-                  <Animated.View
-                    style={[
-                      styles.heartContainer,
-                      {
-                        transform: [{ scale: heartPulseAnim }],
-                      }
-                    ]}
-                  >
-                    <Heart size={16} color="#f43f5e" fill="#f43f5e" />
-                  </Animated.View>
-                </View>
-                
-                <View style={styles.speechBubble}>
-                  <Text style={styles.speechText}>What should I call you?</Text>
-                  <View style={styles.speechTail} />
-                </View>
+            {/* Anu Avatar with Message */}
+            <View style={styles.anuContainer}>
+              <View style={styles.anuAvatarContainer}>
+                <Image
+                  source={require('../../../assets/images/turtle-anu-greetings.png')}
+                  style={styles.anuAvatar}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              <View style={styles.speechBubble}>
+                <Text style={styles.speechText}>What should I call you?</Text>
+                <View style={styles.speechTail} />
               </View>
             </View>
 

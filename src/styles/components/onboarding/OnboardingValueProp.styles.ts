@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors } from '../tokens/colors';
+import { colors } from '../../tokens/colors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,7 +31,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   progressFill: {
-    width: '40%', // 4/10
+    width: '57%', // 4/7 pages
     height: '100%',
     backgroundColor: '#5BA3B8', // Primary blue-teal from style guide
     borderRadius: 2,
@@ -39,7 +39,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   progressText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#5BA3B8',
   },
 
@@ -59,7 +59,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   headline: {
     fontSize: 32, // --text-3xl from style guide
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'BubblegumSans-Regular',
     color: '#1A2332', // --near-black from style guide
     textAlign: 'center',
     letterSpacing: -0.5,
@@ -133,7 +133,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   cardTitle: {
     fontSize: 24, // Slightly larger for better hierarchy
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'BubblegumSans-Regular',
     color: '#1A2332',
     textAlign: 'center',
     marginBottom: 20,
@@ -146,7 +146,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   cardDescription: {
     fontSize: 17, // Slightly larger for readability
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: '#334155', // Darker gray for better contrast
     textAlign: 'center',
     lineHeight: 26, // Better line spacing
@@ -228,7 +228,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   primaryButtonText: {
     fontSize: 18, // --text-lg from style guide
-    fontFamily: 'Inter-SemiBold', // --font-semibold
+    fontFamily: 'Ubuntu-Bold', // --font-semibold
     color: colors.white,
     letterSpacing: 0.3,
     marginRight: 8,

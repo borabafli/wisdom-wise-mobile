@@ -11,7 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MessageCircle, Target, BarChart3, Brain, ChevronRight } from 'lucide-react-native';
-import { onboardingValuePropStyles as styles } from '../styles/components/OnboardingValueProp.styles';
+import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,7 +33,7 @@ const valueCards: ValueCard[] = [
     description: "I'll help you untangle complex thoughts and emotions through evidence-based techniques",
     gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(91, 163, 184, 0.15)'],
     iconColor: '#5BA3B8',
-    backgroundImage: require('../../assets/images/8.jpeg')
+    backgroundImage: require('../../../assets/images/8.jpeg')
   },
   {
     id: 2,
@@ -42,7 +42,7 @@ const valueCards: ValueCard[] = [
     description: "From breathing techniques to CBT tools, all tailored to your specific needs",
     gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(181, 167, 230, 0.15)'],
     iconColor: '#B5A7E6',
-    backgroundImage: require('../../assets/images/9.jpeg')
+    backgroundImage: require('../../../assets/images/9.jpeg')
   },
   {
     id: 3,
@@ -51,7 +51,7 @@ const valueCards: ValueCard[] = [
     description: "Discover patterns in your thinking, track your growth, and celebrate progress",
     gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(160, 213, 211, 0.15)'],
     iconColor: '#A0D5D3',
-    backgroundImage: require('../../assets/images/10.jpeg')
+    backgroundImage: require('../../../assets/images/10.jpeg')
   },
   {
     id: 4,
@@ -60,7 +60,7 @@ const valueCards: ValueCard[] = [
     description: "I learn from our conversations to provide increasingly personalized support",
     gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(255, 196, 176, 0.15)'],
     iconColor: '#FFC4B0',
-    backgroundImage: require('../../assets/images/1.jpeg')
+    backgroundImage: require('../../../assets/images/1.jpeg')
   }
 ];
 
@@ -212,10 +212,8 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             <View style={styles.progressBar}>
               <View style={styles.progressFill} />
             </View>
-            <Text style={styles.progressText}>4/10</Text>
           </View>
 
-          {/* Main Content */}
           <Animated.View 
             style={[
               styles.contentContainer,
@@ -227,7 +225,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
           >
             {/* Header */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>Here's how Anu helps you grow</Text>
+              <Text style={styles.headline}>How can Anu help you?</Text>
             </View>
 
             {/* Cards ScrollView */}

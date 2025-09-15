@@ -19,6 +19,13 @@ export interface UserProfile {
   lastName: string;
   displayName?: string;
   emojiPreference?: 'female' | 'male' | 'neutral';
+  motivation?: string;
+  motivationTimestamp?: string;
+  challenges?: string[];
+  goals?: string[];
+  challengesTimestamp?: string;
+  baselineMood?: number;
+  baselineMoodTimestamp?: string;
   createdAt: string;
   updatedAt: string;
 }

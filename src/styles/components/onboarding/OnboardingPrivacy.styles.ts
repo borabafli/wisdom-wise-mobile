@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors } from '../tokens/colors';
+import { colors } from '../../tokens/colors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,7 +39,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   progressText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
   },
 
@@ -59,7 +59,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   headline: {
     fontSize: 28,
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'BubblegumSans-Regular',
     color: colors.teal[800],
     textAlign: 'center',
     letterSpacing: -0.5,
@@ -85,7 +85,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
     position: 'relative',
     shadowColor: colors.teal[500],
     shadowOffset: {
-      width: 0,
+      width: 80,
       height: 4,
     },
     shadowOpacity: 0.15,
@@ -108,7 +108,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   },
 
   turtleImage: {
-    width: 120,
+    width: 80,
     height: 120,
   },
 
@@ -132,7 +132,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   privacyText: {
     flex: 1,
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[700],
     lineHeight: 22,
     marginLeft: 12,
@@ -148,7 +148,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   },
 
   checkbox: {
-    width: 24,
+    width: 80,
     height: 24,
     borderRadius: 4,
     borderWidth: 2,
@@ -168,7 +168,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   consentText: {
     flex: 1,
     fontSize: 15,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[700],
     lineHeight: 21,
   },
@@ -183,7 +183,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   legalLink: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
     textDecorationLine: 'underline',
     textDecorationColor: colors.teal[400],
@@ -191,7 +191,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   linkSeparator: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[400],
     marginHorizontal: 12,
   },
@@ -203,7 +203,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   },
 
   primaryButton: {
-    width: '100%',
+    width: '80%',
     height: 56,
     borderRadius: 28,
     marginBottom: 16,
@@ -231,7 +231,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   primaryButtonText: {
     fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'Ubuntu-Bold',
     color: colors.white,
     letterSpacing: 0.3,
   },
@@ -247,7 +247,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   secondaryButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
     textDecorationLine: 'underline',
     textDecorationColor: colors.teal[400],
@@ -271,7 +271,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
     },
 
     shieldContainer: {
-      width: 60,
+      width: 80,
       height: 60,
       marginBottom: 12,
     },

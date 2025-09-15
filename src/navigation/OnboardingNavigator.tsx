@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import OnboardingWelcomeScreen from '../screens/OnboardingWelcomeScreen';
-import OnboardingPrivacyScreen from '../screens/OnboardingPrivacyScreen';
-import OnboardingPersonalizationScreen from '../screens/OnboardingPersonalizationScreen';
-import OnboardingValuePropScreen from '../screens/OnboardingValuePropScreen';
+import OnboardingWelcomeScreen from '../screens/onboarding/OnboardingWelcomeScreen';
+import OnboardingPrivacyScreen from '../screens/onboarding/OnboardingPrivacyScreen';
+import OnboardingPersonalizationScreen from '../screens/onboarding/OnboardingPersonalizationScreen';
+import OnboardingValuePropScreen from '../screens/onboarding/OnboardingValuePropScreen';
+import OnboardingMotivationScreen from '../screens/onboarding/OnboardingMotivationScreen';
+import OnboardingCurrentStateScreen from '../screens/onboarding/OnboardingCurrentStateScreen';
+import OnboardingBaselineScreen from '../screens/onboarding/OnboardingBaselineScreen';
 import { OnboardingService } from '../services/onboardingService';
 import { storageService } from '../services/storageService';
 
@@ -42,20 +45,66 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     setCurrentStep(4);
   };
 
-  const handleContinueFromValueProp = async () => {
-    // For now, complete onboarding after value prop screen
-    // In the future, you can add more onboarding steps here
-    // setCurrentStep(5); // Navigate to next screen
+  const handleContinueFromValueProp = () => {
+    // Navigate to motivation discovery screen
+    setCurrentStep(5);
+  };
+
+  const handleContinueFromMotivation = async (motivation: string) => {
+    // Save motivation data is already handled in the component
+    console.log('User motivation:', motivation);
+    
+    // Navigate to current state & goals screen
+    setCurrentStep(6);
+  };
+
+  const handleContinueFromCurrentState = async (challenges: string[], goals: string[]) => {
+    // Save current state and goals data
+    console.log('User challenges:', challenges);
+    console.log('User goals:', goals);
+    
+    try {
+      await storageService.updateUserProfile({
+        challenges: challenges,
+        goals: goals,
+        challengesTimestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error saving current state data:', error);
+    }
+    
+    // Navigate to baseline check-in screen
+    setCurrentStep(7);
+  };
+
+  const handleSkipMotivation = async () => {
+    // Skip motivation and go to current state screen
+    setCurrentStep(6);
+  };
+
+  const handleContinueFromBaseline = async (moodRating: number) => {
+    // Baseline mood is saved in the component
+    console.log('User baseline mood:', moodRating);
     
     // Complete onboarding and navigate to main app
     await OnboardingService.completeOnboarding();
     onComplete();
   };
 
-  const handleSkipPersonalization = async () => {
-    // Skip personalization and complete onboarding
+  const handleSkipCurrentState = async () => {
+    // Skip current state and go to baseline screen
+    setCurrentStep(7);
+  };
+
+  const handleSkipBaseline = async () => {
+    // Skip baseline and complete onboarding
     await OnboardingService.completeOnboarding();
     onComplete();
+  };
+
+  const handleSkipPersonalization = async () => {
+    // Skip personalization and go to value proposition screen
+    setCurrentStep(4);
   };
 
 
@@ -83,6 +132,30 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
       return (
         <OnboardingValuePropScreen 
           onContinue={handleContinueFromValueProp}
+        />
+      );
+    
+    case 5:
+      return (
+        <OnboardingMotivationScreen 
+          onContinue={handleContinueFromMotivation}
+          onSkip={handleSkipMotivation}
+        />
+      );
+    
+    case 6:
+      return (
+        <OnboardingCurrentStateScreen 
+          onContinue={handleContinueFromCurrentState}
+          onSkip={handleSkipCurrentState}
+        />
+      );
+    
+    case 7:
+      return (
+        <OnboardingBaselineScreen 
+          onContinue={handleContinueFromBaseline}
+          onSkip={handleSkipBaseline}
         />
       );
     

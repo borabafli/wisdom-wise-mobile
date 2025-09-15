@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors } from '../tokens/colors';
+import { colors } from '../../tokens/colors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,7 +43,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   progressText: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
   },
 
@@ -64,7 +64,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   headline: {
     fontSize: 28,
-    fontFamily: 'Inter-Bold',
+    fontFamily: 'BubblegumSans-Regular',
     color: colors.teal[800],
     textAlign: 'center',
     letterSpacing: -0.5,
@@ -74,6 +74,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
   // Anu Avatar and Speech Bubble
   anuContainer: {
     alignItems: 'center',
+    marginTop: 20,
     marginBottom: 40,
   },
 
@@ -97,8 +98,8 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
   },
 
   anuAvatar: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 150,
   },
 
   heartContainer: {
@@ -138,7 +139,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   speechText: {
     fontSize: 16,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[700],
     textAlign: 'center',
   },
@@ -193,7 +194,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   textInput: {
     fontSize: 18,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[800],
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -202,7 +203,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   inputCaption: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Ubuntu-Regular',
     color: colors.teal[500],
     textAlign: 'center',
     fontStyle: 'italic',
@@ -239,7 +240,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   primaryButtonText: {
     fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'Ubuntu-Bold',
     color: colors.white,
     letterSpacing: 0.3,
   },
@@ -251,7 +252,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   secondaryButtonText: {
     fontSize: 16,
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: colors.teal[600],
     textDecorationLine: 'underline',
     textDecorationColor: colors.teal[400],
