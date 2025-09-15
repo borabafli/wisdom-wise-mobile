@@ -24,41 +24,6 @@ export const insightsDashboardStyles = StyleSheet.create({
     width: width,
     minHeight: height, // Changed from fixed height to minHeight
   },
-  blurOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-  },
-  blueOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 2,
-  },
-  watercolorBlob: {
-    position: 'absolute',
-    borderRadius: 9999,
-    opacity: 0.3,
-  },
-  blob1: {
-    top: 0,
-    right: -80,
-    width: 256,
-    height: 256,
-    backgroundColor: 'rgba(96, 165, 250, 0.15)', // Softer blue
-  },
-  blob2: {
-    bottom: 0,
-    left: -96,
-    width: 384,
-    height: 384,
-    backgroundColor: 'rgba(147, 197, 253, 0.12)', // Lighter complement
-  },
   // Header Section - Consistent with HomeScreen
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -109,6 +74,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     top: 0,
     left: -spacing[8], // Compensate for scrollView padding
     right: -spacing[8],
+    bottom: 0,
     zIndex: 0,
   },
   scrollableBackgroundImage: {
@@ -116,22 +82,9 @@ export const insightsDashboardStyles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    width: width,
+    bottom: 0,
+    width: '100%',
     zIndex: 0,
-  },
-  scrollableBlurOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-  },
-  scrollableBlueOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 2,
   },
   contentContainer: {
     position: 'relative',

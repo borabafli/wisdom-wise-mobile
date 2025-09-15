@@ -34,10 +34,25 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onCancelRecording,
 }) => {
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const insets = useSafeAreaInsets();
   
   // Count lines by splitting on newlines and adding 1
   const inputLineCount = Math.min(inputText.split('\n').length, 9);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   const handleInputTextChange = (text: string) => {
     onInputTextChange(text);
@@ -54,7 +69,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <>
       {/* Input Area */}
-      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 0 }]}>
+      <View style={[
+        styles.inputContainer, 
+        { 
+          paddingBottom: Math.max(insets.bottom || 0, 16) + (keyboardHeight > 0 ? 30 : 0) // Extra padding only when keyboard is visible
+        }
+      ]}>
         <View style={styles.inputCard}>
           <View style={styles.inputRow}>
             {!isRecording ? (

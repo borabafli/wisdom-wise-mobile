@@ -529,9 +529,11 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Input Area - Modern Glass
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding - 4, // Make chatbar wider by reducing side padding
-    paddingTop: 0, // Remove top padding to eliminate gap
+    paddingTop: 16, // Normal top padding - don't affect default state
+    backgroundColor: 'rgba(255, 255, 254, 0.98)', // More opaque background
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(226, 232, 240, 0.3)', // Subtle separator
     zIndex: 10, // Lower z-index to avoid blocking other elements
-    backgroundColor: 'transparent', // Ensure transparent background
   },
   inputCard: {
     backgroundColor: '#e2e8f0', // Much lighter gray (slate-200) for lighter appearance
@@ -546,7 +548,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', // Center items for perfect circular alignment
     gap: spacing[3],
-    minHeight: 60, // Increased height to accommodate properly centered text
+    minHeight: 48, // Reduced from 60 to 48 for standard chat height
   },
   inputButtonsContainer: {
     flexDirection: 'row',
@@ -564,10 +566,10 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   micButton: {
     padding: spacing[2],
-    borderRadius: 22,
+    borderRadius: 20,
     backgroundColor: 'transparent',
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 12, // Moderate z-index for buttons
@@ -636,16 +638,16 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 17, // Slightly larger for better readability
+    fontSize: 16, // Slightly smaller for better proportions with shorter height
     fontFamily: 'Inter-Regular', // Match chat font family
     fontWeight: '400',
     color: '#64748b', // Lighter gray-blue for input text
-    minHeight: 40, // Reduced minimum height
+    minHeight: 32, // Reduced minimum height for standard chat size
     maxHeight: 200,
-    paddingVertical: 10, // Add some vertical padding for better touch area
+    paddingVertical: 8, // Reduced vertical padding for shorter height
     paddingHorizontal: spacing[6], // Further increased padding to move text more to the right
     backgroundColor: 'transparent',
-    lineHeight: 22, // Adjusted line height for better centering
+    lineHeight: 20, // Adjusted line height for better centering with shorter input
     letterSpacing: 0.2, // Match AI message letter spacing
     textAlignVertical: 'center', // Center text vertically
     includeFontPadding: false, // Remove extra font padding on Android
@@ -966,8 +968,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
     paddingHorizontal: spacing[2],
-    paddingVertical: spacing[2], // Reduced padding for shorter chatbar
-    minHeight: 70, // Reduced height for more compact chatbar
+    paddingVertical: spacing[1], // Further reduced padding for standard chat height
+    minHeight: 48, // Reduced to match inputRow height
   },
 
   // Cancel Button (X) - Light filled

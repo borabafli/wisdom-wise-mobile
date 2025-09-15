@@ -275,9 +275,10 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             source={require('../../assets/images/insights-background.png')}
             style={[styles.scrollableBackgroundImage, { 
               height: Math.max(Dimensions.get('window').height, contentHeight),
-              width: Dimensions.get('window').width // Full width
+              width: '100%' // Use 100% for full width
             }]}
             contentFit="cover"
+            contentPosition="center bottom" // Keep bubbles visible at bottom
           />
         </View>
         

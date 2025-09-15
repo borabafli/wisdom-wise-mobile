@@ -53,9 +53,10 @@ export const homeScreenStyles = StyleSheet.create({
   // Input Bar Layout
   inputWithTurtleWrapper: {
     alignItems: 'center',
-    marginTop: height < 700 ? 190 : 210, // Lowered chatbar position
+    marginTop: height < 700 ? 170 : 190, // Raised chatbar position
     position: 'relative',
     width: '100%',
+    zIndex: -1, // Behind other elements like turtle image
   },
 
   // Header Section
@@ -99,39 +100,11 @@ export const homeScreenStyles = StyleSheet.create({
     textShadowRadius: 3,
   },
 
-  // Input Container - Clean design with silver gradient
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding,
-    paddingVertical: spacing.components.cardGap,
-    borderRadius: 50,
-    gap: spacing.components.cardGap,
-    width: '96%',
+  // Chatbar - Just the image
+  chatbarImage: {
+    width: width * 1.13, // 113% of screen width - even bigger
+    height: 80, // Increased height from 60 to 80
     alignSelf: 'center',
-    paddingTop: spacing[8],
-    shadowColor: '#000000', // Dark shadow instead of light blue
-    shadowOffset: { width: 0, height: 6 }, // Slightly more offset
-    shadowOpacity: 0.15, // Darker but not too harsh
-    shadowRadius: 15, // Larger radius for softer spread
-    elevation: 10, // Higher elevation for Android
-  },
-  inputText: {
-    flex: 1,
-    fontSize: 18,
-    color: '#64748B', // Lighter gray color
-    fontWeight: '400', // Lighter weight
-    textAlign: 'left',
-    marginLeft: spacing[2], // Start with less margin
-    paddingLeft: spacing[4], // Use padding instead of margin for better control
-  },
-  micButton: {
-    width: 36, // Slightly smaller
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing[1], // Less margin
   },
 
   // Exercises Section
@@ -175,15 +148,11 @@ export const homeScreenStyles = StyleSheet.create({
     minHeight: 100, // Fixed height for all cards
   },
   exerciseCardGradient: {
-    padding: spacing[12], // Reduced padding for less height
-    marginBottom: spacing[3], // Reduced margin
+    padding: spacing[12],
+    marginBottom: spacing[3],
     borderRadius: 20,
-    minHeight: 100, // Fixed height for uniform appearance
-    shadowColor: 'rgba(0, 0, 0, 0.15)', // Darker shadow
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2, // Higher opacity
-    shadowRadius: 15,
-    elevation: 8, // Higher elevation
+    minHeight: 100,
+    backgroundColor: 'transparent',
   },
   exerciseCardContent: {
     flexDirection: 'row',
@@ -213,9 +182,6 @@ export const homeScreenStyles = StyleSheet.create({
     marginBottom: spacing[1],
     textAlign: 'center',
     letterSpacing: -0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   exerciseTime: {
     fontSize: 11,
@@ -255,42 +221,35 @@ export const homeScreenStyles = StyleSheet.create({
   },
   quickActionsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.components.cardGap,
+    justifyContent: 'space-between',
   },
   quickActionButton: {
     flex: 1,
     overflow: 'hidden',
+    height: 120,
+    borderRadius: 20,
   },
   quickActionBackgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.4,
+    borderRadius: 20,
   },
   quickActionGradient: {
     padding: spacing.components.cardGap,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 96,
+    height: 120,
     gap: spacing[4],
-    borderRadius: 18,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
+    borderRadius: 20,
   },
   quickActionText: {
     color: '#002d14',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: typography.fontWeight.semibold,
     textAlign: 'center',
     letterSpacing: 0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+    flexWrap: 'wrap',
+    maxWidth: '100%',
   },
   quickActionIconImage: {
     width: 48, // Bigger than the original 36px

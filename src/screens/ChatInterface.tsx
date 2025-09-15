@@ -385,7 +385,9 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
         <KeyboardAvoidingView 
           style={styles.keyboardView} 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={0}
+          enabled={Platform.OS === 'ios'}
         >
           {/* Header */}
           <Animated.View style={[
@@ -453,8 +455,11 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             contentContainerStyle={styles.messagesContent}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-            keyboardShouldPersistTaps="always"
-            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+            automaticallyAdjustKeyboardInsets={false}
+            automaticallyAdjustContentInsets={false}
+            contentInsetAdjustmentBehavior="never"
           >
 
             

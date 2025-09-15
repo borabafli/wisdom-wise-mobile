@@ -70,18 +70,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             activeOpacity={0.9}
           >
             
-            {/* Input area */}
-            <LinearGradient
-              colors={['rgba(248, 250, 252, 0.7)', 'rgba(241, 245, 249, 0.8)', 'rgba(255, 255, 255, 0.9)']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.inputContainer}
-            >
-              <View style={styles.micButton}>
-                <Mic size={28} color="#374151" strokeWidth={1.5} />
-              </View>
-              <Text style={styles.inputText} numberOfLines={1}>Share how you feel...</Text>
-            </LinearGradient>
+            {/* Input area - Just the image */}
+            <Image
+              source={require('../../assets/images/Buttons/chatbar.png')}
+              style={styles.chatbarImage}
+              contentFit="contain"
+            />
           </TouchableOpacity>
         </View>
 
@@ -105,11 +99,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['#D8E9E9', '#E7F3F1']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
                 style={styles.exerciseCardGradient}
+                imageStyle={{ borderRadius: 20 }}
+                resizeMode="cover"
               >
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
@@ -125,7 +119,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                     <Text style={styles.exerciseTime}>8 min</Text>
                   </View>
                 </View>
-              </LinearGradient>
+              </ImageBackground>
             </TouchableOpacity>
 
             {/* Stress Relief */}
@@ -134,11 +128,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['#D8E9E9', '#E7F3F1']}
-                start={{ x: 0, y: 0.3 }}
-                end={{ x: 1, y: 0.8 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
                 style={styles.exerciseCardGradient}
+                imageStyle={{ borderRadius: 20 }}
+                resizeMode="cover"
               >
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
@@ -154,7 +148,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                     <Text style={styles.exerciseTime}>3 min</Text>
                   </View>
                 </View>
-              </LinearGradient>
+              </ImageBackground>
             </TouchableOpacity>
 
             {/* Gratitude Practice */}
@@ -163,11 +157,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.exerciseCard}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['#D8E9E9', '#E7F3F1']}
-                start={{ x: 0.2, y: 0 }}
-                end={{ x: 0.8, y: 1 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
                 style={styles.exerciseCardGradient}
+                imageStyle={{ borderRadius: 20 }}
+                resizeMode="cover"
               >
                 <View style={styles.exerciseCardContent}>
                   <View style={styles.exerciseIcon}>
@@ -183,7 +177,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                     <Text style={styles.exerciseTime}>2 min</Text>
                   </View>
                 </View>
-              </LinearGradient>
+              </ImageBackground>
             </TouchableOpacity>
           </View>
         </View>
@@ -200,19 +194,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
                 style={styles.quickActionGradient}
+                imageStyle={styles.quickActionBackgroundImage}
+                resizeMode="cover"
               >
                 <Image 
                   source={require('../../assets/images/New Icons/icon-4.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText}>Browse Exercises</Text>
-              </LinearGradient>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Browse{"\n"}Exercises</Text>
+              </ImageBackground>
             </TouchableOpacity>
             
             <TouchableOpacity
@@ -220,19 +214,39 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['rgba(147, 197, 253, 0.25)', 'rgba(186, 230, 253, 0.15)', 'rgba(255, 255, 255, 0.8)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-6.png')}
                 style={styles.quickActionGradient}
+                imageStyle={styles.quickActionBackgroundImage}
+                resizeMode="cover"
               >
                 <Image 
                   source={require('../../assets/images/New Icons/icon-5.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText}>View Insights</Text>
-              </LinearGradient>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>View{"\n"}Insights</Text>
+              </ImageBackground>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => onStartSession({ type: 'breathing', name: 'Deep Breathing', duration: '5 min', description: 'Calm your mind with guided breathing' })}
+              style={styles.quickActionButton}
+              activeOpacity={0.9}
+            >
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-7.png')}
+                style={styles.quickActionGradient}
+                imageStyle={styles.quickActionBackgroundImage}
+                resizeMode="cover"
+              >
+                <Image 
+                  source={require('../../assets/images/New Icons/icon-6.png')}
+                  style={styles.quickActionIconImage}
+                  contentFit="contain"
+                />
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Start{"\n"}Breathing</Text>
+              </ImageBackground>
             </TouchableOpacity>
 
           </View>
