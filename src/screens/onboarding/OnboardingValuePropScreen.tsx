@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronRight } from 'lucide-react-native';
 import { Image } from 'expo-image';
-import WatercolorBlob from '../../components/WatercolorBlob';
+import WatercolorBackdrop from '../../components/WatercolorBackdrop';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -143,16 +143,12 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
         style={[
           styles.card,
           {
-            width: width - 48,
             transform: [{ scale: cardScale }],
             opacity: cardOpacity,
           }
         ]}
       >
-        <View style={styles.cardInner}>
-          <View style={styles.blobWrapper}>
-            <WatercolorBlob width={width - 48} height={220} opacity={0.9} />
-          </View>
+        <TouchableOpacity activeOpacity={0.85} style={styles.cardInner}>
           <View style={styles.cardContent}>
             <View style={styles.textContent}>
               <Image source={card.iconImage} style={styles.iconImage} contentFit="contain" />
@@ -160,7 +156,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
               <Text style={styles.cardDescription}>{card.description}</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </Animated.View>
     );
   };
@@ -173,6 +169,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
       end={{ x: 1, y: 1 }}
     >
         <SafeAreaView style={styles.safeArea}>
+          <WatercolorBackdrop style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
           {/* Progress Indicator */}
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
@@ -194,56 +191,16 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
               <Text style={styles.headline}>How can Anu help you?</Text>
             </View>
 
-            {/* Cards ScrollView */}
-            <View style={styles.cardsContainer}>
-              <ScrollView
-                ref={scrollViewRef}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={handleScroll}
-                decelerationRate="fast"
-                contentContainerStyle={styles.scrollContent}
-                style={styles.cardScrollView}
-              >
-                {valueCards.map((card, index) => renderCard(card, index))}
-              </ScrollView>
+            {/* Tiles Grid */}
+            <View style={styles.tilesGrid}>
+              {valueCards.map((card, index) => (
+                <View key={card.id} style={styles.tileWrapper}>
+                  {renderCard(card, index)}
+                </View>
+              ))}
             </View>
 
-            {/* Dots Indicator */}
-            <View style={styles.dotsContainer}>
-              {valueCards.map((_, index) => {
-                const dotScale = dotAnimations[index].interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 1.3],
-                });
-
-                const dotOpacity = dotAnimations[index].interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.3, 1],
-                });
-
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => scrollToCard(index)}
-                    style={styles.dotTouchable}
-                    activeOpacity={0.7}
-                  >
-                    <Animated.View
-                      style={[
-                        styles.dot,
-                        index === currentIndex && styles.activeDot,
-                        {
-                          transform: [{ scale: dotScale }],
-                          opacity: dotOpacity,
-                        }
-                      ]}
-                    />
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+            {/* Remove dots for grid layout */}
 
             {/* Action Button */}
             <View style={styles.actionContainer}>

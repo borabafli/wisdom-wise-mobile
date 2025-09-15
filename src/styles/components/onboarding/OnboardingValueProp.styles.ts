@@ -82,9 +82,21 @@ export const onboardingValuePropStyles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  // Tiles Grid
+  tilesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  tileWrapper: {
+    width: (width - 24 * 2 - 12) / 2,
+    height: 180,
+    marginBottom: 16,
+  },
+
   // Card Styles (Following style guide card patterns)
   card: {
-    height: 320,
+    height: '100%',
     marginHorizontal: 0,
     borderRadius: 20, // --radius-xl from style guide
     overflow: 'hidden',
@@ -129,22 +141,23 @@ export const onboardingValuePropStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 32,
+    paddingVertical: 18,
+    paddingHorizontal: 12,
   },
 
   iconImage: {
-    width: 84,
-    height: 84,
-    marginBottom: 14,
+    width: 64,
+    height: 64,
+    marginBottom: 12,
   },
 
   cardTitle: {
-    fontSize: 24, // Slightly larger for better hierarchy
+    fontSize: 20, // tighter for tile layout
     fontFamily: 'BubblegumSans-Regular',
     color: '#1A2332',
     textAlign: 'center',
-    marginBottom: 20,
-    lineHeight: 30, // --leading-tight
+    marginBottom: 10,
+    lineHeight: 26, // --leading-tight
     textShadowColor: 'rgba(255, 255, 255, 0.9)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
@@ -152,12 +165,12 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   cardDescription: {
-    fontSize: 17, // Slightly larger for readability
+    fontSize: 14,
     fontFamily: 'Ubuntu-Regular',
     color: '#334155', // Darker gray for better contrast
     textAlign: 'center',
-    lineHeight: 26, // Better line spacing
-    paddingHorizontal: 12,
+    lineHeight: 20,
+    paddingHorizontal: 6,
     textShadowColor: 'rgba(255, 255, 255, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,

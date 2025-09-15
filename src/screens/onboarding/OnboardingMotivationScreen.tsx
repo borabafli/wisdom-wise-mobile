@@ -281,6 +281,8 @@ Remember: This is their first interaction with you. Be genuinely caring, specifi
                   onChangeText={setTextInput}
                   onFocus={() => setIsTextFocused(true)}
                   onBlur={() => setIsTextFocused(false)}
+                  autoCapitalize="sentences"
+                  autoCorrect={true}
                   maxLength={200}
                 />
               </View>
