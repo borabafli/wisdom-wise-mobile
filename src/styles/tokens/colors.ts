@@ -139,7 +139,7 @@ export const colors = {
 
   // Chat Colors
   chat: {
-    bulletPoint: '#006A8F', // Turtle message bullet points and list numbers
+    bulletPoint: '#68a9a4', // Turtle message bullet points and list numbers
   },
 
   // Border Colors - Ultra Subtle

@@ -21,10 +21,10 @@ const ProfileScreen: React.FC = () => {
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
   
   const stats = [
-    { label: 'Sessions', value: '47', icon: Heart },
-    { label: 'Streak', value: '7 days', icon: Award },
-    { label: 'Insights', value: '23', icon: Brain },
-    { label: 'Exercises', value: '31', icon: Calendar }
+    { label: 'Sessions', value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
+    { label: 'Streak', value: '7 days', iconImage: require('../../assets/images/New Icons/icon-7.png') },
+    { label: 'Insights', value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
+    { label: 'Exercises', value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
   ];
 
   const [showChatHistory, setShowChatHistory] = useState(false);
@@ -61,13 +61,13 @@ const ProfileScreen: React.FC = () => {
   };
 
   const menuItems = [
-    { icon: Edit3, label: 'Edit Profile', action: () => setShowEditProfile(true) },
-    { icon: History, label: 'Chat History', action: () => setShowChatHistory(true) },
-    { icon: Volume2, label: 'Voice Settings', action: () => setShowTTSSettings(true) },
-    { icon: Bell, label: 'Notifications', badge: '3' },
-    { icon: Shield, label: 'Privacy & Security' },
-    { icon: Moon, label: 'Dark Mode', toggle: true },
-    { icon: HelpCircle, label: 'Help & Support' },
+    { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: 'Edit Profile', action: () => setShowEditProfile(true) },
+    { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: 'Chat History', action: () => setShowChatHistory(true) },
+    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: 'Voice Settings', action: () => setShowTTSSettings(true) },
+    { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: 'Notifications', badge: '3' },
+    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: 'Privacy & Security' },
+    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: 'Dark Mode', toggle: true },
+    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: 'Help & Support' },
     { icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }
   ];
 
@@ -102,152 +102,207 @@ const ProfileScreen: React.FC = () => {
         {/* User Info */}
         <View style={styles.userInfoSection}>
           <View style={styles.userInfoCard}>
-            <View style={styles.userInfoContent}>
-              <View style={styles.avatarContainer}>
-                <LinearGradient
-                  colors={['#3b82f6', '#0ea5e9']}
-                  style={styles.avatar}
-                >
-                  <User size={32} color="white" />
-                </LinearGradient>
+            <LinearGradient
+              colors={['#D8E9E9', '#E7F3F1']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.userInfoCardGradient}
+            >
+              <View style={styles.userInfoContent}>
+                <View style={styles.avatarContainer}>
+                  <LinearGradient
+                    colors={['#3b82f6', '#0ea5e9']}
+                    style={styles.avatar}
+                  >
+                    <User size={32} color="white" />
+                  </LinearGradient>
+                </View>
+                <View style={styles.userDetails}>
+                  <Text style={styles.userName}>{displayName}</Text>
+                  <Text style={styles.memberSince}>
+                    {isAnonymous 
+                      ? 'Anonymous Guest' 
+                      : profile 
+                        ? `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` 
+                        : user?.email || 'Welcome to WisdomWise'
+                    }
+                  </Text>
+                  <Text style={styles.premiumBadge}>
+                    {isAnonymous ? 'Guest User' : 'Premium Member'}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
+                  <Settings size={20} color="#002d14" />
+                </TouchableOpacity>
               </View>
-              <View style={styles.userDetails}>
-                <Text style={styles.userName}>{displayName}</Text>
-                <Text style={styles.memberSince}>
-                  {isAnonymous 
-                    ? 'Anonymous Guest' 
-                    : profile 
-                      ? `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` 
-                      : user?.email || 'Welcome to WisdomWise'
-                  }
-                </Text>
-                <Text style={styles.premiumBadge}>
-                  {isAnonymous ? 'Guest User' : 'Premium Member'}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
-                <Settings size={20} color="#6b7280" />
-              </TouchableOpacity>
-            </View>
+            </LinearGradient>
           </View>
         </View>
 
-        {/* Stats Grid - Insights Card Style */}
-        <View style={styles.statsCard}>
+        {/* Stats Grid - HomeScreen Style */}
+        <View style={styles.statsSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Your Progress</Text>
+          </View>
+          
           <View style={styles.statsGrid}>
             {/* First Row: Sessions and Streak */}
             <View style={styles.statsRow}>
               {stats.slice(0, 2).map((stat, index) => {
-                const Icon = stat.icon;
                 return (
-                  <View key={index} style={styles.statCard}>
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.statCard}
+                    activeOpacity={0.9}
+                  >
                     <LinearGradient
-                      colors={['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)']}
+                      colors={['#D8E9E9', '#E7F3F1']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
                       style={styles.statCardGradient}
                     >
                       <View style={styles.statCardContent}>
-                        <View style={styles.statIconContainer}>
-                          <Icon size={18} color="#2563eb" />
-                          <Text style={styles.statValue}>{stat.value}</Text>
+                        <View style={styles.statIcon}>
+                          <Image 
+                            source={stat.iconImage}
+                            style={styles.statIconImage}
+                            contentFit="contain"
+                          />
                         </View>
-                        <Text style={styles.statLabel}>{stat.label}</Text>
+                        <View style={styles.statInfo}>
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                          <Text style={styles.statLabel}>{stat.label}</Text>
+                        </View>
                       </View>
                     </LinearGradient>
-                  </View>
+                  </TouchableOpacity>
                 );
               })}
             </View>
             {/* Second Row: Insights and Exercises */}
             <View style={styles.statsRow}>
               {stats.slice(2, 4).map((stat, index) => {
-                const Icon = stat.icon;
                 return (
-                  <View key={index + 2} style={styles.statCard}>
+                  <TouchableOpacity
+                    key={index + 2}
+                    style={styles.statCard}
+                    activeOpacity={0.9}
+                  >
                     <LinearGradient
-                      colors={['rgba(255, 255, 255, 0.95)', 'rgba(239, 246, 255, 0.9)']}
+                      colors={['#D8E9E9', '#E7F3F1']}
+                      start={{ x: 0.2, y: 0 }}
+                      end={{ x: 0.8, y: 1 }}
                       style={styles.statCardGradient}
                     >
                       <View style={styles.statCardContent}>
-                        <View style={styles.statIconContainer}>
-                          <Icon size={18} color="#2563eb" />
-                          <Text style={styles.statValue}>{stat.value}</Text>
+                        <View style={styles.statIcon}>
+                          <Image 
+                            source={stat.iconImage}
+                            style={styles.statIconImage}
+                            contentFit="contain"
+                          />
                         </View>
-                        <Text style={styles.statLabel}>{stat.label}</Text>
+                        <View style={styles.statInfo}>
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                          <Text style={styles.statLabel}>{stat.label}</Text>
+                        </View>
                       </View>
                     </LinearGradient>
-                  </View>
+                  </TouchableOpacity>
                 );
               })}
             </View>
           </View>
         </View>
 
-        {/* Menu Items - Insights Pattern */}
-        {menuItems.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <View key={index} style={styles.menuCard}>
-              <TouchableOpacity
-                style={[
-                  styles.menuItemInsights,
-                  item.danger && styles.menuItemDanger
-                ]}
-                activeOpacity={0.7}
-                onPress={item.action}
-              >
-                <View style={styles.menuIconContainer}>
-                  <View style={styles.menuIconBackground}>
-                    <Icon 
-                      size={24} 
-                      color={item.danger ? '#ef4444' : '#6b7280'} 
-                    />
-                  </View>
-                </View>
-                <View style={styles.menuTitleContainer}>
-                  <Text style={[
-                    styles.menuTitle,
-                    item.danger && styles.menuTitleDanger
-                  ]}>
-                    {item.label}
-                  </Text>
-                  <Text style={styles.menuSubtitle}>
-                    {item.label === 'Edit Profile' ? 'Update your information' :
-                     item.label === 'Chat History' ? 'View past conversations' :
-                     item.label === 'Voice Settings' ? 'Configure speech options' :
-                     item.label === 'Notifications' ? 'Manage alerts' :
-                     item.label === 'Privacy & Security' ? 'Control your data' :
-                     item.label === 'Dark Mode' ? 'Toggle dark theme' :
-                     item.label === 'Help & Support' ? 'Get assistance' :
-                     item.label === 'Sign Out' ? 'Leave your account' :
-                     'Tap to access'}
-                  </Text>
-                </View>
-                {item.badge && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{item.badge}</Text>
-                  </View>
-                )}
-                {item.toggle && (
-                  <Switch
-                    value={false}
-                    trackColor={{ false: '#d1d5db', true: '#3b82f6' }}
-                    thumbColor="#ffffff"
-                    ios_backgroundColor="#d1d5db"
-                    style={styles.switch}
-                  />
-                )}
-                {!item.toggle && (
-                  <View style={styles.menuArrow}>
-                    <ArrowRight 
-                      size={16} 
-                      color={item.danger ? '#ef4444' : '#1e40af'} 
-                    />
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-          );
-        })}
+        {/* Menu Items Section */}
+        <View style={styles.menuSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Settings</Text>
+          </View>
+          
+          <View style={styles.menuGrid}>
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.menuCard}
+                  activeOpacity={0.9}
+                  onPress={item.action}
+                >
+                  <LinearGradient
+                    colors={item.danger 
+                      ? ['rgba(254, 202, 202, 0.25)', 'rgba(252, 165, 165, 0.15)', 'rgba(255, 255, 255, 0.8)']
+                      : ['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.menuCardGradient}
+                  >
+                    <View style={styles.menuCardContent}>
+                      <View style={styles.menuIconContainer}>
+                        {item.iconImage ? (
+                          <Image 
+                            source={item.iconImage}
+                            style={styles.menuIconImage}
+                            contentFit="contain"
+                          />
+                        ) : (
+                          <Icon 
+                            size={24} 
+                            color={item.danger ? '#ef4444' : '#002d14'} 
+                          />
+                        )}
+                      </View>
+                      <View style={styles.menuTitleContainer}>
+                        <Text style={[
+                          styles.menuTitle,
+                          item.danger && styles.menuTitleDanger
+                        ]}>
+                          {item.label}
+                        </Text>
+                        <Text style={styles.menuSubtitle}>
+                          {item.label === 'Edit Profile' ? 'Update your information' :
+                           item.label === 'Chat History' ? 'View past conversations' :
+                           item.label === 'Voice Settings' ? 'Configure speech options' :
+                           item.label === 'Notifications' ? 'Manage alerts' :
+                           item.label === 'Privacy & Security' ? 'Control your data' :
+                           item.label === 'Dark Mode' ? 'Toggle dark theme' :
+                           item.label === 'Help & Support' ? 'Get assistance' :
+                           item.label === 'Sign Out' ? 'Leave your account' :
+                           'Tap to access'}
+                        </Text>
+                      </View>
+                      <View style={styles.menuActions}>
+                        {item.badge && (
+                          <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{item.badge}</Text>
+                          </View>
+                        )}
+                        {item.toggle && (
+                          <Switch
+                            value={false}
+                            trackColor={{ false: '#d1d5db', true: '#3b82f6' }}
+                            thumbColor="#ffffff"
+                            ios_backgroundColor="#d1d5db"
+                            style={styles.switch}
+                          />
+                        )}
+                        {!item.toggle && !item.badge && (
+                          <ArrowRight 
+                            size={16} 
+                            color={item.danger ? '#ef4444' : '#002d14'} 
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
 
         {/* App Version */}
         <View style={styles.versionSection}>

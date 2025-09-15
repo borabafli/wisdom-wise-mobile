@@ -7,6 +7,7 @@ import { Exercise } from '../types';
 export const useAppState = () => {
   const [showChat, setShowChat] = useState<boolean>(false);
   const [showBreathing, setShowBreathing] = useState<boolean>(false);
+  const [showTherapyGoals, setShowTherapyGoals] = useState<boolean>(false);
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
 
@@ -38,6 +39,18 @@ export const useAppState = () => {
     console.log('handleBackFromBreathing called');
     setShowBreathing(false);
     console.log('Returned to main app from breathing screen');
+  }, []);
+
+  const handleTherapyGoalsClick = useCallback(() => {
+    console.log('handleTherapyGoalsClick called');
+    setShowTherapyGoals(true);
+    console.log('Opening therapy goals screen');
+  }, []);
+
+  const handleBackFromTherapyGoals = useCallback(() => {
+    console.log('handleBackFromTherapyGoals called');
+    setShowTherapyGoals(false);
+    console.log('Returned to main app from therapy goals screen');
   }, []);
 
   const handleExerciseClick = useCallback((exercise?: Exercise) => {
@@ -152,12 +165,15 @@ export const useAppState = () => {
   return {
     showChat,
     showBreathing,
+    showTherapyGoals,
     currentExercise,
     chatWithActionPalette,
     handleStartSession,
     handleNewSession,
     handleBackFromChat,
     handleBackFromBreathing,
+    handleTherapyGoalsClick,
+    handleBackFromTherapyGoals,
     handleExerciseClick,
     handleInsightClick,
     handleActionSelect,

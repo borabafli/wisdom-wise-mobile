@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Message, storageService } from '../services/storageService';
 import { contextService } from '../services/contextService';
 import { apiService } from '../services/apiService';
-import { getExerciseFlow } from '../data/exerciseLibrary';
+import { getExerciseFlow, exerciseLibraryData } from '../data/exerciseLibrary';
 import { ttsService } from '../services/ttsService';
 import { memoryService } from '../services/memoryService';
 import { valuesService } from '../services/valuesService';
@@ -47,7 +47,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
       }
 
       setExerciseData({ dynamicFlow: flow, currentExercise });
-      
+
       // Show pre-exercise mood slider first
       setShowPreExerciseMoodSlider(true);
       return true;

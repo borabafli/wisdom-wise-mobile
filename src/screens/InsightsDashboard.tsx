@@ -30,6 +30,7 @@ const { width } = Dimensions.get('window');
 
 interface InsightsDashboardProps {
   onInsightClick: (type: string, insight?: any) => void;
+  onTherapyGoalsClick?: () => void;
 }
 
 // Brief explanations for thought pattern types
@@ -49,7 +50,7 @@ const PATTERN_EXPLANATIONS: Record<string, string> = {
   'Thought Pattern': 'A recurring way of thinking that may need attention'
 };
 
-const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick }) => {
+const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, onTherapyGoalsClick }) => {
   const { firstName } = useUserProfile();
   
   // Apply dynamic navigation bar styling
@@ -275,9 +276,10 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
             source={require('../../assets/images/insights-background.png')}
             style={[styles.scrollableBackgroundImage, { 
               height: Math.max(Dimensions.get('window').height, contentHeight),
-              width: Dimensions.get('window').width // Full width
+              width: '100%' // Use 100% for full width
             }]}
             contentFit="cover"
+            contentPosition="center bottom" // Keep bubbles visible at bottom
           />
         </View>
         
@@ -767,6 +769,95 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick })
                   </TouchableOpacity>
                 );
               })}
+            </View>
+          )}
+        </View>
+
+        {/* Therapy Goals Section */}
+        <View style={styles.patternsCard}>
+          <TouchableOpacity
+            style={styles.patternsHeader}
+            onPress={onTherapyGoalsClick || (() => setGoalDetailsVisible(true))}
+            activeOpacity={0.7}
+          >
+            <View style={styles.patternsIcon}>
+              <Image
+                source={require('../../assets/images/New Icons/icon-12.png')}
+                style={{ width: 60, height: 60 }}
+                contentFit="contain"
+              />
+            </View>
+            <View style={styles.patternsTitleContainer}>
+              <Text style={styles.patternsTitle}>Therapy Goals</Text>
+              <Text style={styles.patternsSubtitle}>
+                {activeGoals.length > 0
+                  ? `${activeGoals.length} active goal${activeGoals.length === 1 ? '' : 's'}`
+                  : 'Set your first goal'
+                }
+              </Text>
+            </View>
+            <View style={styles.patternArrow}>
+              <ArrowRight size={16} color="#059669" />
+            </View>
+          </TouchableOpacity>
+
+          {activeGoals.length > 0 && (
+            <View style={styles.patternsContainer}>
+              {activeGoals.slice(0, 3).map((goal) => (
+                <TouchableOpacity
+                  key={goal.id}
+                  onPress={() => {
+                    setSelectedGoal(goal);
+                    setGoalDetailsVisible(true);
+                  }}
+                  style={styles.patternCard}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.patternContent}>
+                    <View style={styles.patternContentLeft}>
+                      <Text style={styles.patternName}>
+                        {goal.focusArea === 'other' ? goal.customFocusArea :
+                         goal.focusArea.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </Text>
+                      <Text style={styles.insightPreview}>
+                        {goal.mainGoal}
+                      </Text>
+                      <View style={styles.goalProgressContainer}>
+                        <View style={styles.goalProgressBar}>
+                          <View
+                            style={[
+                              styles.goalProgressFill,
+                              { width: `${goal.progress}%` }
+                            ]}
+                          />
+                        </View>
+                        <Text style={styles.patternDescription}>
+                          {goal.progress}% complete • {goal.timeline}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.patternArrow}>
+                      <ArrowRight size={16} color="#059669" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+
+              {activeGoals.length === 0 && (
+                <View style={styles.noGoalsContainer}>
+                  <Text style={styles.noGoalsText}>
+                    Set therapy goals to give direction and motivation to your healing journey.
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => onInsightClick('goal-setting')}
+                    style={styles.setGoalButton}
+                    activeOpacity={0.8}
+                  >
+                    <Plus size={16} color="#FFFFFF" />
+                    <Text style={styles.setGoalButtonText}>Set Your First Goal</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           )}
         </View>

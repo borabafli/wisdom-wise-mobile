@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X } from 'lucide-react-native';
@@ -11,6 +11,8 @@ import { exerciseLibraryStyles, getTagColor, getExerciseCardGradient } from '../
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { getExerciseEmojis } from '../utils/emojiUtils';
 import { useUserProfile } from '../hooks/useUserProfile';
+import SlidableExerciseCard from '../components/SlidableExerciseCard';
+import { CardHidingService } from '../services/cardHidingService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,9 +26,19 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const [selectedBenefitFilter, setSelectedBenefitFilter] = useState('All');
   const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
+  const [hiddenCardIds, setHiddenCardIds] = useState<string[]>([]);
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
+  
+  // Load hidden card IDs on mount
+  useEffect(() => {
+    const loadHiddenCards = async () => {
+      const hiddenIds = await CardHidingService.getHiddenCardIds();
+      setHiddenCardIds(hiddenIds);
+    };
+    loadHiddenCards();
+  }, []);
   
   // Get user profile for emoji preferences
   const { profile } = useUserProfile();
@@ -88,9 +100,19 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     return 'Focus';
   };
 
+  // Handle card hiding
+  const handleHideCard = async (exerciseId: string, hideType: 'permanent' | 'temporary') => {
+    await CardHidingService.hideCard(exerciseId, hideType);
+    const updatedHiddenIds = await CardHidingService.getHiddenCardIds();
+    setHiddenCardIds(updatedHiddenIds);
+  };
+
   // Filter exercises based on all criteria
   const filteredExercises = useMemo(() => {
     let filtered = exercises;
+
+    // Filter out hidden cards first
+    filtered = filtered.filter(exercise => !hiddenCardIds.includes(exercise.id));
 
     // Search filter
     if (searchText) {
@@ -133,7 +155,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     }
 
     return filtered;
-  }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
+  }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter, hiddenCardIds]);
 
 
   const FilterChip = ({ label, selected, onPress, filterType }: { 
@@ -204,63 +226,15 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     const isLargeButton = benefit.length > 8;
     
     return (
-      <TouchableOpacity
-        style={exerciseLibraryStyles.exerciseCard}
-        onPress={() => onExerciseClick(exercise)}
-        activeOpacity={0.8}
-      >
-        <LinearGradient
-          colors={getExerciseCardGradient()}
-          style={exerciseLibraryStyles.exerciseCardGradient}
-        >
-          {/* Left side image */}
-          <View style={exerciseLibraryStyles.exerciseImageContainer}>
-            <Image 
-              source={exercise.image || require('../../assets/images/new-icon1.png')}
-              style={exerciseLibraryStyles.exerciseImage}
-              contentFit="cover"
-            />
-          </View>
-          
-          {/* Right side content */}
-          <View style={exerciseLibraryStyles.exerciseContent}>
-            {/* Top row: Benefit tag and time */}
-            <View style={exerciseLibraryStyles.tagAndTimeRow}>
-              {/* Benefit tag with button image background */}
-              <View style={exerciseLibraryStyles.categoryTagImageContainer}>
-                <Image 
-                  source={buttonImage}
-                  style={[
-                    exerciseLibraryStyles.categoryTagImage,
-                    isLargeButton && exerciseLibraryStyles.categoryTagImageLarge
-                  ]}
-                  contentFit="cover"
-                />
-                <Text style={[
-                  exerciseLibraryStyles.categoryTagTextOverlay,
-                  isLargeButton && exerciseLibraryStyles.categoryTagTextOverlayLarge
-                ]}>
-                  {benefit}
-                </Text>
-              </View>
-              
-              {/* Time display */}
-              <View style={exerciseLibraryStyles.durationContainer}>
-                <Clock size={12} color="#002244" />
-                <Text style={exerciseLibraryStyles.exerciseDuration}>{exercise.duration}</Text>
-              </View>
-            </View>
-            
-            <Text style={exerciseLibraryStyles.exerciseTitle} numberOfLines={2}>
-              {exercise.name}
-            </Text>
-            
-            <Text style={exerciseLibraryStyles.exerciseDescription} numberOfLines={2}>
-              {exercise.description}
-            </Text>
-          </View>
-        </LinearGradient>
-      </TouchableOpacity>
+      <SlidableExerciseCard
+        exercise={exercise}
+        index={index}
+        benefit={benefit}
+        isLargeButton={isLargeButton}
+        buttonImage={buttonImage}
+        onExerciseClick={onExerciseClick}
+        onHideCard={handleHideCard}
+      />
     );
   };
 

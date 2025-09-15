@@ -14,6 +14,7 @@ import InsightsDashboard from '../screens/InsightsDashboard';
 import ProfileScreen from '../screens/ProfileScreen';
 import ChatInterface from '../screens/ChatInterface';
 import BreathingScreen from '../screens/BreathingScreen';
+import TherapyGoalsScreen from '../screens/TherapyGoalsScreen';
 import CustomTabBar from './CustomTabBar';
 
 // Import navigators
@@ -60,12 +61,15 @@ export const AppContent: React.FC = () => {
   const {
     showChat,
     showBreathing,
+    showTherapyGoals,
     currentExercise,
     chatWithActionPalette,
     handleStartSession,
     handleNewSession,
     handleBackFromChat,
     handleBackFromBreathing,
+    handleTherapyGoalsClick,
+    handleBackFromTherapyGoals,
     handleExerciseClick,
     handleInsightClick,
     handleActionSelect,
@@ -113,10 +117,11 @@ export const AppContent: React.FC = () => {
     console.log('AppContent re-rendered. State:', {
       showChat,
       showBreathing,
+      showTherapyGoals,
       currentExercise: currentExercise ? currentExercise.name : 'null',
       chatWithActionPalette,
     });
-  }, [showChat, showBreathing, currentExercise, chatWithActionPalette]);
+  }, [showChat, showBreathing, showTherapyGoals, currentExercise, chatWithActionPalette]);
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
@@ -145,6 +150,22 @@ export const AppContent: React.FC = () => {
       <>
         <StatusBar style="dark" backgroundColor="#f0f9ff" />
         <BreathingScreen onBack={handleBackFromBreathing} />
+      </>
+    );
+  }
+
+  if (showTherapyGoals) {
+    return (
+      <>
+        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <TherapyGoalsScreen
+          onBack={handleBackFromTherapyGoals}
+          onNavigateToExercises={handleNavigateToExercises}
+          onStartGoalSetting={() => {
+            // TODO: Add goal setting navigation when that feature is implemented
+            console.log('Goal setting requested');
+          }}
+        />
       </>
     );
   }
@@ -195,7 +216,7 @@ export const AppContent: React.FC = () => {
           {() => <ExerciseLibrary onExerciseClick={handleExerciseClick} />}
         </Tab.Screen>
         <Tab.Screen name="Insights">
-          {() => <InsightsDashboard onInsightClick={handleInsightClick} />}
+          {() => <InsightsDashboard onInsightClick={handleInsightClick} onTherapyGoalsClick={handleTherapyGoalsClick} />}
         </Tab.Screen>
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>

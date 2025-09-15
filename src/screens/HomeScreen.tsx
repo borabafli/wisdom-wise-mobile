@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
@@ -12,6 +12,10 @@ import { HomeScreenProps } from '../types/app';
 import { useQuote } from '../hooks/useQuote';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { AudioWaveformDemo } from '../components/audio/AudioWaveformDemo';
+import { getTopExercises, ExerciseProgress, Exercise } from '../utils/exercisePriority';
+import SlidableHomeExerciseCard from '../components/SlidableHomeExerciseCard';
+import { CardHidingService } from '../services/cardHidingService';
+import { ExerciseCompletionService } from '../services/exerciseCompletionService';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
@@ -19,13 +23,81 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   const [showWaveformDemo, setShowWaveformDemo] = useState(false);
   const insets = useSafeAreaInsets();
 
+  // Exercise progress state - in real app, this would come from storage/API
+  const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress>({});
+  const [showTestButtons, setShowTestButtons] = useState(false);
+  const [hiddenCardIds, setHiddenCardIds] = useState<string[]>([]);
+  const [completedExerciseIds, setCompletedExerciseIds] = useState<string[]>([]);
+
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.homeScreen);
+  
+  // Load hidden card IDs and completed exercises on mount
+  useEffect(() => {
+    const loadData = async () => {
+      const hiddenIds = await CardHidingService.getHiddenCardIds();
+      setHiddenCardIds(hiddenIds);
+
+      const completedIds = await ExerciseCompletionService.getCompletedExerciseIds();
+      setCompletedExerciseIds(completedIds);
+
+      // Update exercise progress with completion status
+      const newProgress: ExerciseProgress = {};
+      completedIds.forEach(id => {
+        newProgress[id] = {
+          completed: true,
+          completedCount: 1,
+          rating: Math.floor(Math.random() * 5) + 1,
+          moodImprovement: Math.floor(Math.random() * 8) + 2,
+          lastCompleted: new Date(),
+        };
+      });
+      setExerciseProgress(newProgress);
+    };
+    loadData();
+  }, []);
 
   // Static welcome message
   const welcomeMessage = {
-    title: "Let's begin with you",
-    subtitle: "How are you right now?"
+    title: "How are you\nfeeling?",
+    subtitle: "" // Removed subtitle
+  };
+
+  // Handle card hiding
+  const handleHideCard = async (exerciseId: string, hideType: 'permanent' | 'temporary') => {
+    await CardHidingService.hideCard(exerciseId, hideType);
+    const updatedHiddenIds = await CardHidingService.getHiddenCardIds();
+    setHiddenCardIds(updatedHiddenIds);
+  };
+
+  // Get prioritized exercises and filter out hidden ones
+  const topExercises = useMemo(() => {
+    // Pass hidden IDs to getTopExercises so it can provide alternatives automatically
+    return getTopExercises(exerciseProgress, hiddenCardIds);
+  }, [exerciseProgress, hiddenCardIds]);
+
+  // Test function to simulate exercise completion
+  const simulateExerciseCompletion = async (exerciseId: string, completed: boolean) => {
+    if (completed) {
+      await ExerciseCompletionService.markExerciseCompleted(exerciseId);
+      const updatedCompletedIds = await ExerciseCompletionService.getCompletedExerciseIds();
+      setCompletedExerciseIds(updatedCompletedIds);
+    } else {
+      await ExerciseCompletionService.removeCompletion(exerciseId);
+      const updatedCompletedIds = await ExerciseCompletionService.getCompletedExerciseIds();
+      setCompletedExerciseIds(updatedCompletedIds);
+    }
+
+    setExerciseProgress(prev => ({
+      ...prev,
+      [exerciseId]: {
+        completed,
+        completedCount: completed ? 1 : 0,
+        rating: completed ? Math.floor(Math.random() * 5) + 1 : undefined,
+        moodImprovement: completed ? Math.floor(Math.random() * 8) + 2 : undefined,
+        lastCompleted: completed ? new Date() : undefined,
+      }
+    }));
   };
 
 
@@ -50,8 +122,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         {/* Header Text and Chat Input */}
         <View style={styles.headerSection}>
           <View style={styles.headerText}>
-            <Text style={styles.ctaTitle}>{welcomeMessage.title}</Text>
-            <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>
+            <Text style={styles.ctaTitle}>How are you</Text>
+            <Text style={[styles.ctaTitle, styles.ctaTitleSecondLine]}>feeling?</Text>
+            {welcomeMessage.subtitle && <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>}
           </View>
           
           {/* Scrollable Turtle Background - positioned between text and chatbar */}
@@ -70,121 +143,64 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             activeOpacity={0.9}
           >
             
-            {/* Input area */}
-            <LinearGradient
-              colors={['rgba(248, 250, 252, 0.7)', 'rgba(241, 245, 249, 0.8)', 'rgba(255, 255, 255, 0.9)']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.inputContainer}
-            >
-              <View style={styles.micButton}>
-                <Mic size={28} color="#374151" strokeWidth={1.5} />
-              </View>
-              <Text style={styles.inputText} numberOfLines={1}>Share how you feel...</Text>
-            </LinearGradient>
+            {/* Input area - Just the image */}
+            <Image
+              source={require('../../assets/images/Buttons/chatbar.png')}
+              style={styles.chatbarImage}
+              contentFit="contain"
+            />
+            
+            {/* Grey text overlay on chatbar */}
+            <Text style={styles.chatbarText}>Tap to Share...</Text>
           </TouchableOpacity>
         </View>
 
         {/* For You Today Section */}
         <View style={styles.exercisesSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>For You Today</Text>
-            <TouchableOpacity 
-              onPress={onNavigateToExercises}
-              style={styles.seeAllButton}
-            >
-              <Text style={styles.seeAllText}>See all</Text>
-            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>Your Next Steps</Text>
+            <View style={styles.headerButtons}>
+              <TouchableOpacity 
+                onPress={() => setShowTestButtons(!showTestButtons)}
+                style={[styles.testButton, showTestButtons && styles.testButtonActive]}
+              >
+                <Text style={[styles.testButtonText, showTestButtons && styles.testButtonTextActive]}>
+                  {showTestButtons ? 'Hide Test' : 'Test'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={onNavigateToExercises}
+                style={styles.seeAllButton}
+              >
+                <Text style={styles.seeAllText}>See all</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Exercise Cards */}
+          {/* Exercise Cards with background line */}
+<View style={styles.exercisesWrapper}>
+  {/* Decorative background line */}
+  <Image 
+    source={require('../../assets/images/line.png')}
+    style={styles.exercisesLineBackground}
+  />
+
+            {/* Dynamic Exercise Cards */}
           <View style={styles.exercisesList}>
-            {/* Morning Mindfulness */}
-            <TouchableOpacity
-              onPress={() => onStartSession({ type: 'mindfulness', name: 'Morning Mindfulness', duration: '8 min', description: 'Start your day with gentle awareness and presence' })}
-              style={styles.exerciseCard}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#D8E9E9', '#E7F3F1']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.exerciseCardGradient}
-              >
-                <View style={styles.exerciseCardContent}>
-                  <View style={styles.exerciseIcon}>
-                    <Image 
-                      source={require('../../assets/images/New Icons/icon-1.png')}
-                      style={styles.exerciseIconImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                  <View style={styles.exerciseInfo}>
-                    <Text style={styles.exerciseName} numberOfLines={1}>Morning Mindfulness</Text>
-                    <Text style={styles.exerciseDescription}>Gentle awareness</Text>
-                    <Text style={styles.exerciseTime}>8 min</Text>
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Stress Relief */}
-            <TouchableOpacity
-              onPress={() => onStartSession({ type: 'stress-relief', name: 'Stress Relief', duration: '3 min', description: 'Progressive relaxation for immediate relief' })}
-              style={styles.exerciseCard}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#D8E9E9', '#E7F3F1']}
-                start={{ x: 0, y: 0.3 }}
-                end={{ x: 1, y: 0.8 }}
-                style={styles.exerciseCardGradient}
-              >
-                <View style={styles.exerciseCardContent}>
-                  <View style={styles.exerciseIcon}>
-                    <Image 
-                      source={require('../../assets/images/New Icons/icon-2.png')}
-                      style={styles.exerciseIconImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                  <View style={styles.exerciseInfo}>
-                    <Text style={styles.exerciseName} numberOfLines={1}>Stress Relief</Text>
-                    <Text style={styles.exerciseDescription}>Release tension</Text>
-                    <Text style={styles.exerciseTime}>3 min</Text>
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Gratitude Practice */}
-            <TouchableOpacity
-              onPress={() => onStartSession({ type: 'gratitude', name: 'Gratitude Practice', duration: '2 min', description: 'Cultivate appreciation and positive mindset' })}
-              style={styles.exerciseCard}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#D8E9E9', '#E7F3F1']}
-                start={{ x: 0.2, y: 0 }}
-                end={{ x: 0.8, y: 1 }}
-                style={styles.exerciseCardGradient}
-              >
-                <View style={styles.exerciseCardContent}>
-                  <View style={styles.exerciseIcon}>
-                    <Image 
-                      source={require('../../assets/images/New Icons/icon-3.png')}
-                      style={styles.exerciseIconImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                  <View style={styles.exerciseInfo}>
-                    <Text style={styles.exerciseName} numberOfLines={1}>Gratitude Practice</Text>
-                    <Text style={styles.exerciseDescription}>Cultivate positivity</Text>
-                    <Text style={styles.exerciseTime}>2 min</Text>
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+            {topExercises.map((exercise, index) => (
+              <SlidableHomeExerciseCard
+                key={exercise.id}
+                exercise={exercise}
+                index={index}
+                exerciseProgress={exerciseProgress}
+                showTestButtons={showTestButtons}
+                onStartSession={onStartSession}
+                onHideCard={handleHideCard}
+                simulateExerciseCompletion={simulateExerciseCompletion}
+              />
+            ))}
+          </View>
           </View>
         </View>
         
@@ -200,19 +216,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
                 style={styles.quickActionGradient}
+                imageStyle={styles.quickActionBackgroundImage}
+                resizeMode="cover"
               >
                 <Image 
                   source={require('../../assets/images/New Icons/icon-4.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText}>Browse Exercises</Text>
-              </LinearGradient>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Browse{"\n"}Exercises</Text>
+              </ImageBackground>
             </TouchableOpacity>
             
             <TouchableOpacity
@@ -220,19 +236,39 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['rgba(147, 197, 253, 0.25)', 'rgba(186, 230, 253, 0.15)', 'rgba(255, 255, 255, 0.8)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
                 style={styles.quickActionGradient}
+                imageStyle={styles.quickActionBackgroundImage}
+                resizeMode="cover"
               >
                 <Image 
                   source={require('../../assets/images/New Icons/icon-5.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText}>View Insights</Text>
-              </LinearGradient>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>View{"\n"}Insights</Text>
+              </ImageBackground>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => onStartSession({ type: 'breathing', name: 'Deep Breathing', duration: '5 min', description: 'Calm your mind with guided breathing' })}
+              style={styles.quickActionButton}
+              activeOpacity={0.9}
+            >
+              <ImageBackground
+                source={require('../../assets/images/Buttons/background-5.png')}
+                style={styles.quickActionGradient}
+                imageStyle={styles.quickActionBackgroundImage}
+                resizeMode="cover"
+              >
+                <Image 
+                  source={require('../../assets/images/New Icons/icon-6.png')}
+                  style={styles.quickActionIconImage}
+                  contentFit="contain"
+                />
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Start{"\n"}Breathing</Text>
+              </ImageBackground>
             </TouchableOpacity>
 
           </View>
