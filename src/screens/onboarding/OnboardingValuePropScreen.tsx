@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronRight } from 'lucide-react-native';
 import { Image } from 'expo-image';
-import WatercolorBackdrop from '../../components/WatercolorBackdrop';
+// import WatercolorBackdrop from '../../components/WatercolorBackdrop';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -19,27 +19,27 @@ interface ValueCard {
 const valueCards: ValueCard[] = [
   {
     id: 1,
-    iconImage: require('../../../assets/images/New Icons/icon-2.png'),
+    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-2.png'),
     title: 'Therapeutic Conversations',
-    description: "I'll help you untangle complex thoughts and emotions through evidence-based techniques",
+    description: "I'll help you untangle complex thoughts and emotions",
   },
   {
     id: 2,
-    iconImage: require('../../../assets/images/New Icons/icon-5.png'),
+    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-5.png'),
     title: '14+ Therapeutic Exercises',
-    description: 'From breathing techniques to CBT tools, all tailored to your specific needs',
+    description: 'From breathing techniques to CBT tools, all tailored to your needs',
   },
   {
     id: 3,
-    iconImage: require('../../../assets/images/New Icons/icon-12.png'),
+    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-12.png'),
     title: 'Personal Insights Dashboard',
-    description: 'Discover patterns in your thinking, track your growth, and celebrate progress',
+    description: 'Discover patterns in your thinking and celebrate progress',
   },
   {
     id: 4,
-    iconImage: require('../../../assets/images/New Icons/icon-14.png'),
+    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-14.png'),
     title: 'AI That Remembers You',
-    description: 'I learn from our conversations to provide increasingly personalized support',
+    description: 'I learn from our conversations to provide personalized support',
   },
 ];
 
@@ -48,12 +48,9 @@ interface OnboardingValuePropScreenProps {
 }
 
 const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ onContinue }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const cardAnimations = useRef(valueCards.map(() => new Animated.Value(0))).current;
-  const dotAnimations = useRef(valueCards.map(() => new Animated.Value(0))).current;
 
   useEffect(() => {
     // Entrance animations
@@ -70,61 +67,22 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
       }),
     ]).start();
 
-    // Initial card animation
-    animateCard(0);
+    // Staggered card animations
+    const animateCards = () => {
+      const animations = cardAnimations.map((anim, index) =>
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 600,
+          delay: index * 200,
+          useNativeDriver: true,
+        })
+      );
+      Animated.parallel(animations).start();
+    };
+
+    animateCards();
   }, []);
 
-  const animateCard = (index: number) => {
-    // Reset all card animations
-    cardAnimations.forEach((anim, i) => {
-      if (i !== index) {
-        Animated.timing(anim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-      }
-    });
-
-    // Animate current card
-    Animated.sequence([
-      Animated.timing(cardAnimations[index], {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Animate dots
-    dotAnimations.forEach((anim, i) => {
-      Animated.timing(anim, {
-        toValue: i === index ? 1 : 0,
-        duration: 400,
-        useNativeDriver: false,
-      }).start();
-    });
-  };
-
-  const handleScroll = (event: any) => {
-    const contentOffset = event.nativeEvent.contentOffset.x;
-    const cardWidth = width - 48; // Account for padding
-    const index = Math.round(contentOffset / cardWidth);
-    
-    if (index !== currentIndex && index >= 0 && index < valueCards.length) {
-      setCurrentIndex(index);
-      animateCard(index);
-    }
-  };
-
-  const scrollToCard = (index: number) => {
-    const cardWidth = width - 48;
-    scrollViewRef.current?.scrollTo({
-      x: index * cardWidth,
-      animated: true,
-    });
-    setCurrentIndex(index);
-    animateCard(index);
-  };
 
   const renderCard = (card: ValueCard, index: number) => {
     const cardScale = cardAnimations[index].interpolate({
@@ -151,7 +109,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
         <TouchableOpacity activeOpacity={0.85} style={styles.cardInner}>
           <View style={styles.cardContent}>
             <View style={styles.textContent}>
-              <Image source={card.iconImage} style={styles.iconImage} contentFit="contain" />
+              <Image source={card.iconImage} style={styles.iconImage as any} contentFit="contain" />
               <Text style={styles.cardTitle}>{card.title}</Text>
               <Text style={styles.cardDescription}>{card.description}</Text>
             </View>
@@ -163,65 +121,70 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
 
   return (
     <LinearGradient
-      colors={['#ffffff', '#f5fefc']}
+      colors={['#f0fdfa', '#e6fffa', '#ccfbf1']}
       style={styles.container}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-        <SafeAreaView style={styles.safeArea}>
-          <WatercolorBackdrop style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-          {/* Progress Indicator */}
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={styles.progressFill} />
-            </View>
+      <SafeAreaView style={styles.safeArea}>
+        {/* <WatercolorBackdrop style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} /> */}
+        
+        {/* Progress Indicator */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View style={styles.progressFill} />
+          </View>
+        </View>
+
+        <Animated.View 
+          style={[
+            styles.contentContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }
+          ]}
+        >
+          {/* Header */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.headline}>How can Anu help you?</Text>
           </View>
 
-          <Animated.View 
-            style={[
-              styles.contentContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }],
-              }
-            ]}
+          {/* Cards Grid */}
+          <ScrollView 
+            style={styles.cardsScrollView}
+            contentContainerStyle={styles.cardsContent}
+            showsVerticalScrollIndicator={false}
           >
-            {/* Header */}
-            <View style={styles.headerContainer}>
-              <Text style={styles.headline}>How can Anu help you?</Text>
-            </View>
-
-            {/* Tiles Grid */}
-            <View style={styles.tilesGrid}>
+            <View style={styles.cardsGrid}>
               {valueCards.map((card, index) => (
-                <View key={card.id} style={styles.tileWrapper}>
+                <View key={card.id} style={styles.cardWrapper}>
                   {renderCard(card, index)}
                 </View>
               ))}
             </View>
+          </ScrollView>
 
-            {/* Remove dots for grid layout */}
-
-            {/* Action Button */}
-            <View style={styles.actionContainer}>
-              <TouchableOpacity 
-                style={styles.primaryButton} 
-                onPress={onContinue}
-                activeOpacity={0.8}
+          {/* Action Button */}
+          <View style={styles.actionContainer}>
+            <TouchableOpacity 
+              style={styles.primaryButton} 
+              onPress={onContinue}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['#14b8a6', '#0d9488']}
+                style={styles.buttonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
               >
-                <LinearGradient
-                  colors={['#5BA3B8', '#357A8A']}
-                  style={styles.buttonGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.primaryButtonText}>Let's get started</Text>
-                  <ChevronRight size={20} color="white" />
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </SafeAreaView>
+                <Text style={styles.primaryButtonText}>Let's get started</Text>
+                <ChevronRight size={20} color="white" />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };

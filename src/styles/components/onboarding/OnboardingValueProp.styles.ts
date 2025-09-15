@@ -25,7 +25,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 4,
-    backgroundColor: 'rgba(91, 163, 184, 0.2)', // Using style guide primary color
+    backgroundColor: 'rgba(20, 184, 166, 0.2)',
     borderRadius: 2,
     marginRight: 12,
   },
@@ -33,7 +33,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   progressFill: {
     width: '57%', // 4/7 pages
     height: '100%',
-    backgroundColor: '#5BA3B8', // Primary blue-teal from style guide
+    backgroundColor: colors.teal[500],
     borderRadius: 2,
   },
 
@@ -47,187 +47,124 @@ export const onboardingValuePropStyles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
 
   headerContainer: {
     alignItems: 'center',
-    marginTop: height * 0.02,
+    marginTop: height * 0.04,
     paddingHorizontal: 20,
-    marginBottom: 32,
   },
 
   headline: {
-    fontSize: 32, // --text-3xl from style guide
+    fontSize: 32,
     fontFamily: 'BubblegumSans-Regular',
-    color: '#1A2332', // --near-black from style guide
+    color: colors.teal[800],
     textAlign: 'center',
     letterSpacing: -0.5,
-    lineHeight: 40, // --leading-tight equivalent
-  },
-
-  // Cards Container Styles
-  cardsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    marginVertical: 20,
-  },
-
-  cardScrollView: {
-    flexGrow: 0,
-  },
-
-  scrollContent: {
-    paddingHorizontal: 0,
-    alignItems: 'center',
-  },
-
-  // Tiles Grid
-  tilesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  tileWrapper: {
-    width: (width - 24 * 2 - 12) / 2,
-    height: 180,
+    lineHeight: 40,
     marginBottom: 16,
   },
 
-  // Card Styles (Following style guide card patterns)
+  // Cards Container Styles
+  cardsScrollView: {
+    flex: 1,
+    marginVertical: 16,
+  } as any,
+
+  cardsContent: {
+    paddingBottom: 20,
+  },
+
+  cardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+  } as any,
+
+  cardWrapper: {
+    width: (width - 48 - 16) / 2, // Account for padding and gap
+    marginBottom: 20,
+  },
+
+  // Card Styles (Following organic watercolor minimalism)
   card: {
-    height: '100%',
-    marginHorizontal: 0,
-    borderRadius: 20, // --radius-xl from style guide
+    height: 200,
+    borderRadius: 20,
     overflow: 'hidden',
-    // Shadow from style guide
-    shadowColor: '#5BA3B8',
+    shadowColor: colors.teal[500],
     shadowOffset: {
       width: 0,
-      height: 8,
+      height: 4,
     },
-    shadowOpacity: 0.16, // --shadow-lg equivalent
-    shadowRadius: 24,
-    elevation: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 6,
   },
 
   cardInner: {
     flex: 1,
     borderRadius: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderWidth: 1,
-    borderColor: 'rgba(91, 163, 184, 0.10)',
+    borderColor: 'rgba(20, 184, 166, 0.08)',
+    backdropFilter: 'blur(10px)',
   },
 
   cardContent: {
     flex: 1,
-    padding: 24, // --space-3 from style guide
-    justifyContent: 'space-between',
-    position: 'relative',
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-
-  blobWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 220,
-    opacity: 0.9,
-  },
-
 
   // Text Content Styles
   textContent: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: 12,
   },
 
   iconImage: {
-    width: 64,
-    height: 64,
+    width: 56,
+    height: 56,
     marginBottom: 12,
+    opacity: 0.9,
   },
 
   cardTitle: {
-    fontSize: 20, // tighter for tile layout
+    fontSize: 16,
     fontFamily: 'BubblegumSans-Regular',
-    color: '#1A2332',
+    color: colors.teal[800],
     textAlign: 'center',
-    marginBottom: 10,
-    lineHeight: 26, // --leading-tight
-    textShadowColor: 'rgba(255, 255, 255, 0.9)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-    letterSpacing: -0.3,
+    marginBottom: 8,
+    lineHeight: 20,
+    letterSpacing: -0.2,
   },
 
   cardDescription: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Ubuntu-Regular',
-    color: '#334155', // Darker gray for better contrast
+    color: colors.teal[600],
     textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 6,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    lineHeight: 16,
+    opacity: 0.8,
   },
 
-  // Subtle Decorative Accent
-  decorativeAccent: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 4,
-    height: 40,
-    borderRadius: 2,
-    opacity: 0.4,
-  },
 
-  // Dots Indicator Styles
-  dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 24,
-    paddingHorizontal: 20,
-  },
-
-  dotTouchable: {
-    padding: 8,
-  },
-
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(91, 163, 184, 0.3)',
-    marginHorizontal: 4,
-    // Smooth transition from style guide
-    // This would be: transition: all var(--duration-normal) var(--ease-default);
-  },
-
-  activeDot: {
-    backgroundColor: '#5BA3B8',
-    width: 24,
-    borderRadius: 12,
-  },
-
-  // Action Button Styles (Following style guide button patterns)
+  // Action Button Styles
   actionContainer: {
+    width: '100%',
     alignItems: 'center',
     paddingBottom: 20,
-    marginTop: 16,
+    marginTop: 8,
   },
 
   primaryButton: {
     width: '100%',
     height: 56,
-    borderRadius: 28, // --radius-full equivalent
-    shadowColor: '#5BA3B8',
+    borderRadius: 28,
+    shadowColor: colors.teal[500],
     shadowOffset: {
       width: 0,
       height: 4,
@@ -247,8 +184,8 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   primaryButtonText: {
-    fontSize: 18, // --text-lg from style guide
-    fontFamily: 'Ubuntu-Bold', // --font-semibold
+    fontSize: 18,
+    fontFamily: 'Ubuntu-Bold',
     color: colors.white,
     letterSpacing: 0.3,
     marginRight: 8,
