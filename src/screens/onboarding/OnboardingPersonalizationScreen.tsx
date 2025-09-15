@@ -162,7 +162,7 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
                     onChangeText={setName}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    autoCapitalize="words"
+                    autoCapitalize="none"
                     autoCorrect={false}
                     maxLength={30}
                   />

@@ -25,7 +25,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 4,
-    backgroundColor: 'rgba(91, 163, 184, 0.2)', // Using style guide primary color
+    backgroundColor: 'rgba(20, 184, 166, 0.2)',
     borderRadius: 2,
     marginRight: 12,
   },
@@ -33,14 +33,14 @@ export const onboardingMotivationStyles = StyleSheet.create({
   progressFill: {
     width: '71%', // 5/7 pages
     height: '100%',
-    backgroundColor: '#5BA3B8', // Primary blue-teal from style guide
+    backgroundColor: colors.teal[500],
     borderRadius: 2,
   },
 
   progressText: {
     fontSize: 14,
     fontFamily: 'Ubuntu-Medium',
-    color: '#5BA3B8',
+    color: colors.teal[600],
   },
 
   // Main Content Styles

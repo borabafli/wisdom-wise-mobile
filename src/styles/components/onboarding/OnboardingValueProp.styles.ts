@@ -99,20 +99,12 @@ export const onboardingValuePropStyles = StyleSheet.create({
     elevation: 8,
   },
 
-  cardBackground: {
-    flex: 1,
-  },
-
-  cardBackgroundImage: {
-    borderRadius: 20,
-    opacity: 0.6, // Very slightly increased for better background visibility
-  },
-
-  cardGradient: {
+  cardInner: {
     flex: 1,
     borderRadius: 20,
+    backgroundColor: '#ffffff',
     borderWidth: 1,
-    borderColor: 'rgba(91, 163, 184, 0.1)',
+    borderColor: 'rgba(91, 163, 184, 0.10)',
   },
 
   cardContent: {
@@ -122,6 +114,15 @@ export const onboardingValuePropStyles = StyleSheet.create({
     position: 'relative',
   },
 
+  blobWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 220,
+    opacity: 0.9,
+  },
+
 
   // Text Content Styles
   textContent: {
@@ -129,6 +130,12 @@ export const onboardingValuePropStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 32,
+  },
+
+  iconImage: {
+    width: 84,
+    height: 84,
+    marginBottom: 14,
   },
 
   cardTitle: {

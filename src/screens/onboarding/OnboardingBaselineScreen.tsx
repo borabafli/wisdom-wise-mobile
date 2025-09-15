@@ -114,7 +114,6 @@ const OnboardingBaselineScreen: React.FC<OnboardingBaselineScreenProps> = ({ onC
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
-          <Text style={styles.progressText}>7/7</Text>
         </View>
 
         {/* Main Content */}
@@ -160,6 +159,7 @@ const OnboardingBaselineScreen: React.FC<OnboardingBaselineScreenProps> = ({ onC
                 subtitle=""
                 type="mood"
                 variant="default"
+                allowReselection={true}
               />
             </View>
           </View>

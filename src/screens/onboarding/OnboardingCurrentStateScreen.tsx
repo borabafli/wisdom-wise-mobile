@@ -118,7 +118,6 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
-          <Text style={styles.progressText}>6/7</Text>
         </View>
 
         <ScrollView 

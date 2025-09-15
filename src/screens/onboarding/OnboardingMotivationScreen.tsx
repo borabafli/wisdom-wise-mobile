@@ -231,12 +231,6 @@ Remember: This is their first interaction with you. Be genuinely caring, specifi
       end={{ x: 1, y: 1 }}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* Progress Indicator */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={styles.progressFill} />
-          </View>
-        </View>
 
         {/* Anu Character Section */}
         <View style={styles.characterContainer}>

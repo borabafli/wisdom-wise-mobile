@@ -93,7 +93,6 @@ const OnboardingWelcomeScreen: React.FC<OnboardingWelcomeScreenProps> = ({ onCon
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
-          <Text style={styles.progressText}>1/10</Text>
         </View>
 
         {/* Main Content */}
@@ -192,7 +191,7 @@ const OnboardingWelcomeScreen: React.FC<OnboardingWelcomeScreenProps> = ({ onCon
               {/* Modal Header */}
               <View style={styles.modalHeader}>
                 <View style={styles.modalTitleContainer}>
-                  <Text style={styles.modalTitle}>🐢 About Anu</Text>
+                  <Text style={styles.modalTitle}>About Anu</Text>
                 </View>
                 <TouchableOpacity 
                   style={styles.closeButton}

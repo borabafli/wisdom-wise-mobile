@@ -1,67 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Animated,
-  Dimensions,
-  ImageBackground,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MessageCircle, Target, BarChart3, Brain, ChevronRight } from 'lucide-react-native';
+import { ChevronRight } from 'lucide-react-native';
+import { Image } from 'expo-image';
+import WatercolorBlob from '../../components/WatercolorBlob';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 
 const { width, height } = Dimensions.get('window');
 
 interface ValueCard {
   id: number;
-  icon: any;
+  iconImage: any;
   title: string;
   description: string;
-  gradient: string[];
-  iconColor: string;
-  backgroundImage: any;
 }
 
 const valueCards: ValueCard[] = [
   {
     id: 1,
-    icon: MessageCircle,
-    title: "Therapeutic Conversations",
+    iconImage: require('../../../assets/images/New Icons/icon-2.png'),
+    title: 'Therapeutic Conversations',
     description: "I'll help you untangle complex thoughts and emotions through evidence-based techniques",
-    gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(91, 163, 184, 0.15)'],
-    iconColor: '#5BA3B8',
-    backgroundImage: require('../../../assets/images/8.jpeg')
   },
   {
     id: 2,
-    icon: Target,
-    title: "14+ Therapeutic Exercises",
-    description: "From breathing techniques to CBT tools, all tailored to your specific needs",
-    gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(181, 167, 230, 0.15)'],
-    iconColor: '#B5A7E6',
-    backgroundImage: require('../../../assets/images/9.jpeg')
+    iconImage: require('../../../assets/images/New Icons/icon-5.png'),
+    title: '14+ Therapeutic Exercises',
+    description: 'From breathing techniques to CBT tools, all tailored to your specific needs',
   },
   {
     id: 3,
-    icon: BarChart3,
-    title: "Personal Insights Dashboard",
-    description: "Discover patterns in your thinking, track your growth, and celebrate progress",
-    gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(160, 213, 211, 0.15)'],
-    iconColor: '#A0D5D3',
-    backgroundImage: require('../../../assets/images/10.jpeg')
+    iconImage: require('../../../assets/images/New Icons/icon-12.png'),
+    title: 'Personal Insights Dashboard',
+    description: 'Discover patterns in your thinking, track your growth, and celebrate progress',
   },
   {
     id: 4,
-    icon: Brain,
-    title: "AI That Remembers You",
-    description: "I learn from our conversations to provide increasingly personalized support",
-    gradient: ['rgba(255, 255, 255, 0.75)', 'rgba(255, 196, 176, 0.15)'],
-    iconColor: '#FFC4B0',
-    backgroundImage: require('../../../assets/images/1.jpeg')
-  }
+    iconImage: require('../../../assets/images/New Icons/icon-14.png'),
+    title: 'AI That Remembers You',
+    description: 'I learn from our conversations to provide increasingly personalized support',
+  },
 ];
 
 interface OnboardingValuePropScreenProps {
@@ -148,8 +127,6 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   };
 
   const renderCard = (card: ValueCard, index: number) => {
-    const Icon = card.icon;
-    
     const cardScale = cardAnimations[index].interpolate({
       inputRange: [0, 1],
       outputRange: [0.95, 1],
@@ -172,36 +149,25 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
           }
         ]}
       >
-        <ImageBackground
-          source={card.backgroundImage}
-          style={styles.cardBackground}
-          imageStyle={styles.cardBackgroundImage}
-        >
-          <LinearGradient
-            colors={card.gradient}
-            style={styles.cardGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View style={styles.cardContent}>
-            {/* Content */}
+        <View style={styles.cardInner}>
+          <View style={styles.blobWrapper}>
+            <WatercolorBlob width={width - 48} height={220} opacity={0.9} />
+          </View>
+          <View style={styles.cardContent}>
             <View style={styles.textContent}>
+              <Image source={card.iconImage} style={styles.iconImage} contentFit="contain" />
               <Text style={styles.cardTitle}>{card.title}</Text>
               <Text style={styles.cardDescription}>{card.description}</Text>
             </View>
-
-            {/* Subtle Decorative Element */}
-            <View style={[styles.decorativeAccent, { backgroundColor: card.iconColor }]} />
-            </View>
-          </LinearGradient>
-        </ImageBackground>
+          </View>
+        </View>
       </Animated.View>
     );
   };
 
   return (
     <LinearGradient
-      colors={['#f0fdfa', '#e6fffa', '#ccfbf1']}
+      colors={['#ffffff', '#f5fefc']}
       style={styles.container}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
