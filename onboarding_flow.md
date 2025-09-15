@@ -111,7 +111,7 @@ Anu says: "What should I call you?"
 **Purpose:** Communicate core benefits before asking for user data
 
 **Visual Elements:**
-- Swipeable cards or vertical scroll
+- Swipeable cards.
 - Icons for each benefit
 - Progress indicator: 4/10
 
@@ -181,7 +181,7 @@ Subtitle: "This helps me understand how to best support you"
 
 **Actions:**
 - Primary Button: "Continue"
-- Can't skip (essential for personalization)
+- Skip for now
 
 **Backend Logic:**
 - AI analyzes text for initial insight extraction
