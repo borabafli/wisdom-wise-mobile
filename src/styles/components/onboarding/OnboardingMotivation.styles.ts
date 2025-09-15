@@ -31,7 +31,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   },
 
   progressFill: {
-    width: '71%', // 5/7 pages
+    width: '100%', // 7/7 pages (final screen)
     height: '100%',
     backgroundColor: colors.teal[500],
     borderRadius: 2,

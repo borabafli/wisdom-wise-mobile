@@ -35,7 +35,7 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   },
 
   progressFill: {
-    width: '86%', // 6/7 pages
+    width: '71%', // 5/7 pages
     height: '100%',
     backgroundColor: colors.teal[500],
     borderRadius: 2,

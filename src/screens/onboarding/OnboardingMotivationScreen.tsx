@@ -231,6 +231,12 @@ Remember: This is their first interaction with you. Be genuinely caring, specifi
       end={{ x: 1, y: 1 }}
     >
       <SafeAreaView style={styles.safeArea}>
+        {/* Progress Indicator */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View style={styles.progressFill} />
+          </View>
+        </View>
 
         {/* Anu Character Section */}
         <View style={styles.characterContainer}>
@@ -244,7 +250,7 @@ Remember: This is their first interaction with you. Be genuinely caring, specifi
           >
             <Image
               source={require('../../../assets/images/turtle-anu-greetings.png')}
-              style={styles.anuAvatar}
+              style={styles.anuAvatar as any}
               resizeMode="contain"
             />
           </Animated.View>
@@ -361,7 +367,7 @@ Remember: This is their first interaction with you. Be genuinely caring, specifi
                 <View style={styles.responseHeader}>
                   <Image
                     source={require('../../../assets/images/Teal watercolor single element/home-background.png')}
-                    style={styles.responseAvatarSmall}
+                    style={styles.responseAvatarSmall as any}
                     resizeMode="contain"
                   />
                   <Text style={styles.responseLabel}>Anu's Response</Text>

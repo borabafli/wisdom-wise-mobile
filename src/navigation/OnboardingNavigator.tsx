@@ -46,16 +46,8 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
   };
 
   const handleContinueFromValueProp = () => {
-    // Navigate to motivation discovery screen
-    setCurrentStep(5);
-  };
-
-  const handleContinueFromMotivation = async (motivation: string) => {
-    // Save motivation data is already handled in the component
-    console.log('User motivation:', motivation);
-    
     // Navigate to current state & goals screen
-    setCurrentStep(6);
+    setCurrentStep(5);
   };
 
   const handleContinueFromCurrentState = async (challenges: string[], goals: string[]) => {
@@ -74,11 +66,6 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     }
     
     // Navigate to baseline check-in screen
-    setCurrentStep(7);
-  };
-
-  const handleSkipMotivation = async () => {
-    // Skip motivation and go to current state screen
     setCurrentStep(6);
   };
 
@@ -86,20 +73,33 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     // Baseline mood is saved in the component
     console.log('User baseline mood:', moodRating);
     
+    // Navigate to motivation discovery screen (final step)
+    setCurrentStep(7);
+  };
+
+  const handleContinueFromMotivation = async (motivation: string) => {
+    // Save motivation data is already handled in the component
+    console.log('User motivation:', motivation);
+    
     // Complete onboarding and navigate to main app
+    await OnboardingService.completeOnboarding();
+    onComplete();
+  };
+
+  const handleSkipMotivation = async () => {
+    // Skip motivation and complete onboarding
     await OnboardingService.completeOnboarding();
     onComplete();
   };
 
   const handleSkipCurrentState = async () => {
     // Skip current state and go to baseline screen
-    setCurrentStep(7);
+    setCurrentStep(6);
   };
 
   const handleSkipBaseline = async () => {
-    // Skip baseline and complete onboarding
-    await OnboardingService.completeOnboarding();
-    onComplete();
+    // Skip baseline and go to motivation screen
+    setCurrentStep(7);
   };
 
   const handleSkipPersonalization = async () => {
@@ -137,25 +137,25 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     
     case 5:
       return (
-        <OnboardingMotivationScreen 
-          onContinue={handleContinueFromMotivation}
-          onSkip={handleSkipMotivation}
-        />
-      );
-    
-    case 6:
-      return (
         <OnboardingCurrentStateScreen 
           onContinue={handleContinueFromCurrentState}
           onSkip={handleSkipCurrentState}
         />
       );
     
-    case 7:
+    case 6:
       return (
         <OnboardingBaselineScreen 
           onContinue={handleContinueFromBaseline}
           onSkip={handleSkipBaseline}
+        />
+      );
+    
+    case 7:
+      return (
+        <OnboardingMotivationScreen 
+          onContinue={handleContinueFromMotivation}
+          onSkip={handleSkipMotivation}
         />
       );
     
