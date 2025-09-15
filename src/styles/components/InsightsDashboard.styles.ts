@@ -667,4 +667,42 @@ export const insightsDashboardStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  // Therapy Goals Styles
+  goalProgressBar: {
+    height: 4,
+    backgroundColor: colors.gray[200],
+    borderRadius: 2,
+    marginBottom: spacing[1],
+  },
+
+  noGoalsContainer: {
+    alignItems: 'center',
+    paddingVertical: spacing[4],
+    paddingHorizontal: spacing[3],
+  },
+
+  noGoalsText: {
+    ...typography.textStyles.body,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: spacing[3],
+    lineHeight: typography.lineHeight.relaxed,
+  },
+
+  setGoalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#059669',
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[4],
+    borderRadius: spacing.radius.md,
+    gap: spacing[1],
+  },
+
+  setGoalButtonText: {
+    ...typography.textStyles.bodySmall,
+    color: colors.white,
+    fontWeight: typography.fontWeight.medium,
+  },
+
 });

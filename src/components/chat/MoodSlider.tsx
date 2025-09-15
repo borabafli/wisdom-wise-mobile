@@ -101,7 +101,7 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
     <>
       {(title || variant === 'test') && (
         <Text style={styles.promptText}>
-          {variant === 'test' ? 'How helpful was this?' : title ? 'I feel...' : ''}
+{variant === 'test' ? 'How helpful was this?' : title ? 'I feel...' : null}
         </Text>
       )}
       

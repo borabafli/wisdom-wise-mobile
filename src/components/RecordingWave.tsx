@@ -214,7 +214,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
       {showTimer && isRecording && (
         <View style={{
           marginBottom: 2,
-          marginTop: 2,
+          marginTop: 8, // Increased from 2 to 8 to move timer lower
           alignItems: 'center',
         }}>
           <Text style={{

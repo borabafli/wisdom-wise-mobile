@@ -538,7 +538,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputCard: {
     backgroundColor: '#e2e8f0', // Much lighter gray (slate-200) for lighter appearance
     borderWidth: 0, // No border
-    borderRadius: 50, // Perfect circle edges - very rounded
+    borderRadius: 24, // Consistent rounded corners that scale well
     paddingHorizontal: spacing[4], // Adequate horizontal padding for circular shape
     paddingVertical: spacing[1], // Minimal vertical padding for lower height
     zIndex: 11, // Slightly above container, but not too high
@@ -700,7 +700,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   fullscreenSendButton: {
     padding: spacing[2],
     borderRadius: 20,
-    backgroundColor: '#3B82F6', // Much darker, more contrasty blue
+    backgroundColor: '#61a8b4', // Updated to requested color
     width: 40,
     height: 40,
     alignItems: 'center',
@@ -830,7 +830,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3B82F6', // Much darker, more contrasty blue
+    backgroundColor: '#61a8b4', // Updated to requested color
     // Minimal shadow for send button
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -964,7 +964,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Recording Interface with Timer Inside
   recordingInterfaceWithTimer: {
     flexDirection: 'row',
-    alignItems: 'center', // Center align for proper calculation
+    alignItems: 'flex-end', // Changed from center to flex-end to align buttons lower
     justifyContent: 'space-between',
     flex: 1,
     paddingHorizontal: spacing[2],
@@ -974,14 +974,14 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Cancel Button (X) - Light filled
   cancelButton: {
-    width: 36,
-    height: 36,
+    width: 42,
+    height: 42,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#94a3b8', // Light gray fill
     ...shadows.sm,
-    marginTop: 10, // Offset down to align with waveform bar center (timer height compensation)
+    marginBottom: 15, // Use marginBottom instead of marginTop to position from bottom
   },
 
   // Wave with Timer Container
@@ -999,18 +999,19 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: spacing[3],
     flexDirection: 'column', // Stack timer and wave vertically
+    marginTop: 6, // Move timer slightly lower
   },
 
   // Submit Recording Button (Check) - Filled like send button
   submitRecordingButton: {
-    width: 36,
-    height: 36,
+    width: 42,
+    height: 42,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2563eb', // Same as send button
+    backgroundColor: '#61a8b4', // Updated to requested color
     ...shadows.sm,
-    marginTop: 10, // Offset down to align with waveform bar center (timer height compensation)
+    marginBottom: 15, // Use marginBottom instead of marginTop to position from bottom
   },
 
 

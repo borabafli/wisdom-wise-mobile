@@ -25,9 +25,9 @@ import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
 import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
-import { 
-  useTypewriterAnimation, 
-  useVoiceRecording, 
+import {
+  useTypewriterAnimation,
+  useVoiceRecording,
   useChatSession,
   useTTSControls
 } from '../hooks/chat';
@@ -553,16 +553,11 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           {/* Suggestion Chips */}
           <SuggestionChips
             suggestions={chatSession.suggestions}
-            onSuggestionPress={handleSend}
+            onSuggestionPress={(suggestion) => handleSend(suggestion)}
             onSuggestExercise={() => {
               if (onExerciseClick) {
                 const breathingExercise = exerciseLibraryData['breathing'];
                 onExerciseClick(breathingExercise);
-              }
-            }}
-            onActionSelect={() => {
-              if (onActionSelect) {
-                onActionSelect('guided-session');
               }
             }}
             showExerciseButton={
