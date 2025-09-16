@@ -26,7 +26,7 @@ export const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
   try {
     insets = useSafeAreaInsets();
   } catch (error) {
-    console.warn('SafeAreaProvider context not available, using fallback values:', error);
+    console.warn('SafeAreaProvider context not available, using fallback values');
     // Fallback insets for when context is not available
     insets = {
       top: Platform.OS === 'ios' ? 44 : 0,

@@ -16,7 +16,7 @@ import { onboardingCurrentStateStyles as styles } from '../../styles/components/
 const { width, height } = Dimensions.get('window');
 
 interface OnboardingCurrentStateScreenProps {
-  onContinue: (challenges: string[], goals: string[]) => void;
+  onContinue: (challenges: string[], goals: string[], values: string[]) => void;
   onSkip: () => void;
 }
 
@@ -42,9 +42,21 @@ const COMMON_GOALS = [
   'Emotional balance',
 ];
 
+const COMMON_VALUES = [
+  'Family & Connection',
+  'Personal Growth',
+  'Health & Wellness',
+  'Creativity',
+  'Freedom & Independence',
+  'Achievement & Success',
+  'Helping Others',
+  'Adventure & Fun',
+];
+
 const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> = ({ onContinue, onSkip }) => {
   const [selectedChallenges, setSelectedChallenges] = useState<string[]>([]);
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -99,11 +111,19 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
     );
   };
 
-  const handleContinue = () => {
-    onContinue(selectedChallenges, selectedGoals);
+  const toggleValue = (value: string) => {
+    setSelectedValues(prev => 
+      prev.includes(value) 
+        ? prev.filter(v => v !== value)
+        : [...prev, value]
+    );
   };
 
-  const canContinue = selectedChallenges.length > 0 || selectedGoals.length > 0;
+  const handleContinue = () => {
+    onContinue(selectedChallenges, selectedGoals, selectedValues);
+  };
+
+  const canContinue = selectedChallenges.length > 0 || selectedGoals.length > 0 || selectedValues.length > 0;
 
   return (
     <LinearGradient
@@ -151,14 +171,38 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
                   resizeMode="contain"
                 />
               </Animated.View>
-              
-              <Text style={styles.title}>What brings you here?</Text>
-              <Text style={styles.subtitle}>Help me understand your current challenges and goals</Text>
+              <Text style={styles.title}>Tell me about yourself</Text>
+            </View>
+
+            {/* Values Section */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>What's important to you?</Text>
+              <Text style={styles.sectionDescription}>Select the values that resonate with you most</Text>
+              <View style={styles.optionsContainer}>
+                {COMMON_VALUES.map((value) => (
+                  <TouchableOpacity
+                    key={value}
+                    style={[
+                      styles.optionButton,
+                      selectedValues.includes(value) && styles.optionButtonSelected
+                    ]}
+                    onPress={() => toggleValue(value)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.optionText,
+                      selectedValues.includes(value) && styles.optionTextSelected
+                    ]}>
+                      {value}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
 
             {/* Challenges Section */}
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Current challenges (optional)</Text>
+              <Text style={styles.sectionTitle}>Current challenges</Text>
               <View style={styles.optionsContainer}>
                 {COMMON_CHALLENGES.map((challenge) => (
                   <TouchableOpacity
@@ -183,7 +227,7 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
 
             {/* Goals Section */}
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>What would you like to work on? (optional)</Text>
+              <Text style={styles.sectionTitle}>What would you like to work on?</Text>
               <View style={styles.optionsContainer}>
                 {COMMON_GOALS.map((goal) => (
                   <TouchableOpacity
@@ -219,24 +263,25 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[
-              styles.continueButton,
-              canContinue && styles.continueButtonEnabled
-            ]} 
+            style={styles.primaryButton}
             onPress={handleContinue}
             disabled={!canContinue}
-            activeOpacity={0.8}
+            activeOpacity={canContinue ? 0.8 : 1}
           >
-            <Text style={[
-              styles.continueButtonText,
-              canContinue && styles.continueButtonTextEnabled
-            ]}>
-              Continue
-            </Text>
-            <ChevronRight 
-              size={20} 
-              color={canContinue ? '#ffffff' : '#a0a0a0'} 
-            />
+            <LinearGradient
+              colors={canContinue ? ['#5BA3B8', '#357A8A'] : ['rgba(160, 160, 160, 0.5)', 'rgba(160, 160, 160, 0.3)']}
+              style={styles.buttonGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <Text style={[styles.primaryButtonText, { opacity: canContinue ? 1 : 0.6 }]}>
+                Continue
+              </Text>
+              <ChevronRight 
+                size={20} 
+                color={canContinue ? "#ffffff" : "#a0a0a0"}
+              />
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

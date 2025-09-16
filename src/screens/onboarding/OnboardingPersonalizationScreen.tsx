@@ -181,7 +181,7 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
                 onPress={handleContinue}
               >
                 <LinearGradient
-                  colors={['#14b8a6', '#0d9488']}
+                  colors={['#5BA3B8', '#357A8A']}
                   style={styles.buttonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}

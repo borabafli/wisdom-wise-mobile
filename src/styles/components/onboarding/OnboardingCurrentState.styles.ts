@@ -108,19 +108,30 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   },
 
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: 'Ubuntu-Bold',
-    color: colors.teal[800],
+    color: '#357A8A',
+    textAlign: 'center',
+    marginBottom: 10,
+    lineHeight: 28,
+  },
+
+  sectionDescription: {
+    fontSize: 16,
+    fontFamily: 'Ubuntu-Regular',
+    color: '#5BA3B8',
     textAlign: 'center',
     marginBottom: 20,
-    lineHeight: 26,
+    lineHeight: 22,
+    opacity: 0.9,
   },
 
   optionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 12,
+    gap: 8,
+    paddingHorizontal: 16,
   },
 
   optionButton: {
@@ -129,12 +140,12 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: 'rgba(20, 184, 166, 0.2)',
+    borderColor: 'rgba(91, 163, 184, 0.3)',
     marginHorizontal: 4,
     marginVertical: 4,
     minWidth: 80,
     alignItems: 'center',
-    shadowColor: colors.teal[300],
+    shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -145,9 +156,9 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   },
 
   optionButtonSelected: {
-    backgroundColor: colors.teal[500],
-    borderColor: colors.teal[600],
-    shadowColor: colors.teal[500],
+    backgroundColor: '#5BA3B8',
+    borderColor: '#357A8A',
+    shadowColor: '#5BA3B8',
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
@@ -156,7 +167,7 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   optionText: {
     fontSize: 14,
     fontFamily: 'Ubuntu-Medium',
-    color: colors.teal[700],
+    color: '#357A8A',
     textAlign: 'center',
   },
 
@@ -183,51 +194,41 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   skipButtonText: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Medium',
-    color: colors.teal[500],
+    color: '#5BA3B8',
     textAlign: 'center',
     textDecorationLine: 'underline',
-    textDecorationColor: colors.teal[400],
+    textDecorationColor: '#5BA3B8',
   },
 
-  continueButton: {
+  primaryButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 'auto',
+  },
+
+  buttonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(20, 184, 166, 0.3)',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 25,
-    borderWidth: 2,
-    borderColor: 'rgba(20, 184, 166, 0.4)',
-    minWidth: 120,
-    shadowColor: colors.teal[300],
+    minWidth: 150,
+    shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-
-  continueButtonEnabled: {
-    backgroundColor: colors.teal[500],
-    borderColor: colors.teal[600],
-    shadowColor: colors.teal[500],
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 6,
   },
 
-  continueButtonText: {
+  primaryButtonText: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Bold',
-    color: '#a0a0a0',
-    marginRight: 8,
-  },
-
-  continueButtonTextEnabled: {
     color: 'white',
+    marginRight: 8,
   },
 
   // Responsive adjustments

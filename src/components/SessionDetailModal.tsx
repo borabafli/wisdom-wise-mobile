@@ -45,7 +45,7 @@ const ReadOnlyMessage: React.FC<{ message: any }> = ({ message }) => {
       <View style={styles.aiMessageContainer}>
         <View style={styles.aiMessageContent}>
           <LinearGradient
-            colors={['#f0f9ff', '#e0f2fe']}
+            colors={['#F8FCFC', '#E8F4F1']}
             style={styles.aiMessageBubble}
           >
             <Text style={[styles.aiMessageText, fontsLoaded && { fontFamily: 'Caveat_400Regular' }]}>
@@ -63,7 +63,7 @@ const ReadOnlyMessage: React.FC<{ message: any }> = ({ message }) => {
     return (
       <View style={styles.exerciseMessageContainer}>
         <LinearGradient
-          colors={['#f0fdf4', '#dcfce7']}
+          colors={['#E8F4F1', '#F8FCFC']}
           style={styles.exerciseMessageBubble}
         >
           {message.title && (
@@ -140,7 +140,7 @@ const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ visible, onClos
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <SafeAreaWrapper style={styles.container}>
         <LinearGradient
-          colors={['#f0f9ff', '#e0f2fe']}
+          colors={['#F8FCFC', '#E8F4F1']}
           style={styles.backgroundGradient}
         />
 
@@ -154,32 +154,32 @@ const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ visible, onClos
               </Text>
             </View>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <X size={24} color="#475569" />
+              <X size={24} color="#2D3436" />
             </TouchableOpacity>
           </View>
 
           {/* Session Metadata */}
           <View style={styles.metadataContainer}>
             <LinearGradient
-              colors={['rgba(255, 255, 255, 0.95)', 'rgba(240, 249, 255, 0.8)']}
+              colors={['rgba(255, 255, 255, 0.95)', 'rgba(232, 244, 241, 0.8)']}
               style={styles.metadataGradient}
             >
               <View style={styles.metadataContent}>
                 <View style={styles.metadataRow}>
                   <View style={styles.metadataItem}>
-                    <Calendar size={16} color="#3b82f6" />
+                    <Calendar size={16} color="#4A9B8E" />
                     <Text style={styles.metadataText}>
                       {formatTime(conversationDate)}
                     </Text>
                   </View>
                   <View style={styles.metadataItem}>
-                    <MessageCircle size={16} color="#3b82f6" />
+                    <MessageCircle size={16} color="#4A9B8E" />
                     <Text style={styles.metadataText}>
                       {session.metadata?.userMessageCount || userMessages.length} messages
                     </Text>
                   </View>
                   <View style={styles.metadataItem}>
-                    <Clock size={16} color="#3b82f6" />
+                    <Clock size={16} color="#4A9B8E" />
                     <Text style={styles.metadataText}>
                       {session.metadata?.duration || '< 1 min'}
                     </Text>
@@ -199,7 +199,7 @@ const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ visible, onClos
         >
           {session.messages.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <MessageCircle size={48} color="#94a3b8" />
+              <MessageCircle size={48} color="#6BB3A5" />
               <Text style={styles.emptyTitle}>No Messages</Text>
               <Text style={styles.emptySubtitle}>
                 This conversation doesn't contain any messages.

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
+import { User, Settings, Bell, Shield, HelpCircle, LogOut, LogIn, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -10,15 +10,38 @@ import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
 import { useAuth } from '../contexts';
+import { storageService } from '../services/storageService';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
-  const { user, profile, isAnonymous, signOut } = useAuth();
+  const { user, profile, isAnonymous, signOut, requestLogin } = useAuth();
   
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
+  
+  // Local state for dynamic display name
+  const [displayName, setDisplayName] = useState('Friend');
+
+  // Update display name when component mounts or profile changes
+  useEffect(() => {
+    const updateDisplayName = async () => {
+      try {
+        const name = await storageService.getDisplayNameWithPriority(user);
+        setDisplayName(name);
+      } catch (error) {
+        console.error('Error updating display name:', error);
+        // Fallback to auth profile if storage fails
+        const fallbackName = profile 
+          ? `${profile.first_name} ${profile.last_name}`.trim() || 'Friend'
+          : user?.email?.split('@')[0] || 'Friend';
+        setDisplayName(fallbackName);
+      }
+    };
+
+    updateDisplayName();
+  }, [user, profile]);
   
   const stats = [
     { label: 'Sessions', value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
@@ -30,11 +53,6 @@ const ProfileScreen: React.FC = () => {
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-
-  // Get display name from auth profile
-  const displayName = profile 
-    ? `${profile.first_name} ${profile.last_name}`.trim() || 'Friend'
-    : user?.email?.split('@')[0] || 'Friend';
 
   const handleSignOut = () => {
     Alert.alert(
@@ -60,6 +78,26 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
+  const handleLogin = () => {
+    Alert.alert(
+      'Create Account',
+      'Sign up to save your progress and access all features!',
+      [
+        {
+          text: 'Maybe Later',
+          style: 'cancel',
+        },
+        {
+          text: 'Sign Up',
+          style: 'default',
+          onPress: () => {
+            requestLogin();
+          },
+        },
+      ]
+    );
+  };
+
   const menuItems = [
     { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: 'Edit Profile', action: () => setShowEditProfile(true) },
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: 'Chat History', action: () => setShowChatHistory(true) },
@@ -68,7 +106,11 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: 'Privacy & Security' },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: 'Dark Mode', toggle: true },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: 'Help & Support' },
-    { icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }
+    // Conditionally show Sign Out (for logged in users) or Login (for anonymous users)
+    ...(isAnonymous 
+      ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true }]
+      : [{ icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }]
+    )
   ];
 
   return (
@@ -234,7 +276,9 @@ const ProfileScreen: React.FC = () => {
                   <LinearGradient
                     colors={item.danger 
                       ? ['rgba(254, 202, 202, 0.25)', 'rgba(252, 165, 165, 0.15)', 'rgba(255, 255, 255, 0.8)']
-                      : ['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']
+                      : item.highlight
+                        ? ['rgba(34, 197, 94, 0.25)', 'rgba(74, 222, 128, 0.15)', 'rgba(255, 255, 255, 0.8)']
+                        : ['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -251,14 +295,15 @@ const ProfileScreen: React.FC = () => {
                         ) : (
                           <Icon 
                             size={24} 
-                            color={item.danger ? '#ef4444' : '#002d14'} 
+                            color={item.danger ? '#ef4444' : item.highlight ? '#22c55e' : '#002d14'} 
                           />
                         )}
                       </View>
                       <View style={styles.menuTitleContainer}>
                         <Text style={[
                           styles.menuTitle,
-                          item.danger && styles.menuTitleDanger
+                          item.danger && styles.menuTitleDanger,
+                          item.highlight && { color: '#22c55e', fontWeight: '600' }
                         ]}>
                           {item.label}
                         </Text>
@@ -271,6 +316,7 @@ const ProfileScreen: React.FC = () => {
                            item.label === 'Dark Mode' ? 'Toggle dark theme' :
                            item.label === 'Help & Support' ? 'Get assistance' :
                            item.label === 'Sign Out' ? 'Leave your account' :
+                           item.label === 'Create Account' ? 'Save your progress & unlock features' :
                            'Tap to access'}
                         </Text>
                       </View>
@@ -292,7 +338,7 @@ const ProfileScreen: React.FC = () => {
                         {!item.toggle && !item.badge && (
                           <ArrowRight 
                             size={16} 
-                            color={item.danger ? '#ef4444' : '#002d14'} 
+                            color={item.danger ? '#ef4444' : item.highlight ? '#22c55e' : '#002d14'} 
                           />
                         )}
                       </View>

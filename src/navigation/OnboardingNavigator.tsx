@@ -8,6 +8,7 @@ import OnboardingCurrentStateScreen from '../screens/onboarding/OnboardingCurren
 import OnboardingBaselineScreen from '../screens/onboarding/OnboardingBaselineScreen';
 import { OnboardingService } from '../services/onboardingService';
 import { storageService } from '../services/storageService';
+import { valuesService } from '../services/valuesService';
 
 interface OnboardingNavigatorProps {
   onComplete: () => void;
@@ -50,23 +51,83 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     setCurrentStep(5);
   };
 
-  const handleContinueFromCurrentState = async (challenges: string[], goals: string[]) => {
-    // Save current state and goals data
+  const handleContinueFromCurrentState = async (challenges: string[], goals: string[], values: string[]) => {
+    // Save current state, goals, and values data
     console.log('User challenges:', challenges);
     console.log('User goals:', goals);
+    console.log('User values:', values);
     
     try {
+      // Save to user profile
       await storageService.updateUserProfile({
         challenges: challenges,
         goals: goals,
+        onboardingValues: values,
         challengesTimestamp: new Date().toISOString(),
       });
+
+      // Process values and save to values service for insights
+      if (values.length > 0) {
+        await processOnboardingValues(values);
+      }
     } catch (error) {
       console.error('Error saving current state data:', error);
     }
     
     // Navigate to baseline check-in screen
     setCurrentStep(6);
+  };
+
+  const processOnboardingValues = async (selectedValues: string[]) => {
+    try {
+      // Create UserValue entries from onboarding selections
+      for (const valueName of selectedValues) {
+        // Generate a basic description for onboarding values
+        const description = getValueDescription(valueName);
+        
+        await valuesService.saveValue({
+          name: valueName,
+          userDescription: description,
+          importance: 4, // Default importance for onboarding values
+          sourceSessionId: 'onboarding',
+          tags: getValueTags(valueName),
+        });
+      }
+      
+      console.log(`✅ Processed ${selectedValues.length} onboarding values into insights system`);
+    } catch (error) {
+      console.error('Error processing onboarding values:', error);
+    }
+  };
+
+  const getValueDescription = (valueName: string): string => {
+    const descriptions: Record<string, string> = {
+      'Family & Connection': 'Being close to my family and friends gives me strength and joy.',
+      'Personal Growth': 'I value learning, improving myself, and becoming a better person.',
+      'Health & Wellness': 'Taking care of my physical and mental health is important to me.',
+      'Creativity': 'Expressing myself creatively and bringing new ideas to life matters to me.',
+      'Freedom & Independence': 'Having the ability to make my own choices and live independently.',
+      'Achievement & Success': 'Working toward goals and achieving meaningful accomplishments.',
+      'Helping Others': 'Making a positive difference in other people\'s lives brings me purpose.',
+      'Adventure & Fun': 'Exploring new experiences and enjoying life\'s adventures.',
+    };
+    
+    return descriptions[valueName] || `${valueName} is important to me and guides my decisions.`;
+  };
+
+  const getValueTags = (valueName: string): string[] => {
+    const tags: Record<string, string[]> = {
+      'Family & Connection': ['family', 'relationships', 'love', 'support'],
+      'Personal Growth': ['learning', 'development', 'improvement', 'growth'],
+      'Health & Wellness': ['health', 'fitness', 'wellness', 'self-care'],
+      'Creativity': ['art', 'creativity', 'expression', 'innovation'],
+      'Freedom & Independence': ['freedom', 'independence', 'autonomy', 'choice'],
+      'Achievement & Success': ['achievement', 'success', 'goals', 'accomplishment'],
+      'Helping Others': ['service', 'kindness', 'compassion', 'helping'],
+      'Adventure & Fun': ['adventure', 'fun', 'exploration', 'excitement'],
+    };
+    
+    return tags[valueName] || [valueName.toLowerCase()];
   };
 
   const handleContinueFromBaseline = async (moodRating: number) => {

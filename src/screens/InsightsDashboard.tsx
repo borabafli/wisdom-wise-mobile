@@ -325,7 +325,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             <View style={styles.motivationalContent}>
               <View style={styles.motivationalText}>
                 <Text style={styles.motivationalTitle}>
-                  {motivationalCard?.message.emoji ? `${motivationalCard.message.emoji} ` : ''}{motivationalCard?.message.text || 'Your wellness journey continues'}
+                  {motivationalCard?.message?.emoji ? `${motivationalCard.message.emoji} ` : ''}{motivationalCard?.message?.text || 'Your wellness journey continues'}
                 </Text>
               </View>
               <View style={styles.motivationalStats}>
@@ -334,12 +334,12 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                     <View key={index} style={styles.motivationalStat}>
                       <Text style={[
                         styles.motivationalNumber,
-                        motivationalCard.message.category === 'vision' && styles.motivationalNumberVision,
-                        motivationalCard.message.category === 'achievement' && styles.motivationalNumberAchievement
+                        motivationalCard?.message?.category === 'vision' && styles.motivationalNumberVision,
+                        motivationalCard?.message?.category === 'achievement' && styles.motivationalNumberAchievement
                       ]}>
-                        {stat.value}
+                        {stat?.value || '0'}
                       </Text>
-                      <Text style={styles.motivationalLabel}>{stat.label}</Text>
+                      <Text style={styles.motivationalLabel}>{stat?.label || 'metric'}</Text>
                     </View>
                   ))
                 ) : (

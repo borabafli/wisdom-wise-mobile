@@ -33,7 +33,7 @@ const valueCards: ValueCard[] = [
     id: 3,
     iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-12.png'),
     title: 'Personal Insights Dashboard',
-    description: 'Discover patterns in your thinking and celebrate progress',
+    description: 'I will discover insights in your thinking',
   },
   {
     id: 4,
@@ -173,12 +173,12 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={['#14b8a6', '#0d9488']}
+                colors={['#5BA3B8', '#357A8A']}
                 style={styles.buttonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={styles.primaryButtonText}>Let's get started</Text>
+                <Text style={styles.primaryButtonText}>Continue</Text>
                 <ChevronRight size={20} color="white" />
               </LinearGradient>
             </TouchableOpacity>
