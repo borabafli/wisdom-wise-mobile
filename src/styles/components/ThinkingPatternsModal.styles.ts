@@ -9,12 +9,12 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width, height } = Dimensions.get('window');
 
 export const thinkingPatternsModalStyles = StyleSheet.create({
-  // Background and container - Enhanced organic watercolor with gradient
+  // Background - Soft mint gradient (#E8F4F1 → #FFFFFF) with subtle watercolor texture
   backgroundImage: {
     flex: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: '#F8FAFB', // Cool gray-blue for softer feel
+    backgroundColor: '#E8F4F1', // Soft mint base
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -23,7 +23,7 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60, // Account for status bar
-    backgroundColor: '#F8FAFB', // Cool gray-blue background
+    backgroundColor: 'transparent', // Let background gradient show
   },
 
   // Header - Enhanced with proper teal and spacing per design principles
@@ -41,27 +41,27 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
     width: 44, // 44x44px touch target
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'transparent',
+    backgroundColor: '#E8F4F1', // Circular, soft mint background
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#4A9B8E', // Teal outline
+    borderWidth: 0, // No border for soft appearance
+    ...shadows.components.card, // Subtle shadow
   },
   headerCenter: {
     alignItems: 'center',
     flex: 1,
   },
   headerTitle: {
-    fontSize: 26, // 24-28px Ubuntu Bold per design principles
+    fontSize: 22, // Ubuntu Bold 22px as specified
     fontFamily: 'Ubuntu-Bold',
-    color: '#4A9B8E', // Primary Teal/Turquoise
+    color: '#2D3436', // Dark gray as specified
     fontWeight: typography.fontWeight.bold,
   },
   headerSubtitle: {
-    fontSize: 15, // 14-16px Ubuntu Regular
-    fontFamily: 'Ubuntu-Regular',
-    color: '#6B7280', // Medium gray for secondary text
-    fontWeight: typography.fontWeight.regular,
+    fontSize: 14, // Ubuntu Light 14px as specified
+    fontFamily: 'Ubuntu-Light',
+    color: '#6B7280', // Soft gray as specified
+    fontWeight: typography.fontWeight.light,
     marginTop: spacing[2],
   },
   headerRight: {
@@ -113,69 +113,45 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
     paddingTop: spacing[6],
   },
   patternType: {
-    fontSize: 26, // 24-28px Ubuntu Bold
+    fontSize: 24, // Ubuntu Bold 24px as specified
     fontFamily: 'Ubuntu-Bold',
-    color: '#4A9B8E', // Primary Teal/Turquoise
+    color: '#4A9B8E', // Teal as specified
     fontWeight: typography.fontWeight.bold,
     textAlign: 'center',
-    marginBottom: spacing[6], // More vertical spacing
+    marginBottom: spacing[4], // Space for decorative accent
     letterSpacing: 0.5,
   },
+  // Decorative icon - Small organic teal watercolor shape (leaf/feather silhouette)
+  decorativeIcon: {
+    alignSelf: 'center',
+    marginBottom: spacing[6],
+    width: 40,
+    height: 40,
+    tintColor: '#4A9B8E',
+    opacity: 0.7,
+  },
 
-  // Education section - Soft Mint background per design principles
-  educationSection: {
+  // Pattern Description Section - Card container with soft mint background
+  descriptionSection: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: spacing[8],
-    backgroundColor: '#E8F4F1', // Soft Mint for card backgrounds
+    backgroundColor: '#E8F4F1', // Soft mint background (#E8F4F1)
     padding: spacing[6], // 16-24px generous padding
-    borderRadius: spacing.radius.xl, // 8-16px border radius
+    borderRadius: 16, // Rounded corners (16px)
     gap: spacing[4],
     marginHorizontal: spacing[3],
-    ...shadows.components.card, // Subtle shadow (0 2px 4px rgba(0,0,0,0.05))
+    ...shadows.components.card, // Subtle shadow
   },
-  educationIcon: {
+  brainIcon: {
     marginTop: spacing[0.5],
   },
-  educationText: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.primary,
+  descriptionText: {
+    fontSize: 15, // Ubuntu Regular 15px
+    fontFamily: 'Ubuntu-Regular',
+    color: '#2D3436', // Dark gray (#2D3436)
     lineHeight: typography.lineHeight.relaxed,
-    fontStyle: 'italic',
     flex: 1,
-  },
-
-  // Personalized thought shift section - Enhanced warm cream watercolor
-  thoughtShiftSection: {
-    marginTop: spacing[8],
-    marginBottom: spacing[8],
-    backgroundColor: '#FFF8F0', // Warm cream for softer feel
-    padding: spacing[7], // More generous padding for therapeutic space
-    borderRadius: spacing.radius['3xl'], // Even more organic curves
-    borderWidth: 0, // No hard borders, organic flow
-    marginHorizontal: spacing[1], // Subtle organic inset
-    ...shadows.components.card,
-  },
-  thoughtShiftHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[2],
-    marginBottom: spacing[2],
-  },
-  thoughtShiftTitle: {
-    ...typography.textStyles.body, // Larger for better hierarchy
-    color: '#4A9B8E', // Teal for consistency
-    fontWeight: typography.fontWeight.medium, // Softer than bold
-    textTransform: 'none', // More organic, less rigid
-    letterSpacing: 0.3,
-    marginBottom: spacing[3], // Better spacing
-  },
-  thoughtShiftText: {
-    ...typography.textStyles.body, // Larger for readability
-    color: colors.text.primary,
-    fontStyle: 'italic',
-    lineHeight: typography.lineHeight.loose, // More breathing room
-    fontWeight: typography.fontWeight.regular, // Softer weight
   },
 
   // Enhanced organic progress section with therapeutic spacing
@@ -211,116 +187,137 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
     // Enhanced gradient for watercolor effect applied via component
   },
 
-  // Fixed top patterns section - Clean white/soft gray per design principles
-  fixedTopPatternsSection: {
+  // Progress Footer - Sticky footer card, white background with subtle shadow
+  progressFooterSection: {
     position: 'absolute',
     bottom: spacing[20],
     left: spacing.layout.screenPadding,
     right: spacing.layout.screenPadding,
     zIndex: 10,
   },
-  fixedTopPatternsContainer: {
-    backgroundColor: '#F5F5F5', // Soft gray for contrast
-    borderRadius: spacing.radius.xl, // 8-16px border radius
-    padding: spacing[6], // 16-24px generous padding
+  progressFooterContainer: {
+    backgroundColor: 'white', // White background with subtle shadow
+    borderRadius: spacing.radius.xl,
+    padding: spacing[6],
     borderWidth: 0,
     marginHorizontal: spacing[3],
     ...shadows.components.card, // Subtle shadow
   },
-  fixedTopPatternsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[2],
-    marginBottom: spacing[2],
-    justifyContent: 'center',
-  },
-  fixedTopPatternsTitle: {
-    fontSize: 19, // 18-20px Ubuntu Medium
+  progressFooterTitle: {
+    fontSize: 14, // Ubuntu Medium 14px
     fontFamily: 'Ubuntu-Medium',
-    color: '#6B7280', // Medium gray per design principles
+    color: '#4A9B8E', // Teal
     fontWeight: typography.fontWeight.medium,
-    textTransform: 'none',
-    letterSpacing: 0,
+    textAlign: 'center',
+    marginBottom: spacing[4],
   },
-  fixedTopPatternsContent: {
+  progressFooterChips: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     flexWrap: 'wrap',
     gap: spacing[2],
   },
-  fixedPatternStatItem: {
+  patternChip: {
     alignItems: 'center',
     minWidth: '30%',
   },
-  fixedPatternStatName: {
-    fontSize: 14, // Better readability
+  patternChipText: {
+    fontSize: 12,
     fontFamily: 'Ubuntu-Regular',
-    color: '#4A9B8E', // Primary teal for pattern names
-    fontWeight: typography.fontWeight.medium,
+    color: '#4A9B8E', // Teal text
+    fontWeight: typography.fontWeight.regular,
     textAlign: 'center',
-    marginBottom: spacing[1],
-    backgroundColor: '#E8F4F1', // Soft teal background for pills
+    backgroundColor: 'transparent',
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2],
-    borderRadius: spacing.radius.full, // Fully rounded pills
-  },
-  fixedPatternStatCount: {
-    fontSize: 12,
-    fontFamily: 'Ubuntu-Light',
-    color: '#6B7280', // Lighter gray for counts
-    fontWeight: typography.fontWeight.light,
-    textAlign: 'center',
-    marginTop: spacing[1],
+    borderRadius: spacing.radius.full, // Rounded pills with teal outline
+    borderWidth: 1,
+    borderColor: '#4A9B8E', // Teal outline
   },
 
-  // Thoughts container - Enhanced flowing organic layout
-  thoughtsContainer: {
-    gap: spacing[7], // Even more generous spacing for breathing room
+  // Examples Section
+  examplesSection: {
     marginBottom: spacing[8],
-    paddingHorizontal: spacing[2], // Subtle inset for organic feel
+    paddingHorizontal: spacing[2],
   },
-  thoughtLabel: {
-    fontSize: 15, // 14-16px for good readability
+  examplesTitle: {
+    fontSize: 18,
     fontFamily: 'Ubuntu-Medium',
-    color: '#4A9B8E', // Primary teal
+    color: '#2D3436',
     fontWeight: typography.fontWeight.medium,
-    textTransform: 'none',
-    letterSpacing: 0.3,
+    marginBottom: spacing[6],
+    textAlign: 'center',
+  },
+  
+  // Distorted Thought Card - Very light coral background
+  distortedThoughtCard: {
+    backgroundColor: '#FFF4E6', // Very light coral (#FFF4E6)
+    padding: spacing[6],
+    borderRadius: 16, // Rounded corners
+    marginBottom: spacing[4],
+    marginHorizontal: spacing[3],
+    ...shadows.components.card,
+  },
+  distortedThoughtHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing[3],
+    gap: spacing[2],
+  },
+  distortedThoughtIcon: {
+    width: 16,
+    height: 16,
+    tintColor: '#FF6F61', // Orange color to match the coral theme
+    opacity: 0.8,
+  },
+  distortedThoughtLabel: {
+    fontSize: 14, // Ubuntu Medium 14px
+    fontFamily: 'Ubuntu-Medium',
+    color: '#FF6F61', // Coral (#FF6F61)
+    fontWeight: typography.fontWeight.medium,
     marginBottom: spacing[3],
   },
-  originalThought: {
-    backgroundColor: '#FFEDE6', // Softer, desaturated salmon-pink
-    padding: spacing[6], // 16-24px generous padding
-    borderRadius: spacing.radius.xl, // 8-16px border radius
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFB5A0', // Coral/Salmon accent
-    marginBottom: spacing[6],
+  distortedThoughtText: {
+    fontSize: 15, // Ubuntu Regular 15px
+    fontFamily: 'Ubuntu-Regular',
+    color: '#2D3436', // Dark gray
+    lineHeight: typography.lineHeight.loose,
+  },
+  
+  // Balanced Thought Card - Soft mint background
+  balancedThoughtCard: {
+    backgroundColor: '#E8F4F1', // Soft mint (#E8F4F1)
+    padding: spacing[6],
+    borderRadius: 16, // Rounded corners
     marginHorizontal: spacing[3],
-    ...shadows.components.card, // Subtle shadow
+    ...shadows.components.card,
   },
-  thoughtText: {
-    ...typography.textStyles.body,
-    color: colors.text.primary,
-    fontStyle: 'italic',
-    lineHeight: typography.lineHeight.loose, // More breathing room
-    fontSize: 15, // Slightly larger for readability
-  },
-  reframedThought: {
-    backgroundColor: '#E8F4F1', // Soft Mint for gentle teal
-    padding: spacing[6], // 16-24px generous padding
-    borderRadius: spacing.radius.xl, // 8-16px border radius
-    borderLeftWidth: 4,
-    borderLeftColor: '#6BB3A5', // Primary Teal range
-    marginHorizontal: spacing[3],
-    ...shadows.components.card, // Subtle shadow
-  },
-  reframedText: {
-    ...typography.textStyles.body,
-    color: colors.text.primary,
-    fontStyle: 'italic',
-    lineHeight: typography.lineHeight.loose, // More breathing room
+  balancedThoughtLabel: {
+    fontSize: 14, // Ubuntu Medium 14px
+    fontFamily: 'Ubuntu-Medium',
+    color: '#4A9B8E', // Teal (#4A9B8E)
     fontWeight: typography.fontWeight.medium,
-    fontSize: 15, // Slightly larger for readability
+    marginBottom: spacing[3],
+  },
+  balancedThoughtText: {
+    fontSize: 15, // Ubuntu Regular 15px
+    fontFamily: 'Ubuntu-Regular',
+    color: '#2D3436', // Dark gray
+    lineHeight: typography.lineHeight.loose,
+  },
+
+  // Headers for thought cards with icons
+  balancedThoughtHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing[3],
+    gap: spacing[2],
+  },
+  thoughtCardIcon: {
+    width: 16,
+    height: 16,
+    tintColor: '#4A9B8E',
+    opacity: 0.7,
   },
 
   // Enhanced organic distortion tags with pastel treatment
@@ -402,5 +399,38 @@ export const thinkingPatternsModalStyles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: typography.lineHeight.relaxed,
     fontWeight: typography.fontWeight.medium,
+  },
+
+  // Personalized thought shift section - Enhanced warm cream watercolor
+  thoughtShiftSection: {
+    marginTop: spacing[8],
+    marginBottom: spacing[8],
+    backgroundColor: '#FFF8F0', // Warm cream for softer feel
+    padding: spacing[7], // More generous padding for therapeutic space
+    borderRadius: spacing.radius['3xl'], // Even more organic curves
+    borderWidth: 0, // No hard borders, organic flow
+    marginHorizontal: spacing[1], // Subtle organic inset
+    ...shadows.components.card,
+  },
+  thoughtShiftHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+    marginBottom: spacing[2],
+  },
+  thoughtShiftTitle: {
+    ...typography.textStyles.body, // Larger for better hierarchy
+    color: '#4A9B8E', // Teal for consistency
+    fontWeight: typography.fontWeight.medium, // Softer than bold
+    textTransform: 'none', // More organic, less rigid
+    letterSpacing: 0.3,
+    marginBottom: spacing[3], // Better spacing
+  },
+  thoughtShiftText: {
+    ...typography.textStyles.body, // Larger for readability
+    color: colors.text.primary,
+    fontStyle: 'italic',
+    lineHeight: typography.lineHeight.loose, // More breathing room
+    fontWeight: typography.fontWeight.regular, // Softer weight
   },
 });

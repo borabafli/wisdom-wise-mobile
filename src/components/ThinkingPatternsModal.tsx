@@ -9,8 +9,10 @@ import {
   Modal,
   StatusBar,
   ScrollView,
+  ImageBackground,
 } from 'react-native';
 import { X, Brain, Lightbulb, TrendingUp } from 'lucide-react-native';
+import { Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ValuesReflectButton } from './ReflectButton';
 import { ThoughtPattern } from '../services/storageService';
@@ -56,6 +58,23 @@ const DISTORTION_INFO: Record<string, { explanation: string; tip: string }> = {
   'Mental Filter': {
     explanation: 'You focus only on negatives while ignoring positives.',
     tip: 'Deliberately look for at least one positive in the situation.'
+  }
+};
+
+// Static icon imports from New Icons folder
+const decorativeIcon = require('../../assets/images/New Icons/icon-1.png');
+const secondaryIcon = require('../../assets/images/New Icons/icon-5.png');
+const distortedIcon = require('../../assets/images/New Icons/icon-3.png');
+const catastrophizingIcon = require('../../assets/images/New Icons/icon-7.png');
+
+// Function to get icon based on pattern type
+const getPatternIcon = (patternType: string) => {
+  switch (patternType) {
+    case 'Catastrophizing':
+      return catastrophizingIcon;
+    case 'All-or-Nothing Thinking':
+    default:
+      return decorativeIcon;
   }
 };
 
@@ -127,6 +146,8 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   const flatListRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
+  const cardFadeAnim = useRef(new Animated.Value(0)).current;
+  const chipsAnimations = useRef(patterns.map(() => new Animated.Value(1))).current;
 
   // Mock data for demonstration - in real app this would come from analytics
   const getPatternStats = () => {
@@ -137,14 +158,24 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
       });
     });
     
-    return Object.entries(patternCounts)
+    const stats = Object.entries(patternCounts)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 3);
+    
+    // If no real data, show sample data for demonstration
+    if (stats.length === 0 && patterns.length > 0) {
+      return [
+        ['All-or-Nothing Thinking', 1],
+        ['Catastrophizing', 1]
+      ];
+    }
+    
+    return stats;
   };
 
   const mockMoodImprovements = [72, 68, 85, 79, 91]; // Percentage improvements
 
-  // Animate modal entrance/exit
+  // Animate modal entrance/exit with soft fade-in for cards
   useEffect(() => {
     if (visible) {
       // Animate modal entrance
@@ -159,11 +190,18 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
           duration: 300,
           useNativeDriver: true,
         }),
+        Animated.timing(cardFadeAnim, {
+          toValue: 1,
+          duration: 400,
+          delay: 200, // Soft fade-in when cards appear
+          useNativeDriver: true,
+        }),
       ]).start();
     } else {
       // Reset animation values when closing
       fadeAnim.setValue(0);
       scaleAnim.setValue(0.95);
+      cardFadeAnim.setValue(0);
     }
   }, [visible]);
 
@@ -191,56 +229,85 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
     }
   }, []);
 
-  const renderPatternCard = ({ item: pattern, index }: { item: ThoughtPattern; index: number }) => {
+  const renderPatternCard = ({ item: pattern, index }: { item: ThoughtPattern; index: number }): React.ReactElement => {
     const primaryDistortion = pattern.distortionTypes[0] || 'Thought Pattern';
     const distortionInfo = DISTORTION_INFO[primaryDistortion];
     const currentMoodImprovement = mockMoodImprovements[index % mockMoodImprovements.length];
     
     return (
-      <View style={styles.patternCard}>
+      <Animated.View 
+        style={[
+          styles.patternCard,
+          {
+            opacity: cardFadeAnim, // Soft fade-in when cards appear
+          }
+        ]}
+      >
         <ScrollView 
           style={styles.cardScrollView}
           contentContainerStyle={styles.cardContent}
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
-            {/* 1. Distortion Pattern Header */}
+            {/* 1. Pattern Name Section */}
             <View style={styles.cardHeader}>
               <Text style={styles.patternType}>
                 {primaryDistortion}
               </Text>
+              {/* Pattern-specific icon */}
+              <Image 
+                source={getPatternIcon(primaryDistortion)} 
+                style={styles.decorativeIcon} 
+                resizeMode="contain"
+              />
             </View>
 
-            {/* 2. Pattern Explanation - Simple text with icon */}
-            <View style={styles.educationSection}>
-              <Brain size={16} color="#3b82f6" style={styles.educationIcon} />
-              <Text style={styles.educationText}>
+            {/* 2. Pattern Description Section */}
+            <View style={styles.descriptionSection}>
+              <Brain size={20} color="#4A9B8E" style={styles.brainIcon} />
+              <Text style={styles.descriptionText}>
                 {distortionInfo?.explanation || 'A common thinking pattern that may not serve you well.'}
               </Text>
             </View>
 
-            {/* 3. Distorted & Balanced Thoughts - Priority Section */}
-            <View style={styles.thoughtsContainer}>
-              <View style={styles.originalThought}>
-                <Text style={styles.thoughtLabel}>Distorted thought:</Text>
-                <Text style={styles.thoughtText}>"{pattern.originalThought}"</Text>
+            {/* 3. Examples Section - Two vertically stacked cards */}
+            <View style={styles.examplesSection}>
+              <Text style={styles.examplesTitle}>Examples</Text>
+              
+              <View style={styles.distortedThoughtCard}>
+                <View style={styles.distortedThoughtHeader}>
+                  <Image 
+                    source={distortedIcon} 
+                    style={styles.distortedThoughtIcon} 
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.distortedThoughtLabel}>Distorted thought</Text>
+                </View>
+                <Text style={styles.distortedThoughtText}>"{pattern.originalThought}"</Text>
               </View>
 
-              <View style={styles.reframedThought}>
-                <Text style={styles.thoughtLabel}>More balanced thought:</Text>
-                <Text style={styles.reframedText}>"{pattern.reframedThought}"</Text>
-              </View>
-              
-              {/* Personalized Thought Shift - Below balanced thought */}
-              <View style={styles.thoughtShiftSection}>
-                <View style={styles.thoughtShiftHeader}>
-                  <Lightbulb size={14} color="#f59e0b" />
-                  <Text style={styles.thoughtShiftTitle}>Your personalized shift:</Text>
+              <View style={styles.balancedThoughtCard}>
+                <View style={styles.balancedThoughtHeader}>
+                  <Image 
+                    source={secondaryIcon} 
+                    style={styles.thoughtCardIcon} 
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.balancedThoughtLabel}>Balanced thought</Text>
                 </View>
-                <Text style={styles.thoughtShiftText}>
-                  {generatePersonalizedThoughtShift(pattern.originalThought, primaryDistortion)}
-                </Text>
+                <Text style={styles.balancedThoughtText}>"{pattern.reframedThought}"</Text>
               </View>
+            </View>
+              
+            {/* Personalized Thought Shift - Below balanced thought */}
+            <View style={styles.thoughtShiftSection}>
+              <View style={styles.thoughtShiftHeader}>
+                <Lightbulb size={14} color="#f59e0b" />
+                <Text style={styles.thoughtShiftTitle}>Your personalized shift:</Text>
+              </View>
+              <Text style={styles.thoughtShiftText}>
+                {generatePersonalizedThoughtShift(pattern.originalThought, primaryDistortion)}
+              </Text>
             </View>
 
             {/* 4. Progress - Connected to thoughts */}
@@ -289,7 +356,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
               />
             )}
           </ScrollView>
-      </View>
+        </Animated.View>
     );
   };
 
@@ -305,7 +372,10 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
     >
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
       
-      <View style={styles.backgroundImage}>
+      <LinearGradient
+        colors={['#E8F4F1', '#FFFFFF']} // Soft mint to white gradient as specified
+        style={styles.backgroundImage}
+      >
         
         <Animated.View
           style={[
@@ -361,21 +431,45 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
             </View>
           )}
 
-          {/* Fixed Top Thinking Patterns - Higher position */}
-          {patterns.length > 1 && (
-            <View style={styles.fixedTopPatternsSection}>
-              <View style={styles.fixedTopPatternsContainer}>
-                <View style={styles.fixedTopPatternsHeader}>
-                  <Brain size={14} color="#22c55e" />
-                  <Text style={styles.fixedTopPatternsTitle}>Your Most Common Patterns</Text>
-                </View>
-                <View style={styles.fixedTopPatternsContent}>
-                  {getPatternStats().slice(0, 3).map(([patternName, count]) => (
-                    <View key={patternName} style={styles.fixedPatternStatItem}>
-                      <Text style={styles.fixedPatternStatName}>{patternName}</Text>
-                      <Text style={styles.fixedPatternStatCount}>{count}×</Text>
-                    </View>
-                  ))}
+          {/* Progress Footer - Sticky footer card */}
+          {patterns.length > 0 && getPatternStats().length > 0 && (
+            <View style={styles.progressFooterSection}>
+              <View style={styles.progressFooterContainer}>
+                <Text style={styles.progressFooterTitle}>Your Most Common Patterns</Text>
+                <View style={styles.progressFooterChips}>
+                  {getPatternStats().slice(0, 3).map(([patternName, count], index) => {
+                    // Animate chips with subtle bounce when tapped
+                    const animateChip = () => {
+                      Animated.sequence([
+                        Animated.timing(chipsAnimations[index], {
+                          toValue: 1.1,
+                          duration: 100,
+                          useNativeDriver: true,
+                        }),
+                        Animated.timing(chipsAnimations[index], {
+                          toValue: 1,
+                          duration: 100,
+                          useNativeDriver: true,
+                        }),
+                      ]).start();
+                    };
+                    
+                    return (
+                      <TouchableOpacity 
+                        key={patternName} 
+                        style={styles.patternChip}
+                        onPress={animateChip}
+                      >
+                        <Animated.View 
+                          style={[{
+                            transform: [{ scale: chipsAnimations[index] || 1 }]
+                          }]}
+                        >
+                          <Text style={styles.patternChipText}>{patternName} ({count}×)</Text>
+                        </Animated.View>
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
               </View>
             </View>
@@ -397,7 +491,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
             </View>
           )}
         </Animated.View>
-      </View>
+      </LinearGradient>
     </Modal>
   );
 };
