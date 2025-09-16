@@ -27,6 +27,7 @@ import { useUserProfile } from '../hooks';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 import { ValuesReflectButton } from '../components/ReflectButton';
 
+
 const { width } = Dimensions.get('window');
 
 interface InsightsDashboardProps {
@@ -263,8 +264,15 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+      <LinearGradient
+  colors={['#FFFFFF', '#aad3d0']}  // Pastel teal → White
+  // red → green → blue
+  start={{ x: 0, y: 0 }}
+  end={{ x: 0, y: 1 }}
+  style={styles.backgroundGradient}
+/>
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -288,8 +296,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             >
               <LinearGradient
                 colors={['#74B8B2', '#24837C']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+                start={{ x: 0, y: 0.1 }}
+                end={{ x: 1, y: 0.4 }}
                 style={styles.gradientFill}
               />
             </MaskedView>

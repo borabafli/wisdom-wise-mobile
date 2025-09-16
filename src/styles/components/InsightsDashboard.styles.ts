@@ -6,6 +6,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors, typography, spacing, shadows } from '../tokens';
 
+
 const { width, height } = Dimensions.get('window');
 
 export const insightsDashboardStyles = StyleSheet.create({
@@ -24,6 +25,13 @@ export const insightsDashboardStyles = StyleSheet.create({
     width: width,
     minHeight: height, // Changed from fixed height to minHeight
   },
+
+  backgroundGradient: {
+    ...StyleSheet.absoluteFillObject,  // ensures it fills the whole screen
+    //zIndex: -1,                        // push it fully behind everything
+  },
+  
+
   // Header Section - Consistent with HomeScreen
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -63,17 +71,17 @@ export const insightsDashboardStyles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: spacing[8],
     zIndex: 3,
-    backgroundColor: colors.gray[50],
+    backgroundColor: 'transparent',
   },
   scrollContent: {
-    paddingTop: 0, // No top padding needed anymore
+    paddingTop: 10, // No top padding needed anymore
     paddingBottom: 120,
   },
   // Header Image Styles
   headerImageContainer: {
     position: 'relative',
-    width: '95%',
-    height: 220,
+    width: '88%',
+    height: 190,
     alignSelf: 'center',
     borderRadius: spacing.radius.lg,
     overflow: 'hidden',
@@ -108,8 +116,8 @@ export const insightsDashboardStyles = StyleSheet.create({
   contentContainer: {
     position: 'relative',
     zIndex: 3,
-    paddingTop: spacing[4],
-    backgroundColor: colors.gray[50],
+    paddingTop: spacing[5],
+    backgroundColor: 'transparent',
   },
   // Enhanced Motivational Header Card
   motivationalCard: {
