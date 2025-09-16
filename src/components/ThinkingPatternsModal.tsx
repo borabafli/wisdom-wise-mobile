@@ -6,19 +6,17 @@ import {
   FlatList,
   Animated,
   Dimensions,
-  ImageBackground,
   Modal,
   StatusBar,
   ScrollView,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { X, ArrowLeft, ArrowRight, Brain, Lightbulb, TrendingUp, Target, Zap } from 'lucide-react-native';
+import { X, Brain, Lightbulb, TrendingUp } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ValuesReflectButton } from './ReflectButton';
 import { ThoughtPattern } from '../services/storageService';
 import { thinkingPatternsModalStyles as styles } from '../styles/components/ThinkingPatternsModal.styles';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface ThinkingPatternsModalProps {
   visible: boolean;
@@ -28,20 +26,6 @@ interface ThinkingPatternsModalProps {
   onStartReflection?: (pattern: ThoughtPattern, prompt: string) => void;
 }
 
-// Background images - we'll randomly select one
-const BACKGROUND_IMAGES = [
-  require('../../assets/images/1.jpeg'),
-  require('../../assets/images/2.jpeg'),
-  require('../../assets/images/3.jpeg'),
-  require('../../assets/images/4.jpeg'),
-  require('../../assets/images/5.jpeg'),
-  require('../../assets/images/6.jpg'),
-  require('../../assets/images/7.jpeg'),
-  require('../../assets/images/8.jpeg'),
-  require('../../assets/images/9.jpeg'),
-  require('../../assets/images/10.jpeg'),
-  require('../../assets/images/11.jpeg'),
-];
 
 // Distortion education data (without emojis)
 const DISTORTION_INFO: Record<string, { explanation: string; tip: string }> = {
@@ -137,11 +121,9 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   visible,
   onClose,
   patterns,
-  onPatternPress,
   onStartReflection,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [backgroundImage, setBackgroundImage] = useState(require('../../assets/images/8.jpeg'));
   const flatListRef = useRef<FlatList>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
@@ -161,7 +143,6 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
   };
 
   const mockMoodImprovements = [72, 68, 85, 79, 91]; // Percentage improvements
-  const averageMoodImprovement = Math.round(mockMoodImprovements.reduce((a, b) => a + b, 0) / mockMoodImprovements.length);
 
   // Animate modal entrance/exit
   useEffect(() => {
@@ -203,11 +184,6 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
     });
   };
 
-  const handlePatternPress = (pattern: ThoughtPattern) => {
-    if (onPatternPress) {
-      onPatternPress(pattern);
-    }
-  };
 
   const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
@@ -222,13 +198,12 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
     
     return (
       <View style={styles.patternCard}>
-        <BlurView intensity={40} style={styles.cardBlurContainer}>
-          <ScrollView 
-            style={styles.cardScrollView}
-            contentContainerStyle={styles.cardContent}
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-          >
+        <ScrollView 
+          style={styles.cardScrollView}
+          contentContainerStyle={styles.cardContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
             {/* 1. Distortion Pattern Header */}
             <View style={styles.cardHeader}>
               <Text style={styles.patternType}>
@@ -314,7 +289,6 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
               />
             )}
           </ScrollView>
-        </BlurView>
       </View>
     );
   };
@@ -329,10 +303,9 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
       statusBarTranslucent
       onRequestClose={handleClose}
     >
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
       
-      <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
-        <View style={styles.overlay} />
+      <View style={styles.backgroundImage}>
         
         <Animated.View
           style={[
@@ -346,7 +319,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-              <X size={24} color="white" />
+              <X size={24} color="#6B7280" />
             </TouchableOpacity>
             
             <View style={styles.headerCenter}>
@@ -391,23 +364,20 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
           {/* Fixed Top Thinking Patterns - Higher position */}
           {patterns.length > 1 && (
             <View style={styles.fixedTopPatternsSection}>
-              <LinearGradient
-                colors={['rgba(0, 0, 0, 0.8)', 'rgba(0, 0, 0, 0.6)']}
-                style={styles.fixedTopPatternsContainer}
-              >
+              <View style={styles.fixedTopPatternsContainer}>
                 <View style={styles.fixedTopPatternsHeader}>
                   <Brain size={14} color="#22c55e" />
                   <Text style={styles.fixedTopPatternsTitle}>Your Most Common Patterns</Text>
                 </View>
                 <View style={styles.fixedTopPatternsContent}>
-                  {getPatternStats().slice(0, 3).map(([patternName, count], idx) => (
+                  {getPatternStats().slice(0, 3).map(([patternName, count]) => (
                     <View key={patternName} style={styles.fixedPatternStatItem}>
                       <Text style={styles.fixedPatternStatName}>{patternName}</Text>
                       <Text style={styles.fixedPatternStatCount}>{count}×</Text>
                     </View>
                   ))}
                 </View>
-              </LinearGradient>
+              </View>
             </View>
           )}
 
@@ -427,7 +397,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
             </View>
           )}
         </Animated.View>
-      </ImageBackground>
+      </View>
     </Modal>
   );
 };
