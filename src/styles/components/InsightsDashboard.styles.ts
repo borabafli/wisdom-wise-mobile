@@ -61,39 +61,55 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingHorizontal: spacing[8], // Further reduced to make cards even wider
+    paddingHorizontal: spacing[8],
     zIndex: 3,
+    backgroundColor: colors.gray[50],
   },
   scrollContent: {
     paddingTop: 0, // No top padding needed anymore
     paddingBottom: 120,
   },
-  // New scrollable background styles
-  scrollableBackgroundContainer: {
-    position: 'absolute',
-    top: 0,
-    left: -spacing[8], // Compensate for scrollView padding
-    right: -spacing[8],
-    bottom: 0,
-    zIndex: 0,
+  // Header Image Styles
+  headerImageContainer: {
+    position: 'relative',
+    width: '95%',
+    height: 220,
+    alignSelf: 'center',
+    borderRadius: spacing.radius.lg,
+    overflow: 'hidden',
+    marginBottom: spacing[4],
   },
-  scrollableBackgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  headerImage: {
     width: '100%',
-    zIndex: 0,
+    height: '100%',
+  },
+  headerTextContainer: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 2,
+  },
+  maskedView: {
+    width: 140,
+    height: 42,
+  },
+  maskText: {
+    fontSize: 28,
+    fontWeight: '700',
+    fontFamily: 'Ubuntu-Bold',
+    color: 'black',
+    textAlign: 'left',
+    backgroundColor: 'transparent',
+  },
+  gradientFill: {
+    width: 140,
+    height: 42,
   },
   contentContainer: {
     position: 'relative',
     zIndex: 3,
-    paddingTop: spacing[8],
-  },
-  scrollableHeader: {
-    paddingVertical: spacing[12], // Much less space than the fixed header
-    alignItems: 'center',
+    paddingTop: spacing[4],
+    backgroundColor: colors.gray[50],
   },
   // Enhanced Motivational Header Card
   motivationalCard: {
