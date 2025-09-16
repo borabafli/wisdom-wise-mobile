@@ -13,6 +13,8 @@ import { getExerciseEmojis } from '../utils/emojiUtils';
 import { useUserProfile } from '../hooks/useUserProfile';
 import SlidableExerciseCard from '../components/SlidableExerciseCard';
 import { CardHidingService } from '../services/cardHidingService';
+import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
+import { useExercisePreview } from '../hooks/useExercisePreview';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,6 +32,20 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
+
+  // Exercise preview functionality
+  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview();
+
+  // Enhanced exercise click handler that shows preview first
+  const handleExerciseClickWithPreview = (exercise: any) => {
+    if (exercise) {
+      showExercisePreview(exercise, () => {
+        onExerciseClick(exercise);
+      });
+    } else {
+      onExerciseClick(exercise);
+    }
+  };
   
   // Load hidden card IDs on mount
   useEffect(() => {
@@ -232,7 +248,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         benefit={benefit}
         isLargeButton={isLargeButton}
         buttonImage={buttonImage}
-        onExerciseClick={onExerciseClick}
+        onExerciseClick={handleExerciseClickWithPreview}
         onHideCard={handleHideCard}
       />
     );
@@ -408,6 +424,16 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
           </View>
         )}
       </ScrollView>
+
+      {/* Exercise Preview Card */}
+      {previewExercise && (
+        <ExerciseSummaryCard
+          visible={showPreview}
+          exercise={previewExercise}
+          onStart={confirmExerciseStart}
+          onClose={hideExercisePreview}
+        />
+      )}
     </SafeAreaWrapper>
   );
 };

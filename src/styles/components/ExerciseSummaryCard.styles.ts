@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { colors, typography, spacing, shadows } from '../tokens';
 
 const { width, height } = Dimensions.get('window');
@@ -27,7 +27,7 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
 
   blurView: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
 
   card: {
@@ -38,15 +38,30 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: spacing.radius.xl,
     borderTopRightRadius: spacing.radius.xl,
-    maxHeight: height * 0.85,
-    minHeight: height * 0.6,
+    height: height * 0.8,
+    flexDirection: 'column',
     ...shadows.modal,
   },
 
-  headerGradient: {
+  // Full-width Image Header
+  imageHeader: {
+    width: '100%',
+    height: 160,
     borderTopLeftRadius: spacing.radius.xl,
     borderTopRightRadius: spacing.radius.xl,
-    paddingBottom: spacing[6],
+    overflow: 'hidden',
+    position: 'relative',
+  },
+
+  fullWidthImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover', // This ensures full width with horizontal cropping
+  },
+
+  fallbackGradient: {
+    width: '100%',
+    height: '100%',
   },
 
   closeButton: {
@@ -54,50 +69,19 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     top: spacing[4],
     right: spacing[4],
     zIndex: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderRadius: spacing.radius.full,
     padding: spacing[2],
   },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[6],
-    gap: spacing[4],
-  },
-
-  imageContainer: {
-    width: 80,
-    height: 80,
+  ratingOverlay: {
+    position: 'absolute',
+    bottom: spacing[4],
+    left: spacing[4],
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderRadius: spacing.radius.lg,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    ...shadows.card,
-  },
-
-  exerciseImage: {
-    width: '100%',
-    height: '100%',
-  },
-
-  headerInfo: {
-    flex: 1,
-  },
-
-  title: {
-    ...typography.textStyles.h3,
-    color: colors.white,
-    fontWeight: typography.fontWeight.bold,
-    marginBottom: spacing[2],
-    lineHeight: typography.lineHeight.tight,
-  },
-
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing[3],
-    gap: spacing[2],
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[2],
   },
 
   starsContainer: {
@@ -105,132 +89,287 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     gap: spacing[1],
   },
 
-  ratingText: {
-    ...typography.textStyles.caption,
-    color: colors.white,
-    fontWeight: typography.fontWeight.medium,
-  },
-
-  metaContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[4],
-  },
-
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[1],
-  },
-
-  metaText: {
-    ...typography.textStyles.caption,
-    color: colors.white,
-    fontWeight: typography.fontWeight.medium,
-  },
-
-  categoryText: {
-    ...typography.textStyles.caption,
-    color: colors.white,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingHorizontal: spacing[2],
-    paddingVertical: spacing[1],
-    borderRadius: spacing.radius.sm,
-    fontWeight: typography.fontWeight.medium,
-    overflow: 'hidden',
-  },
-
+  // Content Section
   content: {
     flex: 1,
     paddingHorizontal: spacing[6],
     paddingTop: spacing[6],
+    paddingBottom: spacing[6],
   },
 
-  description: {
-    ...typography.textStyles.body,
+  exerciseName: {
+    fontSize: 24,
+    fontWeight: '700',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Bold',
+      android: 'Ubuntu-Bold',
+      default: 'System'
+    }),
     color: colors.text.primary,
-    lineHeight: typography.lineHeight.relaxed,
-    marginBottom: spacing[6],
+    lineHeight: 28,
+    marginBottom: spacing[2],
   },
 
-  tagsContainer: {
+  exerciseShortDescription: {
+    fontSize: 15,
+    fontWeight: '400',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Regular',
+      android: 'Ubuntu-Regular',
+      default: 'System'
+    }),
+    color: colors.text.secondary,
+    lineHeight: 20,
+    marginBottom: spacing[4],
+    paddingBottom: spacing[3],
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+
+  // Benefit Tags
+  benefitTagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing[2],
-    marginBottom: spacing[6],
+    marginBottom: spacing[5],
   },
 
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.gray[100],
+    backgroundColor: '#6B7280',
     paddingHorizontal: spacing[3],
-    paddingVertical: spacing[1],
-    borderRadius: spacing.radius.full,
+    paddingVertical: spacing[2],
+    borderRadius: spacing.radius.lg,
     gap: spacing[1],
+    borderWidth: 1,
+    borderColor: '#4B5563',
+  },
+
+  tagDuration: {
+    backgroundColor: '#3F7D7B',
+    borderColor: '#2F6B69',
+  },
+
+  tagCategory: {
+    backgroundColor: '#4B5563',
+    borderColor: '#374151',
+  },
+
+  tagDifficulty: {
+    backgroundColor: '#6B7280',
+    borderColor: '#4B5563',
+  },
+
+  tagBenefit: {
+    backgroundColor: '#3F7D7B',
+    borderColor: '#2F6B69',
+  },
+
+  tagApproach: {
+    backgroundColor: '#4B5563',
+    borderColor: '#374151',
   },
 
   tagText: {
-    ...typography.textStyles.caption,
-    color: colors.text.secondary,
-    fontWeight: typography.fontWeight.medium,
+    fontSize: 12,
+    fontWeight: '500',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Medium',
+      android: 'Ubuntu-Medium',
+      default: 'System'
+    }),
+    color: '#FFFFFF',
     textTransform: 'capitalize',
   },
 
+  tagTextDuration: {
+    color: '#FFFFFF',
+  },
+
+  tagTextCategory: {
+    color: '#FFFFFF',
+  },
+
+  tagTextDifficulty: {
+    color: '#FFFFFF',
+  },
+
+  tagTextBenefit: {
+    color: '#FFFFFF',
+  },
+
+  tagTextApproach: {
+    color: '#FFFFFF',
+  },
+
+  // Meta Information
+  metaInfoContainer: {
+    flexDirection: 'row',
+    gap: spacing[5],
+    marginBottom: spacing[6],
+  },
+
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+
+  metaText: {
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Medium',
+      android: 'Ubuntu-Medium',
+      default: 'System'
+    }),
+    color: colors.text.secondary,
+  },
+
+  // Steps Section
   stepsSection: {
     marginBottom: spacing[6],
   },
 
   sectionTitle: {
-    ...typography.textStyles.h5,
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-SemiBold',
+      android: 'Ubuntu-SemiBold',
+      default: 'System'
+    }),
     color: colors.text.primary,
-    fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing[4],
   },
 
   stepsContainer: {
-    gap: spacing[3],
+    paddingLeft: 0,
   },
 
   stepItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: spacing[3],
+    position: 'relative',
   },
 
-  stepNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: spacing.radius.full,
-    backgroundColor: colors.semantic.success.light,
+  stepIndicatorContainer: {
+    alignItems: 'center',
+    width: 40,
+    marginRight: spacing[3],
+    position: 'relative',
+    flexShrink: 0,
+    paddingTop: spacing[1],
+    minHeight: 55,
+  },
+
+  stepCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing[1],
+    zIndex: 2,
+    borderWidth: 2,
+    borderColor: '#3F7D7B',
   },
 
-  stepNumberText: {
-    ...typography.textStyles.caption,
-    color: colors.semantic.success.dark,
-    fontWeight: typography.fontWeight.bold,
+  stepCircleNumber: {
     fontSize: 12,
+    color: '#3F7D7B',
+    fontWeight: '700',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Bold',
+      android: 'Ubuntu-Bold',
+      default: 'System'
+    }),
+  },
+
+  stepConnectorLine: {
+    position: 'absolute',
+    left: 19, // Center line with circle in 40px container (40/2 - 1px)
+    top: 28, // Start below the circle
+    width: 2,
+    height: 35, // Reduced height to match tighter spacing
+    backgroundColor: '#3F7D7B',
+    zIndex: 1,
   },
 
   stepContent: {
     flex: 1,
+    paddingTop: spacing[1],
+  },
+
+  stepContentCard: {
+    flex: 1,
+    paddingVertical: spacing[2],
+    paddingBottom: spacing[3],
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    minHeight: 45,
   },
 
   stepTitle: {
-    ...typography.textStyles.actionTitle,
+    fontSize: 15,
+    fontWeight: '600',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-SemiBold',
+      android: 'Ubuntu-SemiBold',
+      default: 'System'
+    }),
     color: colors.text.primary,
-    fontWeight: typography.fontWeight.semibold,
     marginBottom: spacing[1],
+    lineHeight: 20,
   },
 
   stepDescription: {
-    ...typography.textStyles.body,
+    fontSize: 12,
+    fontWeight: '400',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Regular',
+      android: 'Ubuntu-Regular',
+      default: 'System'
+    }),
     color: colors.text.secondary,
-    lineHeight: typography.lineHeight.relaxed,
-    fontSize: 14,
+    lineHeight: 16,
+  },
+
+  // More Steps
+  moreStepsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing[2],
+  },
+
+  moreStepsCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.gray[300],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  moreStepsText: {
+    ...typography.textStyles.caption,
+    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.bold,
+    fontSize: 10,
+  },
+
+  moreStepsLabel: {
+    ...typography.textStyles.caption,
+    color: colors.text.secondary,
+    marginLeft: spacing[4],
+    fontStyle: 'italic',
+  },
+
+  // No Steps State
+  noStepsContainer: {
+    paddingVertical: spacing[4],
+    alignItems: 'center',
   },
 
   noStepsText: {
@@ -238,39 +377,49 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     color: colors.text.secondary,
     fontStyle: 'italic',
     textAlign: 'center',
-    paddingVertical: spacing[4],
   },
 
-  moreStepsText: {
-    ...typography.textStyles.caption,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginTop: spacing[2],
-    fontStyle: 'italic',
-  },
-
+  // Footer
   footer: {
     paddingHorizontal: spacing[6],
-    paddingVertical: spacing[6],
+    paddingVertical: spacing[4],
     borderTopWidth: 1,
     borderTopColor: colors.gray[100],
+    flexShrink: 0,
+    backgroundColor: '#F8F9FA',
+    justifyContent: 'center',
   },
 
   startButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.semantic.success.default,
+    backgroundColor: '#3F7D7B',
     paddingVertical: spacing[4],
     paddingHorizontal: spacing[6],
     borderRadius: spacing.radius.lg,
-    gap: spacing[2],
-    ...shadows.button,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+    width: '100%',
+    borderWidth: 2,
+    borderColor: '#2F6B69',
+    elevation: 4, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 
   startButtonText: {
-    ...typography.textStyles.actionTitle,
-    color: colors.white,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: 16,
+    color: '#FFFFFF', // Explicit white color
+    fontWeight: '700',
+    fontFamily: Platform.select({
+      ios: 'Ubuntu-Bold',
+      android: 'Ubuntu-Bold',
+      default: 'System'
+    }),
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 });

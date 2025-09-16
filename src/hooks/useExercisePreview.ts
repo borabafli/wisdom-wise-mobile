@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { exerciseLibraryData } from '../data/exerciseLibrary';
+import { exerciseLibraryData, exerciseFlows } from '../data/exerciseLibrary';
 
 interface Exercise {
   id?: string | number;
@@ -24,9 +24,15 @@ export const useExercisePreview = () => {
   const showExercisePreview = useCallback((exercise: Exercise, onConfirm: () => void) => {
     // Get complete exercise data from library
     const exerciseDetails = exerciseLibraryData[exercise.type] || exercise;
+
+    // Get exercise steps from flows
+    const exerciseFlow = exerciseFlows[exercise.type];
+    const steps = exerciseFlow?.steps || [];
+
     const enhancedExercise = {
       ...exercise,
       ...exerciseDetails,
+      steps, // Add the steps from exerciseFlows
       // Preserve any context data that might have been passed
       context: exercise.context
     };

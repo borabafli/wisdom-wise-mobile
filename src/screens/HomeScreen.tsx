@@ -16,6 +16,8 @@ import { getTopExercises, ExerciseProgress, Exercise } from '../utils/exercisePr
 import SlidableHomeExerciseCard from '../components/SlidableHomeExerciseCard';
 import { CardHidingService } from '../services/cardHidingService';
 import { ExerciseCompletionService } from '../services/exerciseCompletionService';
+import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
+import { useExercisePreview } from '../hooks/useExercisePreview';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
   const { currentQuote } = useQuote();
@@ -31,6 +33,31 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.homeScreen);
+
+  // Exercise preview functionality
+  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview();
+
+  // Enhanced exercise click handler that shows preview first
+  const handleExerciseClickWithPreview = (exercise?: Exercise) => {
+    if (exercise) {
+      showExercisePreview(exercise, () => {
+        onExerciseClick?.(exercise);
+      });
+    } else {
+      onExerciseClick?.(exercise);
+    }
+  };
+
+  // Enhanced start session handler that shows preview first
+  const handleStartSessionWithPreview = (exercise: any) => {
+    if (exercise) {
+      showExercisePreview(exercise, () => {
+        onStartSession(exercise);
+      });
+    } else {
+      onStartSession(exercise);
+    }
+  };
   
   // Load hidden card IDs and completed exercises on mount
   useEffect(() => {
@@ -195,7 +222,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 index={index}
                 exerciseProgress={exerciseProgress}
                 showTestButtons={showTestButtons}
-                onStartSession={onStartSession}
+                onStartSession={handleStartSessionWithPreview}
                 onHideCard={handleHideCard}
                 simulateExerciseCompletion={simulateExerciseCompletion}
               />
@@ -342,6 +369,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           {/* <AudioWaveformDemo /> */}
         </SafeAreaWrapper>
       </Modal>
+
+      {/* Exercise Preview Card */}
+      {previewExercise && (
+        <ExerciseSummaryCard
+          visible={showPreview}
+          exercise={previewExercise}
+          onStart={confirmExerciseStart}
+          onClose={hideExercisePreview}
+        />
+      )}
     </SafeAreaWrapper>
   );
 };

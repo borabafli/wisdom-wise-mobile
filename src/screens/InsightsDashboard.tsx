@@ -4,6 +4,7 @@ import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
@@ -25,6 +26,7 @@ import { VisionDetailsModal } from '../components/VisionDetailsModal';
 import { useUserProfile } from '../hooks';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 import { ValuesReflectButton } from '../components/ReflectButton';
+
 
 const { width } = Dimensions.get('window');
 
@@ -262,38 +264,48 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
+      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+      <LinearGradient
+  colors={['#FFFFFF', '#aad3d0']}  // Pastel teal → White
+  // red → green → blue
+  start={{ x: 0, y: 0 }}
+  end={{ x: 0, y: 1 }}
+  style={styles.backgroundGradient}
+/>
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         onContentSizeChange={(width, height) => setContentHeight(height)}
       >
-        {/* Background Image - Full width, no overlays */}
-        <View style={styles.scrollableBackgroundContainer}>
+        {/* Header Image with Text Overlay */}
+        <View style={styles.headerImageContainer}>
           <Image
-            source={require('../../assets/images/insights-background.png')}
-            style={[styles.scrollableBackgroundImage, { 
-              height: Math.max(Dimensions.get('window').height, contentHeight),
-              width: '100%' // Use 100% for full width
-            }]}
+            source={require('../../assets/images/insights-header.png')}
+            style={styles.headerImage}
             contentFit="cover"
-            contentPosition="center bottom" // Keep bubbles visible at bottom
+            contentPosition="center"
           />
-        </View>
-        
-        {/* All content container - positioned above background */}
-        <View style={styles.contentContainer}>
-          {/* Header - Now inside ScrollView so it scrolls away */}
-          <View style={styles.scrollableHeader}>
-            <Text style={styles.compactTitle}>
-              Your progress
-            </Text>
-            <Text style={styles.subtitle}>
-              Your wellness journey continues
-            </Text>
+          <View style={styles.headerTextContainer}>
+            <MaskedView
+              style={styles.maskedView}
+              maskElement={
+                <Text style={styles.maskText}>Insights</Text>
+              }
+            >
+              <LinearGradient
+                colors={['#74B8B2', '#24837C']}
+                start={{ x: 0, y: 0.1 }}
+                end={{ x: 1, y: 0.4 }}
+                style={styles.gradientFill}
+              />
+            </MaskedView>
           </View>
+        </View>
+
+        {/* All content container */}
+        <View style={styles.contentContainer}>
         {/* Enhanced Motivational Header Card */}
         <Animated.View 
           style={[
