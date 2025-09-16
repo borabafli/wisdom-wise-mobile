@@ -319,7 +319,7 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-              <X size={24} color="#6B7280" />
+              <X size={24} color="#4A9B8E" />
             </TouchableOpacity>
             
             <View style={styles.headerCenter}>
