@@ -8,6 +8,7 @@ import {
   Dimensions,
   Alert,
   RefreshControl,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { StatusBar } from 'expo-status-bar';
@@ -32,9 +33,15 @@ const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onProm
   const scrollViewRef = useRef<ScrollView>(null);
   const { width } = Dimensions.get('window');
 
+  // Calculate card width with proper spacing for perfect centering
+  const cardSpacing = 6; // minimal spacing between cards
+  const sideMargin = 12; // minimal margin on sides for perfect centering
+  const cardWidth = width - (sideMargin * 2); // Card width minus margins only
+  const totalCardWidth = cardWidth + cardSpacing; // Total width including spacing
+
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / (width - 40)); // Account for margins
+    const index = Math.round(offsetX / totalCardWidth);
     setCurrentIndex(index);
   };
 
@@ -43,27 +50,43 @@ const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onProm
       <ScrollView
         ref={scrollViewRef}
         horizontal
-        pagingEnabled
+        pagingEnabled={false} // Disable paging to use custom snap behavior
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScroll}
         contentContainerStyle={styles.promptsScrollContent}
         decelerationRate="fast"
-        snapToInterval={width - 40}
+        snapToInterval={totalCardWidth} // Snap to each card + spacing
         snapToAlignment="start"
       >
         {prompts.map((prompt, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.promptCard, { width: width - 40 }]}
-            onPress={() => onPromptSelect(prompt)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.promptCardText}>{prompt}</Text>
-            <View style={styles.promptCardButton}>
-              <Plus size={16} color="#FFFFFF" />
-              <Text style={styles.promptCardButtonText}>Start Writing</Text>
-            </View>
-          </TouchableOpacity>
+          <View key={index} style={[styles.promptCardContainer, { width: totalCardWidth }]}>
+            <ImageBackground
+              source={require('../../assets/images/daily-journal-prompt-card.png')}
+              style={styles.promptCard}
+              imageStyle={styles.promptCardBackground}
+              resizeMode="cover"
+            >
+              <TouchableOpacity
+                style={styles.promptCardTouchable}
+                onPress={() => onPromptSelect(prompt)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.promptCardContent}>
+                  <View style={styles.promptTextContainer}>
+                    <Text style={styles.promptCardText}>{prompt}</Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.promptCardButton}
+                    onPress={() => onPromptSelect(prompt)}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.promptCardButtonText}>Start Writing</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </ImageBackground>
+          </View>
         ))}
       </ScrollView>
 

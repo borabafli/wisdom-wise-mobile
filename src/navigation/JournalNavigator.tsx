@@ -5,6 +5,7 @@ import { JournalStackParamList } from '../types/navigation';
 // Import screens
 import JournalScreen from '../screens/JournalScreen';
 import GuidedJournalScreen from '../screens/GuidedJournalScreen';
+import JournalEntryDetailScreen from '../screens/JournalEntryDetailScreen';
 
 const Stack = createStackNavigator<JournalStackParamList>();
 
@@ -16,6 +17,10 @@ export const JournalNavigator: React.FC = () => {
       }}
     >
       <Stack.Screen name="JournalHome" component={JournalScreen} />
+      <Stack.Screen
+        name="JournalEntryDetail"
+        component={JournalEntryDetailScreen}
+      />
       <Stack.Screen
         name="GuidedJournal"
         component={GuidedJournalScreen}

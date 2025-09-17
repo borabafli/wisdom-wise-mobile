@@ -58,7 +58,7 @@ class ChatService {
   /**
    * Send message with conversation context to AI therapist
    */
-  async getChatCompletionWithContext(messages: any[]): Promise<AIResponse> {
+  async getChatCompletionWithContext(messages: any[], systemMessage?: string, bypassJsonSchema?: boolean): Promise<AIResponse> {
     // Mock responses for testing without API key
     if (DEBUG.MOCK_API_RESPONSES) {
       return this.getMockResponse(messages);
@@ -84,13 +84,40 @@ class ChatService {
       console.log('=== SENDING REQUEST TO EDGE FUNCTION ===');
       console.log('Model:', this.config.model);
 
-      const response = await this.client.post('/ai-chat', {
+// Construct the final message array, prioritizing the provided system message
+const finalMessages = [];
+
+if (systemMessage && typeof systemMessage === 'string') {
+  // Use the provided system message and skip any existing system messages
+  finalMessages.push({ role: 'system', content: systemMessage });
+
+  // Add only non-system messages from the original array
+  const nonSystemMessages = messages.filter(msg => msg.role !== 'system');
+  finalMessages.push(...nonSystemMessages);
+
+  console.log('🎯 [JOURNAL DEBUG] Using custom system message:', systemMessage.substring(0, 100) + '...');
+  console.log('🎯 [JOURNAL DEBUG] Filtered out system messages, remaining:', nonSystemMessages.length);
+} else {
+  // Fallback to original behavior for other use cases
+  finalMessages.push(...messages);
+  console.log('🎯 [JOURNAL DEBUG] Using original message flow with', messages.length, 'messages');
+}
+
+      const requestData: any = {
         action: 'chat',
-        messages: messages,
+        messages: finalMessages,
         model: this.config.model,
         maxTokens: this.config.maxTokens,
         temperature: this.config.temperature
-      });
+      };
+
+      // Add bypass parameter if specified
+      if (bypassJsonSchema) {
+        requestData.bypassJsonSchema = true;
+        console.log('🎯 [JOURNAL DEBUG] Adding bypassJsonSchema=true to request');
+      }
+
+      const response = await this.client.post('/ai-chat', requestData);
 
       console.log('📥 Raw API Response:', {
         status: response.status,
@@ -169,38 +196,34 @@ class ChatService {
     return APIErrorHandler.generateFallbackResponse(userMessage);
   }
 
-  /**
-   * Send a simple message and get response (for journal prompts)
-   */
-  async sendMessage(prompt: string, context: any[] = []): Promise<string> {
-    try {
-      const messages = [
-        {
-          role: 'system',
-          content: 'You are a helpful AI assistant specializing in therapeutic journaling and mindfulness. Provide thoughtful, supportive responses that encourage self-reflection.'
-        },
-        ...context.map(item => ({
-          role: item.role || 'user',
-          content: item.content || item.message || String(item)
-        })),
-        {
-          role: 'user',
-          content: prompt
-        }
-      ];
 
-      const response = await this.getChatCompletionWithContext(messages);
 
-      if (response.success && response.message) {
-        return response.message;
-      } else {
-        throw new Error(response.error || 'Failed to get AI response');
+ // Send a simple message and get response (for journal prompts)
+async sendMessage(prompt: string, context: any[] = [], systemMessage?: string): Promise<string> {
+  try {
+    const messages = [
+      ...context.map(item => ({
+        role: item.role || 'user',
+        content: item.content || item.message || String(item)
+      })),
+      {
+        role: 'user',
+        content: prompt
       }
-    } catch (error) {
-      console.error('Error in sendMessage:', error);
-      throw error;
+    ];
+
+    const response = await this.getChatCompletionWithContext(messages, systemMessage);
+
+    if (response.success && response.message) {
+      return response.message;
+    } else {
+      throw new Error(response.error || 'Failed to get AI response');
     }
+  } catch (error) {
+    console.error('Error in sendMessage:', error);
+    throw error;
   }
+}
 
   // Mock responses for testing without API key
   private async getMockResponse(messages: any[]): Promise<AIResponse> {

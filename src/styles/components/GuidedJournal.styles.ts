@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get('window');
 export const guidedJournalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D2B48C', // Light brown, earthy background
+    backgroundColor: 'transparent', // Transparent to show gradient
   },
 
   keyboardView: {
@@ -17,11 +17,10 @@ export const guidedJournalStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    backgroundColor: '#C19A6B', // Slightly darker brown for header
-    borderBottomWidth: 1,
-    borderBottomColor: '#B8956B',
+    paddingHorizontal: spacing[12],
+    paddingVertical: spacing[4],
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
   },
 
   backButton: {
@@ -30,7 +29,7 @@ export const guidedJournalStyles = StyleSheet.create({
 
   headerTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#5D4E37', // Dark brown
     textAlign: 'center',
@@ -39,25 +38,26 @@ export const guidedJournalStyles = StyleSheet.create({
 
   stepIndicator: {
     backgroundColor: '#8B7355',
-    paddingHorizontal: spacing[12],
-    paddingVertical: spacing[6],
-    borderRadius: 12,
+    paddingHorizontal: spacing[8],
+    paddingVertical: spacing[4],
+    borderRadius: 8,
   },
 
   stepText: {
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 12,
+    fontSize: 10,
     color: '#FFFFFF',
     fontWeight: '600',
   },
 
   scrollView: {
     flex: 1,
-    paddingHorizontal: spacing[20],
+    paddingHorizontal: spacing[12],
   },
 
   promptContainer: {
-    marginVertical: spacing[24],
+    marginTop: spacing[8],
+    marginBottom: spacing[8],
     padding: spacing[20],
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 16,
@@ -68,7 +68,7 @@ export const guidedJournalStyles = StyleSheet.create({
   promptHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
 
   promptText: {
@@ -77,9 +77,8 @@ export const guidedJournalStyles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 26,
     color: '#5D4E37', // Dark brown
-    textAlign: 'left',
+    textAlign: 'center',
     fontWeight: '500',
-    marginRight: spacing[12],
   },
 
   ttsButton: {
@@ -107,14 +106,15 @@ export const guidedJournalStyles = StyleSheet.create({
     marginBottom: spacing[20],
     borderWidth: 1,
     borderColor: 'rgba(139, 115, 85, 0.3)',
+    marginHorizontal: spacing[4],
   },
 
   inputRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: spacing[16],
-    paddingVertical: spacing[12],
-    minHeight: 56,
+    alignItems: 'center',
+    paddingHorizontal: spacing[20],
+    paddingVertical: spacing[16],
+    minHeight: 100,
   },
 
   textInput: {
@@ -124,14 +124,15 @@ export const guidedJournalStyles = StyleSheet.create({
     lineHeight: 24,
     color: '#5D4E37',
     textAlignVertical: 'top',
-    minHeight: 40,
-    maxHeight: 120,
-    paddingVertical: 0,
+    minHeight: 60,
+    maxHeight: 150,
+    paddingVertical: spacing[4],
   },
 
   inputButtonsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginLeft: spacing[8],
   },
 
@@ -145,44 +146,53 @@ export const guidedJournalStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Recording Interface - Exactly like chat
+  // Recording Interface - Improved layout
   recordingInterfaceWithTimer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
-    paddingHorizontal: spacing[2],
-    paddingVertical: spacing[1],
-    minHeight: 48,
+    paddingHorizontal: spacing[12],
+    paddingVertical: spacing[8],
+    minHeight: 68,
   },
 
   cancelButton: {
-    width: 42,
-    height: 42,
+    width: 36,
+    height: 36,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#DC2626',
-    marginHorizontal: spacing[3],
+    backgroundColor: '#6B7280',
+    marginRight: spacing[12],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
 
   waveWithTimerInside: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: spacing[3],
     flexDirection: 'column',
-    marginTop: 6,
+    width: 120,
+    height: 50,
   },
 
   submitRecordingButton: {
-    width: 42,
-    height: 42,
+    width: 36,
+    height: 36,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#065F46',
-    marginHorizontal: spacing[3],
+    marginLeft: spacing[12],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
 
   previousEntriesContainer: {
@@ -228,12 +238,11 @@ export const guidedJournalStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center', // Center the continue button
-    paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    backgroundColor: '#C19A6B', // Same as header
-    borderTopWidth: 1,
-    borderTopColor: '#B8956B',
-    minHeight: 80, // Same as header
+    paddingHorizontal: spacing[16],
+    paddingVertical: spacing[8],
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    minHeight: 50,
   },
 
 
@@ -242,11 +251,11 @@ export const guidedJournalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#065F46',
-    paddingVertical: spacing[8],
-    paddingHorizontal: spacing[16],
-    borderRadius: 12,
-    gap: spacing[4],
-    minWidth: 90,
+    paddingVertical: spacing[6],
+    paddingHorizontal: spacing[12],
+    borderRadius: 8,
+    gap: spacing[3],
+    minWidth: 80,
   },
 
   compactNextButtonDisabled: {
@@ -255,7 +264,7 @@ export const guidedJournalStyles = StyleSheet.create({
 
   compactNextButtonText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 12,
+    fontSize: 11,
     color: '#FFFFFF',
     fontWeight: '600',
   },

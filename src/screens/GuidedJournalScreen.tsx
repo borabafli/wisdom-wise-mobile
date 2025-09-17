@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvo
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Check, ArrowLeft, Mic, MicOff, Volume2, VolumeX, X } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
 import { guidedJournalStyles as styles } from '../styles/components/GuidedJournal.styles';
 import JournalSummaryCard from '../components/JournalSummaryCard';
 import { chatService } from '../services/chatService';
@@ -147,17 +148,48 @@ Return only the question, no additional text.`;
 
 ${fullJournalText}
 
-Return a JSON response with this format:
+IMPORTANT: You must respond with ONLY valid JSON in exactly this format (no additional text before or after):
 {
   "summary": "A warm, brief summary (2-3 sentences) of their reflection",
   "insights": ["Key insight 1", "Key insight 2 (optional)"]
 }
 
-Make the summary supportive and affirming. Keep insights concise and meaningful.`;
+Make the summary supportive and affirming. Keep insights concise and meaningful. Respond with JSON only.`;
 
     try {
       const response = await chatService.sendMessage(prompt, []);
-      const summaryData = JSON.parse(response.trim());
+      console.log('Raw summary response:', response);
+
+      let summaryData;
+
+      // Try to parse as JSON first
+      try {
+        summaryData = JSON.parse(response.trim());
+      } catch (jsonError) {
+        console.log('Failed to parse as JSON, attempting to extract JSON from response');
+
+        // Try to find JSON within the response text
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          try {
+            summaryData = JSON.parse(jsonMatch[0]);
+          } catch (extractError) {
+            throw new Error('Could not extract valid JSON from response');
+          }
+        } else {
+          // If no JSON found, create summary from plain text
+          summaryData = {
+            summary: response.trim().split('\n')[0] || "Thank you for your thoughtful reflection.",
+            insights: ["Your willingness to explore your thoughts shows great self-awareness"]
+          };
+        }
+      }
+
+      // Validate the structure
+      if (!summaryData.summary || !summaryData.insights) {
+        throw new Error('Invalid summary structure');
+      }
+
       setJournalSummary(summaryData);
       setShowSummary(true);
     } catch (error) {
@@ -264,13 +296,19 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      <StatusBar style="dark" backgroundColor="#8B7355" />
+      <StatusBar style="dark" backgroundColor="#8B7355" hidden={true} />
 
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      <LinearGradient
+        colors={['#C19A6B', '#FFFFFF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={{ flex: 1 }}
       >
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
@@ -287,23 +325,6 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
           <View style={styles.promptContainer}>
             <View style={styles.promptHeader}>
               <Text style={styles.promptText}>{entries[currentStep]?.prompt}</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  if (ttsStatus.isSpeaking && playingMessageId === 'current_prompt') {
-                    handleStopTTS();
-                  } else {
-                    handlePlayTTS('current_prompt', entries[currentStep]?.prompt || '');
-                  }
-                }}
-                style={styles.ttsButton}
-                activeOpacity={0.7}
-              >
-                {ttsStatus.isSpeaking && playingMessageId === 'current_prompt' ? (
-                  <VolumeX size={16} color="#5D4E37" />
-                ) : (
-                  <Volume2 size={16} color="#5D4E37" />
-                )}
-              </TouchableOpacity>
             </View>
           </View>
 
@@ -422,7 +443,8 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
             )}
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
 
       {/* Save Session Modal */}
       <Modal

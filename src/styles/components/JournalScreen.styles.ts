@@ -56,7 +56,8 @@ export const journalScreenStyles = StyleSheet.create({
 
   // Swipable Prompts Section
   promptsSection: {
-    paddingVertical: spacing[20],
+    paddingTop: spacing[12], // Reduced top padding
+    paddingBottom: spacing[8], // Reduced bottom padding
   },
 
   sectionTitle: {
@@ -69,61 +70,96 @@ export const journalScreenStyles = StyleSheet.create({
   },
 
   swipableContainer: {
-    height: 140,
+    height: 300, // Further increased to ensure cards are fully visible
+    marginBottom: spacing[4], // Reduced margin bottom
   },
 
   promptsScrollContent: {
-    paddingHorizontal: spacing[20],
+    paddingLeft: spacing[6], // Reduced left padding to shift cards left
+    paddingRight: spacing[18], // Increased right padding to balance
+    alignItems: 'center', // Center cards vertically in scroll view
+  },
+
+  promptCardContainer: {
+    alignItems: 'center', // Center the card within its container
+    justifyContent: 'center',
+    paddingRight: spacing[6], // Reduced right padding to shift cards left
   },
 
   promptCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: spacing[20],
-    marginRight: spacing[16],
-    minHeight: 120,
+    width: '100%', // Full width within container
+    height: 260, // Match DailyPromptCard height
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+
+  promptCardBackground: {
+    borderRadius: 20,
+  },
+
+  promptCardTouchable: {
+    flex: 1,
+  },
+
+  promptCardContent: {
+    flex: 1,
+    padding: spacing[16],
     justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+  },
+
+  promptTextContainer: {
+    position: 'absolute',
+    left: '8%', // Match DailyPromptCard positioning
+    top: '40%',
+    width: '85%',
+    maxHeight: 120,
+    transform: [{ translateY: -20 }],
+    flex: 1,
+    justifyContent: 'center',
   },
 
   promptCardText: {
     fontFamily: 'Ubuntu-Regular',
     fontSize: 16,
-    lineHeight: 22,
-    color: '#374151',
-    flex: 1,
-    marginBottom: spacing[12],
+    lineHeight: 18, // Tighter line height like DailyPromptCard
+    color: '#2D3748',
+    textAlign: 'left',
+    fontWeight: '500',
+    flexShrink: 1,
+    adjustsFontSizeToFit: true,
+    numberOfLines: 0,
+    minimumFontScale: 0.5,
   },
 
   promptCardButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#065F46',
-    paddingHorizontal: spacing[12],
-    paddingVertical: spacing[8],
+    position: 'absolute',
+    bottom: spacing[12],
+    left: '15%', // Match DailyPromptCard positioning
+    backgroundColor: '#4c908b', // Match DailyPromptCard color
+    paddingHorizontal: spacing[10],
+    paddingVertical: spacing[5],
     borderRadius: 8,
-    alignSelf: 'flex-start',
-    gap: spacing[6],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
   promptCardButtonText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 12,
+    fontSize: 13, // Match DailyPromptCard font size
     color: '#FFFFFF',
     fontWeight: '600',
+    textAlign: 'center',
   },
 
   pageIndicator: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing[12],
+    marginTop: spacing[8], // Reduced top margin
+    marginBottom: spacing[4], // Reduced bottom margin
     gap: spacing[6],
   },
 
@@ -143,8 +179,8 @@ export const journalScreenStyles = StyleSheet.create({
 
   // Entries Section
   entriesSection: {
-    marginTop: spacing[24],
-    marginBottom: spacing[16],
+    marginTop: spacing[12], // Reduced top margin
+    marginBottom: spacing[8], // Reduced bottom margin
   },
 
   entryCard: {
