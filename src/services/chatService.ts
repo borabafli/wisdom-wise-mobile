@@ -169,6 +169,39 @@ class ChatService {
     return APIErrorHandler.generateFallbackResponse(userMessage);
   }
 
+  /**
+   * Send a simple message and get response (for journal prompts)
+   */
+  async sendMessage(prompt: string, context: any[] = []): Promise<string> {
+    try {
+      const messages = [
+        {
+          role: 'system',
+          content: 'You are a helpful AI assistant specializing in therapeutic journaling and mindfulness. Provide thoughtful, supportive responses that encourage self-reflection.'
+        },
+        ...context.map(item => ({
+          role: item.role || 'user',
+          content: item.content || item.message || String(item)
+        })),
+        {
+          role: 'user',
+          content: prompt
+        }
+      ];
+
+      const response = await this.getChatCompletionWithContext(messages);
+
+      if (response.success && response.message) {
+        return response.message;
+      } else {
+        throw new Error(response.error || 'Failed to get AI response');
+      }
+    } catch (error) {
+      console.error('Error in sendMessage:', error);
+      throw error;
+    }
+  }
+
   // Mock responses for testing without API key
   private async getMockResponse(messages: any[]): Promise<AIResponse> {
     // Simulate API delay

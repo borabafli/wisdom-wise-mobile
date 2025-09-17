@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle, Waves, X } from 'lucide-react-native';
@@ -18,8 +18,10 @@ import { CardHidingService } from '../services/cardHidingService';
 import { ExerciseCompletionService } from '../services/exerciseCompletionService';
 import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
 import { useExercisePreview } from '../hooks/useExercisePreview';
+import DailyPromptCard from '../components/DailyPromptCard';
+import JournalPromptService from '../services/journalPromptService';
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation }) => {
   const { currentQuote } = useQuote();
   const { width, height } = Dimensions.get('window');
   const [showWaveformDemo, setShowWaveformDemo] = useState(false);
@@ -30,6 +32,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   const [showTestButtons, setShowTestButtons] = useState(false);
   const [hiddenCardIds, setHiddenCardIds] = useState<string[]>([]);
   const [completedExerciseIds, setCompletedExerciseIds] = useState<string[]>([]);
+  const [dailyPrompt, setDailyPrompt] = useState<string>('');
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.homeScreen);
@@ -67,6 +70,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
       const completedIds = await ExerciseCompletionService.getCompletedExerciseIds();
       setCompletedExerciseIds(completedIds);
+
+      // Load daily prompt
+      const prompt = await JournalPromptService.getTodaysMainPrompt();
+      setDailyPrompt(prompt);
 
       // Update exercise progress with completion status
       const newProgress: ExerciseProgress = {};
@@ -127,6 +134,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
     }));
   };
 
+  // Test function to generate daily prompts using existing insights
+  const handleGeneratePromptsTest = async () => {
+    try {
+      // Force regeneration by using the service method
+      await JournalPromptService.forceRegeneratePrompts();
+
+      // Generate new prompts using existing insights
+      const newPrompts = await JournalPromptService.generateDailyPrompts();
+
+      // Update the main prompt
+      if (newPrompts.length > 0) {
+        setDailyPrompt(newPrompts[0].text);
+      }
+
+      console.log('Generated', newPrompts.length, 'prompts for today using existing insights');
+
+      // Show success message
+      Alert.alert(
+        'Prompts Generated!',
+        `Generated ${newPrompts.length} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the "Writing Prompts" section.`,
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.error('Error generating test prompts:', error);
+      Alert.alert('Error', 'Failed to generate prompts. Please try again.');
+    }
+  };
 
   return (
     <SafeAreaWrapper style={styles.container}>
@@ -324,6 +358,30 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             </ImageBackground>
           </View>
         </View>
+
+        {/* Daily Reflection Section */}
+        {dailyPrompt && (
+          <View style={styles.dailyReflectionSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Daily Reflection</Text>
+              <TouchableOpacity
+                onPress={handleGeneratePromptsTest}
+                style={[styles.testButton, styles.promptTestButton]}
+              >
+                <Text style={styles.testButtonText}>
+                  Generate Test
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <DailyPromptCard
+              prompt={dailyPrompt}
+              onStartWriting={() => navigation?.navigate('Journal', {
+                screen: 'GuidedJournal',
+                params: { initialPrompt: dailyPrompt }
+              })}
+            />
+          </View>
+        )}
       </ScrollView>
 
       {/* Audio Waveform Demo Modal */}

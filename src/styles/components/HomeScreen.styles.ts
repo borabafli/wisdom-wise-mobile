@@ -166,6 +166,13 @@ export const homeScreenStyles = StyleSheet.create({
   testButtonTextActive: {
     color: '#FFFFFF',
   },
+  promptTestButton: {
+    backgroundColor: '#4c908b',
+    borderColor: '#4c908b',
+    marginTop: 4, // More space downwards
+    marginLeft: 4, // Slightly more to the right
+    paddingHorizontal: spacing[10], // Slightly more padding left and right
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -495,8 +502,9 @@ export const homeScreenStyles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing[16],
-    paddingHorizontal: spacing[16],
+    paddingVertical: spacing[20],
+    paddingHorizontal: spacing[20],
+    paddingRight: spacing[24],
     minHeight: 160,
   },
   quoteIcon: {
@@ -529,6 +537,13 @@ export const homeScreenStyles = StyleSheet.create({
     color: '#002d14',
     fontWeight: typography.fontWeight.medium,
     textAlign: 'center',
+  },
+
+  // Daily Reflection Section
+  dailyReflectionSection: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing.layout.screenPadding,
+    marginTop: spacing[12], // Same as Quick Actions section
   },
 });
 
