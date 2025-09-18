@@ -19,13 +19,12 @@ export const customTabBarStyles = StyleSheet.create({
   },
   tabBarContent: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly', // Evenly distribute 5 tabs
     alignItems: 'flex-start', // Align to top
     paddingVertical: 8, // More vertical space for text
     paddingHorizontal: spacing.components.cardPadding,
     flex: 1, // Take full width
     minHeight: 90, // Much more height for text
-    overflow: 'visible', // Allow plus button to extend outside
   },
 
   // Tab Buttons

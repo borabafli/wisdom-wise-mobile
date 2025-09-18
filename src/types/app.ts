@@ -15,6 +15,7 @@ export interface HomeScreenProps {
   onInsightClick: (type: string, insight?: any) => void;
   onNavigateToExercises: () => void;
   onNavigateToInsights: () => void;
+  navigation?: any;
 }
 
 export interface ChatInterfaceProps {

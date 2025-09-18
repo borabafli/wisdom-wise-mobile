@@ -128,26 +128,32 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   };
 
   const tabs = [
-    { 
-      name: 'Home', 
+    {
+      name: 'Home',
       label: 'Home',
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-home.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home.png')
     },
-    { 
-      name: 'Exercises', 
+    {
+      name: 'Exercises',
       label: 'Exercises',
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-exercises.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-exercises.png')
     },
-    { 
-      name: 'Insights', 
+    {
+      name: 'Journal',
+      label: 'Journal',
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal.png'),
+      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal.png')
+    },
+    {
+      name: 'Insights',
       label: 'Insights',
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-insights.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-insights.png')
     },
-    { 
-      name: 'Profile', 
+    {
+      name: 'Profile',
       label: 'Profile',
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-profile.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-profile.png')
@@ -162,8 +168,8 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
         style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
       >
         <View style={styles.tabBarContent}>
-            {/* First 2 tabs */}
-            {tabs.slice(0, 2).map((tab, index) => {
+            {/* All 5 tabs */}
+            {tabs.map((tab, index) => {
               const isFocused = state.index === index;
 
               const onPress = () => {
@@ -213,107 +219,18 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                       />
                     );
                   })}
-                  
+
                   <View style={{ zIndex: 10 }}>
-                    <TabIcon 
+                    <TabIcon
                       selectedIcon={tab.selectedIcon}
                       unselectedIcon={tab.unselectedIcon}
                       isFocused={isFocused}
                     />
                   </View>
-                  <Text 
+                  <Text
                     style={[
                       styles.tabLabel,
-                      { 
-                        color: isFocused ? '#0d9488' : '#6B7280',
-                        fontWeight: isFocused ? '600' : '500',
-                        zIndex: 10,
-                      }
-                    ]}
-                  >
-                    {tab.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-
-            {/* Center Plus Button - Show on all tabs */}
-            <TouchableOpacity
-              onPress={() => setShowQuickActions(true)}
-              style={styles.centerButton}
-              activeOpacity={0.8}
-            >
-              <Image 
-                source={require('../../assets/navigation-icons/First Version/plus-button.png')} 
-                style={{ width: 52, height: 52 }}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-
-            {/* Last 2 tabs */}
-            {tabs.slice(2).map((tab, index) => {
-              const actualIndex = index + 2; // Adjust for slice
-              const isFocused = state.index === actualIndex;
-
-              const onPress = () => {
-                const event = navigation.emit({
-                  type: 'tabPress',
-                  target: state.routes[actualIndex].key,
-                  canPreventDefault: true,
-                });
-
-                if (!isFocused && !event.defaultPrevented) {
-                  handleTabPress(actualIndex, () => navigation.navigate(tab.name));
-                } else {
-                  handleTabPress(actualIndex, () => {});
-                }
-              };
-
-              return (
-                <TouchableOpacity
-                  key={tab.name}
-                  onPress={onPress}
-                  style={[styles.tabButton]}
-                  activeOpacity={0.7}
-                >
-                  {/* Circle animation */}
-                  {Object.entries(circleAnimations).map(([key, anim]) => {
-                    if (!key.startsWith(`${actualIndex}-`) || !anim) return null;
-                    return (
-                      <Animated.View
-                        key={key}
-                        style={[
-                          styles.tabCircle1, // Use the first circle style
-                          {
-                            opacity: anim.interpolate({
-                              inputRange: [0, 0.5, 1],
-                              outputRange: [0.8, 0.4, 0],
-                            }),
-                            transform: [
-                              {
-                                scale: anim.interpolate({
-                                  inputRange: [0, 1],
-                                  outputRange: [0.85, 1],
-                                })
-                              }
-                            ],
-                          }
-                        ]}
-                      />
-                    );
-                  })}
-                  
-                  <View style={{ zIndex: 10 }}>
-                    <TabIcon 
-                      selectedIcon={tab.selectedIcon}
-                      unselectedIcon={tab.unselectedIcon}
-                      isFocused={isFocused}
-                    />
-                  </View>
-                  <Text 
-                    style={[
-                      styles.tabLabel,
-                      { 
+                      {
                         color: isFocused ? '#0d9488' : '#6B7280',
                         fontWeight: isFocused ? '600' : '500',
                         zIndex: 10,

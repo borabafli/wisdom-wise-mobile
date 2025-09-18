@@ -15,6 +15,7 @@ interface ChatCompletionRequest {
   maxTokens?: number;
   temperature?: number;
   aiResponse?: string; // For suggestion generation
+  bypassJsonSchema?: boolean; // For journaling prompts and other non-therapy requests
 }
 
 interface AIResponse {
@@ -165,7 +166,8 @@ Deno.serve(async (req: Request) => {
           messages || [],
           model || 'google/gemini-2.5-flash',
           maxTokens || 500,
-          temperature || 0.7
+          temperature || 0.7,
+          requestBody.bypassJsonSchema || false
         );
 
       case 'transcribe':
@@ -280,7 +282,8 @@ async function handleChatCompletion(
   messages: ChatMessage[],
   model: string,
   maxTokens: number,
-  temperature: number
+  temperature: number,
+  bypassJsonSchema: boolean = false
 ): Promise<Response> {
   if (!messages || messages.length === 0) {
     return new Response(
@@ -296,6 +299,84 @@ async function handleChatCompletion(
   }
 
   try {
+    // Prepare the request body
+    const requestBody: any = {
+      model: model,
+      messages: messages.map(msg => ({
+        role: msg.role,
+        content: typeof msg.content === 'string'
+          ? [{ type: "text", text: msg.content }]
+          : msg.content
+      })),
+      max_tokens: maxTokens,
+      temperature: temperature,
+      stream: false,
+      reasoning_effort: "low"
+    };
+
+    // Only add JSON schema for regular therapy conversations
+    if (!bypassJsonSchema) {
+      requestBody.response_format = {
+        type: "json_schema",
+        json_schema: {
+          name: "therapeutic_response",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                description: "The therapeutic response message from Anu"
+              },
+              suggestions: {
+                type: "array",
+                items: {
+                  type: "string"
+                },
+                minItems: 2,
+                maxItems: 4,
+                description: "2-4 short user reply suggestions (2-5 words each) that are direct responses to the message"
+              },
+              nextStep: {
+                type: "boolean",
+                description: "For exercises only: true if the therapeutic goal of current step is achieved and ready to advance, false to stay in current step for deeper exploration"
+              },
+              nextAction: {
+                type: "string",
+                enum: ["none", "showExerciseCard"],
+                description: "REQUIRED: Set to 'showExerciseCard' when user confirms wanting to do an exercise, 'none' otherwise"
+              },
+              exerciseData: {
+                type: "object",
+                properties: {
+                  type: {
+                    type: "string",
+                    enum: ["breathing", "mindfulness", "gratitude", "automatic-thoughts", "self-compassion", "values-clarification"],
+                    description: "The exercise type"
+                  },
+                  name: {
+                    type: "string",
+                    description: "The display name of the exercise"
+                  }
+                },
+                required: ["type", "name"],
+                description: "Exercise details - REQUIRED when nextAction is 'showExerciseCard', can be null when nextAction is 'none'"
+              }
+            },
+            required: ["message", "suggestions", "nextAction"],
+            additionalProperties: true
+          }
+        }
+      };
+    }
+
+    console.log('🔧 [EDGE FUNCTION] Request config:', {
+      bypassJsonSchema,
+      hasResponseFormat: !!requestBody.response_format,
+      model: requestBody.model,
+      messagesCount: requestBody.messages.length
+    });
+
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -304,71 +385,7 @@ async function handleChatCompletion(
         'X-Title': 'WisdomWise',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: model,
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: typeof msg.content === 'string' 
-            ? [{ type: "text", text: msg.content }]
-            : msg.content
-        })),
-        max_tokens: maxTokens,
-        temperature: temperature,
-        stream: false,
-        reasoning_effort: "low",
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "therapeutic_response",
-            strict: true,
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  description: "The therapeutic response message from Anu"
-                },
-                suggestions: {
-                  type: "array",
-                  items: {
-                    type: "string"
-                  },
-                  minItems: 2,
-                  maxItems: 4,
-                  description: "2-4 short user reply suggestions (2-5 words each) that are direct responses to the message"
-                },
-                nextStep: {
-                  type: "boolean",
-                  description: "For exercises only: true if the therapeutic goal of current step is achieved and ready to advance, false to stay in current step for deeper exploration"
-                },
-                nextAction: {
-                  type: "string",
-                  enum: ["none", "showExerciseCard"],
-                  description: "REQUIRED: Set to 'showExerciseCard' when user confirms wanting to do an exercise, 'none' otherwise"
-                },
-                exerciseData: {
-                  type: "object",
-                  properties: {
-                    type: {
-                      type: "string",
-                      enum: ["breathing", "mindfulness", "gratitude", "automatic-thoughts", "self-compassion", "values-clarification"],
-                      description: "The exercise type"
-                    },
-                    name: {
-                      type: "string", 
-                      description: "The display name of the exercise"
-                    }
-                  },
-                  required: ["type", "name"],
-                  description: "Exercise details - REQUIRED when nextAction is 'showExerciseCard', can be null when nextAction is 'none'"
-                }
-              },
-              required: ["message", "suggestions", "nextAction"],
-              additionalProperties: true
-            }
-          }
-        }
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     // Handle non-streaming response
@@ -457,55 +474,64 @@ async function handleChatCompletion(
 
     console.log('🔍 Raw messageContent before parsing:', messageContent);
     
-    // With structured output, the content should already be parsed JSON
+    // Handle response based on whether JSON schema was used
     let cleanedMessage = '';
     let suggestions: string[] = [];
     let nextAction: string | undefined;
     let exerciseData: {type: string, name: string} | undefined;
     let nextStep: boolean | undefined;
-    
-    try {
-      // First, try to extract JSON from markdown code blocks if present
-      let jsonString = messageContent;
-      console.log('🔍 Initial messageContent:', messageContent);
-      
-      const codeBlockMatch = messageContent.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
-      if (codeBlockMatch) {
-        jsonString = codeBlockMatch[1].trim();
-        console.log('🔧 Found code block, extracted JSON:', jsonString);
-      } else {
-        console.log('🔍 No code block found, trying direct parsing');
+
+    if (bypassJsonSchema) {
+      // For bypassed requests (like journaling), return the raw message content
+      console.log('🔧 [BYPASS MODE] Using raw message content for bypassed schema');
+      cleanedMessage = messageContent.trim();
+      suggestions = []; // No suggestions for non-therapy requests
+      nextAction = "none";
+    } else {
+      // For regular therapy requests, parse the JSON response
+      try {
+        // First, try to extract JSON from markdown code blocks if present
+        let jsonString = messageContent;
+        console.log('🔍 Initial messageContent:', messageContent);
+
+        const codeBlockMatch = messageContent.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+        if (codeBlockMatch) {
+          jsonString = codeBlockMatch[1].trim();
+          console.log('🔧 Found code block, extracted JSON:', jsonString);
+        } else {
+          console.log('🔍 No code block found, trying direct parsing');
+        }
+
+        console.log('🔍 About to parse JSON string:', jsonString.substring(0, 300));
+        const jsonResponse = JSON.parse(jsonString);
+        console.log('🔍 Successfully parsed JSON response:', jsonResponse);
+
+        if (jsonResponse.message && jsonResponse.suggestions) {
+          cleanedMessage = jsonResponse.message.trim();
+          suggestions = Array.isArray(jsonResponse.suggestions)
+            ? jsonResponse.suggestions.slice(0, 4)
+            : [];
+          nextAction = jsonResponse.nextAction;
+          exerciseData = jsonResponse.exerciseData;
+          nextStep = jsonResponse.nextStep;
+          console.log('✅ Successfully extracted from JSON:', {
+            cleanedMessage: cleanedMessage.substring(0, 100),
+            suggestions,
+            nextAction,
+            exerciseData,
+            nextStep
+          });
+        } else {
+          console.log('⚠️ JSON missing required fields, using fallback');
+          cleanedMessage = messageContent;
+          suggestions = [];
+        }
+      } catch (e) {
+        console.log('⚠️ Not JSON, using fallback parsing');
+        const result = parseStructuredResponse(messageContent);
+        cleanedMessage = result.cleanedMessage;
+        suggestions = result.suggestions;
       }
-      
-      console.log('🔍 About to parse JSON string:', jsonString.substring(0, 300));
-      const jsonResponse = JSON.parse(jsonString);
-      console.log('🔍 Successfully parsed JSON response:', jsonResponse);
-      
-      if (jsonResponse.message && jsonResponse.suggestions) {
-        cleanedMessage = jsonResponse.message.trim();
-        suggestions = Array.isArray(jsonResponse.suggestions) 
-          ? jsonResponse.suggestions.slice(0, 4) 
-          : [];
-        nextAction = jsonResponse.nextAction;
-        exerciseData = jsonResponse.exerciseData;
-        nextStep = jsonResponse.nextStep;
-        console.log('✅ Successfully extracted from JSON:', { 
-          cleanedMessage: cleanedMessage.substring(0, 100), 
-          suggestions, 
-          nextAction, 
-          exerciseData,
-          nextStep 
-        });
-      } else {
-        console.log('⚠️ JSON missing required fields, using fallback');
-        cleanedMessage = messageContent;
-        suggestions = [];
-      }
-    } catch (e) {
-      console.log('⚠️ Not JSON, using fallback parsing');
-      const result = parseStructuredResponse(messageContent);
-      cleanedMessage = result.cleanedMessage;
-      suggestions = result.suggestions;
     }
     
     console.log('🔍 After parsing - cleanedMessage:', cleanedMessage);

@@ -10,6 +10,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
 import ExerciseLibrary from '../screens/ExerciseLibrary';
+import JournalScreen from '../screens/JournalScreen';
+import GuidedJournalScreen from '../screens/GuidedJournalScreen';
 import InsightsDashboard from '../screens/InsightsDashboard';
 import ProfileScreen from '../screens/ProfileScreen';
 import ChatInterface from '../screens/ChatInterface';
@@ -19,6 +21,7 @@ import CustomTabBar from './CustomTabBar';
 
 // Import navigators
 import { AuthNavigator } from '../navigation/AuthNavigator';
+import { JournalNavigator } from '../navigation/JournalNavigator';
 import { OnboardingNavigator } from '../navigation/OnboardingNavigator';
 
 // Import services
@@ -202,8 +205,9 @@ export const AppContent: React.FC = () => {
         }}
       >
         <Tab.Screen name="Home">
-          {() => (
+          {(props) => (
             <HomeScreen
+              {...props}
               onStartSession={handleStartSession}
               onExerciseClick={handleExerciseClick}
               onInsightClick={handleInsightClick}
@@ -215,6 +219,7 @@ export const AppContent: React.FC = () => {
         <Tab.Screen name="Exercises">
           {() => <ExerciseLibrary onExerciseClick={handleExerciseClick} />}
         </Tab.Screen>
+        <Tab.Screen name="Journal" component={JournalNavigator} />
         <Tab.Screen name="Insights">
           {() => <InsightsDashboard onInsightClick={handleInsightClick} onTherapyGoalsClick={handleTherapyGoalsClick} />}
         </Tab.Screen>
