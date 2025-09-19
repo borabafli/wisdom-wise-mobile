@@ -32,11 +32,50 @@ export const insightsDashboardStyles = StyleSheet.create({
   },
   
 
-  // Header Section - Consistent with HomeScreen
+  // Header Section - Matching ExerciseLibrary style
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[32],
-    paddingBottom: spacing.layout.screenPadding,
+    paddingTop: spacing[16],
+    paddingBottom: spacing[4],
+  },
+  headerContent: {
+    alignItems: 'flex-start',
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing[2],
+    marginLeft: -spacing[16],
+    marginTop: -spacing[12],
+  },
+  headerTurtleIcon: {
+    width: 162,
+    height: 162,
+    marginRight: spacing[4],
+    marginTop: -spacing[8],
+  },
+  titleAndSubtitleContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: -spacing[12],
+    marginTop: spacing[20],
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#002d14',
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: spacing[1],
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#6b7280',
+    fontFamily: 'Inter-Medium',
+    letterSpacing: 0.2,
   },
   title: {
     fontSize: 28,
@@ -138,12 +177,12 @@ export const insightsDashboardStyles = StyleSheet.create({
     // No padding here to avoid double padding
   },
   motivationalContent: {
-    padding: spacing[16], // Reduced from 20 to 16
-    gap: spacing[12], // Reduced from 16 to 12
+    padding: spacing[12], // Further reduced height
+    gap: spacing[4], // Much smaller gap
   },
   motivationalText: {
     flex: 1,
-    marginBottom: spacing[8],
+    marginBottom: spacing[2], // Much smaller distance
   },
   motivationalTitle: {
     fontSize: 17,
@@ -170,16 +209,16 @@ export const insightsDashboardStyles = StyleSheet.create({
   motivationalNumber: {
     fontSize: 20,
     fontWeight: typography.fontWeight.bold,
-    color: '#87BAA3',
+    color: '#4A6B7C', // Same blue color as the buttons
     marginBottom: spacing[2],
   },
-  
+
   motivationalNumberVision: {
-    color: '#87BAA3', // Updated to match sage green theme
+    color: '#4A6B7C', // Same blue color as the buttons
   },
-  
+
   motivationalNumberAchievement: {
-    color: '#87BAA3', // Updated to match sage green theme
+    color: '#4A6B7C', // Same blue color as the buttons
   },
   motivationalLabel: {
     fontSize: 11,

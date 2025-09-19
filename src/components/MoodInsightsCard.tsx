@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground } from 'react-native';
 import { Image } from 'expo-image';
 import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -381,32 +381,66 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
   };
 
   return (
-    <View style={styles.patternsCard}>
-      {/* Background accent */}
-      <View style={[styles.patternsAccent, { backgroundColor: 'rgba(251, 146, 60, 0.15)' }]} />
-      
-      {/* Header */}
-      <View style={styles.patternsHeader}>
-        <View style={styles.patternsIcon}>
-          <Image 
-            source={require('../../assets/images/New Icons/icon-4.png')}
-            style={{ width: 60, height: 60 }}
-            contentFit="contain"
-          />
+    <>
+      {/* Mood Chart Card - Only contains the chart */}
+      <ImageBackground
+        source={require('../../assets/new-design/Homescreen/Cards/blue-card-high.png')}
+        style={{
+          marginHorizontal: 4,
+          marginBottom: 20,
+          minHeight: 320,
+          justifyContent: 'flex-start',
+          borderRadius: 20
+        }}
+        imageStyle={{ borderRadius: 20 }}
+        resizeMode="stretch"
+      >
+        <View style={{ padding: 20, flex: 1 }}>
+          {/* Header for mood chart */}
+          <View style={[styles.patternsHeader, { marginBottom: 8 }]}>
+            <View style={styles.patternsIcon}>
+              <Image
+                source={require('../../assets/new-design/Homescreen/Icons/distorted-thought-card-icon-1.png')}
+                style={{ width: 50, height: 50 }}
+                contentFit="contain"
+              />
+            </View>
+            <View style={styles.patternsTitleContainer}>
+              <Text style={[styles.patternsTitle, { fontFamily: 'Ubuntu-Medium' }]}>Your Mood</Text>
+              <Text style={[styles.patternsSubtitle, { fontFamily: 'Ubuntu-Light' }]}>Track your emotions</Text>
+            </View>
+          </View>
+
+          {/* Main Mood Chart */}
+          <View style={{ marginTop: -8 }}>
+            <MoodChart days={14} height={200} />
+          </View>
         </View>
-        <View style={styles.patternsTitleContainer}>
-          <Text style={styles.patternsTitle}>Your Mood</Text>
-          <Text style={styles.patternsSubtitle}>Track your emotion</Text>
+      </ImageBackground>
+
+      {/* Weekly Progress Section - Simple with white boxes */}
+      <View style={{ marginHorizontal: 16, marginBottom: 20 }}>
+        {/* Header for weekly progress */}
+        <View style={[styles.patternsHeader, { marginBottom: 16 }]}>
+          <View style={styles.patternsIcon}>
+            <Image
+              source={require('../../assets/images/New Icons/icon-3.png')}
+              style={{ width: 50, height: 50 }}
+              contentFit="contain"
+            />
+          </View>
+          <View style={styles.patternsTitleContainer}>
+            <Text style={[styles.patternsTitle, { fontFamily: 'Ubuntu-Medium' }]}>Weekly Progress</Text>
+            <Text style={[styles.patternsSubtitle, { fontFamily: 'Ubuntu-Light' }]}>Your weekly trends</Text>
+          </View>
         </View>
+
+        {/* Weekly Mood Comparison with white boxes */}
+        <WeeklyMoodComparison style={{ marginBottom: 0 }} />
       </View>
 
-      {/* Main Mood Chart - Always visible at top */}
-      <View style={{ marginBottom: 16, marginTop: -8 }}>
-        <MoodChart days={14} height={220} />
-      </View>
-
-      {/* Weekly Mood Comparison */}
-      <WeeklyMoodComparison style={{ marginBottom: 20 }} />
+      {/* Separate card for insights */}
+      <View style={styles.patternsCard}>
 
       {/* Separator line */}
       <View style={{
@@ -494,57 +528,6 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         )}
       </View>
 
-      {/* Control Buttons */}
-      <View style={{ flexDirection: 'row', marginTop: 20, gap: 10 }}>
-        <TouchableOpacity
-          onPress={async () => {
-            setLoading(true);
-            // Generate both mood and values sample data
-            await Promise.all([
-              generateSampleMoodData(),
-              generateSampleValuesData()
-            ]);
-            await loadInsights();
-            setLoading(false);
-          }}
-          style={{
-            flex: 1,
-            backgroundColor: '#A78BFA',
-            borderRadius: 8,
-            paddingVertical: 10,
-            alignItems: 'center',
-          }}
-          activeOpacity={0.7}
-        >
-          <Text style={{
-            fontSize: 12,
-            color: 'white',
-            fontWeight: '500',
-          }}>
-            Generate Data
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          onPress={loadInsights}
-          style={{
-            flex: 1,
-            backgroundColor: '#f1f5f9',
-            borderRadius: 8,
-            paddingVertical: 10,
-            alignItems: 'center',
-          }}
-          activeOpacity={0.7}
-        >
-          <Text style={{
-            fontSize: 12,
-            color: '#64748b',
-            fontWeight: '500',
-          }}>
-            Refresh
-          </Text>
-        </TouchableOpacity>
-      </View>
 
       {/* Analysis Date */}
       {insights?.analysisDate && (
@@ -568,6 +551,91 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           )}
         </View>
       )}
-    </View>
+      </View>
+
+      {/* Control Buttons at Bottom */}
+      <View style={{
+        flexDirection: 'row',
+        marginTop: 30,
+        marginBottom: 20,
+        marginHorizontal: 16,
+        gap: 12
+      }}>
+        <TouchableOpacity
+          onPress={async () => {
+            setLoading(true);
+            // Generate both mood and values sample data
+            await Promise.all([
+              generateSampleMoodData(),
+              generateSampleValuesData()
+            ]);
+            await loadInsights();
+            setLoading(false);
+          }}
+          style={{
+            flex: 1,
+            borderRadius: 12,
+            paddingVertical: 14,
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={['#4A6B7C', '#1A2B36']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
+          />
+          <Text style={{
+            fontSize: 14,
+            color: 'white',
+            fontWeight: '600',
+            fontFamily: 'Ubuntu-Medium'
+          }}>
+            Generate Data
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={loadInsights}
+          style={{
+            flex: 1,
+            borderRadius: 12,
+            paddingVertical: 14,
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={['#4A6B7C', '#1A2B36']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
+          />
+          <Text style={{
+            fontSize: 14,
+            color: 'white',
+            fontWeight: '600',
+            fontFamily: 'Ubuntu-Medium'
+          }}>
+            Refresh
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };

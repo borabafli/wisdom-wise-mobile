@@ -20,17 +20,35 @@ export const exerciseLibraryStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: -1,
   },
 
   // Header Section - Consistent styling
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingTop: spacing[16], // Reduced from spacing[20]
-    paddingBottom: spacing[8], // Reduced from spacing[12]
+    paddingBottom: spacing[4], // Further reduced to move content up
   },
   headerContent: {
     alignItems: 'flex-start',
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing[2],
+    marginLeft: -spacing[16],
+    marginTop: -spacing[12],
+  },
+  headerTurtleIcon: {
+    width: 162,
+    height: 162,
+    marginRight: spacing[4],
+    marginTop: -spacing[8],
+  },
+  titleAndSubtitleContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: -spacing[12],
+    marginTop: spacing[20],
   },
   headerTitle: {
     fontSize: 32,
@@ -40,10 +58,10 @@ export const exerciseLibraryStyles = StyleSheet.create({
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
-    marginBottom: spacing[2],
+    marginBottom: spacing[1],
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     color: '#6b7280',
     fontFamily: 'Inter-Medium',
@@ -102,7 +120,7 @@ export const exerciseLibraryStyles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: '#87BAA3',
+    backgroundColor: '#2B475E',
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -138,11 +156,9 @@ export const exerciseLibraryStyles = StyleSheet.create({
     width: 48, // Made bigger to match search bar height
     height: 48, // Made bigger to match search bar height
     borderRadius: 24, // Half of width/height for perfect circle
-    backgroundColor: '#F3F4F6', // Same as search bar background
+    backgroundColor: 'transparent', // Remove background
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E5E7EB', // Same as search bar border
     position: 'relative',
   },
 
@@ -162,13 +178,11 @@ export const exerciseLibraryStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6', // Much lighter grey
+    backgroundColor: '#FFFFFF', // More white
     borderRadius: 24, // Match filter button radius
     paddingHorizontal: spacing[12], // Reduced from 16 to 12 to move elements left
     paddingVertical: spacing[8], // Increased to match filter button height
     gap: spacing[8], // Reduced from 12 to 8 to move elements closer
-    borderWidth: 1,
-    borderColor: '#E5E7EB', // Light grey border
     height: 48, // Fixed height instead of minHeight
   },
   searchInput: {
@@ -207,20 +221,21 @@ export const exerciseLibraryStyles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Filters Section - Improved styling
+  // Filters Section - White transparent box
   filtersSection: {
-    backgroundColor: 'transparent', // Remove background
-    paddingVertical: spacing[12], // Reduced from spacing[16]
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // White 80% transparent (less transparent)
+    paddingTop: spacing[1], // Even more reduced top padding
+    paddingBottom: spacing[12],
     paddingHorizontal: spacing.layout.screenPadding,
-    gap: spacing[8], // Reduced from spacing[12]
-    borderRadius: 0, // Remove border radius
-    marginHorizontal: 0, // Remove horizontal margin
-    marginBottom: spacing[8], // Reduced from spacing[16]
-    shadowColor: 'transparent', // Remove shadow
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    elevation: 0,
+    gap: spacing[8],
+    borderRadius: 16, // Rounded corners
+    marginHorizontal: spacing[8], // Reduced horizontal margin for wider box
+    marginBottom: spacing[8],
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   filtersHeader: {
     flexDirection: 'row',
@@ -237,15 +252,15 @@ export const exerciseLibraryStyles = StyleSheet.create({
   clearFiltersButton: {
     paddingHorizontal: spacing[12],
     paddingVertical: spacing[6],
-    backgroundColor: 'rgba(134, 239, 172, 0.3)', // Light green
+    backgroundColor: '#DBEDF4', // Light blue to match tags
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(134, 239, 172, 0.5)',
+    borderColor: '#B1D6EB', // Darker blue border
   },
   clearFiltersText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#002d14',
+    color: '#2B475E', // Dark blue text
   },
   filterGroup: {
     gap: spacing[8],
@@ -320,6 +335,20 @@ export const exerciseLibraryStyles = StyleSheet.create({
   filterChipTextOverlaySelected: {
     color: '#0A2A0D', // Keep same color for selected state
     fontWeight: '800',
+  },
+
+  // New solid filter chip styles
+  filterChipSolid: {
+    paddingHorizontal: spacing[12],
+    paddingVertical: spacing[2],
+    borderRadius: 16,
+    marginHorizontal: spacing[2],
+    marginBottom: spacing[2],
+    shadowColor: 'rgba(0, 0, 0, 0.05)',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
 
   // Compact filter group styles

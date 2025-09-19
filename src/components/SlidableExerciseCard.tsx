@@ -134,13 +134,22 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
               onPress={() => onExerciseClick(exercise)}
               activeOpacity={0.8}
             >
-              <View style={slidableExerciseCardStyles.exerciseCardContainer}>
-                <Image
-                  source={require('../../assets/new-design/Homescreen/Cards/clean-purple-cart-insights-with-border-and-no-shadow-1.png')}
-                  style={slidableExerciseCardStyles.exerciseCardBackground}
-                  contentFit="cover"
-                />
-                <View style={slidableExerciseCardStyles.exerciseCardGradient}>
+              {/* Card pattern background in top right */}
+              <Image
+                source={
+                  index % 3 === 0
+                    ? require('../../assets/new-design/Homescreen/Cards/card pattern-blue.png')
+                    : index % 3 === 1
+                    ? require('../../assets/new-design/Homescreen/Cards/card pattern.png')
+                    : require('../../assets/new-design/Homescreen/Cards/card pattern-purple.png')
+                }
+                style={[
+                  slidableExerciseCardStyles.cardPatternBackground,
+                  index % 3 === 2 && slidableExerciseCardStyles.cardPatternBackgroundPurple
+                ]}
+                contentFit="cover"
+              />
+              <View style={slidableExerciseCardStyles.exerciseCardGradient}>
                 {/* Left side image */}
                 <View style={slidableExerciseCardStyles.exerciseImageContainer}>
                   <Image 
@@ -154,19 +163,14 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
                 <View style={slidableExerciseCardStyles.exerciseContent}>
                   {/* Top row: Benefit tag and time */}
                   <View style={slidableExerciseCardStyles.tagAndTimeRow}>
-                    {/* Benefit tag with button image background */}
-                    <View style={slidableExerciseCardStyles.categoryTagImageContainer}>
-                      <Image 
-                        source={buttonImage}
-                        style={[
-                          slidableExerciseCardStyles.categoryTagImage,
-                          isLargeButton && slidableExerciseCardStyles.categoryTagImageLarge
-                        ]}
-                        contentFit="cover"
-                      />
+                    {/* Benefit tag with solid background */}
+                    <View style={[
+                      slidableExerciseCardStyles.categoryTagContainer,
+                      isLargeButton && slidableExerciseCardStyles.categoryTagContainerLarge
+                    ]}>
                       <Text style={[
-                        slidableExerciseCardStyles.categoryTagTextOverlay,
-                        isLargeButton && slidableExerciseCardStyles.categoryTagTextOverlayLarge
+                        slidableExerciseCardStyles.categoryTagText,
+                        isLargeButton && slidableExerciseCardStyles.categoryTagTextLarge
                       ]}>
                         {benefit}
                       </Text>
@@ -186,7 +190,6 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
                   <Text style={slidableExerciseCardStyles.exerciseDescription} numberOfLines={2}>
                     {exercise.description}
                   </Text>
-                </View>
                 </View>
               </View>
               

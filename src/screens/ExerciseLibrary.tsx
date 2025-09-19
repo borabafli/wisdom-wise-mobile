@@ -174,45 +174,36 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter, hiddenCardIds]);
 
 
-  const FilterChip = ({ label, selected, onPress, filterType }: { 
-    label: string; 
-    selected: boolean; 
-    onPress: () => void; 
+  const FilterChip = ({ label, selected, onPress, filterType }: {
+    label: string;
+    selected: boolean;
+    onPress: () => void;
     filterType: 'duration' | 'benefits' | 'approach';
   }) => {
-    // Get button image based on filter type
-    const getButtonImage = () => {
+    // Get background color based on filter type
+    const getBackgroundColor = () => {
       switch (filterType) {
-        case 'duration': return require('../../assets/images/Buttons/1.png');
-        case 'benefits': return require('../../assets/images/Buttons/3.png');
-        case 'approach': return require('../../assets/images/Buttons/7.png');
-        default: return require('../../assets/images/Buttons/1.png');
+        case 'duration': return '#DBEDF4'; // Same as tag background
+        case 'benefits': return '#C6E2F0'; // Slightly darker blue
+        case 'approach': return '#B1D6EB'; // Even darker blue
+        default: return '#DBEDF4';
       }
     };
 
-    // Calculate dynamic width based on text length
-    const getButtonWidth = (text: string) => {
-      const baseWidth = 50; // Reduced base width for compactness
-      const charWidth = 7; // Reduced character width for tighter spacing
-      return Math.max(baseWidth, text.length * charWidth + 16); // Reduced padding
-    };
-
-    const buttonWidth = getButtonWidth(label);
-
     return (
       <TouchableOpacity
-        style={[exerciseLibraryStyles.filterChipImage, { width: buttonWidth }]}
+        style={[
+          exerciseLibraryStyles.filterChipSolid,
+          {
+            backgroundColor: selected ? '#2B475E' : getBackgroundColor(),
+          }
+        ]}
         onPress={onPress}
         activeOpacity={0.7}
       >
-        <Image 
-          source={getButtonImage()}
-          style={[exerciseLibraryStyles.filterChipImageBackground, { width: buttonWidth }]}
-          contentFit="cover"
-        />
         <Text style={[
-          exerciseLibraryStyles.filterChipTextOverlay,
-          selected && exerciseLibraryStyles.filterChipTextOverlaySelected
+          exerciseLibraryStyles.filterChipText,
+          { color: selected ? '#FFFFFF' : '#2B475E' }
         ]}>
           {label}
         </Text>
@@ -258,12 +249,13 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     <SafeAreaWrapper style={exerciseLibraryStyles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Background Gradient - Consistent with HomeScreen */}
+      {/* Background Gradient - Same as HomeScreen */}
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={exerciseLibraryStyles.backgroundGradient}
+        pointerEvents="none"
       />
 
       {/* Main Scrollable Content */}
@@ -275,8 +267,17 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         {/* Header */}
         <View style={exerciseLibraryStyles.header}>
           <View style={exerciseLibraryStyles.headerContent}>
-            <Text style={exerciseLibraryStyles.headerTitle}>{emojis.title} Exercises</Text>
-            <Text style={exerciseLibraryStyles.headerSubtitle}>{emojis.subtitle} Guided activities for your wellbeing</Text>
+            <View style={exerciseLibraryStyles.headerTitleContainer}>
+              <Image
+                source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-5.png')}
+                style={exerciseLibraryStyles.headerTurtleIcon}
+                contentFit="contain"
+              />
+              <View style={exerciseLibraryStyles.titleAndSubtitleContainer}>
+                <Text style={exerciseLibraryStyles.headerTitle}>Exercises</Text>
+                <Text style={exerciseLibraryStyles.headerSubtitle}>{emojis.subtitle} For your well-being</Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -317,8 +318,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               onPress={() => setShowFilters(!showFilters)}
               activeOpacity={0.7}
             >
-              <Image 
-                source={require('../../assets/images/Buttons/filter-2.png')}
+              <Image
+                source={require('../../assets/new-design/Homescreen/Icons/filter.png')}
                 style={{ width: 32, height: 32 }}
                 contentFit="contain"
               />
@@ -336,7 +337,6 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
           <View style={exerciseLibraryStyles.filtersSection}>
             {/* Filters Header */}
             <View style={exerciseLibraryStyles.filtersHeader}>
-              <Text style={exerciseLibraryStyles.filtersTitle}>Filters</Text>
               {activeFiltersCount > 0 && (
                 <TouchableOpacity
                   style={exerciseLibraryStyles.clearFiltersButton}

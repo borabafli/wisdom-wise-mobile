@@ -279,28 +279,20 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
         contentContainerStyle={styles.scrollContent}
         onContentSizeChange={(width, height) => setContentHeight(height)}
       >
-        {/* Header Image with Text Overlay */}
-        <View style={styles.headerImageContainer}>
-          <Image
-            source={require('../../assets/images/insights-header.png')}
-            style={styles.headerImage}
-            contentFit="cover"
-            contentPosition="center"
-          />
-          <View style={styles.headerTextContainer}>
-            <MaskedView
-              style={styles.maskedView}
-              maskElement={
-                <Text style={styles.maskText}>Insights</Text>
-              }
-            >
-              <LinearGradient
-                colors={['#74B8B2', '#24837C']}
-                start={{ x: 0, y: 0.1 }}
-                end={{ x: 1, y: 0.4 }}
-                style={styles.gradientFill}
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerTitleContainer}>
+              <Image
+                source={require('../../assets/new-design/Turtle Hero Section/insights-hero.png')}
+                style={styles.headerTurtleIcon}
+                contentFit="contain"
               />
-            </MaskedView>
+              <View style={styles.titleAndSubtitleContainer}>
+                <Text style={styles.headerTitle}>Insights</Text>
+                <Text style={styles.headerSubtitle}>✨ For your growth</Text>
+              </View>
+            </View>
           </View>
         </View>
 

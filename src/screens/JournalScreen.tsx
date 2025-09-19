@@ -13,6 +13,8 @@ import {
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { StatusBar } from 'expo-status-bar';
 import { Plus, Calendar, Search, Trash2 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import { journalScreenStyles as styles } from '../styles/components/JournalScreen.styles';
 import { JournalEntry } from '../services/journalStorageService';
 import JournalStorageService from '../services/journalStorageService';
@@ -248,18 +250,16 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      <StatusBar style="dark" backgroundColor="#F8FAFC" />
+      <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Journal</Text>
-        <TouchableOpacity
-          style={styles.newEntryButton}
-          onPress={() => handlePromptSelect("What's on your mind today?")}
-        >
-          <Plus size={24} color="#065F46" />
-        </TouchableOpacity>
-      </View>
+      {/* Background Gradient - Same as ExerciseLibrary */}
+      <LinearGradient
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.backgroundGradient}
+        pointerEvents="none"
+      />
 
       <FlatList
         data={journalEntries}
@@ -272,6 +272,23 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
         }
         ListHeaderComponent={
           <>
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={styles.headerContent}>
+                <View style={styles.headerTitleContainer}>
+                  <Image
+                    source={require('../../assets/new-design/Turtle Hero Section/journal-hero.png')}
+                    style={styles.headerTurtleIcon}
+                    contentFit="contain"
+                  />
+                  <View style={styles.titleAndSubtitleContainer}>
+                    <Text style={styles.headerTitle}>Journal</Text>
+                    <Text style={styles.headerSubtitle}>📝 For your thoughts</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
             {/* Swipable Prompt Cards */}
             {todayPrompts.length > 0 && (
               <View style={styles.promptsSection}>

@@ -143,7 +143,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     {
       name: 'Journal',
       label: 'Journal',
-      selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal.png'),
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal-blue.png')
     },
     {
