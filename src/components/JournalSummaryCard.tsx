@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, Save, Sparkles } from 'lucide-react-native';
+import { StatusBar } from 'expo-status-bar';
 import { journalSummaryStyles as styles } from '../styles/components/JournalSummary.styles';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -29,12 +30,19 @@ const JournalSummaryCard: React.FC<JournalSummaryCardProps> = ({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <SafeAreaWrapper style={styles.container}>
+      <LinearGradient
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.container}
+      >
+        <SafeAreaWrapper style={styles.safeAreaWrapper}>
+        <StatusBar style="dark" backgroundColor="transparent" translucent />
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Journal Summary</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <X size={24} color="#5D4E37" />
+            <X size={24} color="#2B475E" />
           </TouchableOpacity>
         </View>
 
@@ -70,21 +78,35 @@ const JournalSummaryCard: React.FC<JournalSummaryCardProps> = ({
             <Text style={styles.saveOptionsTitle}>Would you like to save this entry?</Text>
 
             <TouchableOpacity
-              style={styles.saveButton}
+              style={styles.saveButtonContainer}
               onPress={onSave}
               activeOpacity={0.8}
             >
-              <Save size={20} color="#FFFFFF" />
-              <Text style={styles.saveButtonText}>Save</Text>
+              <LinearGradient
+                colors={['#4A6B7C', '#1A2B36']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.saveButton}
+              >
+                <Save size={20} color="#FFFFFF" />
+                <Text style={styles.saveButtonText}>Save</Text>
+              </LinearGradient>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.saveAndPolishButton}
+              style={styles.saveAndPolishButtonContainer}
               onPress={onSaveAndPolish}
               activeOpacity={0.8}
             >
-              <Sparkles size={20} color="#FFFFFF" />
-              <Text style={styles.saveAndPolishButtonText}>Save & Polish</Text>
+              <LinearGradient
+                colors={['#4A6B7C', '#1A2B36']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.saveAndPolishButton}
+              >
+                <Sparkles size={20} color="#FFFFFF" />
+                <Text style={styles.saveAndPolishButtonText}>Save & Polish</Text>
+              </LinearGradient>
             </TouchableOpacity>
 
             <Text style={styles.polishDescription}>
@@ -92,7 +114,8 @@ const JournalSummaryCard: React.FC<JournalSummaryCardProps> = ({
             </Text>
           </View>
         </ScrollView>
-      </SafeAreaWrapper>
+        </SafeAreaWrapper>
+      </LinearGradient>
     </Modal>
   );
 };

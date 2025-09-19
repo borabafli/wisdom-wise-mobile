@@ -218,7 +218,7 @@
 Guidelines:
 - They must feel open, imaginative, and emotionally engaging.
 - They should be easy to understand and not too long or complicated, simple but thought-provocing
-- They should inspire storytelling and self-reflection, not yes/no answers.
+- They should inspire self-reflection
 - They can be loosely inspired by the user’s values, thought patterns, or goals — but don't force to reference them too much.
 - Each question should feel important and natural, as if it could appear in an inspiring journal.
 

@@ -23,6 +23,23 @@ export const slidableExerciseCardStyles = StyleSheet.create({
     backgroundColor: 'transparent',
     position: 'relative',
   },
+  exerciseCardContainer: {
+    position: 'relative',
+    height: 110,
+  },
+  exerciseCardBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: 110,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
   exerciseCardGradient: {
     flexDirection: 'row',
     paddingTop: 0,
@@ -30,6 +47,8 @@ export const slidableExerciseCardStyles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: spacing[12],
     height: 110,
+    position: 'relative',
+    zIndex: 1,
   },
   exerciseImageContainer: {
     width: 55,

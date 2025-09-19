@@ -267,12 +267,12 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
       
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       <LinearGradient
-  colors={['#FFFFFF', '#aad3d0']}  // Pastel teal → White
-  // red → green → blue
-  start={{ x: 0, y: 0 }}
-  end={{ x: 0, y: 1 }}
-  style={styles.backgroundGradient}
-/>
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.backgroundGradient}
+        pointerEvents="none"
+      />
       <ScrollView 
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}

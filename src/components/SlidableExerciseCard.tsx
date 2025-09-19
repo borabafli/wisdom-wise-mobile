@@ -134,10 +134,13 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
               onPress={() => onExerciseClick(exercise)}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={['#F8FCFC', '#F4FAFA']}
-                style={slidableExerciseCardStyles.exerciseCardGradient}
-              >
+              <View style={slidableExerciseCardStyles.exerciseCardContainer}>
+                <Image
+                  source={require('../../assets/new-design/Homescreen/Cards/clean-purple-cart-insights-with-border-and-no-shadow-1.png')}
+                  style={slidableExerciseCardStyles.exerciseCardBackground}
+                  contentFit="cover"
+                />
+                <View style={slidableExerciseCardStyles.exerciseCardGradient}>
                 {/* Left side image */}
                 <View style={slidableExerciseCardStyles.exerciseImageContainer}>
                   <Image 
@@ -184,7 +187,8 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
                     {exercise.description}
                   </Text>
                 </View>
-              </LinearGradient>
+                </View>
+              </View>
               
               {/* Blur overlay */}
               <Animated.View 
