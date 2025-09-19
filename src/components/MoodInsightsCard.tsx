@@ -424,7 +424,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         <View style={[styles.patternsHeader, { marginBottom: 16 }]}>
           <View style={styles.patternsIcon}>
             <Image
-              source={require('../../assets/images/New Icons/icon-3.png')}
+              source={require('../../assets/images/New Icons/new-3.png')}
               style={{ width: 50, height: 50 }}
               contentFit="contain"
             />
@@ -440,16 +440,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       </View>
 
       {/* Separate card for insights */}
-      <View style={styles.patternsCard}>
+      <View style={[styles.patternsCard, { backgroundColor: 'transparent' }]}>
 
-      {/* Separator line */}
-      <View style={{
-        height: 2,
-        backgroundColor: '#9CA3AF',
-        marginTop: 8,
-        marginBottom: 16,
-        marginHorizontal: 20
-      }} />
 
       {/* Insights Highlights */}
       <View style={{ paddingHorizontal: 12 }}>
@@ -553,89 +545,6 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       )}
       </View>
 
-      {/* Control Buttons at Bottom */}
-      <View style={{
-        flexDirection: 'row',
-        marginTop: 30,
-        marginBottom: 20,
-        marginHorizontal: 16,
-        gap: 12
-      }}>
-        <TouchableOpacity
-          onPress={async () => {
-            setLoading(true);
-            // Generate both mood and values sample data
-            await Promise.all([
-              generateSampleMoodData(),
-              generateSampleValuesData()
-            ]);
-            await loadInsights();
-            setLoading(false);
-          }}
-          style={{
-            flex: 1,
-            borderRadius: 12,
-            paddingVertical: 14,
-            alignItems: 'center',
-            overflow: 'hidden'
-          }}
-          activeOpacity={0.8}
-        >
-          <LinearGradient
-            colors={['#4A6B7C', '#1A2B36']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0
-            }}
-          />
-          <Text style={{
-            fontSize: 14,
-            color: 'white',
-            fontWeight: '600',
-            fontFamily: 'Ubuntu-Medium'
-          }}>
-            Generate Data
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={loadInsights}
-          style={{
-            flex: 1,
-            borderRadius: 12,
-            paddingVertical: 14,
-            alignItems: 'center',
-            overflow: 'hidden'
-          }}
-          activeOpacity={0.8}
-        >
-          <LinearGradient
-            colors={['#4A6B7C', '#1A2B36']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0
-            }}
-          />
-          <Text style={{
-            fontSize: 14,
-            color: 'white',
-            fontWeight: '600',
-            fontFamily: 'Ubuntu-Medium'
-          }}>
-            Refresh
-          </Text>
-        </TouchableOpacity>
-      </View>
     </>
   );
 };

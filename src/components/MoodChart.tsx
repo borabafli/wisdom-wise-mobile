@@ -492,43 +492,6 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
     <View style={[{ paddingHorizontal: 0 }, style]}>
       {/* Weekly progress content without card background (handled by parent) */}
       <View style={{ paddingHorizontal: 0 }}>
-        {/* Header with trend indicator - title moved to parent */}
-        <View style={[styles.comparisonHeader, { justifyContent: 'flex-end' }]}>
-          {weeklyData.currentWeek.rating > weeklyData.previousWeek.rating && (
-            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
-              <ExpoLinearGradient
-                colors={['#4A6B7C', '#1A2B36']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
-              />
-              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>↗ Improving</Text>
-            </View>
-          )}
-          {weeklyData.currentWeek.rating === weeklyData.previousWeek.rating && (
-            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
-              <ExpoLinearGradient
-                colors={['#4A6B7C', '#1A2B36']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
-              />
-              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>→ Stable</Text>
-            </View>
-          )}
-        </View>
 
         {/* Progress visualization - Side by side layout */}
         <View style={styles.progressVisualization}>
@@ -583,6 +546,44 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
               </View>
             </View>
           </View>
+        </View>
+
+        {/* Trend indicator - moved below the weekly comparison boxes */}
+        <View style={[styles.comparisonHeader, { justifyContent: 'center', marginTop: 16, marginBottom: 0 }]}>
+          {weeklyData.currentWeek.rating > weeklyData.previousWeek.rating && (
+            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
+              <ExpoLinearGradient
+                colors={['#8297A2', '#8297A2']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0
+                }}
+              />
+              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>↗ Improving</Text>
+            </View>
+          )}
+          {weeklyData.currentWeek.rating === weeklyData.previousWeek.rating && (
+            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
+              <ExpoLinearGradient
+                colors={['#4A6B7C', '#1A2B36']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0
+                }}
+              />
+              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>→ Stable</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
