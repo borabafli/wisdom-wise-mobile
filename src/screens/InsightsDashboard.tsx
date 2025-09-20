@@ -351,6 +351,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           onInsightPress={(insightId) => onInsightClick('mood_insight', insightId)}
           displayPatterns={displayPatterns}
           currentPatternIndex={currentPatternIndex}
+          onPatternSwipeLeft={handlePatternSwipeLeft}
+          onPatternSwipeRight={handlePatternSwipeRight}
         />
 
         {/* Thinking Patterns Section - Second */}

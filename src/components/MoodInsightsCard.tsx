@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground, FlatList, Dimensions, Animated } from 'react-native';
 import { Image } from 'expo-image';
-import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3 } from 'lucide-react-native';
+import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
@@ -16,6 +16,8 @@ interface MoodInsightsCardProps {
   onInsightPress?: (insightId: string) => void;
   displayPatterns?: any[];
   currentPatternIndex?: number;
+  onPatternSwipeLeft?: () => void;
+  onPatternSwipeRight?: () => void;
 }
 
 interface DataAvailability {
@@ -25,7 +27,13 @@ interface DataAvailability {
   moodRatingCount: number;
 }
 
-export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPress, displayPatterns = [], currentPatternIndex = 0 }) => {
+export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
+  onInsightPress,
+  displayPatterns = [],
+  currentPatternIndex = 0,
+  onPatternSwipeLeft,
+  onPatternSwipeRight
+}) => {
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
 
   // Helper function to determine font size based on text length
@@ -35,9 +43,330 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
     if (length <= 25) return 18;     // Very short text - much larger font
     if (length <= 50) return 16;
     if (length <= 115) return 14;     // Slightly longer - normal font
-    if (length <= 215) return 12;     // Long text - smaller font
-    return 11;                        // Very long text - smallest font
+    if (length <= 225) return 13;     // Long text - smaller font
+    return 12;                        // Very long text - smallest font
   };
+
+  // Using the same explanations as the main dashboard
+  const PATTERN_EXPLANATIONS: Record<string, string> = {
+    'All-or-Nothing Thinking': 'Seeing things in black and white without middle ground',
+    'Catastrophizing': 'Imagining the worst possible outcomes',
+    'Mental Filter': 'Focusing only on negative details',
+    'Overgeneralization': 'Making broad conclusions from single events',
+    'Mind Reading': 'Assuming you know what others think',
+    'Fortune Telling': 'Predicting negative outcomes without evidence',
+    'Emotional Reasoning': 'Believing feelings reflect reality',
+    'Should Statements': 'Using rigid rules about how things should be',
+    'Labeling': 'Attaching negative labels to yourself or others',
+    'Personalization': 'Blaming yourself for things outside your control',
+    'Magnification': 'Exaggerating the importance of problems',
+    'Minimization': 'Downplaying positive experiences or accomplishments'
+  };
+
+  const getDistortionExplanation = (distortionType: string) => {
+    return PATTERN_EXPLANATIONS[distortionType] || 'A common thinking pattern that may not reflect reality accurately.';
+  };
+
+  // Render a pattern card for the given pattern data
+  const renderPatternCard = (pattern: any) => {
+    if (!pattern) return null;
+
+    return (
+      <>
+        {/* Explanation Container */}
+        <View style={{
+          marginHorizontal: 8,
+          marginTop: 0,
+          marginBottom: 20,
+          alignItems: 'flex-start',
+        }}>
+          <View style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: 16,
+            padding: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            minWidth: '90%',
+          }}>
+            <Image
+              source={require('../../assets/images/New Icons/new-5-red.png')}
+              style={{
+                width: 24,
+                height: 24,
+                marginRight: 12,
+                marginTop: -2,
+              }}
+              contentFit="contain"
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: '#374151',
+                marginBottom: 4,
+                fontFamily: 'Ubuntu-Medium',
+              }}>
+                {pattern.distortionTypes[0] || 'Thought Pattern'}
+              </Text>
+              <Text style={{
+                fontSize: 11,
+                color: '#6B7280',
+                lineHeight: 16,
+                fontFamily: 'Ubuntu-Light',
+              }}>
+                {getDistortionExplanation(pattern.distortionTypes[0])}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Distorted Thought Container */}
+        <View style={{
+          marginHorizontal: '-20%',
+          marginBottom: 20,
+          marginTop: -5,
+        }}>
+          <ImageBackground
+            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean-6.png')}
+            style={{
+              minHeight: 200,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 12,
+              overflow: 'visible',
+            }}
+            imageStyle={{ borderRadius: 12 }}
+            resizeMode="cover"
+          >
+            {/* Distorted Thought Label */}
+            <View style={{
+              position: 'absolute',
+              top: '8%',
+              width: '100%',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                fontSize: 17,
+                color: 'white',
+                fontWeight: '600',
+                fontFamily: 'Ubuntu-Medium',
+                textAlign: 'center',
+              }}>
+                Distorted Thought
+              </Text>
+            </View>
+
+            <View style={{
+              paddingHorizontal: 8,
+              paddingVertical: 15,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'transparent',
+              marginTop: -20,
+              width: '60%',
+              alignSelf: 'center',
+            }}>
+              <Text style={{
+                fontSize: getDynamicFontSize(`"${pattern.originalThought}"`),
+                color: '#374151',
+                fontWeight: '500',
+                textAlign: 'center',
+                fontFamily: 'Ubuntu-Regular',
+              }}>
+                "{pattern.originalThought}"
+              </Text>
+            </View>
+
+            {/* Blue containers at bottom */}
+            <View style={{
+              position: 'absolute',
+              bottom: '8%',
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              paddingHorizontal: '20%',
+              marginLeft: '5%',
+            }}>
+              <View style={{
+                width: '40%',
+                backgroundColor: 'transparent',
+                paddingHorizontal: 6,
+                paddingVertical: 6,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                marginLeft: '2%',
+                minHeight: 36,
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#374151',
+                  textAlign: 'left',
+                  lineHeight: 15,
+                }}>
+                  {pattern.distortionTypes[0] || 'Pattern Type'}
+                </Text>
+              </View>
+
+              <View style={{
+                width: '40%',
+                backgroundColor: 'transparent',
+                paddingHorizontal: 6,
+                paddingVertical: 6,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                minHeight: 36,
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#374151',
+                  textAlign: 'left',
+                  lineHeight: 15,
+                }}>Not realistic</Text>
+              </View>
+            </View>
+
+          </ImageBackground>
+        </View>
+
+        {/* Balanced Thought Container */}
+        <View style={{
+          marginHorizontal: '-20%',
+          marginBottom: 20,
+          marginTop: -5,
+        }}>
+          <ImageBackground
+            source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought-card-clean-7.png')}
+            style={{
+              minHeight: 200,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 12,
+              overflow: 'visible',
+            }}
+            imageStyle={{ borderRadius: 12 }}
+            resizeMode="cover"
+          >
+            {/* Balanced Thought Label */}
+            <View style={{
+              position: 'absolute',
+              top: '5%',
+              width: '100%',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                fontSize: 17,
+                color: 'white',
+                fontWeight: '600',
+                fontFamily: 'Ubuntu-Medium',
+                textAlign: 'center',
+              }}>
+                Balanced Thought
+              </Text>
+            </View>
+
+            <View style={{
+              paddingHorizontal: 8,
+              paddingVertical: 15,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'transparent',
+              marginTop: -29,
+              width: '60%',
+              alignSelf: 'center',
+            }}>
+              <Text style={{
+                fontSize: getDynamicFontSize(`"${pattern.reframedThought}"`),
+                color: '#374151',
+                fontWeight: '500',
+                textAlign: 'center',
+                fontFamily: 'Ubuntu-Medium',
+              }}>
+                "{pattern.reframedThought}"
+              </Text>
+            </View>
+
+            {/* Blue containers at bottom */}
+            <View style={{
+              position: 'absolute',
+              bottom: '8%',
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              paddingHorizontal: '20%',
+              marginLeft: '5%',
+            }}>
+              <View style={{
+                width: '40%',
+                backgroundColor: 'transparent',
+                paddingHorizontal: 6,
+                paddingVertical: 6,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                marginLeft: '2%',
+                minHeight: 36,
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#374151',
+                  textAlign: 'left',
+                  lineHeight: 15,
+                }}>More balanced</Text>
+              </View>
+
+              <View style={{
+                width: '40%',
+                backgroundColor: 'transparent',
+                paddingHorizontal: 6,
+                paddingVertical: 6,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                minHeight: 36,
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#374151',
+                  textAlign: 'left',
+                  lineHeight: 15,
+                }}>More realistic</Text>
+              </View>
+            </View>
+
+          </ImageBackground>
+        </View>
+      </>
+    );
+  };
+
+  // Modern FlatList approach with 3D effects
+  const screenWidth = Dimensions.get('window').width;
+  const flatListRef = useRef<FlatList>(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  // Sync FlatList with currentPatternIndex
+  useEffect(() => {
+    if (displayPatterns.length > 0 && flatListRef.current) {
+      flatListRef.current.scrollToIndex({
+        index: currentPatternIndex,
+        animated: true,
+      });
+    }
+  }, [currentPatternIndex, displayPatterns.length]);
+
+  // Handle FlatList scroll end
+  const handleScrollEnd = (event: any) => {
+    const contentOffset = event.nativeEvent.contentOffset;
+    const viewSize = event.nativeEvent.layoutMeasurement;
+    const pageNum = Math.floor(contentOffset.x / viewSize.width);
+
+    if (pageNum !== currentPatternIndex) {
+      if (pageNum > currentPatternIndex && onPatternSwipeLeft) {
+        onPatternSwipeLeft();
+      } else if (pageNum < currentPatternIndex && onPatternSwipeRight) {
+        onPatternSwipeRight();
+      }
+    }
+  };
+
   const [loading, setLoading] = useState(true);
   const [showFullChart, setShowFullChart] = useState(false);
   const [dataAvailability, setDataAvailability] = useState<DataAvailability>({
@@ -56,13 +385,13 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
       // Check session summaries from last 14 days
       const fourteenDaysAgo = new Date();
       fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-      
+
       const sessionSummaries = await memoryService.getSessionSummaries();
-      const recentSessions = sessionSummaries.filter(session => 
+      const recentSessions = sessionSummaries.filter(session =>
         new Date(session.date) >= fourteenDaysAgo
       );
 
-      // Check mood ratings from last 14 days  
+      // Check mood ratings from last 14 days
       const allRatings = await moodRatingService.getAllRatings();
       const recentRatings = allRatings.filter(rating =>
         new Date(rating.timestamp) >= fourteenDaysAgo
@@ -100,7 +429,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           // Reload availability after generating sample data
           const newAvailability = await checkDataAvailability();
           setDataAvailability(newAvailability);
-          
+
           if (newAvailability.hasSessionSummaries || newAvailability.hasMoodRatings) {
             const insightsData = await moodInsightsService.generateMoodInsights();
             console.log('Generated insights from sample data:', insightsData);
@@ -127,7 +456,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
 
   const renderEmptyStateContent = () => {
     const { hasSessionSummaries, hasMoodRatings, sessionCount, moodRatingCount } = dataAvailability;
-    
+
     // No data at all
     if (!hasSessionSummaries && !hasMoodRatings) {
       return (
@@ -153,7 +482,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           }}>
             Chat with Anu or track your mood after exercises to see personalized insights here
           </Text>
-          
+
           <View style={{ flexDirection: 'row', gap: 12 }}>
             <TouchableOpacity
               style={{
@@ -172,7 +501,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
                 Chat with Anu
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={{
                 backgroundColor: '#6366F1',
@@ -191,7 +520,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
               </Text>
             </TouchableOpacity>
           </View>
-          
+
           {/* Sample Data Button */}
           <TouchableOpacity
             onPress={async () => {
@@ -220,7 +549,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         </>
       );
     }
-    
+
     // Has mood ratings only
     if (!hasSessionSummaries && hasMoodRatings) {
       return (
@@ -246,7 +575,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           }}>
             You've logged {moodRatingCount} mood {moodRatingCount === 1 ? 'rating' : 'ratings'}. Chat with Anu to unlock personalized insights about your patterns.
           </Text>
-          
+
           <TouchableOpacity
             style={{
               backgroundColor: '#8B5CF6',
@@ -267,8 +596,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         </>
       );
     }
-    
-    // Has sessions only  
+
+    // Has sessions only
     if (hasSessionSummaries && !hasMoodRatings) {
       return (
         <>
@@ -293,7 +622,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           }}>
             You've had {sessionCount} conversation{sessionCount === 1 ? '' : 's'}. Rate your mood after exercises to see weekly trends and deeper insights.
           </Text>
-          
+
           <TouchableOpacity
             style={{
               backgroundColor: '#6366F1',
@@ -314,7 +643,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         </>
       );
     }
-    
+
     // Has both data types but insights didn't generate - show encouragement to continue
     if (hasSessionSummaries && hasMoodRatings) {
       return (
@@ -467,212 +796,146 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
         </View>
       </View>
 
-      {/* Distorted Thought Container with distorted-thought-card-clean-6.png */}
-      <View style={{
-        marginHorizontal: '-20%', // 140% width (extends 20% on each side) - slightly smaller
-        marginBottom: 20,
-        marginTop: -5, // Moved up slightly
-      }}>
-        <ImageBackground
-          source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean-6.png')}
-          style={{
-            minHeight: 200,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 12,
-            overflow: 'hidden',
-          }}
-          imageStyle={{ borderRadius: 12 }}
-          resizeMode="cover"
-        >
-          {/* Distorted Thought Label */}
-          <View style={{
-            position: 'absolute',
-            top: '8%',
-            width: '100%',
-            alignItems: 'center',
-          }}>
+      {/* Navigation Controls at Top */}
+      {displayPatterns.length > 1 && (
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          marginBottom: 16,
+        }}>
+          <TouchableOpacity
+            onPress={onPatternSwipeRight}
+            disabled={currentPatternIndex === 0}
+            style={{
+              opacity: currentPatternIndex === 0 ? 0.3 : 1,
+              padding: 8
+            }}
+          >
+            <ChevronLeft size={24} color="#87BAA3" />
+          </TouchableOpacity>
+
+          <View style={{ alignItems: 'center' }}>
             <Text style={{
-              fontSize: 17,
-              color: 'white',
-              fontWeight: '600',
-              fontFamily: 'Ubuntu-Medium',
-              textAlign: 'center',
+              fontSize: 14,
+              color: '#374151',
+              fontWeight: '500'
             }}>
-              Distorted Thought
+              {currentPatternIndex + 1} of {displayPatterns.length}
+            </Text>
+            <Text style={{
+              fontSize: 12,
+              color: '#9CA3AF',
+              marginTop: 2
+            }}>
+              Swipe to navigate
             </Text>
           </View>
 
-          <View style={{
-            paddingHorizontal: 8, // Slightly less horizontal padding
-            paddingVertical: 15, // Move up slightly (reduced from 20) - same as distorted
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 255, 0, 0.3)', // Green background to see content area
-            marginTop: -20, // EXACTLY same as balanced card for testing
-            width: '60%', // Slightly smaller green container
-            alignSelf: 'center', // Center the container
-          }}>
-            {(() => {
-              const text = displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
-                ? `"${displayPatterns[currentPatternIndex].originalThought}"`
-                : '"Your distorted thoughts will appear here"';
+          <TouchableOpacity
+            onPress={onPatternSwipeLeft}
+            disabled={currentPatternIndex === displayPatterns.length - 1}
+            style={{
+              opacity: currentPatternIndex === displayPatterns.length - 1 ? 0.3 : 1,
+              padding: 8
+            }}
+          >
+            <ChevronRight size={24} color="#87BAA3" />
+          </TouchableOpacity>
+        </View>
+      )}
 
-              return (
-                <Text style={{
-                  fontSize: getDynamicFontSize(text),
-                  color: '#374151',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  fontFamily: 'Ubuntu-Regular',
-                }}>
-                  {text}
-                </Text>
-              );
-            })()}
-          </View>
+      {/* Modern FlatList Swipeable Cards with 3D Effect */}
+      {displayPatterns.length > 0 && (
+        <Animated.FlatList
+          ref={flatListRef}
+          data={displayPatterns}
+          renderItem={({ item, index }) => {
+            const inputRange = [
+              (index - 1) * screenWidth,
+              index * screenWidth,
+              (index + 1) * screenWidth,
+            ];
 
-          {/* Two blue containers at bottom */}
-          <View style={{
-            position: 'absolute',
-            bottom: '8%', // Moved down slightly for distorted card
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'space-between', // Same as balanced card
-            paddingHorizontal: '20%', // More padding to move left container more to center
-            marginLeft: '5%', // Move slightly to the right
-          }}>
-            <View style={{
-              width: '43%',
-              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Same blue background as balanced card
-              padding: 6, // Same as balanced thought containers
-              alignItems: 'flex-start', // Left align content
-              justifyContent: 'center', // Center vertically
-              marginLeft: '2%', // Move tiny bit to the right
-            }}>
-              <Text style={{ fontSize: 12, color: '#374151', textAlign: 'left' }}>
-                {displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
-                  ? displayPatterns[currentPatternIndex].distortionTypes[0] || 'Pattern Type'
-                  : 'Pattern Type'
-                }
-              </Text>
-            </View>
+            const scale = scrollX.interpolate({
+              inputRange,
+              outputRange: [0.95, 1, 0.95],
+              extrapolate: 'clamp',
+            });
 
-            <View style={{
-              width: '40%',
-              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
-              padding: 6, // Same as balanced thought containers
-              alignItems: 'flex-start', // Left align content
-              justifyContent: 'center', // Center vertically
-            }}>
-              <Text style={{ fontSize: 13, color: '#374151', textAlign: 'left' }}>Not realistic</Text>
-            </View>
-          </View>
-        </ImageBackground>
-      </View>
+            const opacity = scrollX.interpolate({
+              inputRange,
+              outputRange: [0.7, 1, 0.7],
+              extrapolate: 'clamp',
+            });
 
-      {/* Balanced Thought Container with balanced-thought-card-clean-6.png */}
-      <View style={{
-        marginHorizontal: '-20%', // 140% width (extends 20% on each side) - slightly smaller
-        marginBottom: 20,
-        marginTop: -5, // Moved up slightly
-      }}>
-        <ImageBackground
-          source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought-card-clean-6.png')}
-          style={{
-            minHeight: 200,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 12,
-            overflow: 'hidden',
+            const rotateY = scrollX.interpolate({
+              inputRange,
+              outputRange: ['15deg', '0deg', '-15deg'],
+              extrapolate: 'clamp',
+            });
+
+            const translateX = scrollX.interpolate({
+              inputRange,
+              outputRange: [screenWidth * 0.05, 0, -screenWidth * 0.05],
+              extrapolate: 'clamp',
+            });
+
+            return (
+              <Animated.View style={{
+                width: screenWidth,
+                paddingHorizontal: 16,
+                transform: [
+                  { scale },
+                  { rotateY },
+                  { translateX },
+                  { perspective: 1000 }
+                ],
+                opacity,
+              }}>
+                {renderPatternCard(item)}
+              </Animated.View>
+            );
           }}
-          imageStyle={{ borderRadius: 12 }}
-          resizeMode="cover"
-        >
-          {/* Balanced Thought Label */}
-          <View style={{
-            position: 'absolute',
-            top: '5%',
-            width: '100%',
-            alignItems: 'center',
-          }}>
-            <Text style={{
-              fontSize: 17,
-              color: 'white',
-              fontWeight: '600',
-              fontFamily: 'Ubuntu-Medium',
-              textAlign: 'center',
-            }}>
-              Balanced Thought
-            </Text>
-          </View>
+          keyExtractor={(item, index) => `pattern-${index}`}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: true }
+          )}
+          onMomentumScrollEnd={handleScrollEnd}
+          snapToInterval={screenWidth}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          scrollEventThrottle={16}
+          style={{ marginHorizontal: -16 }}
+        />
+      )}
 
-          <View style={{
-            paddingHorizontal: 8, // Slightly less horizontal padding
-            paddingVertical: 15, // Move up slightly (reduced from 20) - same as distorted
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 255, 0, 0)', // Green background to see content area
-            marginTop: -29, // Move the content area higher up within the card (was -10)
-            width: '60%', // Slightly smaller green container
-            alignSelf: 'center', // Center the container
-          }}>
-            {(() => {
-              const text = displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
-                ? `"${displayPatterns[currentPatternIndex].reframedThought}"`
-                : '"A more balanced perspective will appear here"';
-
-              return (
-                <Text style={{
-                  fontSize: getDynamicFontSize(text),
-                  color: '#374151',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  fontFamily: 'Ubuntu-Medium',
-                }}>
-                  {text}
-                </Text>
-              );
-            })()}
-          </View>
-
-          {/* Two blue containers at bottom */}
-          <View style={{
-            position: 'absolute',
-            bottom: '8%', // Moved down slightly for balanced card
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'space-between',
-            paddingHorizontal: '20%', // More padding to move left container more to center
-            marginLeft: '5%', // Move slightly to the right
-          }}>
-            <View style={{
-              width: '40%',
-              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
-              padding: 6,
-              alignItems: 'flex-start', // Left align content
-              justifyContent: 'center', // Center vertically
-              marginLeft: '2%', // Same as first card - Move tiny bit to the right
-            }}>
-              <Text style={{ fontSize: 13, color: '#374151', textAlign: 'left' }}>More balanced</Text>
-            </View>
-
-            <View style={{
-              width: '40%',
-              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
-              padding: 6,
-              alignItems: 'flex-start', // Left align content
-              justifyContent: 'center', // Center vertically
-            }}>
-              <Text style={{ fontSize: 13, color: '#374151', textAlign: 'left' }}>More realistic</Text>
-            </View>
-          </View>
-        </ImageBackground>
+      {/* Arrow Overlay - Highest Z-Index Layer */}
+      <View style={{
+        position: 'absolute',
+        top: '65%', // Position between the cards
+        left: '50%',
+        transform: [{ translateX: -25 }, { translateY: -25 }], // Center the 50x50 arrow
+        zIndex: 1000, // Highest layer
+        pointerEvents: 'none', // Don't interfere with touch events
+      }}>
+        <Image
+          source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-1.png')}
+          style={{
+            width: 50,
+            height: 50,
+          }}
+          contentFit="contain"
+        />
       </View>
 
       {/* Separate card for insights */}
       <View style={[styles.patternsCard, { backgroundColor: 'transparent' }]}>
-
 
       {/* Insights Highlights */}
       <View style={{ paddingHorizontal: 12 }}>
@@ -750,7 +1013,6 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           </View>
         )}
       </View>
-
 
       {/* Analysis Date */}
       {insights?.analysisDate && (
