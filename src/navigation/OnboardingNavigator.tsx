@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import OnboardingWelcomeScreen from '../screens/onboarding/OnboardingWelcomeScreen';
 import OnboardingValuePropScreen from '../screens/onboarding/OnboardingValuePropScreen';
+import PersonalValuesScreen from '../screens/onboarding/PersonalValuesScreen';
+import FocusAreasScreen from '../screens/onboarding/FocusAreasScreen';
 import { OnboardingService } from '../services/onboardingService';
+import { storageService } from '../services/storageService';
 
 interface OnboardingNavigatorProps {
   onComplete: () => void;
@@ -9,14 +12,38 @@ interface OnboardingNavigatorProps {
 
 export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [userProfile, setUserProfile] = useState<{ name?: string }>({});
+  const [userProfile, setUserProfile] = useState<{ name?: string; values?: string[]; focusAreas?: string[] }>({});
 
   const handleContinueFromWelcome = () => {
-    setCurrentStep(4); // Skip directly to value proposition screen
+    setCurrentStep(2); // Go to value proposition screen
   };
 
-  const handleContinueFromValueProp = async () => {
-    // Complete onboarding directly after value prop
+  const handleContinueFromValueProp = () => {
+    setCurrentStep(3); // Go to personal values screen
+  };
+
+  const handleContinueFromPersonalValues = async (selectedValues: string[]) => {
+    // Save selected values and move to focus areas
+    setUserProfile(prev => ({ ...prev, values: selectedValues }));
+    setCurrentStep(4); // Go to focus areas screen
+  };
+
+  const handleContinueFromFocusAreas = async (selectedAreas: string[]) => {
+    // Save selected focus areas
+    try {
+      await storageService.updateUserProfile({
+        onboardingValues: userProfile.values || [],
+        onboardingFocusAreas: selectedAreas,
+        valuesTimestamp: new Date().toISOString(),
+        focusAreasTimestamp: new Date().toISOString(),
+      });
+      console.log('Saved personal values:', userProfile.values);
+      console.log('Saved focus areas:', selectedAreas);
+    } catch (error) {
+      console.error('Error saving onboarding data:', error);
+    }
+
+    // Complete onboarding
     await OnboardingService.completeOnboarding();
     onComplete();
   };
@@ -29,10 +56,24 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     case 1:
       return <OnboardingWelcomeScreen onContinue={handleContinueFromWelcome} />;
     
-    case 4:
+    case 2:
       return (
         <OnboardingValuePropScreen 
           onContinue={handleContinueFromValueProp}
+        />
+      );
+
+    case 3:
+      return (
+        <PersonalValuesScreen 
+          onContinue={handleContinueFromPersonalValues}
+        />
+      );
+
+    case 4:
+      return (
+        <FocusAreasScreen 
+          onContinue={handleContinueFromFocusAreas}
         />
       );
     

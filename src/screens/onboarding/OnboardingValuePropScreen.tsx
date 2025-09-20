@@ -1,45 +1,38 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronRight } from 'lucide-react-native';
-import { Image } from 'expo-image';
-// import WatercolorBackdrop from '../../components/WatercolorBackdrop';
+import { MessageCircle, Brain, BookOpen } from 'lucide-react-native';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 
 const { width, height } = Dimensions.get('window');
 
-interface ValueCard {
+interface OnboardingPage {
   id: number;
-  iconImage: any;
+  icon: React.ComponentType<any>;
   title: string;
   description: string;
+  isMainPage?: boolean;
 }
 
-const valueCards: ValueCard[] = [
+const onboardingPages: OnboardingPage[] = [
   {
     id: 1,
-    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-2.png'),
-    title: 'Therapeutic Conversations',
-    description: "I'll help you untangle complex thoughts and emotions",
+    icon: MessageCircle,
+    title: 'Chat with a Guide Who Remembers',
+    description: 'Our conversations build on each other. I\'ll remember your insights and progress to provide truly personal support.',
   },
   {
     id: 2,
-    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-5.png'),
-    title: '14+ Therapeutic Exercises',
-    description: 'From breathing techniques to CBT tools, all tailored to your needs',
+    icon: Brain,
+    title: 'Uncover Your Thinking Patterns',
+    description: 'We\'ll go beyond simple mood tracking to gently identify and reframe unhelpful thoughts on your personal Insights Dashboard.',
   },
   {
     id: 3,
-    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-12.png'),
-    title: 'Personal Insights Dashboard',
-    description: 'I will discover insights in your thinking',
-  },
-  {
-    id: 4,
-    iconImage: require('../../../assets/images/Teal watercolor single element/teal-icon-14.png'),
-    title: 'AI That Remembers You',
-    description: 'I learn from our conversations to provide personalized support',
+    icon: BookOpen,
+    title: 'Build Real Skills with Proven Tools',
+    description: 'Practice and grow with a library of guided exercises rooted in proven methods like CBT and Mindfulness.',
   },
 ];
 
@@ -48,16 +41,17 @@ interface OnboardingValuePropScreenProps {
 }
 
 const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ onContinue }) => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(50)).current;
-  const cardAnimations = useRef(valueCards.map(() => new Animated.Value(0))).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
 
   useEffect(() => {
     // Entrance animations
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 800,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
@@ -66,76 +60,37 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
         useNativeDriver: true,
       }),
     ]).start();
-
-    // Staggered card animations
-    const animateCards = () => {
-      const animations = cardAnimations.map((anim, index) =>
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 600,
-          delay: index * 200,
-          useNativeDriver: true,
-        })
-      );
-      Animated.parallel(animations).start();
-    };
-
-    animateCards();
   }, []);
 
-
-  const renderCard = (card: ValueCard, index: number) => {
-    const cardScale = cardAnimations[index].interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.95, 1],
-    });
-
-    const cardOpacity = cardAnimations[index].interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.7, 1],
-    });
-
-    return (
-      <Animated.View
-        key={card.id}
-        style={[
-          styles.card,
-          {
-            transform: [{ scale: cardScale }],
-            opacity: cardOpacity,
-          }
-        ]}
-      >
-        <TouchableOpacity activeOpacity={0.85} style={styles.cardInner}>
-          <View style={styles.cardContent}>
-            <View style={styles.textContent}>
-              <Image source={card.iconImage} style={styles.iconImage as any} contentFit="contain" />
-              <Text style={styles.cardTitle}>{card.title}</Text>
-              <Text style={styles.cardDescription}>{card.description}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    );
+  const handleScroll = (event: any) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const pageIndex = Math.round(scrollPosition / width);
+    setCurrentPage(pageIndex);
   };
+
+
+  const renderPage = (page: OnboardingPage) => (
+    <View key={page.id} style={styles.pageContainer}>
+      {/* Text Content Only */}
+      <View style={styles.textContent}>
+        <Text style={styles.pageTitle}>
+          {page.title}
+        </Text>
+        <Text style={styles.pageDescription}>
+          {page.description}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
     <LinearGradient
-      colors={['#f0fdfa', '#e6fffa', '#ccfbf1']}
+      colors={['#F8FAFB', '#E8F4F1']}
       style={styles.container}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* <WatercolorBackdrop style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} /> */}
-        
-        {/* Progress Indicator */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={styles.progressFill} />
-          </View>
-        </View>
-
         <Animated.View 
           style={[
             styles.contentContainer,
@@ -145,25 +100,41 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             }
           ]}
         >
-          {/* Header */}
-          <View style={styles.headerContainer}>
-            <Text style={styles.headline}>How can Anu help you?</Text>
+          {/* Swipable Text Content */}
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            style={styles.swipeContainer}
+          >
+            {/* All Pages */}
+            {onboardingPages.map((page) => renderPage(page))}
+          </ScrollView>
+
+          {/* Page Indicators - Right below text */}
+          <View style={styles.pageIndicators}>
+            {onboardingPages.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.pageIndicator,
+                  currentPage === index && styles.activePageIndicator
+                ]}
+              />
+            ))}
           </View>
 
-          {/* Cards Grid */}
-          <ScrollView 
-            style={styles.cardsScrollView}
-            contentContainerStyle={styles.cardsContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.cardsGrid}>
-              {valueCards.map((card, index) => (
-                <View key={card.id} style={styles.cardWrapper}>
-                  {renderCard(card, index)}
-                </View>
-              ))}
-            </View>
-          </ScrollView>
+          {/* Static Anu Image - Never moves */}
+          <View style={styles.staticAnuContainer}>
+            <Image
+              source={require('../../../assets/images/turtle-hero-3.png')}
+              style={styles.staticAnuImage}
+              resizeMode="contain"
+            />
+          </View>
 
           {/* Action Button */}
           <View style={styles.actionContainer}>
@@ -172,15 +143,9 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
               onPress={onContinue}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={['#5BA3B8', '#357A8A']}
-                style={styles.buttonGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-              >
-                <Text style={styles.primaryButtonText}>Continue</Text>
-                <ChevronRight size={20} color="white" />
-              </LinearGradient>
+              <Text style={styles.primaryButtonText}>
+                {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
+              </Text>
             </TouchableOpacity>
           </View>
         </Animated.View>
