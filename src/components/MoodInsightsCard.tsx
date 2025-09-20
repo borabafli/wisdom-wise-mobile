@@ -32,10 +32,11 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
   // Baseline: current balanced thought length (~80-120 chars) = 15px
   const getDynamicFontSize = (text: string) => {
     const length = text.length;
-    if (length <= 11) return 15;     // Current size or shorter - larger font
-    if (length <= 170) return 14;     // Slightly longer - normal font
-    if (length <= 235) return 13;     // Long text - smaller font
-    return 12;                        // Very long text - smallest font
+    if (length <= 25) return 18;     // Very short text - much larger font
+    if (length <= 50) return 16;
+    if (length <= 115) return 14;     // Slightly longer - normal font
+    if (length <= 215) return 12;     // Long text - smaller font
+    return 11;                        // Very long text - smallest font
   };
   const [loading, setLoading] = useState(true);
   const [showFullChart, setShowFullChart] = useState(false);
@@ -468,14 +469,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
 
       {/* Distorted Thought Container with distorted-thought-card-clean-6.png */}
       <View style={{
-        marginHorizontal: '-15%', // 130% width (extends 15% on each side) - same as balanced card
+        marginHorizontal: '-20%', // 140% width (extends 20% on each side) - slightly smaller
         marginBottom: 20,
         marginTop: -5, // Moved up slightly
       }}>
         <ImageBackground
           source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean-6.png')}
           style={{
-            minHeight: 180,
+            minHeight: 200,
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 12,
@@ -503,13 +504,13 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           </View>
 
           <View style={{
-            paddingHorizontal: 10, // Wider content area (reduced from 20) - same as distorted
+            paddingHorizontal: 8, // Slightly less horizontal padding
             paddingVertical: 15, // Move up slightly (reduced from 20) - same as distorted
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(0, 255, 0, 0.3)', // Green background to see content area
             marginTop: -20, // EXACTLY same as balanced card for testing
-            width: '66%', // 80% of image width
+            width: '60%', // Slightly smaller green container
             alignSelf: 'center', // Center the container
           }}>
             {(() => {
@@ -534,7 +535,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           {/* Two blue containers at bottom */}
           <View style={{
             position: 'absolute',
-            bottom: '8%', // Same as balanced card
+            bottom: '8%', // Moved down slightly for distorted card
             flexDirection: 'row',
             width: '100%',
             justifyContent: 'space-between', // Same as balanced card
@@ -542,13 +543,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
             marginLeft: '5%', // Move slightly to the right
           }}>
             <View style={{
-              width: '35%',
+              width: '43%',
               backgroundColor: 'rgba(0, 0, 255, 0.3)', // Same blue background as balanced card
               padding: 6, // Same as balanced thought containers
               alignItems: 'flex-start', // Left align content
+              justifyContent: 'center', // Center vertically
               marginLeft: '2%', // Move tiny bit to the right
             }}>
-              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>
+              <Text style={{ fontSize: 12, color: '#374151', textAlign: 'left' }}>
                 {displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
                   ? displayPatterns[currentPatternIndex].distortionTypes[0] || 'Pattern Type'
                   : 'Pattern Type'
@@ -561,8 +563,9 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
               backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
               padding: 6, // Same as balanced thought containers
               alignItems: 'flex-start', // Left align content
+              justifyContent: 'center', // Center vertically
             }}>
-              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>Not realistic</Text>
+              <Text style={{ fontSize: 13, color: '#374151', textAlign: 'left' }}>Not realistic</Text>
             </View>
           </View>
         </ImageBackground>
@@ -570,14 +573,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
 
       {/* Balanced Thought Container with balanced-thought-card-clean-6.png */}
       <View style={{
-        marginHorizontal: '-15%', // 130% width (extends 15% on each side) - same as balanced card
+        marginHorizontal: '-20%', // 140% width (extends 20% on each side) - slightly smaller
         marginBottom: 20,
         marginTop: -5, // Moved up slightly
       }}>
         <ImageBackground
           source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought-card-clean-6.png')}
           style={{
-            minHeight: 180,
+            minHeight: 200,
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 12,
@@ -605,13 +608,13 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           </View>
 
           <View style={{
-            paddingHorizontal: 10, // Wider content area (reduced from 20) - same as distorted
+            paddingHorizontal: 8, // Slightly less horizontal padding
             paddingVertical: 15, // Move up slightly (reduced from 20) - same as distorted
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(0, 255, 0, 0)', // Green background to see content area
             marginTop: -29, // Move the content area higher up within the card (was -10)
-            width: '66%', // 80% of image width
+            width: '60%', // Slightly smaller green container
             alignSelf: 'center', // Center the container
           }}>
             {(() => {
@@ -636,7 +639,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
           {/* Two blue containers at bottom */}
           <View style={{
             position: 'absolute',
-            bottom: '8%', // Moved slightly back up from 5% to 7% for balanced card
+            bottom: '8%', // Moved down slightly for balanced card
             flexDirection: 'row',
             width: '100%',
             justifyContent: 'space-between',
@@ -644,13 +647,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
             marginLeft: '5%', // Move slightly to the right
           }}>
             <View style={{
-              width: '35%',
+              width: '40%',
               backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
               padding: 6,
               alignItems: 'flex-start', // Left align content
+              justifyContent: 'center', // Center vertically
               marginLeft: '2%', // Same as first card - Move tiny bit to the right
             }}>
-              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>More balanced</Text>
+              <Text style={{ fontSize: 13, color: '#374151', textAlign: 'left' }}>More balanced</Text>
             </View>
 
             <View style={{
@@ -658,8 +662,9 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
               backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
               padding: 6,
               alignItems: 'flex-start', // Left align content
+              justifyContent: 'center', // Center vertically
             }}>
-              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>More realistic</Text>
+              <Text style={{ fontSize: 13, color: '#374151', textAlign: 'left' }}>More realistic</Text>
             </View>
           </View>
         </ImageBackground>
