@@ -178,41 +178,25 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
                 style={slidableHomeExerciseCardStyles.exerciseCard}
                 activeOpacity={0.9}
               >
-                <LinearGradient
-                  colors={['#F0F8F8', '#E0F0F0', '#D0E8E8']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={slidableHomeExerciseCardStyles.exerciseCardGradient}
-                >
-                  <View style={slidableHomeExerciseCardStyles.exerciseCardContent}>
-                    <View style={slidableHomeExerciseCardStyles.exerciseIcon}>
-                      <Image 
-                        source={
-                          showTestButtons 
-                            ? (index === 0 
-                                ? require('../../assets/images/New Icons/1.png')
-                                : index === 1
-                                ? require('../../assets/images/New Icons/2.png')
-                                : require('../../assets/images/New Icons/3.png'))
-                            : exercise.iconSource
-                        }
-                        style={[
-                          slidableHomeExerciseCardStyles.exerciseIconImage,
-                          showTestButtons && slidableHomeExerciseCardStyles.exerciseIconImageTest
-                        ]}
-                        contentFit="contain"
-                      />
-                    </View>
-                    <View style={slidableHomeExerciseCardStyles.exerciseInfo}>
-                      <Text style={slidableHomeExerciseCardStyles.exerciseName} numberOfLines={1}>
-                        {exercise.name}
-                      </Text>
-                      <Text style={slidableHomeExerciseCardStyles.exerciseDescription}>
-                        {exercise.description}
-                      </Text>
-                    </View>
-                  </View>
-                </LinearGradient>
+                <Image
+                  source={
+                    index === 0
+                      ? require('../../assets/new-design/Homescreen/Cards/green-card-new.png')
+                      : index === 1
+                      ? require('../../assets/new-design/Homescreen/Cards/purple-card-new.png')
+                      : require('../../assets/new-design/Homescreen/Cards/blue-card-new.png')
+                  }
+                  style={slidableHomeExerciseCardStyles.exerciseCardFullSize}
+                  contentFit="contain"
+                />
+                <View style={slidableHomeExerciseCardStyles.textOverlay}>
+                  <Text style={slidableHomeExerciseCardStyles.exerciseName} numberOfLines={1}>
+                    {exercise.name}
+                  </Text>
+                  <Text style={slidableHomeExerciseCardStyles.exerciseDescription}>
+                    {exercise.description}
+                  </Text>
+                </View>
                 
                 {/* Blur overlay */}
                 <Animated.View 

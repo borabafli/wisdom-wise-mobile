@@ -207,7 +207,7 @@ Headline: "Let's understand your journey"
 ```
 "What are you struggling with? (select all that apply)"
 
-□ Constant worry          □ Negative self-talk
+□ Constant worry         □ Negative self-talk
 □ Overthinking           □ Low energy
 □ Stress                 □ Difficulty focusing
 □ Relationship issues    □ Sleep problems
@@ -276,46 +276,6 @@ Subtitle: "This helps me track your progress over time"
 **Actions:**
 - Primary Button: "Continue"
 - Secondary: "Skip scales" (only for optional section)
-
----
-
-### **Page 8: Interaction Preferences**
-**Purpose:** Customize AI personality and communication style
-
-**Visual Elements:**
-- Interactive sliders with preview text
-- Anu avatar changes expression based on selections
-- Progress indicator: 8/10
-
-**Content:**
-```
-Headline: "How should we work together?"
-Subtitle: "I'll adapt to your preferences"
-```
-
-**Preference Sliders:**
-
-1. **Guidance Style**
-   ```
-   Gentle Reflection ←────────→ Goal-Oriented
-   "Let's explore..."          "Let's tackle..."
-   ```
-
-2. **Conversation Depth**
-   ```
-   Keep it Light ←────────→ Go Deep
-   "Surface support"      "Explore roots"
-   ```
-
-3. **Tone**
-   ```
-   Calm & Soothing ←────────→ Warm & Playful
-   🧘 Zen-like              🐢 Friendly turtle
-   ```
-
-**Actions:**
-- Primary Button: "Continue"
-- Secondary: "Use defaults"
 
 ---
 

@@ -131,32 +131,32 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     {
       name: 'Home',
       label: 'Home',
-      selectedIcon: require('../../assets/navigation-icons/First Version/selected-home.png'),
-      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home.png')
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-home-blue.png'),
+      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home-blue.png')
     },
     {
       name: 'Exercises',
       label: 'Exercises',
-      selectedIcon: require('../../assets/navigation-icons/First Version/selected-exercises.png'),
-      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-exercises.png')
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-exercises-blue.png'),
+      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-exercises-blue.png')
     },
     {
       name: 'Journal',
       label: 'Journal',
-      selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal.png'),
-      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal.png')
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal-blue.png'),
+      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal-blue.png')
     },
     {
       name: 'Insights',
       label: 'Insights',
-      selectedIcon: require('../../assets/navigation-icons/First Version/selected-insights.png'),
-      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-insights.png')
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-insights-blue.png'),
+      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-insights-blue.png')
     },
     {
       name: 'Profile',
       label: 'Profile',
-      selectedIcon: require('../../assets/navigation-icons/First Version/selected-profile.png'),
-      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-profile.png')
+      selectedIcon: require('../../assets/navigation-icons/First Version/selected-profile-blue.png'),
+      unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-profile-blue.png')
     }
   ];
 

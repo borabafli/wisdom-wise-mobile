@@ -165,14 +165,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+
+      {/* Persistent Gradient Background */}
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.backgroundGradient}
+        pointerEvents="none"
       />
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
@@ -180,37 +183,44 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           Platform.OS === 'android' && { paddingBottom: insets.bottom }
         ]}
       >
-        {/* Header Text and Chat Input */}
-        <View style={styles.headerSection}>
-          <View style={styles.headerText}>
-            <Text style={styles.ctaTitle}>How are you</Text>
-            <Text style={[styles.ctaTitle, styles.ctaTitleSecondLine]}>feeling?</Text>
-            {welcomeMessage.subtitle && <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>}
-          </View>
-          
-          {/* Scrollable Turtle Background - positioned between text and chatbar */}
-          <View style={styles.scrollableTurtleContainer}>
-            <Image 
-              source={require('../../assets/images/Teal watercolor single element/home-background.png')}
-              style={styles.scrollableTurtleImage}
+        <View style={styles.scrollableContainer}>
+          {/* Background Image */}
+          <Image
+            source={require('../../assets/new-design/Homescreen/background.png')}
+            style={styles.backgroundImageScrollable}
+            contentFit="contain"
+          />
+
+          {/* Header Text and Chat Input */}
+          <View style={styles.headerSection}>
+          {/* Turtle Hero Image - positioned first */}
+          <View style={styles.turtleHeroContainer}>
+            <Image
+              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-3.png')}
+              style={styles.turtleHeroImage}
               contentFit="contain"
             />
           </View>
-          
-          {/* Container for turtle and input bar */}
+
+          <View style={styles.headerText}>
+            <Text style={styles.ctaTitle}>How are you feeling?</Text>
+            {welcomeMessage.subtitle && <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>}
+          </View>
+
+          {/* Container for new chatbar */}
           <TouchableOpacity
             onPress={() => onStartSession()}
             style={styles.inputWithTurtleWrapper}
             activeOpacity={0.9}
           >
-            
-            {/* Input area - Just the image */}
+
+            {/* New chatbar image */}
             <Image
-              source={require('../../assets/images/Buttons/chatbar.png')}
+              source={require('../../assets/new-design/Homescreen/Chatbars/chatbar-6.png')}
               style={styles.chatbarImage}
               contentFit="contain"
             />
-            
+
             {/* Grey text overlay on chatbar */}
             <Text style={styles.chatbarText}>Tap to Share...</Text>
           </TouchableOpacity>
@@ -221,15 +231,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Your Next Steps</Text>
             <View style={styles.headerButtons}>
-              <TouchableOpacity 
-                onPress={() => setShowTestButtons(!showTestButtons)}
-                style={[styles.testButton, showTestButtons && styles.testButtonActive]}
-              >
-                <Text style={[styles.testButtonText, showTestButtons && styles.testButtonTextActive]}>
-                  {showTestButtons ? 'Hide Test' : 'Test'}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={onNavigateToExercises}
                 style={styles.seeAllButton}
               >
@@ -241,11 +243,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           {/* Exercise Cards */}
           {/* Exercise Cards with background line */}
 <View style={styles.exercisesWrapper}>
-  {/* Decorative background line */}
-  <Image 
-    source={require('../../assets/images/line.png')}
-    style={styles.exercisesLineBackground}
-  />
 
             {/* Dynamic Exercise Cards */}
           <View style={styles.exercisesList}>
@@ -264,13 +261,37 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
           </View>
         </View>
-        
+
+        {/* Daily Reflection Section */}
+        {dailyPrompt && (
+          <View style={styles.dailyReflectionSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Daily Reflection</Text>
+              <TouchableOpacity
+                onPress={handleGeneratePromptsTest}
+                style={[styles.testButton, styles.promptTestButton]}
+              >
+                <Text style={styles.promptTestButtonText}>
+                  Generate Test
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <DailyPromptCard
+              prompt={dailyPrompt}
+              onStartWriting={() => navigation?.navigate('Journal', {
+                screen: 'GuidedJournal',
+                params: { initialPrompt: dailyPrompt }
+              })}
+            />
+          </View>
+        )}
+
         {/* Quick Actions - Modern Style */}
         <View style={styles.quickActions}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Actions</Text>
           </View>
-          
+
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
               onPress={onNavigateToExercises}
@@ -278,33 +299,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <ImageBackground
-                source={require('../../assets/images/Buttons/background-5.png')}
+                source={require('../../assets/new-design/Homescreen/Cards/blue-card-high.png')}
                 style={styles.quickActionGradient}
                 imageStyle={styles.quickActionBackgroundImage}
-                resizeMode="cover"
+                resizeMode="contain"
               >
-                <Image 
-                  source={require('../../assets/images/New Icons/icon-4.png')}
+                <Image
+                  source={require('../../assets/images/New Icons/new-1.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
                 <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Browse{"\n"}Exercises</Text>
               </ImageBackground>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               onPress={onNavigateToInsights}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
               <ImageBackground
-                source={require('../../assets/images/Buttons/background-5.png')}
+                source={require('../../assets/new-design/Homescreen/Cards/blue-card-high.png')}
                 style={styles.quickActionGradient}
                 imageStyle={styles.quickActionBackgroundImage}
-                resizeMode="cover"
+                resizeMode="contain"
               >
-                <Image 
-                  source={require('../../assets/images/New Icons/icon-5.png')}
+                <Image
+                  source={require('../../assets/images/New Icons/new-2.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -318,13 +339,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <ImageBackground
-                source={require('../../assets/images/Buttons/background-5.png')}
+                source={require('../../assets/new-design/Homescreen/Cards/blue-card-high.png')}
                 style={styles.quickActionGradient}
                 imageStyle={styles.quickActionBackgroundImage}
-                resizeMode="cover"
+                resizeMode="contain"
               >
-                <Image 
-                  source={require('../../assets/images/New Icons/icon-6.png')}
+                <Image
+                  source={require('../../assets/images/New Icons/new-3.png')}
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
@@ -339,7 +360,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         <View style={styles.quoteSection}>
           <View style={styles.quoteCard}>
             <ImageBackground
-              source={require('../../assets/images/Teal watercolor single element/home-background.png')}
+              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-3.png')}
               style={styles.quoteBackgroundImage}
               imageStyle={styles.quoteBackgroundImageStyle}
               resizeMode="cover"
@@ -358,30 +379,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             </ImageBackground>
           </View>
         </View>
-
-        {/* Daily Reflection Section */}
-        {dailyPrompt && (
-          <View style={styles.dailyReflectionSection}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Daily Reflection</Text>
-              <TouchableOpacity
-                onPress={handleGeneratePromptsTest}
-                style={[styles.testButton, styles.promptTestButton]}
-              >
-                <Text style={styles.testButtonText}>
-                  Generate Test
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <DailyPromptCard
-              prompt={dailyPrompt}
-              onStartWriting={() => navigation?.navigate('Journal', {
-                screen: 'GuidedJournal',
-                params: { initialPrompt: dailyPrompt }
-              })}
-            />
-          </View>
-        )}
+        </View>
       </ScrollView>
 
       {/* Audio Waveform Demo Modal */}

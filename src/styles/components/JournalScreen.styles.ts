@@ -6,7 +6,14 @@ const { width, height } = Dimensions.get('window');
 export const journalScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    position: 'relative',
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 
   loadingContainer: {
@@ -21,22 +28,50 @@ export const journalScreenStyles = StyleSheet.create({
     color: '#6B7280',
   },
 
+  // Header Section - Matching ExerciseLibrary style
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[16],
+    paddingBottom: spacing[4],
   },
-
+  headerContent: {
+    alignItems: 'flex-start',
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing[2],
+    marginLeft: -spacing[16],
+    marginTop: -spacing[12],
+  },
+  headerTurtleIcon: {
+    width: 162,
+    height: 162,
+    marginRight: spacing[4],
+    marginTop: -spacing[8],
+  },
+  titleAndSubtitleContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: -spacing[12],
+    marginTop: spacing[20],
+  },
   headerTitle: {
-    fontFamily: 'Ubuntu-Bold',
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#002d14',
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: spacing[1],
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#6b7280',
+    fontFamily: 'Inter-Medium',
+    letterSpacing: 0.2,
   },
 
   newEntryButton: {

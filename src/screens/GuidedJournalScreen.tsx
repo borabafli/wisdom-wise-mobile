@@ -295,15 +295,15 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
   }
 
   return (
-    <SafeAreaWrapper style={styles.container}>
-      <StatusBar style="dark" backgroundColor="#8B7355" hidden={true} />
-
+    <>
       <LinearGradient
-        colors={['#C19A6B', '#FFFFFF']}
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={{ flex: 1 }}
       >
+        <SafeAreaWrapper style={styles.container}>
+        <StatusBar style="dark" backgroundColor="transparent" translucent />
         <KeyboardAvoidingView
           style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -312,7 +312,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-            <ArrowLeft size={24} color="#5D4E37" />
+            <ArrowLeft size={24} color="#2B475E" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Guided Journal</Text>
           <View style={styles.stepIndicator}>
@@ -336,7 +336,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                   value={currentResponse}
                   onChangeText={setCurrentResponse}
                   placeholder={isTranscribing ? "Transcribing..." : "Type or speak your thoughts..."}
-                  placeholderTextColor="#A0845C"
+                  placeholderTextColor="rgba(43, 71, 94, 0.5)"
                   multiline
                   style={styles.textInput}
                   editable={!isGeneratingQuestion && !isTranscribing}
@@ -385,7 +385,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                       style={styles.micButton}
                       activeOpacity={0.7}
                     >
-                      <Mic size={26} color="#5D4E37" />
+                      <Mic size={26} color="#2B475E" />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -418,32 +418,43 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
               ))}
             </View>
           )}
-        </ScrollView>
 
-        {/* Bottom Bar - Same style as header */}
-        <View style={styles.bottomBar}>
-          {/* Next Button - Centered */}
-          <TouchableOpacity
-            style={[
-              styles.compactNextButton,
-              (!currentResponse.trim() || isGeneratingQuestion) && styles.compactNextButtonDisabled
-            ]}
-            onPress={handleNext}
-            disabled={!currentResponse.trim() || isGeneratingQuestion}
-          >
-            {isGeneratingQuestion ? (
-              <Text style={styles.compactNextButtonText}>...</Text>
-            ) : (
-              <>
-                <Check size={16} color="#FFFFFF" />
-                <Text style={styles.compactNextButtonText}>
-                  {currentStep < 2 ? 'Continue' : 'Finish'}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
+          {/* Continue Button - Part of scrollable content */}
+          <View style={styles.scrollableContinueButtonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.compactNextButtonContainer,
+                (!currentResponse.trim() || isGeneratingQuestion) && styles.compactNextButtonDisabled
+              ]}
+              onPress={handleNext}
+              disabled={!currentResponse.trim() || isGeneratingQuestion}
+              activeOpacity={0.8}
+            >
+              {(!currentResponse.trim() || isGeneratingQuestion) ? (
+                <View style={[styles.compactNextButton, styles.compactNextButtonDisabled]}>
+                  <Check size={16} color="#FFFFFF" />
+                  <Text style={styles.compactNextButtonText}>
+                    {isGeneratingQuestion ? '...' : (currentStep < 2 ? 'Continue' : 'Finish')}
+                  </Text>
+                </View>
+              ) : (
+                <LinearGradient
+                  colors={['#4A6B7C', '#1A2B36']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.compactNextButton}
+                >
+                  <Check size={16} color="#FFFFFF" />
+                  <Text style={styles.compactNextButtonText}>
+                    {currentStep < 2 ? 'Continue' : 'Finish'}
+                  </Text>
+                </LinearGradient>
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
         </KeyboardAvoidingView>
+        </SafeAreaWrapper>
       </LinearGradient>
 
       {/* Save Session Modal */}
@@ -483,7 +494,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
           </View>
         </View>
       </Modal>
-    </SafeAreaWrapper>
+    </>
   );
 };
 

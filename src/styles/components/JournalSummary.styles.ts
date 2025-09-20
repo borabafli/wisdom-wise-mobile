@@ -6,25 +6,28 @@ const { width } = Dimensions.get('window');
 export const journalSummaryStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D2B48C', // Matching earthy background
+  },
+
+  safeAreaWrapper: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
 
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    backgroundColor: '#C19A6B',
-    borderBottomWidth: 1,
-    borderBottomColor: '#B8956B',
+    paddingHorizontal: spacing[8],
+    paddingVertical: spacing[2],
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
   },
 
   headerTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#5D4E37',
+    color: '#2B475E',
     flex: 1,
     textAlign: 'center',
   },
@@ -35,32 +38,32 @@ export const journalSummaryStyles = StyleSheet.create({
 
   scrollView: {
     flex: 1,
-    paddingHorizontal: spacing[20],
+    paddingHorizontal: spacing[12],
   },
 
   summaryCard: {
-    marginVertical: spacing[24],
+    marginVertical: spacing[16],
     borderRadius: 20,
-    padding: spacing[24],
+    padding: spacing[16],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 6,
     borderWidth: 1,
-    borderColor: 'rgba(139, 115, 85, 0.2)',
+    borderColor: '#2B475E',
   },
 
   summaryHeader: {
     alignItems: 'center',
-    marginBottom: spacing[20],
+    marginBottom: spacing[12],
   },
 
   summaryTitle: {
     fontFamily: 'Ubuntu-Bold',
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#5D4E37',
+    color: '#2B475E',
     textAlign: 'center',
   },
 
@@ -68,24 +71,24 @@ export const journalSummaryStyles = StyleSheet.create({
     fontFamily: 'Ubuntu-Regular',
     fontSize: 16,
     lineHeight: 24,
-    color: '#5D4E37',
+    color: '#2B475E',
     textAlign: 'left',
-    marginBottom: spacing[20],
+    marginBottom: spacing[12],
   },
 
   insightsContainer: {
-    marginTop: spacing[16],
-    paddingTop: spacing[16],
+    marginTop: spacing[12],
+    paddingTop: spacing[12],
     borderTopWidth: 1,
-    borderTopColor: 'rgba(139, 115, 85, 0.3)',
+    borderTopColor: 'rgba(43, 71, 94, 0.3)',
   },
 
   insightsTitle: {
     fontFamily: 'Ubuntu-Medium',
     fontSize: 16,
     fontWeight: '600',
-    color: '#5D4E37',
-    marginBottom: spacing[12],
+    color: '#2B475E',
+    marginBottom: spacing[8],
   },
 
   insightItem: {
@@ -98,7 +101,7 @@ export const journalSummaryStyles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#065F46',
+    backgroundColor: '#2B475E',
     marginTop: 8,
     marginRight: spacing[12],
   },
@@ -108,38 +111,41 @@ export const journalSummaryStyles = StyleSheet.create({
     fontFamily: 'Ubuntu-Regular',
     fontSize: 14,
     lineHeight: 20,
-    color: '#6B5B47',
+    color: '#2B475E',
     fontStyle: 'italic',
   },
 
   saveOptionsContainer: {
-    paddingVertical: spacing[20],
+    paddingVertical: spacing[12],
   },
 
   saveOptionsTitle: {
     fontFamily: 'Ubuntu-Medium',
     fontSize: 18,
     fontWeight: '600',
-    color: '#5D4E37',
+    color: '#2B475E',
     textAlign: 'center',
-    marginBottom: spacing[24],
+    marginBottom: spacing[16],
+  },
+
+  saveButtonContainer: {
+    borderRadius: 16,
+    marginBottom: spacing[12],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
   saveButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#065F46',
-    paddingVertical: spacing[16],
-    paddingHorizontal: spacing[24],
+    paddingVertical: spacing[12],
+    paddingHorizontal: spacing[16],
     borderRadius: 16,
-    marginBottom: spacing[16],
-    gap: spacing[8],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    gap: spacing[6],
   },
 
   saveButtonText: {
@@ -149,21 +155,24 @@ export const journalSummaryStyles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  saveAndPolishButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#7C2D12', // Darker brown/orange for polish option
-    paddingVertical: spacing[16],
-    paddingHorizontal: spacing[24],
+  saveAndPolishButtonContainer: {
     borderRadius: 16,
-    marginBottom: spacing[12],
-    gap: spacing[8],
+    marginBottom: spacing[8],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+
+  saveAndPolishButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing[12],
+    paddingHorizontal: spacing[16],
+    borderRadius: 16,
+    gap: spacing[6],
   },
 
   saveAndPolishButtonText: {
@@ -176,10 +185,11 @@ export const journalSummaryStyles = StyleSheet.create({
   polishDescription: {
     fontFamily: 'Ubuntu-Regular',
     fontSize: 12,
-    color: '#6B5B47',
+    color: 'rgba(43, 71, 94, 0.8)',
     textAlign: 'center',
     lineHeight: 16,
     fontStyle: 'italic',
-    paddingHorizontal: spacing[12],
+    paddingHorizontal: spacing[8],
+    marginTop: spacing[4],
   },
 });
