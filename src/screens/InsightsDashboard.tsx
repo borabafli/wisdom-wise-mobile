@@ -26,6 +26,8 @@ import { VisionDetailsModal } from '../components/VisionDetailsModal';
 import { useUserProfile } from '../hooks';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
 import { ValuesReflectButton } from '../components/ReflectButton';
+import { generateSampleMoodData } from '../utils/sampleMoodData';
+import { generateSampleValuesData } from '../utils/sampleValuesData';
 
 
 const { width } = Dimensions.get('window');
@@ -345,7 +347,11 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           </LinearGradient>
         </Animated.View>
         {/* Mood Insights Section - First */}
-        <MoodInsightsCard onInsightPress={(insightId) => onInsightClick('mood_insight', insightId)} />
+        <MoodInsightsCard
+          onInsightPress={(insightId) => onInsightClick('mood_insight', insightId)}
+          displayPatterns={displayPatterns}
+          currentPatternIndex={currentPatternIndex}
+        />
 
         {/* Thinking Patterns Section - Second */}
         <View style={styles.patternsCard}>
@@ -920,6 +926,90 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               ))}
             </View>
           </View>
+        </View>
+
+        {/* Control Buttons at Bottom */}
+        <View style={{
+          flexDirection: 'row',
+          marginTop: 30,
+          marginBottom: 20,
+          marginHorizontal: 16,
+          gap: 12
+        }}>
+          <TouchableOpacity
+            onPress={async () => {
+              setIsLoading(true);
+              // Generate both mood and values sample data
+              await Promise.all([
+                generateSampleMoodData(),
+                generateSampleValuesData()
+              ]);
+              await loadInsightData();
+              setIsLoading(false);
+            }}
+            style={{
+              flex: 1,
+              borderRadius: 12,
+              paddingVertical: 14,
+              alignItems: 'center',
+              overflow: 'hidden'
+            }}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['#4A6B7C', '#1A2B36']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+              }}
+            />
+            <Text style={{
+              fontSize: 14,
+              color: 'white',
+              fontWeight: '600',
+              fontFamily: 'Ubuntu-Medium'
+            }}>
+              Generate Data
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={loadInsightData}
+            style={{
+              flex: 1,
+              borderRadius: 12,
+              paddingVertical: 14,
+              alignItems: 'center',
+              overflow: 'hidden'
+            }}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['#4A6B7C', '#1A2B36']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+              }}
+            />
+            <Text style={{
+              fontSize: 14,
+              color: 'white',
+              fontWeight: '600',
+              fontFamily: 'Ubuntu-Medium'
+            }}>
+              Refresh
+            </Text>
+          </TouchableOpacity>
         </View>
         </View> {/* Close contentContainer */}
       </ScrollView>

@@ -14,6 +14,8 @@ import { getShortConfidenceLabel } from '../utils/confidenceDisplay';
 
 interface MoodInsightsCardProps {
   onInsightPress?: (insightId: string) => void;
+  displayPatterns?: any[];
+  currentPatternIndex?: number;
 }
 
 interface DataAvailability {
@@ -23,8 +25,18 @@ interface DataAvailability {
   moodRatingCount: number;
 }
 
-export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPress }) => {
+export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPress, displayPatterns = [], currentPatternIndex = 0 }) => {
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
+
+  // Helper function to determine font size based on text length
+  // Baseline: current balanced thought length (~80-120 chars) = 15px
+  const getDynamicFontSize = (text: string) => {
+    const length = text.length;
+    if (length <= 11) return 15;     // Current size or shorter - larger font
+    if (length <= 170) return 14;     // Slightly longer - normal font
+    if (length <= 235) return 13;     // Long text - smaller font
+    return 12;                        // Very long text - smallest font
+  };
   const [loading, setLoading] = useState(true);
   const [showFullChart, setShowFullChart] = useState(false);
   const [dataAvailability, setDataAvailability] = useState<DataAvailability>({
@@ -437,6 +449,220 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({ onInsightPre
 
         {/* Weekly Mood Comparison with white boxes */}
         <WeeklyMoodComparison style={{ marginBottom: 0 }} />
+      </View>
+
+      {/* Header for Your Thought Patterns */}
+      <View style={[styles.patternsHeader, { marginBottom: 16, marginHorizontal: 16 }]}>
+        <View style={styles.patternsIcon}>
+          <Image
+            source={require('../../assets/images/New Icons/new-4.png')}
+            style={{ width: 50, height: 50 }}
+            contentFit="contain"
+          />
+        </View>
+        <View style={styles.patternsTitleContainer}>
+          <Text style={[styles.patternsTitle, { fontFamily: 'Ubuntu-Medium' }]}>Your Thought Patterns</Text>
+          <Text style={[styles.patternsSubtitle, { fontFamily: 'Ubuntu-Light' }]}>Identify and reframe</Text>
+        </View>
+      </View>
+
+      {/* Distorted Thought Container with distorted-thought-card-clean-6.png */}
+      <View style={{
+        marginHorizontal: '-15%', // 130% width (extends 15% on each side) - same as balanced card
+        marginBottom: 20,
+        marginTop: -5, // Moved up slightly
+      }}>
+        <ImageBackground
+          source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean-6.png')}
+          style={{
+            minHeight: 180,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 12,
+            overflow: 'hidden',
+          }}
+          imageStyle={{ borderRadius: 12 }}
+          resizeMode="cover"
+        >
+          {/* Distorted Thought Label */}
+          <View style={{
+            position: 'absolute',
+            top: '8%',
+            width: '100%',
+            alignItems: 'center',
+          }}>
+            <Text style={{
+              fontSize: 17,
+              color: 'white',
+              fontWeight: '600',
+              fontFamily: 'Ubuntu-Medium',
+              textAlign: 'center',
+            }}>
+              Distorted Thought
+            </Text>
+          </View>
+
+          <View style={{
+            paddingHorizontal: 10, // Wider content area (reduced from 20) - same as distorted
+            paddingVertical: 15, // Move up slightly (reduced from 20) - same as distorted
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 255, 0, 0.3)', // Green background to see content area
+            marginTop: -20, // EXACTLY same as balanced card for testing
+            width: '66%', // 80% of image width
+            alignSelf: 'center', // Center the container
+          }}>
+            {(() => {
+              const text = displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
+                ? `"${displayPatterns[currentPatternIndex].originalThought}"`
+                : '"Your distorted thoughts will appear here"';
+
+              return (
+                <Text style={{
+                  fontSize: getDynamicFontSize(text),
+                  color: '#374151',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  fontFamily: 'Ubuntu-Regular',
+                }}>
+                  {text}
+                </Text>
+              );
+            })()}
+          </View>
+
+          {/* Two blue containers at bottom */}
+          <View style={{
+            position: 'absolute',
+            bottom: '8%', // Same as balanced card
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between', // Same as balanced card
+            paddingHorizontal: '20%', // More padding to move left container more to center
+            marginLeft: '5%', // Move slightly to the right
+          }}>
+            <View style={{
+              width: '35%',
+              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Same blue background as balanced card
+              padding: 6, // Same as balanced thought containers
+              alignItems: 'flex-start', // Left align content
+              marginLeft: '2%', // Move tiny bit to the right
+            }}>
+              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>
+                {displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
+                  ? displayPatterns[currentPatternIndex].distortionTypes[0] || 'Pattern Type'
+                  : 'Pattern Type'
+                }
+              </Text>
+            </View>
+
+            <View style={{
+              width: '40%',
+              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
+              padding: 6, // Same as balanced thought containers
+              alignItems: 'flex-start', // Left align content
+            }}>
+              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>Not realistic</Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+
+      {/* Balanced Thought Container with balanced-thought-card-clean-6.png */}
+      <View style={{
+        marginHorizontal: '-15%', // 130% width (extends 15% on each side) - same as balanced card
+        marginBottom: 20,
+        marginTop: -5, // Moved up slightly
+      }}>
+        <ImageBackground
+          source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought-card-clean-6.png')}
+          style={{
+            minHeight: 180,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 12,
+            overflow: 'hidden',
+          }}
+          imageStyle={{ borderRadius: 12 }}
+          resizeMode="cover"
+        >
+          {/* Balanced Thought Label */}
+          <View style={{
+            position: 'absolute',
+            top: '5%',
+            width: '100%',
+            alignItems: 'center',
+          }}>
+            <Text style={{
+              fontSize: 17,
+              color: 'white',
+              fontWeight: '600',
+              fontFamily: 'Ubuntu-Medium',
+              textAlign: 'center',
+            }}>
+              Balanced Thought
+            </Text>
+          </View>
+
+          <View style={{
+            paddingHorizontal: 10, // Wider content area (reduced from 20) - same as distorted
+            paddingVertical: 15, // Move up slightly (reduced from 20) - same as distorted
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 255, 0, 0)', // Green background to see content area
+            marginTop: -29, // Move the content area higher up within the card (was -10)
+            width: '66%', // 80% of image width
+            alignSelf: 'center', // Center the container
+          }}>
+            {(() => {
+              const text = displayPatterns.length > 0 && displayPatterns[currentPatternIndex]
+                ? `"${displayPatterns[currentPatternIndex].reframedThought}"`
+                : '"A more balanced perspective will appear here"';
+
+              return (
+                <Text style={{
+                  fontSize: getDynamicFontSize(text),
+                  color: '#374151',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  fontFamily: 'Ubuntu-Medium',
+                }}>
+                  {text}
+                </Text>
+              );
+            })()}
+          </View>
+
+          {/* Two blue containers at bottom */}
+          <View style={{
+            position: 'absolute',
+            bottom: '8%', // Moved slightly back up from 5% to 7% for balanced card
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between',
+            paddingHorizontal: '20%', // More padding to move left container more to center
+            marginLeft: '5%', // Move slightly to the right
+          }}>
+            <View style={{
+              width: '35%',
+              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
+              padding: 6,
+              alignItems: 'flex-start', // Left align content
+              marginLeft: '2%', // Same as first card - Move tiny bit to the right
+            }}>
+              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>More balanced</Text>
+            </View>
+
+            <View style={{
+              width: '40%',
+              backgroundColor: 'rgba(0, 0, 255, 0.3)', // Blue background
+              padding: 6,
+              alignItems: 'flex-start', // Left align content
+            }}>
+              <Text style={{ fontSize: 10, color: '#374151', textAlign: 'left' }}>More realistic</Text>
+            </View>
+          </View>
+        </ImageBackground>
       </View>
 
       {/* Separate card for insights */}
