@@ -34,10 +34,26 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onCancelRecording,
 }) => {
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  // 👇 add this
+const [inputHeight, setInputHeight] = useState(40);
   const insets = useSafeAreaInsets();
-  
-  // Count lines by splitting on newlines and adding 1
   const inputLineCount = Math.min(inputText.split('\n').length, 9);
+
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   const handleInputTextChange = (text: string) => {
     onInputTextChange(text);
@@ -54,27 +70,36 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <>
       {/* Input Area */}
-      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 0 }]}>
+      <View style={[
+        styles.inputContainer, 
+        { 
+          paddingBottom: Math.max(insets.bottom || 0, 16) + (keyboardHeight > 0 ? 30 : 0) // Extra padding only when keyboard is visible
+        }
+      ]}>
         <View style={styles.inputCard}>
           <View style={styles.inputRow}>
             {!isRecording ? (
               <TextInput
-                value={inputText}
-                onChangeText={handleInputTextChange}
-                placeholder={isTranscribing ? "Transcribing..." : "Type or speak..."}
-                placeholderTextColor="#94a3b8"
-                multiline
-                style={[
-                  styles.textInput,
-                  {
-                    height: Math.min(Math.max(40, inputLineCount * 22), 9 * 22),
-                    textAlign: isTranscribing ? 'center' : 'left',
-                  }
-                ]}
-                editable={!isTranscribing}
-                allowFontScaling={false}
-                selectionColor="#3b82f6"
-              />
+              value={inputText}
+              onChangeText={handleInputTextChange}
+              placeholder={isTranscribing ? "Transcribing..." : "Type or speak..."}
+              placeholderTextColor="#94a3b8"
+              multiline
+              style={[
+                styles.textInput,
+                {
+                  height: Math.min(Math.max(40, inputHeight), 9 * 22), // min 40, max 9 lines
+                  textAlign: isTranscribing ? 'center' : 'left',
+                }
+              ]}
+              editable={!isTranscribing}
+              allowFontScaling={false}
+              selectionColor="#3b82f6"
+              onContentSizeChange={(e) => {
+                setInputHeight(e.nativeEvent.contentSize.height);
+              }}
+            />
+            
             ) : (
               /* Recording Interface: X button - Wave with Timer inside chatbox - Check button */
               <View style={styles.recordingInterfaceWithTimer}>
@@ -174,17 +199,17 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           
           <TouchableWithoutFeedback onPress={dismissKeyboard}>
             <View style={styles.fullscreenInputContent}>
-              <TextInput
-                value={inputText}
-                onChangeText={handleInputTextChange}
-                placeholder="Type your message here..."
-                placeholderTextColor="#94a3b8"
-                multiline
-                style={styles.fullscreenTextInput}
-                autoFocus
-                textAlignVertical="top"
-                selectionColor="#3b82f6"
-              />
+            <TextInput
+  value={inputText}
+  onChangeText={handleInputTextChange}
+  placeholder="Type or speak..."
+  placeholderTextColor="#94a3b8"
+  multiline
+  style={styles.fullscreenTextInput}  // ✅ use fullscreen style
+  onContentSizeChange={(e) =>
+    setInputHeight(e.nativeEvent.contentSize.height)
+  }
+/>
             </View>
           </TouchableWithoutFeedback>
         </SafeAreaWrapper>

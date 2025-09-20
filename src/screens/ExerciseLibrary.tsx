@@ -1,15 +1,20 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X, Bug } from 'lucide-react-native';
+import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { exercisesArray } from '../data/exerciseLibrary';
-import { colors, gradients, shadows } from '../styles/tokens';
+import { colors, gradients, shadows, spacing } from '../styles/tokens';
 import { exerciseLibraryStyles, getTagColor, getExerciseCardGradient } from '../styles/components/ExerciseLibrary.styles';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
-import { MoodSlider } from '../components/chat/MoodSlider';
+import { getExerciseEmojis } from '../utils/emojiUtils';
+import { useUserProfile } from '../hooks/useUserProfile';
+import SlidableExerciseCard from '../components/SlidableExerciseCard';
+import { CardHidingService } from '../services/cardHidingService';
+import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
+import { useExercisePreview } from '../hooks/useExercisePreview';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,18 +28,44 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const [selectedBenefitFilter, setSelectedBenefitFilter] = useState('All');
   const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
-  const [showDevSlider, setShowDevSlider] = useState(false);
-  const [sliderVariant, setSliderVariant] = useState<'default' | 'test'>('default');
+  const [hiddenCardIds, setHiddenCardIds] = useState<string[]>([]);
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
+
+  // Exercise preview functionality
+  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview();
+
+  // Enhanced exercise click handler that shows preview first
+  const handleExerciseClickWithPreview = (exercise: any) => {
+    if (exercise) {
+      showExercisePreview(exercise, () => {
+        onExerciseClick(exercise);
+      });
+    } else {
+      onExerciseClick(exercise);
+    }
+  };
+  
+  // Load hidden card IDs on mount
+  useEffect(() => {
+    const loadHiddenCards = async () => {
+      const hiddenIds = await CardHidingService.getHiddenCardIds();
+      setHiddenCardIds(hiddenIds);
+    };
+    loadHiddenCards();
+  }, []);
+  
+  // Get user profile for emoji preferences
+  const { profile } = useUserProfile();
+  const emojis = getExerciseEmojis(profile?.emojiPreference || 'neutral');
   
   // Use unified exercises from exerciseLibrary.ts
   const exercises = exercisesArray;
 
   // Filter options
   const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
-  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-exploration', 'Clarity', 'Stress', 'Focus', 'Sleep'];
+  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-Discovery', 'Mental Clarity', 'Stress Relief', 'Focus', 'Emotional Balance'];
   const styleFilters = ['All', 'CBT', 'Breathing', 'Meditation', 'Journaling', 'Mindfulness', 'ACT'];
 
   // Helper function to get duration in minutes
@@ -59,9 +90,45 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     setSelectedStyleFilter('All');
   };
 
+  // Extract benefit from exercise description or category
+  const getBenefitFromExercise = (exercise: any) => {
+    const description = exercise.description.toLowerCase();
+    const name = exercise.name.toLowerCase();
+    
+    if (description.includes('anxiety') || description.includes('anxious')) return 'Anxiety';
+    if (description.includes('depression') || description.includes('mood') || description.includes('happiness')) return 'Mood';
+    if (description.includes('discover') || description.includes('explore') || description.includes('journey') || description.includes('story') || name.includes('story')) return 'Self-Discovery';
+    if (description.includes('clarity') || description.includes('clear') || description.includes('organize') || description.includes('clutter')) return 'Mental Clarity';
+    if (description.includes('stress') || description.includes('tension') || description.includes('calm') || description.includes('relax')) return 'Stress Relief';
+    if (description.includes('focus') || description.includes('concentration') || description.includes('attention')) return 'Focus';
+    if (description.includes('balance') || description.includes('compassion') || description.includes('kindness') || description.includes('emotional')) return 'Emotional Balance';
+    
+    // Category-based mapping
+    if (exercise.category.toLowerCase() === 'breathing') return 'Stress Relief';
+    if (exercise.category.toLowerCase() === 'cbt') return 'Mental Clarity';
+    if (exercise.category.toLowerCase() === 'mindfulness') return 'Focus';
+    if (exercise.category.toLowerCase() === 'self-care') return 'Emotional Balance';
+    if (exercise.category.toLowerCase() === 'act') return 'Self-Discovery';
+    if (exercise.category.toLowerCase() === 'self-discovery') return 'Self-Discovery';
+    if (exercise.category.toLowerCase() === 'self-growth') return 'Self-Discovery';
+    
+    // Default fallback
+    return 'Focus';
+  };
+
+  // Handle card hiding
+  const handleHideCard = async (exerciseId: string, hideType: 'permanent' | 'temporary') => {
+    await CardHidingService.hideCard(exerciseId, hideType);
+    const updatedHiddenIds = await CardHidingService.getHiddenCardIds();
+    setHiddenCardIds(updatedHiddenIds);
+  };
+
   // Filter exercises based on all criteria
   const filteredExercises = useMemo(() => {
     let filtered = exercises;
+
+    // Filter out hidden cards first
+    filtered = filtered.filter(exercise => !hiddenCardIds.includes(exercise.id));
 
     // Search filter
     if (searchText) {
@@ -104,69 +171,77 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     }
 
     return filtered;
-  }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
+  }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter, hiddenCardIds]);
 
 
-  const FilterChip = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) => (
-    <TouchableOpacity
-      style={[exerciseLibraryStyles.filterChip, selected && exerciseLibraryStyles.filterChipSelected]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Text style={[exerciseLibraryStyles.filterChipText, selected && exerciseLibraryStyles.filterChipTextSelected]}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+  const FilterChip = ({ label, selected, onPress, filterType }: {
+    label: string;
+    selected: boolean;
+    onPress: () => void;
+    filterType: 'duration' | 'benefits' | 'approach';
+  }) => {
+    // Get background color based on filter type
+    const getBackgroundColor = () => {
+      switch (filterType) {
+        case 'duration': return '#DBEDF4'; // Same as tag background
+        case 'benefits': return '#C6E2F0'; // Slightly darker blue
+        case 'approach': return '#B1D6EB'; // Even darker blue
+        default: return '#DBEDF4';
+      }
+    };
 
-  const ExerciseCard = ({ exercise }: { exercise: any }) => {
-    const tagColor = getTagColor(exercise.category);
-    
     return (
       <TouchableOpacity
-        style={exerciseLibraryStyles.exerciseCard}
-        onPress={() => onExerciseClick(exercise)}
-        activeOpacity={0.8}
+        style={[
+          exerciseLibraryStyles.filterChipSolid,
+          {
+            backgroundColor: selected ? '#2B475E' : getBackgroundColor(),
+          }
+        ]}
+        onPress={onPress}
+        activeOpacity={0.7}
       >
-        <LinearGradient
-          colors={getExerciseCardGradient()}
-          style={exerciseLibraryStyles.exerciseCardGradient}
-        >
-          {/* Left side image */}
-          <View style={exerciseLibraryStyles.exerciseImageContainer}>
-            <Image 
-              source={exercise.image || require('../../assets/images/new-icon1.png')}
-              style={exerciseLibraryStyles.exerciseImage}
-              contentFit="cover"
-            />
-          </View>
-          
-          {/* Right side content */}
-          <View style={exerciseLibraryStyles.exerciseContent}>
-            {/* Category tag */}
-            <View style={[exerciseLibraryStyles.categoryTag, { backgroundColor: tagColor.bg }]}>
-              <Text style={[exerciseLibraryStyles.categoryTagText, { color: tagColor.text }]}>
-                {exercise.category}
-              </Text>
-            </View>
-            
-            <Text style={exerciseLibraryStyles.exerciseTitle} numberOfLines={2}>
-              {exercise.name}
-            </Text>
-            
-            <View style={exerciseLibraryStyles.exerciseMeta}>
-              <View style={exerciseLibraryStyles.durationContainer}>
-                <Clock size={12} color="#002244" />
-                <Text style={exerciseLibraryStyles.exerciseDuration}>{exercise.duration}</Text>
-              </View>
-            </View>
-            
-            <Text style={exerciseLibraryStyles.exerciseDescription} numberOfLines={2}>
-              {exercise.description}
-            </Text>
-          </View>
-        </LinearGradient>
+        <Text style={[
+          exerciseLibraryStyles.filterChipText,
+          { color: selected ? '#FFFFFF' : '#2B475E' }
+        ]}>
+          {label}
+        </Text>
       </TouchableOpacity>
+    );
+  };
+
+  const ExerciseCard = ({ exercise, index }: { exercise: any; index: number }) => {
+    const benefit = getBenefitFromExercise(exercise);
+    
+    // Choose button image based on benefit name length
+    const getButtonImage = (benefitName: string, cardIndex: number) => {
+      if (benefitName.length > 8) {
+        // Use larger buttons for longer names
+        return cardIndex % 2 === 0 
+          ? require('../../assets/images/Buttons/3.png')
+          : require('../../assets/images/Buttons/4.png');
+      } else {
+        // Use smaller buttons for shorter names
+        return cardIndex % 2 === 0 
+          ? require('../../assets/images/Buttons/1.png')
+          : require('../../assets/images/Buttons/2.png');
+      }
+    };
+    
+    const buttonImage = getButtonImage(benefit, index);
+    const isLargeButton = benefit.length > 8;
+    
+    return (
+      <SlidableExerciseCard
+        exercise={exercise}
+        index={index}
+        benefit={benefit}
+        isLargeButton={isLargeButton}
+        buttonImage={buttonImage}
+        onExerciseClick={handleExerciseClickWithPreview}
+        onHideCard={handleHideCard}
+      />
     );
   };
 
@@ -174,200 +249,171 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     <SafeAreaWrapper style={exerciseLibraryStyles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Background Gradient - Consistent with HomeScreen */}
+      {/* Background Gradient - Same as HomeScreen */}
       <LinearGradient
-        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={exerciseLibraryStyles.backgroundGradient}
+        pointerEvents="none"
       />
 
-      {/* Header */}
-      <View style={exerciseLibraryStyles.header}>
-        <Text style={exerciseLibraryStyles.headerTitle}>Exercise Library</Text>
-        <View style={exerciseLibraryStyles.headerButtons}>
-          {/* Slider Variant Toggle */}
-          {showDevSlider && (
+      {/* Main Scrollable Content */}
+      <ScrollView
+        style={exerciseLibraryStyles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={exerciseLibraryStyles.scrollContent}
+      >
+        {/* Header */}
+        <View style={exerciseLibraryStyles.header}>
+          <View style={exerciseLibraryStyles.headerContent}>
+            <View style={exerciseLibraryStyles.headerTitleContainer}>
+              <Image
+                source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-5.png')}
+                style={exerciseLibraryStyles.headerTurtleIcon}
+                contentFit="contain"
+              />
+              <View style={exerciseLibraryStyles.titleAndSubtitleContainer}>
+                <Text style={exerciseLibraryStyles.headerTitle}>Exercises</Text>
+                <Text style={exerciseLibraryStyles.headerSubtitle}>{emojis.subtitle} For your well-being</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Search Bar */}
+        <View style={exerciseLibraryStyles.searchSection}>
+          <View style={exerciseLibraryStyles.searchRow}>
+            <View style={exerciseLibraryStyles.searchBar}>
+              <Search size={20} color={colors.text.secondary} />
+              <TextInput
+                style={[exerciseLibraryStyles.searchInput, { color: '#000000' }]}
+                placeholder="Search exercises..."
+                value={searchText}
+                onChangeText={setSearchText}
+                placeholderTextColor="#6B7280"
+                selectionColor="#000000"
+              />
+              {searchText ? (
+                <TouchableOpacity 
+                  onPress={() => setSearchText('')} 
+                  activeOpacity={0.7}
+                  style={{
+                    padding: spacing[8], // Add padding for better touch target
+                    borderRadius: 16,
+                    minWidth: 44, // Ensure minimum touch target
+                    minHeight: 44,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <X size={18} color={colors.text.secondary} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+            
+            {/* Filter Button - Next to search bar with circle background */}
             <TouchableOpacity
-              style={[exerciseLibraryStyles.devButton, sliderVariant === 'test' && exerciseLibraryStyles.devButtonSelected]}
-              onPress={() => setSliderVariant(sliderVariant === 'default' ? 'test' : 'default')}
+              style={exerciseLibraryStyles.filterButtonCircle}
+              onPress={() => setShowFilters(!showFilters)}
               activeOpacity={0.7}
             >
-              <Text style={exerciseLibraryStyles.devButtonText}>
-                {sliderVariant === 'default' ? '#446D78' : '#10597B'}
-              </Text>
+              <Image
+                source={require('../../assets/new-design/Homescreen/Icons/filter.png')}
+                style={{ width: 32, height: 32 }}
+                contentFit="contain"
+              />
+              {activeFiltersCount > 0 && (
+                <View style={exerciseLibraryStyles.filterBadge}>
+                  <Text style={exerciseLibraryStyles.filterBadgeText}>{activeFiltersCount}</Text>
+                </View>
+              )}
             </TouchableOpacity>
-          )}
-          
-          {/* Dev Test Button */}
-          <TouchableOpacity
-            style={exerciseLibraryStyles.devButton}
-            onPress={() => setShowDevSlider(!showDevSlider)}
-            activeOpacity={0.7}
-          >
-            <Bug size={16} color={colors.primary[400]} />
-            <Text style={exerciseLibraryStyles.devButtonText}>Test Slider</Text>
-          </TouchableOpacity>
-          
-        </View>
-      </View>
-
-      {/* Search Bar */}
-      <View style={exerciseLibraryStyles.searchSection}>
-        <View style={exerciseLibraryStyles.searchRow}>
-          <View style={exerciseLibraryStyles.searchBar}>
-            <Search size={20} color={colors.text.secondary} />
-            <TextInput
-              style={exerciseLibraryStyles.searchInput}
-              placeholder="Search exercises..."
-              value={searchText}
-              onChangeText={setSearchText}
-              placeholderTextColor={colors.text.secondary}
-            />
-            {searchText ? (
-              <TouchableOpacity 
-                onPress={() => setSearchText('')} 
-                activeOpacity={0.7}
-                style={{
-                  padding: spacing[8], // Add padding for better touch target
-                  borderRadius: 16,
-                  minWidth: 44, // Ensure minimum touch target
-                  minHeight: 44,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <X size={18} color={colors.text.secondary} />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-          
-          {/* Filter Button */}
-          <TouchableOpacity
-            style={[exerciseLibraryStyles.filterButton, activeFiltersCount > 0 && exerciseLibraryStyles.filterButtonActive]}
-            onPress={() => setShowFilters(!showFilters)}
-            activeOpacity={0.7}
-          >
-            <Filter size={20} color={colors.primary[400]} />
-            {activeFiltersCount > 0 && (
-              <View style={exerciseLibraryStyles.filterBadge}>
-                <Text style={exerciseLibraryStyles.filterBadgeText}>{activeFiltersCount}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Dev Slider Test */}
-      {showDevSlider && (
-        <View style={exerciseLibraryStyles.devSliderSection}>
-          <View style={exerciseLibraryStyles.devSliderContainer}>
-            <MoodSlider
-              title={sliderVariant === 'default' ? "How are you feeling right now?" : "How effective was this session?"}
-              subtitle={sliderVariant === 'default' ? "Testing mood slider" : "Testing effectiveness slider"}
-              onRatingChange={(rating) => console.log(`${sliderVariant} slider changed:`, rating)}
-              onComplete={(rating) => {
-                console.log(`${sliderVariant} slider completed:`, rating);
-                // Auto-hide after completion for better UX
-                setTimeout(() => setShowDevSlider(false), 2000);
-              }}
-              type={sliderVariant === 'default' ? 'mood' : 'helpfulness'}
-              variant={sliderVariant}
-              initialValue={2.5}
-            />
           </View>
         </View>
-      )}
 
-      {/* Filters */}
-      {showFilters && (
-        <View style={exerciseLibraryStyles.filtersSection}>
-          {/* Filters Header */}
-          <View style={exerciseLibraryStyles.filtersHeader}>
-            <Text style={exerciseLibraryStyles.filtersTitle}>Filters</Text>
-            {activeFiltersCount > 0 && (
-              <TouchableOpacity
-                style={exerciseLibraryStyles.clearFiltersButton}
-                onPress={clearAllFilters}
-                activeOpacity={0.7}
-              >
-                <Text style={exerciseLibraryStyles.clearFiltersText}>Clear All</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          {/* Time Filter */}
-          <View style={exerciseLibraryStyles.filterGroup}>
-            <Text style={exerciseLibraryStyles.filterGroupTitle}>Duration</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={exerciseLibraryStyles.filterScrollView}>
-              <View style={exerciseLibraryStyles.filterRow}>
+        {/* Filters */}
+        {showFilters && (
+          <View style={exerciseLibraryStyles.filtersSection}>
+            {/* Filters Header */}
+            <View style={exerciseLibraryStyles.filtersHeader}>
+              {activeFiltersCount > 0 && (
+                <TouchableOpacity
+                  style={exerciseLibraryStyles.clearFiltersButton}
+                  onPress={clearAllFilters}
+                  activeOpacity={0.7}
+                >
+                  <Text style={exerciseLibraryStyles.clearFiltersText}>Clear All</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            {/* Time Filter - Compact */}
+            <View style={exerciseLibraryStyles.filterGroupCompact}>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.duration} Duration</Text>
+              <View style={exerciseLibraryStyles.filterRowCompact}>
                 {timeFilters.map((filter) => (
                   <FilterChip
                     key={filter}
                     label={filter}
                     selected={selectedTimeFilter === filter}
                     onPress={() => setSelectedTimeFilter(filter)}
+                    filterType="duration"
                   />
                 ))}
               </View>
-            </ScrollView>
-          </View>
+            </View>
 
-          {/* Benefit Filter */}
-          <View style={exerciseLibraryStyles.filterGroup}>
-            <Text style={exerciseLibraryStyles.filterGroupTitle}>Benefits</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={exerciseLibraryStyles.filterScrollView}>
-              <View style={exerciseLibraryStyles.filterRow}>
+            {/* Benefit Filter - Compact */}
+            <View style={exerciseLibraryStyles.filterGroupCompact}>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.benefits} Benefits</Text>
+              <View style={exerciseLibraryStyles.filterRowCompact}>
                 {benefitFilters.map((filter) => (
                   <FilterChip
                     key={filter}
                     label={filter}
                     selected={selectedBenefitFilter === filter}
                     onPress={() => setSelectedBenefitFilter(filter)}
+                    filterType="benefits"
                   />
                 ))}
               </View>
-            </ScrollView>
-          </View>
+            </View>
 
-          {/* Style Filter */}
-          <View style={exerciseLibraryStyles.filterGroup}>
-            <Text style={exerciseLibraryStyles.filterGroupTitle}>Approach</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={exerciseLibraryStyles.filterScrollView}>
-              <View style={exerciseLibraryStyles.filterRow}>
+            {/* Style Filter - Compact */}
+            <View style={exerciseLibraryStyles.filterGroupCompact}>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.approach} Approach</Text>
+              <View style={exerciseLibraryStyles.filterRowCompact}>
                 {styleFilters.map((filter) => (
                   <FilterChip
                     key={filter}
                     label={filter}
                     selected={selectedStyleFilter === filter}
                     onPress={() => setSelectedStyleFilter(filter)}
+                    filterType="approach"
                   />
                 ))}
               </View>
-            </ScrollView>
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      {/* Results */}
-      <ScrollView
-        style={exerciseLibraryStyles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={exerciseLibraryStyles.scrollContent}
-      >
+        {/* Results Header */}
         <View style={exerciseLibraryStyles.resultsHeader}>
           <Text style={exerciseLibraryStyles.resultsCount}>
             {filteredExercises.length} exercise{filteredExercises.length !== 1 ? 's' : ''} found
           </Text>
         </View>
 
+        {/* Exercise Cards */}
         <View style={exerciseLibraryStyles.exercisesGrid}>
           {filteredExercises.map((exercise, index) => (
             <View key={`exercise-${exercise.id}-${exercise.type}-${index}`} style={exerciseLibraryStyles.exerciseCardWrapper}>
-              <ExerciseCard exercise={exercise} />
+              <ExerciseCard exercise={exercise} index={index} />
             </View>
           ))}
         </View>
 
+        {/* Empty State */}
         {filteredExercises.length === 0 && (
           <View style={exerciseLibraryStyles.emptyState}>
             <Sparkles size={48} color={colors.text.tertiary} />
@@ -378,6 +424,16 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
           </View>
         )}
       </ScrollView>
+
+      {/* Exercise Preview Card */}
+      {previewExercise && (
+        <ExerciseSummaryCard
+          visible={showPreview}
+          exercise={previewExercise}
+          onStart={confirmExerciseStart}
+          onClose={hideExercisePreview}
+        />
+      )}
     </SafeAreaWrapper>
   );
 };

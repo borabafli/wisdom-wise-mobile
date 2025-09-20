@@ -25,9 +25,9 @@ import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
 import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
-import { 
-  useTypewriterAnimation, 
-  useVoiceRecording, 
+import {
+  useTypewriterAnimation,
+  useVoiceRecording,
   useChatSession,
   useTTSControls
 } from '../hooks/chat';
@@ -385,7 +385,9 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
         <KeyboardAvoidingView 
           style={styles.keyboardView} 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={0}
+          enabled={Platform.OS === 'ios'}
         >
           {/* Header */}
           <Animated.View style={[
@@ -453,8 +455,11 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             contentContainerStyle={styles.messagesContent}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-            keyboardShouldPersistTaps="always"
-            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+            automaticallyAdjustKeyboardInsets={false}
+            automaticallyAdjustContentInsets={false}
+            contentInsetAdjustmentBehavior="never"
           >
 
             
@@ -548,16 +553,11 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           {/* Suggestion Chips */}
           <SuggestionChips
             suggestions={chatSession.suggestions}
-            onSuggestionPress={handleSend}
+            onSuggestionPress={(suggestion) => handleSend(suggestion)}
             onSuggestExercise={() => {
               if (onExerciseClick) {
                 const breathingExercise = exerciseLibraryData['breathing'];
                 onExerciseClick(breathingExercise);
-              }
-            }}
-            onActionSelect={() => {
-              if (onActionSelect) {
-                onActionSelect('guided-session');
               }
             }}
             showExerciseButton={

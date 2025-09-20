@@ -18,6 +18,15 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   displayName?: string;
+  emojiPreference?: 'female' | 'male' | 'neutral';
+  motivation?: string;
+  motivationTimestamp?: string;
+  challenges?: string[];
+  goals?: string[];
+  onboardingValues?: string[];
+  challengesTimestamp?: string;
+  baselineMood?: number;
+  baselineMoodTimestamp?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -340,6 +349,40 @@ class StorageService {
       return 'Friend'; // Fallback if somehow both are empty
     } catch (error) {
       console.error('Error getting display name:', error);
+      return 'Friend';
+    }
+  }
+
+  /**
+   * Get user's display name with priority: onboarding name > signup name > default
+   * Onboarding name (from storageService) takes highest priority over auth signup name
+   */
+  async getDisplayNameWithPriority(authUser?: any): Promise<string> {
+    try {
+      // First priority: Check onboarding/local storage name
+      const localProfile = await this.getUserProfile();
+      if (localProfile?.firstName?.trim()) {
+        const firstName = localProfile.firstName.trim();
+        const lastName = localProfile.lastName?.trim() || '';
+        return lastName ? `${firstName} ${lastName}` : firstName;
+      }
+
+      // Second priority: Check auth user metadata (signup name)
+      if (authUser?.user_metadata?.first_name?.trim()) {
+        const firstName = authUser.user_metadata.first_name.trim();
+        const lastName = authUser.user_metadata.last_name?.trim() || '';
+        return lastName ? `${firstName} ${lastName}` : firstName;
+      }
+
+      // Third priority: Email-based fallback
+      if (authUser?.email) {
+        return authUser.email.split('@')[0];
+      }
+
+      // Final fallback
+      return 'Friend';
+    } catch (error) {
+      console.error('Error getting display name with priority:', error);
       return 'Friend';
     }
   }

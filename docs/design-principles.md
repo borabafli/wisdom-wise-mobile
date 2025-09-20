@@ -1,165 +1,173 @@
-# Design Principles for Mindfulness App
-
-> *"Design is not just what it looks like. Design is how it heals."*
+# Design Principles
 
 ## Core Philosophy
+**"Calm Confidence Through Simplicity"**
 
-Our design system is built on the foundation of **mindful minimalism** - every pixel, color, and interaction is intentionally crafted to reduce anxiety and promote mental wellness. We believe that good design in mental health apps isn't just about aesthetics; it's about creating a digital sanctuary where users feel safe, supported, and seen.
+The design creates a safe, trustworthy space that feels like a gentle companion rather than a clinical tool. Every element should contribute to a sense of peace, progress, and personal growth.
 
----
+## Color Palette
 
-## 1. Calm is Our Canvas
+### Primary Colors
+- **Teal/Turquoise** (#4A9B8E to #6BB3A5): Primary brand color used for headers, buttons, and accents
+- **Soft Mint** (#E8F4F1): Light teal backgrounds for cards and sections
+- **Ocean Gradient**: Subtle teal-to-mint gradients for depth
 
-### Principle
-Every design decision starts with the question: "Does this bring calm or chaos?"
+### Supporting Colors
+- **Warm Neutrals**: 
+  - Soft grays (#F5F5F5 to #FAFAFA) for backgrounds
+  - Medium gray (#6B7280) for secondary text
+  - Dark gray (#2D3436) for primary text
 
-### In Practice
-- **Soft Geometry**: We use rounded corners (16-24px) exclusively - no sharp edges that create visual tension
-- **Breathing Room**: Generous white space (minimum 24px padding) gives content room to breathe, literally helping users feel less overwhelmed
-- **Muted Palette**: Our Ocean Breath color system (#C9E8F8 to #5DA4CD) creates visual tranquility without stark contrasts
+### Accent Colors
+- **Coral/Salmon** (#FFB5A0): Used sparingly in illustrations for warmth
+- **Sky Blue** (#87CEEB): Complementary color in gradients and illustrations
+- **Soft Yellow** (#FFF4E6): Occasional warm highlights in imagery
 
-### Why It Matters
-Users often come to our app in states of distress. Visual calm can physiologically trigger the parasympathetic nervous system, helping users regulate before they even begin an exercise.
+### Emotional Indicators
+- Mood tracking uses gentle variations of teal, from lighter (positive) to deeper (contemplative)
 
----
+## Typography
 
-## 2. Gradients as Emotional Transitions
+### Font Families
+- **Ubuntu**: Primary font for UI elements, headers, and body text
+  - Light (300): Subtle labels and secondary information
+  - Regular (400): Body text and descriptions
+  - Medium (500): Buttons and emphasis
+  - Bold (700): Headers and titles
 
-### Principle
-Life isn't binary, and neither is mental health. Gradients represent the gentle transitions between emotional states.
+- **Bubblegum Sans**: Playful accent font
+  - Used sparingly for friendly messaging or onboarding
+  - Creates approachable, non-intimidating tone
 
-### In Practice
-- **Primary Actions**: Gradient buttons (135°, #5DA4CD to #7FC4C4) feel inviting, not demanding
-- **Background Atmospheres**: Subtle vertical gradients create depth without harsh divisions
-- **Mood Representation**: Emotional states blend into each other, never jarring jumps
-- **Progress Indicators**: Gradient fills show journey, not just destination
+### Typography Scale
+- **Headers**: 24-28px, Ubuntu Bold
+- **Subheaders**: 18-20px, Ubuntu Medium
+- **Body**: 14-16px, Ubuntu Regular
+- **Small Text**: 12-13px, Ubuntu Light
+- **Button Text**: 14-16px, Ubuntu Medium, uppercase or sentence case
 
-### Why It Matters
-Mental health recovery is non-linear. Gradients visually communicate that it's okay to exist between states - you don't have to be "completely better" or "completely struggling."
+## Visual Language
 
----
+### Imagery
+- Abstract, calming nature scenes
+- Soft gradients with organic shapes
+- Watercolor-like textures
+- Sunrise/sunset motifs suggesting hope and renewal
+- Minimalist landscapes with soothing color transitions
 
-## 3. Motion with Meaning
+### Shape Language
+- **Rounded Corners**: Everything is soft (8-16px radius)
+- **Organic Forms**: Flowing lines in graphics and backgrounds
+- **No Sharp Edges**: Creating psychological safety through form
+Visual Style Pattern:
+"Organic Watercolor Minimalism in Monochromatic Teal"
+Key Style Elements:
 
-### Principle
-Every animation should feel like a gentle breath - intentional, calming, and never rushed.
+Color Palette: Gradient teal spectrum ranging from pale aqua to deep ocean blue-green
+Technique: Soft watercolor with visible texture, bleeding edges, and organic flow
+Composition: Isolated elements on white/neutral backgrounds with generous negative space
+Forms: Nature-inspired silhouettes (profile, leaves, feather, tree) rendered as simple, recognizable shapes
 
-### In Practice
-- **Timing**: 400-700ms for transitions (2x slower than typical apps)
-- **Easing**: Custom cubic-bezier(0.4, 0, 0.6, 1) for organic movement
-- **Micro-interactions**: Subtle scale on hover (translateY(-2px)) provides feedback without startling
-- **Breathing Animations**: 4-7-8 second cycles that users can physically sync with
+Texture & Treatment:
 
-### Why It Matters
-Sudden movements trigger our fight-or-flight response. Slow, predictable animations help maintain the calm state we're cultivating.
+Mottled, granulated watercolor texture with natural pooling and variation
+Soft, diffused edges that suggest gentle dissolution into the background
+Subtle paint splatters and dots that add spontaneity and movement
+Translucent layering creating depth within the monochrome palette
 
----
+Emotional Qualities & Feelings:
 
-## 4. Progressive Disclosure, Not Overwhelm
+Serenity: The cool teal tones evoke calmness, like looking at shallow tropical water
+Contemplation: The minimalist approach and negative space invite quiet reflection
+Natural Harmony: Organic shapes suggest growth, life, and connection to nature
+Gentle Strength: Soft execution with confident, singular forms
+Meditative Simplicity: Uncomplicated designs that feel cleansing and peaceful
 
-### Principle
-Show what's needed now, reveal complexity only when the user is ready.
+Style Description for Generation:
+"Create minimalist watercolor illustrations using only teal/turquoise tones ranging from light aqua to deep teal. Feature single, nature-inspired silhouettes (botanical elements, organic shapes, or simple profiles) with soft, bleeding watercolor edges. Include visible texture with paint pooling, granulation, and occasional small splatters. Place elements on clean white backgrounds with ample negative space. The overall feeling should be serene, contemplative, and naturally elegant - like meditation through color and form."
+This style would work beautifully for wellness brands, spa aesthetics, mindfulness apps, or any design requiring a sense of calm sophistication.
+## Component Design
 
-### In Practice
-- **Onboarding**: Start with one simple question, not a lengthy form
-- **Exercise Details**: Duration and type visible immediately, full descriptions on tap
-- **Settings**: Advanced options hidden behind "More options" - defaults work for 90% of users
-- **Error States**: Gentle guidance, never a list of everything wrong
+### Cards & Containers
+- White or very light teal backgrounds
+- Subtle shadows (0 2px 4px rgba(0,0,0,0.05))
+- Generous padding (16-24px)
+- Clear visual hierarchy through spacing
 
-### Why It Matters
-Decision fatigue is real, especially during mental health struggles. We protect cognitive resources by simplifying choices.
+### Buttons
+- **Primary**: Teal background, white text, fully rounded
+- **Secondary**: Teal outline or light teal background
+- **Pills/Tags**: Fully rounded, soft teal with darker text
+- Minimum height: 44px for accessibility
 
----
+### Navigation
+- Bottom tab bar with centered action button
+- Icons in outline style, filled when active
+- Teal accent for active states
 
-## 5. Accessible by Default
+### Forms & Inputs
+- Large, friendly input fields
+- Rounded corners
+- Light gray borders that turn teal on focus
+- Voice input options for accessibility
 
-### Principle
-Mental health support should be available to everyone, regardless of ability or circumstance.
+## Motion & Interaction
 
-### In Practice
-- **Contrast Ratios**: WCAG AAA (7:1) where possible, never below AA (4.5:1)
-- **Touch Targets**: Minimum 48x48px - accounting for tremors or motor difficulties
-- **Text Scaling**: Support up to 200% zoom without breaking layouts
-- **Motion Preferences**: Respect prefers-reduced-motion with instant fallbacks
-- **Screen Readers**: Comprehensive ARIA labels, not afterthoughts
+### Transitions
+- Gentle, smooth animations (300-400ms)
+- Ease-in-out timing functions
+- Subtle scale effects on press (0.98 scale)
 
-### Why It Matters
-Mental health challenges often coincide with physical symptoms (tremors, vision issues, fatigue). Our design must work when users are at their most vulnerable.
+### Feedback
+- Soft haptic feedback on interactions
+- Progress indicated through gentle animations
+- Success states with checkmarks and positive reinforcement
 
----
+## Overall Feeling
 
-## 6. Color as Emotional Language
+### Emotional Tone
+- **Safe & Trustworthy**: Privacy-first messaging, secure iconography
+- **Supportive, Not Directive**: "How are you feeling?" vs. commands
+- **Progress-Oriented**: Tracking and insights without judgment
+- **Approachable**: Friendly mascot, conversational language
+- **Calm & Centered**: Breathing exercises, mindfulness focus
 
-### Principle
-Colors should support, not manipulate. We use color to communicate state, not to drive engagement.
+### Design Values
+1. **Accessibility First**: High contrast, large touch targets, clear labels
+2. **Non-Judgmental**: Neutral language, no negative reinforcement
+3. **Personal Agency**: User controls their journey and data
+4. **Gentle Guidance**: Suggestions, not prescriptions
+5. **Consistent Comfort**: Familiar patterns throughout
 
-### In Practice
-- **Ocean Breath Palette**: Blues and teals for trust and stability
-- **Semantic Softness**: Success (#9DC88D), Warning (#F4B860), Error (#E8A0A0) - all muted
-- **Dark Mode**: Not just inverted colors, but thoughtfully crafted for nighttime vulnerability
-- **Personal Preference**: Users can adjust warmth/coolness based on what soothes them
+## Spacing System
+- Base unit: 8px
+- Micro: 4px
+- Small: 8px
+- Medium: 16px
+- Large: 24px
+- Extra Large: 32px
+- Section spacing: 40-48px
 
-### Why It Matters
-Color psychology is powerful. We use it responsibly to create emotional safety, not to trigger action through alarm.
+## Information Architecture
+- **Progressive Disclosure**: Start simple, reveal complexity as needed
+- **Clear Categories**: STRESS RELIEF, EMOTIONAL BALANCE, MOOD
+- **Time Estimates**: Always visible, respecting user's time
+- **Quick Actions**: Immediate access to core features
 
----
+## Voice & Tone
+- Warm and encouraging
+- Professional yet friendly
+- Never clinical or cold
+- Emphasis on "your" journey (personalization)
+- Celebration of small wins
 
-## 7. Typography That Comforts
+## Accessibility Guidelines
+- WCAG AA compliance minimum
+- Touch targets: 44x44px minimum
+- Color contrast: 4.5:1 for normal text, 3:1 for large text
+- Clear focus states
+- Screen reader optimized
+- Option for larger text sizes
 
-### Principle
-Words are often the first interaction. They should feel like a friend talking, not a clinician prescribing.
-
-### In Practice
-- **Font Choice**: Inter/Manrope - humanist sans-serifs that feel approachable
-- **Size Minimums**: 16px base on mobile, 18px on desktop - never strain to read
-- **Line Height**: 1.75x for body text - optimal for stressed readers
-- **Hierarchy**: Clear but gentle - headers guide without shouting
-
-### Why It Matters
-During anxiety or depression, concentration suffers. Our typography reduces the effort needed to engage with content.
-
-
----
-
-## Implementation Checklist
-
-Before any design goes live, ask:
-
-- [ ] Can someone in crisis use this easily?
-- [ ] Does this reduce or add cognitive load?
-- [ ] Is there an escape route?
-- [ ] Would this trigger anxiety or calm it?
-- [ ] Does the color contrast work in bright sun and dark rooms?
-- [ ] Are we celebrating progress or demanding perfection?
-- [ ] Is the language compassionate or clinical?
-- [ ] Have we tested with users in various emotional states?
-
----
-
-## Design Values Hierarchy
-
-When principles conflict, this is our priority order:
-
-1. **Safety** - Never harm or trigger
-2. **Accessibility** - Available to all who need it
-3. **Calm** - Reduce anxiety and overwhelm
-4. **Clarity** - Simple and understandable
-5. **Beauty** - Pleasing and inspiring
-
----
-
-## Measuring Success
-
-We don't measure engagement. We measure healing:
-
-- **Completion Comfort**: Users finish exercises without added stress
-- **Return Rate**: Sustainable use without burnout
-- **Mood Improvement**: Self-reported wellness trends
-- **Accessibility Usage**: High keyboard/screen reader adoption
-- **Crisis De-escalation**: Successful connection to resources when needed
-
-
-
----
-
-*"In the end, our design should feel like a deep breath - natural, necessary, and restorative."*
+## Platform Considerations
+- Responsive layouts for different screen sizes

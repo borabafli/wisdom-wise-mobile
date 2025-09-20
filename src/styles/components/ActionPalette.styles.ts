@@ -41,11 +41,15 @@ export const actionPaletteStyles = StyleSheet.create({
 
   // Title
   title: {
-    ...typography.textStyles.h3,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#002d14',
+    fontFamily: 'BubblegumSans-Regular',
     textAlign: 'center',
-    color: colors.text.primary,
     marginBottom: spacing.layout.screenPadding,
-    fontWeight: typography.fontWeight.bold,
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
 
   // Actions List
@@ -53,12 +57,17 @@ export const actionPaletteStyles = StyleSheet.create({
     gap: spacing.components.cardGap,
   },
   actionButton: {
-    backgroundColor: colors.background.glass,
-    borderRadius: spacing.radius.lg,
-    padding: spacing.components.cardPadding,
-    borderWidth: 1,
-    borderColor: colors.border.light,
-    ...shadows.components.actionButton,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  actionCardGradient: {
+    padding: spacing[12],
+    borderRadius: 20,
+    shadowColor: 'rgba(0, 0, 0, 0.15)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
+    elevation: 8,
   },
   actionContent: {
     flexDirection: 'row',
@@ -68,28 +77,42 @@ export const actionPaletteStyles = StyleSheet.create({
 
   // Action Icon
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: spacing.radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
+    width: 60,
+    height: 60,
+  },
+  iconImage: {
+    width: 60,
+    height: 60,
   },
 
   // Text Content
   textContainer: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   actionTitle: {
-    ...typography.textStyles.actionTitle,
-    color: colors.text.primary,
-    marginBottom: spacing[2],
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: 20,
+    color: '#002d14',
+    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
+    marginBottom: spacing[1],
+    textAlign: 'center',
+    letterSpacing: -0.3,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   actionDescription: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.secondary,
-    fontWeight: typography.fontWeight.regular,
+    fontSize: 12,
+    color: '#002d14',
+    fontWeight: '400',
+    lineHeight: 17,
+    textAlign: 'center',
+    opacity: 0.8,
+    letterSpacing: 0.1,
   },
 
   // Cancel Button
@@ -99,8 +122,11 @@ export const actionPaletteStyles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelText: {
-    color: colors.text.secondary,
-    ...typography.textStyles.body,
-    fontWeight: typography.fontWeight.medium,
+    color: '#002d14',
+    fontSize: 16,
+    fontWeight: '500',
+    opacity: 0.7,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

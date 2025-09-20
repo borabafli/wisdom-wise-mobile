@@ -4,48 +4,68 @@ import { spacing } from '../tokens/spacing';
 import { typography } from '../tokens/typography';
 
 export const moodSliderStyles = StyleSheet.create({
-  container: {
-    padding: spacing[24],
-    marginVertical: spacing[20],
-  },
-  
-  header: {
-    alignItems: 'center',
-    marginBottom: spacing[4],
-    paddingHorizontal: spacing[20],
-  },
-  
-  title: {
-    ...typography.textStyles.bodyMedium,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing[8],
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 20,
-  },
-  
   promptText: {
-    ...typography.textStyles.h3,
+    fontSize: 22,
+    fontWeight: '700',
     color: colors.text.primary,
     textAlign: 'center',
-    fontSize: 22,
-    fontWeight: '600',
-    lineHeight: 26,
-    marginTop: spacing[3],
+    marginBottom: spacing[20],
+    marginTop: spacing[16],
+    paddingHorizontal: spacing[8],
+    fontFamily: 'Poppins_700Bold',
+    lineHeight: 32,
+    letterSpacing: -0.4,
   },
   
-  smileyContainer: {
+  mainEmojiContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing[6],
-    marginTop: spacing[6],
-    height: 80,
+    marginBottom: spacing[16],
+    position: 'relative',
   },
   
-  smileyImage: {
-    width: 280,
-    height: 60,
+  mainEmojiImage: {
+    width: 140, // Even bigger
+    height: 140,
+  },
+  
+  glowEffect: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(213, 232, 232, 0.6)',
+    shadowColor: '#D5E8E8',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  
+  savedFeedback: {
+    position: 'absolute',
+    bottom: -40,
+    backgroundColor: '#145458', // Updated box color
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  
+  savedText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
+  },
+  
+  questionMark: {
+    fontSize: 48,
+    fontWeight: '300',
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginBottom: spacing[16],
+    fontFamily: 'Nunito_300Light',
+    opacity: 0.7,
   },
   
   effectivenessImage: {
@@ -72,7 +92,7 @@ export const moodSliderStyles = StyleSheet.create({
   
   filledTrack: {
     height: '100%',
-    backgroundColor: '#446D78',
+    backgroundColor: '#ADDCC7',
     borderRadius: 3,
   },
   
@@ -83,7 +103,7 @@ export const moodSliderStyles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: 'white',
     borderWidth: 2,
-    borderColor: '#446D78',
+    borderColor: '#ADDCC7',
     top: -9,
     shadowColor: colors.black,
     shadowOffset: {
@@ -131,20 +151,60 @@ export const moodSliderStyles = StyleSheet.create({
     opacity: 0.8,
   },
 
-  submitSection: {
+  // Emoji selection row
+  emojiSelectionRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing[16],
-    paddingHorizontal: spacing[24],
+    paddingHorizontal: spacing[4],
+    marginBottom: spacing[8],
+    marginTop: spacing[4], // Add top margin to replace question mark space
+    gap: 8, // Increased spacing between emojis
+  },
+  
+  emojiOption: {
+    width: 52, // Slightly smaller touch area
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  selectedEmojiOption: {
+    transform: [{ scale: 1.1 }],
+  },
+  
+  unselectedEmojiOption: {
+    opacity: 0.4,
+  },
+  
+  optionEmojiImage: {
+    width: 48, // Smaller emojis for better fit
+    height: 48,
+  },
+  
+  unselectedEmojiImage: {
+    opacity: 0.5,
+  },
+
+  // Skip button
+  skipButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[12],
+    paddingVertical: spacing[4],
+    marginTop: spacing[4],
+    marginBottom: spacing[4],
   },
   
   skipText: {
-    ...typography.textStyles.body,
     color: colors.text.tertiary,
-    fontSize: 14,
-    fontWeight: '400',
+    fontSize: 16, // Slightly bigger to match other text
+    fontWeight: '600',
+    marginRight: spacing[2], // Closer to chevron
+    fontFamily: 'Inter_600SemiBold', // Match the new font family
     opacity: 0.8,
+    letterSpacing: -0.1,
   },
 
   submitButton: {

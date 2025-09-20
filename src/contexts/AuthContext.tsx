@@ -1,5 +1,6 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
+import { storageService } from '../services/storageService';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -12,6 +13,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   signOut: () => Promise<void>;
   skipAuth: () => void;
+  requestLogin: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,10 +42,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         setUser(session.user);
         setIsAnonymous(false);
-        // Set user profile data if available
+        
+        // Get display name with priority: onboarding > signup > fallback
+        const displayName = await storageService.getDisplayNameWithPriority(session.user);
+        const [firstName, ...lastNameParts] = displayName.split(' ');
+        const lastName = lastNameParts.join(' ');
+        
         setProfile({
-          first_name: session.user.user_metadata?.first_name || '',
-          last_name: session.user.user_metadata?.last_name || '',
+          first_name: firstName || 'Friend',
+          last_name: lastName || '',
           created_at: session.user.created_at
         });
       } else {
@@ -53,27 +60,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setIsAuthenticated(true);
           setIsAnonymous(true);
           setUser(null);
-          setProfile({ first_name: 'Friend', last_name: '', created_at: new Date().toISOString() });
+          
+          // For anonymous users, check if they have an onboarding name
+          const displayName = await storageService.getDisplayNameWithPriority();
+          const [firstName, ...lastNameParts] = displayName.split(' ');
+          const lastName = lastNameParts.join(' ');
+          
+          setProfile({ 
+            first_name: firstName || 'Friend', 
+            last_name: lastName || '', 
+            created_at: new Date().toISOString() 
+          });
         }
       }
     } catch (error) {
-      console.error('Error checking initial session:', error);
+      console.error('Error checking initial session');
     } finally {
       setIsLoading(false);
     }
   };
 
   const setupAuthListener = () => {
-    const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
       
       if (session?.user) {
         setIsAuthenticated(true);
         setUser(session.user);
         setIsAnonymous(false);
+        
+        // Get display name with priority: onboarding > signup > fallback
+        const displayName = await storageService.getDisplayNameWithPriority(session.user);
+        const [firstName, ...lastNameParts] = displayName.split(' ');
+        const lastName = lastNameParts.join(' ');
+        
         setProfile({
-          first_name: session.user.user_metadata?.first_name || '',
-          last_name: session.user.user_metadata?.last_name || '',
+          first_name: firstName || 'Friend',
+          last_name: lastName || '',
           created_at: session.user.created_at
         });
       } else {
@@ -99,9 +122,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await authService.signIn(email, password);
-      console.log('Sign in successful:', data.user?.email);
+      console.log('Sign in successful');
     } catch (error: any) {
-      console.error('Sign in error:', error);
+      console.error('Sign in error');
       throw error;
     } finally {
       setIsLoading(false);
@@ -112,9 +135,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await authService.signInWithGoogle();
-      console.log('Google sign in successful:', data.user?.email);
+      console.log('Google sign in successful');
     } catch (error: any) {
-      console.error('Google sign in error:', error);
+      console.error('Google sign in error');
       throw error;
     } finally {
       setIsLoading(false);
@@ -125,9 +148,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await authService.signUp(email, password, firstName, lastName);
-      console.log('Sign up successful:', data.user?.email);
+      console.log('Sign up successful');
     } catch (error: any) {
-      console.error('Sign up error:', error);
+      console.error('Sign up error');
       throw error;
     } finally {
       setIsLoading(false);
@@ -146,19 +169,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsAnonymous(false);
       console.log('Sign out successful');
     } catch (error: any) {
-      console.error('Sign out error:', error);
+      console.error('Sign out error');
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const skipAuth = () => {
+  const skipAuth = async () => {
     setIsAuthenticated(true);
     setIsAnonymous(true);
     setUser(null);
-    setProfile({ first_name: 'Friend', last_name: '', created_at: new Date().toISOString() });
+    
+    // For anonymous users, check if they have an onboarding name
+    const displayName = await storageService.getDisplayNameWithPriority();
+    const [firstName, ...lastNameParts] = displayName.split(' ');
+    const lastName = lastNameParts.join(' ');
+    
+    setProfile({ 
+      first_name: firstName || 'Friend', 
+      last_name: lastName || '', 
+      created_at: new Date().toISOString() 
+    });
     authService.setAnonymousMode();
+  };
+
+  const requestLogin = () => {
+    // Clear anonymous mode and reset auth state to trigger login flow
+    setIsAuthenticated(false);
+    setIsAnonymous(false);
+    setUser(null);
+    setProfile(null);
+    authService.clearAnonymousMode();
   };
 
   const value = {
@@ -172,6 +214,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signUp,
     signOut,
     skipAuth,
+    requestLogin,
   };
 
   return (

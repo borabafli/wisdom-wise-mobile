@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal, Pressable, GestureResponderEvent }
 import { MessageCircle, BookOpen, Heart, PenTool } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { Image } from 'expo-image';
 import { actionPaletteStyles as styles } from '../styles/components/ActionPalette.styles';
 import { colors, gradients } from '../styles/tokens';
 
@@ -16,31 +17,27 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
   const actions = [
     {
       id: 'guided-session',
-      icon: MessageCircle,
+      iconImage: require('../../assets/images/New Icons/icon-1.png'),
       title: 'Guided Session',
-      description: 'Talk with your AI therapist',
-      color: gradients.button.blue
+      description: 'Talk with your AI therapist'
     },
     {
       id: 'guided-journaling',
-      icon: PenTool,
+      iconImage: require('../../assets/images/New Icons/icon-2.png'),
       title: 'Guided Journaling',
-      description: 'Reflect through writing',
-      color: gradients.button.purple
+      description: 'Reflect through writing'
     },
     {
       id: 'suggested-exercises',
-      icon: Heart,
+      iconImage: require('../../assets/images/New Icons/icon-3.png'),
       title: 'Quick Exercise',
-      description: 'Start a mindfulness practice',
-      color: gradients.button.cyan
+      description: 'Start a mindfulness practice'
     },
     {
       id: 'exercise-library',
-      icon: BookOpen,
+      iconImage: require('../../assets/images/New Icons/icon-4.png'),
       title: 'Exercise Library',
-      description: 'Browse all exercises',
-      color: gradients.button.emerald
+      description: 'Browse all exercises'
     }
   ];
 
@@ -59,7 +56,9 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
         <View style={styles.container}>
           <View style={styles.modalContent}>
             <LinearGradient
-              colors={[...gradients.card.primary]}
+              colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
               style={styles.gradient}
             >
               <Text style={styles.title}>
@@ -67,31 +66,38 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
               </Text>
               
               <View style={styles.actionsList}>
-                {actions.map((action) => {
-                  const Icon = action.icon;
+                {actions.map((action, index) => {
                   return (
                     <TouchableOpacity
                       key={action.id}
                       onPress={() => onOptionSelect(action.id)}
                       style={styles.actionButton}
-                      activeOpacity={0.8}
+                      activeOpacity={0.9}
                     >
-                      <View style={styles.actionContent}>
-                        <LinearGradient
-                          colors={[...action.color]}
-                          style={styles.iconContainer}
-                        >
-                          <Icon size={24} color={colors.text.inverse} />
-                        </LinearGradient>
-                        <View style={styles.textContainer}>
-                          <Text style={styles.actionTitle}>
-                            {action.title}
-                          </Text>
-                          <Text style={styles.actionDescription}>
-                            {action.description}
-                          </Text>
+                      <LinearGradient
+                        colors={['#D8E9E9', '#E7F3F1']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.actionCardGradient}
+                      >
+                        <View style={styles.actionContent}>
+                          <View style={styles.iconContainer}>
+                            <Image 
+                              source={action.iconImage}
+                              style={styles.iconImage}
+                              contentFit="contain"
+                            />
+                          </View>
+                          <View style={styles.textContainer}>
+                            <Text style={styles.actionTitle}>
+                              {action.title}
+                            </Text>
+                            <Text style={styles.actionDescription}>
+                              {action.description}
+                            </Text>
+                          </View>
                         </View>
-                      </View>
+                      </LinearGradient>
                     </TouchableOpacity>
                   );
                 })}

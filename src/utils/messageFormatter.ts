@@ -96,7 +96,7 @@ export class MessageFormatter {
               style: { fontWeight: '700', color: '#1e293b' }
             }, boldText);
           }
-          return part;
+          return React.createElement(Text, { key: partIndex }, part);
         })
       )
     );
@@ -116,7 +116,7 @@ export class MessageFormatter {
               style: { fontStyle: 'italic', color: '#374151' }
             }, italicText);
           }
-          return part;
+          return React.createElement(Text, { key: partIndex }, part);
         })
       )
     );
@@ -208,7 +208,7 @@ export class MessageFormatter {
             style: { fontWeight: '700', color: '#1e293b' }
           }, boldText);
         }
-        return part;
+        return React.createElement(Text, { key: partIndex }, part);
       })
     );
   }

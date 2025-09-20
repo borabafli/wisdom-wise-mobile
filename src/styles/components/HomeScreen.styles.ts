@@ -13,6 +13,30 @@ export const homeScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    paddingTop: 0,
+    backgroundColor: 'transparent',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: -50,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: 350,
+    zIndex: 0,
+  },
+  scrollableContainer: {
+    position: 'relative',
+    flex: 1,
+  },
+  backgroundImageScrollable: {
+    position: 'absolute',
+    top: -50,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: 350,
+    zIndex: 0,
   },
   backgroundGradient: {
     position: 'absolute',
@@ -22,38 +46,45 @@ export const homeScreenStyles = StyleSheet.create({
     bottom: 0,
     zIndex: -1,
   },
+  backgroundGradientScrollable: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: -2,
+  },
   fullScreenBackground: {
     flex: 1,
     position: 'relative',
   },
-  // Scrollable turtle styles
-  scrollableTurtleContainer: {
-    position: 'absolute',
+  // Turtle Hero styles
+  turtleHeroContainer: {
     alignItems: 'center',
-    zIndex: 0,
-    pointerEvents: 'none',
-    top: height < 700 ? 100 : 120,
-    left: 0,
-    right: 0,
+    justifyContent: 'center',
+    marginBottom: spacing[4],
   },
-  scrollableTurtleImage: {
-    width: width * 0.45,
-    height: width * 0.45,
+  turtleHeroImage: {
+    width: width * 0.68,
+    height: width * 0.68,
     opacity: 1,
   },
 
   // Scroll View
   scrollView: {
     flex: 1,
+    zIndex: 1,
+    backgroundColor: 'transparent',
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 10, // Minimal bottom space
   },
 
   // Input Bar Layout
   inputWithTurtleWrapper: {
     alignItems: 'center',
-    marginTop: height < 700 ? 190 : 210, // Lowered chatbar position
     position: 'relative',
     width: '100%',
   },
@@ -61,90 +92,123 @@ export const homeScreenStyles = StyleSheet.create({
   // Header Section
   headerSection: {
     paddingHorizontal: width < 375 ? spacing[16] : spacing.layout.screenPadding,
-    paddingTop: spacing[32],
-    marginBottom: height < 700 ? 60 : 70, // Further reduced spacing below header
+    paddingTop: spacing[16], // Reduced from spacing[32] to minimize top gap
+    marginBottom: height < 700 ? 40 : 50, // Reduced spacing below header
     minHeight: height < 700 ? 160 : 180, // Reduced for more compact layout
   },
   headerText: {
-    position: 'absolute',
-    left: width < 375 ? width * 0.08 : width * 0.1, // Moved more to the left
-    top: height < 700 ? 20 : 40, // Even higher up in the blue header area
-    zIndex: 2, // Above wave header
-    maxWidth: width * 0.8, // Increased max width for left positioning
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing[8],
   },
   ctaTitle: {
-    fontFamily: 'BubblegumSans-Regular',
-    fontSize: width < 375 ? 28 : 32, // Responsive font size - much bigger
-    fontWeight: 'normal', // Changed to normal since BubblegumSans is already styled
-    color: '#002d14', // Even darker green color
+    fontFamily: 'Ubuntu-Bold',
+    fontSize: width < 375 ? 30 : 34,
+    fontWeight: 'bold',
+    color: '#002d14',
     marginTop: spacing[2],
-    marginBottom: spacing[4],
+    marginBottom: spacing[2],
     textAlign: 'center',
     letterSpacing: -0.5,
-    lineHeight: width < 375 ? 32 : 38, // Better line height
+    lineHeight: width < 375 ? 34 : 38,
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
   ctaSubtitle: {
     fontFamily: 'Poppins-Regular',
-    fontSize: width < 375 ? 17 : 19, // Bigger subtitle
+    fontSize: width < 375 ? 15 : 17, // Slightly smaller subtitle
     fontWeight: 'normal',
     color: '#002d14', // Even darker green color
     marginBottom: spacing[8],
-    textAlign: 'center',
-    lineHeight: width < 375 ? 22 : 26, // Better line height
+    textAlign: 'left', // Changed to left align
+    lineHeight: width < 375 ? 20 : 24, // Adjusted line height
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
 
-  // Input Container - Clean design with silver gradient
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: width < 375 ? spacing[12] : spacing.layout.screenPadding,
-    paddingVertical: spacing.components.cardGap,
-    borderRadius: 50,
-    gap: spacing.components.cardGap,
-    width: '96%',
+  // Chatbar - Just the image
+  chatbarImage: {
+    width: width * 0.91, // 95% of screen width
+    height: 75, // Reduced height
     alignSelf: 'center',
-    paddingTop: spacing[8],
-    shadowColor: '#000000', // Dark shadow instead of light blue
-    shadowOffset: { width: 0, height: 6 }, // Slightly more offset
-    shadowOpacity: 0.15, // Darker but not too harsh
-    shadowRadius: 15, // Larger radius for softer spread
-    elevation: 10, // Higher elevation for Android
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  inputText: {
-    flex: 1,
-    fontSize: 18,
-    color: '#64748B', // Lighter gray color
-    fontWeight: '400', // Lighter weight
+  
+  // Chatbar text overlay
+  chatbarText: {
+    position: 'absolute',
+    top: '50%', // Move slightly lower
+    left: '22%', // Move more to the left
+    transform: [{ translateX: -50 }, { translateY: -10 }], // Adjust centering for left position
+    color: '#64748B', // Grey color
+    fontSize: 20, // Slightly smaller font size
+    fontFamily: 'Ubuntu-Regular', // Ubuntu Regular font
     textAlign: 'left',
-    marginLeft: spacing[2], // Start with less margin
-    paddingLeft: spacing[4], // Use padding instead of margin for better control
-  },
-  micButton: {
-    width: 36, // Slightly smaller
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing[1], // Less margin
+    opacity: 0.6,
+    zIndex: 10,
   },
 
   // Exercises Section
   exercisesSection: {
     paddingHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
-    marginTop: height < 700 ? 4 : 6, // Further reduced spacing below chatbar
+    marginTop: height < 700 ? -10 : -8, // Much closer spacing below chatbar
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginBottom: spacing.components.cardGap,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[8],
+  },
+  testButton: {
+    paddingHorizontal: spacing[8],
+    paddingVertical: spacing[4],
+    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  testButtonActive: {
+    backgroundColor: '#002d14',
+    borderColor: '#002d14',
+  },
+  testButtonText: {
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  testButtonTextActive: {
+    color: '#FFFFFF',
+  },
+  promptTestButton: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    marginTop: 4, // More space downwards
+    marginLeft: 4, // Slightly more to the right
+    paddingHorizontal: spacing[10], // Slightly more padding left and right
+  },
+  promptTestButtonText: {
+    fontSize: 11,
+    color: '#2B475E',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   sectionTitle: {
     fontSize: 18,
@@ -155,11 +219,15 @@ export const homeScreenStyles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
   },
   seeAllButton: {
-    paddingHorizontal: spacing[6],
-    paddingVertical: spacing[3],
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[2],
+    borderWidth: 1,
+    borderColor: '#002d14',
+    borderRadius: 20,
+    backgroundColor: 'transparent',
   },
   seeAllText: {
-    fontSize: 14,
+    fontSize: 11,
     color: '#002d14',
     fontWeight: 'normal',
     textTransform: 'uppercase',
@@ -169,71 +237,221 @@ export const homeScreenStyles = StyleSheet.create({
   // Exercise List Items (No Cards)
   exercisesList: {
     gap: 0,
+    paddingLeft: 0,
+    marginVertical: 0,
+    paddingVertical: 0,
+  },
+  exerciseCardContainer: {
+    position: 'relative',
+    marginBottom: 0,
   },
   exerciseCard: {
     backgroundColor: 'transparent',
-    minHeight: 100, // Fixed height for all cards
+    minHeight: 75, // Slightly increased height
+  },
+  checkboxContainer: {
+    position: 'absolute',
+    top: -25,
+    left: -40,
+    zIndex: 10,
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkmarkImage: {
+    width: 28,
+    height: 28,
+  },
+  // First checkmark - double size
+  checkboxContainerFirst: {
+    width: 84, // 300% of the default 28
+    height: 84,
+    left: -40,
+    top: -25,
+  },
+  checkmarkImageFirst: {
+    width: 84,
+    height: 84,
+  },
+  // Second checkmark - 50% bigger
+  checkboxContainerSecond: {
+    width: 56, // 100% bigger than 28
+    height: 56,
+    left: -40,
+    top: -20,
+  },
+  checkmarkImageSecond: {
+    width: 56,
+    height: 56,
+  },
+  // Third checkmark - 20% bigger
+  checkboxContainerThird: {
+    width: 42,
+    height: 42,
+  },
+  checkmarkImageThird: {
+    width: 42,
+    height: 42,
+  },
+  testButtonsContainer: {
+    position: 'absolute',
+    left: -40,
+    top: '50%',
+    transform: [{ translateY: -25 }],
+    flexDirection: 'row',
+    gap: spacing[4],
+  },
+  testButtonsContainerFirst: {
+    left: -40,
+    transform: [{ translateY: -25 }],
+  },
+  testButtonsContainerSecond: {
+    left: -40,
+    transform: [{ translateY: -20 }],
+  },
+  testToggleButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  completeButton: {
+    backgroundColor: '#22C55E',
+  },
+  uncompleteButton: {
+    backgroundColor: '#EF4444',
+  },
+  testToggleButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  testCheckmarkButton: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testCheckmarkImage: {
+    width: 28,
+    height: 28,
+  },
+  // First test checkmark - double size (56x56)
+  testCheckmarkButtonFirst: {
+    width: 84,
+    height: 84,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testCheckmarkImageFirst: {
+    width: 84,
+    height: 84,
+  },
+  // Second test checkmark - 50% bigger (42x42)
+  testCheckmarkButtonSecond: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testCheckmarkImageSecond: {
+    width: 42,
+    height: 42,
+  },
+  // Third test checkmark - 20% bigger (34x34)
+  testCheckmarkButtonThird: {
+    width: 34,
+    height: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testCheckmarkImageThird: {
+    width: 34,
+    height: 34,
   },
   exerciseCardGradient: {
-    padding: spacing[12], // Reduced padding for less height
-    marginBottom: spacing[3], // Reduced margin
+    paddingTop: 0, // No top padding so image can fill edge
+    paddingBottom: 0, // No bottom padding so image can fill edge
+    paddingRight: spacing[8],
+    paddingLeft: 0, // No left padding so image can fill edge
+    marginBottom: spacing[0],
     borderRadius: 20,
-    minHeight: 100, // Fixed height for uniform appearance
-    shadowColor: 'rgba(0, 0, 0, 0.15)', // Darker shadow
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2, // Higher opacity
-    shadowRadius: 15,
-    elevation: 8, // Higher elevation
+    height: 75, // Fixed height
+    backgroundColor: 'transparent',
+    position: 'relative', // For absolute positioned children
   },
   exerciseCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.components.cardGap,
+    paddingTop: spacing[0], // Add padding back for content
+    paddingBottom: spacing[0], // Add padding back for content
   },
   exerciseIcon: {
+    position: 'absolute', // Position absolutely to fill edges
+    left: 0, // Flush with left edge
+    top: 0, // Flush with top edge
+    width: 75, // Fixed width
+    height: 75, // Fixed height
+    overflow: 'hidden', // Ensure image doesn't overflow
+    borderTopLeftRadius: 20, // Match card corner
+    borderBottomLeftRadius: 20, // Match card corner
     alignItems: 'center',
     justifyContent: 'center',
-    width: 60, // Even smaller icon container for more text space
-    height: 60,
   },
   exerciseIconImage: {
-    width: 60, // Even smaller icon for more text space
-    height: 60,
+    width: '100%', // Fill container width
+    height: '100%', // Fill complete height to match card height
+  },
+  exerciseIconImageTest: {
+    width: '70%', // Slightly bigger test icons
+    height: '70%',
   },
   exerciseInfo: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    paddingLeft: 75 + spacing.components.cardGap, // Account for absolute positioned image + gap
   },
   exerciseName: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#002d14',
     fontWeight: 'bold',
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Ubuntu-Light',
     marginBottom: spacing[1],
-    textAlign: 'center',
+    textAlign: 'left',
     letterSpacing: -0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   exerciseTime: {
     fontSize: 11,
     color: '#002d14',
     fontWeight: '500',
-    marginTop: spacing[1],
-    textAlign: 'center',
+    fontFamily: 'Ubuntu-Light',
+    textAlign: 'left',
     textTransform: 'uppercase',
     letterSpacing: 0.4,
     opacity: 0.7,
   },
+  exerciseDescriptionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: spacing[2],
+  },
   exerciseDescription: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#002d14',
     fontWeight: '400',
-    lineHeight: 17,
-    textAlign: 'center',
-    marginBottom: spacing[1],
+    fontFamily: 'Ubuntu-Light',
+    lineHeight: 18,
+    textAlign: 'left',
     opacity: 0.8,
     letterSpacing: 0.1,
   },
@@ -248,53 +466,64 @@ export const homeScreenStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  exercisesWrapper: {
+    position: 'relative',
+  },
+  
+  exercisesLineBackground: {
+    position: 'absolute',
+    left: -35,
+    right: -25,
+    top: -50,
+    width: '190%',
+    height: 450,
+    opacity: 1.0,
+    zIndex: -1,
+  },
+  
+  
+
   // Quick Actions
   quickActions: {
     paddingHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
+    marginTop: spacing[4], // Further reduced from spacing[12] to spacing[4]
   },
   quickActionsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.components.cardGap,
+    justifyContent: 'space-between',
   },
   quickActionButton: {
     flex: 1,
     overflow: 'hidden',
+    height: 140,
+    borderRadius: 20,
   },
   quickActionBackgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.4,
+    borderRadius: 20,
   },
   quickActionGradient: {
     padding: spacing.components.cardGap,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 96,
+    height: 140,
     gap: spacing[4],
-    borderRadius: 18,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
+    borderRadius: 20,
   },
   quickActionText: {
     color: '#002d14',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: typography.fontWeight.semibold,
     textAlign: 'center',
     letterSpacing: 0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+    flexWrap: 'wrap',
+    maxWidth: '100%',
   },
   quickActionIconImage: {
-    width: 48, // Bigger than the original 36px
-    height: 48,
+    width: 42,
+    height: 42,
     borderRadius: 0,
   },
 
@@ -316,8 +545,9 @@ export const homeScreenStyles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing[16],
-    paddingHorizontal: spacing[16],
+    paddingVertical: spacing[20],
+    paddingHorizontal: spacing[20],
+    paddingRight: spacing[24],
     minHeight: 160,
   },
   quoteIcon: {
@@ -340,6 +570,8 @@ export const homeScreenStyles = StyleSheet.create({
   },
   quoteText: {
     ...typography.textStyles.h4,
+    fontFamily: 'BubblegumSans-Regular',
+    fontSize: 20, // Increased font size
     color: '#002d14',
     textAlign: 'center',
     lineHeight: typography.lineHeight.loose,
@@ -350,6 +582,13 @@ export const homeScreenStyles = StyleSheet.create({
     color: '#002d14',
     fontWeight: typography.fontWeight.medium,
     textAlign: 'center',
+  },
+
+  // Daily Reflection Section
+  dailyReflectionSection: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing.layout.screenPadding,
+    marginTop: spacing[12], // Same as Quick Actions section
   },
 });
 

@@ -16,7 +16,7 @@ const WHATSAPP_STYLE = {
   barRadius: 1.5, // Radius for rounded bars
   minHeight: 3, // Same as barWidth for perfect circles in silence
   maxHeight: 80, // Increased for more dramatic visual effect
-  color: '#06B6D4',
+  color: '#87BAA3',
   inactiveOpacity: 0.3,
   activeOpacity: 0.95,
   timerColor: '#64748b',
@@ -37,17 +37,17 @@ const getBarColor = (level: number): string => {
   // Ensure level is between 0 and 1
   const normalizedLevel = Math.max(0, Math.min(1, level));
   
-  // More intense color range - from pale blue to very deep blue
-  const veryLightBlue = { r: 186, g: 230, b: 253 }; // #BAE6FD - More visible pale blue
-  const deepBlue = { r: 2, g: 82, b: 119 };         // #025277 - Much darker blue for contrast
+  // Gradient from light sage green to deep teal green
+  const lightSageGreen = { r: 199, g: 223, b: 206 }; // #C7DFCE - Light sage green
+  const deepTealGreen = { r: 67, g: 110, b: 89 };    // #436E59 - Deep teal green
   
   // Apply power curve for more dramatic color transition
   const intensifiedLevel = Math.pow(normalizedLevel, 0.7); // Makes transition more dramatic
   
-  // Interpolate between very light and deep blue
-  const r = Math.round(veryLightBlue.r + (deepBlue.r - veryLightBlue.r) * intensifiedLevel);
-  const g = Math.round(veryLightBlue.g + (deepBlue.g - veryLightBlue.g) * intensifiedLevel);
-  const b = Math.round(veryLightBlue.b + (deepBlue.b - veryLightBlue.b) * intensifiedLevel);
+  // Interpolate between light sage green and deep teal green
+  const r = Math.round(lightSageGreen.r + (deepTealGreen.r - lightSageGreen.r) * intensifiedLevel);
+  const g = Math.round(lightSageGreen.g + (deepTealGreen.g - lightSageGreen.g) * intensifiedLevel);
+  const b = Math.round(lightSageGreen.b + (deepTealGreen.b - lightSageGreen.b) * intensifiedLevel);
   
   return `rgb(${r}, ${g}, ${b})`;
 };
@@ -214,7 +214,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
       {showTimer && isRecording && (
         <View style={{
           marginBottom: 2,
-          marginTop: 2,
+          marginTop: 8, // Increased from 2 to 8 to move timer lower
           alignItems: 'center',
         }}>
           <Text style={{

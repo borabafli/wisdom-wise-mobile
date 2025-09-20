@@ -132,4 +132,5 @@ This is an active development project with sophisticated AI-driven therapy featu
 - If a new edge function needs to be created, it should also be created within /supabase/functions. We must always have Supabase functions available locally. This is a MUST DO.
 - Follow React Native best practices. Instead of creating large single components, check for opportunities to split them and improve reusability.
 - Our system prompts and configuration of AI responses are highly important. We don't want you to make changes without asking permission for AI System Prompt modifications.
+- UI changes should be compatible for both platforms, IOS and Android.
 - End your last sentence with "be water my friend, take care 🧘🏼‍♀️".

@@ -77,14 +77,38 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
 
   return (
     <View style={styles.suggestionsContainer}>
-      {/* Regular suggestion chips in horizontal scroll */}
-      {suggestions.length > 0 && (
+      {/* All suggestion chips (including exercise button) in one horizontal scroll */}
+      {(suggestions.length > 0 || showExerciseButton) && (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.suggestionsScrollContent}
           style={styles.suggestionsScroll}
         >
+          {/* Exercise suggestion button in first position */}
+          {showExerciseButton && onSuggestExercise && (
+            <TouchableOpacity
+              onPress={() => !isTyping && onSuggestExercise()}
+              style={[
+                styles.suggestionChip,
+                styles.exerciseSuggestionButton,
+                isTyping && { opacity: 0.5 }
+              ]}
+              activeOpacity={isTyping ? 1 : 0.7}
+              disabled={isTyping}
+            >
+              <Brain size={16} color={isTyping ? "#9CA3AF" : "#145458"} style={{ marginRight: 6 }} />
+              <Text style={[
+                styles.suggestionText,
+                styles.exerciseSuggestionText,
+                isTyping && { color: '#9CA3AF' }
+              ]}>
+                Suggest an exercise
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Regular suggestion chips */}
           {suggestions.map((suggestion, index) => (
             <TouchableOpacity
               key={index}
@@ -105,31 +129,6 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
             </TouchableOpacity>
           ))}
         </ScrollView>
-      )}
-      
-      {/* Exercise suggestion button in separate row */}
-      {showExerciseButton && onSuggestExercise && (
-        <View style={styles.exerciseButtonContainer}>
-          <TouchableOpacity
-            onPress={() => !isTyping && onSuggestExercise()}
-            style={[
-              styles.suggestionChip,
-              styles.exerciseSuggestionButton,
-              isTyping && { opacity: 0.5 }
-            ]}
-            activeOpacity={isTyping ? 1 : 0.7}
-            disabled={isTyping}
-          >
-            <Brain size={16} color={isTyping ? "#9CA3AF" : "#475569"} style={{ marginRight: 6 }} />
-            <Text style={[
-              styles.suggestionText,
-              styles.exerciseSuggestionText,
-              isTyping && { color: '#9CA3AF' }
-            ]}>
-              Suggest an exercise
-            </Text>
-          </TouchableOpacity>
-        </View>
       )}
     </View>
   );

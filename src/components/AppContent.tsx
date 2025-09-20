@@ -10,14 +10,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
 import ExerciseLibrary from '../screens/ExerciseLibrary';
+import JournalScreen from '../screens/JournalScreen';
+import GuidedJournalScreen from '../screens/GuidedJournalScreen';
 import InsightsDashboard from '../screens/InsightsDashboard';
 import ProfileScreen from '../screens/ProfileScreen';
 import ChatInterface from '../screens/ChatInterface';
 import BreathingScreen from '../screens/BreathingScreen';
+import TherapyGoalsScreen from '../screens/TherapyGoalsScreen';
 import CustomTabBar from './CustomTabBar';
 
-// Import auth navigator
+// Import navigators
 import { AuthNavigator } from '../navigation/AuthNavigator';
+import { JournalNavigator } from '../navigation/JournalNavigator';
+import { OnboardingNavigator } from '../navigation/OnboardingNavigator';
+
+// Import services
+import { OnboardingService } from '../services/onboardingService';
 
 // Import contexts
 import { useApp } from '../contexts';
@@ -48,16 +56,23 @@ export const AppContent: React.FC = () => {
   const insets = useSafeAreaInsets();
 
   const { isAuthenticated, isLoading } = useAuth();
+  
+  // Onboarding state management
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
 
   const {
     showChat,
     showBreathing,
+    showTherapyGoals,
     currentExercise,
     chatWithActionPalette,
     handleStartSession,
     handleNewSession,
     handleBackFromChat,
     handleBackFromBreathing,
+    handleTherapyGoalsClick,
+    handleBackFromTherapyGoals,
     handleExerciseClick,
     handleInsightClick,
     handleActionSelect,
@@ -65,6 +80,28 @@ export const AppContent: React.FC = () => {
 
   // Navigation ref for tab navigation - must be called before any conditional returns
   const navigationRef = useNavigationContainerRef();
+
+  // Check onboarding status on app load
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const completed = await OnboardingService.hasCompletedOnboarding();
+        setIsOnboardingComplete(completed);
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        setIsOnboardingComplete(false); // Default to showing onboarding on error
+      } finally {
+        setIsCheckingOnboarding(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, []);
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = useCallback(() => {
+    setIsOnboardingComplete(true);
+  }, []);
 
   const handleNavigateToExercises = useCallback(() => {
     if (navigationRef.isReady()) {
@@ -83,16 +120,17 @@ export const AppContent: React.FC = () => {
     console.log('AppContent re-rendered. State:', {
       showChat,
       showBreathing,
+      showTherapyGoals,
       currentExercise: currentExercise ? currentExercise.name : 'null',
       chatWithActionPalette,
     });
-  }, [showChat, showBreathing, currentExercise, chatWithActionPalette]);
+  }, [showChat, showBreathing, showTherapyGoals, currentExercise, chatWithActionPalette]);
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
 
-  // Show loading screen while checking auth
-  if (isLoading) {
+  // Show loading screen while checking auth or onboarding status
+  if (isLoading || isCheckingOnboarding) {
     return (
       <View className="flex-1 bg-blue-50 justify-center items-center">
         {/* Add loading indicator if needed */}
@@ -105,11 +143,32 @@ export const AppContent: React.FC = () => {
     return <AuthNavigator />;
   }
 
+  // Show onboarding if not completed
+  if (!isOnboardingComplete) {
+    return <OnboardingNavigator onComplete={handleOnboardingComplete} />;
+  }
+
   if (showBreathing) {
     return (
       <>
         <StatusBar style="dark" backgroundColor="#f0f9ff" />
         <BreathingScreen onBack={handleBackFromBreathing} />
+      </>
+    );
+  }
+
+  if (showTherapyGoals) {
+    return (
+      <>
+        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <TherapyGoalsScreen
+          onBack={handleBackFromTherapyGoals}
+          onNavigateToExercises={handleNavigateToExercises}
+          onStartGoalSetting={() => {
+            // TODO: Add goal setting navigation when that feature is implemented
+            console.log('Goal setting requested');
+          }}
+        />
       </>
     );
   }
@@ -146,8 +205,9 @@ export const AppContent: React.FC = () => {
         }}
       >
         <Tab.Screen name="Home">
-          {() => (
+          {(props) => (
             <HomeScreen
+              {...props}
               onStartSession={handleStartSession}
               onExerciseClick={handleExerciseClick}
               onInsightClick={handleInsightClick}
@@ -159,8 +219,9 @@ export const AppContent: React.FC = () => {
         <Tab.Screen name="Exercises">
           {() => <ExerciseLibrary onExerciseClick={handleExerciseClick} />}
         </Tab.Screen>
+        <Tab.Screen name="Journal" component={JournalNavigator} />
         <Tab.Screen name="Insights">
-          {() => <InsightsDashboard onInsightClick={handleInsightClick} />}
+          {() => <InsightsDashboard onInsightClick={handleInsightClick} onTherapyGoalsClick={handleTherapyGoalsClick} />}
         </Tab.Screen>
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>

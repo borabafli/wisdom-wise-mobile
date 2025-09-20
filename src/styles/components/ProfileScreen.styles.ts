@@ -9,11 +9,60 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width, height } = Dimensions.get('window');
 
 export const profileScreenStyles = StyleSheet.create({
-  // Container & Layout - Consistent with HomeScreen
+  // Container & Layout - Consistent with Insights
   container: {
     flex: 1,
     position: 'relative',
   },
+  
+  // Scrollable Background - Match Insights Pattern
+  scrollableBackgroundContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
+  },
+  scrollableBackgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  
+  // Content Container - Positioned above background
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
+    zIndex: 1,
+  },
+  
+  // Header Styles - Match Insights
+  scrollableHeader: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[16],
+    paddingBottom: spacing[8],
+    alignItems: 'flex-start',
+  },
+  compactTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#002d14',
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: spacing[2],
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6b7280',
+    fontFamily: 'Inter-Medium',
+    letterSpacing: 0.2,
+  },
+  
+  // Legacy styles for backward compatibility
   backgroundGradient: {
     position: 'absolute',
     top: 0,
@@ -80,19 +129,22 @@ export const profileScreenStyles = StyleSheet.create({
   },
   userInfoSection: {
     paddingHorizontal: spacing.layout.screenPadding,
-    marginBottom: spacing.layout.screenPadding,
+    marginBottom: spacing[8],
   },
   userInfoCard: {
-    borderRadius: spacing.radius['2xl'],
-    ...shadows.components.modal,
+    backgroundColor: 'transparent',
     overflow: 'hidden',
   },
+  userInfoCardGradient: {
+    padding: spacing[12],
+    borderRadius: 20,
+    shadowColor: 'rgba(0, 0, 0, 0.15)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
+    elevation: 8,
+  },
   userInfoContent: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderWidth: 1,
-    borderColor: colors.border.primary,
-    paddingVertical: spacing.components.cardPadding,
-    paddingHorizontal: spacing.components.cardPadding,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.components.cardGap,
@@ -112,64 +164,218 @@ export const profileScreenStyles = StyleSheet.create({
     flex: 1,
   },
   userName: {
-    ...typography.textStyles.actionTitle,
-    color: colors.text.primary,
+    fontSize: 20,
+    color: '#002d14',
+    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
     marginBottom: spacing[1],
+    letterSpacing: -0.3,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   memberSince: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.secondary,
+    fontSize: 12,
+    color: '#002d14',
+    fontWeight: '400',
     marginBottom: spacing[1],
+    opacity: 0.8,
+    letterSpacing: 0.1,
   },
   premiumBadge: {
-    ...typography.textStyles.caption,
-    color: colors.blue[600],
-    fontWeight: typography.fontWeight.medium,
+    fontSize: 11,
+    color: '#002d14',
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    opacity: 0.7,
   },
+  // Stats Section - HomeScreen Style
   statsSection: {
     paddingHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.screenPadding,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: spacing.components.cardGap,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#002d14',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontFamily: 'Poppins-Bold',
+  },
   statsGrid: {
-    gap: spacing.components.cardGap,
+    gap: 0,
   },
   statsRow: {
     flexDirection: 'row',
     gap: spacing.components.cardGap,
+    marginBottom: spacing.components.cardGap,
   },
   statCard: {
     flex: 1,
-    borderRadius: spacing.radius.lg,
-    ...shadows.components.actionButton,
+    backgroundColor: 'transparent',
+    minHeight: 100,
   },
   statCardGradient: {
-    borderRadius: spacing.radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border.primary,
-    padding: spacing.components.cardGap,
+    padding: spacing[12],
+    borderRadius: 20,
+    minHeight: 100,
+    shadowColor: 'rgba(0, 0, 0, 0.15)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
+    elevation: 8,
   },
   statCardContent: {
-    alignItems: 'flex-start',
-  },
-  statIconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: spacing[1],
+    gap: spacing[2],
+  },
+  statIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    marginRight: spacing[2],
+  },
+  statIconImage: {
+    width: 40,
+    height: 40,
+  },
+  statInfo: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statValue: {
-    ...typography.textStyles.h4,
-    color: colors.text.primary,
+    fontSize: 18,
+    color: '#002d14',
+    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
+    marginBottom: spacing[1],
+    textAlign: 'center',
+    letterSpacing: -0.3,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   statLabel: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.secondary,
-    fontWeight: typography.fontWeight.medium,
+    fontSize: 12,
+    color: '#002d14',
+    fontWeight: '400',
+    textAlign: 'center',
+    opacity: 0.8,
+    letterSpacing: 0.1,
   },
+  // Menu Section - HomeScreen Style
   menuSection: {
     paddingHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing.layout.screenPadding,
+  },
+  menuGrid: {
     gap: spacing.components.cardGap,
+  },
+  menuCard: {
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  menuCardGradient: {
+    padding: spacing.components.cardGap,
+    borderRadius: 18,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  menuCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.components.cardGap,
+  },
+  menuIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 48,
+    height: 48,
+  },
+  menuIconImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 0,
+  },
+  menuTitleContainer: {
+    flex: 1,
+  },
+  menuTitle: {
+    color: '#002d14',
+    fontSize: 16,
+    fontWeight: typography.fontWeight.semibold,
+    letterSpacing: 0.3,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
+    marginBottom: spacing[1],
+  },
+  menuSubtitle: {
+    color: '#002d14',
+    fontSize: 12,
+    fontWeight: '400',
+    opacity: 0.8,
+    letterSpacing: 0.1,
+  },
+  menuActions: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing[2],
+  },
+  
+  // Insights-style menu items
+  menuItemInsights: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.components.cardGap,
+    paddingVertical: spacing[4],
+  },
+  menuIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuIconBackground: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(107, 114, 128, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuTitleContainer: {
+    flex: 1,
+  },
+  menuTitle: {
+    ...typography.textStyles.h4,
+    color: colors.text.primary,
+    marginBottom: spacing[1],
+  },
+  menuTitleDanger: {
+    color: '#ef4444',
+  },
+  menuSubtitle: {
+    ...typography.textStyles.body,
+    color: colors.text.secondary,
+    fontWeight: typography.fontWeight.medium,
+    fontSize: 14,
+  },
+  menuArrow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing[2],
   },
   menuItem: {
     borderRadius: spacing.radius.lg,

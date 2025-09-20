@@ -1,0 +1,45 @@
+# Mobile platform files
+android/
+ios/
+*.apk
+*.ipa
+
+# Development and build artifacts  
+node_modules/
+.expo/
+.expo-shared/
+
+# Platform-specific files
+package-lock.json
+yarn.lock
+
+# Documentation and notes
+*.md
+docs/
+migrations/
+
+# Test files
+test-*.html
+test-*.md
+*.test.*
+*.spec.*
+
+# Temporary files
+temp_*
+migration_*
+
+# Git and version control
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files (keep them)
+# .env*
+
+# Supabase
+supabase/

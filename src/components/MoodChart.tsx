@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, Image } from 'react-native';
-import Svg, { Line, Circle, Path, Defs, LinearGradient, Stop, Filter, FeGaussianBlur, FeMorphology, FeFlood, FeComposite } from 'react-native-svg';
+import { View, Text, Dimensions, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import Svg, { Line, Circle, Path, Defs, LinearGradient, Stop, Filter, FeGaussianBlur, FeMorphology, FeFlood, FeComposite, Rect } from 'react-native-svg';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 import { moodRatingService, type MoodStats } from '../services/moodRatingService';
 import { moodChartStyles as styles } from '../styles/components/MoodChart.styles';
 
@@ -89,15 +90,15 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   }
 
   // Fixed chart dimensions to prevent width overflow
-  const containerPadding = 20; // Reduced container padding
+  const containerPadding = 40; // Increased container padding for better spacing
   const chartWidth = screenWidth - containerPadding; // Use remaining space after padding
-  const chartHeight = height - 40;
+  const chartHeight = height - 20; // Reduced to minimize top space
   
   // Padding with space for smiley Y-axis
-  const paddingLeft = 55; // Adjusted space for smaller smiley images with padding
+  const paddingLeft = 60; // Increased space for new emoji images with more padding
   const paddingRight = 20; // Adequate padding
-  const paddingTop = 30;
-  const paddingBottom = 40; // Space for date labels
+  const paddingTop = 20; // Reduced top padding
+  const paddingBottom = 30; // Space for date labels
   
   const graphWidth = Math.max(200, chartWidth - paddingLeft - paddingRight);
   const graphHeight = Math.max(120, chartHeight - paddingTop - paddingBottom);
@@ -186,32 +187,32 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return `${linePath} L${lastPoint.x},${paddingTop + graphHeight} L${firstPoint.x},${paddingTop + graphHeight} Z`;
   };
 
-  // Smiley Y-axis positions (5 smileys for mood scale 1-5) - Updated to use Teal Watercolor versions
+  // Smiley Y-axis positions (5 smileys for mood scale 1-5) - Using custom emoji images
   const smileyPositions = [
-    { 
-      mood: 5, 
-      image: require('../../assets/images/Teal Watercolor/smiley-5.png'), // Happiest
+    {
+      mood: 5,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-5.png'), // Best
       y: paddingTop + graphHeight - ((5 - minValue) / valueRange) * graphHeight
     },
-    { 
-      mood: 4, 
-      image: require('../../assets/images/Teal Watercolor/smiley-4.png'), 
-      y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight 
+    {
+      mood: 4,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-4.png'),
+      y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight
     },
-    { 
-      mood: 3, 
-      image: require('../../assets/images/Teal Watercolor/smiley-3.png'), // Neutral
-      y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight 
+    {
+      mood: 3,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-3.png'), // Neutral
+      y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight
     },
-    { 
-      mood: 2, 
-      image: require('../../assets/images/Teal Watercolor/smiley-2.png'), 
-      y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight 
+    {
+      mood: 2,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-2.png'),
+      y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight
     },
-    { 
-      mood: 1, 
-      image: require('../../assets/images/Teal Watercolor/smiley-1.png'), // Worst
-      y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight 
+    {
+      mood: 1,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-1.png'), // Lowest
+      y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight
     }
   ];
   
@@ -232,78 +233,72 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       }}>
         <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{marginLeft: 0}}>
           <Defs>
-            {/* Improved line gradient with softer edge fading - Updated to match home colors */}
+            {/* Solid line gradient - no edge fading */}
             <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor="#6CA0CE" stopOpacity="0.2" />
-              <Stop offset="5%" stopColor="#6CA0CE" stopOpacity="0.6" />
-              <Stop offset="15%" stopColor="#6CA0CE" stopOpacity="1" />
-              <Stop offset="85%" stopColor="#6CA0CE" stopOpacity="1" />
-              <Stop offset="95%" stopColor="#6CA0CE" stopOpacity="0.6" />
-              <Stop offset="100%" stopColor="#6CA0CE" stopOpacity="0.2" />
+              <Stop offset="0%" stopColor="#87BAA3" stopOpacity="1" />
+              <Stop offset="100%" stopColor="#87BAA3" stopOpacity="1" />
             </LinearGradient>
-            
-            {/* Smoother area gradient fill - Updated to match home colors */}
+
+            {/* Area gradient fill with vertical fade and white edge fade */}
             <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor="#6CA0CE" stopOpacity="0.6" />
-              <Stop offset="20%" stopColor="#6CA0CE" stopOpacity="0.4" />
-              <Stop offset="50%" stopColor="#6CA0CE" stopOpacity="0.2" />
-              <Stop offset="80%" stopColor="#6CA0CE" stopOpacity="0.08" />
-              <Stop offset="100%" stopColor="#6CA0CE" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#87BAA3" stopOpacity="0.6" />
+              <Stop offset="20%" stopColor="#87BAA3" stopOpacity="0.4" />
+              <Stop offset="50%" stopColor="#87BAA3" stopOpacity="0.2" />
+              <Stop offset="80%" stopColor="#87BAA3" stopOpacity="0.08" />
+              <Stop offset="100%" stopColor="#87BAA3" stopOpacity="0" />
             </LinearGradient>
-            
-            {/* Mask for softer horizontal edge fading */}
-            <LinearGradient id="areaMask" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor="white" stopOpacity="0.1" />
-              <Stop offset="5%" stopColor="white" stopOpacity="0.4" />
-              <Stop offset="15%" stopColor="white" stopOpacity="1" />
-              <Stop offset="85%" stopColor="white" stopOpacity="1" />
-              <Stop offset="95%" stopColor="white" stopOpacity="0.4" />
-              <Stop offset="100%" stopColor="white" stopOpacity="0.1" />
+
+            {/* White fade gradients for left and right edges */}
+            <LinearGradient id="leftFade" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor="white" stopOpacity="1" />
+              <Stop offset="100%" stopColor="white" stopOpacity="0" />
+            </LinearGradient>
+
+            <LinearGradient id="rightFade" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor="white" stopOpacity="0" />
+              <Stop offset="100%" stopColor="white" stopOpacity="1" />
             </LinearGradient>
           </Defs>
           
-          {/* Area fill with horizontal and vertical gradient fading */}
-          <Path
-            d={createAreaPath()}
-            fill="url(#areaGradient)"
-            mask="url(#areaMask)"
-          />
+          {/* Grid lines for mood levels 1-5 */}
+          {[1, 2, 3, 4, 5].map((moodLevel) => {
+            const y = paddingTop + graphHeight - ((moodLevel - minValue) / valueRange) * graphHeight;
+            return (
+              <Line
+                key={`grid-${moodLevel}`}
+                x1={paddingLeft}
+                y1={y}
+                x2={paddingLeft + graphWidth}
+                y2={y}
+                stroke="#D1D5DB"
+                strokeWidth={0.5}
+                opacity={0.8}
+              />
+            );
+          })}
           
-          {/* Clean line with gradient fading at edges */}
+          {/* Clean solid line - thicker */}
           <Path
             d={createSmoothPath()}
-            stroke="url(#lineGradient)"
-            strokeWidth={3}
+            stroke="#6189A8"
+            strokeWidth={5}
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
           
-          {/* Data points with softer edge fading */}
+          {/* White fade overlays - REMOVED for transparency */}
+          
+          {/* Data points - solid, no fading */}
           {pathData.map((point, index) => {
-            // Calculate smoother opacity for edge fading
-            const totalPoints = pathData.length;
-            let opacity = 0.9;
-            
-            if (totalPoints > 1) {
-              const position = index / (totalPoints - 1); // 0 to 1
-              if (position <= 0.15) {
-                opacity = 0.2 + (position / 0.15) * 0.7; // Gradual fade in
-              } else if (position >= 0.85) {
-                opacity = 0.9 - ((position - 0.85) / 0.15) * 0.7; // Gradual fade out
-              }
-            }
-            
             return (
               <Circle
                 key={`point-${index}`}
                 cx={point.x}
                 cy={point.y}
                 r={4}
-                fill="#6CA0CE"
-                stroke="white"
-                strokeWidth={1.5}
-                opacity={opacity}
+                fill="#6189A8"
+                opacity={0.9}
               />
             );
           })}
@@ -312,13 +307,13 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       {/* Smiley Y-axis indicators - properly positioned with padding */}
       <View style={{
         position: 'absolute',
-        left: 10, // More space from edge
+        left: 5, // Space from edge
         top: 0,
         bottom: paddingBottom,
-        width: 45, // Slightly smaller container
+        width: 50, // Container for emoji images
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 5, // Internal padding
+        paddingHorizontal: 8, // More internal padding for spacing
       }}>
         {smileyPositions.map((smiley, index) => (
           <Image
@@ -326,11 +321,17 @@ export const MoodChart: React.FC<MoodChartProps> = ({
             source={smiley.image}
             style={{
               position: 'absolute',
-              top: smiley.y - 12, // Centered for smaller 24px image
-              left: 10, // Centered with padding
-              width: 24, // Smaller size to fit better
-              height: 24,
+              top: smiley.y - 10, // Centered for 20px image
+              left: 15, // Centered with padding and additional spacing
+              width: 20, // Smaller size for better fit
+              height: 20,
               opacity: 0.85,
+              borderRadius: 10,
+              shadowColor: '#87BAA3', // Sage green tint
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.08, // Much lighter
+              shadowRadius: 1.5,
+              elevation: 1, // Lighter Android shadow
             }}
             resizeMode="contain"
           />
@@ -462,53 +463,57 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
   
   const getMoodImage = (rating: number) => {
     let imageSource;
-    if (rating >= 4.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-5.png');
-    else if (rating >= 3.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-4.png');
-    else if (rating >= 2.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-3.png');
-    else if (rating >= 1.5) imageSource = require('../../assets/images/Teal Watercolor/smiley-2.png');
-    else if (rating > 0) imageSource = require('../../assets/images/Teal Watercolor/smiley-1.png');
-    else imageSource = require('../../assets/images/Teal Watercolor/smiley-3.png'); // Default to neutral
+    if (rating >= 4.5) imageSource = require('../../assets/new-design/Insights/Emojis/emoji-5.png');
+    else if (rating >= 3.5) imageSource = require('../../assets/new-design/Insights/Emojis/emoji-4.png');
+    else if (rating >= 2.5) imageSource = require('../../assets/new-design/Insights/Emojis/emoji-3.png');
+    else if (rating >= 1.5) imageSource = require('../../assets/new-design/Insights/Emojis/emoji-2.png');
+    else if (rating > 0) imageSource = require('../../assets/new-design/Insights/Emojis/emoji-1.png');
+    else imageSource = require('../../assets/new-design/Insights/Emojis/emoji-3.png'); // Default to neutral
     
     return (
       <Image 
         source={imageSource} 
-        style={{ width: 24, height: 24 }} 
+        style={{ 
+          width: 20, 
+          height: 20,
+          borderRadius: 10,
+          shadowColor: '#87BAA3', // Sage green tint
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.08, // Much lighter
+          shadowRadius: 1.5,
+          elevation: 1 // Lighter Android shadow
+        }} 
         resizeMode="contain" 
       />
     );
   };
   
   return (
-    <View style={[styles.weeklyContainer, style]}>
-      {/* Unified comparison card */}
-      <View style={styles.comparisonCard}>
-        {/* Header with trend indicator */}
-        <View style={styles.comparisonHeader}>
-          <Text style={styles.comparisonTitle}>Weekly Progress</Text>
-          {weeklyData.currentWeek.rating > weeklyData.previousWeek.rating && (
-            <View style={styles.trendIndicator}>
-              <Text style={styles.trendText}>↗ Improving</Text>
-            </View>
-          )}
-          {weeklyData.currentWeek.rating === weeklyData.previousWeek.rating && (
-            <View style={[styles.trendIndicator, { backgroundColor: '#F3F4F6' }]}>
-              <Text style={[styles.trendText, { color: '#6B7280' }]}>→ Stable</Text>
-            </View>
-          )}
-        </View>
+    <View style={[{ paddingHorizontal: 0 }, style]}>
+      {/* Weekly progress content without card background (handled by parent) */}
+      <View style={{ paddingHorizontal: 0 }}>
 
         {/* Progress visualization - Side by side layout */}
         <View style={styles.progressVisualization}>
           <View style={styles.weeksRow}>
-            {/* Previous week */}
-            <View style={styles.weekSection}>
+            {/* Previous week - with white box */}
+            <View style={[styles.weekSection, {
+              backgroundColor: '#FFFFFF',
+              borderRadius: 12,
+              padding: 16,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3
+            }]}>
               <View style={styles.weekHeader}>
                 <Text style={styles.weekPeriod}>Last Week</Text>
                 <View style={styles.moodEmoji}>{getMoodImage(weeklyData.previousWeek.rating)}</View>
               </View>
               <Text style={styles.moodLabel}>{weeklyData.previousWeek.label}</Text>
               <View style={styles.progressBar}>
-                <View 
+                <View
                   style={[styles.progressFill, styles.previousWeekFill, {
                     width: `${Math.max(10, (weeklyData.previousWeek.rating / 5) * 100)}%`
                   }]}
@@ -516,15 +521,24 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
               </View>
             </View>
 
-            {/* Current week */}
-            <View style={styles.weekSection}>
+            {/* Current week - with white box */}
+            <View style={[styles.weekSection, {
+              backgroundColor: '#FFFFFF',
+              borderRadius: 12,
+              padding: 16,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3
+            }]}>
               <View style={styles.weekHeader}>
                 <Text style={styles.weekPeriod}>This Week</Text>
                 <View style={styles.moodEmoji}>{getMoodImage(weeklyData.currentWeek.rating)}</View>
               </View>
               <Text style={styles.moodLabel}>{weeklyData.currentWeek.label}</Text>
               <View style={styles.progressBar}>
-                <View 
+                <View
                   style={[styles.progressFill, styles.currentWeekFill, {
                     width: `${Math.max(10, (weeklyData.currentWeek.rating / 5) * 100)}%`
                   }]}
@@ -532,6 +546,44 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
               </View>
             </View>
           </View>
+        </View>
+
+        {/* Trend indicator - moved below the weekly comparison boxes */}
+        <View style={[styles.comparisonHeader, { justifyContent: 'center', marginTop: 16, marginBottom: 0 }]}>
+          {weeklyData.currentWeek.rating > weeklyData.previousWeek.rating && (
+            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
+              <ExpoLinearGradient
+                colors={['#8297A2', '#8297A2']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0
+                }}
+              />
+              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>↗ Improving</Text>
+            </View>
+          )}
+          {weeklyData.currentWeek.rating === weeklyData.previousWeek.rating && (
+            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
+              <ExpoLinearGradient
+                colors={['#4A6B7C', '#1A2B36']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0
+                }}
+              />
+              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>→ Stable</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
