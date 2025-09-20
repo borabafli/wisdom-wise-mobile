@@ -208,12 +208,12 @@ export const moodChartStyles = {
   },
 
   previousWeekFill: {
-    backgroundColor: '#87BAA3', // Previous week using sage green with reduced opacity
+    backgroundColor: '#5A88B5', // Previous week using blue with reduced opacity
     opacity: 0.6,
   },
 
   currentWeekFill: {
-    backgroundColor: '#87BAA3', // Current week using sage green
+    backgroundColor: '#5A88B5', // Current week using blue
   },
 
   // Chart SVG colors following therapeutic palette

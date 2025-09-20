@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground, FlatList, Dimensions, Animated } from 'react-native';
 import { Image } from 'expo-image';
-import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
@@ -13,7 +13,7 @@ import { generateSampleValuesData } from '../utils/sampleValuesData';
 import { getShortConfidenceLabel } from '../utils/confidenceDisplay';
 
 interface MoodInsightsCardProps {
-  onInsightPress?: (insightId: string) => void;
+  onInsightPress?: (type: string, data?: any) => void;
   displayPatterns?: any[];
   currentPatternIndex?: number;
   onPatternSwipeLeft?: () => void;
@@ -75,18 +75,18 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
       <>
         {/* Explanation Container */}
         <View style={{
-          marginHorizontal: 8,
+          marginHorizontal: 16,
           marginTop: 0,
           marginBottom: 20,
-          alignItems: 'flex-start',
+          alignItems: 'center',
         }}>
           <View style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderRadius: 16,
-            padding: 16,
+            backgroundColor: 'rgba(173, 216, 230, 0.15)',
+            borderRadius: 20,
+            padding: 20,
             flexDirection: 'row',
             alignItems: 'center',
-            minWidth: '90%',
+            width: '95%',
           }}>
             <Image
               source={require('../../assets/images/New Icons/new-5-red.png')}
@@ -100,18 +100,18 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             />
             <View style={{ flex: 1 }}>
               <Text style={{
-                fontSize: 13,
+                fontSize: 15,
                 fontWeight: '600',
                 color: '#374151',
-                marginBottom: 4,
+                marginBottom: 6,
                 fontFamily: 'Ubuntu-Medium',
               }}>
                 {pattern.distortionTypes[0] || 'Thought Pattern'}
               </Text>
               <Text style={{
-                fontSize: 11,
+                fontSize: 13,
                 color: '#6B7280',
-                lineHeight: 16,
+                lineHeight: 18,
                 fontFamily: 'Ubuntu-Light',
               }}>
                 {getDistortionExplanation(pattern.distortionTypes[0])}
@@ -122,7 +122,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
         {/* Distorted Thought Container */}
         <View style={{
-          marginHorizontal: '-20%',
+          marginHorizontal: '-17%',
           marginBottom: 20,
           marginTop: -5,
         }}>
@@ -141,7 +141,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Distorted Thought Label */}
             <View style={{
               position: 'absolute',
-              top: '8%',
+              top: '9%',
               width: '100%',
               alignItems: 'center',
             }}>
@@ -180,7 +180,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Blue containers at bottom */}
             <View style={{
               position: 'absolute',
-              bottom: '8%',
+              bottom: '10%',
               flexDirection: 'row',
               width: '100%',
               justifyContent: 'space-between',
@@ -202,27 +202,31 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   color: '#374151',
                   textAlign: 'left',
                   lineHeight: 15,
+                  fontFamily: 'Ubuntu-Medium',
                 }}>
                   {pattern.distortionTypes[0] || 'Pattern Type'}
                 </Text>
               </View>
 
-              <View style={{
-                width: '40%',
-                backgroundColor: 'transparent',
-                paddingHorizontal: 6,
-                paddingVertical: 6,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                minHeight: 36,
-              }}>
-                <Text style={{
-                  fontSize: 13,
-                  color: '#374151',
-                  textAlign: 'left',
-                  lineHeight: 15,
-                }}>Not realistic</Text>
-              </View>
+            </View>
+
+            {/* Arrow Overlay - Positioned relative to this container */}
+            <View style={{
+              position: 'absolute',
+              bottom: -20,
+              left: '75%',
+              transform: [{ translateX: -23.5 }],
+              zIndex: 1000,
+              pointerEvents: 'none',
+            }}>
+              <Image
+                source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-1.png')}
+                style={{
+                  width: 47,
+                  height: 47,
+                }}
+                contentFit="contain"
+              />
             </View>
 
           </ImageBackground>
@@ -230,14 +234,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
         {/* Balanced Thought Container */}
         <View style={{
-          marginHorizontal: '-20%',
-          marginBottom: 20,
-          marginTop: -5,
+          marginHorizontal: '-18%',
+          marginBottom: 10,
+          marginTop: -15,
         }}>
           <ImageBackground
             source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought-card-clean-7.png')}
             style={{
-              minHeight: 200,
+              minHeight: 220,
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: 12,
@@ -249,7 +253,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Balanced Thought Label */}
             <View style={{
               position: 'absolute',
-              top: '5%',
+              top: '10%',
               width: '100%',
               alignItems: 'center',
             }}>
@@ -288,7 +292,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Blue containers at bottom */}
             <View style={{
               position: 'absolute',
-              bottom: '8%',
+              bottom: '11%',
               flexDirection: 'row',
               width: '100%',
               justifyContent: 'space-between',
@@ -310,28 +314,74 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   color: '#374151',
                   textAlign: 'left',
                   lineHeight: 15,
+                  fontFamily: 'Ubuntu-Medium',
                 }}>More balanced</Text>
               </View>
 
-              <View style={{
-                width: '40%',
-                backgroundColor: 'transparent',
-                paddingHorizontal: 6,
-                paddingVertical: 6,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                minHeight: 36,
-              }}>
-                <Text style={{
-                  fontSize: 13,
-                  color: '#374151',
-                  textAlign: 'left',
-                  lineHeight: 15,
-                }}>More realistic</Text>
-              </View>
             </View>
 
           </ImageBackground>
+        </View>
+
+        {/* Reflect on This Button */}
+        <View style={{
+          marginHorizontal: 16,
+          marginTop: 16,
+          marginBottom: 8,
+        }}>
+          <View style={{
+            borderRadius: 12,
+            padding: 2,
+            overflow: 'hidden',
+          }}>
+            <LinearGradient
+              colors={['#2B4A5C', '#5A7B8A']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{
+                borderRadius: 12,
+                padding: 2,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
+                  onInsightPress?.('thinking_pattern_reflection', {
+                    originalThought: pattern.originalThought,
+                    distortionType: pattern.distortionTypes[0] || 'Cognitive Distortion',
+                    reframedThought: pattern.reframedThought,
+                    prompt: prompt
+                  });
+                }}
+                style={{
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingVertical: 12,
+                  paddingHorizontal: 20,
+                }}
+                activeOpacity={0.8}
+              >
+                <MessageCircle
+                  size={16}
+                  color="#2B4A5C"
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={{
+                  color: '#2B4A5C',
+                  fontSize: 14,
+                  fontWeight: '500',
+                  fontFamily: 'Ubuntu-Medium',
+                  marginRight: 4,
+                }}>
+                  Reflect on This
+                </Text>
+                <ArrowRight size={14} color="#2B4A5C" />
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
         </View>
       </>
     );
@@ -369,6 +419,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
   const [loading, setLoading] = useState(true);
   const [showFullChart, setShowFullChart] = useState(false);
+  const [weeklyTrend, setWeeklyTrend] = useState<'improving' | 'steady' | 'declining' | null>(null);
   const [dataAvailability, setDataAvailability] = useState<DataAvailability>({
     hasSessionSummaries: false,
     hasMoodRatings: false,
@@ -378,7 +429,48 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
   useEffect(() => {
     loadInsights();
+    calculateWeeklyTrend();
   }, []);
+
+  const calculateWeeklyTrend = async () => {
+    try {
+      const allRatings = await moodRatingService.getAllRatings();
+
+      // Calculate current and previous week averages
+      const now = new Date();
+      const currentWeekStart = new Date(now);
+      currentWeekStart.setDate(now.getDate() - now.getDay());
+      currentWeekStart.setHours(0, 0, 0, 0);
+
+      const previousWeekStart = new Date(currentWeekStart);
+      previousWeekStart.setDate(previousWeekStart.getDate() - 7);
+
+      const currentWeekRatings = allRatings.filter(rating => {
+        const ratingDate = new Date(rating.timestamp);
+        return ratingDate >= currentWeekStart;
+      });
+
+      const previousWeekRatings = allRatings.filter(rating => {
+        const ratingDate = new Date(rating.timestamp);
+        return ratingDate >= previousWeekStart && ratingDate < currentWeekStart;
+      });
+
+      if (currentWeekRatings.length > 0 && previousWeekRatings.length > 0) {
+        const currentAvg = currentWeekRatings.reduce((sum, r) => sum + r.rating, 0) / currentWeekRatings.length;
+        const previousAvg = previousWeekRatings.reduce((sum, r) => sum + r.rating, 0) / previousWeekRatings.length;
+
+        if (currentAvg > previousAvg) {
+          setWeeklyTrend('improving');
+        } else if (currentAvg === previousAvg) {
+          setWeeklyTrend('steady');
+        } else {
+          setWeeklyTrend('declining');
+        }
+      }
+    } catch (error) {
+      console.error('Error calculating weekly trend:', error);
+    }
+  };
 
   const checkDataAvailability = async (): Promise<DataAvailability> => {
     try {
@@ -724,196 +816,304 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
   return (
     <>
-      {/* Mood Chart Card - Only contains the chart */}
-      <ImageBackground
-        source={require('../../assets/new-design/Homescreen/Cards/blue-card-high.png')}
-        style={{
-          marginHorizontal: 4,
-          marginBottom: 20,
+      {/* White Container around entire Your Mood section */}
+      <View style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        marginHorizontal: 4,
+        marginBottom: 20,
+        overflow: 'hidden'
+      }}>
+        {/* Mood Chart section without background */}
+        <View style={{
           minHeight: 320,
           justifyContent: 'flex-start',
-          borderRadius: 20
-        }}
-        imageStyle={{ borderRadius: 20 }}
-        resizeMode="stretch"
-      >
-        <View style={{ padding: 20, flex: 1 }}>
-          {/* Header for mood chart */}
-          <View style={[styles.patternsHeader, { marginBottom: 8 }]}>
-            <View style={styles.patternsIcon}>
-              <Image
-                source={require('../../assets/new-design/Homescreen/Icons/distorted-thought-card-icon-1.png')}
-                style={{ width: 50, height: 50 }}
-                contentFit="contain"
-              />
-            </View>
-            <View style={styles.patternsTitleContainer}>
-              <Text style={[styles.patternsTitle, { fontFamily: 'Ubuntu-Medium' }]}>Your Mood</Text>
-              <Text style={[styles.patternsSubtitle, { fontFamily: 'Ubuntu-Light' }]}>Track your emotions</Text>
-            </View>
-          </View>
-
-          {/* Main Mood Chart */}
-          <View style={{ marginTop: -8 }}>
-            <MoodChart days={14} height={200} />
-          </View>
-        </View>
-      </ImageBackground>
-
-      {/* Weekly Progress Section - Simple with white boxes */}
-      <View style={{ marginHorizontal: 16, marginBottom: 20 }}>
-        {/* Header for weekly progress */}
-        <View style={[styles.patternsHeader, { marginBottom: 16 }]}>
-          <View style={styles.patternsIcon}>
-            <Image
-              source={require('../../assets/images/New Icons/new-3.png')}
-              style={{ width: 50, height: 50 }}
-              contentFit="contain"
-            />
-          </View>
-          <View style={styles.patternsTitleContainer}>
-            <Text style={[styles.patternsTitle, { fontFamily: 'Ubuntu-Medium' }]}>Weekly Progress</Text>
-            <Text style={[styles.patternsSubtitle, { fontFamily: 'Ubuntu-Light' }]}>Your weekly trends</Text>
-          </View>
-        </View>
-
-        {/* Weekly Mood Comparison with white boxes */}
-        <WeeklyMoodComparison style={{ marginBottom: 0 }} />
-      </View>
-
-      {/* Header for Your Thought Patterns */}
-      <View style={[styles.patternsHeader, { marginBottom: 16, marginHorizontal: 16 }]}>
-        <View style={styles.patternsIcon}>
+          backgroundColor: 'transparent',
+          position: 'relative'
+        }}>
+          {/* Background pattern in top left corner - using pattern-blue-2 */}
           <Image
-            source={require('../../assets/images/New Icons/new-4.png')}
-            style={{ width: 50, height: 50 }}
+            source={require('../../assets/new-design/Homescreen/Cards/pattern-blue-2.png')}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: -50,
+              width: 180,
+              height: 81,
+              opacity: 1
+            }}
             contentFit="contain"
           />
+
+          <View style={{ padding: 20, flex: 1 }}>
+            {/* Header for mood chart */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 32,
+              marginLeft: 24,
+              marginTop: 16,
+              gap: 12
+            }}>
+              <Image
+                source={require('../../assets/new-design/Homescreen/Icons/distorted-thought-card-icon-1.png')}
+                style={{ width: 40, height: 40 }}
+                contentFit="contain"
+              />
+              <View>
+                <Text style={{
+                  fontSize: 24,
+                  fontWeight: '700',
+                  color: '#1F2937',
+                  fontFamily: 'Ubuntu-Medium',
+                  letterSpacing: -0.5
+                }}>Your Mood</Text>
+                <Text style={{
+                  fontSize: 14,
+                  color: '#6B7280',
+                  fontFamily: 'Ubuntu-Light',
+                  marginTop: 2
+                }}>Track your emotional journey</Text>
+              </View>
+            </View>
+
+            {/* Main Mood Chart */}
+            <View style={{ marginTop: -8 }}>
+              <MoodChart days={14} height={200} />
+            </View>
+          </View>
         </View>
-        <View style={styles.patternsTitleContainer}>
-          <Text style={[styles.patternsTitle, { fontFamily: 'Ubuntu-Medium' }]}>Your Thought Patterns</Text>
-          <Text style={[styles.patternsSubtitle, { fontFamily: 'Ubuntu-Light' }]}>Identify and reframe</Text>
+
+        {/* Weekly Progress Section - Inside white container */}
+        <View style={{ padding: 16, backgroundColor: 'transparent' }}>
+          {/* Weekly Mood Comparison with white boxes - moved up */}
+          <WeeklyMoodComparison style={{ marginBottom: 12, marginTop: -8 }} />
+
+          {/* Centered weekly trend tag - moved below */}
+          <View style={{ alignItems: 'center', marginBottom: 8 }}>
+            {weeklyTrend === 'improving' && (
+              <View style={{
+                backgroundColor: '#5A88B5',
+                borderRadius: 12,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+              }}>
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: 12,
+                  fontWeight: '600',
+                  fontFamily: 'Ubuntu-Medium',
+                }}>
+                  ↗ Improving
+                </Text>
+              </View>
+            )}
+            {weeklyTrend === 'steady' && (
+              <View style={{
+                backgroundColor: '#5A88B5',
+                borderRadius: 12,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+              }}>
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: 12,
+                  fontWeight: '600',
+                  fontFamily: 'Ubuntu-Medium',
+                }}>
+                  ↔ Steady
+                </Text>
+              </View>
+            )}
+            {weeklyTrend === 'declining' && (
+              <View style={{
+                backgroundColor: '#5A88B5',
+                borderRadius: 12,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+              }}>
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: 12,
+                  fontWeight: '600',
+                  fontFamily: 'Ubuntu-Medium',
+                }}>
+                  ↘ Declining
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
 
-      {/* Navigation Controls at Top */}
-      {displayPatterns.length > 1 && (
+      {/* White Container around Your Thought Patterns section */}
+      <View style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        marginHorizontal: 0,
+        marginTop: 48,
+        marginBottom: 20,
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
+        {/* Background pattern in top right corner */}
+        <Image
+          source={require('../../assets/new-design/Homescreen/Cards/pattern-blue-1.png')}
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: -40,
+            width: 150,
+            height: 67,
+            opacity: 1
+          }}
+          contentFit="contain"
+        />
+
+        {/* Header for Your Thought Patterns */}
         <View style={{
           flexDirection: 'row',
-          justifyContent: 'space-between',
           alignItems: 'center',
-          paddingHorizontal: 16,
-          marginBottom: 16,
+          marginBottom: 32,
+          marginLeft: 24,
+          marginTop: 46,
+          gap: 12
         }}>
-          <TouchableOpacity
-            onPress={onPatternSwipeRight}
-            disabled={currentPatternIndex === 0}
-            style={{
-              opacity: currentPatternIndex === 0 ? 0.3 : 1,
-              padding: 8
-            }}
-          >
-            <ChevronLeft size={24} color="#87BAA3" />
-          </TouchableOpacity>
-
-          <View style={{ alignItems: 'center' }}>
+          <Image
+            source={require('../../assets/images/New Icons/new-4.png')}
+            style={{ width: 40, height: 40 }}
+            contentFit="contain"
+          />
+          <View>
+            <Text style={{
+              fontSize: 24,
+              fontWeight: '700',
+              color: '#1F2937',
+              fontFamily: 'Ubuntu-Medium',
+              letterSpacing: -0.5
+            }}>Your Thoughts</Text>
             <Text style={{
               fontSize: 14,
-              color: '#374151',
-              fontWeight: '500'
-            }}>
-              {currentPatternIndex + 1} of {displayPatterns.length}
-            </Text>
-            <Text style={{
-              fontSize: 12,
-              color: '#9CA3AF',
+              color: '#6B7280',
+              fontFamily: 'Ubuntu-Light',
               marginTop: 2
-            }}>
-              Swipe to navigate
-            </Text>
+            }}>Identify and reframe patterns</Text>
           </View>
-
-          <TouchableOpacity
-            onPress={onPatternSwipeLeft}
-            disabled={currentPatternIndex === displayPatterns.length - 1}
-            style={{
-              opacity: currentPatternIndex === displayPatterns.length - 1 ? 0.3 : 1,
-              padding: 8
-            }}
-          >
-            <ChevronRight size={24} color="#87BAA3" />
-          </TouchableOpacity>
         </View>
-      )}
 
-      {/* Modern FlatList Swipeable Cards with 3D Effect */}
-      {displayPatterns.length > 0 && (
-        <Animated.FlatList
-          ref={flatListRef}
-          data={displayPatterns}
-          renderItem={({ item, index }) => {
-            const inputRange = [
-              (index - 1) * screenWidth,
-              index * screenWidth,
-              (index + 1) * screenWidth,
-            ];
+        {/* Modern FlatList Swipeable Cards with 3D Effect */}
+        {displayPatterns.length > 0 && (
+          <Animated.FlatList
+            ref={flatListRef}
+            data={displayPatterns}
+            renderItem={({ item, index }) => {
+              const inputRange = [
+                (index - 1) * screenWidth,
+                index * screenWidth,
+                (index + 1) * screenWidth,
+              ];
 
-            const scale = scrollX.interpolate({
-              inputRange,
-              outputRange: [0.95, 1, 0.95],
-              extrapolate: 'clamp',
-            });
+              const scale = scrollX.interpolate({
+                inputRange,
+                outputRange: [0.95, 1, 0.95],
+                extrapolate: 'clamp',
+              });
 
-            const opacity = scrollX.interpolate({
-              inputRange,
-              outputRange: [0.7, 1, 0.7],
-              extrapolate: 'clamp',
-            });
+              const opacity = scrollX.interpolate({
+                inputRange,
+                outputRange: [0.7, 1, 0.7],
+                extrapolate: 'clamp',
+              });
 
-            const rotateY = scrollX.interpolate({
-              inputRange,
-              outputRange: ['15deg', '0deg', '-15deg'],
-              extrapolate: 'clamp',
-            });
+              const rotateY = scrollX.interpolate({
+                inputRange,
+                outputRange: ['15deg', '0deg', '-15deg'],
+                extrapolate: 'clamp',
+              });
 
-            const translateX = scrollX.interpolate({
-              inputRange,
-              outputRange: [screenWidth * 0.05, 0, -screenWidth * 0.05],
-              extrapolate: 'clamp',
-            });
+              const translateX = scrollX.interpolate({
+                inputRange,
+                outputRange: [screenWidth * 0.05, 0, -screenWidth * 0.05],
+                extrapolate: 'clamp',
+              });
 
-            return (
-              <Animated.View style={{
-                width: screenWidth,
-                paddingHorizontal: 16,
-                transform: [
-                  { scale },
-                  { rotateY },
-                  { translateX },
-                  { perspective: 1000 }
-                ],
-                opacity,
+              return (
+                <Animated.View style={{
+                  width: screenWidth,
+                  paddingHorizontal: 16,
+                  transform: [
+                    { scale },
+                    { rotateY },
+                    { translateX },
+                    { perspective: 1000 }
+                  ],
+                  opacity,
+                }}>
+                  {renderPatternCard(item)}
+                </Animated.View>
+              );
+            }}
+            keyExtractor={(item, index) => `pattern-${index}`}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: true }
+            )}
+            onMomentumScrollEnd={handleScrollEnd}
+            snapToInterval={screenWidth}
+            snapToAlignment="start"
+            decelerationRate="fast"
+            scrollEventThrottle={16}
+            style={{ marginHorizontal: -16 }}
+          />
+        )}
+
+        {/* Navigation Controls at Bottom */}
+        {displayPatterns.length > 1 && (
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 24,
+            marginTop: 16,
+            marginBottom: 16,
+          }}>
+            <TouchableOpacity
+              onPress={onPatternSwipeRight}
+              disabled={currentPatternIndex === 0}
+              style={{
+                opacity: currentPatternIndex === 0 ? 0.3 : 1,
+                padding: 6
+              }}
+            >
+              <ChevronLeft size={32} color="#2B4A5C" />
+            </TouchableOpacity>
+
+            <View style={{ alignItems: 'center' }}>
+              <Text style={{
+                fontSize: 16,
+                color: '#2B4A5C',
+                fontWeight: '600'
               }}>
-                {renderPatternCard(item)}
-              </Animated.View>
-            );
-          }}
-          keyExtractor={(item, index) => `pattern-${index}`}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true }
-          )}
-          onMomentumScrollEnd={handleScrollEnd}
-          snapToInterval={screenWidth}
-          snapToAlignment="start"
-          decelerationRate="fast"
-          scrollEventThrottle={16}
-          style={{ marginHorizontal: -16 }}
-        />
-      )}
+                {currentPatternIndex + 1} of {displayPatterns.length}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={onPatternSwipeLeft}
+              disabled={currentPatternIndex === displayPatterns.length - 1}
+              style={{
+                opacity: currentPatternIndex === displayPatterns.length - 1 ? 0.3 : 1,
+                padding: 6
+              }}
+            >
+              <ChevronRight size={32} color="#2B4A5C" />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
 
       {/* Arrow Overlay - Highest Z-Index Layer */}
       <View style={{
@@ -934,109 +1134,6 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         />
       </View>
 
-      {/* Separate card for insights */}
-      <View style={[styles.patternsCard, { backgroundColor: 'transparent' }]}>
-
-      {/* Insights Highlights */}
-      <View style={{ paddingHorizontal: 12 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <Text style={{
-            fontSize: 16,
-            fontWeight: '600',
-            color: '#374151',
-            fontFamily: 'Inter-SemiBold',
-          }}>
-            Recent Highlights
-          </Text>
-        </View>
-
-        {insights?.highlights.length ? (
-          <View style={{ gap: 12 }}>
-            {insights.highlights.slice(0, 2).map((insight, index) => (
-              <TouchableOpacity
-                key={insight.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(248, 250, 252, 0.5)',
-                  borderRadius: 12,
-                  padding: 16,
-                  borderLeftWidth: 4,
-                  borderLeftColor: getCategoryColor(insight.category),
-                }}
-                onPress={() => onInsightPress?.(insight.id)}
-                activeOpacity={0.7}
-              >
-                <View style={{ marginRight: 12 }}>
-                  {getCategoryIcon(insight.category)}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{
-                    fontSize: 14,
-                    fontWeight: '500',
-                    color: '#374151',
-                    lineHeight: 20,
-                  }}>
-                    {insight.text}
-                  </Text>
-                  {insight.confidence > 0.7 && (
-                    <View style={{
-                      backgroundColor: getCategoryColor(insight.category),
-                      borderRadius: 10,
-                      paddingHorizontal: 8,
-                      paddingVertical: 2,
-                      alignSelf: 'flex-start',
-                      marginTop: 6,
-                    }}>
-                      <Text style={{
-                        fontSize: 10,
-                        color: 'white',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                      }}>
-                        {getShortConfidenceLabel(insight.confidence, 'insight')}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingVertical: 32,
-            paddingHorizontal: 20,
-          }}>
-            {renderEmptyStateContent()}
-          </View>
-        )}
-      </View>
-
-      {/* Analysis Date */}
-      {insights?.analysisDate && (
-        <View style={{ alignItems: 'center', marginTop: 8 }}>
-          <Text style={{
-            fontSize: 10,
-            color: '#9ca3af',
-            textAlign: 'center',
-          }}>
-            Last updated: {new Date(insights.analysisDate).toLocaleDateString()}
-          </Text>
-          {insights && (
-            <Text style={{
-              fontSize: 10,
-              color: '#9ca3af',
-              textAlign: 'center',
-              marginTop: 2,
-            }}>
-              {insights.sessionsAnalyzed} sessions tracked
-            </Text>
-          )}
-        </View>
-      )}
-      </View>
 
     </>
   );

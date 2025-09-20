@@ -235,17 +235,17 @@ export const MoodChart: React.FC<MoodChartProps> = ({
           <Defs>
             {/* Solid line gradient - no edge fading */}
             <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor="#87BAA3" stopOpacity="1" />
-              <Stop offset="100%" stopColor="#87BAA3" stopOpacity="1" />
+              <Stop offset="0%" stopColor="#5A88B5" stopOpacity="1" />
+              <Stop offset="100%" stopColor="#5A88B5" stopOpacity="1" />
             </LinearGradient>
 
             {/* Area gradient fill with vertical fade and white edge fade */}
             <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor="#87BAA3" stopOpacity="0.6" />
-              <Stop offset="20%" stopColor="#87BAA3" stopOpacity="0.4" />
-              <Stop offset="50%" stopColor="#87BAA3" stopOpacity="0.2" />
-              <Stop offset="80%" stopColor="#87BAA3" stopOpacity="0.08" />
-              <Stop offset="100%" stopColor="#87BAA3" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#5A88B5" stopOpacity="0.6" />
+              <Stop offset="20%" stopColor="#5A88B5" stopOpacity="0.4" />
+              <Stop offset="50%" stopColor="#5A88B5" stopOpacity="0.2" />
+              <Stop offset="80%" stopColor="#5A88B5" stopOpacity="0.08" />
+              <Stop offset="100%" stopColor="#5A88B5" stopOpacity="0" />
             </LinearGradient>
 
             {/* White fade gradients for left and right edges */}
@@ -327,11 +327,6 @@ export const MoodChart: React.FC<MoodChartProps> = ({
               height: 20,
               opacity: 0.85,
               borderRadius: 10,
-              shadowColor: '#87BAA3', // Sage green tint
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.08, // Much lighter
-              shadowRadius: 1.5,
-              elevation: 1, // Lighter Android shadow
             }}
             resizeMode="contain"
           />
@@ -417,7 +412,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
       
       const getRatingLabel = (rating: number) => {
         if (rating >= 4.5) return 'Great';
-        if (rating >= 3.5) return 'Good';
+        if (rating >= 3.5) return 'Positive';
         if (rating >= 2.5) return 'Okay';
         if (rating >= 1.5) return 'Challenging';
         if (rating > 0) return 'Difficult';
@@ -473,15 +468,11 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
     return (
       <Image 
         source={imageSource} 
-        style={{ 
-          width: 20, 
-          height: 20,
-          borderRadius: 10,
-          shadowColor: '#87BAA3', // Sage green tint
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.08, // Much lighter
-          shadowRadius: 1.5,
-          elevation: 1 // Lighter Android shadow
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          marginTop: 4,
         }} 
         resizeMode="contain" 
       />
@@ -492,6 +483,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
     <View style={[{ paddingHorizontal: 0 }, style]}>
       {/* Weekly progress content without card background (handled by parent) */}
       <View style={{ paddingHorizontal: 0 }}>
+
 
         {/* Progress visualization - Side by side layout */}
         <View style={styles.progressVisualization}>
@@ -511,7 +503,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
                 <Text style={styles.weekPeriod}>Last Week</Text>
                 <View style={styles.moodEmoji}>{getMoodImage(weeklyData.previousWeek.rating)}</View>
               </View>
-              <Text style={styles.moodLabel}>{weeklyData.previousWeek.label}</Text>
+              <Text style={[styles.moodLabel, { fontFamily: 'Ubuntu-Bold' }]}>{weeklyData.previousWeek.label}</Text>
               <View style={styles.progressBar}>
                 <View
                   style={[styles.progressFill, styles.previousWeekFill, {
@@ -536,7 +528,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
                 <Text style={styles.weekPeriod}>This Week</Text>
                 <View style={styles.moodEmoji}>{getMoodImage(weeklyData.currentWeek.rating)}</View>
               </View>
-              <Text style={styles.moodLabel}>{weeklyData.currentWeek.label}</Text>
+              <Text style={[styles.moodLabel, { fontFamily: 'Ubuntu-Bold' }]}>{weeklyData.currentWeek.label}</Text>
               <View style={styles.progressBar}>
                 <View
                   style={[styles.progressFill, styles.currentWeekFill, {
@@ -546,44 +538,6 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
               </View>
             </View>
           </View>
-        </View>
-
-        {/* Trend indicator - moved below the weekly comparison boxes */}
-        <View style={[styles.comparisonHeader, { justifyContent: 'center', marginTop: 16, marginBottom: 0 }]}>
-          {weeklyData.currentWeek.rating > weeklyData.previousWeek.rating && (
-            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
-              <ExpoLinearGradient
-                colors={['#8297A2', '#8297A2']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
-              />
-              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>↗ Improving</Text>
-            </View>
-          )}
-          {weeklyData.currentWeek.rating === weeklyData.previousWeek.rating && (
-            <View style={[styles.trendIndicator, { overflow: 'hidden' }]}>
-              <ExpoLinearGradient
-                colors={['#4A6B7C', '#1A2B36']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
-              />
-              <Text style={[styles.trendText, { color: '#FFFFFF' }]}>→ Stable</Text>
-            </View>
-          )}
         </View>
       </View>
     </View>
