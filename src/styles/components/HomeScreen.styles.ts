@@ -65,6 +65,7 @@ export const homeScreenStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing[4],
+    marginTop: -spacing[8], // Move turtle up
   },
   turtleHeroImage: {
     width: width * 0.68,
@@ -99,18 +100,19 @@ export const homeScreenStyles = StyleSheet.create({
   headerText: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing[8],
+    marginBottom: spacing[4], // Reduced distance to turtle image
+    marginTop: spacing[16], // Added top margin to move text lower
   },
   ctaTitle: {
     fontFamily: 'Ubuntu-Bold',
-    fontSize: width < 375 ? 30 : 34,
+    fontSize: width < 375 ? 29.5 : 33.5, // Reduced by 0.5
     fontWeight: 'bold',
     color: '#002d14',
     marginTop: spacing[2],
     marginBottom: spacing[2],
     textAlign: 'center',
     letterSpacing: -0.5,
-    lineHeight: width < 375 ? 34 : 38,
+    lineHeight: width < 375 ? 33.5 : 37.5, // Adjusted line height proportionally
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
@@ -155,6 +157,58 @@ export const homeScreenStyles = StyleSheet.create({
     textAlign: 'left',
     opacity: 0.6,
     zIndex: 10,
+  },
+
+  // Start Check-In Button - Clean and Simple
+  checkInButton: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[32], // Increased width
+    paddingVertical: spacing[8], // Reduced height
+    alignSelf: 'center', // Center the button
+    borderRadius: 27,
+    borderWidth: 1.7,
+    borderColor: '#7d9db6',
+    shadowColor: '#0388bb',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1.0,
+    shadowRadius: 7,
+    elevation: 25,
+    marginBottom: spacing[24], // Added space below button
+  },
+  checkInButtonText: {
+    fontSize: 24, // Bigger text
+    fontWeight: 'bold',
+    color: '#36526f',
+    fontFamily: 'Ubuntu-Bold',
+  },
+  checkInButtonIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[12],
+    marginTop: spacing[4], // Reduced space below text
+  },
+  iconCircle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[2],
+    borderRadius: 12,
+    backgroundColor: '#f7fcfc',
+    borderWidth: 1,
+    borderColor: '#7d9db6',
+    gap: spacing[3],
+  },
+  iconLabel: {
+    fontSize: 12,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#7d9db6',
+    textAlign: 'center',
   },
 
   // Exercises Section
@@ -421,7 +475,7 @@ export const homeScreenStyles = StyleSheet.create({
     paddingLeft: 75 + spacing.components.cardGap, // Account for absolute positioned image + gap
   },
   exerciseName: {
-    fontSize: 18,
+    fontSize: 22,
     color: '#002d14',
     fontWeight: 'bold',
     fontFamily: 'Ubuntu-Light',

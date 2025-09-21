@@ -249,12 +249,9 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     <SafeAreaWrapper style={exerciseLibraryStyles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Background Gradient - Same as HomeScreen */}
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={exerciseLibraryStyles.backgroundGradient}
+      {/* Persistent Solid Background - Same as HomeScreen */}
+      <View
+        style={[exerciseLibraryStyles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
         pointerEvents="none"
       />
 
@@ -312,32 +309,76 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               ) : null}
             </View>
             
-            {/* Filter Button - Next to search bar with circle background */}
-            <TouchableOpacity
-              style={exerciseLibraryStyles.filterButtonCircle}
-              onPress={() => setShowFilters(!showFilters)}
-              activeOpacity={0.7}
-            >
-              <Image
-                source={require('../../assets/new-design/Homescreen/Icons/filter.png')}
-                style={{ width: 32, height: 32 }}
-                contentFit="contain"
-              />
-              {activeFiltersCount > 0 && (
-                <View style={exerciseLibraryStyles.filterBadge}>
-                  <Text style={exerciseLibraryStyles.filterBadgeText}>{activeFiltersCount}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Filters */}
+        {/* Show All Filters Button - Below search bar */}
+        <View style={{
+          paddingHorizontal: spacing.layout.screenPadding,
+          marginBottom: spacing[8],
+        }}>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              gap: 6,
+              alignSelf: 'flex-start',
+            }}
+            onPress={() => setShowFilters(!showFilters)}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={require('../../assets/new-design/Homescreen/Icons/filter.png')}
+              style={{ width: 16, height: 16 }}
+              contentFit="contain"
+            />
+            <Text style={{
+              fontSize: 14,
+              fontWeight: '500',
+              color: '#6B7280',
+            }}>
+              Show all filters
+            </Text>
+            {activeFiltersCount > 0 && (
+              <View style={[exerciseLibraryStyles.filterBadge, { position: 'relative', top: 0, right: 0 }]}>
+                <Text style={exerciseLibraryStyles.filterBadgeText}>{activeFiltersCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Benefits Filter - Always visible, aligned under search bar */}
+        <View style={{
+          paddingHorizontal: spacing.layout.screenPadding, // Aligned with search bar
+          marginBottom: spacing[8],
+        }}>
+          <View style={exerciseLibraryStyles.filterRowCompact}>
+            {benefitFilters.map((filter) => (
+              <FilterChip
+                key={filter}
+                label={filter}
+                selected={selectedBenefitFilter === filter}
+                onPress={() => setSelectedBenefitFilter(filter)}
+                filterType="benefits"
+              />
+            ))}
+          </View>
+        </View>
+
+        {/* Additional Filters - No background, same spacing as Benefits */}
         {showFilters && (
-          <View style={exerciseLibraryStyles.filtersSection}>
+          <View style={{
+            paddingHorizontal: spacing.layout.screenPadding, // Same as Benefits filter
+            marginBottom: spacing[8],
+          }}>
             {/* Filters Header */}
-            <View style={exerciseLibraryStyles.filtersHeader}>
-              {activeFiltersCount > 0 && (
+            {activeFiltersCount > 0 && (
+              <View style={{
+                marginBottom: spacing[8],
+                alignItems: 'flex-start',
+              }}>
                 <TouchableOpacity
                   style={exerciseLibraryStyles.clearFiltersButton}
                   onPress={clearAllFilters}
@@ -345,9 +386,10 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                 >
                   <Text style={exerciseLibraryStyles.clearFiltersText}>Clear All</Text>
                 </TouchableOpacity>
-              )}
-            </View>
-            {/* Time Filter - Compact */}
+              </View>
+            )}
+
+            {/* Duration Filter - Compact */}
             <View style={exerciseLibraryStyles.filterGroupCompact}>
               <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.duration} Duration</Text>
               <View style={exerciseLibraryStyles.filterRowCompact}>
@@ -358,22 +400,6 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                     selected={selectedTimeFilter === filter}
                     onPress={() => setSelectedTimeFilter(filter)}
                     filterType="duration"
-                  />
-                ))}
-              </View>
-            </View>
-
-            {/* Benefit Filter - Compact */}
-            <View style={exerciseLibraryStyles.filterGroupCompact}>
-              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.benefits} Benefits</Text>
-              <View style={exerciseLibraryStyles.filterRowCompact}>
-                {benefitFilters.map((filter) => (
-                  <FilterChip
-                    key={filter}
-                    label={filter}
-                    selected={selectedBenefitFilter === filter}
-                    onPress={() => setSelectedBenefitFilter(filter)}
-                    filterType="benefits"
                   />
                 ))}
               </View>

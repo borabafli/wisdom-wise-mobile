@@ -268,11 +268,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     <SafeAreaWrapper style={styles.container}>
       
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
+      {/* Persistent Solid Background - Same as HomeScreen */}
+      <View
+        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
         pointerEvents="none"
       />
       <ScrollView 
@@ -311,7 +309,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           ]}
         >
           <LinearGradient
-            colors={['rgba(30, 58, 138, 0.12)', 'rgba(248, 250, 252, 0.95)', 'rgba(37, 99, 235, 0.08)']}
+            colors={['rgba(255, 255, 255, 1)', 'rgba(249, 250, 251, 1)', 'rgba(243, 244, 246, 1)']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.motivationalGradient}

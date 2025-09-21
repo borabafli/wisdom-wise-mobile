@@ -130,7 +130,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const tabs = [
     {
       name: 'Home',
-      label: 'Home',
+      label: 'Today',
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-home-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home-blue.png')
     },
@@ -164,7 +164,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     <>
       
       <LinearGradient
-        colors={['#ffffff', '#ffffff']}
+        colors={['#ebf5f9', '#ebf5f9']}
         style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
       >
         <View style={styles.tabBarContent}>
@@ -231,7 +231,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                     style={[
                       styles.tabLabel,
                       {
-                        color: isFocused ? '#0d9488' : '#6B7280',
+                        color: isFocused ? '#446d90' : '#92b2c7',
                         fontWeight: isFocused ? '600' : '500',
                         zIndex: 10,
                       }

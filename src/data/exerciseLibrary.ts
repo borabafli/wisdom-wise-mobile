@@ -7,7 +7,7 @@ export const exerciseLibraryData: Record<string, any> = {
     type: 'automatic-thoughts',
     name: 'Recognizing Automatic Thoughts',
     duration: '15 min',
-    description: 'Challenge negative thoughts with CBT techniques',
+    description: 'Transform negative thoughts',
     shortDescription: 'Identify and reframe unhelpful thinking patterns.',
     category: 'CBT',
     difficulty: 'Intermediate',
@@ -131,7 +131,7 @@ export const exerciseLibraryData: Record<string, any> = {
   'values-clarification': {
     id: 7,
     type: 'values-clarification',
-    name: 'Living Closer to My Values',
+    name: 'My Core Values',
     duration: '15 min',
     description: 'Clarify values and align your daily actions',
     shortDescription: 'Align your actions with what matters most.',
@@ -347,7 +347,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'values-clarification': {
-    name: 'Living Closer to My Values',
+    name: 'My Core Values',
     color: 'gray',
     useAI: true,
     steps: [

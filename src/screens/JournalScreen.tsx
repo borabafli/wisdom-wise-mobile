@@ -252,12 +252,9 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      {/* Background Gradient - Same as ExerciseLibrary */}
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
+      {/* Persistent Solid Background - Same as HomeScreen */}
+      <View
+        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
         pointerEvents="none"
       />
 

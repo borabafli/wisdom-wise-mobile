@@ -75,12 +75,10 @@ const ProfileScreen: React.FC = () => {
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Background Gradient - Clean like Exercise screen */}
-      <LinearGradient
-        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
+      {/* Persistent Solid Background - Same as HomeScreen */}
+      <View
+        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
+        pointerEvents="none"
       />
 
       <ScrollView 
@@ -88,22 +86,30 @@ const ProfileScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.contentContainer}>
-          {/* Header - Now inside ScrollView so it scrolls away */}
-          <View style={styles.scrollableHeader}>
-            <Text style={styles.compactTitle}>
-              Profile 👤
-            </Text>
-            <Text style={styles.subtitle}>
-              Your wellness companion
-            </Text>
+        {/* Header - Match insights screen style */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerTitleContainer}>
+              <Image
+                source={require('../../assets/new-design/Turtle Hero Section/insights-hero.png')}
+                style={styles.headerTurtleIcon}
+                contentFit="contain"
+              />
+              <View style={styles.titleAndSubtitleContainer}>
+                <Text style={styles.headerTitle}>Profile</Text>
+                <Text style={styles.headerSubtitle}>✨ Your wellness companion</Text>
+              </View>
+            </View>
           </View>
+        </View>
+
+        <View style={styles.contentContainer}>
 
         {/* User Info */}
         <View style={styles.userInfoSection}>
           <View style={styles.userInfoCard}>
             <LinearGradient
-              colors={['#D8E9E9', '#E7F3F1']}
+              colors={['rgba(255, 255, 255, 1)', 'rgba(249, 250, 251, 1)', 'rgba(243, 244, 246, 1)']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.userInfoCardGradient}

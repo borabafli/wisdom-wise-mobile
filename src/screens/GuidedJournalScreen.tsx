@@ -296,13 +296,12 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
 
   return (
     <>
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={{ flex: 1 }}
-      >
-        <SafeAreaWrapper style={styles.container}>
+      <SafeAreaWrapper style={styles.container}>
+        {/* Solid Background like Home Screen */}
+        <View
+          style={[styles.backgroundSolid, { backgroundColor: '#ebf5f9' }]}
+          pointerEvents="none"
+        />
         <StatusBar style="dark" backgroundColor="transparent" translucent />
         <KeyboardAvoidingView
           style={styles.keyboardView}
@@ -454,8 +453,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
           </View>
         </ScrollView>
         </KeyboardAvoidingView>
-        </SafeAreaWrapper>
-      </LinearGradient>
+      </SafeAreaWrapper>
 
       {/* Save Session Modal */}
       <Modal

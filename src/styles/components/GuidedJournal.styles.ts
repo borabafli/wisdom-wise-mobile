@@ -6,7 +6,16 @@ const { width, height } = Dimensions.get('window');
 export const guidedJournalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Transparent to show gradient
+    backgroundColor: 'transparent', // Transparent to show solid background
+  },
+
+  backgroundSolid: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
   },
 
   keyboardView: {
@@ -267,7 +276,7 @@ export const guidedJournalStyles = StyleSheet.create({
   },
 
   compactNextButtonDisabled: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#9CA3AF',
   },
 
   compactNextButtonText: {

@@ -126,14 +126,13 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
 
   return (
     <>
-      <PanGestureHandler onGestureEvent={gestureHandler}>
-        <Animated.View style={[slidableExerciseCardStyles.container]}>
-          <Animated.View style={[cardAnimatedStyle]}>
-            <TouchableOpacity
-              style={slidableExerciseCardStyles.exerciseCard}
-              onPress={() => onExerciseClick(exercise)}
-              activeOpacity={0.8}
-            >
+      <View style={[slidableExerciseCardStyles.container]}>
+        <View>
+          <TouchableOpacity
+            style={slidableExerciseCardStyles.exerciseCard}
+            onPress={() => onExerciseClick(exercise)}
+            activeOpacity={0.8}
+          >
               {/* Card pattern background in top right */}
               <Image
                 source={
@@ -152,64 +151,51 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
               <View style={slidableExerciseCardStyles.exerciseCardGradient}>
                 {/* Left side image */}
                 <View style={slidableExerciseCardStyles.exerciseImageContainer}>
-                  <Image 
+                  <Image
                     source={exercise.image || require('../../assets/images/new-icon1.png')}
                     style={slidableExerciseCardStyles.exerciseImage}
                     contentFit="cover"
                   />
                 </View>
-                
+
                 {/* Right side content */}
                 <View style={slidableExerciseCardStyles.exerciseContent}>
-                  {/* Top row: Benefit tag and time */}
-                  <View style={slidableExerciseCardStyles.tagAndTimeRow}>
-                    {/* Benefit tag with solid background */}
-                    <View style={[
-                      slidableExerciseCardStyles.categoryTagContainer,
-                      isLargeButton && slidableExerciseCardStyles.categoryTagContainerLarge
-                    ]}>
-                      <Text style={[
-                        slidableExerciseCardStyles.categoryTagText,
-                        isLargeButton && slidableExerciseCardStyles.categoryTagTextLarge
-                      ]}>
-                        {benefit}
-                      </Text>
-                    </View>
-                    
-                    {/* Time display */}
-                    <View style={slidableExerciseCardStyles.durationContainer}>
-                      <Clock size={12} color="#002244" />
-                      <Text style={slidableExerciseCardStyles.exerciseDuration}>{exercise.duration}</Text>
-                    </View>
-                  </View>
-                  
                   <Text style={slidableExerciseCardStyles.exerciseTitle} numberOfLines={2}>
                     {exercise.name}
                   </Text>
-                  
+
                   <Text style={slidableExerciseCardStyles.exerciseDescription} numberOfLines={2}>
                     {exercise.description}
                   </Text>
                 </View>
+
+                {/* Benefits tag positioned at bottom left */}
+                <View style={[
+                  slidableExerciseCardStyles.categoryTagContainer,
+                  slidableExerciseCardStyles.categoryTagContainerSmall,
+                  slidableExerciseCardStyles.categoryTagContainerBottomLeft
+                ]}>
+                  <Text style={[
+                    slidableExerciseCardStyles.categoryTagText,
+                    slidableExerciseCardStyles.categoryTagTextSmall
+                  ]}>
+                    {benefit}
+                  </Text>
+                </View>
+
+                {/* Duration tag positioned at bottom right */}
+                <View style={[
+                  slidableExerciseCardStyles.durationContainer,
+                  slidableExerciseCardStyles.durationContainerBottomRight
+                ]}>
+                  <Clock size={12} color="#002244" />
+                  <Text style={slidableExerciseCardStyles.exerciseDuration}>{exercise.duration}</Text>
+                </View>
               </View>
-              
-              {/* Blur overlay */}
-              <Animated.View 
-                style={[
-                  slidableExerciseCardStyles.blurOverlay,
-                  blurAnimatedStyle,
-                ]}
-                pointerEvents="none"
-              >
-                <BlurView
-                  intensity={50}
-                  style={slidableExerciseCardStyles.blurView}
-                />
-              </Animated.View>
-            </TouchableOpacity>
-          </Animated.View>
-        </Animated.View>
-      </PanGestureHandler>
+
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Schedule Options Modal */}
       <Modal

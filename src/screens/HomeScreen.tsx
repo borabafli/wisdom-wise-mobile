@@ -166,12 +166,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
 
-      {/* Persistent Gradient Background */}
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
+      {/* Persistent Solid Background */}
+      <View
+        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
         pointerEvents="none"
       />
 
@@ -186,43 +183,50 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         <View style={styles.scrollableContainer}>
           {/* Background Image */}
           <Image
-            source={require('../../assets/new-design/Homescreen/background.png')}
+            source={require('../../assets/new-design/Homescreen/background-wider-4.png')}
             style={styles.backgroundImageScrollable}
             contentFit="contain"
           />
 
           {/* Header Text and Chat Input */}
           <View style={styles.headerSection}>
-          {/* Turtle Hero Image - positioned first */}
-          <View style={styles.turtleHeroContainer}>
-            <Image
-              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-3.png')}
-              style={styles.turtleHeroImage}
-              contentFit="contain"
-            />
-          </View>
-
           <View style={styles.headerText}>
             <Text style={styles.ctaTitle}>How are you feeling?</Text>
             {welcomeMessage.subtitle && <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>}
           </View>
 
-          {/* Container for new chatbar */}
-          <TouchableOpacity
-            onPress={() => onStartSession()}
-            style={styles.inputWithTurtleWrapper}
-            activeOpacity={0.9}
-          >
-
-            {/* New chatbar image */}
+          {/* Turtle Hero Image - positioned after text */}
+          <View style={styles.turtleHeroContainer}>
             <Image
-              source={require('../../assets/new-design/Homescreen/Chatbars/chatbar-6.png')}
-              style={styles.chatbarImage}
+              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-6.png')}
+              style={styles.turtleHeroImage}
               contentFit="contain"
             />
+          </View>
 
-            {/* Grey text overlay on chatbar */}
-            <Text style={styles.chatbarText}>Tap to Share...</Text>
+          {/* Start Check-In Button */}
+          <TouchableOpacity
+            onPress={() => onStartSession()}
+            activeOpacity={0.7}
+          >
+            <ImageBackground
+              source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
+              style={styles.checkInButton}
+              imageStyle={{ borderRadius: 25 }}
+              resizeMode="cover"
+            >
+              <Text style={styles.checkInButtonText}>Check-In Now</Text>
+              <View style={styles.checkInButtonIcons}>
+                <View style={styles.iconCircle}>
+                  <MessageCircle size={18} color="#7d9db6" />
+                  <Text style={styles.iconLabel}>Type</Text>
+                </View>
+                <View style={styles.iconCircle}>
+                  <Mic size={18} color="#7d9db6" />
+                  <Text style={styles.iconLabel}>Talk</Text>
+                </View>
+              </View>
+            </ImageBackground>
           </TouchableOpacity>
         </View>
 
@@ -256,6 +260,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 onStartSession={handleStartSessionWithPreview}
                 onHideCard={handleHideCard}
                 simulateExerciseCompletion={simulateExerciseCompletion}
+                isLast={index === topExercises.length - 1}
               />
             ))}
           </View>
@@ -319,7 +324,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               activeOpacity={0.9}
             >
               <ImageBackground
-                source={require('../../assets/new-design/Homescreen/Cards/blue-card-high.png')}
+                source={require('../../assets/new-design/Homescreen/Cards/blue-card-high-shade-1.png')}
                 style={styles.quickActionGradient}
                 imageStyle={styles.quickActionBackgroundImage}
                 resizeMode="contain"

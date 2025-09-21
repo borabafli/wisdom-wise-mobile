@@ -127,7 +127,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           marginTop: -5,
         }}>
           <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean-6.png')}
+            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean8.png')}
             style={{
               minHeight: 200,
               justifyContent: 'center',
@@ -1115,24 +1115,6 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         )}
       </View>
 
-      {/* Arrow Overlay - Highest Z-Index Layer */}
-      <View style={{
-        position: 'absolute',
-        top: '65%', // Position between the cards
-        left: '50%',
-        transform: [{ translateX: -25 }, { translateY: -25 }], // Center the 50x50 arrow
-        zIndex: 1000, // Highest layer
-        pointerEvents: 'none', // Don't interfere with touch events
-      }}>
-        <Image
-          source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-1.png')}
-          style={{
-            width: 50,
-            height: 50,
-          }}
-          contentFit="contain"
-        />
-      </View>
 
 
     </>

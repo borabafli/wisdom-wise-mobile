@@ -319,11 +319,18 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
         {/* Start Exercise Button */}
         <View style={styles.footer}>
           <TouchableOpacity
-            style={styles.startButton}
+            style={styles.startButtonTouchable}
             onPress={handleStart}
             activeOpacity={0.8}
           >
-            <Text style={styles.startButtonText}>Start Exercise</Text>
+            <LinearGradient
+              colors={['#3B6B8A', '#2E5475']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.startButton}
+            >
+              <Text style={styles.startButtonText}>Start Exercise</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </Animated.View>
