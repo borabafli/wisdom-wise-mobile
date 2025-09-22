@@ -138,14 +138,14 @@ export const AppContent: React.FC = () => {
     );
   }
 
-  // Show auth screen if not authenticated
-  if (!isAuthenticated) {
-    return <AuthNavigator />;
-  }
-
-  // Show onboarding if not completed
+  // Show onboarding if not completed (this should come first!)
   if (!isOnboardingComplete) {
     return <OnboardingNavigator onComplete={handleOnboardingComplete} />;
+  }
+
+  // Show auth screen if not authenticated (only after onboarding is complete)
+  if (!isAuthenticated) {
+    return <AuthNavigator />;
   }
 
   if (showBreathing) {

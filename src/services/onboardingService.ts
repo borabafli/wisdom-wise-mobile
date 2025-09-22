@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ONBOARDING_KEY = 'wisdomwise_onboarding_completed';
 
 // Development flag - set to true to always show onboarding for testing
-const ALWAYS_SHOW_ONBOARDING_FOR_DEVELOPMENT = false;
+const ALWAYS_SHOW_ONBOARDING_FOR_DEVELOPMENT = true;
 
 export class OnboardingService {
   /**

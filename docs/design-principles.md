@@ -1,173 +1,304 @@
-# Design Principles
+# Mental Wellness App Design Guide
 
-## Core Philosophy
-**"Calm Confidence Through Simplicity"**
+## Design Philosophy
+**"Gentle Growth Through Mindful Moments"**
 
-The design creates a safe, trustworthy space that feels like a gentle companion rather than a clinical tool. Every element should contribute to a sense of peace, progress, and personal growth.
+A therapeutic digital companion that creates a safe, nurturing space for emotional exploration and personal growth. Every design decision prioritizes psychological safety, accessibility, and the user's sense of agency in their wellness journey.
 
-## Color Palette
+## Brand Character
 
-### Primary Colors
-- **Teal/Turquoise** (#4A9B8E to #6BB3A5): Primary brand color used for headers, buttons, and accents
-- **Soft Mint** (#E8F4F1): Light teal backgrounds for cards and sections
-- **Ocean Gradient**: Subtle teal-to-mint gradients for depth
+### Visual Personality
+- **Serene & Calming**: Like a peaceful meditation garden
+- **Approachable & Friendly**: Never clinical or intimidating  
+- **Supportive & Encouraging**: A gentle companion, not an authority
+- **Organic & Natural**: Flowing, soft forms inspired by nature
+- **Trustworthy & Safe**: Professional yet warm
 
-### Supporting Colors
-- **Warm Neutrals**: 
-  - Soft grays (#F5F5F5 to #FAFAFA) for backgrounds
-  - Medium gray (#6B7280) for secondary text
-  - Dark gray (#2D3436) for primary text
+## Color System
+
+### Primary Palette
+- **Hero Teal** (#4A9B8E): Primary brand color for CTAs and key elements
+- **Soft Sage** (#6BB3A5): Secondary teal for interactive elements
+- **Mint Whisper** (#E8F4F1): Light backgrounds and cards
+- **Ocean Mist** (#D4E8E4): Subtle accents and dividers
+
+### Background Colors
+- **Cloud White** (#F8FAFB): Primary background
+- **Morning Sky** (#E8F2F4): Secondary sections
+- **Soft Pearl** (#F5F5F5): Neutral card backgrounds
 
 ### Accent Colors
-- **Coral/Salmon** (#FFB5A0): Used sparingly in illustrations for warmth
-- **Sky Blue** (#87CEEB): Complementary color in gradients and illustrations
-- **Soft Yellow** (#FFF4E6): Occasional warm highlights in imagery
+- **Warm Peach** (#FFD4C4): Mascot's shell and warm touches
+- **Sunset Coral** (#FFB5A0): Illustrations and energy points
+- **Sky Blue** (#87CEEB): Complementary highlights
+- **Gentle Yellow** (#FFF4E6): Optimistic accents in illustrations
 
-### Emotional Indicators
-- Mood tracking uses gentle variations of teal, from lighter (positive) to deeper (contemplative)
+### Text Colors
+- **Deep Charcoal** (#2D3436): Primary text
+- **Soft Gray** (#6B7280): Secondary text and labels
+- **Muted Teal** (#5A8A7F): Links and interactive text
+- **Light Gray** (#9CA3AF): Disabled states and hints
+
+### Semantic Colors
+- **Success**: #4ADE80 (Soft green)
+- **Warning**: #FBBF24 (Gentle amber)
+- **Error**: #F87171 (Soft red, used sparingly)
+- **Info**: #60A5FA (Sky blue)
 
 ## Typography
 
-### Font Families
-- **Ubuntu**: Primary font for UI elements, headers, and body text
-  - Light (300): Subtle labels and secondary information
-  - Regular (400): Body text and descriptions
-  - Medium (500): Buttons and emphasis
-  - Bold (700): Headers and titles
+### Type Scale & Usage
 
-- **Bubblegum Sans**: Playful accent font
-  - Used sparingly for friendly messaging or onboarding
-  - Creates approachable, non-intimidating tone
+#### Display
+- **Extra Large**: 32-36px, Ubuntu Bold
+  - Welcome screens and major milestones
+- **Large**: 28-30px, Ubuntu Bold  
+  - Section headers like "How are you feeling?"
 
-### Typography Scale
-- **Headers**: 24-28px, Ubuntu Bold
-- **Subheaders**: 18-20px, Ubuntu Medium
-- **Body**: 14-16px, Ubuntu Regular
-- **Small Text**: 12-13px, Ubuntu Light
-- **Button Text**: 14-16px, Ubuntu Medium, uppercase or sentence case
+#### Headlines
+- **H1**: 24px, Ubuntu Bold
+  - Primary page titles
+- **H2**: 20px, Ubuntu Medium
+  - Section headers like "YOUR NEXT STEPS"
+- **H3**: 18px, Ubuntu Medium
+  - Card titles and subsections
 
-## Visual Language
+#### Body
+- **Large Body**: 16px, Ubuntu Regular
+  - Primary content and descriptions
+- **Regular Body**: 14px, Ubuntu Regular
+  - Standard interface text
+- **Small Body**: 13px, Ubuntu Light
+  - Supporting text and timestamps
 
-### Imagery
-- Abstract, calming nature scenes
-- Soft gradients with organic shapes
-- Watercolor-like textures
-- Sunrise/sunset motifs suggesting hope and renewal
-- Minimalist landscapes with soothing color transitions
+#### Interface
+- **Button**: 14-16px, Ubuntu Medium
+  - All caps or sentence case depending on hierarchy
+- **Caption**: 12px, Ubuntu Light
+  - Labels, hints, and metadata
+- **Micro**: 11px, Ubuntu Light
+  - Badges and indicators
 
-### Shape Language
-- **Rounded Corners**: Everything is soft (8-16px radius)
-- **Organic Forms**: Flowing lines in graphics and backgrounds
-- **No Sharp Edges**: Creating psychological safety through form
-Visual Style Pattern:
-"Organic Watercolor Minimalism in Monochromatic Teal"
-Key Style Elements:
+### Font Characteristics
+- **Line Height**: 1.5x for body text, 1.2x for headers
+- **Letter Spacing**: Slightly increased (0.02em) for readability
+- **Font Weight Range**: 300 (Light) to 700 (Bold)
 
-Color Palette: Gradient teal spectrum ranging from pale aqua to deep ocean blue-green
-Technique: Soft watercolor with visible texture, bleeding edges, and organic flow
-Composition: Isolated elements on white/neutral backgrounds with generous negative space
-Forms: Nature-inspired silhouettes (profile, leaves, feather, tree) rendered as simple, recognizable shapes
+## Visual Elements
 
-Texture & Treatment:
+### Mascot Design
+- **Character**: Friendly turtle with meditation pose
+- **Color Palette**: Soft sage green with peach accents
+- **Expression**: Peaceful, content, approachable
+- **Usage**: Onboarding, empty states, achievements
+- **Personality**: Wise, patient, encouraging companion
 
-Mottled, granulated watercolor texture with natural pooling and variation
-Soft, diffused edges that suggest gentle dissolution into the background
-Subtle paint splatters and dots that add spontaneity and movement
-Translucent layering creating depth within the monochrome palette
+### Illustration Style
+**"Organic Watercolor Minimalism"**
 
-Emotional Qualities & Feelings:
+Key characteristics:
+- **Technique**: Soft watercolor with visible texture and organic flow
+- **Color Application**: Monochromatic teal gradients with occasional warm accents
+- **Composition**: Generous white space with floating elements
+- **Forms**: Nature-inspired silhouettes and abstract organic shapes
+- **Texture**: Mottled paint effects with natural pooling
+- **Edges**: Soft, bleeding boundaries that dissolve gently
+- **Mood**: Contemplative, serene, naturally elegant
 
-Serenity: The cool teal tones evoke calmness, like looking at shallow tropical water
-Contemplation: The minimalist approach and negative space invite quiet reflection
-Natural Harmony: Organic shapes suggest growth, life, and connection to nature
-Gentle Strength: Soft execution with confident, singular forms
-Meditative Simplicity: Uncomplicated designs that feel cleansing and peaceful
+### Background Patterns
+- **Floating Clouds**: Soft, amorphous shapes in pale teal
+- **Gradient Washes**: Subtle teal-to-mint transitions
+- **Organic Waves**: Flowing lines suggesting water or air
+- **Negative Space**: Always 40-60% empty space for breathing room
 
-Style Description for Generation:
-"Create minimalist watercolor illustrations using only teal/turquoise tones ranging from light aqua to deep teal. Feature single, nature-inspired silhouettes (botanical elements, organic shapes, or simple profiles) with soft, bleeding watercolor edges. Include visible texture with paint pooling, granulation, and occasional small splatters. Place elements on clean white backgrounds with ample negative space. The overall feeling should be serene, contemplative, and naturally elegant - like meditation through color and form."
-This style would work beautifully for wellness brands, spa aesthetics, mindfulness apps, or any design requiring a sense of calm sophistication.
-## Component Design
+### Icons
+- **Style**: Outline with 2px stroke weight
+- **Corner Radius**: Rounded terminals
+- **Size Grid**: 24x24px base, scalable to 16px and 32px
+- **Active State**: Filled version with teal color
+- **Inactive**: Light gray outline (#9CA3AF)
+
+## Component Specifications
 
 ### Cards & Containers
-- White or very light teal backgrounds
-- Subtle shadows (0 2px 4px rgba(0,0,0,0.05))
-- Generous padding (16-24px)
-- Clear visual hierarchy through spacing
+
+#### Primary Card
+- **Background**: White (#FFFFFF)
+- **Border Radius**: 16px
+- **Padding**: 20px (mobile), 24px (tablet)
+- **Shadow**: 0 2px 8px rgba(74, 155, 142, 0.08)
+- **Border**: Optional 1px solid #E8F4F1
+
+#### Floating Card (Featured)
+- **Background**: Linear gradient (#E8F4F1 to #FFFFFF)
+- **Border Radius**: 20px
+- **Padding**: 24px all sides
+- **Shadow**: 0 4px 16px rgba(74, 155, 142, 0.12)
+- **Illustration**: Integrated watercolor elements
 
 ### Buttons
-- **Primary**: Teal background, white text, fully rounded
-- **Secondary**: Teal outline or light teal background
-- **Pills/Tags**: Fully rounded, soft teal with darker text
-- Minimum height: 44px for accessibility
+
+#### Primary Button
+- **Background**: #4A9B8E
+- **Text**: White, 14px Ubuntu Medium
+- **Border Radius**: 24px (pill-shaped)
+- **Height**: 48px
+- **Padding**: 16px 32px
+- **Shadow**: 0 2px 8px rgba(74, 155, 142, 0.2)
+- **Hover**: Darken 10%, scale(1.02)
+- **Active**: Scale(0.98)
+
+#### Secondary Button
+- **Background**: #E8F4F1
+- **Text**: #4A9B8E, 14px Ubuntu Medium
+- **Border**: 2px solid #4A9B8E
+- **Border Radius**: 24px
+- **Height**: 44px
+
+#### Text Button
+- **Text**: #5A8A7F, 14px Ubuntu Regular
+- **Underline on hover**
+- **No background**
+
+### Input Fields
+
+#### Text Input
+- **Height**: 48px minimum
+- **Border**: 1px solid #D4E8E4
+- **Border Radius**: 12px
+- **Padding**: 12px 16px
+- **Focus Border**: 2px solid #4A9B8E
+- **Placeholder**: #9CA3AF, Ubuntu Light
+
+#### Voice Input Field
+- **Microphone Icon**: Right-aligned, teal when active
+- **Recording Indicator**: Pulsing teal circle
+- **Waveform**: Optional visualization in teal gradient
 
 ### Navigation
-- Bottom tab bar with centered action button
-- Icons in outline style, filled when active
-- Teal accent for active states
 
-### Forms & Inputs
-- Large, friendly input fields
-- Rounded corners
-- Light gray borders that turn teal on focus
-- Voice input options for accessibility
+#### Bottom Tab Bar
+- **Height**: 64px
+- **Background**: White with top border (#E8F4F1)
+- **Icons**: 24px, centered with 8px label gap
+- **Active Color**: #4A9B8E (filled icon + text)
+- **Inactive**: #9CA3AF (outline icon + text)
+- **Selection Indicator**: 4px teal bar above icon
+
+### Progress Indicators
+- **Linear**: 4px height, rounded ends, teal fill
+- **Circular**: 3px stroke, teal progress on light gray track
+- **Step Indicators**: Connected dots, filled when complete
+
+## Layout & Spacing
+
+### Grid System
+- **Mobile**: 16px margins, 8px gutters
+- **Tablet**: 24px margins, 16px gutters  
+- **Desktop**: 32px margins, 24px gutters
+- **Max Content Width**: 1200px centered
+
+### Spacing Scale
+- **Base Unit**: 8px
+- **Micro**: 4px (tight grouping)
+- **Small**: 8px (related elements)
+- **Medium**: 16px (standard gap)
+- **Large**: 24px (section breaks)
+- **XL**: 32px (major sections)
+- **XXL**: 48px (page sections)
+
+### Component Spacing
+- **Card Internal**: 16-20px padding
+- **Between Cards**: 16px gap
+- **Section Headers**: 24px margin bottom
+- **Paragraph Spacing**: 12px
+- **List Items**: 12px gap
 
 ## Motion & Interaction
 
-### Transitions
-- Gentle, smooth animations (300-400ms)
-- Ease-in-out timing functions
-- Subtle scale effects on press (0.98 scale)
+### Animation Principles
+- **Duration**: 250-400ms for most transitions
+- **Easing**: ease-in-out for natural movement
+- **Stagger**: 50ms delay between list items
+- **Spring**: Subtle bounce for delightful moments
 
-### Feedback
-- Soft haptic feedback on interactions
-- Progress indicated through gentle animations
-- Success states with checkmarks and positive reinforcement
+### Transition Types
+- **Fade In**: Opacity 0 to 1, 300ms
+- **Slide Up**: TranslateY(20px) to 0, 350ms
+- **Scale**: 0.95 to 1 for cards appearing
+- **Morphing**: Smooth shape transitions for buttons
 
-## Overall Feeling
+### Micro-interactions
+- **Button Press**: Scale(0.98) with 150ms duration
+- **Card Hover**: Subtle shadow increase, 250ms
+- **Tab Switch**: Slide animation, 300ms
+- **Loading States**: Pulsing teal skeleton screens
 
-### Emotional Tone
-- **Safe & Trustworthy**: Privacy-first messaging, secure iconography
-- **Supportive, Not Directive**: "How are you feeling?" vs. commands
-- **Progress-Oriented**: Tracking and insights without judgment
-- **Approachable**: Friendly mascot, conversational language
-- **Calm & Centered**: Breathing exercises, mindfulness focus
+### Feedback Patterns
+- **Success**: Checkmark animation with gentle bounce
+- **Input Focus**: Border color transition + slight scale
+- **Progress**: Smooth fill animations
+- **Scroll**: Parallax effects on illustrations (subtle)
 
-### Design Values
-1. **Accessibility First**: High contrast, large touch targets, clear labels
-2. **Non-Judgmental**: Neutral language, no negative reinforcement
-3. **Personal Agency**: User controls their journey and data
-4. **Gentle Guidance**: Suggestions, not prescriptions
-5. **Consistent Comfort**: Familiar patterns throughout
+## Accessibility Standards
 
-## Spacing System
-- Base unit: 8px
-- Micro: 4px
-- Small: 8px
-- Medium: 16px
-- Large: 24px
-- Extra Large: 32px
-- Section spacing: 40-48px
 
-## Information Architecture
-- **Progressive Disclosure**: Start simple, reveal complexity as needed
-- **Clear Categories**: STRESS RELIEF, EMOTIONAL BALANCE, MOOD
-- **Time Estimates**: Always visible, respecting user's time
-- **Quick Actions**: Immediate access to core features
+### Interactive Accessibility
+- **Keyboard Navigation**: Full support, visible focus states
+- **Screen Readers**: Semantic HTML, ARIA labels
+- **Motion Preferences**: Respect reduced-motion settings
+- **Color Independence**: Never rely solely on color
 
-## Voice & Tone
-- Warm and encouraging
-- Professional yet friendly
-- Never clinical or cold
-- Emphasis on "your" journey (personalization)
-- Celebration of small wins
+### Content Accessibility
+- **Clear Labels**: Descriptive, action-oriented
+- **Error Messages**: Helpful, specific guidance
+- **Alternative Text**: Meaningful descriptions for images
+- **Consistent Patterns**: Predictable interactions
 
-## Accessibility Guidelines
-- WCAG AA compliance minimum
-- Touch targets: 44x44px minimum
-- Color contrast: 4.5:1 for normal text, 3:1 for large text
-- Clear focus states
-- Screen reader optimized
-- Option for larger text sizes
+## Content Guidelines
 
-## Platform Considerations
-- Responsive layouts for different screen sizes
+### Voice & Tone
+
+#### Characteristics
+- **Warm & Encouraging**: "You're doing great"
+- **Non-judgmental**: "There's no wrong answer"
+- **Empowering**: "You have the tools within you"
+- **Gentle**: "Take your time"
+- **Professional yet Friendly**: Knowledgeable but approachable
+
+#### Language Patterns
+- Use "you" and "your" for personalization
+- Prefer questions over commands
+- Offer choices, not prescriptions
+- Celebrate small victories
+- Acknowledge feelings without judgment
+
+### Writing Principles
+- **Clarity First**: Simple, clear language
+- **Brevity**: Concise without being terse
+- **Positivity**: Frame things constructively
+- **Inclusivity**: Gender-neutral, culturally sensitive
+- **Empathy**: Acknowledge the user's experience
+
+
+## Platform-Specific Considerations
+
+### iOS
+- **Safe Areas**: Respect notch and home indicator
+- **Haptics**: Subtle feedback on interactions
+- **Dark Mode**: Full theme support with adjusted colors
+- **Dynamic Type**: Support system font sizing
+
+### Android
+- **Material Design**: Respect platform conventions where appropriate
+- **Back Navigation**: Predictable behavior
+- **Edge-to-edge**: Utilize full screen real estate
+- **Adaptive Icons**: Proper icon masks
+
+### Responsive Web
+- **Breakpoints**: 
+  - Mobile: 320-768px
+  - Tablet: 768-1024px
+  - Desktop: 1024px+
+- **Touch-friendly**: Even on desktop
+- **Progressive Enhancement**: Core features work everywhere

@@ -1,5 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../tokens/colors';
+import { typography } from '../../tokens/typography';
+import { spacing } from '../../tokens/spacing';
 
 const { width, height } = Dimensions.get('window');
 
@@ -10,294 +12,142 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   safeArea: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.medium, // 16px
   },
 
-  // Progress Indicator Styles
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 16,
-    marginBottom: 20,
-  },
-
-  progressBar: {
-    flex: 1,
-    height: 4,
-    backgroundColor: 'rgba(20, 184, 166, 0.2)',
-    borderRadius: 2,
-    marginRight: 12,
-  },
-
-  progressFill: {
-    width: '10%', // 1/10
-    height: '100%',
-    backgroundColor: colors.teal[500],
-    borderRadius: 2,
-  },
-
-  progressText: {
-    fontSize: 14,
-    fontFamily: 'Ubuntu-Medium',
-    color: colors.teal[600],
-  },
-
-  // Main Content Styles
+  // Main Content Layout
   contentContainer: {
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: spacing.large, // 24px
   },
 
-  headerContainer: {
+  // Anu Image Container - Takes most of the screen
+  imageContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: height * 0.08,
-    paddingHorizontal: 20,
+    width: '100%',
+    maxHeight: height * 0.6,
+    marginTop: spacing.xl, // 32px
   },
 
-  headline: {
-    fontSize: 32,
-    fontFamily: 'BubblegumSans-Regular',
-    color: colors.teal[800],
+  antuImage: {
+    width: Math.min(width * 0.8, 350),
+    height: Math.min(width * 0.8, 350),
+    maxWidth: 350,
+    maxHeight: 350,
+  },
+
+  // Text Content Container
+  textContainer: {
+    alignItems: 'center',
+    paddingHorizontal: spacing.large, // 24px
+    marginBottom: spacing.medium, // 16px - reduced from 32px to bring text closer
+  },
+
+  // Initial greeting text
+  greetingContainer: {
+    marginBottom: spacing.small, // 8px - reduced from 16px to bring text closer
+  },
+
+  greetingText: {
+    fontSize: 32, // Display Extra Large
+    fontFamily: typography.fontFamily.ubuntuBold,
+    color: colors.teal[800], // Hero Teal from design principles
     textAlign: 'center',
-    marginBottom: 16,
     letterSpacing: -0.5,
+    lineHeight: 38,
   },
 
-  subtext: {
-    fontSize: 17,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[600],
+  // Animated subtitle
+  subtitleContainer: {
+    paddingHorizontal: spacing.small, // 8px
+  },
+
+  subtitleText: {
+    fontSize: 20, // H2 size
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    color: colors.teal[600], // Soft Sage from design principles
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 28,
     opacity: 0.9,
   },
 
-  // Character Animation Styles
-  characterContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    position: 'relative',
-    minHeight: 280,
-  },
-
-  turtleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    backgroundColor: 'rgba(94, 234, 212, 0.1)',
-    shadowColor: colors.teal[500],
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
-  },
-
-  turtleImage: {
-    width: 200,
-    height: 200,
-  },
-
-  sparkleContainer: {
-    position: 'absolute',
-    top: 20,
-    right: 40,
-    zIndex: 1,
-  },
-
-  sparkleContainer2: {
-    position: 'absolute',
-    bottom: 30,
-    left: 30,
-    zIndex: 1,
-  },
-
-  // Action Button Styles
+  // Action Button Container
   actionContainer: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingHorizontal: spacing.large, // 24px
+    paddingBottom: spacing.large, // 24px
   },
 
+  // Primary Button - Following design principles
   primaryButton: {
-    width: '100%',
-    height: 56,
-    borderRadius: 28,
-    marginBottom: 16,
+    paddingHorizontal: 32, // Standard button padding
+    minWidth: 200, // Minimum width for button
+    height: 48, // Design principles height
+    backgroundColor: colors.teal[500], // Hero Teal
+    borderRadius: 24, // Pill-shaped from design principles
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: colors.teal[500],
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 6,
-  },
-
-  buttonGradient: {
-    flex: 1,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   primaryButtonText: {
-    fontSize: 18,
-    fontFamily: 'Ubuntu-Bold',
+    fontSize: 16, // Button text size from design principles
+    fontFamily: typography.fontFamily.ubuntuMedium,
     color: colors.white,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
 
-  secondaryButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-
-  secondaryButtonText: {
-    fontSize: 16,
-    fontFamily: 'Ubuntu-Medium',
-    color: colors.teal[600],
-    textDecorationLine: 'underline',
-    textDecorationColor: colors.teal[400],
-  },
-
-  // Modal Styles
-  modalContainer: {
-    flex: 1,
-  },
-
-  modalContent: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(94, 234, 212, 0.15)',
-    marginBottom: 24,
-  },
-
-  modalTitleContainer: {
-    flex: 1,
-  },
-
-  modalTitle: {
-    fontSize: 24,
-    fontFamily: 'Ubuntu-Bold',
-    color: colors.teal[800],
-  },
-
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(94, 234, 212, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  modalScroll: {
-    flex: 1,
-  },
-
-  modalBodyContainer: {
-    paddingBottom: 40,
-  },
-  
-  modalAnuContainer: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  
-  modalAnuImage: {
-    width: 120,
-    height: 120,
-  },
-
-  modalDescription: {
-    fontSize: 16,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[700],
-    lineHeight: 24,
-    marginBottom: 28,
-  },
-
-  featureList: {
-    marginBottom: 28,
-  },
-
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 20,
-    paddingRight: 16,
-  },
-
-  checkmark: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.teal[500],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-    marginTop: 1,
-  },
-
-  checkmarkText: {
-    fontSize: 14,
-    fontFamily: 'Ubuntu-Bold',
-    color: colors.white,
-  },
-
-  featureText: {
-    flex: 1,
-    fontSize: 15,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[700],
-    lineHeight: 22,
-  },
-
-  modalFooter: {
-    fontSize: 15,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[600],
-    lineHeight: 22,
-    textAlign: 'center',
-    paddingHorizontal: 16,
-    fontStyle: 'italic',
-  },
-
-  // Responsive adjustments
+  // Responsive adjustments for smaller screens
   '@media (max-height: 700)': {
-    headerContainer: {
-      marginTop: height * 0.04,
+    imageContainer: {
+      maxHeight: height * 0.5,
+      marginTop: spacing.medium,
     },
     
-    characterContainer: {
-      minHeight: 200,
+    antuImage: {
+      width: Math.min(width * 0.7, 280),
+      height: Math.min(width * 0.7, 280),
+      maxWidth: 280,
+      maxHeight: 280,
     },
     
-    turtleContainer: {
-      width: 180,
-      height: 180,
+    greetingText: {
+      fontSize: 28,
+      lineHeight: 34,
     },
     
-    turtleImage: {
-      width: 150,
-      height: 150,
+    subtitleText: {
+      fontSize: 18,
+      lineHeight: 24,
+    },
+  },
+
+  // Very small screens
+  '@media (max-height: 600)': {
+    textContainer: {
+      marginBottom: spacing.large,
+    },
+    
+    greetingText: {
+      fontSize: 24,
+      lineHeight: 30,
+    },
+    
+    subtitleText: {
+      fontSize: 16,
+      lineHeight: 22,
     },
   },
 });

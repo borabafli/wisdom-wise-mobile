@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import OnboardingWelcomeScreen from '../screens/onboarding/OnboardingWelcomeScreen';
-import OnboardingPrivacyScreen from '../screens/onboarding/OnboardingPrivacyScreen';
-import OnboardingPersonalizationScreen from '../screens/onboarding/OnboardingPersonalizationScreen';
 import OnboardingValuePropScreen from '../screens/onboarding/OnboardingValuePropScreen';
-import OnboardingMotivationScreen from '../screens/onboarding/OnboardingMotivationScreen';
-import OnboardingCurrentStateScreen from '../screens/onboarding/OnboardingCurrentStateScreen';
-import OnboardingBaselineScreen from '../screens/onboarding/OnboardingBaselineScreen';
+import PersonalValuesScreen from '../screens/onboarding/PersonalValuesScreen';
+import FocusAreasScreen from '../screens/onboarding/FocusAreasScreen';
 import { OnboardingService } from '../services/onboardingService';
 import { storageService } from '../services/storageService';
-import { valuesService } from '../services/valuesService';
 
 interface OnboardingNavigatorProps {
   onComplete: () => void;
@@ -16,157 +12,43 @@ interface OnboardingNavigatorProps {
 
 export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [userProfile, setUserProfile] = useState<{ name?: string }>({});
+  const [userProfile, setUserProfile] = useState<{ name?: string; values?: string[]; focusAreas?: string[] }>({});
 
   const handleContinueFromWelcome = () => {
-    setCurrentStep(2); // Navigate to privacy screen
-  };
-
-  const handleContinueFromPrivacy = () => {
-    setCurrentStep(3); // Navigate to personalization screen
-  };
-
-  const handleContinueFromPersonalization = async (name: string) => {
-    // Save user's name to local state
-    setUserProfile({ name });
-    
-    // Use existing StorageService to save name (consistent with profile settings)
-    if (name.trim()) {
-      try {
-        await storageService.updateUserProfile({
-          firstName: name.trim(),
-          lastName: '', // Default empty last name for onboarding
-        });
-      } catch (error) {
-        console.error('Error saving name from onboarding:', error);
-      }
-    }
-    
-    // Navigate to value proposition screen
-    setCurrentStep(4);
+    setCurrentStep(2); // Go to value proposition screen
   };
 
   const handleContinueFromValueProp = () => {
-    // Navigate to current state & goals screen
-    setCurrentStep(5);
+    setCurrentStep(3); // Go to personal values screen
   };
 
-  const handleContinueFromCurrentState = async (challenges: string[], goals: string[], values: string[]) => {
-    // Save current state, goals, and values data
-    console.log('User challenges:', challenges);
-    console.log('User goals:', goals);
-    console.log('User values:', values);
-    
+  const handleContinueFromPersonalValues = async (selectedValues: string[]) => {
+    // Save selected values and move to focus areas
+    setUserProfile(prev => ({ ...prev, values: selectedValues }));
+    setCurrentStep(4); // Go to focus areas screen
+  };
+
+  const handleContinueFromFocusAreas = async (selectedAreas: string[]) => {
+    // Save selected focus areas
     try {
-      // Save to user profile
       await storageService.updateUserProfile({
-        challenges: challenges,
-        goals: goals,
-        onboardingValues: values,
-        challengesTimestamp: new Date().toISOString(),
+        onboardingValues: userProfile.values || [],
+        onboardingFocusAreas: selectedAreas,
+        valuesTimestamp: new Date().toISOString(),
+        focusAreasTimestamp: new Date().toISOString(),
       });
-
-      // Process values and save to values service for insights
-      if (values.length > 0) {
-        await processOnboardingValues(values);
-      }
+      console.log('Saved personal values:', userProfile.values);
+      console.log('Saved focus areas:', selectedAreas);
     } catch (error) {
-      console.error('Error saving current state data:', error);
+      console.error('Error saving onboarding data:', error);
     }
-    
-    // Navigate to baseline check-in screen
-    setCurrentStep(6);
-  };
 
-  const processOnboardingValues = async (selectedValues: string[]) => {
-    try {
-      // Create UserValue entries from onboarding selections
-      for (const valueName of selectedValues) {
-        // Generate a basic description for onboarding values
-        const description = getValueDescription(valueName);
-        
-        await valuesService.saveValue({
-          name: valueName,
-          userDescription: description,
-          importance: 4, // Default importance for onboarding values
-          sourceSessionId: 'onboarding',
-          tags: getValueTags(valueName),
-        });
-      }
-      
-      console.log(`✅ Processed ${selectedValues.length} onboarding values into insights system`);
-    } catch (error) {
-      console.error('Error processing onboarding values:', error);
-    }
-  };
-
-  const getValueDescription = (valueName: string): string => {
-    const descriptions: Record<string, string> = {
-      'Family & Connection': 'Being close to my family and friends gives me strength and joy.',
-      'Personal Growth': 'I value learning, improving myself, and becoming a better person.',
-      'Health & Wellness': 'Taking care of my physical and mental health is important to me.',
-      'Creativity': 'Expressing myself creatively and bringing new ideas to life matters to me.',
-      'Freedom & Independence': 'Having the ability to make my own choices and live independently.',
-      'Achievement & Success': 'Working toward goals and achieving meaningful accomplishments.',
-      'Helping Others': 'Making a positive difference in other people\'s lives brings me purpose.',
-      'Adventure & Fun': 'Exploring new experiences and enjoying life\'s adventures.',
-    };
-    
-    return descriptions[valueName] || `${valueName} is important to me and guides my decisions.`;
-  };
-
-  const getValueTags = (valueName: string): string[] => {
-    const tags: Record<string, string[]> = {
-      'Family & Connection': ['family', 'relationships', 'love', 'support'],
-      'Personal Growth': ['learning', 'development', 'improvement', 'growth'],
-      'Health & Wellness': ['health', 'fitness', 'wellness', 'self-care'],
-      'Creativity': ['art', 'creativity', 'expression', 'innovation'],
-      'Freedom & Independence': ['freedom', 'independence', 'autonomy', 'choice'],
-      'Achievement & Success': ['achievement', 'success', 'goals', 'accomplishment'],
-      'Helping Others': ['service', 'kindness', 'compassion', 'helping'],
-      'Adventure & Fun': ['adventure', 'fun', 'exploration', 'excitement'],
-    };
-    
-    return tags[valueName] || [valueName.toLowerCase()];
-  };
-
-  const handleContinueFromBaseline = async (moodRating: number) => {
-    // Baseline mood is saved in the component
-    console.log('User baseline mood:', moodRating);
-    
-    // Navigate to motivation discovery screen (final step)
-    setCurrentStep(7);
-  };
-
-  const handleContinueFromMotivation = async (motivation: string) => {
-    // Save motivation data is already handled in the component
-    console.log('User motivation:', motivation);
-    
-    // Complete onboarding and navigate to main app
+    // Complete onboarding
     await OnboardingService.completeOnboarding();
     onComplete();
   };
 
-  const handleSkipMotivation = async () => {
-    // Skip motivation and complete onboarding
-    await OnboardingService.completeOnboarding();
-    onComplete();
-  };
-
-  const handleSkipCurrentState = async () => {
-    // Skip current state and go to baseline screen
-    setCurrentStep(6);
-  };
-
-  const handleSkipBaseline = async () => {
-    // Skip baseline and go to motivation screen
-    setCurrentStep(7);
-  };
-
-  const handleSkipPersonalization = async () => {
-    // Skip personalization and go to value proposition screen
-    setCurrentStep(4);
-  };
+  // Removed unused handlers for disabled onboarding steps
 
 
   // Render current onboarding screen
@@ -176,47 +58,22 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     
     case 2:
       return (
-        <OnboardingPrivacyScreen 
-          onContinue={handleContinueFromPrivacy}
-        />
-      );
-    
-    case 3:
-      return (
-        <OnboardingPersonalizationScreen 
-          onContinue={handleContinueFromPersonalization}
-          onSkip={handleSkipPersonalization}
-        />
-      );
-    
-    case 4:
-      return (
         <OnboardingValuePropScreen 
           onContinue={handleContinueFromValueProp}
         />
       );
-    
-    case 5:
+
+    case 3:
       return (
-        <OnboardingCurrentStateScreen 
-          onContinue={handleContinueFromCurrentState}
-          onSkip={handleSkipCurrentState}
+        <PersonalValuesScreen 
+          onContinue={handleContinueFromPersonalValues}
         />
       );
-    
-    case 6:
+
+    case 4:
       return (
-        <OnboardingBaselineScreen 
-          onContinue={handleContinueFromBaseline}
-          onSkip={handleSkipBaseline}
-        />
-      );
-    
-    case 7:
-      return (
-        <OnboardingMotivationScreen 
-          onContinue={handleContinueFromMotivation}
-          onSkip={handleSkipMotivation}
+        <FocusAreasScreen 
+          onContinue={handleContinueFromFocusAreas}
         />
       );
     

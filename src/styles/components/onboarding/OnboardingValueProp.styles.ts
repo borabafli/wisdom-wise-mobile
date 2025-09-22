@@ -1,5 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../tokens/colors';
+import { typography } from '../../tokens/typography';
+import { spacing } from '../../tokens/spacing';
 
 const { width, height } = Dimensions.get('window');
 
@@ -10,160 +12,112 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   safeArea: {
     flex: 1,
-    paddingHorizontal: 24,
   },
 
-  // Progress Indicator Styles
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 16,
-    marginBottom: 20,
-  },
-
-  progressBar: {
-    flex: 1,
-    height: 4,
-    backgroundColor: 'rgba(20, 184, 166, 0.2)',
-    borderRadius: 2,
-    marginRight: 12,
-  },
-
-  progressFill: {
-    width: '57%', // 4/7 pages
-    height: '100%',
-    backgroundColor: colors.teal[500],
-    borderRadius: 2,
-  },
-
-  progressText: {
-    fontSize: 14,
-    fontFamily: 'Ubuntu-Medium',
-    color: '#5BA3B8',
-  },
-
-  // Main Content Styles
+  // Main Content Layout
   contentContainer: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingVertical: 20,
   },
 
-  headerContainer: {
-    alignItems: 'center',
-    marginTop: height * 0.04,
-    paddingHorizontal: 20,
+  // Swipable Container - Only for text
+  swipeContainer: {
+    height: height * 0.25, // Reduced height for text area
+    marginTop: spacing[16], // 16px - closer to top
   },
 
-  headline: {
-    fontSize: 32,
-    fontFamily: 'BubblegumSans-Regular',
-    color: colors.teal[800],
-    textAlign: 'center',
-    letterSpacing: -0.5,
-    lineHeight: 40,
-    marginBottom: 16,
-  },
-
-  // Cards Container Styles
-  cardsScrollView: {
-    flex: 1,
-    marginVertical: 16,
-  } as any,
-
-  cardsContent: {
-    paddingBottom: 20,
-  },
-
-  cardsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-  } as any,
-
-  cardWrapper: {
-    width: (width - 48 - 16) / 2, // Account for padding and gap
-    marginBottom: 20,
-  },
-
-  // Card Styles (Following organic watercolor minimalism)
-  card: {
-    height: 200,
-    borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: colors.teal[500],
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 6,
-  },
-
-  cardInner: {
-    flex: 1,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderWidth: 1,
-    borderColor: 'rgba(20, 184, 166, 0.08)',
-    backdropFilter: 'blur(10px)',
-  },
-
-  cardContent: {
-    flex: 1,
-    padding: 20,
+  // Page Container - Only contains text
+  pageContainer: {
+    width: width,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: spacing[20], // 20px - reduced padding from edges
+    height: '100%',
   },
 
-  // Text Content Styles
+  // Text Content Container
   textContent: {
     alignItems: 'center',
     justifyContent: 'center',
+    flex: 1,
   },
 
-  iconImage: {
-    width: 56,
-    height: 56,
-    marginBottom: 12,
-    opacity: 0.9,
-  },
-
-  cardTitle: {
-    fontSize: 16,
-    fontFamily: 'BubblegumSans-Regular',
+  pageTitle: {
+    fontSize: 28, // Display Large
+    fontFamily: typography.fontFamily.ubuntuBold,
     color: colors.teal[800],
     textAlign: 'center',
-    marginBottom: 8,
-    lineHeight: 20,
-    letterSpacing: -0.2,
+    lineHeight: 34,
+    letterSpacing: -0.5,
+    marginBottom: spacing[16], // 16px
+    paddingHorizontal: spacing[16], // 16px - reduced padding
   },
 
-  cardDescription: {
-    fontSize: 12,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[600],
+  pageDescription: {
+    fontSize: 16, // Large body
+    fontFamily: typography.fontFamily.ubuntu,
+    color: colors.gray[600],
     textAlign: 'center',
-    lineHeight: 16,
-    opacity: 0.8,
+    lineHeight: 24,
+    opacity: 0.9,
+    paddingHorizontal: spacing[16], // 16px - reduced padding
   },
 
-
-  // Action Button Styles
-  actionContainer: {
-    width: '100%',
+  // Static Anu Image - Never moves
+  staticAnuContainer: {
     alignItems: 'center',
-    paddingBottom: 20,
-    marginTop: 8,
+    justifyContent: 'center',
+    flex: 1,
+    paddingTop: 0, // No top padding
+    paddingBottom: spacing[32], // 32px from button
   },
 
+  staticAnuImage: {
+    width: Math.min(width * 0.85, 400),
+    height: Math.min(width * 0.85, 400),
+    maxWidth: 400,
+    maxHeight: 400,
+  },
+
+  // Page Indicators - Right below text
+  pageIndicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: spacing[16], // 16px from text - increased spacing from text
+    paddingBottom: spacing[32], // 32px from Anu - increased spacing from image
+    gap: spacing[8], // 8px
+  },
+
+  pageIndicator: {
+    width: 12, // Increased from 8 to 12
+    height: 12, // Increased from 8 to 12
+    borderRadius: 6, // Increased from 4 to 6
+    backgroundColor: colors.gray[300],
+    opacity: 0.5,
+  },
+
+  activePageIndicator: {
+    backgroundColor: colors.teal[500],
+    opacity: 1,
+  },
+
+  // Action Button Container
+  actionContainer: {
+    alignItems: 'center',
+    paddingHorizontal: spacing[24], // 24px
+    paddingBottom: spacing[24], // 24px
+  },
+
+  // Primary Button - Following design principles
   primaryButton: {
-    width: '100%',
-    height: 56,
-    borderRadius: 28,
+    paddingHorizontal: 48, // Larger padding for prominence
+    minWidth: 240, // Wider button
+    height: 48, // Design principles height
+    backgroundColor: colors.teal[500], // Hero Teal
+    borderRadius: 24, // Pill-shaped from design principles
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: colors.teal[500],
     shadowOffset: {
       width: 0,
@@ -174,56 +128,58 @@ export const onboardingValuePropStyles = StyleSheet.create({
     elevation: 6,
   },
 
-  buttonGradient: {
-    flex: 1,
-    borderRadius: 28,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-
   primaryButtonText: {
-    fontSize: 18,
-    fontFamily: 'Ubuntu-Bold',
+    fontSize: 16, // Button text size from design principles
+    fontFamily: typography.fontFamily.ubuntuMedium,
     color: colors.white,
-    letterSpacing: 0.3,
-    marginRight: 8,
+    letterSpacing: 0.2,
   },
 
-  // Responsive adjustments
+  // Responsive adjustments for smaller screens
   '@media (max-height: 700)': {
-    headerContainer: {
-      marginTop: height * 0.01,
-      marginBottom: 24,
+    swipeContainer: {
+      height: height * 0.22,
     },
     
-    card: {
-      height: 280,
+    pageTitle: {
+      fontSize: 24,
+      lineHeight: 30,
     },
     
-    headline: {
-      fontSize: 28,
-      lineHeight: 34,
-    },
-
-    cardContent: {
-      padding: 20,
-    },
-
-    iconWrapper: {
-      width: 70,
-      height: 70,
-    },
-
-    cardTitle: {
-      fontSize: 20,
-      marginBottom: 12,
-    },
-
-    cardDescription: {
+    pageDescription: {
       fontSize: 15,
-      lineHeight: 24,
+      lineHeight: 22,
+    },
+    
+    staticAnuImage: {
+      width: Math.min(width * 0.8, 340),
+      height: Math.min(width * 0.8, 340),
+      maxWidth: 340,
+      maxHeight: 340,
+    },
+  },
+
+  // Very small screens
+  '@media (max-height: 600)': {
+    swipeContainer: {
+      height: height * 0.2,
+    },
+    
+    pageTitle: {
+      fontSize: 22,
+      lineHeight: 28,
+    },
+    
+    pageDescription: {
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    
+    staticAnuImage: {
+      width: Math.min(width * 0.75, 300),
+      height: Math.min(width * 0.75, 300),
+      maxWidth: 300,
+      maxHeight: 300,
     },
   },
 });
