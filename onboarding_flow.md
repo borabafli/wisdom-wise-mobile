@@ -28,7 +28,7 @@ Subtext: Practice and grow with a library of guided exercises rooted in proven m
 Why it works: The headline frames the relationship as a "journey." The subtext for each benefit clearly explains the value of that feature, pulling directly from your PRD's strengths (AI Memory, Insights Dashboard, CBT exercises).
 
 Step 3: Personal Values
-Headline: Let's find your compass.
+Headline: Let's personalize your experience with Anu.
 
 Body Copy: To start, let's connect with what truly matters to you. Understanding your core values helps me guide you on a path that feels authentic and meaningful.
 
