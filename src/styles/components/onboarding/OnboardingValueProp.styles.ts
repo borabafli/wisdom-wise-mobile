@@ -17,7 +17,6 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Main Content Layout
   contentContainer: {
     flex: 1,
-    justifyContent: 'space-between',
   },
 
   // Swipable Container - Only for text
@@ -102,11 +101,16 @@ export const onboardingValuePropStyles = StyleSheet.create({
     opacity: 1,
   },
 
-  // Action Button Container
+  // Action Button Container - positioned at bottom
   actionContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     alignItems: 'center',
     paddingHorizontal: spacing[24], // 24px
-    paddingBottom: spacing[24], // 24px
+    paddingBottom: 30, // Match other onboarding pages exactly
+    backgroundColor: 'transparent',
   },
 
   // Primary Button - Following design principles

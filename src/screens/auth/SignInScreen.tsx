@@ -52,7 +52,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
         {/* Header */}
         <View style={styles.headerContainer}>
           <Text style={styles.title}>
-            Welcome Back
+            Welcome!
           </Text>
           <Text style={styles.subtitle}>
             Sign in to continue your mindfulness journey
