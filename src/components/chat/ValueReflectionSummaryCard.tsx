@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Check, X, BookOpen } from 'lucide-react-native';
@@ -26,6 +27,7 @@ export const ValueReflectionSummaryCard: React.FC<ValueReflectionSummaryCardProp
   onSave,
   onCancel
 }) => {
+  const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -50,20 +52,20 @@ export const ValueReflectionSummaryCard: React.FC<ValueReflectionSummaryCardProp
         <View style={styles.header}>
           <View style={styles.titleRow}>
             <BookOpen size={24} color="#4F46E5" />
-            <Text style={styles.title}>Reflection Summary</Text>
+            <Text style={styles.title}>{t('chat.valueReflectionSummary.title')}</Text>
           </View>
-          <Text style={styles.subtitle}>Review your insights on "{valueContext.valueName}"</Text>
+          <Text style={styles.subtitle}>{t('chat.valueReflectionSummary.subtitle', { valueName: valueContext.valueName })}</Text>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.summarySection}>
-            <Text style={styles.sectionTitle}>Summary</Text>
+            <Text style={styles.sectionTitle}>{t('chat.valueReflectionSummary.summary')}</Text>
             <Text style={styles.summaryText}>{summary.summary}</Text>
           </View>
 
           {summary.keyInsights && summary.keyInsights.length > 0 && (
             <View style={styles.insightsSection}>
-              <Text style={styles.sectionTitle}>Key Insights</Text>
+              <Text style={styles.sectionTitle}>{t('chat.valueReflectionSummary.keyInsights')}</Text>
               {summary.keyInsights.map((insight, index) => (
                 <View key={index} style={styles.insightItem}>
                   <View style={styles.insightBullet} />
@@ -81,7 +83,7 @@ export const ValueReflectionSummaryCard: React.FC<ValueReflectionSummaryCardProp
             disabled={isSaving}
           >
             <X size={20} color="#6B7280" />
-            <Text style={styles.cancelButtonText}>Continue Reflection</Text>
+            <Text style={styles.cancelButtonText}>{t('chat.valueReflectionSummary.continueReflection')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -91,7 +93,7 @@ export const ValueReflectionSummaryCard: React.FC<ValueReflectionSummaryCardProp
           >
             <Check size={20} color="white" />
             <Text style={styles.saveButtonText}>
-              {isSaving ? 'Saving...' : 'Save Summary'}
+              {isSaving ? t('common.saving') : t('chat.valueReflectionSummary.saveSummary')}
             </Text>
           </TouchableOpacity>
         </View>

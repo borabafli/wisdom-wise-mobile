@@ -8,7 +8,7 @@ import { memoryService } from '../services/memoryService';
 import { valuesService } from '../services/valuesService';
 import { thinkingPatternsService } from '../services/thinkingPatternsService';
 
-export const useExerciseFlow = (initialExercise?: any) => {
+export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => string) => {
   const [exerciseMode, setExerciseMode] = useState(false);
   const [exerciseStep, setExerciseStep] = useState(0);
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
@@ -38,7 +38,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
   ) => {
     try {
       console.log('Generating and starting dynamic exercise:', currentExercise.type);
-      const flow = getExerciseFlow(currentExercise.type);
+      const flow = getExerciseFlow(currentExercise.type, t || ((key: string) => key));
 
       if (!flow || !flow.steps || flow.steps.length === 0) {
         console.error('Failed to generate exercise flow');

@@ -1,0 +1,562 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "continue": "Devam Et",
+    "skip": "Geç",
+    "back": "Geri",
+    "close": "Kapat",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "confirm": "Onayla",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "yes": "Evet",
+    "no": "Hayır",
+    "ok": "Tamam",
+    "saving": "Kaydediliyor..."
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "today": "Bugün",
+    "journal": "Günlük",
+    "exercises": "Egzersizler",
+    "insights": "Görüşler",
+    "profile": "Profil",
+    "chat": "Sohbet"
+  },
+  "home": {
+    "title": "Ana Sayfa",
+    "subtitle": "Bilinçli alanınız",
+    "startSession": "Seans Başlat",
+    "quickActions": "Hızlı İşlemler",
+    "todaysInsights": "Bugünün Görüşleri",
+    "recentSessions": "Son Seanslar",
+    "welcomeBack": "Tekrar hoş geldiniz",
+    "moodCheck": "Bugün nasıl hissediyorsunuz?",
+    "checkInNow": "Şimdi Check-In Yap",
+    "type": "Yaz",
+    "talk": "Konuş",
+    "yourNextSteps": "Sonraki Adımlarınız",
+    "seeAll": "Hepsini gör",
+    "dailyReflection": "Günlük Yansıtma",
+    "generateTest": "Test Oluştur",
+    "browseExercises": "Egzersizlere\nGöz At",
+    "viewInsights": "Görüşleri\nGörüntüle",
+    "startBreathing": "Nefes\nBaşlat",
+    "realTimeAudioWaves": "Gerçek Zamanlı Ses Dalgaları",
+    "quickBreathingExercise": {
+      "name": "Derin Nefes Alma",
+      "duration": "5 dk",
+      "description": "Rehberli nefes alma ile zihninizi sakinleştirin"
+    },
+    "startWriting": "Yazmaya başla",
+    "slideToRemove": "Egzersizi kaldırmak için kaydırın",
+    "removeExerciseModal": {
+      "title": "Egzersiz kaldırılsın mı?",
+      "for7Days": "7 gün için",
+      "forever": "Kalıcı olarak",
+      "cancel": "İptal"
+    }
+  },
+  "exercises": {
+    "title": "Egzersizler",
+    "subtitle": "Rehberli iyilik hali uygulamaları",
+    "categories": "Kategoriler",
+    "duration": "Süre",
+    "difficulty": "Zorluk",
+    "approach": "Yaklaşım",
+    "startExercise": "Egzersize Başla",
+    "exerciseComplete": "Egzersiz Tamamlandı",
+    "exerciseRating": {
+      "title": "Bu egzersiz ne kadar faydalıydı?",
+      "subtitle": "Deneyiminizi kişiselleştirmek ve ihtiyaçlarınıza uygun daha iyi egzersizler önermek için geri bildiriminizi kullanıyoruz.",
+      "today": "Bugün",
+      "ratings": {
+        "notHelpfulAtAll": "Hiç faydalı değil",
+        "somewhatHelpful": "Biraz faydalı",
+        "moderatelyHelpful": "Orta derecede faydalı",
+        "veryHelpful": "Çok faydalı",
+        "extremelyHelpful": "Son derece faydalı"
+      },
+      "sliderLabels": {
+        "notAtAll": "Hiç",
+        "very": "Çok"
+      }
+    },
+    "breathing": "Nefes Alışverişi",
+    "meditation": "Meditasyon",
+    "journaling": "Yansıtma",
+    "mindfulness": "Bilinçlilik",
+    "searchPlaceholder": "Egzersiz ara...",
+    "showAllFilters": "Tüm filtreleri göster",
+    "clearAll": "Hepsini Temizle",
+    "exercisesFound": "{{count}} egzersiz bulundu",
+    "exercisesFound_other": "{{count}} egzersiz bulundu",
+    "noExercisesFound": "Hiçbir egzersiz bulunamadı",
+    "adjustFilters": "Filtrelerinizi veya arama terimlerinizi ayarlamayı deneyin",
+    "stepByStepGuide": "Bu egzersiz sizi süreç boyunca adım adım yönlendirecektir.",
+    "stepNumber": "Adım {{number}}",
+    "stepsCount": "{{count}} adım",
+    "stepsCount_other": "{{count}} adım",
+    "steps": "Adımlar"
+  },
+  "insights": {
+    "title": "Görüşler",
+    "subtitle": "✨ Büyümeniz için",
+    "yourThoughts": "Düşünceleriniz",
+    "reflectOnThis": "Bunu Düşünün",
+    "moodTracking": "Ruh Hali Takibi",
+    "progressStats": "İlerleme İstatistikleri",
+    "patterns": "Desenler",
+    "goals": "Hedefler",
+    "memoryInsights": "Uzun Vadeli Görüşler",
+    "longTermPatterns": "Uzun vadeli desenler ve temalar",
+    "motivational": {
+      "fallbackMessage": "Sağlık yolculuğunuz devam ediyor",
+      "startingToday": "bugünden başlayarak"
+    },
+    "values": {
+      "title": "Değerleriniz",
+      "subtitle": "Size ne önemli"
+    },
+    "sessionSummaries": {
+      "title": "Seans Özetleri",
+      "subtitle": "Analiz edilen seanslar"
+    },
+    "therapyGoals": {
+      "title": "Terapi Hedefleri",
+      "activeGoal": "aktif hedef",
+      "activeGoals": "aktif hedefler",
+      "setFirstGoal": "İlk hedefinizi belirleyin",
+      "setGoalDescription": "İyileşme yolculuğunuza yön ve motivasyon vermek için terapi hedefleri belirleyin.",
+      "setFirstGoalButton": "İlk Hedefinizi Belirleyin",
+      "complete": "tamamlandı"
+    },
+    "journey": {
+      "title": "Yolculuk",
+      "subtitle": "Her adım önemli",
+      "sessions": "Seanslar",
+      "exercises": "Egzersizler",
+      "dayStreak": "Gün serisi",
+      "completedSessions": "Tamamladınız",
+      "guidedSessions": "rehberli seanslar!",
+      "nextUp": "Sırada:",
+      "recentAchievements": "Son Başarılar"
+    },
+    "actions": {
+      "reflectOnStrengths": "Güçlü Yanları Düşünün",
+      "spendTimeWithEmotions": "Duygularla Zaman Geçirin",
+      "generateData": "Veri Oluştur",
+      "refresh": "Yenile"
+    },
+    "prompts": {
+      "visionReflection": "Gelecekteki benliğinizin güzel bir vizyonunu yarattığınızı görüyorum. Gelecekteki benliğinizi şu niteliklerle cisimleştirdiğinizi anlattınız: {{qualities}}. Vizyonunuz şuydu: \"{{description}}\"\n\nBu vizyonu sizinle keşfetmeyi çok isterim. Bu gelecek benliğin hangi yönleri şu anda size en ilham verici geliyor? Ve bugün bu nitelikleri biraz daha cisimleştirmek için hangi küçük adımı atabilirsiniz?",
+      "strengthReflection": "Uzun vadeli görüşlerinizden bazı güçlü yanlarınız ve olumlu desenleriniz olduğunu fark ettim. Bu güçlü yanlar üzerinde düşünmek için bir dakika ayıralım: \"{{content}}\"\n\nSizce bu güçlü yanları sizin için özellikle anlamlı kılan nedir? Bu güçlü yanlarınıza günlük yaşamınızda nasıl daha fazla yaslanabilirsiniz?",
+      "emotionReflection": "Konuşmalarımızdan bazı derin duygusal görüşleriniz olduğunu görüyorum: \"{{content}}\"\n\nBazen duygularımızla zaman geçirmek ve bize ne söylediklerini anlamak değerlidir. Bu görüşü okuduğunuzda hangi duygular sizde ortaya çıkıyor? Bu duygular size ne iletmeye çalışıyor olabilir?"
+    },
+    "thinkingPatterns": {
+      "allOrNothing": "Hep ya da Hiç Düşüncesi",
+      "catastrophizing": "Felaketleştirme",
+      "mentalFilter": "Zihinsel Filtre",
+      "overgeneralization": "Aşırı Genelleme",
+      "mindReading": "Zihin Okuma",
+      "fortuneTelling": "Gelecek Tahmini",
+      "emotionalReasoning": "Duygusal Mantık",
+      "shouldStatements": "Zorunluluk İfadeleri",
+      "labeling": "Etiketleme",
+      "personalization": "Kişiselleştirme",
+      "magnification": "Büyütme",
+      "minimization": "Küçümseme",
+      "thoughtPattern": "Düşünce Kalıbı",
+      "explanations": {
+        "allOrNothing": "Ara değer olmadan her şeyi siyah ve beyaz olarak görmek",
+        "catastrophizing": "En kötü sonuçları hayal etmek",
+        "mentalFilter": "Sadece olumsuz ayrıntılara odaklanmak",
+        "overgeneralization": "Tek olaylardan geniş sonuçlar çıkarmak",
+        "mindReading": "Başkalarının ne düşündüğünü bildiğinizi sanmak",
+        "fortuneTelling": "Kanıt olmadan olumsuz sonuçlar öngörmek",
+        "emotionalReasoning": "Duyguların gerçeği yansıttığına inanmak",
+        "shouldStatements": "İşlerin nasıl olması gerektiği konusunda katı kurallar kullanmak",
+        "labeling": "Kendinize veya başkalarına olumsuz etiketler yapıştırmak",
+        "personalization": "Kontrolünüz dışındaki şeyler için kendinizi suçlamak",
+        "magnification": "Durumları olduğundan büyük göstermek",
+        "minimization": "Olumlu yönleri küçümsemek",
+        "thoughtPattern": "Dikkat gerektiren tekrarlayan bir düşünce biçimi"
+      }
+    },
+    "mockData": {
+      "patterns": {
+        "presentationThought": "O sunumu tamamen mahvettim, topluluk önünde konuşmada berbatım",
+        "presentationReframe": "Sunumun zor anları oldu, ama iyi anlarım da vardı. Öğreniyorum ve gelişiyorum.",
+        "presentationContext": "İş stresi hakkındaki konuşma sırasında tespit edildi",
+        "jobThought": "Bu işi alamazsam kariyerim mahvolacak",
+        "jobReframe": "Bu özel işi alamamak hayal kırıklığı yaratıcı olurdu, ama başka fırsatlar da var.",
+        "jobContext": "Anksiyete seansı sırasında tanınan kalıp"
+      },
+      "journey": {
+        "nextSuggestion": "Endişeyi azaltmak için Yeniden Çerçeveleme deneyin",
+        "achievements": {
+          "firstSession": "İlk rehberli seans",
+          "dailyStreak": "Günlük check-in serisi",
+          "breathingExercise": "Nefes egzersizi tamamlandı"
+        }
+      },
+      "cognitiveDistortion": "Bilişsel Çarpıtma"
+    },
+    "moodInsights": {
+      "yourMood": "Ruh Haliniz",
+      "trackEmotions": "Duygusal yolculuğunuzu takip edin",
+      "yourThoughts": "Düşünceleriniz",
+      "identifyPatterns": "Kalıpları tanımlayın ve yeniden çerçeveleyin",
+      "distortedThought": "Çarpık Düşünce",
+      "balancedThought": "Dengeli Düşünce",
+      "moreBalanced": "Daha dengeli",
+      "reflectOnThis": "Bunun üzerinde düşün",
+      "analyzingPatterns": "Ruh hali kalıplarınız analiz ediliyor...",
+      "weeklyTrend": {
+        "improving": "↗ İyileşiyor",
+        "steady": "↔ Sabit",
+        "declining": "↘ Azalıyor"
+      },
+      "emptyStates": {
+        "noData": {
+          "title": "Sağlık yolculuğunuza başlayın! ✨",
+          "description": "Anu ile sohbet edin veya egzersizlerden sonra ruh halinizi takip ederek burada kişiselleştirilmiş görüşler görün",
+          "chatButton": "Anu ile sohbet et",
+          "exerciseButton": "Egzersiz dene",
+          "sampleButton": "Örnek veri oluştur"
+        },
+        "moodOnly": {
+          "title": "Ruh halinizi takip ettiğiniz için harika! 📈",
+          "description": "{{count}} ruh hali değerlendirmesi kaydettiniz. Kalıplarınız hakkında kişiselleştirilmiş görüşlerin kilidini açmak için Anu ile sohbet edin."
+        },
+        "sessionsOnly": {
+          "title": "Anu ile güzel ilerleme! 💬",
+          "description": "{{count}} konuşma yaptınız. Haftalık eğilimleri ve daha derin görüşleri görmek için egzersizlerden sonra ruh halinizi değerlendirin.",
+          "exerciseButton": "Bir egzersiz dene"
+        },
+        "bothData": {
+          "title": "Görüşlerinizi oluşturmaya devam edin! ⭐",
+          "description": "{{sessionCount}} konuşmanız ve {{moodRatingCount}} ruh hali değerlendirmeniz var. Daha derin görüşler için yolculuğunuza devam edin."
+        },
+        "fallback": {
+          "title": "Verileriniz kontrol ediliyor... ✨"
+        }
+      }
+    },
+    "priorityExercises": {
+      "names": {
+        "tellStory": "Hikayeni anlat",
+        "goalSetting": "Terapi hedef belirleme",
+        "visionFuture": "Geleceğin vizyonu",
+        "reframingThoughts": "Düşünceleri yeniden çerçeveleme",
+        "livingValues": "Temel değerlerim",
+        "mindfulness": "Sabah farkındalığı",
+        "stressRelief": "4-7-8 nefes alma",
+        "gratitude": "Şükran pratiği"
+      },
+      "descriptions": {
+        "tellStory": "Kişisel yolculuğunuzu paylaşın",
+        "goalSetting": "Hedeflerinizi tanımlayın",
+        "visionFuture": "İdeal gelecek benliğinizi hayal edin",
+        "reframingThoughts": "Olumsuz düşünceleri dönüştürün",
+        "livingValues": "Eylemleri temel değerlerle hizalayın",
+        "mindfulness": "Güne nazik farkındalıkla başlayın",
+        "stressRelief": "Kanıtlanmış nefes tekniği ile kaygıyı azaltın",
+        "gratitude": "Günlük takdir ile mutluluk inşa edin"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "✨ İyilik hali yardımcınız",
+    "personalInfo": "Kişisel Bilgiler",
+    "settings": "Ayarlar",
+    "language": "Dil",
+    "notifications": "Bildirimler",
+    "privacy": "Gizlilik",
+    "signOut": "Çıkış Yap",
+    "editProfile": "Profili Düzenle",
+    "memberSince": "Bu tarihten beri üye",
+    "anonymousGuest": "Anonim Ziyaretçi",
+    "stats": {
+      "sessions": "Seanslar",
+      "streak": "Seri",
+      "insights": "Görüşler",
+      "exercises": "Egzersizler",
+      "daysStreak": "7 gün"
+    },
+    "fallbackName": "Arkadaş",
+    "welcomeMessage": "WisdomWise'a hoş geldiniz",
+    "premiumMember": "Premium Üye",
+    "yourProgress": "Ilerlemeniz",
+    "menu": {
+      "editProfile": "Profili Düzenle",
+      "chatHistory": "Sohbet Geçmişi",
+      "voiceSettings": "Ses Ayarları",
+      "notifications": "Bildirimler",
+      "privacy": "Gizlilik ve Güvenlik",
+      "darkMode": "Karanlık Mod",
+      "help": "Yardım ve Destek",
+      "signOut": "Çıkış Yap"
+    },
+    "menuSubtitles": {
+      "editProfile": "Bilgilerinizi güncelleyin",
+      "chatHistory": "Geçmiş konuşmaları görüntüleyin",
+      "voiceSettings": "Konuşma seçeneklerini yapılandırın",
+      "notifications": "Uyarıları yönetin",
+      "privacy": "Verilerinizi kontrol edin",
+      "darkMode": "Karanlık temayı aç/kapat",
+      "help": "Yardım alın",
+      "signOut": "Hesabınızdan çıkın",
+      "default": "Erişmek için dokunun"
+    },
+    "version": "Sürüm 1.0.0",
+    "madeWith": "İyilik haliniz için 💙 ile yapıldı"
+  },
+  "chat": {
+    "title": "Anu ile Sohbet",
+    "subtitle": "Yapay zeka iyilik hali yardımcınız",
+    "startConversation": "Sohbet başlatın...",
+    "typeMessage": "Mesajınızı yazın...",
+    "sendMessage": "Gönder",
+    "voiceInput": "Ses Girişi",
+    "recording": "Kayıt yapılıyor...",
+    "transcribing": "Yazıya dökülüyor...",
+    "thinking": "Düşünüyor...",
+    "speakResponse": "Cevabı Söyle",
+    "exercise": "Egzersiz",
+    "reflectionSpace": "💭 Yansıtma Alanı",
+    "exerciseProgress": "Adım {{current}}/{{total}} • {{title}}",
+    "inProgress": "Devam Ediyor",
+    "therapeuticExercise": "{{duration}} • Terapotik Egzersiz",
+    "loadingSpace": "Nazik alanınız yükleniyor...",
+    "safeSpace": "Yansıtma için güvenli alanınız",
+    "almostAtLimit": "Günlük limite yaklaştınız! {{remaining}} kaldı.",
+    "limitUsed": "Günlük limitin %{{percentage}}'i kullanıldı.",
+    "endReflection": "Yansıtmayı Bitir",
+    "typeOrSpeak": "Yazın veya konuşun...",
+    "composeMessage": "Mesaj Oluştur",
+    "suggestExercise": "Egzersiz öner",
+    "promptSuggestion": "Bir şey öner ve bana rehberlik et",
+    "moodSlider": {
+      "title": "Şu anda nasıl hissediyorsun?",
+      "subtitle": "Mevcut ruh halinizi değerlendirin",
+      "saved": "Kaydedildi!"
+    },
+    "visionSummary": {
+      "title": "Vizyon Özeti",
+      "subtitle": "İlham veren geleceğiniz ortaya çıktı",
+      "yourVision": "Vizyonunuz",
+      "keyInsights": "Ana Görüşler",
+      "continueVision": "Vizyonu Sürdür",
+      "saveVision": "Vizyonu Kaydet"
+    },
+    "thinkingPatternSummary": {
+      "title": "Yansıtma Özeti",
+      "subtitle": "Düşünce kalıpları hakkındaki görüşleriniz",
+      "patternExplored": "İncelenen Kalıp",
+      "reflectionSummary": "Yansıtma Özeti",
+      "keyInsights": "Ana Görüşler",
+      "continueReflection": "Yansıtmaya Devam Et",
+      "saveSummary": "Özeti Kaydet"
+    },
+    "valueReflectionSummary": {
+      "title": "Yansıtma Özeti",
+      "subtitle": "\"{{valueName}}\" hakkındaki görüşlerinizi gözden geçirin",
+      "summary": "Özet",
+      "keyInsights": "Ana Görüşler",
+      "continueReflection": "Yansıtmaya Devam Et",
+      "saveSummary": "Özeti Kaydet"
+    }
+  },
+  "mood": {
+    "title": "Ruh Hali Takibi",
+    "howAreYouFeeling": "Şu anda nasıl hissediyorsunuz?",
+    "rateYourMood": "Mevcut ruh halinizi değerlendirin",
+    "helpfulnessRating": "Bu ne kadar yardımcı oldu?",
+    "saved": "Kaydedildi! ✓",
+    "beforeWeStart": "Başlamadan önce..."
+  },
+  "journal": {
+    "title": "Rehberli Günlük",
+    "promptTitle": "Yansıtma Sorusu",
+    "yourResponse": "Cevabınız",
+    "finish": "Bitir",
+    "saveSession": "Seans Kaydedilsin mi?",
+    "dontSave": "Kaydetme"
+  },
+  "breathing": {
+    "title": "Nefes Egzersizi",
+    "inhale": "Nefes Al",
+    "exhale": "Nefes Ver",
+    "hold": "Tut",
+    "breathe": "Nefes Al",
+    "pause": "Duraklat",
+    "resume": "Devam Et",
+    "reset": "Sıfırla",
+    "settings": "Ayarlar",
+    "cycles": "Döngüler",
+    "pattern": "Desen"
+  },
+  "language": {
+    "selectLanguage": "Dil Seçin",
+    "currentLanguage": "Mevcut Dil",
+    "changeLanguage": "Dili Değiştir",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "tr": "Türkçe",
+      "es": "Español",
+      "pt": "Português"
+    }
+  },
+  "errors": {
+    "networkError": "Ağ bağlantısı hatası. Lütfen tekrar deneyin.",
+    "genericError": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+    "voicePermissionDenied": "Ses özellikleri için mikrofon izni gereklidir.",
+    "speechRecognitionFailed": "Konuşma tanıma başarısız oldu. Lütfen tekrar deneyin.",
+    "ttsError": "Metin okuma özelliği mevcut değil.",
+    "promptGenerationFailed": "Sorular oluşturulamadı. Lütfen tekrar deneyin."
+  },
+  "exerciseLibrary": {
+    "names": {
+      "automaticThoughts": "Otomatik düşünceleri tanımak",
+      "breathing": "4-7-8 nefes alma",
+      "boxBreathing": "Kutu nefes alma",
+      "triangleBreathing": "Üçgen nefes alma",
+      "coherentBreathing": "Tutarlı nefes alma",
+      "mindfulness": "Vücut taraması",
+      "morningMindfulness": "Sabah farkındalığı",
+      "gratitude": "Şükran pratiği",
+      "selfCompassion": "Öz-şefkat molası",
+      "valuesClarity": "Temel değerlerim",
+      "futureSelfJournaling": "Gelecekteki benlik günlüğü",
+      "sortingThoughts": "Düşünceleri sıralama",
+      "goalSetting": "Terapi hedef belirleme",
+      "tellYourStory": "Hikayeni anlat",
+      "visionOfFuture": "Geleceğin vizyonu"
+    },
+    "descriptions": {
+      "automaticThoughts": "Olumsuz düşünceleri dönüştürme",
+      "breathing": "Kanıtlanmış nefes tekniği ile kaygıyı azaltma",
+      "boxBreathing": "Dengeli nefes alma ile odaklanma ve stres azaltma",
+      "triangleBreathing": "Derin rahatlama için basit bilinçli nefes alma",
+      "coherentBreathing": "Duygusal denge için kalp merkezli nefes alma",
+      "mindfulness": "Dikkatli vücut farkındalığı ile gerginliği serbest bırakma",
+      "morningMindfulness": "Güne sakin bir varlıkla başlama",
+      "gratitude": "Günlük takdir ile mutluluk inşa etme",
+      "selfCompassion": "Kendine karşı nezaket ve iç şefkat geliştirme",
+      "valuesClarity": "Değerleri netleştirme ve günlük eylemlerini hizalama",
+      "futureSelfJournaling": "Geleceğe odaklı yansıtma ile netlik kazanma",
+      "sortingThoughts": "Zihinsel karmaşayı temizleme ve düşünceleri organize etme",
+      "goalSetting": "Değerlerinizle uyumlu odaklı hedefler belirleme",
+      "tellYourStory": "Yolculuğunuzu keşfetme ve iç güçleri keşfetme",
+      "visionOfFuture": "Yolunuzu yönlendirecek ilham verici bir vizyon yaratma"
+    },
+    "shortDescriptions": {
+      "automaticThoughts": "Yararsız düşünce kalıplarını tanımlama ve yeniden çerçeveleme.",
+      "breathing": "Ritmik nefes alma ile zihninizi sakinleştirin.",
+      "boxBreathing": "Zihinsel netlik için kare nefes alma.",
+      "triangleBreathing": "Rahatlama için üç aşamalı nefes alma.",
+      "coherentBreathing": "Denge için kalp odaklı nefes alma.",
+      "mindfulness": "Vücudunuzu bilinçli olarak tarayın ve gevşetin.",
+      "morningMindfulness": "Güne dikkatli farkındalıkla başlayın.",
+      "gratitude": "Takdir ve neşe yetiştirin.",
+      "selfCompassion": "Kendinize karşı nazik olmayı pratik edin.",
+      "valuesClarity": "Eylemlerinizi en önemli olanla hizalayın.",
+      "futureSelfJournaling": "Gelecekteki benliğinizle bağlantı kurun.",
+      "sortingThoughts": "Düşüncelerinizi organize edin ve netleştirin.",
+      "goalSetting": "Büyüme için anlamlı hedefler belirleyin.",
+      "tellYourStory": "Hikayenizi paylaşın ve güçlü yanlarınızı bulun.",
+      "visionOfFuture": "İdeal geleceğinizi hayal edin."
+    },
+    "categories": {
+      "cbt": "BDT",
+      "breathing": "Nefes Alma",
+      "mindfulness": "Farkındalık",
+      "selfCare": "Öz Bakım",
+      "act": "ACT",
+      "selfDiscovery": "Öz Keşif",
+      "selfGrowth": "Kişisel Gelişim"
+    },
+    "difficulties": {
+      "beginner": "Başlangıç",
+      "intermediate": "Orta",
+      "advanced": "İleri"
+    }
+  },
+  "quickActions": {
+    "breathing": {
+      "title": "Nefes egzersizi",
+      "description": "Hızlı 3 dakikalık nefes egzersizi",
+      "category": "Sağlık"
+    },
+    "gratitude": {
+      "title": "Şükran pratiği",
+      "description": "Günlük şükran yansıması",
+      "category": "Farkındalık"
+    },
+    "meditation": {
+      "title": "Hızlı meditasyon",
+      "description": "5 dakikalık bilinçli meditasyon",
+      "category": "Meditasyon"
+    },
+    "journaling": {
+      "title": "Ruh hali kontrolü",
+      "description": "Nasıl hissettiğinizi takip edin",
+      "category": "Günlük"
+    },
+    "stressRelief": {
+      "title": "Stres güderme",
+      "description": "Zihninizi hızla sakinleştirin",
+      "category": "Sağlık"
+    },
+    "voiceNote": {
+      "title": "Ses notu",
+      "description": "Düşüncelerinizi kaydedin",
+      "category": "Günlük"
+    }
+  },
+  "actionPalette": {
+    "title": "Ne yapmak istersiniz?",
+    "cancel": "İptal",
+    "guidedSession": {
+      "title": "Rehberli seans",
+      "description": "Yapay zeka terapistinizle konuşun"
+    },
+    "guidedJournaling": {
+      "title": "Rehberli günlük",
+      "description": "Yazarak düşünün"
+    },
+    "quickExercise": {
+      "title": "Hızlı egzersiz",
+      "description": "Bir bilinçlilik pratiği başlatın"
+    },
+    "exerciseLibrary": {
+      "title": "Egzersiz kütüphanesi",
+      "description": "Tüm egzersizlere göz atın"
+    }
+  },
+  "alerts": {
+    "signOut": {
+      "title": "Çıkış Yap",
+      "message": "Çıkış yapmak istediğinizden emin misiniz?"
+    },
+    "deleteSession": {
+      "title": "Seansı Sil",
+      "message": "Bu seansı silmek istediğinizden emin misiniz?"
+    },
+    "resetProgress": {
+      "title": "İlerlemeyi Sıfırla",
+      "message": "Bu tüm ilerlemenizi sıfırlayacaktır. Bu işlem geri alınamaz."
+    },
+    "promptsGenerated": {
+      "title": "Sorular Oluşturuldu!",
+      "message": "Mevcut görüşleriniz kullanılarak {{count}} yeni yazma sorusu oluşturuldu. Tüm soruları görmek için Günlük sekmesindeki \"Yazma Soruları\" bölümünü kontrol edin."
+    }
+  }
+}

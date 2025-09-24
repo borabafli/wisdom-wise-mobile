@@ -68,8 +68,8 @@ export const homeScreenStyles = StyleSheet.create({
     marginTop: -spacing[8], // Move turtle up
   },
   turtleHeroImage: {
-    width: width * 0.68,
-    height: width * 0.68,
+    width: width * 0.55, // Reduced from 0.68 to 0.55
+    height: width * 0.55, // Reduced from 0.68 to 0.55
     opacity: 1,
   },
 
@@ -104,10 +104,10 @@ export const homeScreenStyles = StyleSheet.create({
     marginTop: spacing[16], // Added top margin to move text lower
   },
   ctaTitle: {
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: 'IBMPlexSans-Bold',
     fontSize: width < 375 ? 29.5 : 33.5, // Reduced by 0.5
-    fontWeight: 'bold',
-    color: '#002d14',
+    fontWeight: '700',
+    color: '#2B475E', // Darker color from #36526f
     marginTop: spacing[2],
     marginBottom: spacing[2],
     textAlign: 'center',
@@ -167,9 +167,7 @@ export const homeScreenStyles = StyleSheet.create({
     paddingHorizontal: spacing[32], // Increased width
     paddingVertical: spacing[8], // Reduced height
     alignSelf: 'center', // Center the button
-    borderRadius: 27,
-    borderWidth: 1.7,
-    borderColor: '#7d9db6',
+    borderRadius: 12,
     shadowColor: '#0388bb',
     shadowOffset: {
       width: 0,
@@ -182,9 +180,9 @@ export const homeScreenStyles = StyleSheet.create({
   },
   checkInButtonText: {
     fontSize: 24, // Bigger text
-    fontWeight: 'bold',
-    color: '#36526f',
-    fontFamily: 'Ubuntu-Bold',
+    fontWeight: '500',
+    color: '#2B475E', // Darker color to match title
+    fontFamily: 'IBMPlexSans-Medium',
   },
   checkInButtonIcons: {
     flexDirection: 'row',
@@ -266,11 +264,11 @@ export const homeScreenStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#002d14',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'IBMPlexSans_SemiCondensed-SemiBold',
   },
   seeAllButton: {
     paddingHorizontal: spacing[4],
@@ -290,14 +288,14 @@ export const homeScreenStyles = StyleSheet.create({
 
   // Exercise List Items (No Cards)
   exercisesList: {
-    gap: 0,
+    gap: -20, // Negative gap for overlapping closer cards
     paddingLeft: 0,
     marginVertical: 0,
     paddingVertical: 0,
   },
   exerciseCardContainer: {
     position: 'relative',
-    marginBottom: 0,
+    marginBottom: -8, // Negative margin to bring cards closer
   },
   exerciseCard: {
     backgroundColor: 'transparent',
@@ -546,11 +544,11 @@ export const homeScreenStyles = StyleSheet.create({
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.components.cardGap,
-    justifyContent: 'space-between',
+    gap: 10, // Small gap between cards for closer spacing
+    justifyContent: 'flex-start',
   },
   quickActionButton: {
-    flex: 1,
+    width: '31%', // Two cards per row with 8px gap
     overflow: 'hidden',
     height: 140,
     borderRadius: 20,

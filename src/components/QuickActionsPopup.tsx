@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import { X, Heart, Brain, Wind, BookOpen, Zap, Mic } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,48 +18,50 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
   onClose,
   onActionSelect,
 }) => {
+  const { t } = useTranslation();
+
   const quickActions = [
     {
       id: 'breathing',
-      title: 'Breathing Exercise',
-      description: 'Quick 3-minute breathing exercise',
+      title: t('quickActions.breathing.title'),
+      description: t('quickActions.breathing.description'),
       icon: require('../../assets/images/New Icons/icon-1.png'),
-      category: 'Wellness',
+      category: t('quickActions.breathing.category'),
     },
     {
       id: 'gratitude',
-      title: 'Gratitude Practice',
-      description: 'Daily gratitude reflection',
+      title: t('quickActions.gratitude.title'),
+      description: t('quickActions.gratitude.description'),
       icon: require('../../assets/images/New Icons/icon-2.png'),
-      category: 'Mindfulness',
+      category: t('quickActions.gratitude.category'),
     },
     {
       id: 'meditation',
-      title: 'Quick Meditation',
-      description: '5-minute mindful meditation',
+      title: t('quickActions.meditation.title'),
+      description: t('quickActions.meditation.description'),
       icon: require('../../assets/images/New Icons/icon-3.png'),
-      category: 'Meditation',
+      category: t('quickActions.meditation.category'),
     },
     {
       id: 'journaling',
-      title: 'Mood Check-in',
-      description: 'Track how you\'re feeling',
+      title: t('quickActions.journaling.title'),
+      description: t('quickActions.journaling.description'),
       icon: require('../../assets/images/New Icons/icon-4.png'),
-      category: 'Journaling',
+      category: t('quickActions.journaling.category'),
     },
     {
       id: 'stress-relief',
-      title: 'Stress Relief',
-      description: 'Progressive muscle relaxation',
+      title: t('quickActions.stressRelief.title'),
+      description: t('quickActions.stressRelief.description'),
       icon: require('../../assets/images/New Icons/icon-5.png'),
-      category: 'Wellness',
+      category: t('quickActions.stressRelief.category'),
     },
     {
       id: 'voice-session',
-      title: 'Voice Session',
-      description: 'Talk with your AI companion',
+      title: t('quickActions.voiceSession.title'),
+      description: t('quickActions.voiceSession.description'),
       icon: require('../../assets/images/New Icons/icon-6.png'),
-      category: 'Chat',
+      category: t('quickActions.voiceSession.category'),
     },
   ];
 
@@ -84,7 +87,7 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
         <View style={styles.popupContainer}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Quick Actions</Text>
+            <Text style={styles.headerTitle}>{t('quickActions.title')}</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <X size={24} color="#374151" />
             </TouchableOpacity>
@@ -115,10 +118,10 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
                 </View>
               </View>
               <View style={styles.featuredActionRight}>
-                <Text style={styles.featuredActionCategory}>Recommended</Text>
-                <Text style={styles.featuredActionTitle}>Deep Breathing</Text>
+                <Text style={styles.featuredActionCategory}>{t('quickActions.recommended')}</Text>
+                <Text style={styles.featuredActionTitle}>{t('quickActions.deepBreathing')}</Text>
                 <Text style={styles.featuredActionDescription}>
-                  Start with a calming breathing exercise to center yourself.
+                  {t('quickActions.startDescription')}
                 </Text>
               </View>
             </LinearGradient>
@@ -172,7 +175,7 @@ const QuickActionsPopup: React.FC<QuickActionsPopupProps> = ({
               style={styles.quickStartGradient}
             >
               <Mic size={20} color="#ffffff" />
-              <Text style={styles.quickStartText}>Start Voice Session</Text>
+              <Text style={styles.quickStartText}>{t('quickActions.startVoiceSession')}</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>

@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
-import { exercisesArray } from '../data/exerciseLibrary';
+import { getExercisesArray } from '../data/exerciseLibrary';
 import { colors, gradients, shadows, spacing } from '../styles/tokens';
 import { exerciseLibraryStyles, getTagColor, getExerciseCardGradient } from '../styles/components/ExerciseLibrary.styles';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
@@ -23,6 +24,7 @@ interface ExerciseLibraryProps {
 }
 
 const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
   const [selectedTimeFilter, setSelectedTimeFilter] = useState('All');
   const [selectedBenefitFilter, setSelectedBenefitFilter] = useState('All');
@@ -34,7 +36,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.exerciseLibrary);
 
   // Exercise preview functionality
-  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview();
+  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview(t);
 
   // Enhanced exercise click handler that shows preview first
   const handleExerciseClickWithPreview = (exercise: any) => {
@@ -61,7 +63,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   const emojis = getExerciseEmojis(profile?.emojiPreference || 'neutral');
   
   // Use unified exercises from exerciseLibrary.ts
-  const exercises = exercisesArray;
+  const exercises = getExercisesArray(t);
 
   // Filter options
   const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
@@ -271,8 +273,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                 contentFit="contain"
               />
               <View style={exerciseLibraryStyles.titleAndSubtitleContainer}>
-                <Text style={exerciseLibraryStyles.headerTitle}>Exercises</Text>
-                <Text style={exerciseLibraryStyles.headerSubtitle}>{emojis.subtitle} For your well-being</Text>
+                <Text style={exerciseLibraryStyles.headerTitle}>{t('exercises.title')}</Text>
+                <Text style={exerciseLibraryStyles.headerSubtitle}>{emojis.subtitle} {t('exercises.subtitle')}</Text>
               </View>
             </View>
           </View>
@@ -285,7 +287,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               <Search size={20} color={colors.text.secondary} />
               <TextInput
                 style={[exerciseLibraryStyles.searchInput, { color: '#000000' }]}
-                placeholder="Search exercises..."
+                placeholder={t('exercises.searchPlaceholder')}
                 value={searchText}
                 onChangeText={setSearchText}
                 placeholderTextColor="#6B7280"
@@ -339,7 +341,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               fontWeight: '500',
               color: '#6B7280',
             }}>
-              Show all filters
+              {t('exercises.showAllFilters')}
             </Text>
             {activeFiltersCount > 0 && (
               <View style={[exerciseLibraryStyles.filterBadge, { position: 'relative', top: 0, right: 0 }]}>
@@ -384,14 +386,14 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                   onPress={clearAllFilters}
                   activeOpacity={0.7}
                 >
-                  <Text style={exerciseLibraryStyles.clearFiltersText}>Clear All</Text>
+                  <Text style={exerciseLibraryStyles.clearFiltersText}>{t('exercises.clearAll')}</Text>
                 </TouchableOpacity>
               </View>
             )}
 
             {/* Duration Filter - Compact */}
             <View style={exerciseLibraryStyles.filterGroupCompact}>
-              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.duration} Duration</Text>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.duration} {t('exercises.duration')}</Text>
               <View style={exerciseLibraryStyles.filterRowCompact}>
                 {timeFilters.map((filter) => (
                   <FilterChip
@@ -407,7 +409,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
             {/* Style Filter - Compact */}
             <View style={exerciseLibraryStyles.filterGroupCompact}>
-              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.approach} Approach</Text>
+              <Text style={exerciseLibraryStyles.filterGroupTitleCompact}>{emojis.approach} {t('exercises.approach')}</Text>
               <View style={exerciseLibraryStyles.filterRowCompact}>
                 {styleFilters.map((filter) => (
                   <FilterChip
@@ -426,7 +428,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         {/* Results Header */}
         <View style={exerciseLibraryStyles.resultsHeader}>
           <Text style={exerciseLibraryStyles.resultsCount}>
-            {filteredExercises.length} exercise{filteredExercises.length !== 1 ? 's' : ''} found
+            {t('exercises.exercisesFound', { count: filteredExercises.length })}
           </Text>
         </View>
 
@@ -443,9 +445,9 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
         {filteredExercises.length === 0 && (
           <View style={exerciseLibraryStyles.emptyState}>
             <Sparkles size={48} color={colors.text.tertiary} />
-            <Text style={exerciseLibraryStyles.emptyStateTitle}>No exercises found</Text>
+            <Text style={exerciseLibraryStyles.emptyStateTitle}>{t('exercises.noExercisesFound')}</Text>
             <Text style={exerciseLibraryStyles.emptyStateDescription}>
-              Try adjusting your filters or search terms
+              {t('exercises.adjustFilters')}
             </Text>
           </View>
         )}

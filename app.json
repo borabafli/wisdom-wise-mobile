@@ -21,7 +21,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#f0f9ff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "statusBar": {
@@ -103,7 +105,8 @@
       "@siteed/expo-audio-studio",
       "expo-navigation-bar",
       "react-native-audio-api",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-localization"
     ],
     "scheme": "wisdomwise",
     "extra": {

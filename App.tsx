@@ -12,25 +12,36 @@ import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { AppProvider, AuthProvider } from './src/contexts';
 import { AppContent } from './src/components/AppContent';
 
+// Import i18n service to initialize it
+import './src/services/i18nService';
+
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
+  console.log('App component rendering, fontsLoaded:', fontsLoaded);
+
   useEffect(() => {
+    console.log('App useEffect starting...');
     async function prepare() {
       try {
+        console.log('Starting font loading...');
         await loadFonts();
-        
+        console.log('Fonts loaded successfully');
+
         // Proper Android navigation bar configuration
         if (Platform.OS === 'android') {
-          await NavigationBar.setBackgroundColorAsync('#ffffff');
+          console.log('Configuring Android navigation bar...');
+          await NavigationBar.setBackgroundColorAsync('#E0E5E7');
           await NavigationBar.setButtonStyleAsync('dark');
+          console.log('Android navigation bar configured');
         }
       } catch (e) {
-        console.warn(e);
+        console.error('Error in prepare function:', e);
       } finally {
+        console.log('Setting fontsLoaded to true');
         setFontsLoaded(true);
         SplashScreen.hideAsync();
       }
@@ -40,20 +51,23 @@ export default function App() {
   }, []);
 
   if (!fontsLoaded) {
-    return <View className="flex-1 bg-blue-50" />;
+    console.log('Fonts not loaded yet, showing loading view');
+    return <View style={{ flex: 1, backgroundColor: '#E0E5E7' }} />;
   }
 
+  console.log('Fonts loaded, rendering main app');
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <SafeAreaProvider>
       <ErrorBoundary>
-        <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <AuthProvider>
             <AppProvider>
               <AppContent />
             </AppProvider>
           </AuthProvider>
-        </SafeAreaProvider>
+        </GestureHandlerRootView>
       </ErrorBoundary>
-    </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

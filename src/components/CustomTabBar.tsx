@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { View, TouchableOpacity, Text, Platform, Image, Animated, Easing, PanResponder } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,13 +16,14 @@ interface CustomTabBarProps {
   onActionSelect: (actionId: string) => void;
 }
 
-const CustomTabBar: React.FC<CustomTabBarProps> = ({ 
-  state, 
-  descriptors, 
-  navigation, 
-  onNewSession, 
-  onActionSelect 
+const CustomTabBar: React.FC<CustomTabBarProps> = ({
+  state,
+  descriptors,
+  navigation,
+  onNewSession,
+  onActionSelect
 }) => {
+  const { t } = useTranslation();
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [circleAnimations, setCircleAnimations] = useState<{[key: string]: Animated.Value}>({});
   const insets = useSafeAreaInsets();
@@ -130,31 +132,31 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const tabs = [
     {
       name: 'Home',
-      label: 'Today',
+      label: t('navigation.today'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-home-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home-blue.png')
     },
     {
       name: 'Exercises',
-      label: 'Exercises',
+      label: t('navigation.exercises'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-exercises-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-exercises-blue.png')
     },
     {
       name: 'Journal',
-      label: 'Journal',
+      label: t('navigation.journal'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal-blue.png')
     },
     {
       name: 'Insights',
-      label: 'Insights',
+      label: t('navigation.insights'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-insights-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-insights-blue.png')
     },
     {
       name: 'Profile',
-      label: 'Profile',
+      label: t('navigation.profile'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-profile-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-profile-blue.png')
     }
@@ -164,7 +166,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     <>
       
       <LinearGradient
-        colors={['#ebf5f9', '#ebf5f9']}
+        colors={['#e0e5e7', '#e0e5e7']}
         style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
       >
         <View style={styles.tabBarContent}>

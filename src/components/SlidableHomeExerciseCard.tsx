@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { PanGestureHandler } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -39,6 +40,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
   simulateExerciseCompletion,
   isLast = false,
 }) => {
+  const { t } = useTranslation();
   const translateX = useSharedValue(0);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
@@ -180,7 +182,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
           {/* Background slide text */}
           <Animated.View style={[slidableHomeExerciseCardStyles.slideTextContainer, slideTextAnimatedStyle]}>
             <Text style={slidableHomeExerciseCardStyles.slideText}>
-              Slide to remove exercise
+              {t('home.slideToRemove')}
             </Text>
           </Animated.View>
 
@@ -296,7 +298,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
         <View style={slidableHomeExerciseCardStyles.modalOverlay}>
           <View style={slidableHomeExerciseCardStyles.modalContainer}>
             <Text style={slidableHomeExerciseCardStyles.modalTitle}>
-              Remove Exercise?
+              {t('home.removeExerciseModal.title')}
             </Text>
 
             <View style={slidableHomeExerciseCardStyles.modalButtonRow}>
@@ -305,7 +307,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
                 onPress={() => handleScheduleChoice('temporary')}
               >
                 <Text style={[slidableHomeExerciseCardStyles.modalButtonText, slidableHomeExerciseCardStyles.temporaryButtonText]}>
-                  For 7 days
+                  {t('home.removeExerciseModal.for7Days')}
                 </Text>
               </TouchableOpacity>
 
@@ -314,7 +316,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
                 onPress={() => handleScheduleChoice('permanent')}
               >
                 <Text style={slidableHomeExerciseCardStyles.modalButtonText}>
-                  Forever
+                  {t('home.removeExerciseModal.forever')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -327,7 +329,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
               }}
             >
               <Text style={[slidableHomeExerciseCardStyles.modalButtonText, slidableHomeExerciseCardStyles.cancelButtonText]}>
-                Cancel
+                {t('home.removeExerciseModal.cancel')}
               </Text>
             </TouchableOpacity>
           </View>

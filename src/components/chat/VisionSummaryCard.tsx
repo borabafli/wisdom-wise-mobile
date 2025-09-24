@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Check, X, Star, Sparkles } from 'lucide-react-native';
@@ -19,6 +20,7 @@ export const VisionSummaryCard: React.FC<VisionSummaryCardProps> = ({
   onSave,
   onCancel
 }) => {
+  const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -43,20 +45,20 @@ export const VisionSummaryCard: React.FC<VisionSummaryCardProps> = ({
         <View style={styles.header}>
           <View style={styles.titleRow}>
             <Star size={24} color="#0EA5E9" />
-            <Text style={styles.title}>Vision Summary</Text>
+            <Text style={styles.title}>{t('chat.visionSummary.title')}</Text>
           </View>
-          <Text style={styles.subtitle}>Your inspiring future self revealed</Text>
+          <Text style={styles.subtitle}>{t('chat.visionSummary.subtitle')}</Text>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.summarySection}>
-            <Text style={styles.sectionTitle}>Your Vision</Text>
+            <Text style={styles.sectionTitle}>{t('chat.visionSummary.yourVision')}</Text>
             <Text style={styles.summaryText}>"{summary.summary}"</Text>
           </View>
 
           {summary.keyInsights && summary.keyInsights.length > 0 && (
             <View style={styles.insightsSection}>
-              <Text style={styles.sectionTitle}>Key Insights</Text>
+              <Text style={styles.sectionTitle}>{t('chat.visionSummary.keyInsights')}</Text>
               {summary.keyInsights.map((insight, index) => (
                 <View key={index} style={styles.insightItem}>
                   <View style={styles.insightBullet} />
@@ -74,7 +76,7 @@ export const VisionSummaryCard: React.FC<VisionSummaryCardProps> = ({
             disabled={isSaving}
           >
             <X size={20} color="#6B7280" />
-            <Text style={styles.cancelButtonText}>Continue Vision</Text>
+            <Text style={styles.cancelButtonText}>{t('chat.visionSummary.continueVision')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -84,7 +86,7 @@ export const VisionSummaryCard: React.FC<VisionSummaryCardProps> = ({
           >
             <Check size={20} color="white" />
             <Text style={styles.saveButtonText}>
-              {isSaving ? 'Saving...' : 'Save Vision'}
+              {isSaving ? t('common.saving') : t('chat.visionSummary.saveVision')}
             </Text>
           </TouchableOpacity>
         </View>

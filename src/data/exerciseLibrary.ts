@@ -1,16 +1,17 @@
 // Final, corrected exerciseLibrary.ts
 import { Brain, Wind, Eye, BookOpen, Heart, Star, Clock, Filter, FileText } from 'lucide-react-native';
 
-export const exerciseLibraryData: Record<string, any> = {
+// Function to get translated exercise library data
+export const getExerciseLibraryData = (t: (key: string) => string): Record<string, any> => ({
   'automatic-thoughts': {
     id: 1,
     type: 'automatic-thoughts',
-    name: 'Recognizing Automatic Thoughts',
+    name: t('exerciseLibrary.names.automaticThoughts'),
     duration: '15 min',
-    description: 'Transform negative thoughts',
-    shortDescription: 'Identify and reframe unhelpful thinking patterns.',
-    category: 'CBT',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.automaticThoughts'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.automaticThoughts'),
+    category: t('exerciseLibrary.categories.cbt'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Brain,
     color: ['#B5A7C6', '#D4B5D0'],
     image: require('../../assets/images/1.jpeg'),
@@ -19,12 +20,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'breathing': {
     id: 2,
     type: 'breathing',
-    name: '4-7-8 Breathing',
+    name: t('exerciseLibrary.names.breathing'),
     duration: '5 min',
-    description: 'Reduce anxiety with proven breathing technique',
-    shortDescription: 'Calm your mind with rhythmic breathing.',
-    category: 'Breathing',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.breathing'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.breathing'),
+    category: t('exerciseLibrary.categories.breathing'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Wind,
     color: ['#8FA5B3', '#C3D9E6'],
     image: require('../../assets/images/2.jpeg'),
@@ -33,12 +34,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'box-breathing': {
     id: 10,
     type: 'breathing',
-    name: 'Box Breathing',
+    name: t('exerciseLibrary.names.boxBreathing'),
     duration: '8 min',
-    description: 'Enhance focus and reduce stress with balanced breathing',
-    shortDescription: 'Square breathing for mental clarity.',
-    category: 'Breathing',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.boxBreathing'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.boxBreathing'),
+    category: t('exerciseLibrary.categories.breathing'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Wind,
     color: ['#7DD3FC', '#93C5FD'],
     image: require('../../assets/images/10.jpeg'),
@@ -47,12 +48,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'triangle-breathing': {
     id: 11,
     type: 'breathing',
-    name: 'Triangle Breathing',
+    name: t('exerciseLibrary.names.triangleBreathing'),
     duration: '6 min',
-    description: 'Simple mindful breathing for deep relaxation',
-    shortDescription: 'Three-phase breathing for relaxation.',
-    category: 'Breathing',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.triangleBreathing'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.triangleBreathing'),
+    category: t('exerciseLibrary.categories.breathing'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Wind,
     color: ['#A7F3D0', '#6EE7B7'],
     image: require('../../assets/images/11.jpeg'),
@@ -61,12 +62,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'coherent-breathing': {
     id: 12,
     type: 'breathing',
-    name: 'Coherent Breathing',
+    name: t('exerciseLibrary.names.coherentBreathing'),
     duration: '10 min',
-    description: 'Heart-centered breathing for emotional balance',
-    shortDescription: 'Heart-focused breathing for balance.',
-    category: 'Breathing',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.coherentBreathing'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.coherentBreathing'),
+    category: t('exerciseLibrary.categories.breathing'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Wind,
     color: ['#FDE68A', '#FCD34D'],
     image: require('../../assets/images/12.jpeg'),
@@ -75,12 +76,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'mindfulness': {
     id: 3,
     type: 'mindfulness',
-    name: 'Body Scan',
+    name: t('exerciseLibrary.names.mindfulness'),
     duration: '10 min',
-    description: 'Release tension with mindful body awareness',
-    shortDescription: 'Mindfully scan and relax your body.',
-    category: 'Mindfulness',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.mindfulness'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.mindfulness'),
+    category: t('exerciseLibrary.categories.mindfulness'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Eye,
     color: ['#95B99C', '#B8C5A6'],
     image: require('../../assets/images/3.jpeg'),
@@ -89,12 +90,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'morning-mindfulness': {
     id: 4,
     type: 'morning-mindfulness',
-    name: 'Morning Mindfulness',
+    name: t('exerciseLibrary.names.morningMindfulness'),
     duration: '8 min',
-    description: 'Begin your day with calm presence',
-    shortDescription: 'Start your day with mindful awareness.',
-    category: 'Mindfulness',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.morningMindfulness'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.morningMindfulness'),
+    category: t('exerciseLibrary.categories.mindfulness'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Eye,
     color: ['#E0F2FE', '#BAE6FD'],
     image: require('../../assets/images/4.jpeg'),
@@ -103,12 +104,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'gratitude': {
     id: 5,
     type: 'gratitude',
-    name: 'Gratitude Practice',
+    name: t('exerciseLibrary.names.gratitude'),
     duration: '10 min',
-    description: 'Build happiness through daily appreciation',
-    shortDescription: 'Cultivate appreciation and joy.',
-    category: 'Mindfulness',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.gratitude'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.gratitude'),
+    category: t('exerciseLibrary.categories.mindfulness'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: BookOpen,
     color: ['#FFD4BA', '#FFE5D4'],
     image: require('../../assets/images/5.jpeg'),
@@ -117,12 +118,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'self-compassion': {
     id: 6,
     type: 'self-compassion',
-    name: 'Self-Compassion Break',
+    name: t('exerciseLibrary.names.selfCompassion'),
     duration: '5 min',
-    description: 'Develop self-kindness and inner compassion',
-    shortDescription: 'Practice being kind to yourself.',
-    category: 'Self-Care',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.selfCompassion'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.selfCompassion'),
+    category: t('exerciseLibrary.categories.selfCare'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Heart,
     color: ['#E8B5A6', '#F5E6D3'],
     image: require('../../assets/images/6.jpg'),
@@ -131,12 +132,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'values-clarification': {
     id: 7,
     type: 'values-clarification',
-    name: 'My Core Values',
+    name: t('exerciseLibrary.names.valuesClarity'),
     duration: '15 min',
-    description: 'Clarify values and align your daily actions',
-    shortDescription: 'Align your actions with what matters most.',
-    category: 'ACT',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.valuesClarity'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.valuesClarity'),
+    category: t('exerciseLibrary.categories.act'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Star,
     color: ['#D4C5B9', '#E5E5E5'],
     image: require('../../assets/images/7.jpeg'),
@@ -145,12 +146,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'future-self-journaling': {
     id: 8,
     type: 'future-self-journaling',
-    name: 'Future Self Journaling',
+    name: t('exerciseLibrary.names.futureSelfJournaling'),
     duration: '20 min',
-    description: 'Gain clarity through future-focused reflection',
-    shortDescription: 'Connect with your future self.',
-    category: 'Self-Discovery',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.futureSelfJournaling'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.futureSelfJournaling'),
+    category: t('exerciseLibrary.categories.selfDiscovery'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Clock,
     color: ['#99F6E4', '#5EEAD4'],
     image: require('../../assets/images/8.jpeg'),
@@ -159,12 +160,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'sorting-thoughts': {
     id: 9,
     type: 'sorting-thoughts',
-    name: 'Sorting Thoughts',
+    name: t('exerciseLibrary.names.sortingThoughts'),
     duration: '10 min',
-    description: 'Clear mental clutter and organize thoughts',
-    shortDescription: 'Organize and clarify your thoughts.',
-    category: 'CBT',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.sortingThoughts'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.sortingThoughts'),
+    category: t('exerciseLibrary.categories.cbt'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Filter,
     color: ['#93C5FD', '#60A5FA'],
     image: require('../../assets/images/9.jpeg'),
@@ -173,12 +174,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'goal-setting': {
     id: 12,
     type: 'goal-setting',
-    name: 'Therapy Goal-Setting',
+    name: t('exerciseLibrary.names.goalSetting'),
     duration: '20 min',
-    description: 'Set focused goals aligned with your values',
-    shortDescription: 'Set meaningful goals for growth.',
-    category: 'Self-Growth',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.goalSetting'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.goalSetting'),
+    category: t('exerciseLibrary.categories.selfGrowth'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Star,
     color: ['#FBBF24', '#F59E0B'],
     image: require('../../assets/images/10.jpeg'), // Reusing image for now
@@ -187,12 +188,12 @@ export const exerciseLibraryData: Record<string, any> = {
   'tell-your-story': {
     id: 13,
     type: 'tell-your-story',
-    name: 'Tell Me Your Story',
+    name: t('exerciseLibrary.names.tellYourStory'),
     duration: '15-25 min',
-    description: 'Explore your journey and discover inner strengths',
-    shortDescription: 'Share your story and find your strengths.',
-    category: 'Self-Discovery',
-    difficulty: 'Beginner',
+    description: t('exerciseLibrary.descriptions.tellYourStory'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.tellYourStory'),
+    category: t('exerciseLibrary.categories.selfDiscovery'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: FileText,
     color: ['#FEF3C7', '#FDE68A'],
     image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
@@ -201,22 +202,25 @@ export const exerciseLibraryData: Record<string, any> = {
   'vision-of-future': {
     id: 14,
     type: 'vision-of-future',
-    name: 'Vision of the Future',
+    name: t('exerciseLibrary.names.visionOfFuture'),
     duration: '20-30 min',
-    description: 'Create an inspiring vision to guide your path',
-    shortDescription: 'Envision your ideal future.',
-    category: 'Self-Discovery',
-    difficulty: 'Intermediate',
+    description: t('exerciseLibrary.descriptions.visionOfFuture'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.visionOfFuture'),
+    category: t('exerciseLibrary.categories.selfDiscovery'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
     icon: Star,
     color: ['#E0F2FE', '#7DD3FC'],
     image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
     keywords: ['vision', 'future', 'goals', 'dreams', 'inspiration', 'values', 'purpose', 'life direction', 'imagination', 'hope'],
   }
-};
+});
 
-export const exerciseFlows: Record<string, any> = {
+// Legacy export for backward compatibility
+export const exerciseLibraryData = getExerciseLibraryData((key: string) => key);
+
+export const getExerciseFlows = (t: (key: string) => string): Record<string, any> => ({
   'automatic-thoughts': {
-    name: 'Recognizing Automatic Thoughts',
+    name: t('exerciseLibrary.names.automaticThoughts'),
     color: 'purple',
     useAI: true,
     steps: [
@@ -247,7 +251,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'breathing': {
-    name: '4-7-8 Breathing',
+    name: t('exerciseLibrary.names.breathing'),
     color: 'blue',
     useAI: true,
     steps: [
@@ -272,7 +276,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'mindfulness': {
-    name: 'Body Scan',
+    name: t('exerciseLibrary.names.mindfulness'),
     color: 'green',
     useAI: true,
     steps: [
@@ -297,7 +301,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'gratitude': {
-    name: 'Gratitude Practice',
+    name: t('exerciseLibrary.names.gratitude'),
     color: 'orange',
     useAI: true,
     steps: [
@@ -322,7 +326,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'self-compassion': {
-    name: 'Self-Compassion Break',
+    name: t('exerciseLibrary.names.selfCompassion'),
     color: 'pink',
     useAI: true,
     steps: [
@@ -347,7 +351,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'values-clarification': {
-    name: 'My Core Values',
+    name: t('exerciseLibrary.names.valuesClarity'),
     color: 'gray',
     useAI: true,
     steps: [
@@ -372,7 +376,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'future-self-journaling': {
-    name: 'Future Self Journaling',
+    name: t('exerciseLibrary.names.futureSelfJournaling'),
     color: 'teal',
     useAI: true,
     steps: [
@@ -409,7 +413,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'sorting-thoughts': {
-    name: 'Sorting Thoughts',
+    name: t('exerciseLibrary.names.sortingThoughts'),
     color: 'blue',
     useAI: true,
     steps: [
@@ -434,7 +438,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'goal-setting': {
-    name: 'Therapy Goal-Setting',
+    name: t('exerciseLibrary.names.goalSetting'),
     color: 'yellow',
     useAI: false, // This uses the custom GoalSettingExercise component
     isCustomComponent: true,
@@ -478,7 +482,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'tell-your-story': {
-    name: 'Tell Me Your Story',
+    name: t('exerciseLibrary.names.tellYourStory'),
     color: 'yellow',
     useAI: false, // This uses the custom StorytellingExercise component
     isCustomComponent: true,
@@ -516,7 +520,7 @@ export const exerciseFlows: Record<string, any> = {
     ]
   },
   'vision-of-future': {
-    name: 'Vision of the Future',
+    name: t('exerciseLibrary.names.visionOfFuture'),
     color: 'blue',
     useAI: true,
     steps: [
@@ -528,18 +532,21 @@ export const exerciseFlows: Record<string, any> = {
       }
     ]
   }
-};
+});
 
-// Unified data for rendering cards in the UI
-export const exercisesArray = Object.values(exerciseLibraryData);
+// Legacy export for backward compatibility
+export const exerciseFlows = getExerciseFlows((key: string) => key);
+
+// Unified data for rendering cards in the UI - now a function
+export const getExercisesArray = (t: (key: string) => string) => Object.values(getExerciseLibraryData(t));
 
 // Helper functions for accessing exercise data
-export function getExerciseByType(type: string) {
-  return exerciseLibraryData[type];
+export function getExerciseByType(type: string, t: (key: string) => string) {
+  return getExerciseLibraryData(t)[type];
 }
 
-export function getExerciseFlow(type: string) {
-  return exerciseFlows[type];
+export function getExerciseFlow(type: string, t: (key: string) => string) {
+  return getExerciseFlows(t)[type];
 }
 
 // Exercise keyword mapping to match AI suggestions with library exercises

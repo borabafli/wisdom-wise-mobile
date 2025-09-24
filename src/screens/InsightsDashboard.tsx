@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated, FlatList } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
@@ -37,24 +38,49 @@ interface InsightsDashboardProps {
   onTherapyGoalsClick?: () => void;
 }
 
-// Brief explanations for thought pattern types
-const PATTERN_EXPLANATIONS: Record<string, string> = {
-  'All-or-Nothing Thinking': 'Seeing things in black and white without middle ground',
-  'Catastrophizing': 'Imagining the worst possible outcomes',
-  'Mental Filter': 'Focusing only on negative details',
-  'Overgeneralization': 'Making broad conclusions from single events',
-  'Mind Reading': 'Assuming you know what others think',
-  'Fortune Telling': 'Predicting negative outcomes without evidence',
-  'Emotional Reasoning': 'Believing feelings reflect reality',
-  'Should Statements': 'Using rigid rules about how things should be',
-  'Labeling': 'Attaching negative labels to yourself or others',
-  'Personalization': 'Blaming yourself for things outside your control',
-  'Magnification': 'Blowing things out of proportion',
-  'Minimization': 'Downplaying positive aspects',
-  'Thought Pattern': 'A recurring way of thinking that may need attention'
+// Get pattern name and explanation using translation keys
+const getPatternName = (patternType: string, t: any): string => {
+  const patterns: Record<string, string> = {
+    'All-or-Nothing Thinking': 'allOrNothing',
+    'Catastrophizing': 'catastrophizing',
+    'Mental Filter': 'mentalFilter',
+    'Overgeneralization': 'overgeneralization',
+    'Mind Reading': 'mindReading',
+    'Fortune Telling': 'fortuneTelling',
+    'Emotional Reasoning': 'emotionalReasoning',
+    'Should Statements': 'shouldStatements',
+    'Labeling': 'labeling',
+    'Personalization': 'personalization',
+    'Magnification': 'magnification',
+    'Minimization': 'minimization'
+  };
+
+  const key = patterns[patternType];
+  return key ? t(`insights.thinkingPatterns.${key}`) : t('insights.thinkingPatterns.thoughtPattern');
+};
+
+const getPatternExplanation = (patternType: string, t: any): string => {
+  const patterns: Record<string, string> = {
+    'All-or-Nothing Thinking': 'allOrNothing',
+    'Catastrophizing': 'catastrophizing',
+    'Mental Filter': 'mentalFilter',
+    'Overgeneralization': 'overgeneralization',
+    'Mind Reading': 'mindReading',
+    'Fortune Telling': 'fortuneTelling',
+    'Emotional Reasoning': 'emotionalReasoning',
+    'Should Statements': 'shouldStatements',
+    'Labeling': 'labeling',
+    'Personalization': 'personalization',
+    'Magnification': 'magnification',
+    'Minimization': 'minimization'
+  };
+
+  const key = patterns[patternType];
+  return key ? t(`insights.thinkingPatterns.explanations.${key}`) : t('insights.thinkingPatterns.explanations.thoughtPattern');
 };
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, onTherapyGoalsClick }) => {
+  const { t } = useTranslation();
   const { firstName } = useUserProfile();
   
   // Apply dynamic navigation bar styling
@@ -200,23 +226,23 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   const mockPatterns = [
     {
       id: 'mock_1',
-      originalThought: 'I completely messed up that presentation, I\'m terrible at public speaking',
-      reframedThought: 'The presentation had some rough spots, but I also had good moments. I\'m learning and improving.',
+      originalThought: t('insights.mockData.patterns.presentationThought'),
+      reframedThought: t('insights.mockData.patterns.presentationReframe'),
       distortionTypes: ['All-or-Nothing Thinking'],
       confidence: 0.85,
       extractedFrom: { messageId: 'mock', sessionId: 'mock' },
       timestamp: new Date().toISOString(),
-      context: 'Identified during conversation about work stress'
+      context: t('insights.mockData.patterns.presentationContext')
     },
     {
-      id: 'mock_2', 
-      originalThought: 'If I don\'t get this job, my career will be ruined',
-      reframedThought: 'Not getting this particular job would be disappointing, but there are other opportunities out there.',
+      id: 'mock_2',
+      originalThought: t('insights.mockData.patterns.jobThought'),
+      reframedThought: t('insights.mockData.patterns.jobReframe'),
       distortionTypes: ['Catastrophizing'],
       confidence: 0.92,
       extractedFrom: { messageId: 'mock', sessionId: 'mock' },
       timestamp: new Date().toISOString(),
-      context: 'Pattern recognized during anxiety session'
+      context: t('insights.mockData.patterns.jobContext')
     }
   ];
 
@@ -235,34 +261,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     }
   };
 
-  // Get brief explanation for pattern type
-  const getPatternExplanation = (patternType: string): string => {
-    return PATTERN_EXPLANATIONS[patternType] || PATTERN_EXPLANATIONS['Thought Pattern'];
-  };
 
   const journeyData = {
     sessionsCompleted: 3,
     exercisesCompleted: 7,
     streakDays: 5,
-    nextSuggestion: 'Try a Reframe to reduce worry',
+    nextSuggestion: t('insights.mockData.journey.nextSuggestion'),
     achievements: [
-      'First guided session',
-      'Daily check-in streak', 
-      'Completed breathing exercise'
+      t('insights.mockData.journey.achievements.firstSession'),
+      t('insights.mockData.journey.achievements.dailyStreak'),
+      t('insights.mockData.journey.achievements.breathingExercise')
     ]
   };
 
-  const insights = [
-    {
-      id: 3,
-      title: 'Session Summaries',
-      value: memoryStats.sessionSummaries.toString(),
-      subtitle: 'Sessions analyzed',
-      icon: FileText,
-      trend: memoryStats.sessionSummaries > 0 ? 'positive' : 'neutral',
-      onClick: () => setSessionSummariesVisible(true)
-    }
-  ];
 
   return (
     <SafeAreaWrapper style={styles.container}>
@@ -289,8 +300,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 contentFit="contain"
               />
               <View style={styles.titleAndSubtitleContainer}>
-                <Text style={styles.headerTitle}>Insights</Text>
-                <Text style={styles.headerSubtitle}>✨ For your growth</Text>
+                <Text style={styles.headerTitle}>{t('insights.title')}</Text>
+                <Text style={styles.headerSubtitle}>{t('insights.subtitle')}</Text>
               </View>
             </View>
           </View>
@@ -317,7 +328,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             <View style={styles.motivationalContent}>
               <View style={styles.motivationalText}>
                 <Text style={styles.motivationalTitle}>
-                  {motivationalCard?.message.emoji ? `${motivationalCard.message.emoji} ` : ''}{motivationalCard?.message.text || 'Your wellness journey continues'}
+                  {motivationalCard?.message.emoji ? `${motivationalCard.message.emoji} ` : ''}{motivationalCard?.message.text || t('insights.motivational.fallbackMessage')}
                 </Text>
               </View>
               <View style={styles.motivationalStats}>
@@ -337,7 +348,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 ) : (
                   <View style={styles.motivationalStat}>
                     <Text style={styles.motivationalNumber}>1</Text>
-                    <Text style={styles.motivationalLabel}>starting today</Text>
+                    <Text style={styles.motivationalLabel}>{t('insights.motivational.startingToday')}</Text>
                   </View>
                 )}
               </View>
@@ -390,13 +401,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 color: '#1F2937',
                 fontFamily: 'Ubuntu-Medium',
                 letterSpacing: -0.5
-              }}>Your Values</Text>
+              }}>{t('insights.values.title')}</Text>
               <Text style={{
                 fontSize: 14,
                 color: '#6B7280',
                 fontFamily: 'Ubuntu-Light',
                 marginTop: 2
-              }}>What matters to you</Text>
+              }}>{t('insights.values.subtitle')}</Text>
             </View>
           </View>
 
@@ -417,7 +428,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
         {/* Vision of the Future Section */}
         <VisionInsightsCard
           onReflectPress={(visionInsight) => {
-            const prompt = `I see that you've created a beautiful vision of your future self. You described your future self as embodying qualities like: ${visionInsight.coreQualities.join(', ')}. Your vision was: "${visionInsight.fullDescription}"\n\nI'd love to explore this vision with you. What aspects of this future self feel most inspiring to you right now? And what small step could you take today to embody a little more of these qualities?`;
+            const prompt = t('insights.prompts.visionReflection')
+              .replace('{{qualities}}', visionInsight.coreQualities.join(', '))
+              .replace('{{description}}', visionInsight.fullDescription);
             onInsightClick('vision_reflection', {
               visionInsight,
               prompt
@@ -451,8 +464,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               />
             </View>
             <View style={styles.patternsTitleContainer}>
-              <Text style={styles.patternsTitle}>Session Summaries</Text>
-              <Text style={styles.patternsSubtitle}>Sessions analyzed</Text>
+              <Text style={styles.patternsTitle}>{t('insights.sessionSummaries.title')}</Text>
+              <Text style={styles.patternsSubtitle}>{t('insights.sessionSummaries.subtitle')}</Text>
             </View>
             <View style={styles.patternArrow}>
               <ArrowRight size={16} color="#1e40af" />
@@ -476,8 +489,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               />
             </View>
             <View style={styles.patternsTitleContainer}>
-              <Text style={styles.patternsTitle}>Memory Insights</Text>
-              <Text style={styles.patternsSubtitle}>Long-term patterns & themes</Text>
+              <Text style={styles.patternsTitle}>{t('insights.memoryInsights')}</Text>
+              <Text style={styles.patternsSubtitle}>{t('insights.longTermPatterns')}</Text>
             </View>
             <View style={styles.patternArrow}>
               <ArrowRight 
@@ -530,27 +543,29 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             <View style={styles.memoryActionButtons}>
                               <ValuesReflectButton
                                 onPress={() => {
-                                  const prompt = `I noticed from your memory insights that you have some strengths and positive patterns. Let's take a moment to reflect on these strengths: "${insight.content}"\n\nWhat do you think makes these strengths particularly meaningful to you? How might you lean into these strengths more in your daily life?`;
+                                  const prompt = t('insights.prompts.strengthReflection')
+                                    .replace('{{content}}', insight.content);
                                   onInsightClick('strength_reflection', {
                                     insightContent: insight.content,
                                     category: insight.category,
                                     prompt: prompt
                                   });
                                 }}
-                                text="Reflect on Strengths"
+                                text={t('insights.actions.reflectOnStrengths')}
                                 style={{ marginBottom: 8 }}
                               />
                               
                               <ValuesReflectButton
                                 onPress={() => {
-                                  const prompt = `I see that you have some deep emotional insights from our conversations: "${insight.content}"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?`;
+                                  const prompt = t('insights.prompts.emotionReflection')
+                                    .replace('{{content}}', insight.content);
                                   onInsightClick('emotion_reflection', {
                                     insightContent: insight.content,
                                     category: insight.category,
                                     prompt: prompt
                                   });
                                 }}
-                                text="Spend Time with Emotions"
+                                text={t('insights.actions.spendTimeWithEmotions')}
                               />
                             </View>
                           </>
@@ -586,11 +601,11 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               />
             </View>
             <View style={styles.patternsTitleContainer}>
-              <Text style={styles.patternsTitle}>Therapy Goals</Text>
+              <Text style={styles.patternsTitle}>{t('insights.therapyGoals.title')}</Text>
               <Text style={styles.patternsSubtitle}>
                 {activeGoals.length > 0
-                  ? `${activeGoals.length} active goal${activeGoals.length === 1 ? '' : 's'}`
-                  : 'Set your first goal'
+                  ? `${activeGoals.length} ${activeGoals.length === 1 ? t('insights.therapyGoals.activeGoal') : t('insights.therapyGoals.activeGoals')}`
+                  : t('insights.therapyGoals.setFirstGoal')
                 }
               </Text>
             </View>
@@ -630,7 +645,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                           />
                         </View>
                         <Text style={styles.patternDescription}>
-                          {goal.progress}% complete • {goal.timeline}
+                          {goal.progress}% {t('insights.therapyGoals.complete')} • {goal.timeline}
                         </Text>
                       </View>
                     </View>
@@ -644,7 +659,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               {activeGoals.length === 0 && (
                 <View style={styles.noGoalsContainer}>
                   <Text style={styles.noGoalsText}>
-                    Set therapy goals to give direction and motivation to your healing journey.
+                    {t('insights.therapyGoals.setGoalDescription')}
                   </Text>
                   <TouchableOpacity
                     onPress={() => onInsightClick('goal-setting')}
@@ -652,7 +667,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                     activeOpacity={0.8}
                   >
                     <Plus size={16} color="#FFFFFF" />
-                    <Text style={styles.setGoalButtonText}>Set Your First Goal</Text>
+                    <Text style={styles.setGoalButtonText}>{t('insights.therapyGoals.setFirstGoalButton')}</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -672,23 +687,23 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               />
             </View>
             <View style={styles.patternsTitleContainer}>
-              <Text style={styles.patternsTitle}>Journey</Text>
-              <Text style={styles.patternsSubtitle}>Every step counts</Text>
+              <Text style={styles.patternsTitle}>{t('insights.journey.title')}</Text>
+              <Text style={styles.patternsSubtitle}>{t('insights.journey.subtitle')}</Text>
             </View>
           </View>
 
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{journeyData.sessionsCompleted}</Text>
-              <Text style={styles.statLabel}>Sessions</Text>
+              <Text style={styles.statLabel}>{t('insights.journey.sessions')}</Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statValueSky}>{journeyData.exercisesCompleted}</Text>
-              <Text style={styles.statLabel}>Exercises</Text>
+              <Text style={styles.statLabel}>{t('insights.journey.exercises')}</Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{journeyData.streakDays}</Text>
-              <Text style={styles.statLabel}>Day streak</Text>
+              <Text style={styles.statLabel}>{t('insights.journey.dayStreak')}</Text>
             </View>
           </View>
 
@@ -697,14 +712,14 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             style={styles.suggestionCard}
           >
             <Text style={styles.suggestionText}>
-              You've completed <Text style={styles.suggestionBold}>{journeyData.sessionsCompleted}</Text> guided sessions! 
-              <Text style={styles.suggestionBoldBlue}> Next up: {journeyData.nextSuggestion}</Text>
+              {t('insights.journey.completedSessions')} <Text style={styles.suggestionBold}>{journeyData.sessionsCompleted}</Text> {t('insights.journey.guidedSessions')}
+              <Text style={styles.suggestionBoldBlue}> {t('insights.journey.nextUp')} {journeyData.nextSuggestion}</Text>
             </Text>
           </LinearGradient>
 
           {/* Recent Achievements - Now inside Journey section */}
           <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(226, 232, 240, 0.6)' }}>
-            <Text style={styles.achievementsTitle}>Recent Achievements</Text>
+            <Text style={styles.achievementsTitle}>{t('insights.journey.recentAchievements')}</Text>
             <View style={styles.achievementsList}>
               {journeyData.achievements.map((achievement, index) => (
                 <View key={index} style={styles.achievementItem}>
@@ -762,7 +777,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               fontWeight: '600',
               fontFamily: 'Ubuntu-Medium'
             }}>
-              Generate Data
+              {t('insights.actions.generateData')}
             </Text>
           </TouchableOpacity>
 
@@ -795,7 +810,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               fontWeight: '600',
               fontFamily: 'Ubuntu-Medium'
             }}>
-              Refresh
+              {t('insights.actions.refresh')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -815,7 +830,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           setPatternsModalVisible(false);
           onInsightClick('thinking_pattern_reflection', {
             originalThought: pattern.originalThought,
-            distortionType: pattern.distortionTypes[0] || 'Cognitive Distortion',
+            distortionType: pattern.distortionTypes[0] || t('insights.mockData.cognitiveDistortion'),
             reframedThought: pattern.reframedThought,
             prompt: prompt
           });
@@ -864,7 +879,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
         onClose={() => setVisionDetailsVisible(false)}
         onReflectPress={(visionInsight) => {
           setVisionDetailsVisible(false);
-          const prompt = `I see that you've created a beautiful vision of your future self. You described your future self as embodying qualities like: ${visionInsight.coreQualities.join(', ')}. Your vision was: "${visionInsight.fullDescription}"\n\nI'd love to explore this vision with you. What aspects of this future self feel most inspiring to you right now? And what small step could you take today to embody a little more of these qualities?`;
+          const prompt = t('insights.prompts.visionReflection')
+            .replace('{{qualities}}', visionInsight.coreQualities.join(', '))
+            .replace('{{description}}', visionInsight.fullDescription);
           onInsightClick('vision_reflection', {
             visionInsight,
             prompt

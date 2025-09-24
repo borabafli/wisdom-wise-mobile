@@ -1,0 +1,596 @@
+{
+  "common": {
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "continue": "Continuer",
+    "skip": "Passer",
+    "back": "Retour",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "D'accord",
+    "saving": "Sauvegarde..."
+  },
+  "navigation": {
+    "home": "Accueil",
+    "today": "Aujourd'hui",
+    "journal": "Journal",
+    "exercises": "Exercices",
+    "insights": "Perspectives",
+    "profile": "Profil",
+    "chat": "Conversation"
+  },
+  "home": {
+    "title": "Accueil",
+    "subtitle": "Votre espace de sérénité",
+    "startSession": "Commencer une séance",
+    "quickActions": "Actions rapides",
+    "todaysInsights": "Vos perspectives du jour",
+    "recentSessions": "Séances récentes",
+    "welcomeBack": "Bon retour parmi nous",
+    "moodCheck": "Comment vous sentez-vous aujourd'hui ?",
+    "checkInNow": "Check-In Maintenant",
+    "type": "Écrire",
+    "talk": "Parler",
+    "yourNextSteps": "Vos Prochaines Étapes",
+    "seeAll": "Voir tout",
+    "dailyReflection": "Réflexion Quotidienne",
+    "generateTest": "Générer Test",
+    "browseExercises": "Parcourir\nExercices",
+    "viewInsights": "Voir\nPerspectives",
+    "startBreathing": "Commencer\nRespiration",
+    "realTimeAudioWaves": "Ondes Audio en Temps Réel",
+    "quickBreathingExercise": {
+      "name": "Respiration Profonde",
+      "duration": "5 min",
+      "description": "Calmez votre esprit avec une respiration guidée"
+    },
+    "startWriting": "Commencer à écrire",
+    "slideToRemove": "Glissez pour supprimer l'exercice",
+    "removeExerciseModal": {
+      "title": "Supprimer l'exercice ?",
+      "for7Days": "Pendant 7 jours",
+      "forever": "Définitivement",
+      "cancel": "Annuler"
+    }
+  },
+  "exercises": {
+    "title": "Exercices",
+    "subtitle": "Pratiques guidées pour votre bien-être",
+    "categories": "Catégories",
+    "duration": "Durée",
+    "difficulty": "Difficulté",
+    "approach": "Approche",
+    "startExercise": "Commencer l'exercice",
+    "exerciseComplete": "Exercice terminé",
+    "exerciseRating": {
+      "title": "Cet exercice vous a-t-il été utile ?",
+      "subtitle": "Nous utilisons vos commentaires pour personnaliser votre expérience et suggérer de meilleurs exercices adaptés à vos besoins.",
+      "today": "Aujourd'hui",
+      "ratings": {
+        "notHelpfulAtAll": "Pas du tout utile",
+        "somewhatHelpful": "Quelque peu utile",
+        "moderatelyHelpful": "Modérément utile",
+        "veryHelpful": "Très utile",
+        "extremelyHelpful": "Extrêmement utile"
+      },
+      "sliderLabels": {
+        "notAtAll": "Pas du tout",
+        "very": "Très"
+      }
+    },
+    "breathing": "Respiration",
+    "meditation": "Méditation",
+    "journaling": "Réflexion",
+    "mindfulness": "Pleine conscience",
+    "searchPlaceholder": "Rechercher des exercices...",
+    "showAllFilters": "Afficher tous les filtres",
+    "clearAll": "Tout effacer",
+    "exercisesFound": "{{count}} exercice trouvé",
+    "exercisesFound_other": "{{count}} exercices trouvés",
+    "noExercisesFound": "Aucun exercice trouvé",
+    "adjustFilters": "Essayez d'ajuster vos filtres ou termes de recherche",
+    "stepByStepGuide": "Cet exercice vous guidera étape par étape dans le processus.",
+    "stepNumber": "Étape {{number}}",
+    "stepsCount": "{{count}} étape",
+    "stepsCount_other": "{{count}} étapes",
+    "steps": "Étapes"
+  },
+  "insights": {
+    "title": "Perspectives",
+    "subtitle": "✨ Pour votre croissance",
+    "yourThoughts": "Vos pensées",
+    "reflectOnThis": "Réfléchir à ceci",
+    "moodTracking": "Suivi d'humeur",
+    "progressStats": "Statistiques de progrès",
+    "patterns": "Schémas",
+    "goals": "Objectifs",
+    "memoryInsights": "Perspectives à long terme",
+    "longTermPatterns": "Schémas et thèmes à long terme",
+    "motivational": {
+      "fallbackMessage": "Votre parcours de bien-être continue",
+      "startingToday": "à partir d'aujourd'hui"
+    },
+    "values": {
+      "title": "Vos Valeurs",
+      "subtitle": "Ce qui compte pour vous"
+    },
+    "sessionSummaries": {
+      "title": "Résumés de Séances",
+      "subtitle": "Séances analysées"
+    },
+    "therapyGoals": {
+      "title": "Objectifs Thérapeutiques",
+      "activeGoal": "objectif actif",
+      "activeGoals": "objectifs actifs",
+      "setFirstGoal": "Définir votre premier objectif",
+      "setGoalDescription": "Définissez des objectifs thérapeutiques pour donner direction et motivation à votre parcours de guérison.",
+      "setFirstGoalButton": "Définir Votre Premier Objectif",
+      "complete": "terminé"
+    },
+    "journey": {
+      "title": "Parcours",
+      "subtitle": "Chaque étape compte",
+      "sessions": "Séances",
+      "exercises": "Exercices",
+      "dayStreak": "Série de jours",
+      "completedSessions": "Vous avez terminé",
+      "guidedSessions": "séances guidées !",
+      "nextUp": "À suivre :",
+      "recentAchievements": "Réalisations Récentes"
+    },
+    "actions": {
+      "reflectOnStrengths": "Réfléchir aux Forces",
+      "spendTimeWithEmotions": "Passer du Temps avec les Émotions",
+      "generateData": "Générer des Données",
+      "refresh": "Actualiser"
+    },
+    "prompts": {
+      "visionReflection": "Je vois que vous avez créé une belle vision de votre futur vous. Vous avez décrit votre futur vous comme incarnant des qualités comme : {{qualities}}. Votre vision était : \"{{description}}\"\n\nJ'aimerais explorer cette vision avec vous. Quels aspects de ce futur vous vous semblent les plus inspirants en ce moment ? Et quel petit pas pourriez-vous faire aujourd'hui pour incarner un peu plus de ces qualités ?",
+      "strengthReflection": "J'ai remarqué dans vos perspectives de mémoire que vous avez des forces et des schémas positifs. Prenons un moment pour réfléchir à ces forces : \"{{content}}\"\n\nQu'est-ce qui rend ces forces particulièrement significatives pour vous ? Comment pourriez-vous vous appuyer davantage sur ces forces dans votre vie quotidienne ?",
+      "emotionReflection": "Je vois que vous avez des perspectives émotionnelles profondes de nos conversations : \"{{content}}\"\n\nParfois, il est précieux de passer du temps avec nos émotions et de comprendre ce qu'elles nous disent. Quelles émotions surgissent en vous quand vous lisez cette perspective ? Que pourraient essayer de vous communiquer ces émotions ?"
+    },
+    "thinkingPatterns": {
+      "allOrNothing": "Pensée Tout ou Rien",
+      "catastrophizing": "Catastrophisme",
+      "mentalFilter": "Filtre Mental",
+      "overgeneralization": "Surgénéralisation",
+      "mindReading": "Lecture de Pensée",
+      "fortuneTelling": "Prédiction d'Avenir",
+      "emotionalReasoning": "Raisonnement Émotionnel",
+      "shouldStatements": "Déclarations du Devoir",
+      "labeling": "Étiquetage",
+      "personalization": "Personnalisation",
+      "magnification": "Amplification",
+      "minimization": "Minimisation",
+      "thoughtPattern": "Schéma de Pensée",
+      "explanations": {
+        "allOrNothing": "Voir les choses en noir et blanc sans nuance",
+        "catastrophizing": "Imaginer les pires scénarios possibles",
+        "mentalFilter": "Se concentrer uniquement sur les détails négatifs",
+        "overgeneralization": "Tirer des conclusions générales d'événements isolés",
+        "mindReading": "Supposer connaître les pensées des autres",
+        "fortuneTelling": "Prédire des résultats négatifs sans preuve",
+        "emotionalReasoning": "Croire que les sentiments reflètent la réalité",
+        "shouldStatements": "Utiliser des règles rigides sur ce qui devrait être",
+        "labeling": "Attacher des étiquettes négatives à soi ou aux autres",
+        "personalization": "Se blâmer pour des choses hors de son contrôle",
+        "magnification": "Exagérer l'importance des choses",
+        "minimization": "Minimiser les aspects positifs",
+        "thoughtPattern": "Une façon récurrente de penser qui nécessite peut-être de l'attention"
+      }
+    },
+    "mockData": {
+      "patterns": {
+        "presentationThought": "J'ai complètement raté cette présentation, je suis nul en prise de parole en public",
+        "presentationReframe": "La présentation a eu des moments difficiles, mais j'ai aussi eu de bons moments. J'apprends et je m'améliore.",
+        "presentationContext": "Identifié lors d'une conversation sur le stress au travail",
+        "jobThought": "Si je n'obtiens pas ce travail, ma carrière sera ruinée",
+        "jobReframe": "Ne pas obtenir ce travail particulier serait décevant, mais il y a d'autres opportunités.",
+        "jobContext": "Schéma reconnu lors d'une séance d'anxiété"
+      },
+      "journey": {
+        "nextSuggestion": "Essayez un Recadrage pour réduire l'inquiétude",
+        "achievements": {
+          "firstSession": "Première séance guidée",
+          "dailyStreak": "Série de check-ins quotidiens",
+          "breathingExercise": "Exercice de respiration terminé"
+        }
+      },
+      "cognitiveDistortion": "Distorsion Cognitive"
+    },
+    "moodInsights": {
+      "yourMood": "Votre Humeur",
+      "trackEmotions": "Suivez votre parcours émotionnel",
+      "yourThoughts": "Vos Pensées",
+      "identifyPatterns": "Identifier et recadrer les schémas",
+      "distortedThought": "Pensée Déformée",
+      "balancedThought": "Pensée Équilibrée",
+      "moreBalanced": "Plus équilibré",
+      "reflectOnThis": "Réfléchir à cela",
+      "analyzingPatterns": "Analyse de vos schémas d'humeur...",
+      "weeklyTrend": {
+        "improving": "↗ Amélioration",
+        "steady": "↔ Stable",
+        "declining": "↘ Déclin"
+      },
+      "emptyStates": {
+        "noData": {
+          "title": "Commencez votre parcours bien-être ! ✨",
+          "description": "Chattez avec Anu ou suivez votre humeur après les exercices pour voir des perspectives personnalisées ici",
+          "chatButton": "Chatter avec Anu",
+          "exerciseButton": "Essayer un exercice",
+          "sampleButton": "Générer des données d'exemple"
+        },
+        "moodOnly": {
+          "title": "Bravo pour avoir suivi votre humeur ! 📈",
+          "description": "Vous avez enregistré {{count}} évaluation d'humeur. Chattez avec Anu pour débloquer des perspectives personnalisées sur vos schémas."
+        },
+        "sessionsOnly": {
+          "title": "Beau progrès avec Anu ! 💬",
+          "description": "Vous avez eu {{count}} conversation. Évaluez votre humeur après les exercices pour voir les tendances hebdomadaires et des perspectives plus profondes.",
+          "exerciseButton": "Essayer un exercice"
+        },
+        "bothData": {
+          "title": "Continuez à construire vos perspectives ! ⭐",
+          "description": "Vous avez {{sessionCount}} conversations et {{moodRatingCount}} évaluations d'humeur. Continuez votre parcours pour des perspectives plus profondes."
+        },
+        "fallback": {
+          "title": "Vérification de vos données... ✨"
+        }
+      }
+    },
+    "priorityExercises": {
+      "names": {
+        "tellStory": "Racontez votre histoire",
+        "goalSetting": "Fixation d'objectifs thérapeutiques",
+        "visionFuture": "Vision de l'avenir",
+        "reframingThoughts": "Recadrage des pensées",
+        "livingValues": "Mes valeurs fondamentales",
+        "mindfulness": "Pleine conscience matinale",
+        "stressRelief": "Respiration 4-7-8",
+        "gratitude": "Pratique de gratitude"
+      },
+      "descriptions": {
+        "tellStory": "Partagez votre parcours personnel",
+        "goalSetting": "Définissez vos objectifs",
+        "visionFuture": "Imaginez votre moi futur idéal",
+        "reframingThoughts": "Transformez les pensées négatives",
+        "livingValues": "Alignez vos actions sur vos valeurs fondamentales",
+        "mindfulness": "Commencez votre journée avec une conscience douce",
+        "stressRelief": "Réduisez l'anxiété avec une technique de respiration éprouvée",
+        "gratitude": "Construisez le bonheur grâce à l'appréciation quotidienne"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "✨ Votre compagnon de bien-être",
+    "personalInfo": "Informations personnelles",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "signOut": "Se déconnecter",
+    "editProfile": "Modifier le profil",
+    "memberSince": "Membre depuis",
+    "anonymousGuest": "Invité anonyme",
+    "stats": {
+      "sessions": "Séances",
+      "streak": "Série",
+      "insights": "Perspectives",
+      "exercises": "Exercices",
+      "daysStreak": "7 jours"
+    },
+    "fallbackName": "Ami",
+    "welcomeMessage": "Bienvenue à WisdomWise",
+    "premiumMember": "Membre Premium",
+    "yourProgress": "Votre Progrès",
+    "menu": {
+      "editProfile": "Modifier le profil",
+      "chatHistory": "Historique des conversations",
+      "voiceSettings": "Paramètres vocaux",
+      "notifications": "Notifications",
+      "privacy": "Confidentialité & Sécurité",
+      "darkMode": "Mode sombre",
+      "help": "Aide & Support",
+      "signOut": "Se déconnecter"
+    },
+    "menuSubtitles": {
+      "editProfile": "Mettre à jour vos informations",
+      "chatHistory": "Voir les conversations passées",
+      "voiceSettings": "Configurer les options vocales",
+      "notifications": "Gérer les alertes",
+      "privacy": "Contrôler vos données",
+      "darkMode": "Basculer le thème sombre",
+      "help": "Obtenir de l'aide",
+      "signOut": "Quitter votre compte",
+      "default": "Appuyer pour accéder"
+    },
+    "version": "Version 1.0.0",
+    "madeWith": "Fait avec 💙 pour votre bien-être"
+  },
+  "chat": {
+    "title": "Conversation avec Anu",
+    "subtitle": "Votre compagnon IA de bien-être",
+    "startConversation": "Commencer une conversation...",
+    "typeMessage": "Tapez votre message...",
+    "sendMessage": "Envoyer",
+    "voiceInput": "Saisie vocale",
+    "recording": "Enregistrement...",
+    "transcribing": "Transcription...",
+    "thinking": "Réflexion...",
+    "speakResponse": "Prononcer la réponse",
+    "exercise": "Exercice",
+    "reflectionSpace": "💭 Espace de réflexion",
+    "exerciseProgress": "Étape {{current}} sur {{total}} • {{title}}",
+    "inProgress": "En cours",
+    "therapeuticExercise": "{{duration}} • Exercice thérapeutique",
+    "loadingSpace": "Chargement de votre espace doux...",
+    "safeSpace": "Votre espace sûr pour la réflexion",
+    "almostAtLimit": "Presque à la limite quotidienne ! {{remaining}} restant.",
+    "limitUsed": "{{percentage}}% de la limite quotidienne utilisée.",
+    "endReflection": "Terminer la réflexion",
+    "typeOrSpeak": "Tapez ou parlez...",
+    "composeMessage": "Rédiger un message",
+    "suggestExercise": "Suggérer un exercice",
+    "promptSuggestion": "Suggérer quelque chose & me guider",
+    "moodSlider": {
+      "title": "Comment vous sentez-vous en ce moment ?",
+      "subtitle": "Évaluez votre humeur actuelle",
+      "saved": "Enregistré !"
+    },
+    "visionSummary": {
+      "title": "Résumé de Vision",
+      "subtitle": "Votre futur inspirant révélé",
+      "yourVision": "Votre Vision",
+      "keyInsights": "Idées Clés",
+      "continueVision": "Continuer la Vision",
+      "saveVision": "Sauvegarder la Vision"
+    },
+    "thinkingPatternSummary": {
+      "title": "Résumé de Réflexion",
+      "subtitle": "Vos perspectives sur les schémas de pensée",
+      "patternExplored": "Schéma Exploré",
+      "reflectionSummary": "Résumé de Réflexion",
+      "keyInsights": "Idées Clés",
+      "continueReflection": "Continuer la Réflexion",
+      "saveSummary": "Sauvegarder le Résumé"
+    },
+    "valueReflectionSummary": {
+      "title": "Résumé de Réflexion",
+      "subtitle": "Examinez vos perspectives sur \"{{valueName}}\"",
+      "summary": "Résumé",
+      "keyInsights": "Idées Clés",
+      "continueReflection": "Continuer la Réflexion",
+      "saveSummary": "Sauvegarder le Résumé"
+    }
+  },
+  "mood": {
+    "title": "Suivi d'humeur",
+    "howAreYouFeeling": "Comment vous sentez-vous en ce moment ?",
+    "rateYourMood": "Évaluez votre humeur actuelle",
+    "helpfulnessRating": "Dans quelle mesure cela a-t-il été utile ?",
+    "saved": "Sauvegardé ! ✓",
+    "beforeWeStart": "Avant de commencer..."
+  },
+  "journal": {
+    "title": "Journal guidé",
+    "promptTitle": "Question de réflexion",
+    "yourResponse": "Votre réponse",
+    "finish": "Terminer",
+    "saveSession": "Sauvegarder la séance ?",
+    "dontSave": "Ne pas sauvegarder",
+    "startWriting": "Commencer à Écrire",
+    "writingPrompts": "Invitations d'Écriture",
+    "yourEntries": "Vos Entrées",
+    "noEntriesTitle": "Aucune entrée de journal encore",
+    "noEntriesText": "Commencez votre voyage de journalisation en sélectionnant une invitation ci-dessus ou créez votre propre entrée.",
+    "loadingJournal": "Chargement de votre journal...",
+    "deleteEntry": "Supprimer l'Entrée",
+    "deleteEntryConfirm": "Êtes-vous sûr de vouloir supprimer cette entrée de journal? Cette action ne peut pas être annulée.",
+    "keyInsights": "Perspectives Clés:",
+    "polished": "✨ Poli",
+    "journalEntry": "Entrée de Journal",
+    "initialPrompt": "Invitation Initiale",
+    "question": "Question",
+    "summary": "Résumé",
+    "keyInsightsTitle": "Perspectives Clés",
+    "stepIndicator": "{{current}}/{{total}}",
+    "typeOrSpeak": "Tapez ou parlez vos pensées...",
+    "transcribing": "Transcription...",
+    "generating": "...",
+    "continue": "Continuer",
+    "previousReflections": "Vos Réflexions Précédentes:",
+    "pleaseWriteSomething": "Veuillez écrire quelque chose",
+    "entryCannotBeEmpty": "Votre entrée de journal ne peut pas être vide.",
+    "failedNextQuestion": "Échec de génération de la prochaine question. Veuillez réessayer.",
+    "journalSaved": "Journal Sauvegardé",
+    "entrySavedPolished": "Votre entrée a été sauvegardée et polie!",
+    "entrySaved": "Votre entrée de journal a été sauvegardée!",
+    "failedToSave": "Échec de sauvegarde de votre entrée de journal. Veuillez réessayer.",
+    "failedToSaveDraft": "Échec de sauvegarde de votre brouillon. Veuillez réessayer.",
+    "saveModalTitle": "Sauvegarder la Séance?",
+    "save": "Sauvegarder",
+    "dontSaveButton": "Ne Pas Sauvegarder",
+    "failedToLoad": "Échec de chargement des données du journal. Veuillez réessayer.",
+    "failedToDelete": "Échec de suppression de l'entrée. Veuillez réessayer."
+  },
+  "breathing": {
+    "title": "Exercice de respiration",
+    "inhale": "Inspirer",
+    "exhale": "Expirer",
+    "hold": "Retenir",
+    "breathe": "Respirer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "reset": "Réinitialiser",
+    "settings": "Paramètres",
+    "cycles": "Cycles",
+    "pattern": "Modèle"
+  },
+  "language": {
+    "selectLanguage": "Sélectionner la langue",
+    "currentLanguage": "Langue actuelle",
+    "changeLanguage": "Changer de langue",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "tr": "Türkçe",
+      "es": "Español",
+      "pt": "Português"
+    }
+  },
+  "errors": {
+    "networkError": "Erreur de connexion réseau. Veuillez réessayer.",
+    "genericError": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "voicePermissionDenied": "L'autorisation du microphone est requise pour les fonctionnalités vocales.",
+    "speechRecognitionFailed": "La reconnaissance vocale a échoué. Veuillez réessayer.",
+    "ttsError": "La synthèse vocale n'est pas disponible.",
+    "promptGenerationFailed": "Échec de la génération des questions. Veuillez réessayer."
+  },
+  "exerciseLibrary": {
+    "names": {
+      "automaticThoughts": "Reconnaître les pensées automatiques",
+      "breathing": "Respiration 4-7-8",
+      "boxBreathing": "Respiration en carré",
+      "triangleBreathing": "Respiration triangulaire",
+      "coherentBreathing": "Respiration cohérente",
+      "mindfulness": "Scanner corporel",
+      "morningMindfulness": "Pleine conscience matinale",
+      "gratitude": "Pratique de gratitude",
+      "selfCompassion": "Pause d'auto-compassion",
+      "valuesClarity": "Mes valeurs fondamentales",
+      "futureSelfJournaling": "Journal du moi futur",
+      "sortingThoughts": "Tri des pensées",
+      "goalSetting": "Définition d'objectifs thérapeutiques",
+      "tellYourStory": "Racontez votre histoire",
+      "visionOfFuture": "Vision de l'avenir"
+    },
+    "descriptions": {
+      "automaticThoughts": "Transformer les pensées négatives",
+      "breathing": "Réduire l'anxiété avec une technique de respiration éprouvée",
+      "boxBreathing": "Améliorer la concentration et réduire le stress avec une respiration équilibrée",
+      "triangleBreathing": "Respiration consciente simple pour une relaxation profonde",
+      "coherentBreathing": "Respiration centrée sur le cœur pour l'équilibre émotionnel",
+      "mindfulness": "Relâcher les tensions avec une conscience corporelle attentive",
+      "morningMindfulness": "Commencez votre journée avec une présence calme",
+      "gratitude": "Construire le bonheur grâce à l'appréciation quotidienne",
+      "selfCompassion": "Développer la bienveillance envers soi et la compassion intérieure",
+      "valuesClarity": "Clarifier les valeurs et aligner vos actions quotidiennes",
+      "futureSelfJournaling": "Gagner en clarté grâce à une réflexion tournée vers l'avenir",
+      "sortingThoughts": "Clarifier l'encombrement mental et organiser les pensées",
+      "goalSetting": "Fixer des objectifs ciblés alignés sur vos valeurs",
+      "tellYourStory": "Explorez votre parcours et découvrez vos forces intérieures",
+      "visionOfFuture": "Créer une vision inspirante pour guider votre chemin"
+    },
+    "shortDescriptions": {
+      "automaticThoughts": "Identifier et recadrer les schémas de pensée inutiles.",
+      "breathing": "Calmez votre esprit avec une respiration rythmée.",
+      "boxBreathing": "Respiration carrée pour la clarté mentale.",
+      "triangleBreathing": "Respiration à trois phases pour la relaxation.",
+      "coherentBreathing": "Respiration centrée sur le cœur pour l'équilibre.",
+      "mindfulness": "Scanner et relaxer votre corps en pleine conscience.",
+      "morningMindfulness": "Commencez votre journée avec une conscience attentive.",
+      "gratitude": "Cultiver l'appréciation et la joie.",
+      "selfCompassion": "Pratiquer la bienveillance envers vous-même.",
+      "valuesClarity": "Alignez vos actions sur ce qui compte le plus.",
+      "futureSelfJournaling": "Connectez-vous avec votre moi futur.",
+      "sortingThoughts": "Organisez et clarifiez vos pensées.",
+      "goalSetting": "Fixer des objectifs significatifs pour la croissance.",
+      "tellYourStory": "Partagez votre histoire et trouvez vos forces.",
+      "visionOfFuture": "Imaginez votre avenir idéal."
+    },
+    "categories": {
+      "cbt": "TCC",
+      "breathing": "Respiration",
+      "mindfulness": "Pleine conscience",
+      "selfCare": "Soins personnels",
+      "act": "ACT",
+      "selfDiscovery": "Découverte de soi",
+      "selfGrowth": "Croissance personnelle"
+    },
+    "difficulties": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    }
+  },
+  "quickActions": {
+    "breathing": {
+      "title": "Exercice de respiration",
+      "description": "Exercice rapide de 3 minutes",
+      "category": "Bien-être"
+    },
+    "gratitude": {
+      "title": "Pratique de gratitude",
+      "description": "Réflexion quotidienne de gratitude",
+      "category": "Pleine conscience"
+    },
+    "meditation": {
+      "title": "Méditation rapide",
+      "description": "Méditation consciente de 5 minutes",
+      "category": "Méditation"
+    },
+    "journaling": {
+      "title": "Point humeur",
+      "description": "Suivez comment vous vous sentez",
+      "category": "Journal"
+    },
+    "stressRelief": {
+      "title": "Soulagement du stress",
+      "description": "Calmez votre esprit rapidement",
+      "category": "Bien-être"
+    },
+    "voiceNote": {
+      "title": "Note vocale",
+      "description": "Enregistrez vos pensées",
+      "category": "Journal"
+    }
+  },
+  "actionPalette": {
+    "title": "Que souhaitez-vous faire ?",
+    "cancel": "Annuler",
+    "guidedSession": {
+      "title": "Séance guidée",
+      "description": "Parlez avec votre thérapeute IA"
+    },
+    "guidedJournaling": {
+      "title": "Journal guidé",
+      "description": "Réfléchissez par l'écriture"
+    },
+    "quickExercise": {
+      "title": "Exercice rapide",
+      "description": "Commencez une pratique de pleine conscience"
+    },
+    "exerciseLibrary": {
+      "title": "Bibliothèque d'exercices",
+      "description": "Parcourez tous les exercices"
+    }
+  },
+  "alerts": {
+    "signOut": {
+      "title": "Se déconnecter",
+      "message": "Êtes-vous sûr de vouloir vous déconnecter ?"
+    },
+    "deleteSession": {
+      "title": "Supprimer la séance",
+      "message": "Êtes-vous sûr de vouloir supprimer cette séance ?"
+    },
+    "resetProgress": {
+      "title": "Réinitialiser les progrès",
+      "message": "Ceci réinitialisera tous vos progrès. Cette action ne peut pas être annulée."
+    },
+    "promptsGenerated": {
+      "title": "Questions générées !",
+      "message": "{{count}} nouvelles questions d'écriture générées en utilisant vos perspectives existantes. Consultez l'onglet Journal pour voir toutes les questions dans la section \"Questions d'écriture\"."
+    }
+  }
+}

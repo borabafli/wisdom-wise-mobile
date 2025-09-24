@@ -251,8 +251,8 @@ export const slidableHomeExerciseCardStyles = StyleSheet.create({
   exerciseName: {
     fontSize: 17.5,
     color: '#002d14',
-    fontWeight: 'bold',
-    fontFamily: 'Ubuntu-Light',
+    fontWeight: '500',
+    fontFamily: 'IBMPlexSans-Medium',
     marginBottom: spacing[1],
     textAlign: 'left',
     letterSpacing: -0.3,
@@ -260,8 +260,8 @@ export const slidableHomeExerciseCardStyles = StyleSheet.create({
   exerciseDescription: {
     fontSize: 13,
     color: '#002d14',
-    fontWeight: '400',
-    fontFamily: 'Ubuntu-Light',
+    fontWeight: '300',
+    fontFamily: 'IBMPlexSans-Light',
     lineHeight: 18,
     textAlign: 'left',
     opacity: 0.8,

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { MessageCircle, Clock, Heart, Zap, BookOpen, Brain, Mic, User, Leaf, Play, Circle, Waves, X } from 'lucide-react-native';
@@ -22,6 +23,7 @@ import DailyPromptCard from '../components/DailyPromptCard';
 import JournalPromptService from '../services/journalPromptService';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation }) => {
+  const { t } = useTranslation();
   const { currentQuote } = useQuote();
   const { width, height } = Dimensions.get('window');
   const [showWaveformDemo, setShowWaveformDemo] = useState(false);
@@ -38,7 +40,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.homeScreen);
 
   // Exercise preview functionality
-  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview();
+  const { showPreview, previewExercise, showExercisePreview, hideExercisePreview, confirmExerciseStart } = useExercisePreview(t);
 
   // Enhanced exercise click handler that shows preview first
   const handleExerciseClickWithPreview = (exercise?: Exercise) => {
@@ -93,7 +95,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
   // Static welcome message
   const welcomeMessage = {
-    title: "How are you\nfeeling?",
+    title: t('home.moodCheck'),
     subtitle: "" // Removed subtitle
   };
 
@@ -107,8 +109,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   // Get prioritized exercises and filter out hidden ones
   const topExercises = useMemo(() => {
     // Pass hidden IDs to getTopExercises so it can provide alternatives automatically
-    return getTopExercises(exerciseProgress, hiddenCardIds);
-  }, [exerciseProgress, hiddenCardIds]);
+    return getTopExercises(exerciseProgress, hiddenCardIds, t);
+  }, [exerciseProgress, hiddenCardIds, t]);
 
   // Test function to simulate exercise completion
   const simulateExerciseCompletion = async (exerciseId: string, completed: boolean) => {
@@ -152,13 +154,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
       // Show success message
       Alert.alert(
-        'Prompts Generated!',
-        `Generated ${newPrompts.length} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the "Writing Prompts" section.`,
-        [{ text: 'OK' }]
+        t('alerts.promptsGenerated.title', 'Prompts Generated!'),
+        t('alerts.promptsGenerated.message', { count: newPrompts.length }),
+        [{ text: t('common.ok') }]
       );
     } catch (error) {
       console.error('Error generating test prompts:', error);
-      Alert.alert('Error', 'Failed to generate prompts. Please try again.');
+      Alert.alert(t('common.error'), t('errors.promptGenerationFailed', 'Failed to generate prompts. Please try again.'));
     }
   };
 
@@ -168,7 +170,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
       {/* Persistent Solid Background */}
       <View
-        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
+        style={[styles.backgroundGradient, { backgroundColor: '#e0e5e7' }]}
         pointerEvents="none"
       />
 
@@ -191,14 +193,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           {/* Header Text and Chat Input */}
           <View style={styles.headerSection}>
           <View style={styles.headerText}>
-            <Text style={styles.ctaTitle}>How are you feeling?</Text>
+            <Text style={styles.ctaTitle}>{t('home.moodCheck')}</Text>
             {welcomeMessage.subtitle && <Text style={styles.ctaSubtitle}>{welcomeMessage.subtitle}</Text>}
           </View>
 
           {/* Turtle Hero Image - positioned after text */}
           <View style={styles.turtleHeroContainer}>
             <Image
-              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-6.png')}
+              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-7.png')}
               style={styles.turtleHeroImage}
               contentFit="contain"
             />
@@ -212,18 +214,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             <ImageBackground
               source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
               style={styles.checkInButton}
-              imageStyle={{ borderRadius: 25 }}
+              imageStyle={{ borderRadius: 10 }}
               resizeMode="cover"
             >
-              <Text style={styles.checkInButtonText}>Check-In Now</Text>
+              <Text style={styles.checkInButtonText}>{t('home.checkInNow')}</Text>
               <View style={styles.checkInButtonIcons}>
                 <View style={styles.iconCircle}>
                   <MessageCircle size={18} color="#7d9db6" />
-                  <Text style={styles.iconLabel}>Type</Text>
+                  <Text style={styles.iconLabel}>{t('home.type')}</Text>
                 </View>
                 <View style={styles.iconCircle}>
                   <Mic size={18} color="#7d9db6" />
-                  <Text style={styles.iconLabel}>Talk</Text>
+                  <Text style={styles.iconLabel}>{t('home.talk')}</Text>
                 </View>
               </View>
             </ImageBackground>
@@ -233,13 +235,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         {/* For You Today Section */}
         <View style={styles.exercisesSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Your Next Steps</Text>
+            <Text style={styles.sectionTitle}>{t('home.yourNextSteps')}</Text>
             <View style={styles.headerButtons}>
               <TouchableOpacity
                 onPress={onNavigateToExercises}
                 style={styles.seeAllButton}
               >
-                <Text style={styles.seeAllText}>See all</Text>
+                <Text style={styles.seeAllText}>{t('home.seeAll')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -271,13 +273,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         {dailyPrompt && (
           <View style={styles.dailyReflectionSection}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Daily Reflection</Text>
+              <Text style={styles.sectionTitle}>{t('home.dailyReflection')}</Text>
               <TouchableOpacity
                 onPress={handleGeneratePromptsTest}
                 style={[styles.testButton, styles.promptTestButton]}
               >
                 <Text style={styles.promptTestButtonText}>
-                  Generate Test
+                  {t('home.generateTest')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -294,7 +296,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         {/* Quick Actions - Modern Style */}
         <View style={styles.quickActions}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
+            <Text style={styles.sectionTitle}>{t('home.quickActions')}</Text>
           </View>
 
           <View style={styles.quickActionsGrid}>
@@ -314,7 +316,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Browse{"\n"}Exercises</Text>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>{t('home.browseExercises')}</Text>
               </ImageBackground>
             </TouchableOpacity>
 
@@ -334,12 +336,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>View{"\n"}Insights</Text>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>{t('home.viewInsights')}</Text>
               </ImageBackground>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => onStartSession({ type: 'breathing', name: 'Deep Breathing', duration: '5 min', description: 'Calm your mind with guided breathing' })}
+              onPress={() => onStartSession({
+                type: 'breathing',
+                name: t('home.quickBreathingExercise.name'),
+                duration: t('home.quickBreathingExercise.duration'),
+                description: t('home.quickBreathingExercise.description')
+              })}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >
@@ -354,7 +361,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                   style={styles.quickActionIconImage}
                   contentFit="contain"
                 />
-                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>Start{"\n"}Breathing</Text>
+                <Text style={styles.quickActionText} numberOfLines={2} adjustsFontSizeToFit>{t('home.startBreathing')}</Text>
               </ImageBackground>
             </TouchableOpacity>
 
@@ -410,7 +417,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               fontFamily: 'Inter-SemiBold', 
               color: '#1E293B' 
             }}>
-              Real-Time Audio Waves
+              {t('home.realTimeAudioWaves')}
             </Text>
             <TouchableOpacity 
               onPress={() => setShowWaveformDemo(false)}

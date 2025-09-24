@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Brain } from 'lucide-react-native';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
 
@@ -71,6 +72,8 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
   isVisible,
   isTyping = false
 }) => {
+  const { t } = useTranslation();
+
   if (!isVisible || (suggestions.length === 0 && !showExerciseButton)) {
     return null;
   }
@@ -103,7 +106,7 @@ export const SuggestionChips: React.FC<SuggestionChipsProps> = ({
                 styles.exerciseSuggestionText,
                 isTyping && { color: '#9CA3AF' }
               ]}>
-                Suggest an exercise
+                {t('chat.suggestExercise')}
               </Text>
             </TouchableOpacity>
           )}

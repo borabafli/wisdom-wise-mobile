@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { exerciseLibraryData, exerciseFlows } from '../data/exerciseLibrary';
+import { getExerciseLibraryData, getExerciseFlows } from '../data/exerciseLibrary';
 
 interface Exercise {
   id?: string | number;
@@ -16,12 +16,17 @@ interface Exercise {
   context?: any;
 }
 
-export const useExercisePreview = () => {
+export const useExercisePreview = (t?: (key: string) => string) => {
   const [showPreview, setShowPreview] = useState(false);
   const [previewExercise, setPreviewExercise] = useState<Exercise | null>(null);
   const [onConfirmCallback, setOnConfirmCallback] = useState<(() => void) | null>(null);
 
   const showExercisePreview = useCallback((exercise: Exercise, onConfirm: () => void) => {
+    // Get exercise data with proper translations
+    const translationFn = t || ((key: string) => key);
+    const exerciseLibraryData = getExerciseLibraryData(translationFn);
+    const exerciseFlows = getExerciseFlows(translationFn);
+
     // Get complete exercise data from library
     const exerciseDetails = exerciseLibraryData[exercise.type] || exercise;
 
@@ -40,7 +45,7 @@ export const useExercisePreview = () => {
     setPreviewExercise(enhancedExercise);
     setOnConfirmCallback(() => onConfirm);
     setShowPreview(true);
-  }, []);
+  }, [t]);
 
   const hideExercisePreview = useCallback(() => {
     setShowPreview(false);
