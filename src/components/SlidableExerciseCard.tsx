@@ -169,27 +169,26 @@ const SlidableExerciseCard: React.FC<SlidableExerciseCardProps> = ({
                   </Text>
                 </View>
 
-                {/* Benefits tag positioned at bottom left */}
-                <View style={[
-                  slidableExerciseCardStyles.categoryTagContainer,
-                  slidableExerciseCardStyles.categoryTagContainerSmall,
-                  slidableExerciseCardStyles.categoryTagContainerBottomLeft
-                ]}>
-                  <Text style={[
-                    slidableExerciseCardStyles.categoryTagText,
-                    slidableExerciseCardStyles.categoryTagTextSmall
+                {/* Tags container positioned at bottom right */}
+                <View style={slidableExerciseCardStyles.tagsContainer}>
+                  {/* Benefits tag */}
+                  <View style={[
+                    slidableExerciseCardStyles.categoryTagContainer,
+                    slidableExerciseCardStyles.categoryTagContainerSmall
                   ]}>
-                    {benefit}
-                  </Text>
-                </View>
+                    <Text style={[
+                      slidableExerciseCardStyles.categoryTagText,
+                      slidableExerciseCardStyles.categoryTagTextSmall
+                    ]}>
+                      {benefit}
+                    </Text>
+                  </View>
 
-                {/* Duration tag positioned at bottom right */}
-                <View style={[
-                  slidableExerciseCardStyles.durationContainer,
-                  slidableExerciseCardStyles.durationContainerBottomRight
-                ]}>
-                  <Clock size={12} color="#002244" />
-                  <Text style={slidableExerciseCardStyles.exerciseDuration}>{exercise.duration}</Text>
+                  {/* Duration tag */}
+                  <View style={slidableExerciseCardStyles.durationContainer}>
+                    <Clock size={12} color="#002244" />
+                    <Text style={slidableExerciseCardStyles.exerciseDuration}>{exercise.duration}</Text>
+                  </View>
                 </View>
               </View>
 

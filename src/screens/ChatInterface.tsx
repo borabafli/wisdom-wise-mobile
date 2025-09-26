@@ -26,6 +26,7 @@ import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
 import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
+import { TherapyGoalSummaryCard } from '../components/chat/TherapyGoalSummaryCard';
 import {
   useTypewriterAnimation,
   useVoiceRecording,
@@ -140,6 +141,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     thinkingPatternSummary,
     showVisionSummary,
     visionSummary,
+    showTherapyGoalSummary,
+    therapyGoalSummary,
     reflectionMessageCount,
     canEndReflection,
     startDynamicAIGuidedExercise,
@@ -156,6 +159,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     cancelThinkingPatternSummary,
     saveVisionSummary,
     cancelVisionSummary,
+    saveTherapyGoalSummary,
+    cancelTherapyGoalSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,
@@ -428,7 +433,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                         ? t('chat.exerciseProgress', {
                             current: exerciseStep + 1,
                             total: exerciseData.dynamicFlow.steps.length,
-                            title: exerciseData.dynamicFlow.steps[exerciseStep]?.title || t('chat.inProgress')
+                            title: exerciseData.dynamicFlow.steps[exerciseStep]?.title ? t(exerciseData.dynamicFlow.steps[exerciseStep].title) : t('chat.inProgress')
                           })
                         : currentExercise
                           ? t('chat.therapeuticExercise', { duration: currentExercise.duration || '5 min' })
@@ -551,6 +556,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                 summary={visionSummary}
                 onSave={saveVisionSummary}
                 onCancel={cancelVisionSummary}
+              />
+            )}
+
+            {showTherapyGoalSummary && therapyGoalSummary && (
+              <TherapyGoalSummaryCard
+                summary={therapyGoalSummary}
+                onSave={saveTherapyGoalSummary}
+                onCancel={cancelTherapyGoalSummary}
               />
             )}
           </ScrollView>

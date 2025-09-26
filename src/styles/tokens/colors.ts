@@ -91,7 +91,7 @@ export const colors = {
   // Neutral Grays
   gray: {
     50: '#f8fafc',
-    100: '#f1f5f9', 
+    100: '#f1f5f9',
     150: '#f0f4f8',
     200: '#e2e8f0',
     300: '#cbd5e1',
@@ -102,6 +102,9 @@ export const colors = {
     800: '#1e293b',
     900: '#0f172a',
   },
+
+  // App Background
+  appBackground: '#e9eff1',
 
   // Semantic Colors
   semantic: {

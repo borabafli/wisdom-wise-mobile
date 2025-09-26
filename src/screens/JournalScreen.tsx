@@ -245,7 +245,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
   if (loading) {
     return (
       <SafeAreaWrapper style={styles.container}>
-        <StatusBar style="dark" backgroundColor="#F8FAFC" />
+        <StatusBar style="dark" backgroundColor="#e9eff1" />
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>{t('journal.loadingJournal')}</Text>
         </View>
@@ -259,7 +259,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
 
       {/* Persistent Solid Background - Same as HomeScreen */}
       <View
-        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
+        style={[styles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
         pointerEvents="none"
       />
 

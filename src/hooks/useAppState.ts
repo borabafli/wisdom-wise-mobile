@@ -95,6 +95,25 @@ export const useAppState = () => {
           handleStartSession(reflectionExercise);
         }
         break;
+      case 'vision_reflection':
+        if (insight?.visionInsight && insight?.prompt) {
+          // Create a special reflection exercise with the vision context
+          const visionReflectionExercise = {
+            type: 'vision_reflection',
+            name: 'Vision Reflection',
+            duration: '10-15 min',
+            description: 'Reflection on your future vision',
+            context: {
+              visionInsight: insight.visionInsight,
+              prompt: insight.prompt,
+              coreQualities: insight.visionInsight.coreQualities,
+              fullDescription: insight.visionInsight.fullDescription
+            }
+          };
+          console.log('Starting vision reflection with exercise:', visionReflectionExercise);
+          handleStartSession(visionReflectionExercise);
+        }
+        break;
       case 'thinking_pattern_reflection':
         if (insight?.originalThought && insight?.distortionType) {
           // Create a special reflection exercise with the thinking pattern context
@@ -130,6 +149,17 @@ export const useAppState = () => {
           console.log('Exercise insight missing type:', insight);
         }
         break;
+      case 'goal-setting':
+        // Handle therapy goal setting button click
+        console.log('Starting therapy goal setting exercise');
+        const goalSettingExercise = {
+          type: 'goal-setting',
+          name: 'Therapy Goal-Setting',
+          duration: '20 min',
+          description: 'Define your therapeutic goals for your healing journey'
+        };
+        handleStartSession(goalSettingExercise);
+        break;
       default:
         console.log('Unhandled insight type:', type);
         // Handle other insight types as needed
@@ -142,20 +172,25 @@ export const useAppState = () => {
         handleStartSession();
         break;
       case 'guided-journaling':
-        handleStartSession({ 
-          type: 'gratitude', 
-          name: 'Guided Journaling', 
-          duration: '10 min', 
-          description: 'gratitude journaling' 
+        handleStartSession({
+          type: 'gratitude',
+          name: 'Guided Journaling',
+          duration: '10 min',
+          description: 'gratitude journaling'
         });
         break;
       case 'suggested-exercises':
-        handleStartSession({ 
-          type: 'mindfulness', 
-          name: 'Morning Mindfulness', 
-          duration: '8 min', 
-          description: 'Start your day with gentle awareness and presence' 
+        handleStartSession({
+          type: 'mindfulness',
+          name: 'Morning Mindfulness',
+          duration: '8 min',
+          description: 'Start your day with gentle awareness and presence'
         });
+        break;
+      case 'breathing':
+      case 'featured-breathing':
+        console.log('Opening breathing screen from quick actions');
+        setShowBreathing(true);
         break;
       default:
         handleStartSession();

@@ -281,7 +281,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       {/* Persistent Solid Background - Same as HomeScreen */}
       <View
-        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
+        style={[styles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
         pointerEvents="none"
       />
       <ScrollView 
@@ -328,7 +328,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             <View style={styles.motivationalContent}>
               <View style={styles.motivationalText}>
                 <Text style={styles.motivationalTitle}>
-                  {motivationalCard?.message.emoji ? `${motivationalCard.message.emoji} ` : ''}{motivationalCard?.message.text || t('insights.motivational.fallbackMessage')}
+                  {(motivationalCard?.message?.emoji ? `${motivationalCard.message.emoji} ` : '') + (motivationalCard?.message?.text || t('insights.motivational.fallbackMessage'))}
                 </Text>
               </View>
               <View style={styles.motivationalStats}>

@@ -133,7 +133,10 @@
     },
     "values": {
       "title": "Your Values",
-      "subtitle": "What matters to you"
+      "subtitle": "What matters to you",
+      "overview": "Core Values",
+      "pagination": "{{current}} of {{total}}",
+      "swipeToExplore": "Swipe to explore"
     },
     "sessionSummaries": {
       "title": "Session Summaries",
@@ -147,6 +150,22 @@
       "setGoalDescription": "Set therapy goals to give direction and motivation to your healing journey.",
       "setFirstGoalButton": "Set Your First Goal",
       "complete": "complete"
+    },
+    "vision": {
+      "title": "Vision of the Future",
+      "inspiringFuture": "Your inspiring future self",
+      "loading": "Loading your vision...",
+      "createInspiring": "Create an inspiring vision of your future self",
+      "emptyState": "Start a Vision of the Future exercise to explore your ideal future self and unlock personalized insights.",
+      "startExercise": "Start Vision Exercise",
+      "created": "Created on",
+      "coreQualities": "Core Qualities",
+      "more": "more",
+      "lifeAreasExplored": "Life Areas Explored",
+      "reflectOnVision": "Reflect on Your Vision",
+      "view": "View your",
+      "visions": "visions",
+      "vision": "vision"
     },
     "journey": {
       "title": "Journey",
@@ -368,6 +387,14 @@
       "keyInsights": "Key Insights",
       "continueReflection": "Continue Reflection",
       "saveSummary": "Save Summary"
+    },
+    "therapyGoalSummary": {
+      "title": "Goal Summary",
+      "subtitle": "Your therapy goals defined",
+      "yourGoals": "Your Goals",
+      "keyInsights": "Key Insights",
+      "continueGoals": "Continue Goals",
+      "saveGoals": "Save Goals"
     }
   },
   "mood": {
@@ -552,6 +579,262 @@
       "beginner": "Beginner",
       "intermediate": "Intermediate",
       "advanced": "Advanced"
+    },
+    "steps": {
+      "automaticThoughts": {
+        "step1": {
+          "title": "Describe the moment",
+          "description": "Recall a recent situation that felt stressful or upsetting.",
+          "instruction": "Invite the user to share one recent situation that triggered stress, anxiety, or low mood. Encourage them to keep it simple and specific ('yesterday in a meeting,' 'when I met a friend'). Stay in this step until they provide one clear situation."
+        },
+        "step2": {
+          "title": "Notice your thought",
+          "description": "What was the first thought that came to mind in that moment?",
+          "instruction": "Encourage the user to write the automatic thought they had in that situation. If they feel stuck, offer gentle examples ('I'm going to fail,' 'They don't like me,' 'I can't handle this'), but keep the focus on their own words."
+        },
+        "step3": {
+          "title": "Spot the thinking pattern",
+          "description": "Does this thought fit a common thinking pattern?",
+          "instruction": "Guide the user to reflect if their thought shows one of the common cognitive distortions. Briefly remind them of typical patterns: All-or-nothing thinking (black/white, no middle ground), Catastrophizing (expecting the worst), Mind-reading (assuming what others think), Overgeneralization (using one event to define everything), Labeling (calling yourself names), Emotional reasoning (assuming feelings = facts), Fortune-telling (predicting a bad outcome), Should statements ('I must… I should…'), Personalization (blaming yourself for things outside your control). Encourage them to pick one or more that fit. Stay until they identify a distortion."
+        },
+        "step4": {
+          "title": "Reframe the thought",
+          "description": "How could you see this in a more balanced way?",
+          "instruction": "Support the user to create a more realistic and kind thought. Ask them to consider: What evidence supports or challenges the original thought? What would they say to a friend in this situation? Is there a more balanced way of looking at it? Encourage them to write one reframed statement. Stay until they provide it."
+        }
+      },
+      "goalSetting": {
+        "step1": {
+          "title": "Pick a goal",
+          "description": "Choose one thing you want to work toward.",
+          "instruction": "Ask the user to state one goal they want to work toward. Keep it concrete and realistic."
+        },
+        "step2": {
+          "title": "Why does it matter?",
+          "description": "Connect the goal to what's meaningful to you.",
+          "instruction": "Encourage the user to share why this goal is meaningful to them. Ask what difference it would make in their life."
+        },
+        "step3": {
+          "title": "Break it down",
+          "description": "Turn a big goal into small, doable steps.",
+          "instruction": "Guide the user to split the big goal into smaller, doable steps. Encourage practicality."
+        },
+        "step4": {
+          "title": "What could get in the way?",
+          "description": "Think ahead about challenges you might face.",
+          "instruction": "Ask what might get in the way of reaching this goal. Encourage them to name at least one challenge."
+        },
+        "step5": {
+          "title": "Plan your way around",
+          "description": "Find strategies to handle those challenges.",
+          "instruction": "Help the user brainstorm strategies to overcome those obstacles. Stay flexible but supportive."
+        },
+        "step6": {
+          "title": "Take the first step",
+          "description": "Decide on one small action you can take soon.",
+          "instruction": "Invite the user to choose one small action they can take today or this week toward their goal. Help them be specific."
+        }
+      },
+      "futureSelfJournaling": {
+        "step1": {
+          "title": "Meet your future self",
+          "description": "Imagine yourself 1–3 years from now, living in line with your values.",
+          "instruction": "Invite the user to picture themselves in the near future (1–3 years) living a life they feel proud of. Ask them to imagine where they are, what they're doing, and what feels different. Encourage them to describe it in their own words."
+        },
+        "step2": {
+          "title": "What does life look like?",
+          "description": "Describe an ordinary day for your future self.",
+          "instruction": "Encourage the user to write about what daily life looks like for this future version of themselves. Ask about how they spend their time, their routines, and what gives them meaning."
+        },
+        "step3": {
+          "title": "Notice your strengths",
+          "description": "What qualities has your future self developed?",
+          "instruction": "Ask the user to describe what personal strengths or skills their future self has built. For example: confidence, resilience, kindness, balance. Encourage at least two."
+        },
+        "step4": {
+          "title": "What's different from today?",
+          "description": "Compare your future self with your current self.",
+          "instruction": "Guide the user to notice the differences between their current habits, beliefs, or behaviors and those of their future self. Encourage them to be honest but compassionate."
+        },
+        "step5": {
+          "title": "One step today",
+          "description": "Choose one action that brings you closer.",
+          "instruction": "Invite the user to write down one small step they can take today (or this week) that moves them toward this future version of themselves. Keep it practical and doable."
+        }
+      },
+      "therapyGoalDefinition": {
+        "step1": {
+          "title": "Choose an area",
+          "description": "Pick one part of your life you'd like to improve (e.g., mood, stress, confidence, relationships).",
+          "instruction": "Invite the user to choose one main area of focus for therapy. Offer examples but keep it open-ended. Stay until they share one area."
+        },
+        "step2": {
+          "title": "Define the change you want",
+          "description": "What would you like to be different in this area?",
+          "instruction": "Ask the user to describe the kind of change they hope for (e.g., 'I want to feel calmer,' 'I want to trust myself more'). Encourage them to be clear but not too detailed."
+        },
+        "step3": {
+          "title": "Why is this important to you?",
+          "description": "Connect your goal to your values or what matters most.",
+          "instruction": "Invite the user to explain why this goal matters. Encourage them to link it to values, relationships, or personal wellbeing."
+        },
+        "step4": {
+          "title": "Imagine success",
+          "description": "How would life look if this goal was achieved?",
+          "instruction": "Ask the user to picture and describe what would be different if their goal was met. Encourage a short, positive vision."
+        },
+        "step5": {
+          "title": "Moving forward",
+          "description": "You've defined your therapy goals — now we'll use them as a foundation.",
+          "instruction": "Acknowledge the user's progress: 'You've clarified what matters to you and what you'd like to change.' Then explain how these goals will guide future work: We'll keep them in mind as a reference point. In other exercises (like Automatic Thoughts or Values Clarification), we'll connect the work back to these goals. Over time, we'll track progress and refine them together. Finish by asking: 'Would you like to start exploring one of your goals right now, or save them as your focus for upcoming sessions?'"
+        }
+      },
+      "sortingThoughts": {
+        "step1": {
+          "title": "Write your thoughts",
+          "description": "Put down whatever is on your mind right now.",
+          "instruction": "Ask the user to jot down a few thoughts currently on their mind, without editing."
+        },
+        "step2": {
+          "title": "Sort them out",
+          "description": "Separate helpful thoughts from unhelpful ones.",
+          "instruction": "Guide the user to categorize their thoughts (helpful vs. unhelpful, or fact vs. worry)."
+        },
+        "step3": {
+          "title": "Choose what to keep",
+          "description": "Focus on one thought that helps you move forward.",
+          "instruction": "Invite the user to select one helpful thought to carry forward, and let the rest go for now."
+        },
+        "step4": {
+          "title": "Moving forward",
+          "description": "You've sorted your thoughts. Now we can go deeper.",
+          "instruction": "Acknowledge: 'You've seen which thoughts lift you up and which ones weigh you down.' Explain the link: Helpful thoughts can connect to your therapy goals as motivators. Unhelpful ones can be explored in Automatic Thoughts, where we'll reframe them. Ask: 'Would you like to reframe one of the unhelpful thoughts you spotted today?'"
+        }
+      },
+      "mindfulness": {
+        "step1": {
+          "title": "Focus on the present",
+          "description": "Choose one anchor like your breath or your body.",
+          "instruction": "Invite the user to focus on their breath or a simple body sensation, like feet on the ground."
+        },
+        "step2": {
+          "title": "Watch your thoughts",
+          "description": "Notice thoughts come and go without judgment.",
+          "instruction": "Guide the user to observe thoughts as they come and go, without judgment, like clouds passing by."
+        },
+        "step3": {
+          "title": "Return gently",
+          "description": "Bring attention back when your mind wanders.",
+          "instruction": "Encourage the user to return attention to their anchor whenever they drift, and acknowledge themselves for practicing."
+        }
+      },
+      "gratitude": {
+        "step1": {
+          "title": "Name three things",
+          "description": "Write down three things you're thankful for today.",
+          "instruction": "Ask the user to name three things they are grateful for today, big or small."
+        },
+        "step2": {
+          "title": "Feel it fully",
+          "description": "Take a moment to really feel the gratitude.",
+          "instruction": "Encourage the user to pause on each one and notice how it feels in their body to feel grateful."
+        },
+        "step3": {
+          "title": "Carry it forward",
+          "description": "Let this feeling guide your day.",
+          "instruction": "Invite the user to carry this feeling of gratitude with them as they continue their day."
+        }
+      },
+      "selfCompassion": {
+        "step1": {
+          "title": "Notice the struggle",
+          "description": "Acknowledge where you're being hard on yourself.",
+          "instruction": "Ask the user to name one area where they're being hard on themselves right now."
+        },
+        "step2": {
+          "title": "Imagine a friend",
+          "description": "Think how you'd respond to someone you care about.",
+          "instruction": "Guide the user to imagine how they would respond if a friend was struggling with the same thing."
+        },
+        "step3": {
+          "title": "Offer kindness",
+          "description": "Write a supportive message to yourself.",
+          "instruction": "Encourage the user to write one kind or supportive sentence to themselves."
+        }
+      },
+      "valuesClarity": {
+        "step1": {
+          "title": "Discover what matters most",
+          "description": "Think about the qualities or principles that guide your life.",
+          "instruction": "Ask the user to list a few values that feel important to them — for example: honesty, growth, family, freedom, kindness, balance. Encourage them to pick what feels true, not what they think they 'should' value."
+        },
+        "step2": {
+          "title": "Choose your top values",
+          "description": "Narrow it down to the ones that feel most central right now.",
+          "instruction": "Encourage the user to pick one or two values from their list that matter most to them in this moment. Remind them there are no right or wrong answers, and values can change over time."
+        },
+        "step3": {
+          "title": "Live your values",
+          "description": "Find one small way to express your values in daily life.",
+          "instruction": "Invite the user to name one small, practical action they could take today or this week that reflects their chosen values. Keep it simple and realistic."
+        }
+      },
+      "tellYourStory": {
+        "step1": {
+          "title": "Share your journey",
+          "description": "Tell me about a meaningful experience or chapter in your life.",
+          "instruction": "Encourage the user to share a significant moment, period, or experience from their life — it could be a challenge they overcame, a time of growth, or a meaningful relationship. Stay in this step until they provide one clear story or experience."
+        },
+        "step2": {
+          "title": "Discover your strengths",
+          "description": "What qualities or strengths did you show during this experience?",
+          "instruction": "Help the user identify the personal strengths, skills, or qualities they demonstrated in their story. Ask them to name at least 2-3 strengths they see in themselves from this experience — things like resilience, courage, compassion, determination, or creativity."
+        },
+        "step3": {
+          "title": "Connect to your present",
+          "description": "How can these strengths help you in your current life?",
+          "instruction": "Guide the user to connect their identified strengths to their present situation. Ask them to consider how these same qualities can support them with current challenges or goals. Encourage one specific way they can use these strengths moving forward."
+        }
+      },
+      "morningMindfulness": {
+        "step1": {
+          "title": "Notice your awakening",
+          "description": "Take a moment to become aware of your body and mind as you begin your day.",
+          "instruction": "Guide the user to pause and notice how they feel physically and mentally as they wake up. Encourage them to observe without judgment — perhaps noticing their energy level, any tension, or their overall mood. Keep this gentle and exploratory."
+        },
+        "step2": {
+          "title": "Set a gentle intention",
+          "description": "Choose one small way you'd like to approach your day mindfully.",
+          "instruction": "Help the user identify one simple intention for their day — this could be being more patient, staying present during conversations, or taking mindful pauses. Encourage them to choose something achievable and kind to themselves."
+        },
+        "step3": {
+          "title": "Take three mindful breaths",
+          "description": "Ground yourself with three conscious breaths before starting your day.",
+          "instruction": "Guide the user through three slow, intentional breaths. Invite them to focus on the sensation of breathing — feeling the air enter and leave their body. This serves as an anchor point they can return to throughout their day."
+        }
+      },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Understand why vision matters",
+          "description": "Having a clear vision gives direction and motivation.",
+          "instruction": "Explain to the user that imagining their future is like setting a compass. It helps guide choices, strengthens motivation, and helps us to know where to move and how we want to be as a person. Encourage them to approach this exercise with openness and not hold back. This is an ideal vision. You can ask a reflective question or offer a quick scale/check-in how clear their vision is at the moment."
+        },
+        "step2": {
+          "title": "Picture your future life",
+          "description": "Imagine your life a few years from now across its important areas.",
+          "instruction": "Guide the user to imagine what life looks like when things feel right. Prompt them to go through key areas: Relationships (family, friends, partner), Work or studies, Health and wellbeing, Personal growth and learning, Lifestyle and daily routines. Encourage them to describe how each of these looks in their future vision."
+        },
+        "step3": {
+          "title": "Notice what's important",
+          "description": "Reflect on the values and priorities in your vision.",
+          "instruction": "Ask the user to identify the main values that shine through their vision — for example, connection, balance, freedom, kindness, growth. Encourage them to name one or two that feel most central right now."
+        },
+        "step4": {
+          "title": "Connect with your vision",
+          "description": "Envision it fully and link it to your life today.",
+          "instruction": "Encourage the user to pause and really imagine being in this future — what does it feel like, what emotions come up? Then ask them to describe one small way they can stay connected to this vision today, whether through an action, a reminder, or simply holding the feeling in mind."
+        }
+      }
     }
   },
   "quickActions": {
@@ -643,6 +926,54 @@
     "checkIn": {
       "title": "Check-In Complete",
       "message": "Thank you for sharing your progress!"
+    }
+  },
+  "visionDetails": {
+    "title": "Vision of Myself",
+    "visionsCreated": "{{count}} vision{{plural}} created",
+    "loading": "Loading your visions...",
+    "empty": {
+      "title": "No Visions Yet",
+      "description": "Complete a \"Vision of the Future\" exercise to see your inspiring visions here."
+    },
+    "sections": {
+      "yourVision": "Your Vision",
+      "coreQualities": "Core Qualities",
+      "lifeAreas": "Life Areas",
+      "guidingWords": "Guiding Words",
+      "practicalSteps": "Practical Steps",
+      "howItFeels": "How It Feels",
+      "wisdomFromFuture": "Wisdom from Your Future Self"
+    },
+    "reflectButton": "Reflect on This Vision"
+  },
+  "ttsSettings": {
+    "title": "Voice Settings",
+    "enable": {
+      "title": "Enable Voice",
+      "description": "Allow your turtle guide to speak responses aloud"
+    },
+    "autoPlay": {
+      "title": "Auto-play Responses",
+      "description": "Automatically speak AI responses when they arrive"
+    },
+    "speed": {
+      "title": "Speaking Speed",
+      "slow": "Slow",
+      "normal": "Normal",
+      "fast": "Fast",
+      "lower": "Lower",
+      "higher": "Higher"
+    },
+    "pitch": {
+      "title": "Voice Pitch",
+      "low": "Low",
+      "high": "High"
+    },
+    "test": {
+      "button": "Test Voice",
+      "stopButton": "Stop Test",
+      "text": "Hello, I'm your gentle turtle guide. This is how my voice will sound with these settings."
     }
   }
 }

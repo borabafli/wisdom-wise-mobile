@@ -42,11 +42,12 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
   // Baseline: current balanced thought length (~80-120 chars) = 15px
   const getDynamicFontSize = (text: string) => {
     const length = text.length;
-    if (length <= 25) return 18;     // Very short text - much larger font
-    if (length <= 50) return 16;
-    if (length <= 115) return 14;     // Slightly longer - normal font
-    if (length <= 225) return 13;     // Long text - smaller font
-    return 12;                        // Very long text - smallest font
+    if (length <= 25) return 24;     // Very short text - even larger font
+    if (length <= 50) return 20;
+    if (length <= 80) return 17;     // Normal length - good readable size
+    if (length <= 120) return 16;    // Longer text - still readable
+    if (length <= 180) return 15;    // Long text - smaller but readable
+    return 14;                       // Very long text - minimum readable size
   };
 
   // Get pattern name and explanation using translation keys (same as InsightsDashboard)
@@ -95,22 +96,111 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
     if (!pattern) return null;
 
     return (
-      <>
-        {/* Explanation Container */}
+      <View style={{ position: 'relative' }}>
+
+        {/* Distorted Thought Container */}
         <View style={{
           marginHorizontal: 16,
-          marginTop: 0,
-          marginBottom: 20,
+          marginBottom: 0,
+          marginTop: 5,
           alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'visible',
         }}>
+          {/* Distorted Thought Label - Above Picture */}
           <View style={{
-            backgroundColor: 'rgba(173, 216, 230, 0.15)',
-            borderRadius: 20,
-            padding: 20,
-            flexDirection: 'row',
+            marginBottom: -10,
             alignItems: 'center',
-            width: '95%',
+            width: '100%',
           }}>
+            <Text style={{
+              fontSize: 17,
+              color: '#000000',
+              fontWeight: '600',
+              fontFamily: 'Ubuntu-Medium',
+              textAlign: 'center',
+            }}>
+              {t('insights.moodInsights.distortedThought')}
+            </Text>
+          </View>
+
+          <ImageBackground
+            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-bubble-4.png')}
+            style={{
+              width: Dimensions.get('window').width - 32,
+              aspectRatio: 1.2,
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignSelf: 'center',
+            }}
+            imageStyle={{ borderRadius: 8 }}
+            resizeMode="contain"
+          >
+
+            <View style={{
+              paddingHorizontal: 12,
+              paddingVertical: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '78%',
+              alignSelf: 'center',
+              marginTop: -25,
+            }}>
+              <Text style={{
+                fontSize: getDynamicFontSize(pattern.originalThought),
+                color: '#374151',
+                fontWeight: '500',
+                textAlign: 'center',
+                fontFamily: 'BubblegumSans-Regular',
+                lineHeight: getDynamicFontSize(pattern.originalThought) * 1.3,
+              }}>
+                {pattern.originalThought}
+              </Text>
+            </View>
+
+
+            {/* Arrow Overlay - Much bigger floating in background */}
+            <View style={{
+              position: 'absolute',
+              bottom: -85,
+              left: '18%',
+              transform: [{ translateX: -75 }],
+              zIndex: -1,
+              pointerEvents: 'none',
+              opacity: 0.6,
+            }}>
+              <Image
+                source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-2.png')}
+                style={{
+                  width: 155,
+                  height: 155,
+                }}
+                contentFit="contain"
+              />
+            </View>
+
+          </ImageBackground>
+        </View>
+
+        {/* Explanation Container - Between heading and image */}
+        <View style={{
+          marginHorizontal: 16,
+          marginTop: -40,
+          marginBottom: 4,
+          alignItems: 'center',
+          backgroundColor: 'rgba(173, 216, 230, 0.2)',
+          borderRadius: 20,
+          paddingVertical: 10,
+          paddingHorizontal: 14,
+          flexDirection: 'row',
+          width: '85%',
+          alignSelf: 'center',
+          shadowColor: 'rgba(0, 0, 0, 0.05)',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4,
+          elevation: 1,
+        }}>
             <Image
               source={require('../../assets/images/New Icons/new-5-red.png')}
               style={{
@@ -140,208 +230,67 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 {getDistortionExplanation(pattern.distortionTypes[0])}
               </Text>
             </View>
-          </View>
-        </View>
-
-        {/* Distorted Thought Container */}
-        <View style={{
-          marginHorizontal: '-17%',
-          marginBottom: 20,
-          marginTop: -5,
-        }}>
-          <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-card-clean8.png')}
-            style={{
-              minHeight: 200,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 12,
-              overflow: 'visible',
-            }}
-            imageStyle={{ borderRadius: 12 }}
-            resizeMode="cover"
-          >
-            {/* Distorted Thought Label */}
-            <View style={{
-              position: 'absolute',
-              top: '9%',
-              width: '100%',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                fontSize: 17,
-                color: 'white',
-                fontWeight: '600',
-                fontFamily: 'Ubuntu-Medium',
-                textAlign: 'center',
-              }}>
-                {t('insights.moodInsights.distortedThought')}
-              </Text>
-            </View>
-
-            <View style={{
-              paddingHorizontal: 8,
-              paddingVertical: 15,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'transparent',
-              marginTop: -20,
-              width: '60%',
-              alignSelf: 'center',
-            }}>
-              <Text style={{
-                fontSize: getDynamicFontSize(`"${pattern.originalThought}"`),
-                color: '#374151',
-                fontWeight: '500',
-                textAlign: 'center',
-                fontFamily: 'Ubuntu-Regular',
-              }}>
-                "{pattern.originalThought}"
-              </Text>
-            </View>
-
-            {/* Blue containers at bottom */}
-            <View style={{
-              position: 'absolute',
-              bottom: '10%',
-              flexDirection: 'row',
-              width: '100%',
-              justifyContent: 'space-between',
-              paddingHorizontal: '20%',
-              marginLeft: '5%',
-            }}>
-              <View style={{
-                width: '40%',
-                backgroundColor: 'transparent',
-                paddingHorizontal: 6,
-                paddingVertical: 6,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                marginLeft: '2%',
-                minHeight: 36,
-              }}>
-                <Text style={{
-                  fontSize: 13,
-                  color: '#374151',
-                  textAlign: 'left',
-                  lineHeight: 15,
-                  fontFamily: 'Ubuntu-Medium',
-                }}>
-                  {pattern.distortionTypes[0] || 'Pattern Type'}
-                </Text>
-              </View>
-
-            </View>
-
-            {/* Arrow Overlay - Positioned relative to this container */}
-            <View style={{
-              position: 'absolute',
-              bottom: -20,
-              left: '75%',
-              transform: [{ translateX: -23.5 }],
-              zIndex: 1000,
-              pointerEvents: 'none',
-            }}>
-              <Image
-                source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-1.png')}
-                style={{
-                  width: 47,
-                  height: 47,
-                }}
-                contentFit="contain"
-              />
-            </View>
-
-          </ImageBackground>
         </View>
 
         {/* Balanced Thought Container */}
         <View style={{
-          marginHorizontal: '-18%',
-          marginBottom: 10,
-          marginTop: -15,
+          marginHorizontal: 16,
+          marginBottom: 15,
+          marginTop: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'visible',
         }}>
+          {/* Balanced Thought Label - Above Picture */}
+          <View style={{
+            marginBottom: 10,
+            alignItems: 'center',
+            width: '100%',
+          }}>
+            <Text style={{
+              fontSize: 17,
+              color: '#000000',
+              fontWeight: '600',
+              fontFamily: 'Ubuntu-Medium',
+              textAlign: 'center',
+            }}>
+              {t('insights.moodInsights.balancedThought')}
+            </Text>
+          </View>
+
           <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought-card-clean-7.png')}
+            source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought.png')}
             style={{
-              minHeight: 220,
+              width: Dimensions.get('window').width - 32,
+              aspectRatio: 1.2,
               justifyContent: 'center',
               alignItems: 'center',
-              borderRadius: 12,
-              overflow: 'visible',
+              alignSelf: 'center',
             }}
-            imageStyle={{ borderRadius: 12 }}
-            resizeMode="cover"
+            imageStyle={{ borderRadius: 8 }}
+            resizeMode="contain"
           >
-            {/* Balanced Thought Label */}
-            <View style={{
-              position: 'absolute',
-              top: '10%',
-              width: '100%',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                fontSize: 17,
-                color: 'white',
-                fontWeight: '600',
-                fontFamily: 'Ubuntu-Medium',
-                textAlign: 'center',
-              }}>
-                {t('insights.moodInsights.balancedThought')}
-              </Text>
-            </View>
 
             <View style={{
-              paddingHorizontal: 8,
-              paddingVertical: 15,
+              paddingHorizontal: 12,
+              paddingVertical: 20,
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: 'transparent',
-              marginTop: -29,
-              width: '60%',
+              width: '78%',
               alignSelf: 'center',
             }}>
               <Text style={{
-                fontSize: getDynamicFontSize(`"${pattern.reframedThought}"`),
+                fontSize: getDynamicFontSize(pattern.reframedThought),
                 color: '#374151',
                 fontWeight: '500',
                 textAlign: 'center',
                 fontFamily: 'Ubuntu-Medium',
+                lineHeight: getDynamicFontSize(pattern.reframedThought) * 1.3,
               }}>
-                "{pattern.reframedThought}"
+                {pattern.reframedThought}
               </Text>
             </View>
 
-            {/* Blue containers at bottom */}
-            <View style={{
-              position: 'absolute',
-              bottom: '11%',
-              flexDirection: 'row',
-              width: '100%',
-              justifyContent: 'space-between',
-              paddingHorizontal: '20%',
-              marginLeft: '5%',
-            }}>
-              <View style={{
-                width: '40%',
-                backgroundColor: 'transparent',
-                paddingHorizontal: 6,
-                paddingVertical: 6,
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                marginLeft: '2%',
-                minHeight: 36,
-              }}>
-                <Text style={{
-                  fontSize: 13,
-                  color: '#374151',
-                  textAlign: 'left',
-                  lineHeight: 15,
-                  fontFamily: 'Ubuntu-Medium',
-                }}>{t('insights.moodInsights.moreBalanced')}</Text>
-              </View>
-
-            </View>
 
           </ImageBackground>
         </View>
@@ -350,7 +299,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         <View style={{
           marginHorizontal: 16,
           marginTop: 8,
-          marginBottom: 4,
+          marginBottom: 20,
         }}>
           <View style={{
             borderRadius: 12,
@@ -406,7 +355,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             </LinearGradient>
           </View>
         </View>
-      </>
+      </View>
     );
   };
 

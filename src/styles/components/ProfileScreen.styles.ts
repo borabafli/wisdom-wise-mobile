@@ -13,6 +13,7 @@ export const profileScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: colors.appBackground,
   },
   
   // Scrollable Background - Match Insights Pattern

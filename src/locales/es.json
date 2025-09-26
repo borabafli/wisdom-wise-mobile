@@ -119,7 +119,10 @@
     },
     "values": {
       "title": "Tus Valores",
-      "subtitle": "Lo que te importa"
+      "subtitle": "Lo que te importa",
+      "overview": "Valores Fundamentales",
+      "pagination": "{{current}} de {{total}}",
+      "swipeToExplore": "Desliza para explorar"
     },
     "sessionSummaries": {
       "title": "Resúmenes de Sesiones",
@@ -133,6 +136,22 @@
       "setGoalDescription": "Establece objetivos de terapia para dar dirección y motivación a tu viaje de sanación.",
       "setFirstGoalButton": "Establece Tu Primer Objetivo",
       "complete": "completo"
+    },
+    "vision": {
+      "title": "Visión del Futuro",
+      "inspiringFuture": "Tu futuro yo inspirador",
+      "loading": "Cargando tu visión...",
+      "createInspiring": "Crea una visión inspiradora de tu futuro yo",
+      "emptyState": "Comienza un ejercicio de Visión del Futuro para explorar tu yo futuro ideal y desbloquear perspectivas personalizadas.",
+      "startExercise": "Comenzar Ejercicio de Visión",
+      "created": "Creado el",
+      "coreQualities": "Cualidades Fundamentales",
+      "more": "más",
+      "lifeAreasExplored": "Áreas de Vida Exploradas",
+      "reflectOnVision": "Reflexionar sobre Tu Visión",
+      "view": "Ver tus",
+      "visions": "visiones",
+      "vision": "visión"
     },
     "journey": {
       "title": "Viaje",
@@ -370,6 +389,14 @@
       "keyInsights": "Ideas Clave",
       "continueReflection": "Continuar Reflexión",
       "saveSummary": "Guardar Resumen"
+    },
+    "therapyGoalSummary": {
+      "title": "Resumen de Objetivos",
+      "subtitle": "Tus objetivos terapéuticos definidos",
+      "yourGoals": "Tus Objetivos",
+      "keyInsights": "Ideas Clave",
+      "continueGoals": "Continuar Objetivos",
+      "saveGoals": "Guardar Objetivos"
     }
   },
   "mood": {
@@ -487,6 +514,240 @@
       "beginner": "Principiante",
       "intermediate": "Intermedio",
       "advanced": "Avanzado"
+    },
+    "steps": {
+      "automaticThoughts": {
+        "step1": {
+          "title": "Describe el momento",
+          "description": "Recuerda una situación reciente que fue estresante o molesta.",
+          "instruction": "Invita al usuario a compartir una situación reciente que desencadenó estrés, ansiedad o estado de ánimo bajo. Anímalo a mantenerlo simple y específico ('ayer en una reunión', 'cuando me encontré con un amigo'). Quédate en este paso hasta que proporcione una situación clara."
+        },
+        "step2": {
+          "title": "Nota tu pensamiento",
+          "description": "¿Cuál fue el primer pensamiento que te vino a la mente en ese momento?",
+          "instruction": "Anima al usuario a escribir el pensamiento automático que tuvo en esa situación. Si se siente atascado, ofrece ejemplos suaves ('Voy a fallar', 'No les gusto', 'No puedo manejar esto'), pero mantén el enfoque en sus propias palabras."
+        },
+        "step3": {
+          "title": "Identifica el patrón de pensamiento",
+          "description": "¿Este pensamiento se ajusta a un patrón de pensamiento común?",
+          "instruction": "Guía al usuario a reflexionar si su pensamiento muestra una de las distorsiones cognitivas comunes. Recuérdales brevemente los patrones típicos: Pensamiento de todo o nada (blanco/negro, sin término medio), Catastrofización (esperar lo peor), Lectura de mente (asumir lo que otros piensan), Sobregeneralización (usar un evento para definir todo), Etiquetado (ponerse nombres), Razonamiento emocional (asumir que sentimientos = hechos), Adivinación del futuro (predecir un mal resultado), Declaraciones de deber ('Debo... Debería...'), Personalización (culparse por cosas fuera de su control). Anímalo a elegir uno o más que encajen. Quédate hasta que identifiquen una distorsión."
+        },
+        "step4": {
+          "title": "Replantea el pensamiento",
+          "description": "¿Cómo podrías ver esto de una manera más equilibrada?",
+          "instruction": "Apoya al usuario para crear un pensamiento más realista y amable. Pídele que considere: ¿Qué evidencia apoya o desafía el pensamiento original? ¿Qué le dirían a un amigo en esta situación? ¿Hay una manera más equilibrada de verlo? Anímalo a escribir una declaración replanteada. Quédate hasta que la proporcione."
+        }
+      },
+      "goalSetting": {
+        "step1": {
+          "title": "Elige un objetivo",
+          "description": "Elige una cosa hacia la que quieras trabajar.",
+          "instruction": "Pide al usuario que declare un objetivo hacia el que quiera trabajar. Mantenlo concreto y realista."
+        },
+        "step2": {
+          "title": "¿Por qué importa?",
+          "description": "Conecta el objetivo con lo que es significativo para ti.",
+          "instruction": "Anima al usuario a compartir por qué este objetivo es significativo para él. Pregunta qué diferencia haría en su vida."
+        },
+        "step3": {
+          "title": "Desglósalo",
+          "description": "Convierte un gran objetivo en pasos pequeños y factibles.",
+          "instruction": "Guía al usuario para dividir el gran objetivo en pasos más pequeños y factibles. Fomenta la practicidad."
+        },
+        "step4": {
+          "title": "¿Qué podría interponerse?",
+          "description": "Piensa con anticipación sobre los desafíos que podrías enfrentar.",
+          "instruction": "Pregunta qué podría interponerse en el camino para alcanzar este objetivo. Anímalos a nombrar al menos un desafío."
+        },
+        "step5": {
+          "title": "Planifica tu camino alrededor",
+          "description": "Encuentra estrategias para manejar esos desafíos.",
+          "instruction": "Ayuda al usuario a desarrollar estrategias para superar esos obstáculos. Mantente flexible pero solidario."
+        },
+        "step6": {
+          "title": "Da el primer paso",
+          "description": "Decide una pequeña acción que puedas tomar pronto.",
+          "instruction": "Invita al usuario a elegir una pequeña acción que pueda tomar hoy o esta semana hacia su objetivo. Ayúdalo a ser específico."
+        }
+      },
+      "futureSelfJournaling": {
+        "step1": {
+          "title": "Conoce a tu yo futuro",
+          "description": "Imagínate en 1-3 años, viviendo en línea con tus valores.",
+          "instruction": "Invita al usuario a imaginarse en un futuro cercano (1-3 años) viviendo una vida de la que pueda sentirse orgulloso. Pídele que imagine dónde está, qué está haciendo, y qué se siente diferente. Anímalo a describirlo con sus propias palabras."
+        },
+        "step2": {
+          "title": "¿Cómo se ve la vida?",
+          "description": "Describe un día ordinario de tu yo futuro.",
+          "instruction": "Anima al usuario a escribir sobre cómo se ve la vida diaria para esta versión futura de sí mismo. Pregunta sobre cómo pasa su tiempo, sus rutinas, y qué le da sentido."
+        },
+        "step3": {
+          "title": "Reconoce tus fortalezas",
+          "description": "¿Qué cualidades ha desarrollado tu yo futuro?",
+          "instruction": "Pide al usuario que describa qué fortalezas personales o habilidades ha construido su yo futuro. Por ejemplo: confianza, resistencia, amabilidad, equilibrio. Anima al menos dos."
+        },
+        "step4": {
+          "title": "¿Qué es diferente de hoy?",
+          "description": "Compara tu yo futuro con tu yo actual.",
+          "instruction": "Guía al usuario para notar las diferencias entre sus hábitos, creencias o comportamientos actuales y los de su yo futuro. Anímalo a ser honesto pero compasivo."
+        },
+        "step5": {
+          "title": "Un paso hoy",
+          "description": "Elige una acción que te acerque.",
+          "instruction": "Invita al usuario a anotar un pequeño paso que pueda dar hoy (o esta semana) que lo acerque a esta versión futura de sí mismo. Manténlo práctico y factible."
+        }
+      },
+      "sortingThoughts": {
+        "step1": {
+          "title": "Escribe tus pensamientos",
+          "description": "Anota todo lo que te pasa por la mente en este momento.",
+          "instruction": "Pide al usuario que anote algunos pensamientos que le vienen a la mente ahora mismo, sin editarlos."
+        },
+        "step2": {
+          "title": "Ordénalos",
+          "description": "Separa los pensamientos útiles de los dañinos.",
+          "instruction": "Guía al usuario para categorizar sus pensamientos (útiles vs. dañinos, o hechos vs. preocupaciones)."
+        },
+        "step3": {
+          "title": "Elige lo que quieres conservar",
+          "description": "Concéntrate en un pensamiento que te ayude a seguir adelante.",
+          "instruction": "Invita al usuario a seleccionar un pensamiento útil para llevar consigo, y dejar el resto por ahora."
+        },
+        "step4": {
+          "title": "Seguir adelante",
+          "description": "Has ordenado tus pensamientos. Ahora podemos profundizar.",
+          "instruction": "Reconoce: 'Has visto qué pensamientos te elevan y cuáles te pesan.' Explica la conexión: Los pensamientos útiles pueden conectar con tus objetivos terapéuticos como motivadores. Los dañinos pueden explorarse en Pensamientos Automáticos, donde los reencuadraremos. Pregunta: '¿Te gustaría reencuadrar uno de los pensamientos dañinos que detectaste hoy?'"
+        }
+      },
+      "therapyGoalDefinition": {
+        "step1": {
+          "title": "Elige un área",
+          "description": "Elige una parte de tu vida que te gustaría mejorar (ej: estado de ánimo, estrés, confianza, relaciones).",
+          "instruction": "Invita al usuario a elegir un área principal de enfoque para la terapia. Ofrece ejemplos pero manténlo abierto. Quédate hasta que compartan un área."
+        },
+        "step2": {
+          "title": "Define el cambio que quieres",
+          "description": "¿Qué te gustaría que fuera diferente en esta área?",
+          "instruction": "Pide al usuario que describa el tipo de cambio que espera (ej: 'Quiero sentirme más calmado', 'Quiero confiar más en mí mismo'). Anímalo a ser claro pero no demasiado detallado."
+        },
+        "step3": {
+          "title": "¿Por qué es importante para ti?",
+          "description": "Conecta tu objetivo con tus valores o lo que más te importa.",
+          "instruction": "Invita al usuario a explicar por qué este objetivo importa. Anímalo a vincularlo con valores, relaciones, o bienestar personal."
+        },
+        "step4": {
+          "title": "Imagina el éxito",
+          "description": "¿Cómo se vería la vida si este objetivo fuera alcanzado?",
+          "instruction": "Pide al usuario que imagine y describa qué sería diferente si su objetivo fuera alcanzado. Anima una visión corta y positiva."
+        },
+        "step5": {
+          "title": "Seguir adelante",
+          "description": "Has definido tus objetivos terapéuticos — ahora los usaremos como fundamento.",
+          "instruction": "Reconoce el progreso del usuario: 'Has aclarado lo que te importa y lo que te gustaría cambiar.' Luego explica cómo estos objetivos guiarán el trabajo futuro: Los mantendremos en mente como punto de referencia. En otros ejercicios (como Pensamientos Automáticos o Clarificación de Valores), conectaremos el trabajo de vuelta a estos objetivos. Con el tiempo, rastrearemos el progreso y los refinaremos juntos. Termina preguntando: '¿Te gustaría empezar a explorar uno de tus objetivos ahora mismo, o guardarlos como tu enfoque para las próximas sesiones?'"
+        }
+      },
+      "mindfulness": {
+        "step1": {
+          "title": "Enfócate en el presente",
+          "description": "Elige un ancla como tu respiración o tu cuerpo.",
+          "instruction": "Invita al usuario a enfocarse en su respiración o una sensación corporal simple, como los pies en el suelo."
+        },
+        "step2": {
+          "title": "Observa tus pensamientos",
+          "description": "Nota como los pensamientos vienen y van sin juzgar.",
+          "instruction": "Guía al usuario a observar pensamientos mientras vienen y van, sin juicio, como nubes pasando."
+        },
+        "step3": {
+          "title": "Regresa gentilmente",
+          "description": "Trae la atención de vuelta cuando tu mente divague.",
+          "instruction": "Anima al usuario a regresar su atención a su ancla cuando se desvíe, y reconocerse por practicar."
+        }
+      },
+      "gratitude": {
+        "step1": {
+          "title": "Nombra tres cosas",
+          "description": "Escribe tres cosas por las que estás agradecido hoy.",
+          "instruction": "Pide al usuario que nombre tres cosas por las que está agradecido hoy, grandes o pequeñas."
+        },
+        "step2": {
+          "title": "Siéntelo completamente",
+          "description": "Tómate un momento para realmente sentir la gratitud.",
+          "instruction": "Anima al usuario a detenerse en cada una y notar cómo se siente en su cuerpo estar agradecido."
+        },
+        "step3": {
+          "title": "Llévalo contigo",
+          "description": "Deja que este sentimiento guíe tu día.",
+          "instruction": "Invita al usuario a llevar este sentimiento de gratitud consigo mientras continúa su día."
+        }
+      },
+      "selfCompassion": {
+        "step1": {
+          "title": "Nota la lucha",
+          "description": "Reconoce dónde estás siendo duro contigo mismo.",
+          "instruction": "Pide al usuario que nombre un área donde está siendo duro consigo mismo ahora mismo."
+        },
+        "step2": {
+          "title": "Imagina a un amigo",
+          "description": "Piensa en cómo responderías a alguien que te importa.",
+          "instruction": "Guía al usuario a imaginar cómo respondería si un amigo estuviera luchando con lo mismo."
+        },
+        "step3": {
+          "title": "Ofrece amabilidad",
+          "description": "Escríbete un mensaje de apoyo.",
+          "instruction": "Anima al usuario a escribirse una oración amable o de apoyo."
+        }
+      },
+      "valuesClarity": {
+        "step1": {
+          "title": "Descubre lo que más importa",
+          "description": "Piensa en las cualidades o principios que guían tu vida.",
+          "instruction": "Pide al usuario que enumere algunos valores que siente importantes para él — por ejemplo: honestidad, crecimiento, familia, libertad, bondad, equilibrio. Anímalo a elegir lo que se siente verdadero, no lo que piensa que 'debería' valorar."
+        },
+        "step2": {
+          "title": "Elige tus valores principales",
+          "description": "Redúcelo a los que se sienten más centrales ahora mismo.",
+          "instruction": "Anima al usuario a elegir uno o dos valores de su lista que más le importan en este momento. Recuérdale que no hay respuestas correctas o incorrectas, y que los valores pueden cambiar con el tiempo."
+        },
+        "step3": {
+          "title": "Vive tus valores",
+          "description": "Encuentra una pequeña manera de expresar tus valores en la vida diaria.",
+          "instruction": "Invita al usuario a nombrar una pequeña acción práctica que podría tomar hoy o esta semana que refleje sus valores elegidos. Mantenlo simple y realista."
+        }
+      },
+      "tellYourStory": {
+        "step1": {
+          "title": "Comparte tu viaje",
+          "description": "Háblame de una experiencia o capítulo significativo en tu vida.",
+          "instruction": "Anima al usuario a compartir un momento significativo, período o experiencia de su vida — podría ser un desafío que superó, un tiempo de crecimiento o una relación significativa. Mantente en este paso hasta que proporcione una historia o experiencia clara."
+        },
+        "step2": {
+          "title": "Descubre tus fortalezas",
+          "description": "¿Qué cualidades o fortalezas mostraste durante esta experiencia?",
+          "instruction": "Ayuda al usuario a identificar las fortalezas personales, habilidades o cualidades que demostró en su historia. Pídele que nombre al menos 2-3 fortalezas que ve en sí mismo de esta experiencia — cosas como resistencia, coraje, compasión, determinación o creatividad."
+        },
+        "step3": {
+          "title": "Conecta con el presente",
+          "description": "¿Cómo pueden estas fortalezas ayudarte en tu vida actual?",
+          "instruction": "Guía al usuario para conectar sus fortalezas identificadas con su situación actual. Pídele que considere cómo estas mismas cualidades pueden apoyarlo con desafíos o metas actuales. Anima una forma específica de usar estas fortalezas para avanzar."
+        }
+      },
+      "morningMindfulness": {
+        "step1": {
+          "title": "Nota tu despertar",
+          "description": "Toma un momento para tomar conciencia de tu cuerpo y mente al comenzar tu día.",
+          "instruction": "Guía al usuario a pausar y notar cómo se siente física y mentalmente al despertar. Anímalo a observar sin juicio — quizás notando su nivel de energía, cualquier tensión, o su estado de ánimo general. Mantén esto suave y exploratorio."
+        },
+        "step2": {
+          "title": "Establece una intención suave",
+          "description": "Elige una pequeña manera en la que te gustaría abordar tu día conscientemente.",
+          "instruction": "Ayuda al usuario a identificar una intención simple para su día — esto podría ser ser más paciente, mantenerse presente durante las conversaciones, o tomar pausas conscientes. Anímalo a elegir algo alcanzable y amable consigo mismo."
+        },
+        "step3": {
+          "title": "Toma tres respiraciones conscientes",
+          "description": "Conéctate a tierra con tres respiraciones conscientes antes de comenzar tu día.",
+          "instruction": "Guía al usuario a través de tres respiraciones lentas e intencionales. Invítalo a enfocarse en la sensación de respirar — sintiendo el aire entrar y salir de su cuerpo. Esto sirve como un punto de anclaje al que puede regresar durante todo su día."
+        }
+      }
     }
   },
   "quickActions": {
@@ -557,6 +818,70 @@
     "promptsGenerated": {
       "title": "¡Preguntas generadas!",
       "message": "Se generaron {{count}} nuevas preguntas de escritura usando tus perspectivas existentes. Consulta la pestaña Diario para ver todas las preguntas en la sección \"Preguntas de escritura\"."
+    },
+    "clearHistory": {
+      "title": "Limpiar todo el historial",
+      "message": "¿Estás seguro de que quieres limpiar todo tu historial de chat? Esta acción no se puede deshacer."
+    },
+    "goalStatus": {
+      "title": "Estado del objetivo actualizado",
+      "message": "¡Objetivo marcado como {{status}}!"
+    },
+    "progressSaved": {
+      "title": "¡Genial!",
+      "message": "Tu progreso ha sido guardado."
+    },
+    "checkIn": {
+      "title": "Check-in completado",
+      "message": "¡Gracias por compartir tu progreso!"
+    }
+  },
+  "visionDetails": {
+    "title": "Visión de mí mismo",
+    "visionsCreated": "{{count}} visión{{plural}} creada{{plural}}",
+    "loading": "Cargando tus visiones...",
+    "empty": {
+      "title": "Aún no hay visiones",
+      "description": "Completa un ejercicio de \"Visión del Futuro\" para ver tus visiones inspiradoras aquí."
+    },
+    "sections": {
+      "yourVision": "Tu Visión",
+      "coreQualities": "Cualidades Esenciales",
+      "lifeAreas": "Áreas de Vida",
+      "guidingWords": "Palabras Guía",
+      "practicalSteps": "Pasos Prácticos",
+      "howItFeels": "Cómo Se Siente",
+      "wisdomFromFuture": "Sabiduría de Tu Yo Futuro"
+    },
+    "reflectButton": "Reflexionar sobre esta Visión"
+  },
+  "ttsSettings": {
+    "title": "Configuración de Voz",
+    "enable": {
+      "title": "Activar Voz",
+      "description": "Permite que tu guía tortuga hable las respuestas en voz alta"
+    },
+    "autoPlay": {
+      "title": "Reproducir Respuestas Automáticamente",
+      "description": "Hablar automáticamente las respuestas de IA cuando lleguen"
+    },
+    "speed": {
+      "title": "Velocidad de Habla",
+      "slow": "Lento",
+      "normal": "Normal",
+      "fast": "Rápido",
+      "lower": "Más Bajo",
+      "higher": "Más Alto"
+    },
+    "pitch": {
+      "title": "Tono de Voz",
+      "low": "Bajo",
+      "high": "Alto"
+    },
+    "test": {
+      "button": "Probar Voz",
+      "stopButton": "Detener Prueba",
+      "text": "Hola, soy tu gentil guía tortuga. Así es como sonará mi voz con estas configuraciones."
     }
   }
 }

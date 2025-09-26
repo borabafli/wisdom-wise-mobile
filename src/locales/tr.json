@@ -119,7 +119,10 @@
     },
     "values": {
       "title": "Değerleriniz",
-      "subtitle": "Size ne önemli"
+      "subtitle": "Size ne önemli",
+      "overview": "Temel Değerler",
+      "pagination": "{{current}} / {{total}}",
+      "swipeToExplore": "Keşfetmek için kaydırın"
     },
     "sessionSummaries": {
       "title": "Seans Özetleri",
@@ -133,6 +136,22 @@
       "setGoalDescription": "İyileşme yolculuğunuza yön ve motivasyon vermek için terapi hedefleri belirleyin.",
       "setFirstGoalButton": "İlk Hedefinizi Belirleyin",
       "complete": "tamamlandı"
+    },
+    "vision": {
+      "title": "Geleceğin Vizyonu",
+      "inspiringFuture": "İlham verici gelecek benliğiniz",
+      "loading": "Vizyonunuz yükleniyor...",
+      "createInspiring": "Gelecek benliğinizin ilham verici bir vizyonunu yaratın",
+      "emptyState": "İdeal gelecek benliğinizi keşfetmek ve kişiselleştirilmiş içgörülerin kilidini açmak için bir Geleceğin Vizyonu egzersizi başlatın.",
+      "startExercise": "Vizyon Egzersizi Başlat",
+      "created": "Oluşturulma tarihi",
+      "coreQualities": "Temel Nitelikler",
+      "more": "daha fazla",
+      "lifeAreasExplored": "Keşfedilen Yaşam Alanları",
+      "reflectOnVision": "Vizyonunuz Üzerine Düşünün",
+      "view": "Sizin",
+      "visions": "vizyonlarınızı görün",
+      "vision": "vizyonunuzu görün"
     },
     "journey": {
       "title": "Yolculuk",
@@ -370,6 +389,14 @@
       "keyInsights": "Ana Görüşler",
       "continueReflection": "Yansıtmaya Devam Et",
       "saveSummary": "Özeti Kaydet"
+    },
+    "therapyGoalSummary": {
+      "title": "Hedef Özeti",
+      "subtitle": "Terapi hedefleriniz tanımlandı",
+      "yourGoals": "Hedefleriniz",
+      "keyInsights": "Ana Görüşler",
+      "continueGoals": "Hedeflere Devam Et",
+      "saveGoals": "Hedefleri Kaydet"
     }
   },
   "mood": {
@@ -487,6 +514,240 @@
       "beginner": "Başlangıç",
       "intermediate": "Orta",
       "advanced": "İleri"
+    },
+    "steps": {
+      "automaticThoughts": {
+        "step1": {
+          "title": "Anı tanımlayın",
+          "description": "Stresli veya rahatsız edici olan yakın zamandaki bir durumu hatırlayın.",
+          "instruction": "Kullanıcıyı stres, kaygı veya kötü ruh hali tetikleyen yakın zamandaki bir durumu paylaşmaya davet edin. Basit ve spesifik tutmalarını teşvik edin ('dün bir toplantıda', 'bir arkadaşımla karşılaştığımda'). Net bir durum sağlayana kadar bu adımda kalın."
+        },
+        "step2": {
+          "title": "Düşüncenizi fark edin",
+          "description": "O anda aklınıza gelen ilk düşünce neydi?",
+          "instruction": "Kullanıcıyı o durumda sahip oldukları otomatik düşünceyi yazmaya teşvik edin. Takılıp kaldıklarını hissederlerse, nazik örnekler sunun ('Başarısız olacağım', 'Beni sevmiyorlar', 'Bununla başa çıkamam'), ama odağı kendi kelimelerinde tutun."
+        },
+        "step3": {
+          "title": "Düşünce kalıbını tespit edin",
+          "description": "Bu düşünce yaygın bir düşünce kalıbına uyuyor mu?",
+          "instruction": "Kullanıcıyı düşüncelerinin yaygın bilişsel çarpıtmalardan birini gösterip göstermediğini düşünmeye yönlendirin. Tipik kalıpları kısaca hatırlatın: Hep ya da hiç düşüncesi (siyah/beyaz, orta yol yok), Felakete odaklanma (en kötüsünü beklemek), Zihin okuma (başkalarının ne düşündüğünü varsaymak), Aşırı genelleme (her şeyi tanımlamak için bir olayı kullanmak), Etiketleme (kendinize isim takmak), Duygusal akıl yürütme (duygular = gerçekler varsaymak), Kehanet (kötü sonuç öngörmek), Zorunluluk ifadeleri ('Yapmalıyım... Etmeliyim...'), Kişiselleştirme (kontrolünüz dışındaki şeyler için kendinizi suçlamak). Uygun olanları seçmelerini teşvik edin. Bir çarpıtma tanımlayana kadar kalın."
+        },
+        "step4": {
+          "title": "Düşünceyi yeniden çerçeveleyin",
+          "description": "Bunu daha dengeli bir şekilde nasıl görebilirsiniz?",
+          "instruction": "Kullanıcının daha gerçekçi ve nazik bir düşünce oluşturmasını destekleyin. Düşünmelerini isteyin: Orijinal düşünceyi destekleyen veya ona meydan okuyan kanıtlar neler? Bu durumda bir arkadaşa ne derlerdi? Buna bakmanın daha dengeli bir yolu var mı? Yeniden çerçevelenmiş bir ifade yazmalarını teşvik edin. Sağlayana kadar kalın."
+        }
+      },
+      "goalSetting": {
+        "step1": {
+          "title": "Bir hedef seçin",
+          "description": "Üzerinde çalışmak istediğiniz bir şey seçin.",
+          "instruction": "Kullanıcıdan üzerinde çalışmak istediği bir hedefi belirtmesini isteyin. Somut ve gerçekçi tutun."
+        },
+        "step2": {
+          "title": "Neden önemli?",
+          "description": "Hedefi sizin için anlamlı olan şeyle bağlayın.",
+          "instruction": "Kullanıcıyı bu hedefin neden onlar için anlamlı olduğunu paylaşmaya teşvik edin. Hayatlarında ne fark yaratacağını sorun."
+        },
+        "step3": {
+          "title": "Parçalayın",
+          "description": "Büyük bir hedefi küçük, yapılabilir adımlara dönüştürün.",
+          "instruction": "Kullanıcının büyük hedefi küçük, yapılabilir adımlara bölmesine rehberlik edin. Pratikliği teşvik edin."
+        },
+        "step4": {
+          "title": "Yoluna ne çıkabilir?",
+          "description": "Karşılaşabileceğiniz zorlukları önceden düşünün.",
+          "instruction": "Bu hedefe ulaşmanın yoluna ne çıkabileceğini sorun. En az bir zorluğu adlandırmalarını teşvik edin."
+        },
+        "step5": {
+          "title": "Yolunuzu planlayın",
+          "description": "Bu zorlukların üstesinden gelmek için stratejiler bulun.",
+          "instruction": "Kullanıcının bu engellerin üstesinden gelmek için stratejiler geliştirmesine yardım edin. Esnek ama destekleyici kalın."
+        },
+        "step6": {
+          "title": "İlk adımı atın",
+          "description": "Yakında atabileceğiniz küçük bir eylem kararlaştırın.",
+          "instruction": "Kullanıcıyı hedefe doğru bugün ya da bu hafta atabileceği küçük bir eylem seçmeye davet edin. Spesifik olmalarına yardım edin."
+        }
+      },
+      "futureSelfJournaling": {
+        "step1": {
+          "title": "Gelecekteki benliğinizle tanışın",
+          "description": "Kendinizi 1-3 yıl sonra, değerlerinize uygun yaşarken hayal edin.",
+          "instruction": "Kullanıcıyı yakın gelecekte (1-3 yıl) gurur duyabileceği bir hayat yaşayan kendini hayal etmeye davet edin. Nerede olduğunu, ne yaptığını ve neyin farklı hissettiğini hayal etmesini isteyin. Kendi kelimeleriyle tarif etmeye teşvik edin."
+        },
+        "step2": {
+          "title": "Hayat nasıl görünüyor?",
+          "description": "Gelecekteki benliğinizin sıradan bir gününü tanımlayın.",
+          "instruction": "Kullanıcıyı kendisinin bu gelecekteki versiyonu için günlük hayatın nasıl göründüğü hakkında yazmaya teşvik edin. Zamanını nasıl geçirdiğini, rutinlerini ve ona anlam veren şeyleri sorun."
+        },
+        "step3": {
+          "title": "Güçlü yanlarınızı fark edin",
+          "description": "Gelecekteki benliğiniz hangi nitelikleri geliştirdi?",
+          "instruction": "Kullanıcıdan gelecekteki benliğinin inşa ettiği kişisel güçlü yanları veya yetenekleri tarif etmesini isteyin. Örneğin: güven, dayanıklılık, nezaket, denge. En az iki tanesini teşvik edin."
+        },
+        "step4": {
+          "title": "Bugünden ne farklı?",
+          "description": "Gelecekteki benliğinizi şimdiki benliğinizle karşılaştırın.",
+          "instruction": "Kullanıcıyı mevcut alışkanlıkları, inançları veya davranışları ile gelecekteki benliğininkileri arasındaki farkları fark etmeye yönlendirin. Dürüst ama şefkatli olmalarını teşvik edin."
+        },
+        "step5": {
+          "title": "Bugün bir adım",
+          "description": "Sizi yaklaştıran bir eylem seçin.",
+          "instruction": "Kullanıcıyı bugün (veya bu hafta) kendini bu gelecekteki versiyonuna yaklaştıracak küçük bir adım yazmasına davet edin. Pratik ve yapılabilir tutun."
+        }
+      },
+      "sortingThoughts": {
+        "step1": {
+          "title": "Düşüncelerinizi yazın",
+          "description": "Şu anda aklınızdan geçen her şeyi not edin.",
+          "instruction": "Kullanıcıdan şu anda aklına gelen birkaç düşünceyi düzenleme yapmadan yazmasını isteyin."
+        },
+        "step2": {
+          "title": "Onları sıralayın",
+          "description": "Faydalı düşünceleri zarlı olanlardan ayırın.",
+          "instruction": "Kullanıcıyı düşüncelerini kategorize etmesi için yönlendirin (faydalı vs zarlı, ya da gerçek vs endişe)."
+        },
+        "step3": {
+          "title": "Neyi tutacağınızı seçin",
+          "description": "Size ilerlemede yardımcı olan bir düşünceye odaklanın.",
+          "instruction": "Kullanıcıyı yanında taşımak üzere faydalı bir düşünce seçmeye ve geri kalanı şimdilik bırakmaya davet edin."
+        },
+        "step4": {
+          "title": "İlerleme",
+          "description": "Düşüncelerinizi sıraladınız. Şimdi daha derine inebiliriz.",
+          "instruction": "Takdir edin: 'Hangi düşüncelerin sizi yükselttiğini ve hangilerinin ağırlaştırdığını gördünüz.' Bağlantıyı açıklayın: Faydalı düşünceler terapi hedeflerinizle motivatör olarak bağlanabilir. Zarlı olanlar Otomatik Düşüncelerde keşfedilebilir, burada onları yeniden çerçeveleriz. Sorun: 'Bugün tespit ettiğiniz zarlı düşüncelerden birini yeniden çerçeveler misiniz?'"
+        }
+      },
+      "therapyGoalDefinition": {
+        "step1": {
+          "title": "Bir alan seçin",
+          "description": "Hayatınızın geliştirmek istediğiniz bir kısmını seçin (örn. ruh hali, stres, güven, ilişkiler).",
+          "instruction": "Kullanıcıyı terapi için bir ana odak alanı seçmeye davet edin. Örnekler sunun ama açık uçlu tutun. Bir alan paylaşana kadar kalın."
+        },
+        "step2": {
+          "title": "İstediğiniz değişimi tanımlayın",
+          "description": "Bu alanda neyin farklı olmasını istersiniz?",
+          "instruction": "Kullanıcıdan umduğu değişim türünü tarif etmesini isteyin (örn. 'Daha sakin hissetmek istiyorum', 'Kendime daha çok güvenmek istiyorum'). Net olmalarını ama çok detaya girmemelerini teşvik edin."
+        },
+        "step3": {
+          "title": "Bu neden sizin için önemli?",
+          "description": "Hedefinizi değerlerinizle veya en önemli olanlarla bağlayın.",
+          "instruction": "Kullanıcıyı bu hedefin neden önemli olduğunu açıklamaya davet edin. Bunu değerler, ilişkiler veya kişisel refah ile bağlamalarını teşvik edin."
+        },
+        "step4": {
+          "title": "Başarıyı hayal edin",
+          "description": "Bu hedef başarılırsa hayat nasıl görünürdü?",
+          "instruction": "Kullanıcıdan hedefi karşılanırsa neyin farklı olacağını hayal etmesini ve tarif etmesini isteyin. Kısa, pozitif bir vizyonu teşvik edin."
+        },
+        "step5": {
+          "title": "İlerlemek",
+          "description": "Terapi hedeflerinizi tanımladınız — şimdi bunları temel olarak kullanacağız.",
+          "instruction": "Kullanıcının ilerlemesini takdir edin: 'Sizin için neyin önemli olduğunu ve neyi değiştirmek istediğinizi netleştirdiniz.' Sonra bu hedeflerin gelecekteki çalışmayı nasıl yönlendireceğini açıklayın: Bunları referans noktası olarak aklımızda tutacağız. Diğer egzersizlerde (Otomatik Düşünceler veya Değer Netleştirme gibi), çalışmayı bu hedeflere geri bağlayacağız. Zamanla, ilerlemeyi takip edecek ve birlikte iyileştireceğiz. Şu soruyla bitirin: 'Hedeflerinizden birini şimdi keşfetmeye başlamak mı istersiniz, yoksa onları gelecek seanslar için odak noktanız olarak mı kaydetmek istersiniz?'"
+        }
+      },
+      "mindfulness": {
+        "step1": {
+          "title": "Şimdiye odaklan",
+          "description": "Nefesiniz veya bedeniniz gibi bir çapa seçin.",
+          "instruction": "Kullanıcıyı nefesine veya yerdeki ayaklar gibi basit bir vücut hissine odaklanmaya davet edin."
+        },
+        "step2": {
+          "title": "Düşüncelerinizi izleyin",
+          "description": "Düşüncelerin yargılamadan gelip gittiğini fark edin.",
+          "instruction": "Kullanıcıya, geçen bulutlar gibi düşüncelerin yargılamadan gelip gittiğini gözlemleme konusunda rehberlik edin."
+        },
+        "step3": {
+          "title": "Nazikçe dönün",
+          "description": "Zihniniz dağıldığında dikkati geri getirin.",
+          "instruction": "Kullanıcıyı, dikkati dağıldığında çapasına geri döndürmeye teşvik edin ve kendilerini pratik yaptıkları için takdir etsinler."
+        }
+      },
+      "gratitude": {
+        "step1": {
+          "title": "Üç şey söyleyin",
+          "description": "Bugün minnettar olduğunuz üç şeyi yazın.",
+          "instruction": "Kullanıcıdan bugün minnettar olduğu, büyük veya küçük üç şeyi söylemesini isteyin."
+        },
+        "step2": {
+          "title": "Tam olarak hissedin",
+          "description": "Minnettarlığı gerçekten hissetmek için bir an durun.",
+          "instruction": "Kullanıcıyı her birinde durmaya ve minnettar hissetmenin vücudunda nasıl bir his yarattığını fark etmeye teşvik edin."
+        },
+        "step3": {
+          "title": "Yanında taşı",
+          "description": "Bu hissin gününüze rehberlik etmesine izin verin.",
+          "instruction": "Kullanıcıyı günlerini sürdürürken bu minnettarlık hissini yanlarında taşımaya davet edin."
+        }
+      },
+      "selfCompassion": {
+        "step1": {
+          "title": "Mücadeleyi fark edin",
+          "description": "Kendinize karşı sert olduğunuz yeri kabul edin.",
+          "instruction": "Kullanıcıdan şu anda kendilerine karşı sert oldukları bir alanı söylemesini isteyin."
+        },
+        "step2": {
+          "title": "Bir arkadaş hayal edin",
+          "description": "Önemsediğiniz birine nasıl yanıt vereceğinizi düşünün.",
+          "instruction": "Kullanıcıyı, bir arkadaşı aynı şeyle mücadele ediyorsa nasıl tepki vereceğini hayal etmeye yönlendirin."
+        },
+        "step3": {
+          "title": "Nezaket sunun",
+          "description": "Kendinize destekleyici bir mesaj yazın.",
+          "instruction": "Kullanıcıyı kendisine nazik veya destekleyici bir cümle yazmaya teşvik edin."
+        }
+      },
+      "valuesClarity": {
+        "step1": {
+          "title": "En önemli olanı keşfedin",
+          "description": "Hayatınıza rehberlik eden nitelikleri veya ilkeleri düşünün.",
+          "instruction": "Kullanıcıdan kendileri için önemli hissettikleri birkaç değeri listelemesini isteyin — örneğin: dürüstlük, büyüme, aile, özgürlük, nezaket, denge. Onları 'yapması gerektiğini' düşündüğü değil, gerçek hissettireni seçmeye teşvik edin."
+        },
+        "step2": {
+          "title": "Ana değerlerinizi seçin",
+          "description": "Şu anda en merkezi hissettirenlere daraltın.",
+          "instruction": "Kullanıcıyı listesinden bu anda en önemli olan bir veya iki değeri seçmeye teşvik edin. Doğru veya yanlış cevapların olmadığını ve değerlerin zamanla değişebileceğini hatırlatın."
+        },
+        "step3": {
+          "title": "Değerlerinizi yaşayın",
+          "description": "Günlük yaşamda değerlerinizi ifade etmenin küçük bir yolunu bulun.",
+          "instruction": "Kullanıcıyı bugün veya bu hafta seçilen değerlerini yansıtan küçük, pratik bir eylem belirlemeye davet edin. Basit ve gerçekçi tutun."
+        }
+      },
+      "tellYourStory": {
+        "step1": {
+          "title": "Yolculuğunuzu paylaşın",
+          "description": "Hayatınızdaki anlamlı bir deneyim veya bölümden bahsedin.",
+          "instruction": "Kullanıcıyı hayatından önemli bir anı, dönem veya deneyimi paylaşmaya teşvik edin — üstesinden geldiği bir zorluk, büyüme dönemi veya anlamlı bir ilişki olabilir. Net bir hikaye veya deneyim sağlayana kadar bu adımda kalın."
+        },
+        "step2": {
+          "title": "Güçlü yanlarınızı keşfedin",
+          "description": "Bu deneyim sırasında hangi nitelikleri veya güçlü yanları gösterdiniz?",
+          "instruction": "Kullanıcının hikayesinde gösterdiği kişisel güçlü yanları, becerileri veya nitelikleri tanımlamasına yardımcı olun. Bu deneyimden kendisinde gördüğü en az 2-3 güçlü yanı belirtmesini isteyin — dayanıklılık, cesaret, merhamet, kararlılık veya yaratıcılık gibi şeyler."
+        },
+        "step3": {
+          "title": "Şimdiki zamana bağlayın",
+          "description": "Bu güçlü yanlar mevcut hayatınızda size nasıl yardımcı olabilir?",
+          "instruction": "Kullanıcıyı belirlediği güçlü yanları mevcut durumuyla bağlantıya yönlendirin. Aynı niteliklerin mevcut zorluklarda veya hedeflerde nasıl destek olabileceğini düşünmesini isteyin. Bu güçlü yanları ileriye taşımak için belirli bir yolu teşvik edin."
+        }
+      },
+      "morningMindfulness": {
+        "step1": {
+          "title": "Uyanışınızı fark edin",
+          "description": "Gününüze başlarken vücudunuzun ve zihninizin farkına varmak için bir dakikanızı ayırın.",
+          "instruction": "Kullanıcıyı duraklamaya ve uyanırken kendisini fiziksel ve zihinsel olarak nasıl hissettiğini fark etmeye yönlendirin. Onları yargısız gözlemlemeye teşvik edin — belki enerji seviyelerini, herhangi bir gerginliği veya genel ruh hallerini fark etmeye. Bunu nazik ve keşifsel tutun."
+        },
+        "step2": {
+          "title": "Nazik bir niyet belirleyin",
+          "description": "Gününüze bilinçli olarak yaklaşmak istediğiniz küçük bir yol seçin.",
+          "instruction": "Kullanıcının günü için basit bir niyet belirlemesine yardımcı olun — bu daha sabırlı olmak, konuşmalarda mevcut kalmak veya bilinçli molalar vermek olabilir. Onları ulaşılabilir ve kendilerine karşı nazik olan bir şey seçmeye teşvik edin."
+        },
+        "step3": {
+          "title": "Üç bilinçli nefes alın",
+          "description": "Gününüze başlamadan önce üç bilinçli nefesle kendinizi topraklandırın.",
+          "instruction": "Kullanıcıyı üç yavaş, kasıtlı nefes alma sürecinde yönlendirin. Onları nefes alma hissine odaklanmaya davet edin — havanın vücuduna girip çıkmasını hissetmeye. Bu, gün boyunca dönebilecekleri bir çapa noktası görevi görür."
+        }
+      }
     }
   },
   "quickActions": {
@@ -557,6 +818,70 @@
     "promptsGenerated": {
       "title": "Sorular Oluşturuldu!",
       "message": "Mevcut görüşleriniz kullanılarak {{count}} yeni yazma sorusu oluşturuldu. Tüm soruları görmek için Günlük sekmesindeki \"Yazma Soruları\" bölümünü kontrol edin."
+    },
+    "clearHistory": {
+      "title": "Tüm Geçmişi Temizle",
+      "message": "Tüm sohbet geçmişinizi temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    },
+    "goalStatus": {
+      "title": "Hedef Durumu Güncellendi",
+      "message": "Hedef {{status}} olarak işaretlendi!"
+    },
+    "progressSaved": {
+      "title": "Harika!",
+      "message": "İlerlemeniz kaydedildi."
+    },
+    "checkIn": {
+      "title": "Kontrol Tamamlandı",
+      "message": "İlerlemenizi paylaştığınız için teşekkürler!"
+    }
+  },
+  "visionDetails": {
+    "title": "Kendimle İlgili Vizyon",
+    "visionsCreated": "{{count}} vizyon{{plural}} oluşturuldu",
+    "loading": "Vizyonlarınız yükleniyor...",
+    "empty": {
+      "title": "Henüz Vizyon Yok",
+      "description": "Ilham veren vizyonlarınızı burada görmek için bir \"Gelecek Vizyonu\" egzersizi tamamlayın."
+    },
+    "sections": {
+      "yourVision": "Vizyonunuz",
+      "coreQualities": "Temel Özellikler",
+      "lifeAreas": "Yaşam Alanları",
+      "guidingWords": "Kılavuz Kelimeler",
+      "practicalSteps": "Pratik Adımlar",
+      "howItFeels": "Nasıl Hissettiriyor",
+      "wisdomFromFuture": "Gelecekteki Beninizden Gelen Bilgelik"
+    },
+    "reflectButton": "Bu Vizyon Üzerinde Düşün"
+  },
+  "ttsSettings": {
+    "title": "Ses Ayarları",
+    "enable": {
+      "title": "Sesi Etkinleştir",
+      "description": "Nazik kaplumbağa kılavuzunuzun yanıtları yüksek sesle söylemesine izin verin"
+    },
+    "autoPlay": {
+      "title": "Yanıtları Otomatik Çal",
+      "description": "AI yanıtları geldiğinde otomatik olarak konuş"
+    },
+    "speed": {
+      "title": "Konuşma Hızı",
+      "slow": "Yavaş",
+      "normal": "Normal",
+      "fast": "Hızlı",
+      "lower": "Daha Düşük",
+      "higher": "Daha Yüksek"
+    },
+    "pitch": {
+      "title": "Ses Tonu",
+      "low": "Alçak",
+      "high": "Yüksek"
+    },
+    "test": {
+      "button": "Sesi Test Et",
+      "stopButton": "Testi Durdur",
+      "text": "Merhaba, ben sizin nazik kaplumbağa kılavuzunuzum. Bu ayarlarla sesim böyle çıkacak."
     }
   }
 }

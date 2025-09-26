@@ -12,7 +12,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Container & Layout - White bottom with blue gradient upward
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFE', // Even closer to pure white
+    backgroundColor: colors.appBackground,
   },
   backgroundImage: {
     flex: 1,

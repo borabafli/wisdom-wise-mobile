@@ -5,6 +5,7 @@ import { memoryService, MemoryContext } from './memoryService';
 import { goalService, TherapyGoal } from './goalService';
 import { apiService } from './apiService';
 import { API_CONFIG } from '../config/constants';
+import { getLanguageInstruction } from './i18nService';
 
 export interface ContextConfig {
   maxTurns: number;
@@ -99,7 +100,8 @@ Your purpose is to be an empathetic, collaborative guide who helps the user expl
 ---
 
 ### — CONVERSATION GUIDANCE —  
-- Warm, human, reflective  
+- Warm, human, reflective
+- Guide, ask questions, suggest next steps the same way a therapist would do  
 - Validate/support first; add brief psychoeducation when useful (why/how) in plain language.  
 - Listen to the user, ask about them, how they feel and follow up like a therapist would ask  
 - Use emojis meaningfully and to structure things.  
@@ -279,7 +281,7 @@ Final check: Output must be a single valid JSON object, nothing else.`
     ---
     
     **RESPONSE APPROACH**  
-    - **Step 1 first message:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Give a concise, compassionate explanation of **why this exercise helps and how it works** (psychoeducation) - they should be in bullet points and there Why it works and how it works text should be in bold.  
+    - **Step 1 first message:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Give a brief 1-sentence explanation of **why this exercise helps and how it works** (psychoeducation) - they should be in bullet points and there Why it works and how it works text should be in bold. Introduction explanation/sentence should also only be 1-2 sentences. 
     - **First message of other steps:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Brief explanation to what this step is about and why it matters.  
     - **Every message should include a clear question or instruction to guide the user:**  
       - Ask specific, open-ended questions that help them explore the step's goal
@@ -294,7 +296,7 @@ Final check: Output must be a single valid JSON object, nothing else.`
     **OVERALL ROLE**  
     - Be a warm, empathetic guide — not a script reader.  
     - Personalize with earlier reflections only if relevant; don’t force memory.  
-    - Prioritize **connection and clarity** over rushing steps.  
+    - Prioritize **connection and clarity**  
     - Allow flexibility in pacing: sometimes stay longer on a step, sometimes move forward.  
     - Before finishing the exercise: help the user **summarize and integrate** the learning.  
     
@@ -334,7 +336,7 @@ Final check: Output must be a single valid JSON object, nothing else.`
       return '\n**Current Therapy Goals:** No active goals set yet.\n';
     }
 
-    let contextString = '\n**Current Therapy Goals:**\n';
+    let contextString = '\n**Current Therapy Goals:**\n';        
     contextString += 'The user has set the following therapy goals. Use these to provide direction, reference progress, and suggest relevant exercises. Goals represent what the user is actively working toward in their therapeutic journey.\n\n';
 
     goals.forEach((goal, index) => {
@@ -762,6 +764,86 @@ The JSON object must have:
       };
     }
   }
+  async generateTherapyGoalSummary(messages: any[]): Promise<{ summary: string; keyInsights: string[] }> {
+    const firstName = await storageService.getFirstName().catch(() => 'Friend');
+
+    try {
+      const prompt = `You are reviewing ${firstName}'s therapy goal-setting session where they defined their therapeutic goals and areas for growth.
+
+Analyze their conversation and create a personalized summary that captures their specific goals and insights.
+
+**THEIR CONVERSATION:**
+${messages
+  .filter(msg => msg.type === 'user' || (msg.type === 'ai' && !msg.content?.includes('Please')) || (msg.type === 'exercise' && !msg.title?.includes('Exercise Complete')))
+  .map(msg => `${msg.type === 'user' ? firstName : 'Anu'}: ${msg.text || msg.content}`)
+  .join('\n\n')}
+
+**CRITICAL: You must respond with ONLY a valid JSON object. No other text, no explanations, no markdown. Just pure JSON.**
+
+The JSON object must have:
+- "summary": A personal, specific 2-3 sentence summary of the therapy goals they defined and what they hope to achieve.
+- "keyInsights": An array of 2-4 specific goals and insights they identified (NOT generic advice)
+
+**JSON Format Example:**
+{
+  "summary": "Through this goal-setting session, I identified that I want to focus on managing my anxiety around work presentations and building more confidence in social situations. I realized that these areas are connected to my core value of authentic connection with others.",
+  "keyInsights": [
+    "My main goal is to feel calmer and more confident during work presentations",
+    "I want to develop better coping strategies for social anxiety, especially in group settings",
+    "I've noticed that my fear of judgment holds me back from being my authentic self",
+    "Success would look like speaking up more in meetings and feeling comfortable in social gatherings"
+  ]
+}
+
+**Critical Requirements:**
+- Use ${firstName}'s actual words and specific goals they mentioned
+- Focus on the specific therapeutic areas they want to work on
+- Capture their vision of what success would look like
+- Include any connections they made between their goals and values
+- Write in first person (I/me) as if ${firstName} is reflecting on their own goals`;
+
+      const response = await this.generateSummaryWithDirectAPI('generate_therapy_goal_summary', [
+        { role: 'system', content: prompt },
+        { role: 'user', content: 'Please analyze my therapy goal conversation and create the summary.' }
+      ]);
+
+      if (response?.message) {
+        let parsed;
+
+        try {
+          // Handle different response formats
+          if (typeof response.message === 'string') {
+            // Try to extract JSON from the string if it contains extra text
+            const jsonMatch = response.message.match(/\{[\s\S]*\}/);
+            const jsonString = jsonMatch ? jsonMatch[0] : response.message;
+            parsed = JSON.parse(jsonString);
+          } else if (typeof response.message === 'object') {
+            parsed = response.message;
+          } else {
+            throw new Error("Unsupported response.message type");
+          }
+
+          return parsed;
+        } catch (parseError) {
+          console.error("JSON parse error:", parseError);
+          console.error("Raw response:", response.message);
+          // Fall through to fallback
+        }
+      }
+
+      // Fallback summary when AI fails or returns an invalid response
+      return {
+        summary: `You spent meaningful time defining your therapy goals and identifying areas where you want to grow. This kind of goal-setting helps you focus your therapeutic work on what matters most to you.`,
+        keyInsights: ["You identified specific areas you want to work on in therapy", "You connected your goals to your personal values and what success would look like"]
+      };
+    } catch (error) {
+      console.error('Error generating therapy goal summary:', error);
+      return {
+        summary: `You took time to thoughtfully define your therapeutic goals and what you hope to achieve. This kind of intentional goal-setting provides direction and purpose for your healing journey.`,
+        keyInsights: ["You clarified what you want to focus on in your therapeutic work", "You thought about what positive change would look like in your life"]
+      };
+    }
+  }
 }
 
 

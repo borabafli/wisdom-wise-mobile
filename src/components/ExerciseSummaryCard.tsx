@@ -152,11 +152,11 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
                 index === steps.length - 1 && { borderBottomWidth: 0 }
               ]}>
                 <Text style={styles.stepTitle}>
-                  {step.title || step.name || t('exercises.stepNumber', { number: index + 1 })}
+                  {step.title ? t(step.title) : step.name || t('exercises.stepNumber', { number: index + 1 })}
                 </Text>
                 {(step.description || step.instruction) && (
                   <Text style={styles.stepDescription}>
-                    {step.description || step.instruction}
+                    {step.description ? t(step.description) : step.instruction ? t(step.instruction) : ''}
                   </Text>
                 )}
               </View>

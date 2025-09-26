@@ -31,18 +31,18 @@ export const slidableExerciseCardStyles = StyleSheet.create({
   },
   cardPatternBackground: {
     position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 60,
-    height: 60,
-    opacity: 1.0,
+    top: -2,
+    right: -2,
+    width: 50,
+    height: 50,
+    opacity: 0.8,
     zIndex: 0,
-    borderTopRightRadius: 12,
-    overflow: 'hidden',
   },
   cardPatternBackgroundPurple: {
-    width: 80,
-    right: -10,
+    width: 52,
+    height: 52,
+    right: -3,
+    top: -3,
   },
   exerciseImageContainer: {
     width: 55,
@@ -95,10 +95,13 @@ export const slidableExerciseCardStyles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 8,
   },
-  categoryTagContainerBottomLeft: {
+  tagsContainer: {
     position: 'absolute',
     bottom: spacing[8],
-    left: 75, // 55 (image width) + 12 (margin) = 67 to align with text content
+    right: spacing[8],
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
     zIndex: 2,
   },
   categoryTagContainerLarge: {
@@ -126,12 +129,6 @@ export const slidableExerciseCardStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
-  },
-  durationContainerBottomRight: {
-    position: 'absolute',
-    bottom: spacing[8],
-    right: spacing[8],
-    zIndex: 2,
   },
   exerciseDuration: {
     fontSize: 11,

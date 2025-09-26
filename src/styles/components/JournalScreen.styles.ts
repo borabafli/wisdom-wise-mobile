@@ -7,6 +7,7 @@ export const journalScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: colors.appBackground,
   },
   backgroundGradient: {
     position: 'absolute',

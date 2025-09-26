@@ -52,7 +52,7 @@ export default function App() {
 
   if (!fontsLoaded) {
     console.log('Fonts not loaded yet, showing loading view');
-    return <View style={{ flex: 1, backgroundColor: '#E0E5E7' }} />;
+    return <View style={{ flex: 1, backgroundColor: '#e9eff1' }} />;
   }
 
   console.log('Fonts loaded, rendering main app');

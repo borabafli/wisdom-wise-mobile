@@ -6,7 +6,7 @@ const { width } = Dimensions.get('window');
 export const therapyGoalsScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.appBackground,
   },
 
   // Header

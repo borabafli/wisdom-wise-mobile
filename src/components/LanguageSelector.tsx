@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Check, ChevronDown, Globe } from 'lucide-react-native';
+import { Check, ChevronDown, Globe, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import {
   SUPPORTED_LANGUAGES,
   LANGUAGE_CODES,
@@ -46,23 +47,38 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageCh
 
   return (
     <>
-      {/* Language Selection Button */}
+      {/* Language Selection Button - Styled like Profile Menu Buttons */}
       <TouchableOpacity
         style={styles.selectorButton}
         onPress={() => {
           console.log('Language selector button pressed!');
           setIsModalVisible(true);
         }}
-        activeOpacity={0.7}
+        activeOpacity={0.9}
       >
-        <View style={styles.selectorContent}>
-          <Globe size={20} color="#2B475E" style={styles.globeIcon} />
-          <View style={styles.languageInfo}>
-            <Text style={styles.languageLabel}>{t('language.currentLanguage')}</Text>
-            <Text style={styles.languageName}>{currentLanguageName}</Text>
+        <LinearGradient
+          colors={['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.selectorGradient}
+        >
+          <View style={styles.selectorContent}>
+            <View style={styles.languageIconContainer}>
+              <Image
+                source={require('../../assets/images/New Icons/icon-9.png')}
+                style={styles.languageIconImage}
+                contentFit="contain"
+              />
+            </View>
+            <View style={styles.languageInfo}>
+              <Text style={styles.languageLabel}>{t('language.currentLanguage')}</Text>
+              <Text style={styles.languageSubtitle}>{t('language.changeLanguage')}</Text>
+            </View>
+            <View style={styles.languageActions}>
+              <Text style={styles.languageName}>{currentLanguageName}</Text>
+            </View>
           </View>
-          <ChevronDown size={20} color="#9CA3AF" />
-        </View>
+        </LinearGradient>
       </TouchableOpacity>
 
       {/* Language Selection Modal */}

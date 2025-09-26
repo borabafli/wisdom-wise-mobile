@@ -80,7 +80,7 @@ const ProfileScreen: React.FC = () => {
       
       {/* Persistent Solid Background - Same as HomeScreen */}
       <View
-        style={[styles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
+        style={[styles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
         pointerEvents="none"
       />
 

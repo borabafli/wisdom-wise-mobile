@@ -4,25 +4,40 @@ import { colors, typography, spacing, shadows } from '../tokens';
 const { width, height } = Dimensions.get('window');
 
 export const languageSelectorStyles = StyleSheet.create({
-  // Selector Button
+  // Selector Button - Styled like Profile Menu Buttons
   selectorButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 12,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[3],
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
     marginVertical: spacing[2],
-    borderWidth: 1,
-    borderColor: 'rgba(43, 71, 94, 0.1)',
-    ...shadows.card,
+  },
+
+  selectorGradient: {
+    padding: spacing.components.cardGap,
+    borderRadius: 18,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
   },
 
   selectorContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.components.cardGap,
   },
 
-  globeIcon: {
-    marginRight: spacing[3],
+  languageIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 48,
+    height: 48,
+  },
+
+  languageIconImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 0,
   },
 
   languageInfo: {
@@ -30,18 +45,36 @@ export const languageSelectorStyles = StyleSheet.create({
   },
 
   languageLabel: {
+    color: '#002d14',
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
+    marginBottom: spacing[1],
+  },
+
+  languageSubtitle: {
+    color: '#002d14',
     fontSize: 12,
-    fontWeight: '500',
-    color: '#6B7280',
-    fontFamily: 'Ubuntu-Medium',
-    marginBottom: 2,
+    fontWeight: '400',
+    opacity: 0.8,
+    letterSpacing: 0.1,
+  },
+
+  languageActions: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing[2],
   },
 
   languageName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2B475E',
-    fontFamily: 'Ubuntu-SemiBold',
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#002d14',
+    opacity: 0.9,
+    letterSpacing: 0.1,
   },
 
   // Modal Styles

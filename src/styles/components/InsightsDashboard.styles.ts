@@ -14,6 +14,7 @@ export const insightsDashboardStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: colors.appBackground,
   },
   backgroundImage: {
     position: 'absolute',
@@ -755,17 +756,25 @@ export const insightsDashboardStyles = StyleSheet.create({
   setGoalButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#059669',
-    paddingVertical: spacing[2],
-    paddingHorizontal: spacing[4],
-    borderRadius: spacing.radius.md,
-    gap: spacing[1],
+    justifyContent: 'center',
+    backgroundColor: '#8B5CF6', // Purple - better contrast and matches app theme
+    paddingVertical: spacing[3], // Increased padding for more button-like feel
+    paddingHorizontal: spacing[6], // Wider button
+    borderRadius: spacing.radius.lg, // More rounded for modern button feel
+    gap: spacing[2],
+    shadowColor: '#8B5CF6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4, // Android shadow
+    minHeight: 48, // Accessibility guideline for touch targets
   },
 
   setGoalButtonText: {
-    ...typography.textStyles.bodySmall,
+    ...typography.textStyles.body, // Larger text size
     color: colors.white,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: typography.fontWeight.semibold, // Bolder text
+    fontSize: 16,
   },
 
 });

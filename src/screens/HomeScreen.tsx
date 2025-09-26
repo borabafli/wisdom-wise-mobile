@@ -170,7 +170,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
       {/* Persistent Solid Background */}
       <View
-        style={[styles.backgroundGradient, { backgroundColor: '#e0e5e7' }]}
+        style={[styles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
         pointerEvents="none"
       />
 
@@ -401,7 +401,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
         presentationStyle="pageSheet"
         onRequestClose={() => setShowWaveformDemo(false)}
       >
-        <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
+        <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#e9eff1' }}>
           <View style={{ 
             flexDirection: 'row', 
             justifyContent: 'space-between', 

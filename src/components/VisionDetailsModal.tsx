@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { X, Star, Lightbulb, ArrowRight, Calendar, Heart } from 'lucide-react-native';
 import { visionInsightsService, VisionInsight } from '../services/visionInsightsService';
 import { ValuesReflectButton } from './ReflectButton';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,6 +26,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
   onClose,
   onReflectPress
 }) => {
+  const { t } = useTranslation();
   const [visions, setVisions] = useState<VisionInsight[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedVision, setExpandedVision] = useState<string | null>(null);
@@ -98,7 +100,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
           <View style={styles.visionContent}>
             {/* Full Description */}
             <View style={styles.descriptionSection}>
-              <Text style={styles.sectionTitle}>Your Vision</Text>
+              <Text style={styles.sectionTitle}>{t('visionDetails.sections.yourVision')}</Text>
               <Text style={styles.descriptionText}>
                 "{vision.fullDescription}"
               </Text>
@@ -107,7 +109,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
             {/* Core Qualities */}
             {vision.coreQualities.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Core Qualities</Text>
+                <Text style={styles.sectionTitle}>{t('visionDetails.sections.coreQualities')}</Text>
                 <View style={styles.tagsContainer}>
                   {vision.coreQualities.map((quality, index) => (
                     <View key={index} style={styles.qualityTag}>
@@ -121,7 +123,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
             {/* Life Domains */}
             {domains.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Life Areas</Text>
+                <Text style={styles.sectionTitle}>{t('visionDetails.sections.lifeAreas')}</Text>
                 {domains.map(([domain, description]) => (
                   <View key={domain} style={styles.domainItem}>
                     <Text style={styles.domainTitle}>
@@ -136,7 +138,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
             {/* Guiding Sentences */}
             {vision.guidingSentences.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Guiding Words</Text>
+                <Text style={styles.sectionTitle}>{t('visionDetails.sections.guidingWords')}</Text>
                 {vision.guidingSentences.map((sentence, index) => (
                   <View key={index} style={styles.guidingSentence}>
                     <Text style={styles.guidingText}>"{sentence}"</Text>
@@ -148,7 +150,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
             {/* Practical Takeaways */}
             {vision.practicalTakeaways.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Practical Steps</Text>
+                <Text style={styles.sectionTitle}>{t('visionDetails.sections.practicalSteps')}</Text>
                 {vision.practicalTakeaways.map((takeaway, index) => (
                   <View key={index} style={styles.takeawayItem}>
                     <Text style={styles.bulletPoint}>•</Text>
@@ -161,7 +163,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
             {/* Emotional Connection */}
             {vision.emotionalConnection && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>How It Feels</Text>
+                <Text style={styles.sectionTitle}>{t('visionDetails.sections.howItFeels')}</Text>
                 <Text style={styles.emotionalText}>
                   {vision.emotionalConnection}
                 </Text>
@@ -171,7 +173,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
             {/* Wisdom Exchange */}
             {vision.wisdomExchange && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Wisdom from Your Future Self</Text>
+                <Text style={styles.sectionTitle}>{t('visionDetails.sections.wisdomFromFuture')}</Text>
                 <Text style={styles.wisdomText}>
                   "{vision.wisdomExchange}"
                 </Text>
@@ -185,7 +187,7 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
                   onClose();
                   onReflectPress(vision);
                 }}
-                text="Reflect on This Vision"
+                text={t('visionDetails.reflectButton')}
               />
             )}
           </View>
@@ -211,9 +213,9 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
               <Star size={24} color="#0369A1" />
             </LinearGradient>
             <View>
-              <Text style={styles.headerTitle}>Vision of Myself</Text>
+              <Text style={styles.headerTitle}>{t('visionDetails.title')}</Text>
               <Text style={styles.headerSubtitle}>
-                {visions.length} vision{visions.length !== 1 ? 's' : ''} created
+                {t('visionDetails.visionsCreated', { count: visions.length, plural: visions.length !== 1 ? 's' : '' })}
               </Text>
             </View>
           </View>
@@ -226,14 +228,14 @@ export const VisionDetailsModal: React.FC<VisionDetailsModalProps> = ({
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <Text style={styles.loadingText}>Loading your visions...</Text>
+              <Text style={styles.loadingText}>{t('visionDetails.loading')}</Text>
             </View>
           ) : visions.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Star size={64} color="#cbd5e1" />
-              <Text style={styles.emptyTitle}>No Visions Yet</Text>
+              <Text style={styles.emptyTitle}>{t('visionDetails.empty.title')}</Text>
               <Text style={styles.emptyText}>
-                Complete a "Vision of the Future" exercise to see your inspiring visions here.
+                {t('visionDetails.empty.description')}
               </Text>
             </View>
           ) : (

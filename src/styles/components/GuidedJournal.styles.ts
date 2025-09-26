@@ -1,12 +1,12 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { spacing } from '../tokens';
+import { spacing, colors } from '../tokens';
 
 const { width, height } = Dimensions.get('window');
 
 export const guidedJournalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Transparent to show solid background
+    backgroundColor: colors.appBackground,
   },
 
   backgroundSolid: {

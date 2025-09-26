@@ -41,9 +41,14 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   // Enhanced exercise click handler that shows preview first
   const handleExerciseClickWithPreview = (exercise: any) => {
     if (exercise) {
-      showExercisePreview(exercise, () => {
+      // Check if it's a breathing exercise - route directly without preview
+      if (exercise.type === 'breathing') {
         onExerciseClick(exercise);
-      });
+      } else {
+        showExercisePreview(exercise, () => {
+          onExerciseClick(exercise);
+        });
+      }
     } else {
       onExerciseClick(exercise);
     }
@@ -253,7 +258,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       
       {/* Persistent Solid Background - Same as HomeScreen */}
       <View
-        style={[exerciseLibraryStyles.backgroundGradient, { backgroundColor: '#ebf5f9' }]}
+        style={[exerciseLibraryStyles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
         pointerEvents="none"
       />
 

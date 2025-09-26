@@ -34,7 +34,7 @@ export default function App() {
         // Proper Android navigation bar configuration
         if (Platform.OS === 'android') {
           console.log('Configuring Android navigation bar...');
-          await NavigationBar.setBackgroundColorAsync('#E0E5E7');
+          await NavigationBar.setBackgroundColorAsync('#e9eff1');
           await NavigationBar.setButtonStyleAsync('dark');
           console.log('Android navigation bar configured');
         }
@@ -52,7 +52,7 @@ export default function App() {
 
   if (!fontsLoaded) {
     console.log('Fonts not loaded yet, showing loading view');
-    return <View style={{ flex: 1, backgroundColor: '#E0E5E7' }} />;
+    return <View style={{ flex: 1, backgroundColor: '#e9eff1' }} />;
   }
 
   console.log('Fonts loaded, rendering main app');

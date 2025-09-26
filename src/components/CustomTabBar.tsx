@@ -166,7 +166,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     <>
       
       <LinearGradient
-        colors={['#e0e5e7', '#e0e5e7']}
+        colors={['#e9eff1', '#e9eff1']}
         style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
       >
         <View style={styles.tabBarContent}>

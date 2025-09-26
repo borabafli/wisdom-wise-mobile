@@ -242,17 +242,32 @@ class MemoryService {
   async shouldExtractInsights(messages: Message[]): Promise<boolean> {
     const userMessages = messages.filter(msg => msg.type === 'user');
     const newMessageCount = userMessages.length - this.extractionMetadata.messageCount;
-    
+
     // Check minimum threshold
     if (newMessageCount < EXTRACTION_CONFIG.MIN_MESSAGE_THRESHOLD) {
       return false;
     }
 
-    // Check if conversation has meaningful content (not just short responses)
-    const meaningfulMessages = userMessages.filter(msg => 
-      msg.text && msg.text.trim().split(' ').length > 3
-    );
-    
+    // Check if conversation has meaningful content (not just short responses or greetings)
+    const meaningfulMessages = userMessages.filter(msg => {
+      if (!msg.text) return false;
+
+      const text = msg.text.trim();
+      const wordCount = text.split(' ').length;
+
+      // Must have at least 4 words
+      if (wordCount < 4) return false;
+
+      // Filter out common trivial patterns
+      const trivialPatterns = [
+        /^(good morning|hello|hi|hey|how are you|thank you|thanks|ok|okay|yes|no|sure|alright)/i,
+        /^(let's start|let's begin|i understand|got it|makes sense|that's right)/i,
+        /^(i see|i get it|sounds good|perfect|great|nice|cool)/i
+      ];
+
+      return !trivialPatterns.some(pattern => pattern.test(text));
+    });
+
     return meaningfulMessages.length >= Math.ceil(EXTRACTION_CONFIG.MIN_MESSAGE_THRESHOLD * 0.7);
   }
 

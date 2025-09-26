@@ -38,8 +38,8 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
   };
 
   return (
-    <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
-      <StatusBar style="dark" backgroundColor="#F8FAFC" />
+    <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#e9eff1' }}>
+      <StatusBar style="dark" backgroundColor="#e9eff1" />
 
       {/* Header */}
       <View style={{

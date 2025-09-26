@@ -301,7 +301,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
       <SafeAreaWrapper style={styles.container}>
         {/* Solid Background like Home Screen */}
         <View
-          style={[styles.backgroundSolid, { backgroundColor: '#ebf5f9' }]}
+          style={[styles.backgroundSolid, { backgroundColor: '#e9eff1' }]}
           pointerEvents="none"
         />
         <StatusBar style="dark" backgroundColor="transparent" translucent />

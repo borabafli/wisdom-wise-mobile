@@ -14,7 +14,7 @@ export const homeScreenStyles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     paddingTop: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.appBackground,
   },
   backgroundImage: {
     position: 'absolute',
