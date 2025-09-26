@@ -395,7 +395,7 @@ class STTService {
         return false;
       }
 
-      // Configure audio session
+      // Configure audio session with iOS-specific settings
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
@@ -403,36 +403,38 @@ class STTService {
         playThroughEarpieceAndroid: false,
       });
 
+      // iOS-specific: Longer delay and session verification
+      if (Platform.OS === 'ios') {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Test audio session by checking recording permission again
+        const { canAskAgain, granted } = await Audio.getPermissionsAsync();
+        console.log('🔍 iOS Audio session check:', { canAskAgain, granted });
+      }
+
       // Start Expo Audio recording for STT transcription
       const recording = new Audio.Recording();
       
       console.log('🎯 Preparing mobile recording with enhanced waveform data...');
       
-      // Use HIGH_QUALITY preset which has metering enabled by default
-      const recordingOptions = Audio.RecordingOptionsPresets.HIGH_QUALITY;
-      
-      // Override with our specific settings while keeping metering
+      // Use cross-platform recording options (expo-av requires both ios and android)
       const customOptions = {
-        ...recordingOptions,
-        // Explicitly enable metering for real-time audio levels
         isMeteringEnabled: true,
+        ios: {
+          extension: '.m4a',
+          outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+          audioQuality: Audio.IOSAudioQuality.MEDIUM,
+          sampleRate: 16000,
+          numberOfChannels: 1,
+          bitRate: 64000,
+        },
         android: {
-          ...recordingOptions.android,
           extension: '.m4a',
           outputFormat: Audio.AndroidOutputFormat.MPEG_4,
           audioEncoder: Audio.AndroidAudioEncoder.AAC,
-          sampleRate: 16000, // 16kHz is optimal for speech recognition
-          numberOfChannels: 1, // Mono is sufficient for speech
-          bitRate: 64000, // Lower bitrate for speech
-        },
-        ios: {
-          ...recordingOptions.ios,
-          extension: '.m4a',
-          outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
-          audioQuality: Audio.IOSAudioQuality.HIGH,
-          sampleRate: 16000, // 16kHz is optimal for speech recognition
-          numberOfChannels: 1, // Mono is sufficient for speech
-          bitRate: 64000, // Lower bitrate for speech
+          sampleRate: 16000,
+          numberOfChannels: 1,
+          bitRate: 64000,
         },
       };
       
@@ -445,11 +447,65 @@ class STTService {
         mimeType: 'audio/mp4'
       };
 
-      await recording.prepareToRecordAsync(customOptions);
-      console.log('✅ M4A recording prepared successfully with HIGH_QUALITY preset')
-      await recording.startAsync();
+      try {
+        console.log('🔧 Preparing recording with iOS-optimized settings...');
+        await recording.prepareToRecordAsync(customOptions);
+        console.log('✅ Recording prepared successfully');
+        
+        console.log('▶️ Starting recording...');
+        await recording.startAsync();
+        console.log('✅ Recording started successfully');
+      } catch (prepareError: any) {
+        console.log('ℹ️ Primary recording config not compatible, trying fallback...');
+        
+        // iOS Fallback: Try with minimal options
+        if (Platform.OS === 'ios') {
+          console.log('🔄 Using iOS compatibility mode...');
+          
+          try {
+            const fallbackOptions = {
+              isMeteringEnabled: true,
+              ios: {
+                extension: '.m4a',
+                outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+                audioQuality: Audio.IOSAudioQuality.LOW, // Use LOW for maximum compatibility
+                sampleRate: 44100, // Use default sample rate
+                numberOfChannels: 1,
+              },
+              android: {
+                extension: '.m4a',
+                outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+                audioEncoder: Audio.AndroidAudioEncoder.AAC,
+                sampleRate: 44100,
+                numberOfChannels: 1,
+                bitRate: 64000,
+              },
+            };
+            
+            console.log('📊 Using compatibility options for iOS');
+            
+            // Create a new recording instance for fallback
+            const fallbackRecording = new Audio.Recording();
+            await fallbackRecording.prepareToRecordAsync(fallbackOptions);
+            await fallbackRecording.startAsync();
+            
+            this.audioRecording = fallbackRecording; // Use fallback recording
+            console.log('✅ iOS compatibility mode recording started successfully');
+          } catch (fallbackError: any) {
+            console.error('❌ iOS fallback also failed:', fallbackError);
+            onError('iOS recording failed. Please check microphone permissions and try restarting the app.');
+            return false;
+          }
+        } else {
+          onError(`Recording failed: ${prepareError?.message || 'Unknown error'}`);
+          return false;
+        }
+      }
       
-      this.audioRecording = recording;
+      // Only assign recording if fallback wasn't used
+      if (!this.audioRecording) {
+        this.audioRecording = recording;
+      }
       this.isRecording = true;
       this.recordingUnloaded = false;
 

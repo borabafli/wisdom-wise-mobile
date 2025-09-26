@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { User, Settings, Bell, Shield, HelpCircle, LogOut, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
+import { User, Settings, Bell, Shield, HelpCircle, LogOut, LogIn, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -12,16 +12,42 @@ import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { useAuth } from '../contexts';
+import { storageService } from '../services/storageService';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
+
   const { t } = useTranslation();
-  const { user, profile, isAnonymous, signOut } = useAuth();
+
+  const { user, profile, isAnonymous, signOut, requestLogin } = useAuth();
+  
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
+  
+  // Local state for dynamic display name
+  const [displayName, setDisplayName] = useState('Friend');
+
+  // Update display name when component mounts or profile changes
+  useEffect(() => {
+    const updateDisplayName = async () => {
+      try {
+        const name = await storageService.getDisplayNameWithPriority(user);
+        setDisplayName(name);
+      } catch (error) {
+        console.error('Error updating display name:', error);
+        // Fallback to auth profile if storage fails
+        const fallbackName = profile 
+          ? `${profile.first_name} ${profile.last_name}`.trim() || 'Friend'
+          : user?.email?.split('@')[0] || 'Friend';
+        setDisplayName(fallbackName);
+      }
+    };
+
+    updateDisplayName();
+  }, [user, profile]);
   
   const stats = [
     { label: t('profile.stats.sessions'), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
@@ -33,6 +59,7 @@ const ProfileScreen: React.FC = () => {
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+
 
   // Get display name from auth profile
   const displayName = profile
@@ -63,15 +90,40 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
+  const handleLogin = () => {
+    Alert.alert(
+      'Create Account',
+      'Sign up to save your progress and access all features!',
+      [
+        {
+          text: 'Maybe Later',
+          style: 'cancel',
+        },
+        {
+          text: 'Sign Up',
+          style: 'default',
+          onPress: () => {
+            requestLogin();
+          },
+        },
+      ]
+    );
+  };
+
   const menuItems = [
-    { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: t('profile.menu.editProfile'), action: () => setShowEditProfile(true) },
-    { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: t('profile.menu.chatHistory'), action: () => setShowChatHistory(true) },
-    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.voiceSettings'), action: () => setShowTTSSettings(true) },
-    { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: t('profile.menu.notifications'), badge: '3' },
-    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy') },
-    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true },
-    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help') },
-    { icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut }
+
+    { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: 'Edit Profile', action: () => setShowEditProfile(true) },
+    { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: 'Chat History', action: () => setShowChatHistory(true) },
+    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: 'Voice Settings', action: () => setShowTTSSettings(true) },
+    { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: 'Notifications', badge: '3' },
+    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: 'Privacy & Security' },
+    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: 'Dark Mode', toggle: true },
+    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: 'Help & Support' },
+    // Conditionally show Sign Out (for logged in users) or Login (for anonymous users)
+    ...(isAnonymous 
+      ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true }]
+      : [{ icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }]
+    )
   ];
 
   return (
@@ -246,7 +298,9 @@ const ProfileScreen: React.FC = () => {
                   <LinearGradient
                     colors={item.danger 
                       ? ['rgba(254, 202, 202, 0.25)', 'rgba(252, 165, 165, 0.15)', 'rgba(255, 255, 255, 0.8)']
-                      : ['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']
+                      : item.highlight
+                        ? ['rgba(34, 197, 94, 0.25)', 'rgba(74, 222, 128, 0.15)', 'rgba(255, 255, 255, 0.8)']
+                        : ['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -263,14 +317,15 @@ const ProfileScreen: React.FC = () => {
                         ) : (
                           <Icon 
                             size={24} 
-                            color={item.danger ? '#ef4444' : '#002d14'} 
+                            color={item.danger ? '#ef4444' : item.highlight ? '#22c55e' : '#002d14'} 
                           />
                         )}
                       </View>
                       <View style={styles.menuTitleContainer}>
                         <Text style={[
                           styles.menuTitle,
-                          item.danger && styles.menuTitleDanger
+                          item.danger && styles.menuTitleDanger,
+                          item.highlight && { color: '#22c55e', fontWeight: '600' }
                         ]}>
                           {item.label}
                         </Text>
@@ -284,6 +339,7 @@ const ProfileScreen: React.FC = () => {
                            item.label === t('profile.menu.help') ? t('profile.menuSubtitles.help') :
                            item.label === t('profile.menu.signOut') ? t('profile.menuSubtitles.signOut') :
                            t('profile.menuSubtitles.default')}
+
                         </Text>
                       </View>
                       <View style={styles.menuActions}>
@@ -304,7 +360,7 @@ const ProfileScreen: React.FC = () => {
                         {!item.toggle && !item.badge && (
                           <ArrowRight 
                             size={16} 
-                            color={item.danger ? '#ef4444' : '#002d14'} 
+                            color={item.danger ? '#ef4444' : item.highlight ? '#22c55e' : '#002d14'} 
                           />
                         )}
                       </View>

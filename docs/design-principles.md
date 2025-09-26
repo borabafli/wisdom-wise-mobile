@@ -1,165 +1,304 @@
-# Design Principles for Mindfulness App
+# Mental Wellness App Design Guide
 
-> *"Design is not just what it looks like. Design is how it heals."*
+## Design Philosophy
+**"Gentle Growth Through Mindful Moments"**
 
-## Core Philosophy
+A therapeutic digital companion that creates a safe, nurturing space for emotional exploration and personal growth. Every design decision prioritizes psychological safety, accessibility, and the user's sense of agency in their wellness journey.
 
-Our design system is built on the foundation of **mindful minimalism** - every pixel, color, and interaction is intentionally crafted to reduce anxiety and promote mental wellness. We believe that good design in mental health apps isn't just about aesthetics; it's about creating a digital sanctuary where users feel safe, supported, and seen.
+## Brand Character
 
----
+### Visual Personality
+- **Serene & Calming**: Like a peaceful meditation garden
+- **Approachable & Friendly**: Never clinical or intimidating  
+- **Supportive & Encouraging**: A gentle companion, not an authority
+- **Organic & Natural**: Flowing, soft forms inspired by nature
+- **Trustworthy & Safe**: Professional yet warm
 
-## 1. Calm is Our Canvas
+## Color System
 
-### Principle
-Every design decision starts with the question: "Does this bring calm or chaos?"
+### Primary Palette
+- **Hero Teal** (#4A9B8E): Primary brand color for CTAs and key elements
+- **Soft Sage** (#6BB3A5): Secondary teal for interactive elements
+- **Mint Whisper** (#E8F4F1): Light backgrounds and cards
+- **Ocean Mist** (#D4E8E4): Subtle accents and dividers
 
-### In Practice
-- **Soft Geometry**: We use rounded corners (16-24px) exclusively - no sharp edges that create visual tension
-- **Breathing Room**: Generous white space (minimum 24px padding) gives content room to breathe, literally helping users feel less overwhelmed
-- **Muted Palette**: Our Ocean Breath color system (#C9E8F8 to #5DA4CD) creates visual tranquility without stark contrasts
+### Background Colors
+- **Cloud White** (#F8FAFB): Primary background
+- **Morning Sky** (#E8F2F4): Secondary sections
+- **Soft Pearl** (#F5F5F5): Neutral card backgrounds
 
-### Why It Matters
-Users often come to our app in states of distress. Visual calm can physiologically trigger the parasympathetic nervous system, helping users regulate before they even begin an exercise.
+### Accent Colors
+- **Warm Peach** (#FFD4C4): Mascot's shell and warm touches
+- **Sunset Coral** (#FFB5A0): Illustrations and energy points
+- **Sky Blue** (#87CEEB): Complementary highlights
+- **Gentle Yellow** (#FFF4E6): Optimistic accents in illustrations
 
----
+### Text Colors
+- **Deep Charcoal** (#2D3436): Primary text
+- **Soft Gray** (#6B7280): Secondary text and labels
+- **Muted Teal** (#5A8A7F): Links and interactive text
+- **Light Gray** (#9CA3AF): Disabled states and hints
 
-## 2. Gradients as Emotional Transitions
+### Semantic Colors
+- **Success**: #4ADE80 (Soft green)
+- **Warning**: #FBBF24 (Gentle amber)
+- **Error**: #F87171 (Soft red, used sparingly)
+- **Info**: #60A5FA (Sky blue)
 
-### Principle
-Life isn't binary, and neither is mental health. Gradients represent the gentle transitions between emotional states.
+## Typography
 
-### In Practice
-- **Primary Actions**: Gradient buttons (135°, #5DA4CD to #7FC4C4) feel inviting, not demanding
-- **Background Atmospheres**: Subtle vertical gradients create depth without harsh divisions
-- **Mood Representation**: Emotional states blend into each other, never jarring jumps
-- **Progress Indicators**: Gradient fills show journey, not just destination
+### Type Scale & Usage
 
-### Why It Matters
-Mental health recovery is non-linear. Gradients visually communicate that it's okay to exist between states - you don't have to be "completely better" or "completely struggling."
+#### Display
+- **Extra Large**: 32-36px, Ubuntu Bold
+  - Welcome screens and major milestones
+- **Large**: 28-30px, Ubuntu Bold  
+  - Section headers like "How are you feeling?"
 
----
+#### Headlines
+- **H1**: 24px, Ubuntu Bold
+  - Primary page titles
+- **H2**: 20px, Ubuntu Medium
+  - Section headers like "YOUR NEXT STEPS"
+- **H3**: 18px, Ubuntu Medium
+  - Card titles and subsections
 
-## 3. Motion with Meaning
+#### Body
+- **Large Body**: 16px, Ubuntu Regular
+  - Primary content and descriptions
+- **Regular Body**: 14px, Ubuntu Regular
+  - Standard interface text
+- **Small Body**: 13px, Ubuntu Light
+  - Supporting text and timestamps
 
-### Principle
-Every animation should feel like a gentle breath - intentional, calming, and never rushed.
+#### Interface
+- **Button**: 14-16px, Ubuntu Medium
+  - All caps or sentence case depending on hierarchy
+- **Caption**: 12px, Ubuntu Light
+  - Labels, hints, and metadata
+- **Micro**: 11px, Ubuntu Light
+  - Badges and indicators
 
-### In Practice
-- **Timing**: 400-700ms for transitions (2x slower than typical apps)
-- **Easing**: Custom cubic-bezier(0.4, 0, 0.6, 1) for organic movement
-- **Micro-interactions**: Subtle scale on hover (translateY(-2px)) provides feedback without startling
-- **Breathing Animations**: 4-7-8 second cycles that users can physically sync with
+### Font Characteristics
+- **Line Height**: 1.5x for body text, 1.2x for headers
+- **Letter Spacing**: Slightly increased (0.02em) for readability
+- **Font Weight Range**: 300 (Light) to 700 (Bold)
 
-### Why It Matters
-Sudden movements trigger our fight-or-flight response. Slow, predictable animations help maintain the calm state we're cultivating.
+## Visual Elements
 
----
+### Mascot Design
+- **Character**: Friendly turtle with meditation pose
+- **Color Palette**: Soft sage green with peach accents
+- **Expression**: Peaceful, content, approachable
+- **Usage**: Onboarding, empty states, achievements
+- **Personality**: Wise, patient, encouraging companion
 
-## 4. Progressive Disclosure, Not Overwhelm
+### Illustration Style
+**"Organic Watercolor Minimalism"**
 
-### Principle
-Show what's needed now, reveal complexity only when the user is ready.
+Key characteristics:
+- **Technique**: Soft watercolor with visible texture and organic flow
+- **Color Application**: Monochromatic teal gradients with occasional warm accents
+- **Composition**: Generous white space with floating elements
+- **Forms**: Nature-inspired silhouettes and abstract organic shapes
+- **Texture**: Mottled paint effects with natural pooling
+- **Edges**: Soft, bleeding boundaries that dissolve gently
+- **Mood**: Contemplative, serene, naturally elegant
 
-### In Practice
-- **Onboarding**: Start with one simple question, not a lengthy form
-- **Exercise Details**: Duration and type visible immediately, full descriptions on tap
-- **Settings**: Advanced options hidden behind "More options" - defaults work for 90% of users
-- **Error States**: Gentle guidance, never a list of everything wrong
+### Background Patterns
+- **Floating Clouds**: Soft, amorphous shapes in pale teal
+- **Gradient Washes**: Subtle teal-to-mint transitions
+- **Organic Waves**: Flowing lines suggesting water or air
+- **Negative Space**: Always 40-60% empty space for breathing room
 
-### Why It Matters
-Decision fatigue is real, especially during mental health struggles. We protect cognitive resources by simplifying choices.
+### Icons
+- **Style**: Outline with 2px stroke weight
+- **Corner Radius**: Rounded terminals
+- **Size Grid**: 24x24px base, scalable to 16px and 32px
+- **Active State**: Filled version with teal color
+- **Inactive**: Light gray outline (#9CA3AF)
 
----
+## Component Specifications
 
-## 5. Accessible by Default
+### Cards & Containers
 
-### Principle
-Mental health support should be available to everyone, regardless of ability or circumstance.
+#### Primary Card
+- **Background**: White (#FFFFFF)
+- **Border Radius**: 16px
+- **Padding**: 20px (mobile), 24px (tablet)
+- **Shadow**: 0 2px 8px rgba(74, 155, 142, 0.08)
+- **Border**: Optional 1px solid #E8F4F1
 
-### In Practice
-- **Contrast Ratios**: WCAG AAA (7:1) where possible, never below AA (4.5:1)
-- **Touch Targets**: Minimum 48x48px - accounting for tremors or motor difficulties
-- **Text Scaling**: Support up to 200% zoom without breaking layouts
-- **Motion Preferences**: Respect prefers-reduced-motion with instant fallbacks
-- **Screen Readers**: Comprehensive ARIA labels, not afterthoughts
+#### Floating Card (Featured)
+- **Background**: Linear gradient (#E8F4F1 to #FFFFFF)
+- **Border Radius**: 20px
+- **Padding**: 24px all sides
+- **Shadow**: 0 4px 16px rgba(74, 155, 142, 0.12)
+- **Illustration**: Integrated watercolor elements
 
-### Why It Matters
-Mental health challenges often coincide with physical symptoms (tremors, vision issues, fatigue). Our design must work when users are at their most vulnerable.
+### Buttons
 
----
+#### Primary Button
+- **Background**: #4A9B8E
+- **Text**: White, 14px Ubuntu Medium
+- **Border Radius**: 24px (pill-shaped)
+- **Height**: 48px
+- **Padding**: 16px 32px
+- **Shadow**: 0 2px 8px rgba(74, 155, 142, 0.2)
+- **Hover**: Darken 10%, scale(1.02)
+- **Active**: Scale(0.98)
 
-## 6. Color as Emotional Language
+#### Secondary Button
+- **Background**: #E8F4F1
+- **Text**: #4A9B8E, 14px Ubuntu Medium
+- **Border**: 2px solid #4A9B8E
+- **Border Radius**: 24px
+- **Height**: 44px
 
-### Principle
-Colors should support, not manipulate. We use color to communicate state, not to drive engagement.
+#### Text Button
+- **Text**: #5A8A7F, 14px Ubuntu Regular
+- **Underline on hover**
+- **No background**
 
-### In Practice
-- **Ocean Breath Palette**: Blues and teals for trust and stability
-- **Semantic Softness**: Success (#9DC88D), Warning (#F4B860), Error (#E8A0A0) - all muted
-- **Dark Mode**: Not just inverted colors, but thoughtfully crafted for nighttime vulnerability
-- **Personal Preference**: Users can adjust warmth/coolness based on what soothes them
+### Input Fields
 
-### Why It Matters
-Color psychology is powerful. We use it responsibly to create emotional safety, not to trigger action through alarm.
+#### Text Input
+- **Height**: 48px minimum
+- **Border**: 1px solid #D4E8E4
+- **Border Radius**: 12px
+- **Padding**: 12px 16px
+- **Focus Border**: 2px solid #4A9B8E
+- **Placeholder**: #9CA3AF, Ubuntu Light
 
----
+#### Voice Input Field
+- **Microphone Icon**: Right-aligned, teal when active
+- **Recording Indicator**: Pulsing teal circle
+- **Waveform**: Optional visualization in teal gradient
 
-## 7. Typography That Comforts
+### Navigation
 
-### Principle
-Words are often the first interaction. They should feel like a friend talking, not a clinician prescribing.
+#### Bottom Tab Bar
+- **Height**: 64px
+- **Background**: White with top border (#E8F4F1)
+- **Icons**: 24px, centered with 8px label gap
+- **Active Color**: #4A9B8E (filled icon + text)
+- **Inactive**: #9CA3AF (outline icon + text)
+- **Selection Indicator**: 4px teal bar above icon
 
-### In Practice
-- **Font Choice**: Inter/Manrope - humanist sans-serifs that feel approachable
-- **Size Minimums**: 16px base on mobile, 18px on desktop - never strain to read
-- **Line Height**: 1.75x for body text - optimal for stressed readers
-- **Hierarchy**: Clear but gentle - headers guide without shouting
+### Progress Indicators
+- **Linear**: 4px height, rounded ends, teal fill
+- **Circular**: 3px stroke, teal progress on light gray track
+- **Step Indicators**: Connected dots, filled when complete
 
-### Why It Matters
-During anxiety or depression, concentration suffers. Our typography reduces the effort needed to engage with content.
+## Layout & Spacing
+
+### Grid System
+- **Mobile**: 16px margins, 8px gutters
+- **Tablet**: 24px margins, 16px gutters  
+- **Desktop**: 32px margins, 24px gutters
+- **Max Content Width**: 1200px centered
+
+### Spacing Scale
+- **Base Unit**: 8px
+- **Micro**: 4px (tight grouping)
+- **Small**: 8px (related elements)
+- **Medium**: 16px (standard gap)
+- **Large**: 24px (section breaks)
+- **XL**: 32px (major sections)
+- **XXL**: 48px (page sections)
+
+### Component Spacing
+- **Card Internal**: 16-20px padding
+- **Between Cards**: 16px gap
+- **Section Headers**: 24px margin bottom
+- **Paragraph Spacing**: 12px
+- **List Items**: 12px gap
+
+## Motion & Interaction
+
+### Animation Principles
+- **Duration**: 250-400ms for most transitions
+- **Easing**: ease-in-out for natural movement
+- **Stagger**: 50ms delay between list items
+- **Spring**: Subtle bounce for delightful moments
+
+### Transition Types
+- **Fade In**: Opacity 0 to 1, 300ms
+- **Slide Up**: TranslateY(20px) to 0, 350ms
+- **Scale**: 0.95 to 1 for cards appearing
+- **Morphing**: Smooth shape transitions for buttons
+
+### Micro-interactions
+- **Button Press**: Scale(0.98) with 150ms duration
+- **Card Hover**: Subtle shadow increase, 250ms
+- **Tab Switch**: Slide animation, 300ms
+- **Loading States**: Pulsing teal skeleton screens
+
+### Feedback Patterns
+- **Success**: Checkmark animation with gentle bounce
+- **Input Focus**: Border color transition + slight scale
+- **Progress**: Smooth fill animations
+- **Scroll**: Parallax effects on illustrations (subtle)
+
+## Accessibility Standards
 
 
----
+### Interactive Accessibility
+- **Keyboard Navigation**: Full support, visible focus states
+- **Screen Readers**: Semantic HTML, ARIA labels
+- **Motion Preferences**: Respect reduced-motion settings
+- **Color Independence**: Never rely solely on color
 
-## Implementation Checklist
+### Content Accessibility
+- **Clear Labels**: Descriptive, action-oriented
+- **Error Messages**: Helpful, specific guidance
+- **Alternative Text**: Meaningful descriptions for images
+- **Consistent Patterns**: Predictable interactions
 
-Before any design goes live, ask:
+## Content Guidelines
 
-- [ ] Can someone in crisis use this easily?
-- [ ] Does this reduce or add cognitive load?
-- [ ] Is there an escape route?
-- [ ] Would this trigger anxiety or calm it?
-- [ ] Does the color contrast work in bright sun and dark rooms?
-- [ ] Are we celebrating progress or demanding perfection?
-- [ ] Is the language compassionate or clinical?
-- [ ] Have we tested with users in various emotional states?
+### Voice & Tone
 
----
+#### Characteristics
+- **Warm & Encouraging**: "You're doing great"
+- **Non-judgmental**: "There's no wrong answer"
+- **Empowering**: "You have the tools within you"
+- **Gentle**: "Take your time"
+- **Professional yet Friendly**: Knowledgeable but approachable
 
-## Design Values Hierarchy
+#### Language Patterns
+- Use "you" and "your" for personalization
+- Prefer questions over commands
+- Offer choices, not prescriptions
+- Celebrate small victories
+- Acknowledge feelings without judgment
 
-When principles conflict, this is our priority order:
-
-1. **Safety** - Never harm or trigger
-2. **Accessibility** - Available to all who need it
-3. **Calm** - Reduce anxiety and overwhelm
-4. **Clarity** - Simple and understandable
-5. **Beauty** - Pleasing and inspiring
-
----
-
-## Measuring Success
-
-We don't measure engagement. We measure healing:
-
-- **Completion Comfort**: Users finish exercises without added stress
-- **Return Rate**: Sustainable use without burnout
-- **Mood Improvement**: Self-reported wellness trends
-- **Accessibility Usage**: High keyboard/screen reader adoption
-- **Crisis De-escalation**: Successful connection to resources when needed
+### Writing Principles
+- **Clarity First**: Simple, clear language
+- **Brevity**: Concise without being terse
+- **Positivity**: Frame things constructively
+- **Inclusivity**: Gender-neutral, culturally sensitive
+- **Empathy**: Acknowledge the user's experience
 
 
+## Platform-Specific Considerations
 
----
+### iOS
+- **Safe Areas**: Respect notch and home indicator
+- **Haptics**: Subtle feedback on interactions
+- **Dark Mode**: Full theme support with adjusted colors
+- **Dynamic Type**: Support system font sizing
 
-*"In the end, our design should feel like a deep breath - natural, necessary, and restorative."*
+### Android
+- **Material Design**: Respect platform conventions where appropriate
+- **Back Navigation**: Predictable behavior
+- **Edge-to-edge**: Utilize full screen real estate
+- **Adaptive Icons**: Proper icon masks
+
+### Responsive Web
+- **Breakpoints**: 
+  - Mobile: 320-768px
+  - Tablet: 768-1024px
+  - Desktop: 1024px+
+- **Touch-friendly**: Even on desktop
+- **Progressive Enhancement**: Core features work everywhere

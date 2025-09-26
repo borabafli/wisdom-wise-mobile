@@ -13,6 +13,7 @@ interface MoodSliderProps {
   initialValue?: number;
   type?: 'mood' | 'helpfulness' | 'sleep' | 'energy' | 'anxiety' | 'custom';
   variant?: 'default' | 'test';
+  allowReselection?: boolean;
 }
 
 // Emoji image assets
@@ -32,7 +33,8 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
   subtitle,
   initialValue = 3,
   type = 'mood',
-  variant = 'default'
+  variant = 'default',
+  allowReselection = false
 }) => {
   const { t } = useTranslation();
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
@@ -47,10 +49,10 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
   const savedAnim = useRef(new Animated.Value(0)).current;
 
   const handleEmojiPress = (rating: number) => {
-    if (isLocked) return; // Prevent multiple selections
+    if (isLocked && !allowReselection) return; // Prevent multiple selections unless reselection is allowed
     
     setSelectedRating(rating);
-    setIsLocked(true);
+    if (!allowReselection) setIsLocked(true);
     onRatingChange(rating);
     
     // Start animations

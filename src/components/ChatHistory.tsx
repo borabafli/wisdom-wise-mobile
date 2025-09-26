@@ -136,7 +136,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <SafeAreaWrapper style={styles.container}>
         <LinearGradient
-          colors={['#f0f9ff', '#e0f2fe']}
+          colors={['#F8FCFC', '#E8F4F1']}
           style={styles.backgroundGradient}
         />
 
@@ -145,7 +145,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>Chat History</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <X size={24} color="#475569" />
+              <X size={24} color="#2D3436" />
             </TouchableOpacity>
           </View>
           {sessions.length > 0 && (
@@ -163,7 +163,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
             </View>
           ) : sessions.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <MessageCircle size={48} color="#94a3b8" />
+              <MessageCircle size={48} color="#6BB3A5" />
               <Text style={styles.emptyTitle}>No Saved Conversations</Text>
               <Text style={styles.emptySubtitle}>
                 Your conversation history will appear here after you save sessions
@@ -174,7 +174,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
               {sessions.map((session) => (
                 <View key={session.id} style={styles.sessionCard}>
                   <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.9)', 'rgba(240, 249, 255, 0.8)']}
+                    colors={['rgba(255, 255, 255, 0.95)', 'rgba(232, 244, 241, 0.8)']}
                     style={styles.sessionGradient}
                   >
                     <TouchableOpacity
@@ -183,7 +183,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
                     >
                       <View style={styles.sessionInfo}>
                         <View style={styles.sessionHeader}>
-                          <MessageCircle size={20} color="#3b82f6" />
+                          <MessageCircle size={20} color="#4A9B8E" />
                           <Text style={styles.sessionDate}>
                             {formatDate(session.metadata?.savedAt || session.createdAt)}
                           </Text>
@@ -191,7 +191,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
                             onPress={() => confirmDeleteSession(session)}
                             style={styles.deleteButton}
                           >
-                            <Trash2 size={16} color="#ef4444" />
+                            <Trash2 size={16} color="#FFB5A0" />
                           </TouchableOpacity>
                         </View>
                         
@@ -201,13 +201,13 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
                         
                         <View style={styles.sessionMeta}>
                           <View style={styles.metaItem}>
-                            <MessageCircle size={12} color="#6b7280" />
+                            <MessageCircle size={12} color="#6BB3A5" />
                             <Text style={styles.metaText}>
                               {session.metadata?.userMessageCount || 0} messages
                             </Text>
                           </View>
                           <View style={styles.metaItem}>
-                            <Clock size={12} color="#6b7280" />
+                            <Clock size={12} color="#6BB3A5" />
                             <Text style={styles.metaText}>
                               {session.metadata?.duration || '< 1 min'}
                             </Text>

@@ -25,8 +25,8 @@ export const sessionDetailModalStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding, // Generous breathing room (24px)
     paddingVertical: spacing.components.cardPadding,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(226, 232, 240, 0.6)',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderBottomColor: 'rgba(107, 179, 165, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
   },
   headerContent: {
     flexDirection: 'row',
@@ -38,15 +38,17 @@ export const sessionDetailModalStyles = StyleSheet.create({
     flex: 1,
   },
   headerTitle: {
-    ...typography.textStyles.h3,
-    color: colors.text.primary,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: 20,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#2D3436',
+    fontWeight: '700',
     marginBottom: spacing[1],
   },
   headerSubtitle: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.secondary,
-    lineHeight: typography.lineHeight.relaxed, // 1.75x for stressed readers
+    fontSize: 14,
+    fontFamily: 'Ubuntu-Regular',
+    color: '#6B7280',
+    lineHeight: 20,
   },
   closeButton: {
     padding: spacing[2], // Accessible touch target (48x48px minimum)
@@ -58,9 +60,9 @@ export const sessionDetailModalStyles = StyleSheet.create({
     marginTop: spacing[2],
   },
   metadataGradient: {
-    borderRadius: spacing.radius.lg, // Rounded corners (24px) for visual tranquility
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.border.primary,
+    borderColor: 'rgba(107, 179, 165, 0.2)',
   },
   metadataContent: {
     padding: spacing.components.cardPadding, // Breathing room (24px)
@@ -79,9 +81,10 @@ export const sessionDetailModalStyles = StyleSheet.create({
     minWidth: 80,
   },
   metadataText: {
-    ...typography.textStyles.caption,
-    color: colors.text.secondary,
-    fontSize: Math.max(16, typography.textStyles.caption.fontSize), // 16px minimum
+    fontSize: 13,
+    fontFamily: 'Ubuntu-Medium',
+    color: '#4A9B8E',
+    fontWeight: '500',
   },
   
   // Messages Section
@@ -109,17 +112,20 @@ export const sessionDetailModalStyles = StyleSheet.create({
     paddingHorizontal: spacing[6],
   },
   emptyTitle: {
-    ...typography.textStyles.h4,
-    color: colors.text.primary,
+    fontSize: 18,
+    fontFamily: 'Ubuntu-Medium',
+    color: '#2D3436',
+    fontWeight: '500',
     marginTop: spacing.components.cardGap,
     marginBottom: spacing[2],
     textAlign: 'center',
   },
   emptySubtitle: {
-    ...typography.textStyles.bodySmall,
-    color: colors.text.secondary,
+    fontSize: 14,
+    fontFamily: 'Ubuntu-Regular',
+    color: '#6B7280',
     textAlign: 'center',
-    lineHeight: typography.lineHeight.relaxed, // 1.75x for optimal readability
+    lineHeight: 20,
     paddingHorizontal: spacing[4],
   },
   
@@ -128,15 +134,15 @@ export const sessionDetailModalStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing[4],
     borderTopWidth: 1,
-    borderTopColor: 'rgba(226, 232, 240, 0.6)',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderTopColor: 'rgba(107, 179, 165, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
   },
   footerText: {
-    ...typography.textStyles.caption,
-    color: colors.text.tertiary,
+    fontSize: 12,
+    fontFamily: 'Ubuntu-Light',
+    color: '#6B7280',
     textAlign: 'center',
-    fontSize: Math.max(16, typography.textStyles.caption.fontSize), // Accessibility: 16px minimum
-    lineHeight: typography.lineHeight.relaxed,
+    lineHeight: 18,
   },
   
   // Read-only message styles following design principles
@@ -147,24 +153,28 @@ export const sessionDetailModalStyles = StyleSheet.create({
     paddingRight: spacing[2],
   },
   userMessageBubble: {
-    backgroundColor: colors.primary[500], // Ocean Breath palette
+    backgroundColor: '#4A9B8E',
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderRadius: spacing.radius.lg, // Soft geometry (24px)
+    borderRadius: 16,
     maxWidth: '80%',
-    ...shadows.components.card, // Gentle elevation
+    shadowColor: 'rgba(74, 155, 142, 0.2)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   userMessageText: {
-    ...typography.textStyles.body,
-    color: colors.white,
-    fontSize: Math.max(16, typography.textStyles.body.fontSize), // 16px minimum
-    lineHeight: typography.lineHeight.relaxed, // 1.75x for stressed readers
+    fontSize: 15,
+    fontFamily: 'Ubuntu-Regular',
+    color: '#FFFFFF',
+    lineHeight: 22,
     marginBottom: spacing[1],
   },
   messageTimestamp: {
-    ...typography.textStyles.caption,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fontSize: Math.max(14, typography.textStyles.caption.fontSize),
+    fontSize: 11,
+    fontFamily: 'Ubuntu-Light',
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'right',
   },
   
@@ -178,18 +188,22 @@ export const sessionDetailModalStyles = StyleSheet.create({
     maxWidth: '85%',
   },
   aiMessageBubble: {
-    paddingHorizontal: spacing[4], // Breathing room (24px)
+    paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderRadius: spacing.radius.lg, // Soft geometry
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.border.primary,
-    ...shadows.components.card,
+    borderColor: 'rgba(107, 179, 165, 0.2)',
+    shadowColor: 'rgba(74, 155, 142, 0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   aiMessageText: {
-    ...typography.textStyles.body,
-    color: colors.text.primary,
-    fontSize: Math.max(16, typography.textStyles.body.fontSize), // Accessibility
-    lineHeight: typography.lineHeight.relaxed, // Optimal for stressed readers
+    fontSize: 15,
+    fontFamily: 'Ubuntu-Regular',
+    color: '#2D3436',
+    lineHeight: 22,
     marginBottom: spacing[1],
   },
   
@@ -202,25 +216,30 @@ export const sessionDetailModalStyles = StyleSheet.create({
   exerciseMessageBubble: {
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    borderRadius: spacing.radius.lg,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(34, 197, 94, 0.2)', // Soft green border
+    borderColor: 'rgba(107, 179, 165, 0.3)',
     maxWidth: '90%',
     alignItems: 'center',
-    ...shadows.components.card,
+    shadowColor: 'rgba(74, 155, 142, 0.15)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   exerciseTitle: {
-    ...typography.textStyles.h5,
-    color: colors.text.primary,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: 16,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#2D3436',
+    fontWeight: '700',
     marginBottom: spacing[2],
     textAlign: 'center',
   },
   exerciseText: {
-    ...typography.textStyles.body,
-    color: colors.text.secondary,
-    fontSize: Math.max(16, typography.textStyles.body.fontSize),
-    lineHeight: typography.lineHeight.relaxed,
+    fontSize: 15,
+    fontFamily: 'Ubuntu-Regular',
+    color: '#6B7280',
+    lineHeight: 22,
     textAlign: 'center',
     marginBottom: spacing[1],
   },

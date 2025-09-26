@@ -22,6 +22,10 @@ import CustomTabBar from './CustomTabBar';
 // Import navigators
 import { AuthNavigator } from '../navigation/AuthNavigator';
 import { JournalNavigator } from '../navigation/JournalNavigator';
+import { OnboardingNavigator } from '../navigation/OnboardingNavigator';
+
+// Import services
+import { OnboardingService } from '../services/onboardingService';
 
 // Import contexts
 import { useApp } from '../contexts';
@@ -52,6 +56,10 @@ export const AppContent: React.FC = () => {
   const insets = useSafeAreaInsets();
 
   const { isAuthenticated, isLoading } = useAuth();
+  
+  // Onboarding state management
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
 
   const {
     showChat,
@@ -72,6 +80,28 @@ export const AppContent: React.FC = () => {
 
   // Navigation ref for tab navigation - must be called before any conditional returns
   const navigationRef = useNavigationContainerRef();
+
+  // Check onboarding status on app load
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const completed = await OnboardingService.hasCompletedOnboarding();
+        setIsOnboardingComplete(completed);
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        setIsOnboardingComplete(false); // Default to showing onboarding on error
+      } finally {
+        setIsCheckingOnboarding(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, []);
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = useCallback(() => {
+    setIsOnboardingComplete(true);
+  }, []);
 
   const handleNavigateToExercises = useCallback(() => {
     if (navigationRef.isReady()) {
@@ -99,8 +129,8 @@ export const AppContent: React.FC = () => {
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
 
-  // Show loading screen while checking auth
-  if (isLoading) {
+  // Show loading screen while checking auth or onboarding status
+  if (isLoading || isCheckingOnboarding) {
     return (
       <View className="flex-1 bg-blue-50 justify-center items-center">
         {/* Add loading indicator if needed */}
@@ -108,7 +138,12 @@ export const AppContent: React.FC = () => {
     );
   }
 
-  // Show auth screen if not authenticated
+  // Show onboarding if not completed (this should come first!)
+  if (!isOnboardingComplete) {
+    return <OnboardingNavigator onComplete={handleOnboardingComplete} />;
+  }
+
+  // Show auth screen if not authenticated (only after onboarding is complete)
   if (!isAuthenticated) {
     return <AuthNavigator />;
   }
