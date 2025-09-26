@@ -14,7 +14,7 @@ export const homeScreenStyles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     paddingTop: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.appBackground,
   },
   backgroundImage: {
     position: 'absolute',
@@ -65,10 +65,11 @@ export const homeScreenStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing[4],
+    marginTop: -spacing[8], // Move turtle up
   },
   turtleHeroImage: {
-    width: width * 0.68,
-    height: width * 0.68,
+    width: width * 0.55, // Reduced from 0.68 to 0.55
+    height: width * 0.55, // Reduced from 0.68 to 0.55
     opacity: 1,
   },
 
@@ -99,18 +100,19 @@ export const homeScreenStyles = StyleSheet.create({
   headerText: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing[8],
+    marginBottom: spacing[4], // Reduced distance to turtle image
+    marginTop: spacing[16], // Added top margin to move text lower
   },
   ctaTitle: {
-    fontFamily: 'Ubuntu-Bold',
-    fontSize: width < 375 ? 30 : 34,
-    fontWeight: 'bold',
-    color: '#002d14',
+    fontFamily: 'IBMPlexSans-Bold',
+    fontSize: width < 375 ? 29.5 : 33.5, // Reduced by 0.5
+    fontWeight: '700',
+    color: '#2B475E', // Darker color from #36526f
     marginTop: spacing[2],
     marginBottom: spacing[2],
     textAlign: 'center',
     letterSpacing: -0.5,
-    lineHeight: width < 375 ? 34 : 38,
+    lineHeight: width < 375 ? 33.5 : 37.5, // Adjusted line height proportionally
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
@@ -155,6 +157,56 @@ export const homeScreenStyles = StyleSheet.create({
     textAlign: 'left',
     opacity: 0.6,
     zIndex: 10,
+  },
+
+  // Start Check-In Button - Clean and Simple
+  checkInButton: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[32], // Increased width
+    paddingVertical: spacing[8], // Reduced height
+    alignSelf: 'center', // Center the button
+    borderRadius: 12,
+    shadowColor: '#0388bb',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1.0,
+    shadowRadius: 7,
+    elevation: 25,
+    marginBottom: spacing[24], // Added space below button
+  },
+  checkInButtonText: {
+    fontSize: 24, // Bigger text
+    fontWeight: '500',
+    color: '#2B475E', // Darker color to match title
+    fontFamily: 'IBMPlexSans-Medium',
+  },
+  checkInButtonIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[12],
+    marginTop: spacing[4], // Reduced space below text
+  },
+  iconCircle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[2],
+    borderRadius: 12,
+    backgroundColor: '#f7fcfc',
+    borderWidth: 1,
+    borderColor: '#7d9db6',
+    gap: spacing[3],
+  },
+  iconLabel: {
+    fontSize: 12,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#7d9db6',
+    textAlign: 'center',
   },
 
   // Exercises Section
@@ -212,11 +264,11 @@ export const homeScreenStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#002d14',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'IBMPlexSans_SemiCondensed-SemiBold',
   },
   seeAllButton: {
     paddingHorizontal: spacing[4],
@@ -236,14 +288,14 @@ export const homeScreenStyles = StyleSheet.create({
 
   // Exercise List Items (No Cards)
   exercisesList: {
-    gap: 0,
+    gap: -20, // Negative gap for overlapping closer cards
     paddingLeft: 0,
     marginVertical: 0,
     paddingVertical: 0,
   },
   exerciseCardContainer: {
     position: 'relative',
-    marginBottom: 0,
+    marginBottom: -8, // Negative margin to bring cards closer
   },
   exerciseCard: {
     backgroundColor: 'transparent',
@@ -421,7 +473,7 @@ export const homeScreenStyles = StyleSheet.create({
     paddingLeft: 75 + spacing.components.cardGap, // Account for absolute positioned image + gap
   },
   exerciseName: {
-    fontSize: 18,
+    fontSize: 22,
     color: '#002d14',
     fontWeight: 'bold',
     fontFamily: 'Ubuntu-Light',
@@ -492,11 +544,11 @@ export const homeScreenStyles = StyleSheet.create({
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.components.cardGap,
-    justifyContent: 'space-between',
+    gap: 10, // Small gap between cards for closer spacing
+    justifyContent: 'flex-start',
   },
   quickActionButton: {
-    flex: 1,
+    width: '31%', // Two cards per row with 8px gap
     overflow: 'hidden',
     height: 140,
     borderRadius: 20,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList, Dimensions, Modal } from 'react-native';
 import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { ValuesReflectButton } from './ReflectButton';
 import Svg, { Rect, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { valuesService, type UserValue, type ValueReflectionSummary } from '../services/valuesService';
@@ -17,25 +18,27 @@ interface ReflectionPrompt {
   category: 'daily' | 'alignment' | 'action';
 }
 
-const REFLECTION_PROMPTS: ReflectionPrompt[] = [
-  { text: "How did you live this value today?", category: 'daily' },
-  { text: "When did you last feel aligned with this?", category: 'alignment' },
-  { text: "What small action could honor this value this week?", category: 'action' },
-  { text: "How does this value show up in your relationships?", category: 'daily' },
-  { text: "What would change if you prioritized this more?", category: 'alignment' },
-  { text: "How can you bring more of this into your work?", category: 'action' },
-  { text: "What barriers prevent you from living this fully?", category: 'alignment' },
-  { text: "How has this value evolved in your life?", category: 'daily' },
-  { text: "What would your ideal day look like with this value?", category: 'action' }
+// Reflection prompt keys for translation
+const REFLECTION_PROMPT_KEYS: Array<{key: string, category: 'daily' | 'alignment' | 'action'}> = [
+  { key: 'insights.values.prompts.liveToday', category: 'daily' },
+  { key: 'insights.values.prompts.feltAligned', category: 'alignment' },
+  { key: 'insights.values.prompts.smallAction', category: 'action' },
+  { key: 'insights.values.prompts.relationships', category: 'daily' },
+  { key: 'insights.values.prompts.prioritizeMore', category: 'alignment' },
+  { key: 'insights.values.prompts.bringToWork', category: 'action' },
+  { key: 'insights.values.prompts.barriers', category: 'alignment' },
+  { key: 'insights.values.prompts.evolved', category: 'daily' },
+  { key: 'insights.values.prompts.idealDay', category: 'action' }
 ];
 
 const { width: screenWidth } = Dimensions.get('window');
 
-export const ValueCards: React.FC<ValueCardsProps> = ({ 
-  onStartReflection, 
-  showBarChart = true, 
-  maxValues = 6 
+export const ValueCards: React.FC<ValueCardsProps> = ({
+  onStartReflection,
+  showBarChart = true,
+  maxValues = 6
 }) => {
+  const { t } = useTranslation();
   const [values, setValues] = useState<UserValue[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPrompts, setSelectedPrompts] = useState<Map<string, ReflectionPrompt>>(new Map());
@@ -69,8 +72,9 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
       // Assign random prompts to each value
       const promptMap = new Map();
       limitedValues.forEach(value => {
-        const randomPrompt = REFLECTION_PROMPTS[Math.floor(Math.random() * REFLECTION_PROMPTS.length)];
-        promptMap.set(value.id, randomPrompt);
+        const randomPromptKey = REFLECTION_PROMPT_KEYS[Math.floor(Math.random() * REFLECTION_PROMPT_KEYS.length)];
+        const promptText = t(randomPromptKey.key);
+        promptMap.set(value.id, { text: promptText, category: randomPromptKey.category });
       });
       setSelectedPrompts(promptMap);
 
@@ -131,7 +135,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
             color: '#374151',
             marginLeft: 8
           }}>
-            Your Values Overview
+            {t('insights.values.overview')}
           </Text>
         </View>
         
@@ -242,7 +246,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
           marginBottom: 8,
           fontWeight: '500'
         }}>
-          💭 Reflection Prompt
+          💭 {t('insights.values.reflectionPrompt')}
         </Text>
         <Text style={{
           fontSize: 14,
@@ -284,7 +288,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
             marginLeft: 6,
             marginRight: 4
           }}>
-            View {valueReflections.length} Reflection{valueReflections.length > 1 ? 's' : ''}
+{valueReflections.length === 1 ? t('insights.values.viewReflectionSingle') : t('insights.values.viewReflections', { count: valueReflections.length })}
           </Text>
         </TouchableOpacity>
       )}
@@ -309,7 +313,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
           marginTop: 8,
           textAlign: 'center'
         }}>
-          Loading your values...
+          {t('insights.values.loading')}
         </Text>
       </View>
     );
@@ -333,7 +337,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
           marginTop: 12,
           textAlign: 'center'
         }}>
-          Discover Your Values
+          {t('insights.values.discover')}
         </Text>
         <Text style={{
           fontSize: 14,
@@ -342,7 +346,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
           textAlign: 'center',
           lineHeight: 20
         }}>
-          Complete a value exercise to see your personal values and importance ratings here.
+          {t('insights.values.completeExercise')}
         </Text>
         <View style={{ flexDirection: 'row', gap: 12 }}>
           <TouchableOpacity
@@ -365,7 +369,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
               fontWeight: '500',
               marginLeft: 6
             }}>
-              Start Values Exercise
+              {t('insights.values.startExercise')}
             </Text>
           </TouchableOpacity>
           
@@ -393,7 +397,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
               fontSize: 14,
               fontWeight: '500'
             }}>
-              Generate Sample
+              {t('insights.values.generateSample')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -414,7 +418,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
   };
 
   const currentValue = values[currentValueIndex];
-  const currentPrompt = currentValue ? selectedPrompts.get(currentValue.id) || REFLECTION_PROMPTS[0] : null;
+  const currentPrompt = currentValue ? selectedPrompts.get(currentValue.id) || { text: t(REFLECTION_PROMPT_KEYS[0].key), category: REFLECTION_PROMPT_KEYS[0].category } : null;
 
   return (
     <View>
@@ -449,14 +453,14 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
                 color: '#698991',
                 fontWeight: '500'
               }}>
-                {currentValueIndex + 1} of {values.length}
+                {t('insights.values.pagination', { current: currentValueIndex + 1, total: values.length })}
               </Text>
               <Text style={{
                 fontSize: 12,
                 color: '#9CA3AF',
                 marginTop: 2
               }}>
-                Swipe to explore
+                {t('insights.values.swipeToExplore')}
               </Text>
             </View>
             
@@ -505,7 +509,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
               fontWeight: '600',
               color: '#374151',
             }}>
-              {currentValue?.name} Reflections
+              {currentValue?.name} {t('insights.values.reflections')}
             </Text>
             <TouchableOpacity
               onPress={() => setShowReflectionsModal(false)}
@@ -521,7 +525,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
                 fontSize: 14,
                 fontWeight: '500',
               }}>
-                Close
+                {t('common.close')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -563,7 +567,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
                   color: '#374151',
                   marginBottom: 8,
                 }}>
-                  Prompt: {reflection.prompt}
+                  {t('insights.values.prompt')}: {reflection.prompt}
                 </Text>
 
                 <Text style={{
@@ -583,7 +587,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
                       color: '#698991',
                       marginBottom: 6,
                     }}>
-                      Key Insights:
+                      {t('insights.values.keyInsights')}:
                     </Text>
                     {reflection.keyInsights.map((insight, index) => (
                       <Text

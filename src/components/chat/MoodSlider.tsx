@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { moodSliderStyles as styles } from '../../styles/components/MoodSlider.styles';
 
 interface MoodSliderProps {
@@ -17,28 +18,33 @@ interface MoodSliderProps {
 
 // Emoji image assets
 const emojiImages = {
-  1: require('../../../assets/images/emojis/1.png'),
-  2: require('../../../assets/images/emojis/2.png'),
-  3: require('../../../assets/images/emojis/3.png'),
-  4: require('../../../assets/images/emojis/4.png'),
-  5: require('../../../assets/images/emojis/5.png'),
+  1: require('../../../assets/new-design/Insights/Emojis/emoji-1.png'),
+  2: require('../../../assets/new-design/Insights/Emojis/emoji-2.png'),
+  3: require('../../../assets/new-design/Insights/Emojis/emoji-3.png'),
+  4: require('../../../assets/new-design/Insights/Emojis/emoji-4.png'),
+  5: require('../../../assets/new-design/Insights/Emojis/emoji-5.png'),
 };
 
 export const MoodSlider: React.FC<MoodSliderProps> = ({
   onRatingChange,
   onComplete,
   onSkip,
-  title = "How are you feeling right now?",
-  subtitle = "Rate your current mood",
+  title,
+  subtitle,
   initialValue = 3,
   type = 'mood',
   variant = 'default',
   allowReselection = false
 }) => {
+  const { t } = useTranslation();
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const bounceAnim = useRef(new Animated.Value(1)).current;
+
+  // Use translation keys as defaults if not provided
+  const displayTitle = title || t('chat.moodSlider.title');
+  const displaySubtitle = subtitle || t('chat.moodSlider.subtitle');
   const glowAnim = useRef(new Animated.Value(0)).current;
   const savedAnim = useRef(new Animated.Value(0)).current;
 
@@ -103,7 +109,7 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
     <>
       {(title || variant === 'test') && (
         <Text style={styles.promptText}>
-{variant === 'test' ? 'How helpful was this?' : title ? 'I feel...' : null}
+{variant === 'test' ? 'How helpful was this?' : displayTitle ? 'I feel...' : null}
         </Text>
       )}
       
@@ -150,7 +156,7 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
                 }
               ]}
             >
-              <Text style={styles.savedText}>Saved! ✓</Text>
+              <Text style={styles.savedText}>{t('chat.moodSlider.saved')} ✓</Text>
             </Animated.View>
           )}
         </View>

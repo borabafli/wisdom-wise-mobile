@@ -10,6 +10,7 @@ import {
   RefreshControl,
   ImageBackground,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { StatusBar } from 'expo-status-bar';
 import { Plus, Calendar, Search, Trash2 } from 'lucide-react-native';
@@ -31,6 +32,7 @@ interface SwipablePromptCardProps {
 }
 
 const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onPromptSelect }) => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const { width } = Dimensions.get('window');
@@ -83,7 +85,7 @@ const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onProm
                     onPress={() => onPromptSelect(prompt)}
                     activeOpacity={0.8}
                   >
-                    <Text style={styles.promptCardButtonText}>Start Writing</Text>
+                    <Text style={styles.promptCardButtonText}>{t('journal.startWriting')}</Text>
                   </TouchableOpacity>
                 </View>
               </TouchableOpacity>
@@ -113,6 +115,8 @@ const JournalEntryCard: React.FC<{
   onPress: () => void;
   onDelete: () => void;
 }> = ({ entry, onPress, onDelete }) => {
+  const { t } = useTranslation();
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -146,7 +150,7 @@ const JournalEntryCard: React.FC<{
 
       {entry.insights.length > 0 && (
         <View style={styles.insightsPreview}>
-          <Text style={styles.insightsLabel}>Key Insights:</Text>
+          <Text style={styles.insightsLabel}>{t('journal.keyInsights')}</Text>
           <Text style={styles.insightsText} numberOfLines={2}>
             {entry.insights.join(' • ')}
           </Text>
@@ -155,7 +159,7 @@ const JournalEntryCard: React.FC<{
 
       {entry.isPolished && (
         <View style={styles.polishedBadge}>
-          <Text style={styles.polishedBadgeText}>✨ Polished</Text>
+          <Text style={styles.polishedBadgeText}>{t('journal.polished')}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -163,6 +167,7 @@ const JournalEntryCard: React.FC<{
 };
 
 const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
+  const { t } = useTranslation();
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [todayPrompts, setTodayPrompts] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -186,7 +191,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
       setTodayPrompts(promptTexts);
     } catch (error) {
       console.error('Error loading journal data:', error);
-      Alert.alert('Error', 'Failed to load journal data. Please try again.');
+      Alert.alert(t('common.error'), t('journal.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -208,12 +213,12 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
 
   const handleDeleteEntry = async (entryId: string) => {
     Alert.alert(
-      'Delete Entry',
-      'Are you sure you want to delete this journal entry? This action cannot be undone.',
+      t('journal.deleteEntry'),
+      t('journal.deleteEntryConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -221,7 +226,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
               setJournalEntries(prev => prev.filter(entry => entry.id !== entryId));
             } catch (error) {
               console.error('Error deleting entry:', error);
-              Alert.alert('Error', 'Failed to delete entry. Please try again.');
+              Alert.alert(t('common.error'), t('journal.failedToDelete'));
             }
           },
         },
@@ -240,9 +245,9 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
   if (loading) {
     return (
       <SafeAreaWrapper style={styles.container}>
-        <StatusBar style="dark" backgroundColor="#F8FAFC" />
+        <StatusBar style="dark" backgroundColor="#e9eff1" />
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading your journal...</Text>
+          <Text style={styles.loadingText}>{t('journal.loadingJournal')}</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -252,12 +257,9 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      {/* Background Gradient - Same as ExerciseLibrary */}
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
+      {/* Persistent Solid Background - Same as HomeScreen */}
+      <View
+        style={[styles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
         pointerEvents="none"
       />
 
@@ -282,7 +284,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
                     contentFit="contain"
                   />
                   <View style={styles.titleAndSubtitleContainer}>
-                    <Text style={styles.headerTitle}>Journal</Text>
+                    <Text style={styles.headerTitle}>{t('navigation.journal')}</Text>
                     <Text style={styles.headerSubtitle}>📝 For your thoughts</Text>
                   </View>
                 </View>
@@ -292,7 +294,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
             {/* Swipable Prompt Cards */}
             {todayPrompts.length > 0 && (
               <View style={styles.promptsSection}>
-                <Text style={styles.sectionTitle}>Writing Prompts</Text>
+                <Text style={styles.sectionTitle}>{t('journal.writingPrompts')}</Text>
                 <SwipablePromptCard
                   prompts={todayPrompts}
                   onPromptSelect={handlePromptSelect}
@@ -303,7 +305,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
             {/* Entries Section Header */}
             {journalEntries.length > 0 && (
               <View style={styles.entriesSection}>
-                <Text style={styles.sectionTitle}>Your Entries</Text>
+                <Text style={styles.sectionTitle}>{t('journal.yourEntries')}</Text>
               </View>
             )}
           </>
@@ -311,9 +313,9 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Calendar size={48} color="#9CA3AF" />
-            <Text style={styles.emptyTitle}>No journal entries yet</Text>
+            <Text style={styles.emptyTitle}>{t('journal.noEntriesTitle')}</Text>
             <Text style={styles.emptyText}>
-              Start your journaling journey by selecting a prompt above or create your own entry.
+              {t('journal.noEntriesText')}
             </Text>
           </View>
         }

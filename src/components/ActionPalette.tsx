@@ -4,6 +4,7 @@ import { MessageCircle, BookOpen, Heart, PenTool } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
+import { useTranslation } from 'react-i18next';
 import { actionPaletteStyles as styles } from '../styles/components/ActionPalette.styles';
 import { colors, gradients } from '../styles/tokens';
 
@@ -14,30 +15,32 @@ interface ActionPaletteProps {
 }
 
 const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOptionSelect }) => {
+  const { t } = useTranslation();
+
   const actions = [
     {
       id: 'guided-session',
       iconImage: require('../../assets/images/New Icons/icon-1.png'),
-      title: 'Guided Session',
-      description: 'Talk with your AI therapist'
+      title: t('actionPalette.guidedSession.title'),
+      description: t('actionPalette.guidedSession.description')
     },
     {
       id: 'guided-journaling',
       iconImage: require('../../assets/images/New Icons/icon-2.png'),
-      title: 'Guided Journaling',
-      description: 'Reflect through writing'
+      title: t('actionPalette.guidedJournaling.title'),
+      description: t('actionPalette.guidedJournaling.description')
     },
     {
       id: 'suggested-exercises',
       iconImage: require('../../assets/images/New Icons/icon-3.png'),
-      title: 'Quick Exercise',
-      description: 'Start a mindfulness practice'
+      title: t('actionPalette.quickExercise.title'),
+      description: t('actionPalette.quickExercise.description')
     },
     {
       id: 'exercise-library',
       iconImage: require('../../assets/images/New Icons/icon-4.png'),
-      title: 'Exercise Library',
-      description: 'Browse all exercises'
+      title: t('actionPalette.exerciseLibrary.title'),
+      description: t('actionPalette.exerciseLibrary.description')
     }
   ];
 
@@ -62,7 +65,7 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
               style={styles.gradient}
             >
               <Text style={styles.title}>
-                What would you like to do?
+                {t('actionPalette.title')}
               </Text>
               
               <View style={styles.actionsList}>
@@ -108,7 +111,7 @@ const ActionPalette: React.FC<ActionPaletteProps> = ({ isVisible, onClose, onOpt
                 style={styles.cancelButton}
                 activeOpacity={0.7}
               >
-                <Text style={styles.cancelText}>Cancel</Text>
+                <Text style={styles.cancelText}>{t('actionPalette.cancel')}</Text>
               </TouchableOpacity>
             </LinearGradient>
           </View>

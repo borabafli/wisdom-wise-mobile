@@ -3,6 +3,9 @@
  * Manages exercise recommendations based on completion status and user feedback
  */
 
+// Translation function type
+type TranslationFunction = (key: string) => string;
+
 export interface Exercise {
   id: string;
   type: string;
@@ -25,81 +28,81 @@ export interface ExerciseProgress {
   };
 }
 
-// Core exercises with priority order
-export const coreExercises: Exercise[] = [
+// Function to get core exercises with translations
+export const getCoreExercises = (t: TranslationFunction): Exercise[] => [
   {
     id: 'tell-story',
     type: 'tell-your-story',
-    name: 'Tell Your Story',
+    name: t('insights.priorityExercises.names.tellStory'),
     duration: '15-25 min',
-    description: 'Share your personal journey',
+    description: t('insights.priorityExercises.descriptions.tellStory'),
     isCompleted: false,
     iconSource: require('../../assets/images/8.jpeg'),
   },
   {
     id: 'goal-setting',
     type: 'goal-setting',
-    name: 'Therapy Goal-Setting',
+    name: t('insights.priorityExercises.names.goalSetting'),
     duration: '20 min',
-    description: 'Define your goals',
+    description: t('insights.priorityExercises.descriptions.goalSetting'),
     isCompleted: false,
     iconSource: require('../../assets/images/10.jpeg'),
   },
   {
     id: 'vision-future',
     type: 'vision-of-future',
-    name: 'Vision of the Future',
+    name: t('insights.priorityExercises.names.visionFuture'),
     duration: '20-30 min',
-    description: 'Imagine your ideal future self',
+    description: t('insights.priorityExercises.descriptions.visionFuture'),
     isCompleted: false,
     iconSource: require('../../assets/images/3.jpeg'),
   },
   {
     id: 'reframing-thoughts',
     type: 'automatic-thoughts',
-    name: 'Reframing Thoughts',
+    name: t('insights.priorityExercises.names.reframingThoughts'),
     duration: '15 min',
-    description: 'Transform negative thought patterns',
+    description: t('insights.priorityExercises.descriptions.reframingThoughts'),
     isCompleted: false,
     iconSource: require('../../assets/images/1.jpeg'),
   },
   {
     id: 'living-values',
     type: 'values-clarification',
-    name: 'Living Closer to My Values',
+    name: t('insights.priorityExercises.names.livingValues'),
     duration: '15 min',
-    description: 'Align actions with core values',
+    description: t('insights.priorityExercises.descriptions.livingValues'),
     isCompleted: false,
     iconSource: require('../../assets/images/7.jpeg'),
   },
 ];
 
-// Fallback exercises for when core exercises are completed
-export const fallbackExercises: Exercise[] = [
+// Function to get fallback exercises with translations
+export const getFallbackExercises = (t: TranslationFunction): Exercise[] => [
   {
     id: 'mindfulness',
     type: 'morning-mindfulness',
-    name: 'Morning Mindfulness',
+    name: t('insights.priorityExercises.names.mindfulness'),
     duration: '8 min',
-    description: 'Start your day with gentle awareness',
+    description: t('insights.priorityExercises.descriptions.mindfulness'),
     isCompleted: false,
     iconSource: require('../../assets/images/4.jpeg'),
   },
   {
     id: 'stress-relief',
     type: 'breathing',
-    name: '4-7-8 Breathing',
+    name: t('insights.priorityExercises.names.stressRelief'),
     duration: '5 min',
-    description: 'Reduce anxiety with proven breathing technique',
+    description: t('insights.priorityExercises.descriptions.stressRelief'),
     isCompleted: false,
     iconSource: require('../../assets/images/2.jpeg'),
   },
   {
     id: 'gratitude',
     type: 'gratitude',
-    name: 'Gratitude Practice',
+    name: t('insights.priorityExercises.names.gratitude'),
     duration: '10 min',
-    description: 'Build happiness through daily appreciation',
+    description: t('insights.priorityExercises.descriptions.gratitude'),
     isCompleted: false,
     iconSource: require('../../assets/images/5.jpeg'),
   },
@@ -140,9 +143,14 @@ export const calculateExercisePriority = (
  * Get top 3 exercises based on priority
  * @param progress User's progress data
  * @param hiddenIds Optional array of exercise IDs to exclude
+ * @param t Translation function
  * @returns Array of top 3 exercises
  */
-export const getTopExercises = (progress: ExerciseProgress, hiddenIds: string[] = []): Exercise[] => {
+export const getTopExercises = (progress: ExerciseProgress, hiddenIds: string[] = [], t: TranslationFunction): Exercise[] => {
+  // Get exercises with translations
+  const coreExercises = getCoreExercises(t);
+  const fallbackExercises = getFallbackExercises(t);
+
   // First, check for uncompleted core exercises (excluding hidden ones)
   const uncompletedCoreExercises = coreExercises.filter(exercise => {
     const exerciseProgress = progress[exercise.id];

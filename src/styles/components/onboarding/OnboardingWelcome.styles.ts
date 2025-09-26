@@ -80,7 +80,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingHorizontal: spacing.large, // 24px
-    paddingBottom: spacing.large, // 24px
+    paddingBottom: 30, // Match other onboarding pages exactly
   },
 
   // Primary Button - Following design principles

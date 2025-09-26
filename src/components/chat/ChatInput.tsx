@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RecordingWave } from '../RecordingWave';
@@ -33,6 +34,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onStopRecording,
   onCancelRecording,
 }) => {
+  const { t } = useTranslation();
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   // 👇 add this
@@ -82,7 +84,7 @@ const [inputHeight, setInputHeight] = useState(40);
               <TextInput
               value={inputText}
               onChangeText={handleInputTextChange}
-              placeholder={isTranscribing ? "Transcribing..." : "Type or speak..."}
+              placeholder={isTranscribing ? t('chat.transcribing') : t('chat.typeOrSpeak')}
               placeholderTextColor="#94a3b8"
               multiline
               style={[
@@ -184,7 +186,7 @@ const [inputHeight, setInputHeight] = useState(40);
             >
               <X size={24} color="#6b7280" />
             </TouchableOpacity>
-            <Text style={styles.fullscreenInputTitle}>Compose Message</Text>
+            <Text style={styles.fullscreenInputTitle}>{t('chat.composeMessage')}</Text>
             <TouchableOpacity 
               onPress={() => {
                 onSend();
@@ -202,7 +204,7 @@ const [inputHeight, setInputHeight] = useState(40);
             <TextInput
   value={inputText}
   onChangeText={handleInputTextChange}
-  placeholder="Type or speak..."
+  placeholder={t('chat.typeOrSpeak')}
   placeholderTextColor="#94a3b8"
   multiline
   style={styles.fullscreenTextInput}  // ✅ use fullscreen style

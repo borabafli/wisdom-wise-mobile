@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { DEBUG, API_CONFIG } from '../config/constants';
 import { APIErrorHandler } from '../utils/apiErrorHandler';
+import { getLanguageInstruction } from './i18nService';
 
 export interface AIResponse {
   success: boolean;
@@ -65,6 +66,9 @@ class ChatService {
     }
 
     try {
+      // Add language instruction to system message
+      const languageInstruction = getLanguageInstruction();
+      const enhancedSystemMessage = systemMessage ? languageInstruction + systemMessage : undefined;
       console.log('🚀 Chat Request Details:', {
         model: this.config.model,
         maxTokens: this.config.maxTokens,
@@ -87,15 +91,15 @@ class ChatService {
 // Construct the final message array, prioritizing the provided system message
 const finalMessages = [];
 
-if (systemMessage && typeof systemMessage === 'string') {
-  // Use the provided system message and skip any existing system messages
-  finalMessages.push({ role: 'system', content: systemMessage });
+if (enhancedSystemMessage && typeof enhancedSystemMessage === 'string') {
+  // Use the enhanced system message and skip any existing system messages
+  finalMessages.push({ role: 'system', content: enhancedSystemMessage });
 
   // Add only non-system messages from the original array
   const nonSystemMessages = messages.filter(msg => msg.role !== 'system');
   finalMessages.push(...nonSystemMessages);
 
-  console.log('🎯 [JOURNAL DEBUG] Using custom system message:', systemMessage.substring(0, 100) + '...');
+  console.log('🎯 [JOURNAL DEBUG] Using enhanced system message:', enhancedSystemMessage.substring(0, 100) + '...');
   console.log('🎯 [JOURNAL DEBUG] Filtered out system messages, remaining:', nonSystemMessages.length);
 } else {
   // Fallback to original behavior for other use cases
@@ -201,6 +205,10 @@ if (systemMessage && typeof systemMessage === 'string') {
  // Send a simple message and get response (for journal prompts)
 async sendMessage(prompt: string, context: any[] = [], systemMessage?: string): Promise<string> {
   try {
+    // Add language instruction to the prompt
+    const languageInstruction = getLanguageInstruction();
+    const enhancedPrompt = languageInstruction + prompt;
+
     const messages = [
       ...context.map(item => ({
         role: item.role || 'user',
@@ -208,11 +216,14 @@ async sendMessage(prompt: string, context: any[] = [], systemMessage?: string): 
       })),
       {
         role: 'user',
-        content: prompt
+        content: enhancedPrompt
       }
     ];
 
-    const response = await this.getChatCompletionWithContext(messages, systemMessage);
+    // Add language instruction to system message if provided
+    const enhancedSystemMessage = systemMessage ? languageInstruction + systemMessage : undefined;
+
+    const response = await this.getChatCompletionWithContext(messages, enhancedSystemMessage);
 
     if (response.success && response.message) {
       return response.message;

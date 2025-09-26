@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { DEBUG, API_CONFIG } from '../config/constants';
 import { APIErrorHandler } from '../utils/apiErrorHandler';
+import { getCurrentLanguage } from './i18nService';
 
 /**
  * Transcription Service - handles audio transcription
@@ -34,10 +35,12 @@ class TranscriptionService {
    * Transcribe audio using Whisper via Edge Function
    */
   async transcribeAudioWithContext(
-    audioData: string, 
-    language: string = 'en', 
+    audioData: string,
+    language?: string,
     fileType: string = 'm4a'
   ): Promise<{ success: boolean; transcript?: string; error?: string }> {
+    // Use current app language if not specified
+    const detectedLanguage = language || getCurrentLanguage();
     if (DEBUG.MOCK_API_RESPONSES) {
       // Mock transcription for testing
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -54,7 +57,7 @@ class TranscriptionService {
         audioDataLength: audioData?.length || 0,
         audioDataType: typeof audioData,
         audioDataPreview: audioData?.substring(0, 50) + '...',
-        language,
+        language: detectedLanguage,
         fileType
       });
 
@@ -88,7 +91,7 @@ class TranscriptionService {
       const payload = {
         action: 'transcribe',
         audioData: audioData,
-        language: language,
+        language: detectedLanguage,
         fileType: fileType
       };
 
@@ -117,7 +120,7 @@ class TranscriptionService {
         responseData: error.response?.data,
         requestData: {
           audioDataLength: audioData?.length || 0,
-          language,
+          language: detectedLanguage,
           fileType
         }
       });

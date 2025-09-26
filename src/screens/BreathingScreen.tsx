@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Vibrati
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { ArrowLeft, Play, Pause, RotateCcw, Settings2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
+import { StatusBar } from 'expo-status-bar';
 // import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
 import { colors, shadows, spacing } from '../styles/tokens';
@@ -99,7 +99,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
   });
 
   const scaleAnimation = useRef(new Animated.Value(0.3)).current;
-  const opacityAnimation = useRef(new Animated.Value(0.4)).current;
+  const opacityAnimation = useRef(new Animated.Value(1.0)).current;
   const ringAnimation = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const soundRef = useRef<Audio.Sound | null>(null);
@@ -217,7 +217,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
 
   const animateBreathingCycle = useCallback((phase: string, duration: number) => {
     const scaleValue = phase === 'inhale' ? 1 : phase === 'exhale' ? 0.3 : 0.7;
-    const opacityValue = phase === 'inhale' ? 0.9 : phase === 'exhale' ? 0.4 : 0.7;
+    const opacityValue = 1.0; // Always fully opaque
 
     Animated.parallel([
       Animated.timing(scaleAnimation, {
@@ -437,30 +437,39 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
   const getPhaseColor = (): [string, string] => {
     switch (currentPhase) {
       case 'inhale':
-        return ['#3BB4F5', '#5EEAD4'];
+        return ['#7DAC9C', '#9BC3B5']; // Breathe in: stronger gradient with more contrast
       case 'hold':
-        return ['#A78BFA', '#C084FC'];
+        return ['#93BFC4', '#B5D4D8']; // Hold: stronger gradient with more contrast
       case 'exhale':
-        return ['#34D399', '#6EE7B7'];
+        return ['#A8BAAC', '#C5CCC7']; // Breathe out: stronger gradient with more contrast
       case 'holdAfterExhale':
-        return ['#FBBF24', '#FCD34D'];
+        return ['#93BFC4', '#B5D4D8']; // Hold after exhale: same as hold
       default:
-        return ['#3BB4F5', '#5EEAD4'];
+        return ['#7DAC9C', '#9BC3B5'];
     }
+  };
+
+  const getPhaseTextColor = (): string => {
+    return '#484847'; // Always black text
   };
 
   return (
     <SafeAreaWrapper style={styles.container}>
+      <StatusBar style="light" backgroundColor="transparent" translucent />
+
+      {/* Top Background Color */}
+      <View
+        style={[styles.topBackground, { backgroundColor: '#FFE7CF' }]}
+        pointerEvents="none"
+      />
+
       {/* Ocean Background */}
       <Image
         source={require('../../assets/images/ocean.png')}
         style={styles.oceanBackground}
         contentFit="cover"
       />
-      
-      {/* Subtle overlay for better content readability */}
-      <View style={styles.oceanOverlay} />
-      
+
       <View style={styles.contentContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -547,32 +556,6 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
         {/* Breathing Circle */}
         <View style={styles.breathingContainer}>
           <View style={styles.breathingCircleContainer}>
-            {/* Blurred background ring for depth */}
-            <BlurView intensity={20} style={styles.blurRing} />
-            
-            {/* Outer ring animation with enhanced blur effect */}
-            <Animated.View
-              style={[
-                styles.outerRing,
-                {
-                  opacity: ringAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.3, 0.8],
-                  }),
-                  transform: [
-                    {
-                      scale: ringAnimation.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.8, 1.2],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              <BlurView intensity={40} style={styles.outerRingBlur} />
-            </Animated.View>
-            
             {/* Main breathing circle */}
             <Animated.View
               style={[
@@ -587,9 +570,9 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
                 colors={getPhaseColor()}
                 style={styles.breathingGradient}
               >
-                <Text style={styles.phaseText}>{getPhaseText()}</Text>
+                <Text style={[styles.phaseText, { color: getPhaseTextColor() }]}>{getPhaseText()}</Text>
                 {timeRemaining > 0 && (
-                  <Text style={styles.timerText}>{timeRemaining}</Text>
+                  <Text style={[styles.timerText, { color: getPhaseTextColor() }]}>{timeRemaining}</Text>
                 )}
               </LinearGradient>
             </Animated.View>
@@ -778,8 +761,19 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#C6C0A8', // Android navigation bar color
   },
-  
+
+  // Top Background Color for Status Bar Area
+  topBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100, // Covers status bar area
+    zIndex: 0,
+  },
+
   // Ocean Background
   oceanBackground: {
     position: 'absolute',
@@ -790,13 +784,29 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  topFade: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    zIndex: 1,
+  },
+  bottomFade: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    zIndex: 1,
+  },
   oceanOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(240, 249, 255, 0.85)', // Light blue overlay for readability
+    backgroundColor: 'rgb(240, 249, 255)', // Light blue overlay for readability - no transparency
   },
   contentContainer: {
     flex: 1,
@@ -822,7 +832,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.card,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
   },
   headerCenter: {
     flex: 1,
@@ -848,7 +857,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.card,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
   },
 
   // Settings Panel
@@ -858,7 +866,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: spacing.therapy.lg,
     marginBottom: spacing.therapy.md,
-    ...shadows.md,
   },
   settingsTitle: {
     fontSize: 18,
@@ -953,21 +960,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  outerRing: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: width * 0.35,
-    borderWidth: 2,
-    borderColor: 'rgba(59, 180, 245, 0.3)',
-  },
   breathingCircle: {
     width: '80%',
     height: '80%',
     borderRadius: width * 0.28,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.lg,
   },
   breathingGradient: {
     width: '100%',
@@ -1030,7 +1028,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.card,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
   },
   playButton: {
     width: 80,
@@ -1038,10 +1035,9 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.lg,
   },
   playButtonActive: {
-    ...shadows.xl,
+    transform: [{ scale: 1.05 }],
   },
   playButtonGradient: {
     width: '100%',
@@ -1051,19 +1047,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   
-  // Blur Effects
-  blurRing: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: width * 0.35,
-  },
-  outerRingBlur: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: width * 0.35,
-  },
 
   // Custom Modal Styles
   modalContainer: {

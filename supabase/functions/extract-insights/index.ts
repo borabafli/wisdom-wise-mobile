@@ -50,6 +50,19 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 };
 
+// Helper function to filter out trivial extractions
+function isTrivialgainextract(content: string): boolean {
+  const trivialPatterns = [
+    /^(good morning|hello|hi|hey|how are you|thank you|thanks|ok|okay|yes|no|sure|alright)$/i,
+    /^(let's start|let's begin|i understand|got it|makes sense|that's right)$/i,
+    /^(i see|i get it|sounds good|perfect|great|nice|cool)$/i,
+    /^[^a-zA-Z]*$/,  // Only punctuation or numbers
+    /^.{1,10}$/,     // Very short responses
+  ];
+
+  return trivialPatterns.some(pattern => pattern.test(content.trim()));
+}
+
 // CBT cognitive distortions reference
 const COGNITIVE_DISTORTIONS = [
   'All-or-Nothing Thinking',
@@ -68,21 +81,31 @@ const COGNITIVE_DISTORTIONS = [
   'Blame'
 ];
 
-const INSIGHT_EXTRACTION_PROMPT = `You are analyzing a therapy conversation to extract meaningful long-term insights. Extract insights into these 6 categories ONLY if they are clearly present and therapeutically significant.
+const INSIGHT_EXTRACTION_PROMPT = `You are analyzing a therapy conversation to extract meaningful long-term insights. Extract insights into these 6 categories ONLY if they are clearly present, therapeutically significant, and personally relevant.
 
-**EXTRACTION CRITERIA:**
-- Only extract insights that represent clear patterns across multiple messages
-- Focus on recurring themes, not isolated incidents
-- Each insight should be 1-2 sentences and therapeutically valuable
-- Assign confidence scores based on evidence strength
+**STRICT EXTRACTION CRITERIA:**
+- NEVER extract trivial exchanges like greetings ("Good Morning", "Hello", "How are you?")
+- NEVER extract procedural responses ("Let's start", "Thank you", "I understand")
+- NEVER extract single-word or short phrase responses without context
+- Only extract insights that represent clear patterns across multiple messages (minimum 3+ related exchanges)
+- Focus on recurring themes, personal struggles, meaningful self-discovery, or emotional patterns
+- Each insight must be personally relevant and therapeutically valuable (minimum 15 words)
+- Assign confidence scores based on evidence strength and personal relevance
+- Require minimum confidence of 0.7 for any extraction
 
-**CATEGORIES:**
-1. **automatic_thoughts**: Recurring negative thought patterns, cognitive distortions, self-critical inner dialogue
-2. **emotions**: Emotional patterns, regulation strategies, triggers, recurring feelings
-3. **behaviors**: Coping behaviors, avoidance patterns, behavioral responses to stress
-4. **values_goals**: Core values, life priorities, meaningful goals, what drives the person
-5. **strengths**: Resilience factors, positive coping skills, personal resources
-6. **life_context**: Important relationships, life circumstances, environmental factors
+**CATEGORIES (Only extract if substantial evidence exists):**
+1. **automatic_thoughts**: Recurring negative thought patterns, cognitive distortions, self-critical inner dialogue that show consistent patterns
+2. **emotions**: Emotional patterns, regulation strategies, triggers, recurring feelings that indicate deeper themes
+3. **behaviors**: Coping behaviors, avoidance patterns, behavioral responses to stress that form recognizable patterns
+4. **values_goals**: Core values, life priorities, meaningful goals, what drives the person (NOT superficial preferences)
+5. **strengths**: Resilience factors, positive coping skills, personal resources demonstrated consistently
+6. **life_context**: Important relationships, life circumstances, environmental factors with therapeutic relevance
+
+**QUALITY FILTERS:**
+- Content must be at least 15 words describing a meaningful pattern or insight
+- Must relate to personal growth, mental health, or therapeutic development
+- Must show evidence from multiple conversation exchanges
+- Must be actionable or reflective for the user's journey
 
 **RESPONSE FORMAT:**
 Return only a JSON object with this structure:
@@ -90,7 +113,7 @@ Return only a JSON object with this structure:
   "insights": [
     {
       "category": "automatic_thoughts",
-      "content": "Frequently engages in catastrophic thinking about work performance",
+      "content": "Shows a consistent pattern of catastrophic thinking about work performance, often jumping to worst-case scenarios when receiving any feedback",
       "confidence": 0.85
     }
   ]
@@ -277,7 +300,12 @@ Deno.serve(async (req: Request) => {
         const insights = await extractMemoryInsights(OPENROUTER_API_KEY, messages);
         response = {
           success: true,
-          insights: insights.filter(insight => insight.confidence >= 0.6),
+          insights: insights.filter(insight =>
+            insight.confidence >= 0.7 &&
+            insight.content &&
+            insight.content.length >= 15 &&
+            !isTrivialgainextract(insight.content)
+          ),
           processingTime: Math.round(performance.now() - startTime)
         };
         break;

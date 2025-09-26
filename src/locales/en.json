@@ -1,0 +1,979 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "skip": "Skip",
+    "back": "Back",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "saving": "Saving..."
+  },
+  "alerts": {
+    "deleteSession": {
+      "title": "Delete Session",
+      "message": "Are you sure you want to delete this conversation? This cannot be undone.",
+      "delete": "Delete"
+    },
+    "clearAllHistory": {
+      "title": "Clear All History",
+      "message": "Are you sure you want to delete all saved conversations? This cannot be undone.",
+      "clearAll": "Clear All"
+    },
+    "deleteSessionError": "Failed to delete session. Please try again.",
+    "clearHistoryError": "Failed to clear history. Please try again."
+  },
+  "navigation": {
+    "home": "Home",
+    "today": "Today",
+    "exercises": "Exercises",
+    "journal": "Journal",
+    "insights": "Insights",
+    "profile": "Profile",
+    "chat": "Chat"
+  },
+  "home": {
+    "title": "Home",
+    "subtitle": "Your mindful space",
+    "startSession": "Start Session",
+    "quickActions": "Quick Actions",
+    "todaysInsights": "Today's Insights",
+    "recentSessions": "Recent Sessions",
+    "welcomeBack": "Welcome back",
+    "moodCheck": "How are you feeling today?",
+    "checkInNow": "Check-In Now",
+    "type": "Type",
+    "talk": "Talk",
+    "yourNextSteps": "Your Next Steps",
+    "seeAll": "See all",
+    "dailyReflection": "Daily Reflection",
+    "generateTest": "Generate Test",
+    "browseExercises": "Browse\nExercises",
+    "viewInsights": "View\nInsights",
+    "startBreathing": "Start\nBreathing",
+    "realTimeAudioWaves": "Real-Time Audio Waves",
+    "quickBreathingExercise": {
+      "name": "Deep Breathing",
+      "duration": "5 min",
+      "description": "Calm your mind with guided breathing"
+    },
+    "startWriting": "Start Writing",
+    "slideToRemove": "Slide to remove exercise",
+    "removeExerciseModal": {
+      "title": "Remove Exercise?",
+      "for7Days": "For 7 days",
+      "forever": "Forever",
+      "cancel": "Cancel"
+    }
+  },
+  "exercises": {
+    "title": "Exercises",
+    "subtitle": "Guided wellness practices",
+    "categories": "Categories",
+    "duration": "Duration",
+    "difficulty": "Difficulty",
+    "approach": "Approach",
+    "startExercise": "Start Exercise",
+    "exerciseComplete": "Exercise Complete",
+    "exerciseRating": {
+      "title": "How helpful was this exercise?",
+      "subtitle": "We use your feedback to personalize your experience and suggest better exercises that suit your needs.",
+      "today": "Today",
+      "ratings": {
+        "notHelpfulAtAll": "Not helpful at all",
+        "somewhatHelpful": "Somewhat helpful",
+        "moderatelyHelpful": "Moderately helpful",
+        "veryHelpful": "Very helpful",
+        "extremelyHelpful": "Extremely helpful"
+      },
+      "sliderLabels": {
+        "notAtAll": "Not at all",
+        "very": "Very"
+      }
+    },
+    "breathing": "Breathing",
+    "meditation": "Meditation",
+    "journaling": "Journaling",
+    "mindfulness": "Mindfulness",
+    "searchPlaceholder": "Search exercises...",
+    "showAllFilters": "Show all filters",
+    "clearAll": "Clear All",
+    "exercisesFound": "{{count}} exercise found",
+    "exercisesFound_other": "{{count}} exercises found",
+    "noExercisesFound": "No exercises found",
+    "adjustFilters": "Try adjusting your filters or search terms",
+    "stepByStepGuide": "This exercise will guide you through the process step by step.",
+    "stepNumber": "Step {{number}}",
+    "stepsCount": "{{count}} step",
+    "stepsCount_other": "{{count}} steps",
+    "steps": "Steps"
+  },
+  "insights": {
+    "title": "Insights",
+    "subtitle": "✨ For your growth",
+    "yourThoughts": "Your Thoughts",
+    "reflectOnThis": "Reflect on This",
+    "moodTracking": "Mood Tracking",
+    "progressStats": "Progress Stats",
+    "patterns": "Patterns",
+    "goals": "Goals",
+    "memoryInsights": "Memory Insights",
+    "longTermPatterns": "Long-term patterns & themes",
+    "motivational": {
+      "fallbackMessage": "Your wellness journey continues",
+      "startingToday": "starting today"
+    },
+    "values": {
+      "title": "Your Values",
+      "subtitle": "What matters to you",
+      "overview": "Core Values",
+      "pagination": "{{current}} of {{total}}",
+      "swipeToExplore": "Swipe to explore"
+    },
+    "sessionSummaries": {
+      "title": "Session Summaries",
+      "subtitle": "Sessions analyzed"
+    },
+    "therapyGoals": {
+      "title": "Therapy Goals",
+      "activeGoal": "active goal",
+      "activeGoals": "active goals",
+      "setFirstGoal": "Set your first goal",
+      "setGoalDescription": "Set therapy goals to give direction and motivation to your healing journey.",
+      "setFirstGoalButton": "Set Your First Goal",
+      "complete": "complete"
+    },
+    "vision": {
+      "title": "Vision of the Future",
+      "inspiringFuture": "Your inspiring future self",
+      "loading": "Loading your vision...",
+      "createInspiring": "Create an inspiring vision of your future self",
+      "emptyState": "Start a Vision of the Future exercise to explore your ideal future self and unlock personalized insights.",
+      "startExercise": "Start Vision Exercise",
+      "created": "Created on",
+      "coreQualities": "Core Qualities",
+      "more": "more",
+      "lifeAreasExplored": "Life Areas Explored",
+      "reflectOnVision": "Reflect on Your Vision",
+      "view": "View your",
+      "visions": "visions",
+      "vision": "vision"
+    },
+    "journey": {
+      "title": "Journey",
+      "subtitle": "Every step counts",
+      "sessions": "Sessions",
+      "exercises": "Exercises",
+      "dayStreak": "Day streak",
+      "completedSessions": "You've completed",
+      "guidedSessions": "guided sessions!",
+      "nextUp": "Next up:",
+      "recentAchievements": "Recent Achievements"
+    },
+    "actions": {
+      "reflectOnStrengths": "Reflect on Strengths",
+      "spendTimeWithEmotions": "Spend Time with Emotions",
+      "generateData": "Generate Data",
+      "refresh": "Refresh"
+    },
+    "prompts": {
+      "visionReflection": "I see that you've created a beautiful vision of your future self. You described your future self as embodying qualities like: {{qualities}}. Your vision was: \"{{description}}\"\n\nI'd love to explore this vision with you. What aspects of this future self feel most inspiring to you right now? And what small step could you take today to embody a little more of these qualities?",
+      "strengthReflection": "I noticed from your memory insights that you have some strengths and positive patterns. Let's take a moment to reflect on these strengths: \"{{content}}\"\n\nWhat do you think makes these strengths particularly meaningful to you? How might you lean into these strengths more in your daily life?",
+      "emotionReflection": "I see that you have some deep emotional insights from our conversations: \"{{content}}\"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?"
+    },
+    "moodInsights": {
+      "distortedThought": "Distorted Thought",
+      "balancedThought": "Balanced Thought",
+      "reflectOnThis": "Reflect on This",
+      "yourMood": "Your Mood",
+      "trackMoodJourney": "Track your emotional journey",
+      "yourThoughts": "Your Thoughts",
+      "identifyPatterns": "Identify and reframe patterns",
+      "weeklyTrend": {
+        "improving": "↗ Improving",
+        "steady": "↔ Steady",
+        "declining": "↘ Declining"
+      },
+      "emptyStates": {
+        "startJourney": "Start your wellness journey! ✨",
+        "chatWithAnu": "Chat with Anu or track your mood after exercises to see personalized insights here",
+        "chatButton": "Chat with Anu",
+        "tryExercise": "Try Exercise",
+        "generateSample": "Generate Sample Data",
+        "greatJobTracking": "Great job tracking your mood! 📈",
+        "niceProgress": "Nice progress with Anu! 💬",
+        "keepBuilding": "Keep building your insights! ⭐",
+        "checkingData": "Checking your data... ✨"
+      }
+    },
+    "thinkingPatterns": {
+      "allOrNothing": "All-or-Nothing Thinking",
+      "catastrophizing": "Catastrophizing",
+      "mentalFilter": "Mental Filter",
+      "overgeneralization": "Overgeneralization",
+      "mindReading": "Mind Reading",
+      "fortuneTelling": "Fortune Telling",
+      "emotionalReasoning": "Emotional Reasoning",
+      "shouldStatements": "Should Statements",
+      "labeling": "Labeling",
+      "personalization": "Personalization",
+      "magnification": "Magnification",
+      "minimization": "Minimization",
+      "thoughtPattern": "Thought Pattern",
+      "explanations": {
+        "allOrNothing": "Seeing things in black and white without middle ground",
+        "catastrophizing": "Imagining the worst possible outcomes",
+        "mentalFilter": "Focusing only on negative details",
+        "overgeneralization": "Making broad conclusions from single events",
+        "mindReading": "Assuming you know what others think",
+        "fortuneTelling": "Predicting negative outcomes without evidence",
+        "emotionalReasoning": "Believing feelings reflect reality",
+        "shouldStatements": "Using rigid rules about how things should be",
+        "labeling": "Attaching negative labels to yourself or others",
+        "personalization": "Blaming yourself for things outside your control",
+        "magnification": "Blowing things out of proportion",
+        "minimization": "Downplaying positive aspects",
+        "thoughtPattern": "A recurring way of thinking that may need attention"
+      }
+    },
+    "mockData": {
+      "patterns": {
+        "presentationThought": "I completely messed up that presentation, I'm terrible at public speaking",
+        "presentationReframe": "The presentation had some rough spots, but I also had good moments. I'm learning and improving.",
+        "presentationContext": "Identified during conversation about work stress",
+        "jobThought": "If I don't get this job, my career will be ruined",
+        "jobReframe": "Not getting this particular job would be disappointing, but there are other opportunities out there.",
+        "jobContext": "Pattern recognized during anxiety session"
+      },
+      "journey": {
+        "nextSuggestion": "Try a Reframe to reduce worry",
+        "achievements": {
+          "firstSession": "First guided session",
+          "dailyStreak": "Daily check-in streak",
+          "breathingExercise": "Completed breathing exercise"
+        }
+      },
+      "cognitiveDistortion": "Cognitive Distortion"
+    },
+    "priorityExercises": {
+      "names": {
+        "tellStory": "Tell Your Story",
+        "goalSetting": "Therapy Goal-Setting",
+        "visionFuture": "Vision of the Future",
+        "reframingThoughts": "Reframing Thoughts",
+        "livingValues": "My Core Values",
+        "mindfulness": "Morning Mindfulness",
+        "stressRelief": "4-7-8 Breathing",
+        "gratitude": "Gratitude Practice"
+      },
+      "descriptions": {
+        "tellStory": "Share your personal journey",
+        "goalSetting": "Define your goals",
+        "visionFuture": "Imagine your ideal future self",
+        "reframingThoughts": "Transform negative thoughts",
+        "livingValues": "Align actions with core values",
+        "mindfulness": "Start your day with gentle awareness",
+        "stressRelief": "Reduce anxiety with proven breathing technique",
+        "gratitude": "Build happiness through daily appreciation"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "✨ Your wellness companion",
+    "personalInfo": "Personal Information",
+    "settings": "Settings",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "signOut": "Sign Out",
+    "editProfile": "Edit Profile",
+    "memberSince": "Member since",
+    "anonymousGuest": "Anonymous Guest",
+    "stats": {
+      "sessions": "Sessions",
+      "streak": "Streak",
+      "insights": "Insights",
+      "exercises": "Exercises",
+      "daysStreak": "7 days"
+    },
+    "fallbackName": "Friend",
+    "welcomeMessage": "Welcome to WisdomWise",
+    "premiumMember": "Premium Member",
+    "yourProgress": "Your Progress",
+    "menu": {
+      "editProfile": "Edit Profile",
+      "chatHistory": "Chat History",
+      "voiceSettings": "Voice Settings",
+      "notifications": "Notifications",
+      "privacy": "Privacy & Security",
+      "darkMode": "Dark Mode",
+      "help": "Help & Support",
+      "signOut": "Sign Out"
+    },
+    "menuSubtitles": {
+      "editProfile": "Update your information",
+      "chatHistory": "View past conversations",
+      "voiceSettings": "Configure speech options",
+      "notifications": "Manage alerts",
+      "privacy": "Control your data",
+      "darkMode": "Toggle dark theme",
+      "help": "Get assistance",
+      "signOut": "Leave your account",
+      "default": "Tap to access"
+    },
+    "version": "Version 1.0.0",
+    "madeWith": "Made with 💙 for your wellness"
+  },
+  "chat": {
+    "title": "Chat with Anu",
+    "subtitle": "Your AI wellness companion",
+    "startConversation": "Start a conversation...",
+    "typeMessage": "Type your message...",
+    "sendMessage": "Send",
+    "voiceInput": "Voice Input",
+    "recording": "Recording...",
+    "transcribing": "Transcribing...",
+    "thinking": "Thinking...",
+    "speakResponse": "Speak Response",
+    "exercise": "Exercise",
+    "reflectionSpace": "💭 Reflection Space",
+    "exerciseProgress": "Step {{current}} of {{total}} • {{title}}",
+    "inProgress": "In Progress",
+    "therapeuticExercise": "{{duration}} • Therapeutic Exercise",
+    "loadingSpace": "Loading your gentle space...",
+    "safeSpace": "Your safe space for reflection",
+    "almostAtLimit": "Almost at daily limit! {{remaining}} left.",
+    "limitUsed": "{{percentage}}% of daily limit used.",
+    "endReflection": "End Reflection",
+    "typeOrSpeak": "Type or speak...",
+    "composeMessage": "Compose Message",
+    "suggestExercise": "Suggest an exercise",
+    "promptSuggestion": "Suggest something & guide me",
+    "moodSlider": {
+      "title": "How are you feeling right now?",
+      "subtitle": "Rate your current mood",
+      "saved": "Saved!"
+    },
+    "visionSummary": {
+      "title": "Vision Summary",
+      "subtitle": "Your inspiring future self revealed",
+      "yourVision": "Your Vision",
+      "keyInsights": "Key Insights",
+      "continueVision": "Continue Vision",
+      "saveVision": "Save Vision"
+    },
+    "thinkingPatternSummary": {
+      "title": "Reflection Summary",
+      "subtitle": "Your insights on thinking patterns",
+      "patternExplored": "Pattern Explored",
+      "reflectionSummary": "Reflection Summary",
+      "keyInsights": "Key Insights",
+      "continueReflection": "Continue Reflection",
+      "saveSummary": "Save Summary"
+    },
+    "valueReflectionSummary": {
+      "title": "Reflection Summary",
+      "subtitle": "Review your insights on \"{{valueName}}\"",
+      "summary": "Summary",
+      "keyInsights": "Key Insights",
+      "continueReflection": "Continue Reflection",
+      "saveSummary": "Save Summary"
+    },
+    "therapyGoalSummary": {
+      "title": "Goal Summary",
+      "subtitle": "Your therapy goals defined",
+      "yourGoals": "Your Goals",
+      "keyInsights": "Key Insights",
+      "continueGoals": "Continue Goals",
+      "saveGoals": "Save Goals"
+    }
+  },
+  "mood": {
+    "title": "Mood Tracking",
+    "howAreYouFeeling": "How are you feeling right now?",
+    "rateYourMood": "Rate your current mood",
+    "helpfulnessRating": "How helpful was this?",
+    "saved": "Saved! ✓",
+    "beforeWeStart": "Before we start..."
+  },
+  "journal": {
+    "title": "Guided Journal",
+    "promptTitle": "Reflection Prompt",
+    "yourResponse": "Your Response",
+    "finish": "Finish",
+    "saveSession": "Save Session?",
+    "dontSave": "Don't Save",
+    "startWriting": "Start Writing",
+    "writingPrompts": "Writing Prompts",
+    "yourEntries": "Your Entries",
+    "noEntriesTitle": "No journal entries yet",
+    "noEntriesText": "Start your journaling journey by selecting a prompt above or create your own entry.",
+    "loadingJournal": "Loading your journal...",
+    "deleteEntry": "Delete Entry",
+    "deleteEntryConfirm": "Are you sure you want to delete this journal entry? This action cannot be undone.",
+    "keyInsights": "Key Insights:",
+    "polished": "✨ Polished",
+    "journalEntry": "Journal Entry",
+    "initialPrompt": "Initial Prompt",
+    "question": "Question",
+    "summary": "Summary",
+    "keyInsightsTitle": "Key Insights",
+    "stepIndicator": "{{current}}/{{total}}",
+    "typeOrSpeak": "Type or speak your thoughts...",
+    "transcribing": "Transcribing...",
+    "generating": "...",
+    "continue": "Continue",
+    "previousReflections": "Your Previous Reflections:",
+    "pleaseWriteSomething": "Please write something",
+    "entryCannotBeEmpty": "Your journal entry cannot be empty.",
+    "failedNextQuestion": "Failed to generate next question. Please try again.",
+    "journalSaved": "Journal Saved",
+    "entrySavedPolished": "Your entry has been saved and polished!",
+    "entrySaved": "Your journal entry has been saved!",
+    "failedToSave": "Failed to save your journal entry. Please try again.",
+    "failedToSaveDraft": "Failed to save your draft. Please try again.",
+    "saveModalTitle": "Save Session?",
+    "save": "Save",
+    "dontSaveButton": "Don't Save",
+    "failedToLoad": "Failed to load journal data. Please try again.",
+    "failedToDelete": "Failed to delete entry. Please try again."
+  },
+  "breathing": {
+    "title": "Breathing Exercise",
+    "inhale": "Inhale",
+    "exhale": "Exhale",
+    "hold": "Hold",
+    "breathe": "Breathe",
+    "pause": "Pause",
+    "resume": "Resume",
+    "reset": "Reset",
+    "settings": "Settings",
+    "cycles": "Cycles",
+    "pattern": "Pattern"
+  },
+  "language": {
+    "selectLanguage": "Select Language",
+    "currentLanguage": "Current Language",
+    "changeLanguage": "Change Language",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "tr": "Türkçe",
+      "es": "Español",
+      "pt": "Português"
+    }
+  },
+  "errors": {
+    "networkError": "Network connection error. Please try again.",
+    "genericError": "Something went wrong. Please try again.",
+    "voicePermissionDenied": "Microphone permission is required for voice features.",
+    "speechRecognitionFailed": "Speech recognition failed. Please try again.",
+    "ttsError": "Text-to-speech is not available.",
+    "promptGenerationFailed": "Failed to generate prompts. Please try again.",
+    "fillAllFields": "Please fill in all fields",
+    "signInFailed": "Sign In Failed",
+    "signUpFailed": "Sign Up Failed",
+    "googleSignInFailed": "Google Sign In Failed",
+    "emailSent": "Email Sent",
+    "verificationEmailSent": "Verification email has been sent again. Please check your inbox.",
+    "resendVerificationFailed": "Failed to resend verification email",
+    "notVerified": "Not Verified",
+    "checkEmailFirst": "Please check your email and click the verification link first.",
+    "verificationCheckFailed": "Unable to check verification status. Please try again.",
+    "enterFirstName": "Please enter your first name",
+    "enterLastName": "Please enter your last name",
+    "enterEmail": "Please enter your email",
+    "enterValidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "passwordsNoMatch": "Passwords do not match",
+    "acceptPrivacyPolicy": "Please accept the privacy policy to continue",
+    "failedToLoadGoals": "Failed to load your goals. Please try again.",
+    "pleaseEnterValidGoal": "Please enter a valid goal.",
+    "goalUpdatedSuccess": "Goal updated successfully!",
+    "failedToUpdateGoal": "Failed to update goal. Please try again.",
+    "failedToUpdateGoalStatus": "Failed to update goal status.",
+    "failedToSaveGoal": "Failed to save your goal. Please try again.",
+    "missingInformation": "Missing Information",
+    "pleaseRateProgress": "Please rate your progress before submitting.",
+    "pleaseAddReflection": "Please add a brief reflection on your progress.",
+    "progressRecorded": "Your progress has been recorded.",
+    "failedToSaveCheckIn": "Failed to save check-in. Please try again.",
+    "failedToLoadSummaries": "Failed to load session summaries.",
+    "failedToSaveSettings": "Failed to save settings",
+    "failedToDeleteSession": "Failed to delete session. Please try again.",
+    "failedToClearHistory": "Failed to clear history. Please try again.",
+    "failedToUpdateProfile": "Failed to update profile. Please try again."
+  },
+  "exerciseLibrary": {
+    "names": {
+      "automaticThoughts": "Recognizing Automatic Thoughts",
+      "breathing": "4-7-8 Breathing",
+      "boxBreathing": "Box Breathing",
+      "triangleBreathing": "Triangle Breathing",
+      "coherentBreathing": "Coherent Breathing",
+      "mindfulness": "Body Scan",
+      "morningMindfulness": "Morning Mindfulness",
+      "gratitude": "Gratitude Practice",
+      "selfCompassion": "Self-Compassion Break",
+      "valuesClarity": "My Core Values",
+      "futureSelfJournaling": "Future Self Journaling",
+      "sortingThoughts": "Sorting Thoughts",
+      "goalSetting": "Therapy Goal-Setting",
+      "tellYourStory": "Tell Me Your Story",
+      "visionOfFuture": "Vision of the Future"
+    },
+    "descriptions": {
+      "automaticThoughts": "Transform negative thoughts",
+      "breathing": "Reduce anxiety with proven breathing technique",
+      "boxBreathing": "Enhance focus and reduce stress with balanced breathing",
+      "triangleBreathing": "Simple mindful breathing for deep relaxation",
+      "coherentBreathing": "Heart-centered breathing for emotional balance",
+      "mindfulness": "Release tension with mindful body awareness",
+      "morningMindfulness": "Begin your day with calm presence",
+      "gratitude": "Build happiness through daily appreciation",
+      "selfCompassion": "Develop self-kindness and inner compassion",
+      "valuesClarity": "Clarify values and align your daily actions",
+      "futureSelfJournaling": "Gain clarity through future-focused reflection",
+      "sortingThoughts": "Clear mental clutter and organize thoughts",
+      "goalSetting": "Set focused goals aligned with your values",
+      "tellYourStory": "Explore your journey and discover inner strengths",
+      "visionOfFuture": "Create an inspiring vision to guide your path"
+    },
+    "shortDescriptions": {
+      "automaticThoughts": "Identify and reframe unhelpful thinking patterns.",
+      "breathing": "Calm your mind with rhythmic breathing.",
+      "boxBreathing": "Square breathing for mental clarity.",
+      "triangleBreathing": "Three-phase breathing for relaxation.",
+      "coherentBreathing": "Heart-focused breathing for balance.",
+      "mindfulness": "Mindfully scan and relax your body.",
+      "morningMindfulness": "Start your day with mindful awareness.",
+      "gratitude": "Cultivate appreciation and joy.",
+      "selfCompassion": "Practice being kind to yourself.",
+      "valuesClarity": "Align your actions with what matters most.",
+      "futureSelfJournaling": "Connect with your future self.",
+      "sortingThoughts": "Organize and clarify your thoughts.",
+      "goalSetting": "Set meaningful goals for growth.",
+      "tellYourStory": "Share your story and find your strengths.",
+      "visionOfFuture": "Envision your ideal future."
+    },
+    "categories": {
+      "cbt": "CBT",
+      "breathing": "Breathing",
+      "mindfulness": "Mindfulness",
+      "selfCare": "Self-Care",
+      "act": "ACT",
+      "selfDiscovery": "Self-Discovery",
+      "selfGrowth": "Self-Growth"
+    },
+    "difficulties": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "steps": {
+      "automaticThoughts": {
+        "step1": {
+          "title": "Describe the moment",
+          "description": "Recall a recent situation that felt stressful or upsetting.",
+          "instruction": "Invite the user to share one recent situation that triggered stress, anxiety, or low mood. Encourage them to keep it simple and specific ('yesterday in a meeting,' 'when I met a friend'). Stay in this step until they provide one clear situation."
+        },
+        "step2": {
+          "title": "Notice your thought",
+          "description": "What was the first thought that came to mind in that moment?",
+          "instruction": "Encourage the user to write the automatic thought they had in that situation. If they feel stuck, offer gentle examples ('I'm going to fail,' 'They don't like me,' 'I can't handle this'), but keep the focus on their own words."
+        },
+        "step3": {
+          "title": "Spot the thinking pattern",
+          "description": "Does this thought fit a common thinking pattern?",
+          "instruction": "Guide the user to reflect if their thought shows one of the common cognitive distortions. Briefly remind them of typical patterns: All-or-nothing thinking (black/white, no middle ground), Catastrophizing (expecting the worst), Mind-reading (assuming what others think), Overgeneralization (using one event to define everything), Labeling (calling yourself names), Emotional reasoning (assuming feelings = facts), Fortune-telling (predicting a bad outcome), Should statements ('I must… I should…'), Personalization (blaming yourself for things outside your control). Encourage them to pick one or more that fit. Stay until they identify a distortion."
+        },
+        "step4": {
+          "title": "Reframe the thought",
+          "description": "How could you see this in a more balanced way?",
+          "instruction": "Support the user to create a more realistic and kind thought. Ask them to consider: What evidence supports or challenges the original thought? What would they say to a friend in this situation? Is there a more balanced way of looking at it? Encourage them to write one reframed statement. Stay until they provide it."
+        }
+      },
+      "goalSetting": {
+        "step1": {
+          "title": "Pick a goal",
+          "description": "Choose one thing you want to work toward.",
+          "instruction": "Ask the user to state one goal they want to work toward. Keep it concrete and realistic."
+        },
+        "step2": {
+          "title": "Why does it matter?",
+          "description": "Connect the goal to what's meaningful to you.",
+          "instruction": "Encourage the user to share why this goal is meaningful to them. Ask what difference it would make in their life."
+        },
+        "step3": {
+          "title": "Break it down",
+          "description": "Turn a big goal into small, doable steps.",
+          "instruction": "Guide the user to split the big goal into smaller, doable steps. Encourage practicality."
+        },
+        "step4": {
+          "title": "What could get in the way?",
+          "description": "Think ahead about challenges you might face.",
+          "instruction": "Ask what might get in the way of reaching this goal. Encourage them to name at least one challenge."
+        },
+        "step5": {
+          "title": "Plan your way around",
+          "description": "Find strategies to handle those challenges.",
+          "instruction": "Help the user brainstorm strategies to overcome those obstacles. Stay flexible but supportive."
+        },
+        "step6": {
+          "title": "Take the first step",
+          "description": "Decide on one small action you can take soon.",
+          "instruction": "Invite the user to choose one small action they can take today or this week toward their goal. Help them be specific."
+        }
+      },
+      "futureSelfJournaling": {
+        "step1": {
+          "title": "Meet your future self",
+          "description": "Imagine yourself 1–3 years from now, living in line with your values.",
+          "instruction": "Invite the user to picture themselves in the near future (1–3 years) living a life they feel proud of. Ask them to imagine where they are, what they're doing, and what feels different. Encourage them to describe it in their own words."
+        },
+        "step2": {
+          "title": "What does life look like?",
+          "description": "Describe an ordinary day for your future self.",
+          "instruction": "Encourage the user to write about what daily life looks like for this future version of themselves. Ask about how they spend their time, their routines, and what gives them meaning."
+        },
+        "step3": {
+          "title": "Notice your strengths",
+          "description": "What qualities has your future self developed?",
+          "instruction": "Ask the user to describe what personal strengths or skills their future self has built. For example: confidence, resilience, kindness, balance. Encourage at least two."
+        },
+        "step4": {
+          "title": "What's different from today?",
+          "description": "Compare your future self with your current self.",
+          "instruction": "Guide the user to notice the differences between their current habits, beliefs, or behaviors and those of their future self. Encourage them to be honest but compassionate."
+        },
+        "step5": {
+          "title": "One step today",
+          "description": "Choose one action that brings you closer.",
+          "instruction": "Invite the user to write down one small step they can take today (or this week) that moves them toward this future version of themselves. Keep it practical and doable."
+        }
+      },
+      "therapyGoalDefinition": {
+        "step1": {
+          "title": "Choose an area",
+          "description": "Pick one part of your life you'd like to improve (e.g., mood, stress, confidence, relationships).",
+          "instruction": "Invite the user to choose one main area of focus for therapy. Offer examples but keep it open-ended. Stay until they share one area."
+        },
+        "step2": {
+          "title": "Define the change you want",
+          "description": "What would you like to be different in this area?",
+          "instruction": "Ask the user to describe the kind of change they hope for (e.g., 'I want to feel calmer,' 'I want to trust myself more'). Encourage them to be clear but not too detailed."
+        },
+        "step3": {
+          "title": "Why is this important to you?",
+          "description": "Connect your goal to your values or what matters most.",
+          "instruction": "Invite the user to explain why this goal matters. Encourage them to link it to values, relationships, or personal wellbeing."
+        },
+        "step4": {
+          "title": "Imagine success",
+          "description": "How would life look if this goal was achieved?",
+          "instruction": "Ask the user to picture and describe what would be different if their goal was met. Encourage a short, positive vision."
+        },
+        "step5": {
+          "title": "Moving forward",
+          "description": "You've defined your therapy goals — now we'll use them as a foundation.",
+          "instruction": "Acknowledge the user's progress: 'You've clarified what matters to you and what you'd like to change.' Then explain how these goals will guide future work: We'll keep them in mind as a reference point. In other exercises (like Automatic Thoughts or Values Clarification), we'll connect the work back to these goals. Over time, we'll track progress and refine them together. Finish by asking: 'Would you like to start exploring one of your goals right now, or save them as your focus for upcoming sessions?'"
+        }
+      },
+      "sortingThoughts": {
+        "step1": {
+          "title": "Write your thoughts",
+          "description": "Put down whatever is on your mind right now.",
+          "instruction": "Ask the user to jot down a few thoughts currently on their mind, without editing."
+        },
+        "step2": {
+          "title": "Sort them out",
+          "description": "Separate helpful thoughts from unhelpful ones.",
+          "instruction": "Guide the user to categorize their thoughts (helpful vs. unhelpful, or fact vs. worry)."
+        },
+        "step3": {
+          "title": "Choose what to keep",
+          "description": "Focus on one thought that helps you move forward.",
+          "instruction": "Invite the user to select one helpful thought to carry forward, and let the rest go for now."
+        },
+        "step4": {
+          "title": "Moving forward",
+          "description": "You've sorted your thoughts. Now we can go deeper.",
+          "instruction": "Acknowledge: 'You've seen which thoughts lift you up and which ones weigh you down.' Explain the link: Helpful thoughts can connect to your therapy goals as motivators. Unhelpful ones can be explored in Automatic Thoughts, where we'll reframe them. Ask: 'Would you like to reframe one of the unhelpful thoughts you spotted today?'"
+        }
+      },
+      "mindfulness": {
+        "step1": {
+          "title": "Focus on the present",
+          "description": "Choose one anchor like your breath or your body.",
+          "instruction": "Invite the user to focus on their breath or a simple body sensation, like feet on the ground."
+        },
+        "step2": {
+          "title": "Watch your thoughts",
+          "description": "Notice thoughts come and go without judgment.",
+          "instruction": "Guide the user to observe thoughts as they come and go, without judgment, like clouds passing by."
+        },
+        "step3": {
+          "title": "Return gently",
+          "description": "Bring attention back when your mind wanders.",
+          "instruction": "Encourage the user to return attention to their anchor whenever they drift, and acknowledge themselves for practicing."
+        }
+      },
+      "gratitude": {
+        "step1": {
+          "title": "Name three things",
+          "description": "Write down three things you're thankful for today.",
+          "instruction": "Ask the user to name three things they are grateful for today, big or small."
+        },
+        "step2": {
+          "title": "Feel it fully",
+          "description": "Take a moment to really feel the gratitude.",
+          "instruction": "Encourage the user to pause on each one and notice how it feels in their body to feel grateful."
+        },
+        "step3": {
+          "title": "Carry it forward",
+          "description": "Let this feeling guide your day.",
+          "instruction": "Invite the user to carry this feeling of gratitude with them as they continue their day."
+        }
+      },
+      "selfCompassion": {
+        "step1": {
+          "title": "Notice the struggle",
+          "description": "Acknowledge where you're being hard on yourself.",
+          "instruction": "Ask the user to name one area where they're being hard on themselves right now."
+        },
+        "step2": {
+          "title": "Imagine a friend",
+          "description": "Think how you'd respond to someone you care about.",
+          "instruction": "Guide the user to imagine how they would respond if a friend was struggling with the same thing."
+        },
+        "step3": {
+          "title": "Offer kindness",
+          "description": "Write a supportive message to yourself.",
+          "instruction": "Encourage the user to write one kind or supportive sentence to themselves."
+        }
+      },
+      "valuesClarity": {
+        "step1": {
+          "title": "Discover what matters most",
+          "description": "Think about the qualities or principles that guide your life.",
+          "instruction": "Ask the user to list a few values that feel important to them — for example: honesty, growth, family, freedom, kindness, balance. Encourage them to pick what feels true, not what they think they 'should' value."
+        },
+        "step2": {
+          "title": "Choose your top values",
+          "description": "Narrow it down to the ones that feel most central right now.",
+          "instruction": "Encourage the user to pick one or two values from their list that matter most to them in this moment. Remind them there are no right or wrong answers, and values can change over time."
+        },
+        "step3": {
+          "title": "Live your values",
+          "description": "Find one small way to express your values in daily life.",
+          "instruction": "Invite the user to name one small, practical action they could take today or this week that reflects their chosen values. Keep it simple and realistic."
+        }
+      },
+      "tellYourStory": {
+        "step1": {
+          "title": "Share your journey",
+          "description": "Tell me about a meaningful experience or chapter in your life.",
+          "instruction": "Encourage the user to share a significant moment, period, or experience from their life — it could be a challenge they overcame, a time of growth, or a meaningful relationship. Stay in this step until they provide one clear story or experience."
+        },
+        "step2": {
+          "title": "Discover your strengths",
+          "description": "What qualities or strengths did you show during this experience?",
+          "instruction": "Help the user identify the personal strengths, skills, or qualities they demonstrated in their story. Ask them to name at least 2-3 strengths they see in themselves from this experience — things like resilience, courage, compassion, determination, or creativity."
+        },
+        "step3": {
+          "title": "Connect to your present",
+          "description": "How can these strengths help you in your current life?",
+          "instruction": "Guide the user to connect their identified strengths to their present situation. Ask them to consider how these same qualities can support them with current challenges or goals. Encourage one specific way they can use these strengths moving forward."
+        }
+      },
+      "morningMindfulness": {
+        "step1": {
+          "title": "Notice your awakening",
+          "description": "Take a moment to become aware of your body and mind as you begin your day.",
+          "instruction": "Guide the user to pause and notice how they feel physically and mentally as they wake up. Encourage them to observe without judgment — perhaps noticing their energy level, any tension, or their overall mood. Keep this gentle and exploratory."
+        },
+        "step2": {
+          "title": "Set a gentle intention",
+          "description": "Choose one small way you'd like to approach your day mindfully.",
+          "instruction": "Help the user identify one simple intention for their day — this could be being more patient, staying present during conversations, or taking mindful pauses. Encourage them to choose something achievable and kind to themselves."
+        },
+        "step3": {
+          "title": "Take three mindful breaths",
+          "description": "Ground yourself with three conscious breaths before starting your day.",
+          "instruction": "Guide the user through three slow, intentional breaths. Invite them to focus on the sensation of breathing — feeling the air enter and leave their body. This serves as an anchor point they can return to throughout their day."
+        }
+      },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Understand why vision matters",
+          "description": "Having a clear vision gives direction and motivation.",
+          "instruction": "Explain to the user that imagining their future is like setting a compass. It helps guide choices, strengthens motivation, and helps us to know where to move and how we want to be as a person. Encourage them to approach this exercise with openness and not hold back. This is an ideal vision. You can ask a reflective question or offer a quick scale/check-in how clear their vision is at the moment."
+        },
+        "step2": {
+          "title": "Picture your future life",
+          "description": "Imagine your life a few years from now across its important areas.",
+          "instruction": "Guide the user to imagine what life looks like when things feel right. Prompt them to go through key areas: Relationships (family, friends, partner), Work or studies, Health and wellbeing, Personal growth and learning, Lifestyle and daily routines. Encourage them to describe how each of these looks in their future vision."
+        },
+        "step3": {
+          "title": "Notice what's important",
+          "description": "Reflect on the values and priorities in your vision.",
+          "instruction": "Ask the user to identify the main values that shine through their vision — for example, connection, balance, freedom, kindness, growth. Encourage them to name one or two that feel most central right now."
+        },
+        "step4": {
+          "title": "Connect with your vision",
+          "description": "Envision it fully and link it to your life today.",
+          "instruction": "Encourage the user to pause and really imagine being in this future — what does it feel like, what emotions come up? Then ask them to describe one small way they can stay connected to this vision today, whether through an action, a reminder, or simply holding the feeling in mind."
+        }
+      }
+    }
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "recommended": "Recommended",
+    "deepBreathing": "Deep Breathing",
+    "startDescription": "Start with a calming breathing exercise to center yourself.",
+    "startVoiceSession": "Start Voice Session",
+    "breathing": {
+      "title": "Breathing Exercise",
+      "description": "Quick 3-minute breathing exercise",
+      "category": "Wellness"
+    },
+    "gratitude": {
+      "title": "Gratitude Practice",
+      "description": "Daily gratitude reflection",
+      "category": "Mindfulness"
+    },
+    "meditation": {
+      "title": "Quick Meditation",
+      "description": "5-minute mindful meditation",
+      "category": "Meditation"
+    },
+    "journaling": {
+      "title": "Mood Check-in",
+      "description": "Track how you're feeling",
+      "category": "Journaling"
+    },
+    "stressRelief": {
+      "title": "Stress Relief",
+      "description": "Progressive muscle relaxation",
+      "category": "Wellness"
+    },
+    "voiceSession": {
+      "title": "Voice Session",
+      "description": "Talk with your AI companion",
+      "category": "Chat"
+    }
+  },
+  "actionPalette": {
+    "title": "What would you like to do?",
+    "cancel": "Cancel",
+    "guidedSession": {
+      "title": "Guided Session",
+      "description": "Talk with your AI therapist"
+    },
+    "guidedJournaling": {
+      "title": "Guided Journaling",
+      "description": "Reflect through writing"
+    },
+    "quickExercise": {
+      "title": "Quick Exercise",
+      "description": "Start a mindfulness practice"
+    },
+    "exerciseLibrary": {
+      "title": "Exercise Library",
+      "description": "Browse all exercises"
+    }
+  },
+  "alerts": {
+    "signOut": {
+      "title": "Sign Out",
+      "message": "Are you sure you want to sign out?"
+    },
+    "deleteSession": {
+      "title": "Delete Session",
+      "message": "Are you sure you want to delete this session?"
+    },
+    "resetProgress": {
+      "title": "Reset Progress",
+      "message": "This will reset all your progress. This action cannot be undone."
+    },
+    "promptsGenerated": {
+      "title": "Prompts Generated!",
+      "message": "Generated {{count}} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the \"Writing Prompts\" section."
+    },
+    "clearHistory": {
+      "title": "Clear All History",
+      "message": "Are you sure you want to clear all your chat history? This action cannot be undone."
+    },
+    "goalStatus": {
+      "title": "Goal Status Updated",
+      "message": "Goal marked as {{status}}!"
+    },
+    "progressSaved": {
+      "title": "Great!",
+      "message": "Your progress has been recorded."
+    },
+    "checkIn": {
+      "title": "Check-In Complete",
+      "message": "Thank you for sharing your progress!"
+    }
+  },
+  "visionDetails": {
+    "title": "Vision of Myself",
+    "visionsCreated": "{{count}} vision{{plural}} created",
+    "loading": "Loading your visions...",
+    "empty": {
+      "title": "No Visions Yet",
+      "description": "Complete a \"Vision of the Future\" exercise to see your inspiring visions here."
+    },
+    "sections": {
+      "yourVision": "Your Vision",
+      "coreQualities": "Core Qualities",
+      "lifeAreas": "Life Areas",
+      "guidingWords": "Guiding Words",
+      "practicalSteps": "Practical Steps",
+      "howItFeels": "How It Feels",
+      "wisdomFromFuture": "Wisdom from Your Future Self"
+    },
+    "reflectButton": "Reflect on This Vision"
+  },
+  "ttsSettings": {
+    "title": "Voice Settings",
+    "enable": {
+      "title": "Enable Voice",
+      "description": "Allow your turtle guide to speak responses aloud"
+    },
+    "autoPlay": {
+      "title": "Auto-play Responses",
+      "description": "Automatically speak AI responses when they arrive"
+    },
+    "speed": {
+      "title": "Speaking Speed",
+      "slow": "Slow",
+      "normal": "Normal",
+      "fast": "Fast",
+      "lower": "Lower",
+      "higher": "Higher"
+    },
+    "pitch": {
+      "title": "Voice Pitch",
+      "low": "Low",
+      "high": "High"
+    },
+    "test": {
+      "button": "Test Voice",
+      "stopButton": "Stop Test",
+      "text": "Hello, I'm your gentle turtle guide. This is how my voice will sound with these settings."
+    }
+  }
+}

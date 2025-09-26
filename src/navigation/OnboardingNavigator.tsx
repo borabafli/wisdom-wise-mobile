@@ -3,6 +3,7 @@ import OnboardingWelcomeScreen from '../screens/onboarding/OnboardingWelcomeScre
 import OnboardingValuePropScreen from '../screens/onboarding/OnboardingValuePropScreen';
 import PersonalValuesScreen from '../screens/onboarding/PersonalValuesScreen';
 import FocusAreasScreen from '../screens/onboarding/FocusAreasScreen';
+import OnboardingFinalScreen from '../screens/onboarding/OnboardingFinalScreen';
 import { OnboardingService } from '../services/onboardingService';
 import { storageService } from '../services/storageService';
 
@@ -29,7 +30,7 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
   };
 
   const handleContinueFromFocusAreas = async (selectedAreas: string[]) => {
-    // Save selected focus areas
+    // Save selected focus areas and move to final screen
     try {
       await storageService.updateUserProfile({
         onboardingValues: userProfile.values || [],
@@ -43,6 +44,10 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
       console.error('Error saving onboarding data:', error);
     }
 
+    setCurrentStep(5); // Go to final screen
+  };
+
+  const handleCompleteOnboarding = async () => {
     // Complete onboarding
     await OnboardingService.completeOnboarding();
     onComplete();
@@ -74,6 +79,13 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
       return (
         <FocusAreasScreen 
           onContinue={handleContinueFromFocusAreas}
+        />
+      );
+
+    case 5:
+      return (
+        <OnboardingFinalScreen 
+          onComplete={handleCompleteOnboarding}
         />
       );
     

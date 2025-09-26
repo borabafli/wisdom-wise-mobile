@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { PanGestureHandler } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -24,6 +25,7 @@ interface SlidableHomeExerciseCardProps {
   onStartSession: (exercise: any) => void;
   onHideCard: (exerciseId: string, hideType: 'permanent' | 'temporary') => void;
   simulateExerciseCompletion?: (exerciseId: string, completed: boolean) => void;
+  isLast?: boolean;
 }
 
 const SWIPE_THRESHOLD = 100;
@@ -36,7 +38,9 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
   onStartSession,
   onHideCard,
   simulateExerciseCompletion,
+  isLast = false,
 }) => {
+  const { t } = useTranslation();
   const translateX = useSharedValue(0);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
@@ -138,10 +142,47 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
         shouldCancelWhenOutside={true}
       >
         <Animated.View style={[slidableHomeExerciseCardStyles.container]}>
+          {/* Timeline elements - outside sliding container */}
+          <View style={slidableHomeExerciseCardStyles.timelineContainer}>
+            {index > 0 && <View style={slidableHomeExerciseCardStyles.timelineLineTop} />}
+            {isLast ? (
+              <View style={slidableHomeExerciseCardStyles.timelineLineBottomLastGradient}>
+                <LinearGradient
+                  colors={['#9CA3AF', 'rgba(156, 163, 175, 0.8)']}
+                  style={slidableHomeExerciseCardStyles.dashSegment}
+                />
+                <View style={slidableHomeExerciseCardStyles.dashGap} />
+                <LinearGradient
+                  colors={['rgba(156, 163, 175, 0.7)', 'rgba(156, 163, 175, 0.5)']}
+                  style={slidableHomeExerciseCardStyles.dashSegment}
+                />
+                <View style={slidableHomeExerciseCardStyles.dashGap} />
+                <LinearGradient
+                  colors={['rgba(156, 163, 175, 0.4)', 'rgba(156, 163, 175, 0.2)']}
+                  style={slidableHomeExerciseCardStyles.dashSegment}
+                />
+                <View style={slidableHomeExerciseCardStyles.dashGap} />
+                <LinearGradient
+                  colors={['rgba(156, 163, 175, 0.1)', 'rgba(156, 163, 175, 0)']}
+                  style={slidableHomeExerciseCardStyles.dashSegment}
+                />
+              </View>
+            ) : (
+              <View style={slidableHomeExerciseCardStyles.timelineLineBottom} />
+            )}
+            {index === 0 ? (
+              <View style={[slidableHomeExerciseCardStyles.timelineCircle, slidableHomeExerciseCardStyles.timelineCircleFirst]}>
+                <View style={slidableHomeExerciseCardStyles.timelineCircleFirstInner} />
+              </View>
+            ) : (
+              <View style={slidableHomeExerciseCardStyles.timelineCircle} />
+            )}
+          </View>
+
           {/* Background slide text */}
           <Animated.View style={[slidableHomeExerciseCardStyles.slideTextContainer, slideTextAnimatedStyle]}>
             <Text style={slidableHomeExerciseCardStyles.slideText}>
-              Slide to remove exercise
+              {t('home.slideToRemove')}
             </Text>
           </Animated.View>
 
@@ -181,10 +222,10 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
                 <Image
                   source={
                     index === 0
-                      ? require('../../assets/new-design/Homescreen/Cards/green-card-new.png')
+                      ? require('../../assets/new-design/Homescreen/Cards/sharper/card-1-less-height.png')
                       : index === 1
-                      ? require('../../assets/new-design/Homescreen/Cards/purple-card-new.png')
-                      : require('../../assets/new-design/Homescreen/Cards/blue-card-new.png')
+                      ? require('../../assets/new-design/Homescreen/Cards/sharper/card-2-less-height.png')
+                      : require('../../assets/new-design/Homescreen/Cards/sharper/card-4-less-height.png')
                   }
                   style={slidableHomeExerciseCardStyles.exerciseCardFullSize}
                   contentFit="contain"
@@ -257,7 +298,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
         <View style={slidableHomeExerciseCardStyles.modalOverlay}>
           <View style={slidableHomeExerciseCardStyles.modalContainer}>
             <Text style={slidableHomeExerciseCardStyles.modalTitle}>
-              Remove Exercise?
+              {t('home.removeExerciseModal.title')}
             </Text>
 
             <View style={slidableHomeExerciseCardStyles.modalButtonRow}>
@@ -266,7 +307,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
                 onPress={() => handleScheduleChoice('temporary')}
               >
                 <Text style={[slidableHomeExerciseCardStyles.modalButtonText, slidableHomeExerciseCardStyles.temporaryButtonText]}>
-                  For 7 days
+                  {t('home.removeExerciseModal.for7Days')}
                 </Text>
               </TouchableOpacity>
 
@@ -275,7 +316,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
                 onPress={() => handleScheduleChoice('permanent')}
               >
                 <Text style={slidableHomeExerciseCardStyles.modalButtonText}>
-                  Forever
+                  {t('home.removeExerciseModal.forever')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -288,7 +329,7 @@ const SlidableHomeExerciseCard: React.FC<SlidableHomeExerciseCardProps> = ({
               }}
             >
               <Text style={[slidableHomeExerciseCardStyles.modalButtonText, slidableHomeExerciseCardStyles.cancelButtonText]}>
-                Cancel
+                {t('home.removeExerciseModal.cancel')}
               </Text>
             </TouchableOpacity>
           </View>

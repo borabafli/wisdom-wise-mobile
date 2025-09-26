@@ -6,6 +6,7 @@
     import { insightService } from './insightService';
     import { goalService } from './goalService';
     import { chatService } from './chatService';
+    import { getCurrentLanguage, getLanguageName } from './i18nService';
 
     export interface JournalPrompt {
       id: string;

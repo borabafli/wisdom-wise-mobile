@@ -11,6 +11,7 @@ import JournalStorageService from '../services/journalStorageService';
 import { useVoiceRecording } from '../hooks/chat/useVoiceRecording';
 import { useTTSControls } from '../hooks/chat/useTTSControls';
 import { RecordingWave } from '../components/RecordingWave';
+import { useTranslation } from 'react-i18next';
 
 interface GuidedJournalScreenProps {
   route: {
@@ -27,6 +28,7 @@ interface JournalEntry {
 }
 
 const GuidedJournalScreen: React.FC<GuidedJournalScreenProps> = ({ route, navigation }) => {
+  const { t } = useTranslation();
   const { initialPrompt } = route.params;
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -74,7 +76,7 @@ const GuidedJournalScreen: React.FC<GuidedJournalScreenProps> = ({ route, naviga
 
   const handleNext = async () => {
     if (!currentResponse.trim()) {
-      Alert.alert('Please write something', 'Your journal entry cannot be empty.');
+      Alert.alert(t('journal.pleaseWriteSomething'), t('journal.entryCannotBeEmpty'));
       return;
     }
 
@@ -94,7 +96,7 @@ const GuidedJournalScreen: React.FC<GuidedJournalScreenProps> = ({ route, naviga
         setCurrentResponse('');
       } catch (error) {
         console.error('Error generating follow-up question:', error);
-        Alert.alert('Error', 'Failed to generate next question. Please try again.');
+        Alert.alert(t('common.error'), t('journal.failedNextQuestion'));
       } finally {
         setIsGeneratingQuestion(false);
       }
@@ -219,18 +221,18 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
       );
 
       Alert.alert(
-        'Journal Saved',
-        shouldPolish ? 'Your entry has been saved and polished!' : 'Your journal entry has been saved!',
+        t('journal.journalSaved'),
+        shouldPolish ? t('journal.entrySavedPolished') : t('journal.entrySaved'),
         [
           {
-            text: 'OK',
+            text: t('common.ok'),
             onPress: () => navigation.goBack()
           }
         ]
       );
     } catch (error) {
       console.error('Error saving journal entry:', error);
-      Alert.alert('Error', 'Failed to save your journal entry. Please try again.');
+      Alert.alert(t('common.error'), t('journal.failedToSave'));
     }
   };
 
@@ -272,7 +274,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
       navigation.goBack();
     } catch (error) {
       console.error('Error saving draft:', error);
-      Alert.alert('Error', 'Failed to save your draft. Please try again.');
+      Alert.alert(t('common.error'), t('journal.failedToSaveDraft'));
     }
   };
 
@@ -296,13 +298,12 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
 
   return (
     <>
-      <LinearGradient
-        colors={['rgb(216, 235, 243)', 'rgba(255, 255, 255, 1)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={{ flex: 1 }}
-      >
-        <SafeAreaWrapper style={styles.container}>
+      <SafeAreaWrapper style={styles.container}>
+        {/* Solid Background like Home Screen */}
+        <View
+          style={[styles.backgroundSolid, { backgroundColor: '#e9eff1' }]}
+          pointerEvents="none"
+        />
         <StatusBar style="dark" backgroundColor="transparent" translucent />
         <KeyboardAvoidingView
           style={styles.keyboardView}
@@ -314,9 +315,9 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
           <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
             <ArrowLeft size={24} color="#2B475E" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Guided Journal</Text>
+          <Text style={styles.headerTitle}>{t('journal.title')}</Text>
           <View style={styles.stepIndicator}>
-            <Text style={styles.stepText}>{currentStep + 1}/3</Text>
+            <Text style={styles.stepText}>{t('journal.stepIndicator', { current: currentStep + 1, total: 3 })}</Text>
           </View>
         </View>
 
@@ -335,7 +336,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                 <TextInput
                   value={currentResponse}
                   onChangeText={setCurrentResponse}
-                  placeholder={isTranscribing ? "Transcribing..." : "Type or speak your thoughts..."}
+                  placeholder={isTranscribing ? t('journal.transcribing') : t('journal.typeOrSpeak')}
                   placeholderTextColor="rgba(43, 71, 94, 0.5)"
                   multiline
                   style={styles.textInput}
@@ -409,7 +410,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
           {/* Previous Entries (for context) */}
           {currentStep > 0 && (
             <View style={styles.previousEntriesContainer}>
-              <Text style={styles.previousEntriesTitle}>Your Previous Reflections:</Text>
+              <Text style={styles.previousEntriesTitle}>{t('journal.previousReflections')}</Text>
               {entries.slice(0, currentStep).map((entry, index) => (
                 <View key={index} style={styles.previousEntry}>
                   <Text style={styles.previousPrompt}>{entry.prompt}</Text>
@@ -434,7 +435,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                 <View style={[styles.compactNextButton, styles.compactNextButtonDisabled]}>
                   <Check size={16} color="#FFFFFF" />
                   <Text style={styles.compactNextButtonText}>
-                    {isGeneratingQuestion ? '...' : (currentStep < 2 ? 'Continue' : 'Finish')}
+                    {isGeneratingQuestion ? t('journal.generating') : (currentStep < 2 ? t('journal.continue') : t('journal.finish'))}
                   </Text>
                 </View>
               ) : (
@@ -446,7 +447,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                 >
                   <Check size={16} color="#FFFFFF" />
                   <Text style={styles.compactNextButtonText}>
-                    {currentStep < 2 ? 'Continue' : 'Finish'}
+                    {currentStep < 2 ? t('journal.continue') : t('journal.finish')}
                   </Text>
                 </LinearGradient>
               )}
@@ -454,8 +455,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
           </View>
         </ScrollView>
         </KeyboardAvoidingView>
-        </SafeAreaWrapper>
-      </LinearGradient>
+      </SafeAreaWrapper>
 
       {/* Save Session Modal */}
       <Modal
@@ -466,14 +466,14 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
       >
         <View style={styles.modalOverlay}>
           <View style={styles.saveModal}>
-            <Text style={styles.saveModalTitle}>Save Session?</Text>
+            <Text style={styles.saveModalTitle}>{t('journal.saveModalTitle')}</Text>
 
             <TouchableOpacity
               style={styles.saveModalButton}
               onPress={handleSaveAndExit}
               activeOpacity={0.8}
             >
-              <Text style={styles.saveModalButtonText}>Save</Text>
+              <Text style={styles.saveModalButtonText}>{t('journal.save')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -481,7 +481,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
               onPress={handleDontSaveAndExit}
               activeOpacity={0.8}
             >
-              <Text style={[styles.saveModalButtonText, styles.dontSaveButtonText]}>Don't Save</Text>
+              <Text style={[styles.saveModalButtonText, styles.dontSaveButtonText]}>{t('journal.dontSaveButton')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -489,7 +489,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
               style={styles.cancelButton}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -127,6 +127,35 @@ WisdomWise is a mindfulness and mental health support app built around a therape
 ### Project Status
 This is an active development project with sophisticated AI-driven therapy features, advanced exercise flow management, and comprehensive voice interaction capabilities.
 
+## Multi-Language Support Strategy
+
+### Overview
+The app supports 6 languages: English (en) as default, plus German (de), French (fr), Turkish (tr), Spanish (es), and Portuguese (pt).
+
+### AI-First Approach
+- **AI Content**: AI naturally responds in the user's preferred language without static translations
+- **Exercise Content**: AI generates/explains exercises in the selected language dynamically
+- **Voice Recognition**: Whisper API uses language parameter based on user's language setting
+- **Cultural Adaptation**: Minimal - AI handles therapeutic appropriateness across languages
+
+### Technical Implementation
+- **Static UI Only**: Translate buttons, menus, labels, error messages using i18n framework
+- **Language State**: Store user preference in AsyncStorage, pass to AI context
+- **AI Integration**: Add language instruction to system prompts ("Respond in German")
+- **Session Management**: Handle mid-session language switches gracefully
+
+### Development Workflow (CRITICAL)
+- **NEVER hardcode text strings** - always use translation keys from day one
+- **Pattern**: `<Text>{t('profile.title')}</Text>` not `<Text>Profile</Text>`
+- **New Features**: Build in English first using translation keys, batch translate later
+- **Claude's Role**: Enforce i18n patterns, catch and prevent hardcoded strings
+- **File Structure**: `/locales/en.json` (master), `/locales/de.json`, etc.
+
+### Key Principle
+> **"Multilingual by Design, not by Retrofit"**
+
+All new development must use translation keys immediately to prevent future regression.
+
 ### Development Guides
 - If the requested functionality is too complex to handle within the code alone, you may suggest alternative approaches (e.g., "we should create a database for this in the following way...").
 - If a new edge function needs to be created, it should also be created within /supabase/functions. We must always have Supabase functions available locally. This is a MUST DO.
