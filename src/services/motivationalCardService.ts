@@ -146,20 +146,21 @@ class MotivationalCardService {
     }
 
     // Randomly select from available messages
-    const selectedMessage = availableMessages[Math.floor(Math.random() * availableMessages.length)];
+    const selectedMessage = availableMessages[Math.floor(Math.random() * availableMessages.length)] ||
+      { emoji: '🌿', text: 'Your wellness journey continues', category: 'encouragement' as const };
 
-    // Substitute placeholders
-    let text = selectedMessage.text;
-    text = text.replace('{{exerciseCount}}', data.exercisesThisWeek.toString());
+    // Substitute placeholders with safe values
+    let text = selectedMessage.text || 'Your wellness journey continues';
+    text = text.replace('{{exerciseCount}}', (data.exercisesThisWeek || 0).toString());
     text = text.replace('{{reflectionType}}', data.lastReflectionType || 'wellness');
-    text = text.replace('{{sessionCount}}', data.sessionsThisWeek.toString());
-    text = text.replace('{{totalSessions}}', data.totalSessions.toString());
-    text = text.replace('{{visionQualities}}', this.formatVisionQualities(data.visionQualities));
+    text = text.replace('{{sessionCount}}', (data.sessionsThisWeek || 0).toString());
+    text = text.replace('{{totalSessions}}', (data.totalSessions || 0).toString());
+    text = text.replace('{{visionQualities}}', this.formatVisionQualities(data.visionQualities || []));
 
     return {
-      emoji: selectedMessage.emoji,
+      emoji: selectedMessage.emoji || '🌿',
       text,
-      category: selectedMessage.category
+      category: selectedMessage.category || 'encouragement'
     };
   }
 

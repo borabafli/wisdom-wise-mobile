@@ -42,7 +42,7 @@ const customTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: '#F9FBFD', // Therapeutic soft blue-tint background
+    background: '#e9eff1', // Match homescreen background
     card: colors.white, // Pure white tab bar
     text: colors.text.primary, // Primary text color
     primary: '#3BB4F5', // Light sky blue accent - matches turtle theme
@@ -151,7 +151,7 @@ export const AppContent: React.FC = () => {
   if (showBreathing) {
     return (
       <>
-        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <StatusBar style="dark" backgroundColor="#e9eff1" />
         <BreathingScreen onBack={handleBackFromBreathing} />
       </>
     );
@@ -160,7 +160,7 @@ export const AppContent: React.FC = () => {
   if (showTherapyGoals) {
     return (
       <>
-        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <StatusBar style="dark" backgroundColor="#e9eff1" />
         <TherapyGoalsScreen
           onBack={handleBackFromTherapyGoals}
           onNavigateToExercises={handleNavigateToExercises}
@@ -176,7 +176,7 @@ export const AppContent: React.FC = () => {
   if (showChat) {
     return (
       <>
-        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <StatusBar style="dark" backgroundColor="#e9eff1" />
         <ChatInterface 
           key={chatKey}
           onBack={handleBackFromChat}
@@ -191,7 +191,7 @@ export const AppContent: React.FC = () => {
 
   return (
     <NavigationContainer ref={navigationRef} theme={customTheme}>
-        <StatusBar style="dark" backgroundColor="#f0f9ff" />
+        <StatusBar style="dark" backgroundColor="#e9eff1" />
         <Tab.Navigator
         tabBar={(props: any) => (
           <CustomTabBar 

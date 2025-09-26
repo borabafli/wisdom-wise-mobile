@@ -4,6 +4,7 @@ import { X, ChevronRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { SmileyImage } from './SmileyImage';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,15 +21,16 @@ const ExerciseCompletionRating: React.FC<ExerciseCompletionRatingProps> = ({
   onRatingSubmit,
   exerciseName,
 }) => {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(3);
   const sliderAnimation = new Animated.Value(0.5); // Start at middle (rating 3)
 
   const getRatingText = (rating: number) => {
-    if (rating <= 1) return 'Not helpful at all';
-    if (rating <= 2) return 'Somewhat helpful';
-    if (rating <= 3) return 'Moderately helpful';
-    if (rating <= 4) return 'Very helpful';
-    return 'Extremely helpful';
+    if (rating <= 1) return t('exercises.exerciseRating.ratings.notHelpfulAtAll');
+    if (rating <= 2) return t('exercises.exerciseRating.ratings.somewhatHelpful');
+    if (rating <= 3) return t('exercises.exerciseRating.ratings.moderatelyHelpful');
+    if (rating <= 4) return t('exercises.exerciseRating.ratings.veryHelpful');
+    return t('exercises.exerciseRating.ratings.extremelyHelpful');
   };
 
   const getRatingEmoji = (rating: number) => {
@@ -108,15 +110,15 @@ const ExerciseCompletionRating: React.FC<ExerciseCompletionRatingProps> = ({
           
           {/* Title */}
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>How helpful was this exercise?</Text>
+            <Text style={styles.title}>{t('exercises.exerciseRating.title')}</Text>
             <Text style={styles.subtitle}>
-              We use your feedback to personalize your experience and suggest better exercises that suit your needs.
+              {t('exercises.exerciseRating.subtitle')}
             </Text>
           </View>
           
           {/* Rating Display */}
           <View style={styles.ratingContainer}>
-            <Text style={styles.ratingLabel}>Today</Text>
+            <Text style={styles.ratingLabel}>{t('exercises.exerciseRating.today')}</Text>
             <Text style={styles.ratingText}>{getRatingText(rating)}</Text>
             <SmileyImage emoji={getRatingEmoji(rating)} size={32} />
           </View>
@@ -156,8 +158,8 @@ const ExerciseCompletionRating: React.FC<ExerciseCompletionRatingProps> = ({
             </View>
             
             <View style={styles.sliderLabels}>
-              <Text style={styles.sliderLabelText}>Not at all</Text>
-              <Text style={styles.sliderLabelText}>Very</Text>
+              <Text style={styles.sliderLabelText}>{t('exercises.exerciseRating.sliderLabels.notAtAll')}</Text>
+              <Text style={styles.sliderLabelText}>{t('exercises.exerciseRating.sliderLabels.very')}</Text>
             </View>
           </View>
           

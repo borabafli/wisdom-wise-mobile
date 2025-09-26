@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider'; // We'd need to install this
 import { ttsService, TTSSettings, TTSVoice } from '../services/ttsService';
 import { ttsSettingsStyles as styles } from '../styles/components/TTSSettings.styles';
+import { useTranslation } from 'react-i18next';
 
 interface TTSSettingsProps {
   visible: boolean;
@@ -13,6 +14,7 @@ interface TTSSettingsProps {
 }
 
 const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) => {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<TTSSettings>({
     isEnabled: true,
     autoPlay: false,
@@ -65,7 +67,7 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
       setIsTestSpeaking(false);
     } else {
       setIsTestSpeaking(true);
-      const testText = "Hello, I'm your gentle turtle guide. This is how my voice will sound with these settings.";
+      const testText = t('ttsSettings.test.text');
       await ttsService.speak(testText, settings);
       // The service will handle the callback when done
       setTimeout(() => setIsTestSpeaking(false), 5000); // Fallback timeout
@@ -82,7 +84,7 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
 
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Voice Settings</Text>
+          <Text style={styles.headerTitle}>{t('ttsSettings.title')}</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <X size={24} color="#475569" />
           </TouchableOpacity>
@@ -99,9 +101,9 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
             >
               <View style={styles.settingHeader}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingTitle}>Enable Voice</Text>
+                  <Text style={styles.settingTitle}>{t('ttsSettings.enable.title')}</Text>
                   <Text style={styles.settingDescription}>
-                    Allow your turtle guide to speak responses aloud
+                    {t('ttsSettings.enable.description')}
                   </Text>
                 </View>
                 <Switch
@@ -122,9 +124,9 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
             >
               <View style={styles.settingHeader}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingTitle}>Auto-play Responses</Text>
+                  <Text style={styles.settingTitle}>{t('ttsSettings.autoPlay.title')}</Text>
                   <Text style={styles.settingDescription}>
-                    Automatically speak AI responses when they arrive
+                    {t('ttsSettings.autoPlay.description')}
                   </Text>
                 </View>
                 <Switch
@@ -145,11 +147,11 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
               style={styles.settingGradient}
             >
               <View style={styles.settingContent}>
-                <Text style={styles.settingTitle}>Speaking Speed</Text>
+                <Text style={styles.settingTitle}>{t('ttsSettings.speed.title')}</Text>
                 <Text style={styles.settingValue}>{Math.round(settings.rate * 100)}%</Text>
-                
+
                 <View style={styles.sliderContainer}>
-                  <Text style={styles.sliderLabel}>Slow</Text>
+                  <Text style={styles.sliderLabel}>{t('ttsSettings.speed.slow')}</Text>
                   <View style={styles.sliderWrapper}>
                     {/* Note: We'd need to install @react-native-community/slider */}
                     <View style={styles.sliderPlaceholder}>
@@ -157,23 +159,23 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
                         style={[styles.sliderButton, settings.rate < 0.8 && styles.sliderButtonActive]}
                         onPress={() => saveSettings({ rate: 0.6 })}
                       >
-                        <Text style={styles.sliderButtonText}>Slow</Text>
+                        <Text style={styles.sliderButtonText}>{t('ttsSettings.speed.slow')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.sliderButton, settings.rate >= 0.7 && settings.rate <= 0.9 && styles.sliderButtonActive]}
                         onPress={() => saveSettings({ rate: 0.8 })}
                       >
-                        <Text style={styles.sliderButtonText}>Normal</Text>
+                        <Text style={styles.sliderButtonText}>{t('ttsSettings.speed.normal')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.sliderButton, settings.rate > 1.0 && styles.sliderButtonActive]}
                         onPress={() => saveSettings({ rate: 1.2 })}
                       >
-                        <Text style={styles.sliderButtonText}>Fast</Text>
+                        <Text style={styles.sliderButtonText}>{t('ttsSettings.speed.fast')}</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <Text style={styles.sliderLabel}>Fast</Text>
+                  <Text style={styles.sliderLabel}>{t('ttsSettings.speed.fast')}</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -186,34 +188,34 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
               style={styles.settingGradient}
             >
               <View style={styles.settingContent}>
-                <Text style={styles.settingTitle}>Voice Pitch</Text>
+                <Text style={styles.settingTitle}>{t('ttsSettings.pitch.title')}</Text>
                 <Text style={styles.settingValue}>{Math.round(settings.pitch * 100)}%</Text>
-                
+
                 <View style={styles.sliderContainer}>
-                  <Text style={styles.sliderLabel}>Lower</Text>
+                  <Text style={styles.sliderLabel}>{t('ttsSettings.speed.lower')}</Text>
                   <View style={styles.sliderWrapper}>
                     <View style={styles.sliderPlaceholder}>
                       <TouchableOpacity
                         style={[styles.sliderButton, settings.pitch < 0.8 && styles.sliderButtonActive]}
                         onPress={() => saveSettings({ pitch: 0.7 })}
                       >
-                        <Text style={styles.sliderButtonText}>Low</Text>
+                        <Text style={styles.sliderButtonText}>{t('ttsSettings.pitch.low')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.sliderButton, settings.pitch >= 0.8 && settings.pitch <= 1.0 && styles.sliderButtonActive]}
                         onPress={() => saveSettings({ pitch: 0.9 })}
                       >
-                        <Text style={styles.sliderButtonText}>Normal</Text>
+                        <Text style={styles.sliderButtonText}>{t('ttsSettings.speed.normal')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.sliderButton, settings.pitch > 1.0 && styles.sliderButtonActive]}
                         onPress={() => saveSettings({ pitch: 1.2 })}
                       >
-                        <Text style={styles.sliderButtonText}>High</Text>
+                        <Text style={styles.sliderButtonText}>{t('ttsSettings.pitch.high')}</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <Text style={styles.sliderLabel}>Higher</Text>
+                  <Text style={styles.sliderLabel}>{t('ttsSettings.speed.higher')}</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -236,12 +238,12 @@ const TTSSettingsComponent: React.FC<TTSSettingsProps> = ({ visible, onClose }) 
                 {isTestSpeaking ? (
                   <>
                     <VolumeX size={20} color="white" />
-                    <Text style={styles.testButtonText}>Stop Test</Text>
+                    <Text style={styles.testButtonText}>{t('ttsSettings.test.stopButton')}</Text>
                   </>
                 ) : (
                   <>
                     <Play size={20} color="white" />
-                    <Text style={styles.testButtonText}>Test Voice</Text>
+                    <Text style={styles.testButtonText}>{t('ttsSettings.test.button')}</Text>
                   </>
                 )}
               </LinearGradient>

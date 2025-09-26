@@ -35,7 +35,7 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.white,
+    backgroundColor: '#ebf5f9',
     borderTopLeftRadius: spacing.radius.xl,
     borderTopRightRadius: spacing.radius.xl,
     height: height * 0.8,
@@ -147,8 +147,8 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
   },
 
   tagDuration: {
-    backgroundColor: '#3F7D7B',
-    borderColor: '#2F6B69',
+    backgroundColor: '#3C678B',
+    borderColor: '#2E5475',
   },
 
   tagCategory: {
@@ -162,8 +162,8 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
   },
 
   tagBenefit: {
-    backgroundColor: '#3F7D7B',
-    borderColor: '#2F6B69',
+    backgroundColor: '#3C678B',
+    borderColor: '#2E5475',
   },
 
   tagApproach: {
@@ -273,12 +273,12 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 2,
     borderWidth: 2,
-    borderColor: '#3F7D7B',
+    borderColor: '#3C678B',
   },
 
   stepCircleNumber: {
     fontSize: 12,
-    color: '#3F7D7B',
+    color: '#3C678B',
     fontWeight: '700',
     fontFamily: Platform.select({
       ios: 'Ubuntu-Bold',
@@ -293,7 +293,7 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     top: 28, // Start below the circle
     width: 2,
     height: 35, // Reduced height to match tighter spacing
-    backgroundColor: '#3F7D7B',
+    backgroundColor: '#3C678B',
     zIndex: 1,
   },
 
@@ -386,26 +386,28 @@ export const exerciseSummaryCardStyles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.gray[100],
     flexShrink: 0,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#ebf5f9',
     justifyContent: 'center',
   },
 
-  startButton: {
-    backgroundColor: '#3F7D7B',
-    paddingVertical: spacing[4],
-    paddingHorizontal: spacing[6],
-    borderRadius: spacing.radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-    width: '100%',
-    borderWidth: 2,
-    borderColor: '#2F6B69',
+  startButtonTouchable: {
+    width: '80%',
+    alignSelf: 'center',
+    borderRadius: 24,
     elevation: 4, // Android shadow
     shadowColor: '#000', // iOS shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  },
+  startButton: {
+    paddingVertical: spacing[4],
+    paddingHorizontal: spacing[6],
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+    width: '100%',
   },
 
   startButtonText: {

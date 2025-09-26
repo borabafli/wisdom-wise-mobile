@@ -35,6 +35,14 @@ import {
   CrimsonText_400Regular,
   CrimsonText_600SemiBold,
 } from '@expo-google-fonts/crimson-text';
+import {
+  Oswald_300Light,
+  Oswald_400Regular,
+  Oswald_500Medium,
+  Oswald_600SemiBold,
+  Oswald_700Bold,
+} from '@expo-google-fonts/oswald';
+// IBM Plex Sans now uses local font files
 
 export const fontConfig = {
   // Primary UI font - Clean, readable for interface elements  
@@ -85,6 +93,23 @@ export const fontConfig = {
   'Ubuntu-Regular': require('../../assets/fonts/Ubuntu/Ubuntu-Regular.ttf'),
   'Ubuntu-Medium': require('../../assets/fonts/Ubuntu/Ubuntu-Medium.ttf'),
   'Ubuntu-Bold': require('../../assets/fonts/Ubuntu/Ubuntu-Bold.ttf'),
+
+  // Oswald font - Bold, condensed for titles and emphasis
+  'Oswald-Light': Oswald_300Light,
+  'Oswald-Regular': Oswald_400Regular,
+  'Oswald-Medium': Oswald_500Medium,
+  'Oswald-SemiBold': Oswald_600SemiBold,
+  'Oswald-Bold': Oswald_700Bold,
+
+  // IBM Plex Sans font - Modern, clean, professional (local static files)
+  'IBMPlexSans-Light': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-Light.ttf'),
+  'IBMPlexSans-Regular': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-Regular.ttf'),
+  'IBMPlexSans-Medium': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-Medium.ttf'),
+  'IBMPlexSans-SemiBold': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-SemiBold.ttf'),
+  'IBMPlexSans-Bold': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-Bold.ttf'),
+  'IBMPlexSans-MediumItalic': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-MediumItalic.ttf'),
+  'IBMPlexSans-SemiBoldItalic': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans-SemiBoldItalic.ttf'),
+  'IBMPlexSans_SemiCondensed-SemiBold': require('../../assets/fonts/IBM_Plex_Sans/static/IBMPlexSans_SemiCondensed-SemiBold.ttf'),
 };
 
 export const loadFonts = async () => {

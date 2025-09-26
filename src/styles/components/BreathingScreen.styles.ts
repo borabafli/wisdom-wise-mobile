@@ -11,7 +11,7 @@ const { width } = Dimensions.get('window');
 export const breathingScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.appBackground,
   },
   backgroundGradient: {
     position: 'absolute',

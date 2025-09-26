@@ -4,6 +4,7 @@ import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { StatusBar } from 'expo-status-bar';
 import { ArrowLeft } from 'lucide-react-native';
 import { JournalEntry } from '../services/journalStorageService';
+import { useTranslation } from 'react-i18next';
 
 interface JournalEntryDetailScreenProps {
   route: {
@@ -15,6 +16,7 @@ interface JournalEntryDetailScreenProps {
 }
 
 const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ route, navigation }) => {
+  const { t } = useTranslation();
   const { entry } = route.params;
 
   const formatDate = (dateString: string) => {
@@ -36,8 +38,8 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
   };
 
   return (
-    <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
-      <StatusBar style="dark" backgroundColor="#F8FAFC" />
+    <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#e9eff1' }}>
+      <StatusBar style="dark" backgroundColor="#e9eff1" />
 
       {/* Header */}
       <View style={{
@@ -61,7 +63,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
           textAlign: 'center',
           flex: 1,
         }}>
-          Journal Entry
+          {t('journal.journalEntry')}
         </Text>
         <View style={{ width: 40 }} />
       </View>
@@ -105,7 +107,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
                 fontSize: 12,
                 color: '#92400E',
               }}>
-                ✨ Polished
+                {t('journal.polished')}
               </Text>
             </View>
           )}
@@ -128,7 +130,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
             textTransform: 'uppercase',
             letterSpacing: 0.5,
           }}>
-            Initial Prompt
+            {t('journal.initialPrompt')}
           </Text>
           <Text style={{
             fontFamily: 'Ubuntu-Regular',
@@ -158,7 +160,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}>
-              Question {index + 1}
+              {t('journal.question')} {index + 1}
             </Text>
             <Text style={{
               fontFamily: 'Ubuntu-Medium',
@@ -197,7 +199,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
             textTransform: 'uppercase',
             letterSpacing: 0.5,
           }}>
-            Summary
+            {t('journal.summary')}
           </Text>
           <Text style={{
             fontFamily: 'Ubuntu-Regular',
@@ -227,7 +229,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}>
-              Key Insights
+              {t('journal.keyInsightsTitle')}
             </Text>
             {entry.insights.map((insight, index) => (
               <View key={index} style={{

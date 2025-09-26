@@ -8,7 +8,7 @@ import { memoryService } from '../services/memoryService';
 import { valuesService } from '../services/valuesService';
 import { thinkingPatternsService } from '../services/thinkingPatternsService';
 
-export const useExerciseFlow = (initialExercise?: any) => {
+export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => string) => {
   const [exerciseMode, setExerciseMode] = useState(false);
   const [exerciseStep, setExerciseStep] = useState(0);
   const [exerciseData, setExerciseData] = useState<Record<string, any>>({});
@@ -24,6 +24,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
   const [thinkingPatternContext, setThinkingPatternContext] = useState<{originalThought: string; distortionType: string; reframedThought: string; prompt: string} | null>(null);
   const [showVisionSummary, setShowVisionSummary] = useState(false);
   const [visionSummary, setVisionSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
+  const [showTherapyGoalSummary, setShowTherapyGoalSummary] = useState(false);
+  const [therapyGoalSummary, setTherapyGoalSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
   
   // Reflection session tracking
   const [reflectionMessageCount, setReflectionMessageCount] = useState(0);
@@ -38,7 +40,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
   ) => {
     try {
       console.log('Generating and starting dynamic exercise:', currentExercise.type);
-      const flow = getExerciseFlow(currentExercise.type);
+      const flow = getExerciseFlow(currentExercise.type, t || ((key: string) => key));
 
       if (!flow || !flow.steps || flow.steps.length === 0) {
         console.error('Failed to generate exercise flow');
@@ -128,6 +130,17 @@ export const useExerciseFlow = (initialExercise?: any) => {
               // Still show mood rating even if summary fails
               setShowMoodRating(true);
             }
+          } else if (currentExercise.type === 'therapy-goal-definition') {
+            try {
+              const recentMessages = await storageService.getLastMessages(15);
+              const therapyGoalSummary = await contextService.generateTherapyGoalSummary(recentMessages);
+              setTherapyGoalSummary(therapyGoalSummary);
+              setShowTherapyGoalSummary(true);
+            } catch (error) {
+              console.error('Error generating therapy goal summary:', error);
+              // Still show mood rating even if summary fails
+              setShowMoodRating(true);
+            }
           } else {
             // Show mood rating for other exercises
             setShowMoodRating(true);
@@ -155,7 +168,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
         const aiResponse: Message = {
           id: Date.now().toString(),
           type: 'exercise',
-          title: `Step ${exerciseStep + 1}: ${currentStep.title}`,
+          title: `Step ${exerciseStep + 1}: ${currentStep.title ? (t ? t(currentStep.title) : currentStep.title) : `Step ${exerciseStep + 1}`}`,
           content: response.message,
           exerciseType: currentExercise.type,
           color: flow.color,
@@ -215,7 +228,7 @@ export const useExerciseFlow = (initialExercise?: any) => {
       const aiMessage: Message = {
         id: Date.now().toString(),
         type: 'exercise',
-        title: `Step 1: ${currentStep.title}`,
+        title: `Step 1: ${currentStep.title ? (t ? t(currentStep.title) : currentStep.title) : 'Step 1'}`,
         content: response.message,
         exerciseType: currentExercise.type,
         color: flow.color,
@@ -717,6 +730,55 @@ export const useExerciseFlow = (initialExercise?: any) => {
     }
   }, [exerciseData, thinkingPatternContext, reflectionMessageCount, reflectionStartTime]);
 
+  // Therapy Goal Summary handlers
+  const saveTherapyGoalSummary = useCallback(async () => {
+    try {
+      if (therapyGoalSummary) {
+        // Save to insights/memory service for display in insights screen
+        const goalSummaryEntry = {
+          id: `therapy_goal_summary_${Date.now()}`,
+          type: 'therapy_goal_summary',
+          summary: therapyGoalSummary.summary,
+          keyInsights: therapyGoalSummary.keyInsights,
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString(),
+          category: 'goal_setting'
+        };
+
+        // Store in memory service as an insight entry
+        await memoryService.storeInsight({
+          id: goalSummaryEntry.id,
+          type: 'therapy_goals',
+          content: {
+            summary: therapyGoalSummary.summary,
+            keyInsights: therapyGoalSummary.keyInsights,
+            category: 'therapy_goal_definition'
+          },
+          timestamp: new Date().toISOString(),
+          source: 'exercise_completion'
+        });
+
+        console.log('Therapy goal summary saved successfully');
+
+        setShowTherapyGoalSummary(false);
+        setTherapyGoalSummary(null);
+        setShowMoodRating(true);
+      }
+    } catch (error) {
+      console.error('Error saving therapy goal summary:', error);
+      // Still hide the summary and show mood rating even if save fails
+      setShowTherapyGoalSummary(false);
+      setTherapyGoalSummary(null);
+      setShowMoodRating(true);
+    }
+  }, [therapyGoalSummary]);
+
+  const cancelTherapyGoalSummary = useCallback(() => {
+    setShowTherapyGoalSummary(false);
+    setTherapyGoalSummary(null);
+    setShowMoodRating(true);
+  }, []);
+
   return {
     exerciseMode,
     exerciseStep,
@@ -731,6 +793,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
     thinkingPatternSummary,
     showVisionSummary,
     visionSummary,
+    showTherapyGoalSummary,
+    therapyGoalSummary,
     reflectionMessageCount,
     canEndReflection,
     startDynamicAIGuidedExercise,
@@ -747,6 +811,8 @@ export const useExerciseFlow = (initialExercise?: any) => {
     cancelThinkingPatternSummary,
     saveVisionSummary,
     cancelVisionSummary,
+    saveTherapyGoalSummary,
+    cancelTherapyGoalSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,

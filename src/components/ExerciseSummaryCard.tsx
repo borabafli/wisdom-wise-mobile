@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import { BlurView } from 'expo-blur';
 import Animated, {
@@ -50,6 +51,7 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
   onStart,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [userRating, setUserRating] = useState<number>(0);
   const translateY = useSharedValue(height);
   const backgroundOpacity = useSharedValue(0);
@@ -123,7 +125,7 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
       return (
         <View style={styles.noStepsContainer}>
           <Text style={styles.noStepsText}>
-            This exercise will guide you through the process step by step.
+            {t('exercises.stepByStepGuide')}
           </Text>
         </View>
       );
@@ -150,11 +152,11 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
                 index === steps.length - 1 && { borderBottomWidth: 0 }
               ]}>
                 <Text style={styles.stepTitle}>
-                  {step.title || step.name || `Step ${index + 1}`}
+                  {step.title ? t(step.title) : step.name || t('exercises.stepNumber', { number: index + 1 })}
                 </Text>
                 {(step.description || step.instruction) && (
                   <Text style={styles.stepDescription}>
-                    {step.description || step.instruction}
+                    {step.description ? t(step.description) : step.instruction ? t(step.instruction) : ''}
                   </Text>
                 )}
               </View>
@@ -300,7 +302,7 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
             <View style={styles.metaItem}>
               <CheckCircle size={16} color="#6B7280" />
               <Text style={styles.metaText}>
-                {exercise.steps ? exercise.steps.length : 3} steps
+                {t('exercises.stepsCount', { count: exercise.steps ? exercise.steps.length : 3 })}
               </Text>
             </View>
             <View style={styles.metaItem}>
@@ -311,7 +313,7 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
 
           {/* Exercise Steps with Connected Circles */}
           <View style={styles.stepsSection}>
-            <Text style={styles.sectionTitle}>Steps</Text>
+            <Text style={styles.sectionTitle}>{t('exercises.steps')}</Text>
             {renderSteps()}
           </View>
         </ScrollView>
@@ -319,11 +321,18 @@ const ExerciseSummaryCard: React.FC<ExerciseSummaryCardProps> = ({
         {/* Start Exercise Button */}
         <View style={styles.footer}>
           <TouchableOpacity
-            style={styles.startButton}
+            style={styles.startButtonTouchable}
             onPress={handleStart}
             activeOpacity={0.8}
           >
-            <Text style={styles.startButtonText}>Start Exercise</Text>
+            <LinearGradient
+              colors={['#3B6B8A', '#2E5475']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.startButton}
+            >
+              <Text style={styles.startButtonText}>{t('exercises.startExercise')}</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </Animated.View>

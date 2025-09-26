@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { dailyPromptCardStyles as styles } from '../styles/components/DailyPromptCard.styles';
 
 interface DailyPromptCardProps {
@@ -9,6 +10,7 @@ interface DailyPromptCardProps {
 }
 
 const DailyPromptCard: React.FC<DailyPromptCardProps> = ({ prompt, onStartWriting }) => {
+  const { t } = useTranslation();
   // Calculate dynamic font size based on text length
   const getDynamicFontSize = (text: string) => {
     const baseSize = 18; // Increased from 16 to 18
@@ -54,7 +56,7 @@ const DailyPromptCard: React.FC<DailyPromptCardProps> = ({ prompt, onStartWritin
               end={{ x: 1, y: 1 }}
               style={styles.startButton}
             >
-              <Text style={styles.startButtonText}>Start Writing</Text>
+              <Text style={styles.startButtonText}>{t('home.startWriting')}</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>

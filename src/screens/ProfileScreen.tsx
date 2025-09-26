@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { User, Settings, Bell, Shield, HelpCircle, LogOut, LogIn, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,6 +10,7 @@ import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigat
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
@@ -16,8 +18,12 @@ import { profileScreenStyles as styles } from '../styles/components/ProfileScree
 const { width, height } = Dimensions.get('window');
 
 const ProfileScreen: React.FC = () => {
+
+  const { t } = useTranslation();
+
   const { user, profile, isAnonymous, signOut, requestLogin } = useAuth();
   
+
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
   
@@ -44,33 +50,39 @@ const ProfileScreen: React.FC = () => {
   }, [user, profile]);
   
   const stats = [
-    { label: 'Sessions', value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
-    { label: 'Streak', value: '7 days', iconImage: require('../../assets/images/New Icons/icon-7.png') },
-    { label: 'Insights', value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
-    { label: 'Exercises', value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
+    { label: t('profile.stats.sessions'), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
+    { label: t('profile.stats.streak'), value: t('profile.stats.daysStreak'), iconImage: require('../../assets/images/New Icons/icon-7.png') },
+    { label: t('profile.stats.insights'), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
+    { label: t('profile.stats.exercises'), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
   ];
 
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
 
+
+  // Get display name from auth profile
+  const displayName = profile
+    ? `${profile.first_name} ${profile.last_name}`.trim() || t('profile.fallbackName')
+    : user?.email?.split('@')[0] || t('profile.fallbackName');
+
   const handleSignOut = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('alerts.signOut.title'),
+      t('alerts.signOut.message'),
       [
         {
-          text: 'Cancel',
+          text: t('common.cancel'),
           style: 'cancel',
         },
         {
-          text: 'Sign Out',
+          text: t('profile.signOut'),
           style: 'destructive',
           onPress: async () => {
             try {
               await signOut();
             } catch (error) {
-              Alert.alert('Error', 'Failed to sign out. Please try again.');
+              Alert.alert(t('common.error'), t('errors.genericError'));
             }
           },
         },
@@ -99,6 +111,7 @@ const ProfileScreen: React.FC = () => {
   };
 
   const menuItems = [
+
     { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: 'Edit Profile', action: () => setShowEditProfile(true) },
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: 'Chat History', action: () => setShowChatHistory(true) },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: 'Voice Settings', action: () => setShowTTSSettings(true) },
@@ -117,12 +130,10 @@ const ProfileScreen: React.FC = () => {
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
       
-      {/* Background Gradient - Clean like Exercise screen */}
-      <LinearGradient
-        colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.8)', '#F8FAFC']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.backgroundGradient}
+      {/* Persistent Solid Background - Same as HomeScreen */}
+      <View
+        style={[styles.backgroundGradient, { backgroundColor: '#e9eff1' }]}
+        pointerEvents="none"
       />
 
       <ScrollView 
@@ -130,22 +141,30 @@ const ProfileScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.contentContainer}>
-          {/* Header - Now inside ScrollView so it scrolls away */}
-          <View style={styles.scrollableHeader}>
-            <Text style={styles.compactTitle}>
-              Profile 👤
-            </Text>
-            <Text style={styles.subtitle}>
-              Your wellness companion
-            </Text>
+        {/* Header - Match insights screen style */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerTitleContainer}>
+              <Image
+                source={require('../../assets/new-design/Turtle Hero Section/insights-hero.png')}
+                style={styles.headerTurtleIcon}
+                contentFit="contain"
+              />
+              <View style={styles.titleAndSubtitleContainer}>
+                <Text style={styles.headerTitle}>{t('profile.title')}</Text>
+                <Text style={styles.headerSubtitle}>{t('profile.subtitle')}</Text>
+              </View>
+            </View>
           </View>
+        </View>
+
+        <View style={styles.contentContainer}>
 
         {/* User Info */}
         <View style={styles.userInfoSection}>
           <View style={styles.userInfoCard}>
             <LinearGradient
-              colors={['#D8E9E9', '#E7F3F1']}
+              colors={['rgba(255, 255, 255, 1)', 'rgba(249, 250, 251, 1)', 'rgba(243, 244, 246, 1)']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.userInfoCardGradient}
@@ -162,15 +181,15 @@ const ProfileScreen: React.FC = () => {
                 <View style={styles.userDetails}>
                   <Text style={styles.userName}>{displayName}</Text>
                   <Text style={styles.memberSince}>
-                    {isAnonymous 
-                      ? 'Anonymous Guest' 
-                      : profile 
-                        ? `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` 
-                        : user?.email || 'Welcome to WisdomWise'
+                    {isAnonymous
+                      ? t('profile.anonymousGuest')
+                      : profile
+                        ? `${t('profile.memberSince')} ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
+                        : user?.email || t('profile.welcomeMessage')
                     }
                   </Text>
                   <Text style={styles.premiumBadge}>
-                    {isAnonymous ? 'Guest User' : 'Premium Member'}
+                    {isAnonymous ? t('profile.anonymousGuest') : t('profile.premiumMember')}
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
@@ -184,7 +203,7 @@ const ProfileScreen: React.FC = () => {
         {/* Stats Grid - HomeScreen Style */}
         <View style={styles.statsSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Your Progress</Text>
+            <Text style={styles.sectionTitle}>{t('profile.yourProgress')}</Text>
           </View>
           
           <View style={styles.statsGrid}>
@@ -260,9 +279,12 @@ const ProfileScreen: React.FC = () => {
         {/* Menu Items Section */}
         <View style={styles.menuSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Settings</Text>
+            <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
           </View>
-          
+
+          {/* Language Selector */}
+          <LanguageSelector onLanguageChange={(lang) => console.log('Language changed to:', lang)} />
+
           <View style={styles.menuGrid}>
             {menuItems.map((item, index) => {
               const Icon = item.icon;
@@ -308,16 +330,16 @@ const ProfileScreen: React.FC = () => {
                           {item.label}
                         </Text>
                         <Text style={styles.menuSubtitle}>
-                          {item.label === 'Edit Profile' ? 'Update your information' :
-                           item.label === 'Chat History' ? 'View past conversations' :
-                           item.label === 'Voice Settings' ? 'Configure speech options' :
-                           item.label === 'Notifications' ? 'Manage alerts' :
-                           item.label === 'Privacy & Security' ? 'Control your data' :
-                           item.label === 'Dark Mode' ? 'Toggle dark theme' :
-                           item.label === 'Help & Support' ? 'Get assistance' :
-                           item.label === 'Sign Out' ? 'Leave your account' :
-                           item.label === 'Create Account' ? 'Save your progress & unlock features' :
-                           'Tap to access'}
+                          {item.label === t('profile.menu.editProfile') ? t('profile.menuSubtitles.editProfile') :
+                           item.label === t('profile.menu.chatHistory') ? t('profile.menuSubtitles.chatHistory') :
+                           item.label === t('profile.menu.voiceSettings') ? t('profile.menuSubtitles.voiceSettings') :
+                           item.label === t('profile.menu.notifications') ? t('profile.menuSubtitles.notifications') :
+                           item.label === t('profile.menu.privacy') ? t('profile.menuSubtitles.privacy') :
+                           item.label === t('profile.menu.darkMode') ? t('profile.menuSubtitles.darkMode') :
+                           item.label === t('profile.menu.help') ? t('profile.menuSubtitles.help') :
+                           item.label === t('profile.menu.signOut') ? t('profile.menuSubtitles.signOut') :
+                           t('profile.menuSubtitles.default')}
+
                         </Text>
                       </View>
                       <View style={styles.menuActions}>
@@ -352,8 +374,8 @@ const ProfileScreen: React.FC = () => {
 
         {/* App Version */}
         <View style={styles.versionSection}>
-          <Text style={styles.versionText}>Version 1.0.0</Text>
-          <Text style={styles.versionSubtext}>Made with 💙 for your wellness</Text>
+          <Text style={styles.versionText}>{t('profile.version')}</Text>
+          <Text style={styles.versionSubtext}>{t('profile.madeWith')}</Text>
         </View>
         </View> {/* Close contentContainer */}
       </ScrollView>

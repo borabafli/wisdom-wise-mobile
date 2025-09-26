@@ -13,6 +13,7 @@ export const profileScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: colors.appBackground,
   },
   
   // Scrollable Background - Match Insights Pattern
@@ -38,6 +39,50 @@ export const profileScreenStyles = StyleSheet.create({
   },
   
   // Header Styles - Match Insights
+  header: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing[16],
+    paddingBottom: spacing[4],
+  },
+  headerContent: {
+    alignItems: 'flex-start',
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing[2],
+    marginLeft: -spacing[16],
+    marginTop: -spacing[12],
+  },
+  headerTurtleIcon: {
+    width: 162,
+    height: 162,
+    marginRight: spacing[4],
+    marginTop: -spacing[8],
+  },
+  titleAndSubtitleContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: -spacing[12],
+    marginTop: spacing[20],
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#002d14',
+    fontFamily: 'BubblegumSans-Regular',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: spacing[1],
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#6b7280',
+    fontFamily: 'Inter-Medium',
+    letterSpacing: 0.2,
+  },
   scrollableHeader: {
     paddingHorizontal: spacing.layout.screenPadding,
     paddingTop: spacing[16],

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Check, X, Lightbulb } from 'lucide-react-native';
@@ -25,6 +26,7 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
   onSave,
   onCancel
 }) => {
+  const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -50,14 +52,14 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
         <View style={styles.header}>
           <View style={styles.titleRow}>
             <Lightbulb size={24} color="#7C3AED" />
-            <Text style={styles.title}>Reflection Summary</Text>
+            <Text style={styles.title}>{t('chat.thinkingPatternSummary.title')}</Text>
           </View>
-          <Text style={styles.subtitle}>Your insights on thinking patterns</Text>
+          <Text style={styles.subtitle}>{t('chat.thinkingPatternSummary.subtitle')}</Text>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.patternSection}>
-            <Text style={styles.sectionTitle}>Pattern Explored</Text>
+            <Text style={styles.sectionTitle}>{t('chat.thinkingPatternSummary.patternExplored')}</Text>
             <View style={styles.patternCard}>
               <Text style={styles.distortionType}>{patternContext.distortionType}</Text>
               <Text style={styles.originalThought}>"{patternContext.originalThought}"</Text>
@@ -65,13 +67,13 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
           </View>
 
           <View style={styles.summarySection}>
-            <Text style={styles.sectionTitle}>Reflection Summary</Text>
+            <Text style={styles.sectionTitle}>{t('chat.thinkingPatternSummary.reflectionSummary')}</Text>
             <Text style={styles.summaryText}>"{summary.summary}"</Text>
           </View>
 
           {summary.keyInsights && summary.keyInsights.length > 0 && (
             <View style={styles.insightsSection}>
-              <Text style={styles.sectionTitle}>Key Insights</Text>
+              <Text style={styles.sectionTitle}>{t('chat.thinkingPatternSummary.keyInsights')}</Text>
               {summary.keyInsights.map((insight, index) => (
                 <View key={index} style={styles.insightItem}>
                   <View style={styles.insightBullet} />
@@ -89,7 +91,7 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
             disabled={isSaving}
           >
             <X size={20} color="#6B7280" />
-            <Text style={styles.cancelButtonText}>Continue Reflection</Text>
+            <Text style={styles.cancelButtonText}>{t('chat.thinkingPatternSummary.continueReflection')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -99,7 +101,7 @@ export const ThinkingPatternSummaryCard: React.FC<ThinkingPatternSummaryCardProp
           >
             <Check size={20} color="white" />
             <Text style={styles.saveButtonText}>
-              {isSaving ? 'Saving...' : 'Save Summary'}
+              {isSaving ? t('common.saving') : t('chat.thinkingPatternSummary.saveSummary')}
             </Text>
           </TouchableOpacity>
         </View>

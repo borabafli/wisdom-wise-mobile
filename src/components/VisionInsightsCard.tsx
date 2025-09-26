@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Star, ArrowRight, Eye, Lightbulb } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { visionInsightsService, VisionInsight } from '../services/visionInsightsService';
 import { insightsDashboardStyles } from '../styles/components/InsightsDashboard.styles';
 
@@ -17,6 +18,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
   onViewAllPress,
   onStartExercise
 }) => {
+  const { t } = useTranslation();
   const [latestVision, setLatestVision] = useState<VisionInsight | null>(null);
   const [visionStats, setVisionStats] = useState({
     totalVisions: 0,
@@ -62,8 +64,8 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
             />
           </View>
           <View style={insightsDashboardStyles.patternsTitleContainer}>
-            <Text style={insightsDashboardStyles.patternsTitle}>Vision of Myself</Text>
-            <Text style={insightsDashboardStyles.patternsSubtitle}>Loading your inspiring vision...</Text>
+            <Text style={insightsDashboardStyles.patternsTitle}>{t('insights.vision.title')}</Text>
+            <Text style={insightsDashboardStyles.patternsSubtitle}>{t('insights.vision.loading')}</Text>
           </View>
         </View>
       </View>
@@ -84,15 +86,15 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
             />
           </View>
           <View style={insightsDashboardStyles.patternsTitleContainer}>
-            <Text style={insightsDashboardStyles.patternsTitle}>Vision of Myself</Text>
-            <Text style={insightsDashboardStyles.patternsSubtitle}>Create an inspiring vision of your future self</Text>
+            <Text style={insightsDashboardStyles.patternsTitle}>{t('insights.vision.title')}</Text>
+            <Text style={insightsDashboardStyles.patternsSubtitle}>{t('insights.vision.createInspiring')}</Text>
           </View>
         </View>
         
         <View style={insightsDashboardStyles.patternsContainer}>
           <View style={insightsDashboardStyles.emptyStateContainer}>
             <Text style={insightsDashboardStyles.emptyStateText}>
-              Create an inspiring vision of your future self! ✨
+              {t('insights.vision.emptyState')}
             </Text>
             {onStartExercise && (
               <TouchableOpacity
@@ -111,7 +113,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
                 activeOpacity={0.8}
               >
                 <Star size={16} color="white" />
-                <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Start Vision Exercise</Text>
+                <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>{t('insights.vision.startExercise')}</Text>
                 <ArrowRight size={14} color="white" />
               </TouchableOpacity>
             )}
@@ -134,8 +136,8 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
           />
         </View>
         <View style={insightsDashboardStyles.patternsTitleContainer}>
-          <Text style={insightsDashboardStyles.patternsTitle}>Vision of Myself</Text>
-          <Text style={insightsDashboardStyles.patternsSubtitle}>Your inspiring future self</Text>
+          <Text style={insightsDashboardStyles.patternsTitle}>{t('insights.vision.title')}</Text>
+          <Text style={insightsDashboardStyles.patternsSubtitle}>{t('insights.vision.inspiringFuture')}</Text>
         </View>
       </View>
 
@@ -146,14 +148,14 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
             "{latestVision.fullDescription}"
           </Text>
           <Text style={styles.visionDate}>
-            Created {new Date(latestVision.date).toLocaleDateString()}
+            {t('insights.vision.created')} {new Date(latestVision.date).toLocaleDateString()}
           </Text>
         </View>
 
         {/* Core Qualities */}
         {latestVision.coreQualities.length > 0 && (
           <View style={styles.qualitiesContainer}>
-            <Text style={styles.sectionTitle}>Core Qualities</Text>
+            <Text style={styles.sectionTitle}>{t('insights.vision.coreQualities')}</Text>
             <View style={styles.qualitiesRow}>
               {latestVision.coreQualities.slice(0, 4).map((quality, index) => (
                 <View key={index} style={styles.qualityTag}>
@@ -162,7 +164,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
               ))}
               {latestVision.coreQualities.length > 4 && (
                 <View style={styles.qualityTag}>
-                  <Text style={styles.qualityText}>+{latestVision.coreQualities.length - 4} more</Text>
+                  <Text style={styles.qualityText}>+{latestVision.coreQualities.length - 4} {t('insights.vision.more')}</Text>
                 </View>
               )}
             </View>
@@ -172,7 +174,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
         {/* Life Domains Preview */}
         {Object.keys(latestVision.lifeDomains).length > 0 && (
           <View style={styles.domainsContainer}>
-            <Text style={styles.sectionTitle}>Life Areas Explored</Text>
+            <Text style={styles.sectionTitle}>{t('insights.vision.lifeAreasExplored')}</Text>
             <View style={styles.domainsRow}>
               {Object.keys(latestVision.lifeDomains).slice(0, 3).map((domain, index) => (
                 <View key={index} style={styles.domainBadge}>
@@ -184,7 +186,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
               {Object.keys(latestVision.lifeDomains).length > 3 && (
                 <View style={styles.domainBadge}>
                   <Text style={styles.domainText}>
-                    +{Object.keys(latestVision.lifeDomains).length - 3} more
+                    +{Object.keys(latestVision.lifeDomains).length - 3} {t('insights.vision.more')}
                   </Text>
                 </View>
               )}
@@ -209,7 +211,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
             activeOpacity={0.8}
           >
             <Lightbulb size={16} color="white" />
-            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Reflect on Vision</Text>
+            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>{t('insights.vision.reflectOnVision')}</Text>
             <ArrowRight size={14} color="white" />
           </TouchableOpacity>
 
@@ -232,7 +234,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
             >
               <Eye size={14} color="#87BAA3" />
               <Text style={{ color: '#87BAA3', fontSize: 13, fontWeight: '500' }}>
-                View {visionStats.totalVisions} vision{visionStats.totalVisions > 1 ? 's' : ''}
+                {t('insights.vision.view')} {visionStats.totalVisions} {visionStats.totalVisions > 1 ? t('insights.vision.visions') : t('insights.vision.vision')}
               </Text>
             </TouchableOpacity>
           )}

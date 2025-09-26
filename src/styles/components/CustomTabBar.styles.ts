@@ -12,7 +12,7 @@ export const customTabBarStyles = StyleSheet.create({
     backgroundColor: 'transparent', // No background - let LinearGradient handle it
   },
   tabBarGradient: {
-    backgroundColor: colors.white, // Force white background to override dark mode
+    backgroundColor: colors.appBackground, // Match HomeScreen background
     paddingTop: 4, // More space at the top
     paddingBottom: 8, // More space at the bottom
     overflow: 'visible', // Allow plus button to extend outside

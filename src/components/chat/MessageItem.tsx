@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
 import { Volume2, VolumeX, Copy } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Message } from '../../services/storageService';
 import { colors } from '../../styles/tokens';
@@ -39,6 +40,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   onPromptSuggestion,
   AnimatedTypingCursor,
 }) => {
+  const { t } = useTranslation();
   const [fontsLoaded] = useFonts({
     Caveat_400Regular,
   });
@@ -190,13 +192,13 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         
         {/* Prompt Suggestion Card - Only for welcome messages */}
         {isWelcomeMessage && (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.promptSuggestionCard}
-            onPress={() => onPromptSuggestion("Suggest something & guide me")}
+            onPress={() => onPromptSuggestion(t('chat.promptSuggestion'))}
             activeOpacity={0.8}
           >
             <Text style={styles.promptSuggestionText}>
-              Suggest something & guide me
+              {t('chat.promptSuggestion')}
             </Text>
           </TouchableOpacity>
         )}

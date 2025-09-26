@@ -4,6 +4,7 @@ import { Target, CheckCircle, Clock, TrendingUp, Plus, ArrowRight } from 'lucide
 import { LinearGradient } from 'expo-linear-gradient';
 import { goalService, TherapyGoal, GoalProgress } from '../services/goalService';
 import { goalProgressStyles as styles } from '../styles/components/GoalProgress.styles';
+import { useTranslation } from 'react-i18next';
 
 interface GoalProgressCardProps {
   onGoalClick?: (goal: TherapyGoal) => void;
@@ -11,11 +12,12 @@ interface GoalProgressCardProps {
   compact?: boolean;
 }
 
-export const GoalProgressCard: React.FC<GoalProgressCardProps> = ({ 
-  onGoalClick, 
-  onAddGoal, 
-  compact = false 
+export const GoalProgressCard: React.FC<GoalProgressCardProps> = ({
+  onGoalClick,
+  onAddGoal,
+  compact = false
 }) => {
+  const { t } = useTranslation();
   const [activeGoals, setActiveGoals] = useState<TherapyGoal[]>([]);
   const [goalProgress, setGoalProgress] = useState<GoalProgress>({
     totalGoals: 0,
@@ -52,13 +54,13 @@ export const GoalProgressCard: React.FC<GoalProgressCardProps> = ({
 
   const handleQuickCheckIn = async (goal: TherapyGoal) => {
     Alert.alert(
-      'Quick Check-In',
+      t('alerts.checkIn.title', 'Quick Check-In'),
       `How are you feeling about your progress on "${goal.mainGoal}"?`,
       [
         { text: 'Struggling (1)', onPress: () => addQuickCheckIn(goal, 1) },
         { text: 'Some progress (3)', onPress: () => addQuickCheckIn(goal, 3) },
         { text: 'Going well (5)', onPress: () => addQuickCheckIn(goal, 5) },
-        { text: 'Cancel', style: 'cancel' }
+        { text: t('common.cancel'), style: 'cancel' }
       ]
     );
   };
@@ -70,9 +72,9 @@ export const GoalProgressCard: React.FC<GoalProgressCardProps> = ({
         reflection: 'Quick check-in from insights dashboard'
       });
       loadGoalData(); // Refresh data
-      Alert.alert('Great!', 'Your progress has been recorded.');
+      Alert.alert(t('alerts.progressSaved.title'), t('alerts.progressSaved.message'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to save check-in. Please try again.');
+      Alert.alert(t('common.error'), t('errors.failedToSaveCheckIn'));
     }
   };
 

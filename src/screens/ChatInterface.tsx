@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as Clipboard from 'expo-clipboard';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
@@ -25,6 +26,7 @@ import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
 import { ThinkingPatternSummaryCard } from '../components/chat/ThinkingPatternSummaryCard';
 import { VisionSummaryCard } from '../components/chat/VisionSummaryCard';
+import { TherapyGoalSummaryCard } from '../components/chat/TherapyGoalSummaryCard';
 import {
   useTypewriterAnimation,
   useVoiceRecording,
@@ -44,12 +46,13 @@ import { colors } from '../styles/tokens';
 // Import types
 import { ChatInterfaceProps } from '../types';
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
-  onBack, 
-  currentExercise, 
+const ChatInterface: React.FC<ChatInterfaceProps> = ({
+  onBack,
+  currentExercise,
   onActionSelect,
   onExerciseClick
 }) => {
+  const { t } = useTranslation();
   const [fontsLoaded] = useFonts({
     Caveat_400Regular,
   });
@@ -138,6 +141,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     thinkingPatternSummary,
     showVisionSummary,
     visionSummary,
+    showTherapyGoalSummary,
+    therapyGoalSummary,
     reflectionMessageCount,
     canEndReflection,
     startDynamicAIGuidedExercise,
@@ -154,12 +159,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     cancelThinkingPatternSummary,
     saveVisionSummary,
     cancelVisionSummary,
+    saveTherapyGoalSummary,
+    cancelTherapyGoalSummary,
     handleMoodRatingComplete,
     handleMoodRatingSkip,
     handlePreExerciseMoodComplete,
     enterExerciseMode,
     exitExerciseMode,
-  } = useExerciseFlow();
+  } = useExerciseFlow(undefined, t);
 
   // Track initialization
   const [isInitialized, setIsInitialized] = useState(false);
@@ -416,19 +423,23 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                   <View style={styles.sessionDetails}>
                     <Text style={[styles.sessionTitle, (currentExercise || exerciseData.currentExercise) && styles.exerciseTitle]}>
                       {exerciseMode && exerciseData.dynamicFlow
-                        ? exerciseData.currentExercise?.name || 'Exercise'
+                        ? exerciseData.currentExercise?.name || t('chat.exercise')
                         : currentExercise
                           ? currentExercise.name
-                          : '💭 Reflection Space'}
+                          : t('chat.reflectionSpace')}
                     </Text>
                     <Text style={styles.sessionSubtitle}>
                       {exerciseMode && exerciseData.dynamicFlow
-                        ? `Step ${exerciseStep + 1} of ${exerciseData.dynamicFlow.steps.length} • ${exerciseData.dynamicFlow.steps[exerciseStep]?.title || 'In Progress'}`
+                        ? t('chat.exerciseProgress', {
+                            current: exerciseStep + 1,
+                            total: exerciseData.dynamicFlow.steps.length,
+                            title: exerciseData.dynamicFlow.steps[exerciseStep]?.title ? t(exerciseData.dynamicFlow.steps[exerciseStep].title) : t('chat.inProgress')
+                          })
                         : currentExercise
-                          ? `${currentExercise.duration || '5 min'} • Therapeutic Exercise`
+                          ? t('chat.therapeuticExercise', { duration: currentExercise.duration || '5 min' })
                           : chatSession.isLoading
-                            ? 'Loading your gentle space...'
-                            : 'Your safe space for reflection'}
+                            ? t('chat.loadingSpace')
+                            : t('chat.safeSpace')}
                     </Text>
                     
                     {!currentExercise && typeof chatSession.rateLimitStatus?.percentage === 'number' && chatSession.rateLimitStatus.percentage >= 80 && (
@@ -436,8 +447,8 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                         <AlertCircle size={14} color="#f59e0b" />
                         <Text style={styles.warningText}>
                           {chatSession.rateLimitStatus.percentage >= 90 
-                            ? `Almost at daily limit! ${Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0))} left.`
-                            : `${chatSession.rateLimitStatus.percentage}% of daily limit used.`}
+                            ? t('chat.almostAtLimit', { remaining: Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0)) })
+                            : t('chat.limitUsed', { percentage: chatSession.rateLimitStatus.percentage })}
                         </Text>
                       </View>
                     )}
@@ -547,6 +558,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                 onCancel={cancelVisionSummary}
               />
             )}
+
+            {showTherapyGoalSummary && therapyGoalSummary && (
+              <TherapyGoalSummaryCard
+                summary={therapyGoalSummary}
+                onSave={saveTherapyGoalSummary}
+                onCancel={cancelTherapyGoalSummary}
+              />
+            )}
           </ScrollView>
 
 
@@ -611,7 +630,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                   end={{ x: 1, y: 0 }}
                   style={styles.endReflectionButton}
                 >
-                  <Text style={styles.endReflectionButtonText}>End Reflection</Text>
+                  <Text style={styles.endReflectionButtonText}>{t('chat.endReflection')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </Animated.View>

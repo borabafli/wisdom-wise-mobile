@@ -13,6 +13,7 @@ export const exerciseLibraryStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: colors.appBackground,
   },
   backgroundGradient: {
     position: 'absolute',
@@ -339,10 +340,10 @@ export const exerciseLibraryStyles = StyleSheet.create({
 
   // New solid filter chip styles
   filterChipSolid: {
-    paddingHorizontal: spacing[12],
+    paddingHorizontal: spacing[6], // Reduced from spacing[8] to spacing[6]
     paddingVertical: spacing[2],
     borderRadius: 16,
-    marginHorizontal: spacing[2],
+    marginHorizontal: spacing[1], // Reduced from spacing[2] to spacing[1]
     marginBottom: spacing[2],
     shadowColor: 'rgba(0, 0, 0, 0.05)',
     shadowOffset: { width: 0, height: 1 },
@@ -390,14 +391,14 @@ export const exerciseLibraryStyles = StyleSheet.create({
   // Exercise Cards - Match HomeScreen exercise card styling
   exercisesGrid: {
     paddingHorizontal: spacing.layout.screenPadding,
-    gap: spacing[12],
+    gap: spacing[8],
   },
   exerciseCardWrapper: {
     width: '100%',
   },
   exerciseCard: {
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+    borderTopLeftRadius: 55,
+    borderBottomLeftRadius: 55,
     borderTopRightRadius: 0, // Remove right rounding
     borderBottomRightRadius: 0, // Remove right rounding
     overflow: 'hidden',
@@ -420,8 +421,8 @@ export const exerciseLibraryStyles = StyleSheet.create({
   exerciseImageContainer: {
     width: 55, // Reduced from 70 to 55 to give more space for text
     height: 110, // Match reduced card height
-    borderTopLeftRadius: 20, // Match card corner
-    borderBottomLeftRadius: 20, // Match card corner
+    borderTopLeftRadius: 55, // Match card corner
+    borderBottomLeftRadius: 55, // Match card corner
     borderTopRightRadius: 0, // No right rounding
     borderBottomRightRadius: 0, // No right rounding
     overflow: 'hidden',
@@ -446,7 +447,7 @@ export const exerciseLibraryStyles = StyleSheet.create({
   tagAndTimeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginBottom: spacing[6],
   },
   categoryTag: {

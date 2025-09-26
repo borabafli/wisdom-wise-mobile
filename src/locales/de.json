@@ -1,0 +1,981 @@
+{
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "continue": "Weiter",
+    "skip": "Überspringen",
+    "back": "Zurück",
+    "close": "Schließen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "confirm": "Bestätigen",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolgreich",
+    "yes": "Ja",
+    "no": "Nein",
+    "ok": "Verstanden",
+    "saving": "Wird gespeichert..."
+  },
+  "navigation": {
+    "home": "Start",
+    "today": "Heute",
+    "exercises": "Übungen",
+    "journal": "Tagebuch",
+    "insights": "Einsichten",
+    "profile": "Profil",
+    "chat": "Gespräch"
+  },
+  "home": {
+    "title": "Willkommen",
+    "subtitle": "Dein achtsamer Begleiter",
+    "startSession": "Gespräch beginnen",
+    "quickActions": "Schnelle Hilfe",
+    "todaysInsights": "Deine heutigen Einsichten",
+    "recentSessions": "Vergangene Gespräche",
+    "welcomeBack": "Schön, dass du da bist",
+    "moodCheck": "Wie geht es dir gerade?",
+    "checkInNow": "Jetzt einchecken",
+    "type": "Schreiben",
+    "talk": "Sprechen",
+    "yourNextSteps": "Deine nächsten Schritte",
+    "seeAll": "Alle anzeigen",
+    "dailyReflection": "Tägliche Reflexion",
+    "generateTest": "Test generieren",
+    "browseExercises": "Übungen\ndurchstöbern",
+    "viewInsights": "Einsichten\nanzeigen",
+    "startBreathing": "Atmung\nbeginnen",
+    "realTimeAudioWaves": "Echtzeit-Audiowellen",
+    "quickBreathingExercise": {
+      "name": "Tiefes Atmen",
+      "duration": "5 Min",
+      "description": "Beruhige deinen Geist mit geführter Atmung"
+    },
+    "startWriting": "Schreiben beginnen",
+    "slideToRemove": "Zum Entfernen der Übung wischen",
+    "removeExerciseModal": {
+      "title": "Übung entfernen?",
+      "for7Days": "Für 7 Tage",
+      "forever": "Für immer",
+      "cancel": "Abbrechen"
+    }
+  },
+  "exercises": {
+    "title": "Wohlbefinden-Übungen",
+    "subtitle": "Geführte Praktiken für dein Wohlbefinden",
+    "categories": "Kategorien",
+    "duration": "Dauer",
+    "difficulty": "Schwierigkeit",
+    "approach": "Ansatz",
+    "startExercise": "Übung starten",
+    "exerciseComplete": "Übung abgeschlossen",
+    "exerciseRating": {
+      "title": "Wie hilfreich war diese Übung?",
+      "subtitle": "Wir nutzen Ihr Feedback, um Ihre Erfahrung zu personalisieren und bessere Übungen vorzuschlagen, die Ihren Bedürfnissen entsprechen.",
+      "today": "Heute",
+      "ratings": {
+        "notHelpfulAtAll": "Überhaupt nicht hilfreich",
+        "somewhatHelpful": "Etwas hilfreich",
+        "moderatelyHelpful": "Mäßig hilfreich",
+        "veryHelpful": "Sehr hilfreich",
+        "extremelyHelpful": "Äußerst hilfreich"
+      },
+      "sliderLabels": {
+        "notAtAll": "Gar nicht",
+        "very": "Sehr"
+      }
+    },
+    "breathing": "Atemübungen",
+    "meditation": "Meditation",
+    "journaling": "Reflexion",
+    "mindfulness": "Achtsamkeit",
+    "searchPlaceholder": "Übungen suchen...",
+    "showAllFilters": "Alle Filter anzeigen",
+    "clearAll": "Alle löschen",
+    "exercisesFound": "{{count}} Übung gefunden",
+    "exercisesFound_other": "{{count}} Übungen gefunden",
+    "noExercisesFound": "Keine Übungen gefunden",
+    "adjustFilters": "Versuche deine Filter oder Suchbegriffe anzupassen",
+    "stepByStepGuide": "Diese Übung wird dich Schritt für Schritt durch den Prozess führen.",
+    "stepNumber": "Schritt {{number}}",
+    "stepsCount": "{{count}} Schritt",
+    "stepsCount_other": "{{count}} Schritte",
+    "steps": "Schritte"
+  },
+  "insights": {
+    "title": "Einsichten",
+    "subtitle": "✨ Für dein Wachstum",
+    "yourThoughts": "Deine Gedanken",
+    "reflectOnThis": "Darüber nachdenken",
+    "moodTracking": "Stimmungsbeobachtung",
+    "progressStats": "Dein Fortschritt",
+    "patterns": "Muster",
+    "goals": "Ziele",
+    "memoryInsights": "Langzeit-Erkenntnisse",
+    "longTermPatterns": "Langfristige Muster & Themen",
+    "motivational": {
+      "fallbackMessage": "Deine Wellnessreise geht weiter",
+      "startingToday": "ab heute"
+    },
+    "values": {
+      "title": "Deine Werte",
+      "subtitle": "Was dir wichtig ist",
+      "overview": "Grundwerte",
+      "pagination": "{{current}} von {{total}}",
+      "swipeToExplore": "Wischen zum Erkunden"
+    },
+    "sessionSummaries": {
+      "title": "Sitzungszusammenfassungen",
+      "subtitle": "Sitzungen analysiert"
+    },
+    "therapyGoals": {
+      "title": "Therapieziele",
+      "activeGoal": "aktives Ziel",
+      "activeGoals": "aktive Ziele",
+      "setFirstGoal": "Setze dein erstes Ziel",
+      "setGoalDescription": "Setze Therapieziele, um deiner Heilungsreise Richtung und Motivation zu geben.",
+      "setFirstGoalButton": "Dein erstes Ziel setzen",
+      "complete": "vollständig"
+    },
+    "vision": {
+      "title": "Vision der Zukunft",
+      "inspiringFuture": "Ihr inspirierendes zukünftiges Selbst",
+      "loading": "Ihre Vision wird geladen...",
+      "createInspiring": "Erstellen Sie eine inspirierende Vision Ihres zukünftigen Selbst",
+      "emptyState": "Starten Sie eine Vision der Zukunft Übung, um Ihr ideales zukünftiges Selbst zu erkunden und personalisierte Einsichten zu entdecken.",
+      "startExercise": "Vision-Übung starten",
+      "created": "Erstellt am",
+      "coreQualities": "Kern-Qualitäten",
+      "more": "weitere",
+      "lifeAreasExplored": "Erkundete Lebensbereiche",
+      "reflectOnVision": "Über Ihre Vision nachdenken",
+      "view": "Ihre",
+      "visions": "Visionen ansehen",
+      "vision": "Vision ansehen"
+    },
+    "journey": {
+      "title": "Reise",
+      "subtitle": "Jeder Schritt zählt",
+      "sessions": "Sitzungen",
+      "exercises": "Übungen",
+      "dayStreak": "Tage-Serie",
+      "completedSessions": "Du hast abgeschlossen",
+      "guidedSessions": "geführte Sitzungen!",
+      "nextUp": "Als nächstes:",
+      "recentAchievements": "Kürzliche Erfolge"
+    },
+    "actions": {
+      "reflectOnStrengths": "Über Stärken reflektieren",
+      "spendTimeWithEmotions": "Zeit mit Emotionen verbringen",
+      "generateData": "Daten generieren",
+      "refresh": "Aktualisieren"
+    },
+    "prompts": {
+      "visionReflection": "Ich sehe, dass du eine wunderbare Vision deines zukünftigen Selbst geschaffen hast. Du hast dein zukünftiges Selbst als verkörpernd beschrieben mit Eigenschaften wie: {{qualities}}. Deine Vision war: \"{{description}}\"\n\nIch würde gerne diese Vision mit dir erkunden. Welche Aspekte dieses zukünftigen Selbst fühlen sich für dich gerade am inspirierendsten an? Und welchen kleinen Schritt könntest du heute machen, um ein wenig mehr von diesen Eigenschaften zu verkörpern?",
+      "strengthReflection": "Mir ist aus deinen Langzeit-Erkenntnissen aufgefallen, dass du einige Stärken und positive Muster hast. Lass uns einen Moment nehmen, um über diese Stärken zu reflektieren: \"{{content}}\"\n\nWas denkst du, macht diese Stärken besonders bedeutungsvoll für dich? Wie könntest du dich mehr auf diese Stärken in deinem täglichen Leben stützen?",
+      "emotionReflection": "Ich sehe, dass du einige tiefe emotionale Einsichten aus unseren Gesprächen hast: \"{{content}}\"\n\nManchmal ist es wertvoll, Zeit mit unseren Emotionen zu verbringen und zu verstehen, was sie uns sagen. Welche Emotionen kommen in dir auf, wenn du diese Einsicht liest? Was könnten diese Emotionen versuchen, dir zu kommunizieren?"
+    },
+    "thinkingPatterns": {
+      "allOrNothing": "Schwarz-Weiß-Denken",
+      "catastrophizing": "Katastrophisieren",
+      "mentalFilter": "Mentaler Filter",
+      "overgeneralization": "Übergeneralisierung",
+      "mindReading": "Gedankenlesen",
+      "fortuneTelling": "Wahrsagen",
+      "emotionalReasoning": "Emotionales Denken",
+      "shouldStatements": "Soll-Aussagen",
+      "labeling": "Etikettierung",
+      "personalization": "Personalisierung",
+      "magnification": "Vergrößerung",
+      "minimization": "Verkleinerung",
+      "thoughtPattern": "Denkschema",
+      "explanations": {
+        "allOrNothing": "Alles in Schwarz und Weiß sehen ohne Mittelweg",
+        "catastrophizing": "Die schlimmstmöglichen Ergebnisse vorstellen",
+        "mentalFilter": "Nur auf negative Details fokussieren",
+        "overgeneralization": "Breite Schlüsse aus einzelnen Ereignissen ziehen",
+        "mindReading": "Annehmen, zu wissen, was andere denken",
+        "fortuneTelling": "Negative Ergebnisse ohne Belege vorhersagen",
+        "emotionalReasoning": "Glauben, dass Gefühle die Realität widerspiegeln",
+        "shouldStatements": "Starre Regeln darüber, wie Dinge sein sollten",
+        "labeling": "Negative Etiketten auf sich oder andere kleben",
+        "personalization": "Sich für Dinge außerhalb der eigenen Kontrolle die Schuld geben",
+        "magnification": "Dinge aufbauschen",
+        "minimization": "Positive Aspekte herunterspielen",
+        "thoughtPattern": "Ein wiederkehrendes Denkmuster, das Beachtung benötigt"
+      }
+    },
+    "mockData": {
+      "patterns": {
+        "presentationThought": "Ich habe die Präsentation völlig vermasselt, ich bin schrecklich im öffentlichen Sprechen",
+        "presentationReframe": "Die Präsentation hatte schwierige Momente, aber ich hatte auch gute Momente. Ich lerne und verbessere mich.",
+        "presentationContext": "Identifiziert während eines Gesprächs über Arbeitsstress",
+        "jobThought": "Wenn ich diesen Job nicht bekomme, wird meine Karriere ruiniert sein",
+        "jobReframe": "Diesen bestimmten Job nicht zu bekommen wäre enttäuschend, aber es gibt andere Möglichkeiten da draußen.",
+        "jobContext": "Muster erkannt während einer Angstsitzung"
+      },
+      "journey": {
+        "nextSuggestion": "Versuche eine Reframing-Übung, um Sorgen zu reduzieren",
+        "achievements": {
+          "firstSession": "Erste geführte Sitzung",
+          "dailyStreak": "Tägliche Check-in Serie",
+          "breathingExercise": "Atemübung abgeschlossen"
+        }
+      },
+      "cognitiveDistortion": "Kognitive Verzerrung"
+    },
+    "moodInsights": {
+      "yourMood": "Deine Stimmung",
+      "trackEmotions": "Verfolge deine emotionale Reise",
+      "yourThoughts": "Deine Gedanken",
+      "identifyPatterns": "Muster erkennen und umformen",
+      "distortedThought": "Verzerrter Gedanke",
+      "balancedThought": "Ausgewogener Gedanke",
+      "moreBalanced": "Ausgewogener",
+      "reflectOnThis": "Darüber nachdenken",
+      "analyzingPatterns": "Analysiere deine Stimmungsmuster...",
+      "weeklyTrend": {
+        "improving": "↗ Verbesserung",
+        "steady": "↔ Stabil",
+        "declining": "↘ Abnehmend"
+      },
+      "emptyStates": {
+        "noData": {
+          "title": "Beginne deine Wellness-Reise! ✨",
+          "description": "Chatte mit Anu oder verfolge deine Stimmung nach Übungen, um personalisierte Einsichten hier zu sehen",
+          "chatButton": "Mit Anu chatten",
+          "exerciseButton": "Übung ausprobieren",
+          "sampleButton": "Beispieldaten generieren"
+        },
+        "moodOnly": {
+          "title": "Gut gemacht beim Verfolgen deiner Stimmung! 📈",
+          "description": "Du hast {{count}} Stimmungsbewertung geloggt. Chatte mit Anu, um personalisierte Einsichten über deine Muster zu erhalten."
+        },
+        "sessionsOnly": {
+          "title": "Schöner Fortschritt mit Anu! 💬",
+          "description": "Du hattest {{count}} Gespräch. Bewerte deine Stimmung nach Übungen, um wöchentliche Trends und tiefere Einsichten zu sehen.",
+          "exerciseButton": "Eine Übung ausprobieren"
+        },
+        "bothData": {
+          "title": "Baue weiter deine Einsichten auf! ⭐",
+          "description": "Du hast {{sessionCount}} Gespräche und {{moodRatingCount}} Stimmungsbewertungen. Setze deine Reise für tiefere Einsichten fort."
+        },
+        "fallback": {
+          "title": "Überprüfe deine Daten... ✨"
+        }
+      }
+    },
+    "priorityExercises": {
+      "names": {
+        "tellStory": "Erzähl deine Geschichte",
+        "goalSetting": "Therapie-Zielsetzung",
+        "visionFuture": "Vision der Zukunft",
+        "reframingThoughts": "Gedanken umformen",
+        "livingValues": "Meine Kernwerte",
+        "mindfulness": "Morgen-Achtsamkeit",
+        "stressRelief": "4-7-8 Atmung",
+        "gratitude": "Dankbarkeits-Praxis"
+      },
+      "descriptions": {
+        "tellStory": "Teile deine persönliche Reise",
+        "goalSetting": "Definiere deine Ziele",
+        "visionFuture": "Stelle dir dein ideales zukünftiges Ich vor",
+        "reframingThoughts": "Transformiere negative Gedanken",
+        "livingValues": "Richte Handlungen auf Kernwerte aus",
+        "mindfulness": "Beginne deinen Tag mit sanfter Achtsamkeit",
+        "stressRelief": "Reduziere Angst mit bewährter Atemtechnik",
+        "gratitude": "Baue Glück durch tägliche Wertschätzung auf"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "✨ Dein Wohlbefinden-Begleiter",
+    "personalInfo": "Persönliche Informationen",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "notifications": "Benachrichtigungen",
+    "privacy": "Datenschutz",
+    "signOut": "Abmelden",
+    "editProfile": "Profil bearbeiten",
+    "memberSince": "Dabei seit",
+    "anonymousGuest": "Anonymer Gast",
+    "stats": {
+      "sessions": "Sitzungen",
+      "streak": "Serie",
+      "insights": "Einsichten",
+      "exercises": "Übungen",
+      "daysStreak": "7 Tage"
+    },
+    "fallbackName": "Freund",
+    "welcomeMessage": "Willkommen bei WisdomWise",
+    "premiumMember": "Premium-Mitglied",
+    "yourProgress": "Dein Fortschritt",
+    "menu": {
+      "editProfile": "Profil bearbeiten",
+      "chatHistory": "Chat-Verlauf",
+      "voiceSettings": "Spracheinstellungen",
+      "notifications": "Benachrichtigungen",
+      "privacy": "Datenschutz & Sicherheit",
+      "darkMode": "Dunkler Modus",
+      "help": "Hilfe & Support",
+      "signOut": "Abmelden"
+    },
+    "menuSubtitles": {
+      "editProfile": "Informationen aktualisieren",
+      "chatHistory": "Vergangene Gespräche anzeigen",
+      "voiceSettings": "Sprachoptionen konfigurieren",
+      "notifications": "Benachrichtigungen verwalten",
+      "privacy": "Daten kontrollieren",
+      "darkMode": "Dunkles Theme umschalten",
+      "help": "Hilfe erhalten",
+      "signOut": "Konto verlassen",
+      "default": "Zum Zugriff tippen"
+    },
+    "version": "Version 1.0.0",
+    "madeWith": "Mit 💙 für dein Wohlbefinden gemacht"
+  },
+  "chat": {
+    "title": "Gespräch mit Anu",
+    "subtitle": "Dein KI-Wohlbefinden-Begleiter",
+    "startConversation": "Beginne ein Gespräch...",
+    "typeMessage": "Schreibe deine Nachricht...",
+    "sendMessage": "Senden",
+    "voiceInput": "Spracheingabe",
+    "recording": "Aufnahme läuft...",
+    "transcribing": "Wird übersetzt...",
+    "thinking": "Denkt nach...",
+    "speakResponse": "Antwort sprechen",
+    "exercise": "Übung",
+    "reflectionSpace": "💭 Reflexionsraum",
+    "exerciseProgress": "Schritt {{current}} von {{total}} • {{title}}",
+    "inProgress": "In Bearbeitung",
+    "therapeuticExercise": "{{duration}} • Therapeutische Übung",
+    "loadingSpace": "Dein sanfter Raum wird geladen...",
+    "safeSpace": "Dein sicherer Ort für Reflexion",
+    "almostAtLimit": "Fast am Tageslimit! Noch {{remaining}} übrig.",
+    "limitUsed": "{{percentage}}% des Tageslimits verwendet.",
+    "endReflection": "Reflexion beenden",
+    "typeOrSpeak": "Schreiben oder sprechen...",
+    "composeMessage": "Nachricht verfassen",
+    "suggestExercise": "Übung vorschlagen",
+    "promptSuggestion": "Etwas vorschlagen & mich führen",
+    "moodSlider": {
+      "title": "Wie fühlst du dich gerade?",
+      "subtitle": "Bewerte deine aktuelle Stimmung",
+      "saved": "Gespeichert!"
+    },
+    "visionSummary": {
+      "title": "Visionszusammenfassung",
+      "subtitle": "Dein inspirierendes zukünftiges Selbst enthüllt",
+      "yourVision": "Deine Vision",
+      "keyInsights": "Wichtige Erkenntnisse",
+      "continueVision": "Vision fortsetzen",
+      "saveVision": "Vision speichern"
+    },
+    "thinkingPatternSummary": {
+      "title": "Reflexionszusammenfassung",
+      "subtitle": "Deine Erkenntnisse über Denkmuster",
+      "patternExplored": "Untersuchtes Muster",
+      "reflectionSummary": "Reflexionszusammenfassung",
+      "keyInsights": "Wichtige Erkenntnisse",
+      "continueReflection": "Reflexion fortsetzen",
+      "saveSummary": "Zusammenfassung speichern"
+    },
+    "valueReflectionSummary": {
+      "title": "Reflexionszusammenfassung",
+      "subtitle": "Überprüfe deine Erkenntnisse über \"{{valueName}}\"",
+      "summary": "Zusammenfassung",
+      "keyInsights": "Wichtige Erkenntnisse",
+      "continueReflection": "Reflexion fortsetzen",
+      "saveSummary": "Zusammenfassung speichern"
+    },
+    "therapyGoalSummary": {
+      "title": "Ziel-Zusammenfassung",
+      "subtitle": "Deine Therapieziele definiert",
+      "yourGoals": "Deine Ziele",
+      "keyInsights": "Wichtige Erkenntnisse",
+      "continueGoals": "Ziele fortsetzen",
+      "saveGoals": "Ziele speichern"
+    }
+  },
+  "mood": {
+    "title": "Stimmungsbeobachtung",
+    "howAreYouFeeling": "Wie fühlst du dich gerade?",
+    "rateYourMood": "Bewerte deine aktuelle Stimmung",
+    "helpfulnessRating": "Wie hilfreich war das?",
+    "saved": "Gespeichert! ✓",
+    "beforeWeStart": "Bevor wir anfangen..."
+  },
+  "journal": {
+    "title": "Geführtes Tagebuch",
+    "promptTitle": "Reflexionsfrage",
+    "yourResponse": "Deine Antwort",
+    "finish": "Beenden",
+    "saveSession": "Sitzung speichern?",
+    "dontSave": "Nicht speichern",
+    "startWriting": "Schreiben beginnen",
+    "writingPrompts": "Schreibanregungen",
+    "yourEntries": "Deine Einträge",
+    "noEntriesTitle": "Noch keine Tagebucheinträge",
+    "noEntriesText": "Beginne deine Tagebuch-Reise, indem du eine Anregung oben auswählst oder einen eigenen Eintrag erstellst.",
+    "loadingJournal": "Dein Tagebuch wird geladen...",
+    "deleteEntry": "Eintrag löschen",
+    "deleteEntryConfirm": "Bist du sicher, dass du diesen Tagebucheintrag löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "keyInsights": "Wichtige Erkenntnisse:",
+    "polished": "✨ Verfeinert",
+    "journalEntry": "Tagebucheintrag",
+    "initialPrompt": "Ursprüngliche Frage",
+    "question": "Frage",
+    "summary": "Zusammenfassung",
+    "keyInsightsTitle": "Wichtige Erkenntnisse",
+    "stepIndicator": "{{current}}/{{total}}",
+    "typeOrSpeak": "Schreibe oder sprich deine Gedanken...",
+    "transcribing": "Wird übersetzt...",
+    "generating": "...",
+    "continue": "Weiter",
+    "previousReflections": "Deine vorherigen Reflexionen:",
+    "pleaseWriteSomething": "Bitte schreibe etwas",
+    "entryCannotBeEmpty": "Dein Tagebucheintrag kann nicht leer sein.",
+    "failedNextQuestion": "Nächste Frage konnte nicht generiert werden. Bitte versuche es erneut.",
+    "journalSaved": "Tagebuch gespeichert",
+    "entrySavedPolished": "Dein Eintrag wurde gespeichert und verfeinert!",
+    "entrySaved": "Dein Tagebucheintrag wurde gespeichert!",
+    "failedToSave": "Tagebucheintrag konnte nicht gespeichert werden. Bitte versuche es erneut.",
+    "failedToSaveDraft": "Entwurf konnte nicht gespeichert werden. Bitte versuche es erneut.",
+    "saveModalTitle": "Sitzung speichern?",
+    "save": "Speichern",
+    "dontSaveButton": "Nicht speichern",
+    "failedToLoad": "Tagebuchdaten konnten nicht geladen werden. Bitte versuche es erneut.",
+    "failedToDelete": "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut."
+  },
+  "breathing": {
+    "title": "Atemübung",
+    "inhale": "Einatmen",
+    "exhale": "Ausatmen",
+    "hold": "Halten",
+    "breathe": "Atmen",
+    "pause": "Pause",
+    "resume": "Fortsetzen",
+    "reset": "Zurücksetzen",
+    "settings": "Einstellungen",
+    "cycles": "Zyklen",
+    "pattern": "Muster"
+  },
+  "language": {
+    "selectLanguage": "Sprache auswählen",
+    "currentLanguage": "Aktuelle Sprache",
+    "changeLanguage": "Sprache ändern",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "tr": "Türkçe",
+      "es": "Español",
+      "pt": "Português"
+    }
+  },
+  "errors": {
+    "networkError": "Verbindungsfehler. Bitte versuche es erneut.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "voicePermissionDenied": "Mikrofonberechtigung ist für Sprachfunktionen erforderlich.",
+    "speechRecognitionFailed": "Spracherkennung fehlgeschlagen. Bitte versuche es erneut.",
+    "ttsError": "Sprachsynthese ist nicht verfügbar.",
+    "promptGenerationFailed": "Reflexionsfragen konnten nicht erstellt werden. Bitte versuche es erneut.",
+    "fillAllFields": "Bitte fülle alle Felder aus",
+    "signInFailed": "Anmeldung fehlgeschlagen",
+    "signUpFailed": "Registrierung fehlgeschlagen",
+    "googleSignInFailed": "Google-Anmeldung fehlgeschlagen",
+    "emailSent": "E-Mail gesendet",
+    "verificationEmailSent": "Bestätigungs-E-Mail wurde erneut gesendet. Bitte überprüfe deinen Posteingang.",
+    "resendVerificationFailed": "Bestätigungs-E-Mail konnte nicht erneut gesendet werden",
+    "notVerified": "Nicht bestätigt",
+    "checkEmailFirst": "Bitte überprüfe deine E-Mail und klicke zuerst auf den Bestätigungslink.",
+    "verificationCheckFailed": "Bestätigungsstatus konnte nicht überprüft werden. Bitte versuche es erneut.",
+    "enterFirstName": "Bitte gib deinen Vornamen ein",
+    "enterLastName": "Bitte gib deinen Nachnamen ein",
+    "enterEmail": "Bitte gib deine E-Mail-Adresse ein",
+    "enterValidEmail": "Bitte gib eine gültige E-Mail-Adresse ein",
+    "passwordTooShort": "Das Passwort muss mindestens 6 Zeichen lang sein",
+    "passwordsNoMatch": "Die Passwörter stimmen nicht überein",
+    "acceptPrivacyPolicy": "Bitte akzeptiere die Datenschutzrichtlinie, um fortzufahren",
+    "failedToLoadGoals": "Deine Ziele konnten nicht geladen werden. Bitte versuche es erneut.",
+    "pleaseEnterValidGoal": "Bitte gib ein gültiges Ziel ein.",
+    "goalUpdatedSuccess": "Ziel erfolgreich aktualisiert!",
+    "failedToUpdateGoal": "Ziel konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+    "failedToUpdateGoalStatus": "Zielstatus konnte nicht aktualisiert werden.",
+    "failedToSaveGoal": "Dein Ziel konnte nicht gespeichert werden. Bitte versuche es erneut.",
+    "missingInformation": "Fehlende Informationen",
+    "pleaseRateProgress": "Bitte bewerte deinen Fortschritt, bevor du sendest.",
+    "pleaseAddReflection": "Bitte füge eine kurze Reflexion zu deinem Fortschritt hinzu.",
+    "progressRecorded": "Dein Fortschritt wurde aufgezeichnet.",
+    "failedToSaveCheckIn": "Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.",
+    "failedToLoadSummaries": "Sitzungszusammenfassungen konnten nicht geladen werden.",
+    "failedToSaveSettings": "Einstellungen konnten nicht gespeichert werden",
+    "failedToDeleteSession": "Sitzung konnte nicht gelöscht werden. Bitte versuche es erneut.",
+    "failedToClearHistory": "Verlauf konnte nicht gelöscht werden. Bitte versuche es erneut.",
+    "failedToUpdateProfile": "Profil konnte nicht aktualisiert werden. Bitte versuche es erneut."
+  },
+  "exerciseLibrary": {
+    "names": {
+      "automaticThoughts": "Automatische Gedanken erkennen",
+      "breathing": "4-7-8 Atemtechnik",
+      "boxBreathing": "Box-Atmung",
+      "triangleBreathing": "Dreieck-Atmung",
+      "coherentBreathing": "Kohärente Atmung",
+      "mindfulness": "Körper-Scan",
+      "morningMindfulness": "Morgen-Achtsamkeit",
+      "gratitude": "Dankbarkeits-Praxis",
+      "selfCompassion": "Selbstmitgefühl-Pause",
+      "valuesClarity": "Meine Kernwerte",
+      "futureSelfJournaling": "Zukunfts-Ich Reflexion",
+      "sortingThoughts": "Gedanken sortieren",
+      "goalSetting": "Therapie-Zielsetzung",
+      "tellYourStory": "Erzähl deine Geschichte",
+      "visionOfFuture": "Vision der Zukunft"
+    },
+    "descriptions": {
+      "automaticThoughts": "Negative Gedankenmuster transformieren",
+      "breathing": "Angst reduzieren mit bewährter Atemtechnik",
+      "boxBreathing": "Fokus und Stressreduktion durch ausgewogene Atmung",
+      "triangleBreathing": "Einfache achtsame Atmung für tiefe Entspannung",
+      "coherentBreathing": "Herz-zentrierte Atmung für emotionale Balance",
+      "mindfulness": "Spannungen lösen durch achtsame Körperwahrnehmung",
+      "morningMindfulness": "Beginne deinen Tag mit ruhiger Präsenz",
+      "gratitude": "Glück aufbauen durch tägliche Wertschätzung",
+      "selfCompassion": "Selbstfreundlichkeit und inneres Mitgefühl entwickeln",
+      "valuesClarity": "Werte klären und tägliche Handlungen ausrichten",
+      "futureSelfJournaling": "Klarheit durch zukunftsorientierte Reflexion",
+      "sortingThoughts": "Mentales Durcheinander klären und Gedanken ordnen",
+      "goalSetting": "Fokussierte Ziele setzen, die mit deinen Werten übereinstimmen",
+      "tellYourStory": "Deine Reise erforschen und innere Stärken entdecken",
+      "visionOfFuture": "Eine inspirierende Vision für deinen Weg schaffen"
+    },
+    "shortDescriptions": {
+      "automaticThoughts": "Unhilfreiche Denkmuster erkennen und umformen.",
+      "breathing": "Beruhige deinen Geist mit rhythmischer Atmung.",
+      "boxBreathing": "Quadrat-Atmung für mentale Klarheit.",
+      "triangleBreathing": "Dreiphasen-Atmung für Entspannung.",
+      "coherentBreathing": "Herz-fokussierte Atmung für Balance.",
+      "mindfulness": "Körper achtsam scannen und entspannen.",
+      "morningMindfulness": "Starte deinen Tag mit achtsamer Wahrnehmung.",
+      "gratitude": "Wertschätzung und Freude kultivieren.",
+      "selfCompassion": "Übe dich darin, freundlich zu dir zu sein.",
+      "valuesClarity": "Richte deine Handlungen auf das aus, was dir wichtig ist.",
+      "futureSelfJournaling": "Verbinde dich mit deinem zukünftigen Ich.",
+      "sortingThoughts": "Organisiere und kläre deine Gedanken.",
+      "goalSetting": "Setze bedeutungsvolle Ziele für dein Wachstum.",
+      "tellYourStory": "Teile deine Geschichte und finde deine Stärken.",
+      "visionOfFuture": "Stelle dir deine ideale Zukunft vor."
+    },
+    "categories": {
+      "cbt": "KVT",
+      "breathing": "Atmung",
+      "mindfulness": "Achtsamkeit",
+      "selfCare": "Selbstfürsorge",
+      "act": "ACT",
+      "selfDiscovery": "Selbstentdeckung",
+      "selfGrowth": "Persönliches Wachstum"
+    },
+    "difficulties": {
+      "beginner": "Anfänger",
+      "intermediate": "Fortgeschritten",
+      "advanced": "Experte"
+    },
+    "steps": {
+      "automaticThoughts": {
+        "step1": {
+          "title": "Beschreibe den Moment",
+          "description": "Erinnere dich an eine kürzliche Situation, die stressig oder belastend war.",
+          "instruction": "Lade den Nutzer ein, eine kürzliche Situation zu teilen, die Stress, Angst oder schlechte Stimmung ausgelöst hat. Ermutige sie, es einfach und spezifisch zu halten ('gestern in einem Meeting', 'als ich einen Freund traf'). Bleibe in diesem Schritt, bis sie eine klare Situation angeben."
+        },
+        "step2": {
+          "title": "Bemerke deinen Gedanken",
+          "description": "Was war der erste Gedanke, der dir in diesem Moment kam?",
+          "instruction": "Ermutige den Nutzer, den automatischen Gedanken aufzuschreiben, den er in dieser Situation hatte. Falls er sich schwertut, biete sanfte Beispiele ('Ich werde versagen', 'Sie mögen mich nicht', 'Ich kann das nicht schaffen'), aber behalte den Fokus auf ihren eigenen Worten."
+        },
+        "step3": {
+          "title": "Erkenne das Denkmuster",
+          "description": "Passt dieser Gedanke zu einem häufigen Denkmuster?",
+          "instruction": "Führe den Nutzer dazu, zu reflektieren, ob ihr Gedanke eine der häufigen kognitiven Verzerrungen zeigt. Erinnere sie kurz an typische Muster: Schwarz-Weiß-Denken (schwarz/weiß, kein Mittelweg), Katastrophisieren (das Schlimmste erwarten), Gedankenlesen (annehmen, was andere denken), Übergeneralisierung (ein Ereignis für alles definieren), Etikettierung (sich selbst Namen geben), Emotionales Denken (annehmen, Gefühle = Fakten), Wahrsagen (schlechtes Ergebnis vorhersagen), Soll-Aussagen ('Ich muss... Ich sollte...'), Personalisierung (sich für Dinge außerhalb der eigenen Kontrolle beschuldigen). Ermutige sie, eine oder mehrere zu wählen, die passen. Bleibe, bis sie eine Verzerrung identifizieren."
+        },
+        "step4": {
+          "title": "Forme den Gedanken um",
+          "description": "Wie könntest du das auf eine ausgewogenere Weise sehen?",
+          "instruction": "Unterstütze den Nutzer dabei, einen realistischeren und freundlicheren Gedanken zu schaffen. Bitte sie zu überlegen: Welche Beweise unterstützen oder widersprechen dem ursprünglichen Gedanken? Was würden sie einem Freund in dieser Situation sagen? Gibt es eine ausgewogenere Betrachtungsweise? Ermutige sie, eine umgeformte Aussage zu schreiben. Bleibe, bis sie eine liefern."
+        }
+      },
+      "goalSetting": {
+        "step1": {
+          "title": "Wähle ein Ziel",
+          "description": "Wähle eine Sache aus, auf die du hinarbeiten möchtest.",
+          "instruction": "Bitte den Nutzer, ein Ziel zu nennen, auf das er hinarbeiten möchte. Halte es konkret und realistisch."
+        },
+        "step2": {
+          "title": "Warum ist es wichtig?",
+          "description": "Verbinde das Ziel mit dem, was für dich bedeutsam ist.",
+          "instruction": "Ermutige den Nutzer zu teilen, warum dieses Ziel für ihn bedeutsam ist. Frage, welchen Unterschied es in seinem Leben machen würde."
+        },
+        "step3": {
+          "title": "Zerlege es",
+          "description": "Verwandle ein großes Ziel in kleine, machbare Schritte.",
+          "instruction": "Führe den Nutzer dazu, das große Ziel in kleinere, machbare Schritte aufzuteilen. Ermutige zu Praktikabilität."
+        },
+        "step4": {
+          "title": "Was könnte im Weg stehen?",
+          "description": "Denke voraus über Herausforderungen nach, denen du begegnen könntest.",
+          "instruction": "Frage, was im Weg stehen könnte, dieses Ziel zu erreichen. Ermutige sie, mindestens eine Herausforderung zu benennen."
+        },
+        "step5": {
+          "title": "Plane deinen Weg herum",
+          "description": "Finde Strategien, um mit diesen Herausforderungen umzugehen.",
+          "instruction": "Hilf dem Nutzer, Strategien zur Überwindung dieser Hindernisse zu entwickeln. Bleibe flexibel aber unterstützend."
+        },
+        "step6": {
+          "title": "Mache den ersten Schritt",
+          "description": "Entscheide dich für eine kleine Handlung, die du bald unternehmen kannst.",
+          "instruction": "Lade den Nutzer ein, eine kleine Handlung zu wählen, die er heute oder diese Woche in Richtung seines Ziels unternehmen kann. Hilf ihm, spezifisch zu sein."
+        }
+      },
+      "futureSelfJournaling": {
+        "step1": {
+          "title": "Begegne deinem zukünftigen Ich",
+          "description": "Stelle dir vor, wie du in 1–3 Jahren lebst, im Einklang mit deinen Werten.",
+          "instruction": "Lade den Nutzer ein, sich vorzustellen, wie er in naher Zukunft (1–3 Jahre) ein Leben führt, auf das er stolz ist. Bitte ihn, sich vorzustellen, wo er ist, was er tut und was sich anders anfühlt. Ermutige ihn, es in seinen eigenen Worten zu beschreiben."
+        },
+        "step2": {
+          "title": "Wie sieht das Leben aus?",
+          "description": "Beschreibe einen gewöhnlichen Tag deines zukünftigen Ichs.",
+          "instruction": "Ermutige den Nutzer zu schreiben, wie das tägliche Leben für diese zukünftige Version seiner selbst aussieht. Frage nach der Zeitverbringung, den Routinen und was ihnen Sinn gibt."
+        },
+        "step3": {
+          "title": "Erkenne deine Stärken",
+          "description": "Welche Eigenschaften hat dein zukünftiges Ich entwickelt?",
+          "instruction": "Bitte den Nutzer zu beschreiben, welche persönlichen Stärken oder Fähigkeiten sein zukünftiges Ich aufgebaut hat. Zum Beispiel: Selbstvertrauen, Widerstandsfähigkeit, Freundlichkeit, Balance. Ermutige mindestens zwei."
+        },
+        "step4": {
+          "title": "Was ist anders als heute?",
+          "description": "Vergleiche dein zukünftiges Ich mit deinem heutigen Ich.",
+          "instruction": "Führe den Nutzer dazu, die Unterschiede zwischen seinen aktuellen Gewohnheiten, Überzeugungen oder Verhaltensweisen und denen seines zukünftigen Ichs zu bemerken. Ermutige ihn, ehrlich aber mitfühlend zu sein."
+        },
+        "step5": {
+          "title": "Ein Schritt heute",
+          "description": "Wähle eine Handlung, die dich näher bringt.",
+          "instruction": "Lade den Nutzer ein, einen kleinen Schritt aufzuschreiben, den er heute (oder diese Woche) unternehmen kann, der ihn zu dieser zukünftigen Version seiner selbst führt. Halte es praktisch und machbar."
+        }
+      },
+      "sortingThoughts": {
+        "step1": {
+          "title": "Schreiben Sie Ihre Gedanken auf",
+          "description": "Notieren Sie, was Ihnen gerade durch den Kopf geht.",
+          "instruction": "Bitten Sie den Benutzer, ein paar Gedanken aufzuschreiben, die ihm gerade durch den Kopf gehen, ohne sie zu bearbeiten."
+        },
+        "step2": {
+          "title": "Sortieren Sie sie",
+          "description": "Trennen Sie hilfreiche von schädlichen Gedanken.",
+          "instruction": "Leiten Sie den Benutzer an, seine Gedanken zu kategorisieren (hilfreich vs. schädlich oder Fakten vs. Sorgen)."
+        },
+        "step3": {
+          "title": "Wählen Sie aus, was Sie behalten möchten",
+          "description": "Konzentrieren Sie sich auf einen Gedanken, der Ihnen hilft, voranzukommen.",
+          "instruction": "Laden Sie den Benutzer ein, einen hilfreichen Gedanken auszuwählen, den er mitnehmen möchte, und den Rest vorerst loszulassen."
+        },
+        "step4": {
+          "title": "Vorwärts gehen",
+          "description": "Sie haben Ihre Gedanken sortiert. Jetzt können wir tiefer gehen.",
+          "instruction": "Anerkennung: 'Sie haben gesehen, welche Gedanken Sie aufbauen und welche Sie belasten.' Erklären Sie die Verbindung: Hilfreiche Gedanken können als Motivatoren mit Ihren Therapiezielen verbunden werden. Schädliche können in Automatischen Gedanken erforscht werden, wo wir sie neu rahmen. Fragen Sie: 'Möchten Sie einen der schädlichen Gedanken neu rahmen, die Sie heute entdeckt haben?'"
+        }
+      },
+      "therapyGoalDefinition": {
+        "step1": {
+          "title": "Wähle einen Bereich",
+          "description": "Wähle einen Teil deines Lebens aus, den du verbessern möchtest (z.B. Stimmung, Stress, Selbstvertrauen, Beziehungen).",
+          "instruction": "Lade den Nutzer ein, einen Hauptbereich für die Therapie zu wählen. Biete Beispiele an, aber halte es offen. Bleibe, bis sie einen Bereich teilen."
+        },
+        "step2": {
+          "title": "Definiere die gewünschte Veränderung",
+          "description": "Was würdest du gerne in diesem Bereich anders haben?",
+          "instruction": "Bitte den Nutzer, die Art der Veränderung zu beschreiben, die er sich erhofft (z.B. 'Ich möchte ruhiger sein', 'Ich möchte mir mehr vertrauen'). Ermutige sie, klar aber nicht zu detailliert zu sein."
+        },
+        "step3": {
+          "title": "Warum ist das wichtig für dich?",
+          "description": "Verbinde dein Ziel mit deinen Werten oder dem, was dir am wichtigsten ist.",
+          "instruction": "Lade den Nutzer ein zu erklären, warum dieses Ziel wichtig ist. Ermutige sie, es mit Werten, Beziehungen oder persönlichem Wohlbefinden zu verknüpfen."
+        },
+        "step4": {
+          "title": "Stelle dir den Erfolg vor",
+          "description": "Wie würde das Leben aussehen, wenn dieses Ziel erreicht wäre?",
+          "instruction": "Bitte den Nutzer, sich vorzustellen und zu beschreiben, was anders wäre, wenn ihr Ziel erreicht würde. Ermutige eine kurze, positive Vision."
+        },
+        "step5": {
+          "title": "Weitermachen",
+          "description": "Du hast deine Therapieziele definiert — jetzt nutzen wir sie als Fundament.",
+          "instruction": "Anerkenne den Fortschritt des Nutzers: 'Du hast geklärt, was dir wichtig ist und was du ändern möchtest.' Dann erkläre, wie diese Ziele die zukünftige Arbeit leiten werden: Wir behalten sie als Referenzpunkt im Kopf. In anderen Übungen (wie Automatische Gedanken oder Werteklärung) werden wir die Arbeit auf diese Ziele zurückführen. Mit der Zeit werden wir Fortschritte verfolgen und sie gemeinsam verfeinern. Beende mit der Frage: 'Möchtest du jetzt anfangen, eines deiner Ziele zu erkunden, oder sie als Fokus für kommende Sitzungen speichern?'"
+        }
+      },
+      "mindfulness": {
+        "step1": {
+          "title": "Auf das Jetzt fokussieren",
+          "description": "Wählen Sie einen Anker wie Ihren Atem oder Ihren Körper.",
+          "instruction": "Laden Sie den Benutzer ein, sich auf seinen Atem oder eine einfache Körperempfindung zu konzentrieren, wie die Füße auf dem Boden."
+        },
+        "step2": {
+          "title": "Beobachten Sie Ihre Gedanken",
+          "description": "Bemerken Sie, wie Gedanken kommen und gehen, ohne zu urteilen.",
+          "instruction": "Leiten Sie den Benutzer an, Gedanken zu beobachten, wie sie kommen und gehen, ohne zu urteilen, wie Wolken, die vorbeiziehen."
+        },
+        "step3": {
+          "title": "Sanft zurückkehren",
+          "description": "Bringen Sie die Aufmerksamkeit zurück, wenn Ihr Geist wandert.",
+          "instruction": "Ermutigen Sie den Benutzer, die Aufmerksamkeit auf seinen Anker zurückzubringen, wann immer er abdriftet, und sich selbst für das Üben anzuerkennen."
+        }
+      },
+      "gratitude": {
+        "step1": {
+          "title": "Drei Dinge nennen",
+          "description": "Schreiben Sie drei Dinge auf, für die Sie heute dankbar sind.",
+          "instruction": "Bitten Sie den Benutzer, drei Dinge zu nennen, für die er heute dankbar ist, groß oder klein."
+        },
+        "step2": {
+          "title": "Vollständig fühlen",
+          "description": "Nehmen Sie sich einen Moment, um die Dankbarkeit wirklich zu spüren.",
+          "instruction": "Ermutigen Sie den Benutzer, bei jedem innezuhalten und zu bemerken, wie es sich in seinem Körper anfühlt, dankbar zu sein."
+        },
+        "step3": {
+          "title": "Weitertragen",
+          "description": "Lassen Sie dieses Gefühl Ihren Tag leiten.",
+          "instruction": "Laden Sie den Benutzer ein, dieses Gefühl der Dankbarkeit mit sich zu tragen, während er seinen Tag fortsetzt."
+        }
+      },
+      "selfCompassion": {
+        "step1": {
+          "title": "Den Kampf bemerken",
+          "description": "Anerkennen Sie, wo Sie hart zu sich selbst sind.",
+          "instruction": "Bitten Sie den Benutzer, einen Bereich zu nennen, in dem er gerade hart zu sich selbst ist."
+        },
+        "step2": {
+          "title": "Einen Freund vorstellen",
+          "description": "Denken Sie daran, wie Sie jemandem antworten würden, der Ihnen am Herzen liegt.",
+          "instruction": "Leiten Sie den Benutzer an, sich vorzustellen, wie er reagieren würde, wenn ein Freund mit derselben Sache kämpfen würde."
+        },
+        "step3": {
+          "title": "Freundlichkeit anbieten",
+          "description": "Schreiben Sie sich selbst eine unterstützende Nachricht.",
+          "instruction": "Ermutigen Sie den Benutzer, einen freundlichen oder unterstützenden Satz an sich selbst zu schreiben."
+        }
+      },
+      "valuesClarity": {
+        "step1": {
+          "title": "Entdecken Sie, was am wichtigsten ist",
+          "description": "Denken Sie an die Eigenschaften oder Prinzipien, die Ihr Leben leiten.",
+          "instruction": "Bitten Sie den Benutzer, einige Werte aufzulisten, die sich für ihn wichtig anfühlen – zum Beispiel: Ehrlichkeit, Wachstum, Familie, Freiheit, Freundlichkeit, Ausgeglichenheit. Ermutigen Sie ihn, das zu wählen, was sich wahr anfühlt, nicht das, was er denkt, dass er 'sollte' wertschätzen."
+        },
+        "step2": {
+          "title": "Wählen Sie Ihre wichtigsten Werte",
+          "description": "Grenzen Sie es auf die ein, die sich gerade am zentralsten anfühlen.",
+          "instruction": "Ermutigen Sie den Benutzer, einen oder zwei Werte aus seiner Liste zu wählen, die ihm in diesem Moment am wichtigsten sind. Erinnern Sie ihn daran, dass es keine richtigen oder falschen Antworten gibt und sich Werte mit der Zeit ändern können."
+        },
+        "step3": {
+          "title": "Leben Sie Ihre Werte",
+          "description": "Finden Sie eine kleine Möglichkeit, Ihre Werte im täglichen Leben auszudrücken.",
+          "instruction": "Laden Sie den Benutzer ein, eine kleine, praktische Handlung zu benennen, die er heute oder diese Woche unternehmen könnte, die seine gewählten Werte widerspiegelt. Halten Sie es einfach und realistisch."
+        }
+      },
+      "tellYourStory": {
+        "step1": {
+          "title": "Teilen Sie Ihre Reise",
+          "description": "Erzählen Sie mir von einer bedeutsamen Erfahrung oder einem Kapitel in Ihrem Leben.",
+          "instruction": "Ermutigen Sie den Benutzer, einen wichtigen Moment, eine Periode oder Erfahrung aus seinem Leben zu teilen – es könnte eine Herausforderung sein, die er überwunden hat, eine Zeit des Wachstums oder eine bedeutsame Beziehung. Bleiben Sie in diesem Schritt, bis er eine klare Geschichte oder Erfahrung bereitstellt."
+        },
+        "step2": {
+          "title": "Entdecken Sie Ihre Stärken",
+          "description": "Welche Eigenschaften oder Stärken haben Sie während dieser Erfahrung gezeigt?",
+          "instruction": "Helfen Sie dem Benutzer, die persönlichen Stärken, Fähigkeiten oder Eigenschaften zu identifizieren, die er in seiner Geschichte gezeigt hat. Bitten Sie ihn, mindestens 2-3 Stärken zu benennen, die er in sich selbst aus dieser Erfahrung sieht – Dinge wie Widerstandsfähigkeit, Mut, Mitgefühl, Entschlossenheit oder Kreativität."
+        },
+        "step3": {
+          "title": "Verbindung zur Gegenwart",
+          "description": "Wie können diese Stärken Ihnen in Ihrem aktuellen Leben helfen?",
+          "instruction": "Leiten Sie den Benutzer an, seine identifizierten Stärken mit seiner gegenwärtigen Situation zu verbinden. Bitten Sie ihn zu überlegen, wie diese gleichen Eigenschaften ihn bei aktuellen Herausforderungen oder Zielen unterstützen können. Ermutigen Sie eine spezifische Art, wie er diese Stärken voranbringen kann."
+        }
+      },
+      "morningMindfulness": {
+        "step1": {
+          "title": "Bemerken Sie Ihr Erwachen",
+          "description": "Nehmen Sie sich einen Moment Zeit, um sich Ihres Körpers und Geistes bewusst zu werden, wenn Sie Ihren Tag beginnen.",
+          "instruction": "Führen Sie den Benutzer dazu, innezuhalten und zu bemerken, wie er sich körperlich und geistig beim Aufwachen fühlt. Ermutigen Sie ihn, ohne Urteil zu beobachten – vielleicht sein Energieniveau, Verspannungen oder seine allgemeine Stimmung wahrzunehmen. Halten Sie dies sanft und erforschend."
+        },
+        "step2": {
+          "title": "Eine sanfte Absicht setzen",
+          "description": "Wählen Sie eine kleine Art, wie Sie Ihren Tag achtsam angehen möchten.",
+          "instruction": "Helfen Sie dem Benutzer, eine einfache Absicht für seinen Tag zu identifizieren – dies könnte geduldiger sein, bei Gesprächen präsent bleiben oder achtsame Pausen einlegen. Ermutigen Sie ihn, etwas Erreichbares und Freundliches zu sich selbst zu wählen."
+        },
+        "step3": {
+          "title": "Drei achtsame Atemzüge nehmen",
+          "description": "Erden Sie sich mit drei bewussten Atemzügen, bevor Sie Ihren Tag beginnen.",
+          "instruction": "Führen Sie den Benutzer durch drei langsame, bewusste Atemzüge. Laden Sie ihn ein, sich auf das Gefühl des Atmens zu konzentrieren – zu spüren, wie die Luft in seinen Körper ein- und austritt. Dies dient als Ankerpunkt, zu dem er den ganzen Tag über zurückkehren kann."
+        }
+      },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Verstehe, warum Vision wichtig ist",
+          "description": "Eine klare Vision gibt Richtung und Motivation.",
+          "instruction": "Erkläre dem Nutzer, dass das Vorstellen ihrer Zukunft wie das Setzen eines Kompasses ist. Es hilft, Entscheidungen zu leiten, stärkt die Motivation und hilft uns zu wissen, wohin wir uns bewegen und wie wir als Person sein wollen. Ermutige sie, diese Übung mit Offenheit anzugehen und sich nicht zurückzuhalten. Dies ist eine ideale Vision. Du kannst eine reflektierende Frage stellen oder eine schnelle Skala/Check-in anbieten, wie klar ihre Vision im Moment ist."
+        },
+        "step2": {
+          "title": "Stelle dir dein zukünftiges Leben vor",
+          "description": "Stelle dir dein Leben in ein paar Jahren in seinen wichtigen Bereichen vor.",
+          "instruction": "Führe den Nutzer dazu, sich vorzustellen, wie das Leben aussieht, wenn sich die Dinge richtig anfühlen. Bitte sie, wichtige Bereiche durchzugehen: Beziehungen (Familie, Freunde, Partner), Arbeit oder Studium, Gesundheit und Wohlbefinden, Persönliches Wachstum und Lernen, Lebensstil und tägliche Routinen. Ermutige sie zu beschreiben, wie jeder dieser Bereiche in ihrer Zukunftsvision aussieht."
+        },
+        "step3": {
+          "title": "Bemerke, was wichtig ist",
+          "description": "Reflektiere über die Werte und Prioritäten in deiner Vision.",
+          "instruction": "Bitte den Nutzer, die Hauptwerte zu identifizieren, die durch ihre Vision hindurchscheinen — zum Beispiel Verbindung, Balance, Freiheit, Freundlichkeit, Wachstum. Ermutige sie, einen oder zwei zu nennen, die sich gerade am wichtigsten anfühlen."
+        },
+        "step4": {
+          "title": "Verbinde dich mit deiner Vision",
+          "description": "Stelle sie dir vollständig vor und verknüpfe sie mit deinem heutigen Leben.",
+          "instruction": "Ermutige den Nutzer, innezuhalten und sich wirklich vorzustellen, in dieser Zukunft zu sein — wie fühlt es sich an, welche Emotionen kommen auf? Dann bitte sie zu beschreiben, wie sie auf eine kleine Weise mit dieser Vision heute in Verbindung bleiben können, sei es durch eine Handlung, eine Erinnerung oder einfach das Gefühl im Kopf zu behalten."
+        }
+      }
+    }
+  },
+  "quickActions": {
+    "title": "Schnelle Aktionen",
+    "recommended": "Empfohlen",
+    "deepBreathing": "Tiefes Atmen",
+    "startDescription": "Beginne mit einer beruhigenden Atemübung, um dich zu zentrieren.",
+    "startVoiceSession": "Sprachsitzung starten",
+    "breathing": {
+      "title": "Atemübung",
+      "description": "Schnelle 3-Minuten Atemübung",
+      "category": "Wohlbefinden"
+    },
+    "gratitude": {
+      "title": "Dankbarkeitspraxis",
+      "description": "Tägliche Dankbarkeitsreflexion",
+      "category": "Achtsamkeit"
+    },
+    "meditation": {
+      "title": "Kurze Meditation",
+      "description": "5-Minuten achtsame Meditation",
+      "category": "Meditation"
+    },
+    "journaling": {
+      "title": "Stimmungs-Check",
+      "description": "Verfolge, wie du dich fühlst",
+      "category": "Tagebuch"
+    },
+    "stressRelief": {
+      "title": "Stressabbau",
+      "description": "Progressive Muskelentspannung",
+      "category": "Wohlbefinden"
+    },
+    "voiceSession": {
+      "title": "Sprachsitzung",
+      "description": "Sprich mit deinem KI-Begleiter",
+      "category": "Chat"
+    }
+  },
+  "actionPalette": {
+    "title": "Was möchtest du tun?",
+    "cancel": "Abbrechen",
+    "guidedSession": {
+      "title": "Geführte Sitzung",
+      "description": "Spreche mit deinem KI-Therapeuten"
+    },
+    "guidedJournaling": {
+      "title": "Geführtes Journaling",
+      "description": "Reflektiere durch Schreiben"
+    },
+    "quickExercise": {
+      "title": "Schnelle Übung",
+      "description": "Beginne eine Achtsamkeitspraxis"
+    },
+    "exerciseLibrary": {
+      "title": "Übungsbibliothek",
+      "description": "Durchsuche alle Übungen"
+    }
+  },
+  "alerts": {
+    "signOut": {
+      "title": "Abmelden",
+      "message": "Bist du sicher, dass du dich abmelden möchtest?"
+    },
+    "deleteSession": {
+      "title": "Sitzung löschen",
+      "message": "Bist du sicher, dass du diese Sitzung löschen möchtest?"
+    },
+    "resetProgress": {
+      "title": "Fortschritt zurücksetzen",
+      "message": "Dies wird deinen gesamten Fortschritt zurücksetzen. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "promptsGenerated": {
+      "title": "Reflexionsfragen erstellt!",
+      "message": "{{count}} neue Reflexionsfragen basierend auf deinen Einsichten wurden erstellt. Schaue im Journal-Bereich nach den neuen Fragen."
+    },
+    "clearHistory": {
+      "title": "Gesamten Verlauf löschen",
+      "message": "Bist du sicher, dass du deinen gesamten Chat-Verlauf löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "goalStatus": {
+      "title": "Zielstatus aktualisiert",
+      "message": "Ziel als {{status}} markiert!"
+    },
+    "progressSaved": {
+      "title": "Großartig!",
+      "message": "Dein Fortschritt wurde aufgezeichnet."
+    },
+    "checkIn": {
+      "title": "Check-in abgeschlossen",
+      "message": "Danke, dass du deinen Fortschritt geteilt hast!"
+    }
+  },
+  "visionDetails": {
+    "title": "Vision von mir",
+    "visionsCreated": "{{count}} Vision{{plural}} erstellt",
+    "loading": "Lade deine Visionen...",
+    "empty": {
+      "title": "Noch keine Visionen",
+      "description": "Führe eine \"Vision der Zukunft\"-Übung durch, um hier deine inspirierenden Visionen zu sehen."
+    },
+    "sections": {
+      "yourVision": "Deine Vision",
+      "coreQualities": "Kernqualitäten",
+      "lifeAreas": "Lebensbereiche",
+      "guidingWords": "Leitworte",
+      "practicalSteps": "Praktische Schritte",
+      "howItFeels": "Wie es sich anfühlt",
+      "wisdomFromFuture": "Weisheit von deinem zukünftigen Ich"
+    },
+    "reflectButton": "Über diese Vision reflektieren"
+  },
+  "ttsSettings": {
+    "title": "Spracheinstellungen",
+    "enable": {
+      "title": "Sprache aktivieren",
+      "description": "Erlaube deinem Schildkröten-Begleiter, Antworten laut zu sprechen"
+    },
+    "autoPlay": {
+      "title": "Automatisch sprechen",
+      "description": "KI-Antworten automatisch sprechen, wenn sie ankommen"
+    },
+    "speed": {
+      "title": "Sprechgeschwindigkeit",
+      "slow": "Langsam",
+      "normal": "Normal",
+      "fast": "Schnell",
+      "lower": "Niedriger",
+      "higher": "Höher"
+    },
+    "pitch": {
+      "title": "Stimmhöhe",
+      "low": "Tief",
+      "high": "Hoch"
+    },
+    "test": {
+      "button": "Stimme testen",
+      "stopButton": "Test stoppen",
+      "text": "Hallo, ich bin dein sanfter Schildkröten-Begleiter. So wird meine Stimme mit diesen Einstellungen klingen."
+    }
+  }
+}

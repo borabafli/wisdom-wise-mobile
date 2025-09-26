@@ -69,24 +69,28 @@ export const getColorBrightness = (hexColor: string): NavigationBarStyle => {
  * style: Controls navigation/status bar button contrast
  */
 export const navigationBarConfigs = {
+  default: {
+    backgroundColor: '#e9eff1',
+    style: 'light' as NavigationBarStyle
+  },
   homeScreen: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#e9eff1',
     style: 'light' as NavigationBarStyle
   },
   exerciseLibrary: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#e9eff1',
     style: 'light' as NavigationBarStyle
   },
   insightsDashboard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#e9eff1',
     style: 'light' as NavigationBarStyle
   },
   profileScreen: {
-    backgroundColor: '#f8fafc', 
+    backgroundColor: '#e9eff1',
     style: 'light' as NavigationBarStyle
   },
   chatInterface: {
-    backgroundColor: '#FFFFFE',
+    backgroundColor: '#e9eff1',
     style: 'light' as NavigationBarStyle
   }
 };
