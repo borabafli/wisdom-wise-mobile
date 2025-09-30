@@ -33,9 +33,7 @@ export const profileScreenStyles = StyleSheet.create({
   
   // Content Container - Positioned above background
   contentContainer: {
-    flex: 1,
-    position: 'relative',
-    zIndex: 1,
+    paddingBottom: spacing[32],
   },
   
   // Header Styles - Match Insights
@@ -154,23 +152,6 @@ export const profileScreenStyles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 120,
-  },
-  // Header Section - Consistent with HomeScreen
-  header: {
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[32],
-    paddingBottom: spacing.layout.screenPadding,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#002d14', // Consistent with HomeScreen green theme
-    fontFamily: 'BubblegumSans-Regular',
-    textShadowColor: 'rgba(255, 255, 255, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-    textAlign: 'center',
-    letterSpacing: -0.5,
   },
   userInfoSection: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -388,10 +369,6 @@ export const profileScreenStyles = StyleSheet.create({
     gap: spacing.components.cardGap,
     paddingVertical: spacing[4],
   },
-  menuIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   menuIconBackground: {
     width: 48,
     height: 48,
@@ -399,23 +376,6 @@ export const profileScreenStyles = StyleSheet.create({
     backgroundColor: 'rgba(107, 114, 128, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  menuTitleContainer: {
-    flex: 1,
-  },
-  menuTitle: {
-    ...typography.textStyles.h4,
-    color: colors.text.primary,
-    marginBottom: spacing[1],
-  },
-  menuTitleDanger: {
-    color: '#ef4444',
-  },
-  menuSubtitle: {
-    ...typography.textStyles.body,
-    color: colors.text.secondary,
-    fontWeight: typography.fontWeight.medium,
-    fontSize: 14,
   },
   menuArrow: {
     alignItems: 'center',

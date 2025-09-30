@@ -47,7 +47,7 @@ class ContextService {
             ? msg.content
             : JSON.stringify(msg.content)
         })),
-        model: 'google/gemini-flash-2.5',
+        model: 'google/gemini-2.5-flash',
         maxTokens: 500,
         temperature: 0.3
       })

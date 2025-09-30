@@ -5,6 +5,7 @@ import { insightService } from '../services/insightService';
 import { contextService } from '../services/contextService';
 import { memoryService } from '../services/memoryService';
 import { visionInsightsService } from '../services/visionInsightsService';
+import { firstMessageService } from '../services/firstMessageService';
 
 // Exercise context interface for targeted extraction
 export interface ExerciseContext {
@@ -22,27 +23,51 @@ export interface ExerciseContext {
 export const useSessionManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const initializeSession = useCallback(async (): Promise<Message[]> => {
+  const initializeSession = useCallback(async (): Promise<{ messages: Message[], suggestions: string[] }> => {
     try {
       setIsLoading(true);
       console.log('Starting a fresh session - clearing any existing messages.');
-      
+
       // Always clear the current session to start fresh
       await storageService.clearCurrentSession();
-      
+
+      // Generate AI-powered first message with context
+      console.log('🎯 Generating personalized first message...');
+      const firstMessageResponse = await firstMessageService.generateFirstMessage();
+
       const welcomeMessage: Message = {
-        id: 'welcome',
-        type: 'welcome',
-        content: "What's on your mind today? 🌱",
+        id: 'welcome_' + Date.now(),
+        type: 'system',
+        content: firstMessageResponse.message,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-      
+
       await storageService.addMessage(welcomeMessage);
-      console.log('Fresh session started with welcome message.');
-      return [welcomeMessage];
+      console.log('✅ Fresh session started with AI-generated welcome message');
+      console.log('💬 Message:', firstMessageResponse.message);
+      console.log('🎯 Chips:', firstMessageResponse.chips);
+
+      return {
+        messages: [welcomeMessage],
+        suggestions: firstMessageResponse.chips
+      };
     } catch (error) {
       console.error('Error initializing chat session:', error);
-      return [];
+      // Fallback to simple welcome message with user's name
+      const firstName = await storageService.getFirstName().catch(() => '');
+      const greeting = firstName ? `Hey ${firstName}. What's on your mind today? 🌱` : "Hey. What's on your mind today? 🌱";
+
+      const fallbackMessage: Message = {
+        id: 'welcome',
+        type: 'welcome',
+        content: greeting,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      await storageService.addMessage(fallbackMessage);
+      return {
+        messages: [fallbackMessage],
+        suggestions: []
+      };
     } finally {
       setIsLoading(false);
     }

@@ -6,6 +6,7 @@ const { width, height } = Dimensions.get('window');
 export const onboardingCurrentStateStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8', // Same as other onboarding screens
   },
 
   safeArea: {
@@ -37,7 +38,7 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   progressFill: {
     width: '71%', // 5/7 pages
     height: '100%',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Primary color
     borderRadius: 2,
   },
 
@@ -110,7 +111,7 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontFamily: 'Ubuntu-Bold',
-    color: '#357A8A',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     marginBottom: 10,
     lineHeight: 28,
@@ -167,7 +168,7 @@ export const onboardingCurrentStateStyles = StyleSheet.create({
   optionText: {
     fontSize: 14,
     fontFamily: 'Ubuntu-Medium',
-    color: '#357A8A',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
   },
 

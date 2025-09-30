@@ -10,7 +10,7 @@ export const authScreenStyles = StyleSheet.create({
   // Main Container
   safeArea: {
     flex: 1,
-    backgroundColor: '#F9FBFD', // Light blue ocean background from style guide
+    backgroundColor: '#EDF8F8', // Match onboarding background
   },
 
   scrollContainer: {
@@ -39,23 +39,34 @@ export const authScreenStyles = StyleSheet.create({
   // Header Section
   headerContainer: {
     alignItems: 'center',
-    marginBottom: spacing.therapy.xl,
+    marginBottom: spacing.therapy.lg, // Reduced from xl
   },
 
   headerContainerSignUp: {
     alignItems: 'center',
-    marginBottom: spacing.therapy.xl,
-    marginTop: spacing.therapy.md,
+    marginBottom: spacing.therapy.md, // Reduced from xl
+    marginTop: spacing.therapy.sm, // Reduced from md
+  },
+
+  turtleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing[12], // Reduced from 16
+  },
+
+  turtleImage: {
+    width: 100, // Reduced from 120
+    height: 100, // Reduced from 120
   },
 
   title: {
-    fontSize: 32,
+    fontSize: 28, // Reduced from 32
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: spacing.therapy.md,
+    marginBottom: spacing.therapy.sm, // Reduced from md
     fontFamily: 'Inter',
     textAlign: 'center',
-    lineHeight: 40, // Better line height for readability
+    lineHeight: 34, // Adjusted for smaller font
   },
 
   subtitle: {
@@ -74,7 +85,7 @@ export const authScreenStyles = StyleSheet.create({
   },
 
   inputGroup: {
-    marginBottom: spacing.therapy.md,
+    marginBottom: spacing.therapy.sm, // Reduced margin
   },
 
   nameFieldsRow: {
@@ -99,13 +110,13 @@ export const authScreenStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'transparent',
     borderRadius: 16, // Increased from 12 for softer geometry
-    paddingHorizontal: spacing.therapy.lg, // More generous padding
-    paddingVertical: spacing.therapy.md,
+    paddingHorizontal: spacing.therapy.md, // Reduced padding
+    paddingVertical: spacing.therapy.sm, // Reduced padding
     fontSize: 16,
     fontFamily: 'Inter',
     color: colors.text.primary,
     ...shadows.sm,
-    minHeight: 56, // Better touch target
+    minHeight: 48, // Reduced height
   },
 
   textInputFocused: {
@@ -142,7 +153,7 @@ export const authScreenStyles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: spacing.therapy.md,
+    marginTop: spacing.therapy.sm, // Reduced margin
     paddingHorizontal: spacing.therapy.xs,
   },
 
@@ -187,18 +198,16 @@ export const authScreenStyles = StyleSheet.create({
   primaryButton: {
     backgroundColor: '#5BA3B8', // Primary blue-teal from style guide
     borderRadius: 50, // radius-full from style guide
-    paddingVertical: spacing.therapy.lg, // More generous padding
-    paddingHorizontal: spacing.therapy.xl,
-    marginTop: spacing.therapy.xl,
-    ...shadows.md,
+    paddingVertical: spacing.therapy.md, // Reduced padding
+    paddingHorizontal: spacing.therapy.lg,
+    marginTop: spacing.therapy.lg, // Reduced margin
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 56, // Better touch target
+    minHeight: 48, // Reduced height
   },
 
   primaryButtonDisabled: {
     backgroundColor: '#A8D5E8', // Primary light from style guide
-    ...shadows.sm,
   },
 
   primaryButtonText: {
@@ -212,13 +221,12 @@ export const authScreenStyles = StyleSheet.create({
   googleButton: {
     backgroundColor: colors.white,
     borderRadius: 50,
-    paddingVertical: spacing.therapy.lg,
-    paddingHorizontal: spacing.therapy.xl,
-    marginTop: spacing.therapy.md,
-    ...shadows.md,
+    paddingVertical: spacing.therapy.md, // Reduced padding
+    paddingHorizontal: spacing.therapy.lg,
+    marginTop: spacing.therapy.sm, // Reduced margin
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 56,
+    minHeight: 48, // Reduced height
     borderWidth: 1,
     borderColor: '#E1E8ED',
     flexDirection: 'row',
@@ -260,8 +268,8 @@ export const authScreenStyles = StyleSheet.create({
   // Footer Section
   footerContainer: {
     alignItems: 'center',
-    marginTop: spacing.therapy.lg,
-    paddingBottom: spacing.therapy.lg,
+    marginTop: spacing.therapy.md, // Reduced margin
+    paddingBottom: spacing.therapy.md, // Reduced padding
   },
 
   footerText: {

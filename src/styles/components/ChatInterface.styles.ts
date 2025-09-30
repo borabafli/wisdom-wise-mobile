@@ -157,17 +157,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderWidth: 0,
     paddingHorizontal: spacing.components.messagePadding,
     paddingVertical: spacing.components.messagePadding,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   userMessageText: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Regular',
     fontWeight: '400',
-    color: '#475569', // Darker gray-blue for better readability
+    color: '#FFFFFF', // White text for dark gradient background
     textAlign: 'left',
     flexWrap: 'wrap',
     lineHeight: 24,
@@ -700,7 +695,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   fullscreenSendButton: {
     padding: spacing[2],
     borderRadius: 20,
-    backgroundColor: '#61a8b4', // Updated to requested color
+    backgroundColor: '#2a656f',
     width: 40,
     height: 40,
     alignItems: 'center',
@@ -840,7 +835,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     zIndex: 12, // Moderate z-index for buttons
   },
   sendButtonActive: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#2a656f',
   },
   sendButtonDisabled: {
     backgroundColor: colors.gray[200],

@@ -19,7 +19,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#e9eff1"
+      "backgroundColor": "#EDF8F8"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -28,7 +28,7 @@
       "supportsTablet": true,
       "statusBar": {
         "style": "dark",
-        "backgroundColor": "#e9eff1"
+        "backgroundColor": "#EDF8F8"
       },
       "bundleIdentifier": "com.wisdomwise.app",
       "infoPlist": {
@@ -42,16 +42,19 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#e9eff1"
+        "backgroundColor": "#EDF8F8"
+      },
+      "notification": {
+        "icon": "./assets/navigation-icon.png"
       },
       "edgeToEdgeEnabled": false,
       "statusBar": {
-        "backgroundColor": "#e9eff1",
+        "backgroundColor": "#EDF8F8",
         "translucent": false
       },
       "androidNavigationBar": {
         "visible": true,
-        "backgroundColor": "#e9eff1"
+        "backgroundColor": "#EDF8F8"
       },
       "androidStatusBar": {
         "translucent": false
@@ -84,17 +87,19 @@
             "./assets/fonts/OTF/ClashGrotesk-Medium.otf",
             "./assets/fonts/OTF/ClashGrotesk-Regular.otf",
             "./assets/fonts/OTF/ClashGrotesk-Semibold.otf",
-            "./assets/fonts/BubblegumSans-Regular.ttf"
+            "./assets/fonts/BubblegumSans-Regular.ttf",
+            "./assets/fonts/Alan_Sans/static/AlanSans-SemiBold.ttf",
+            "./assets/fonts/Alan_Sans/AlanSans-VariableFont_wght.ttf"
           ]
         }
       ],
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#e9eff1",
+          "backgroundColor": "#EDF8F8",
           "image": "./assets/splash-icon.png",
           "dark": {
-            "backgroundColor": "#e9eff1"
+            "backgroundColor": "#EDF8F8"
           }
         }
       ],

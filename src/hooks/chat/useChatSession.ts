@@ -5,7 +5,7 @@ import { apiService } from '../../services/apiService';
 import { rateLimitService } from '../../services/rateLimitService';
 import { ttsService } from '../../services/ttsService';
 import { useSessionManagement, ExerciseContext } from '../useSessionManagement';
-import { getExerciseFlow, exerciseLibraryData } from '../../data/exerciseLibrary';
+import { getExerciseFlow, getExerciseLibraryData } from '../../data/exerciseLibrary';
 import { memoryService } from '../../services/memoryService';
 
 interface ChatSessionState {
@@ -39,7 +39,8 @@ interface UseChatSessionReturn extends ChatSessionState {
 }
 
 export const useChatSession = (
-  currentExercise?: any
+  currentExercise?: any,
+  t: (key: string) => string = (key) => key
 ): UseChatSessionReturn => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -68,11 +69,12 @@ export const useChatSession = (
         await handleStartExercise(currentExercise);
         return;
       } else {
-        console.log('Starting fresh chat session');
-        const initialMessages = await initializeSession();
-        
-        setMessages(initialMessages);
-        setSuggestions([]); // No initial suggestions - wait for AI
+        console.log('Starting fresh chat session with AI-powered first message');
+        const sessionData = await initializeSession();
+
+        setMessages(sessionData.messages);
+        setSuggestions(sessionData.suggestions); // AI-generated contextual chips
+        console.log('✅ Chat initialized with personalized greeting and', sessionData.suggestions.length, 'suggestion chips');
       }
     } catch (error) {
       console.error('Error initializing chat session:', error);
@@ -81,7 +83,7 @@ export const useChatSession = (
 
   const handleSuggestExercise = async () => {
     console.log('🎯 User requested exercise suggestion');
-    const suggestionText = "I need some help right now. Could you suggest a therapeutic exercise for me?";
+    const suggestionText = "I need some help right now. Could you suggest an exercise for me?";
     await handleSendMessage(suggestionText);
   };
 
@@ -235,7 +237,8 @@ export const useChatSession = (
           console.log('🎯 Checking exercise card trigger...');
           if (response.nextAction === 'showExerciseCard' && response.exerciseData) {
           console.log('🎯 Exercise card should show! Type:', response.exerciseData.type);
-          // Get complete exercise data from library
+          // Get complete exercise data from library with translations
+          const exerciseLibraryData = getExerciseLibraryData(t);
           const fullExerciseData = exerciseLibraryData[response.exerciseData.type];
           console.log('🎯 Full exercise data found:', fullExerciseData);
           if (fullExerciseData) {
@@ -280,6 +283,7 @@ export const useChatSession = (
               }
               
               console.log('🎯 FALLBACK: Using exercise type:', exerciseType);
+              const exerciseLibraryData = getExerciseLibraryData(t);
               const fallbackExercise = exerciseLibraryData[exerciseType];
               if (fallbackExercise) {
                 console.log('🎯 FALLBACK: Showing exercise card for:', fallbackExercise.name);

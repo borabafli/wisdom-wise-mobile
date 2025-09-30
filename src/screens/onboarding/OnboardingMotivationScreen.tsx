@@ -345,7 +345,7 @@ Remember: This is their first interaction with you. Be genuinely caring, specifi
           {/* AI Response Section */}
           {isLoadingResponse && (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#5BA3B8" />
+              <ActivityIndicator size="small" color="#36657d" />
               <Text style={styles.loadingText}>Anu is responding...</Text>
             </View>
           )}

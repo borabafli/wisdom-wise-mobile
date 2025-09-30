@@ -37,7 +37,6 @@ import { useExerciseFlow } from '../hooks';
 
 // Import services and utilities
 import { storageService, Message } from '../services/storageService';
-import { exerciseLibraryData } from '../data/exerciseLibrary';
 
 // Import styles
 import { chatInterfaceStyles as styles } from '../styles/components/ChatInterface.styles';
@@ -114,7 +113,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Custom hooks
-  const chatSession = useChatSession(currentExercise);
+  const chatSession = useChatSession(currentExercise, t);
   const ttsControls = useTTSControls();
   const typewriterAnimation = useTypewriterAnimation(
     chatSession.setMessages,
@@ -484,19 +483,19 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               />
             )}
 
-            {chatSession.isTyping && (
+            {(chatSession.isTyping || chatSession.isLoading) && (
               <View style={styles.typingContainer}>
                 <View style={styles.typingBubble}>
                   <View style={styles.typingContent}>
                     <View style={styles.typingAvatar}>
-                      <Image 
-                        source={require('../../assets/images/Teal watercolor single element/chat-background.png')}
+                      <Image
+                        source={require('../../assets/images/onboarding/chat-avatar-image.png')}
                         style={styles.typingTurtleAvatar}
                         contentFit="contain"
                       />
                     </View>
                     <View style={styles.typingTextContainer}>
-                      <AnimatedTypingDots isVisible={chatSession.isTyping} />
+                      <AnimatedTypingDots isVisible={chatSession.isTyping || chatSession.isLoading} />
                     </View>
                   </View>
                 </View>
@@ -573,12 +572,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           <SuggestionChips
             suggestions={chatSession.suggestions}
             onSuggestionPress={(suggestion) => handleSend(suggestion)}
-            onSuggestExercise={() => {
-              if (onExerciseClick) {
-                const breathingExercise = exerciseLibraryData['breathing'];
-                onExerciseClick(breathingExercise);
-              }
-            }}
+            onSuggestExercise={() => chatSession.handleSuggestExercise()}
             showExerciseButton={
               chatSession.messages.filter(msg => msg.type === 'user').length >= 2 &&
               !chatSession.showExerciseCard &&

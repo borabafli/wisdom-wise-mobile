@@ -13,6 +13,7 @@ import EditProfileModal from '../components/EditProfileModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
+import { notificationService } from '../services/notificationService';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -60,12 +61,6 @@ const ProfileScreen: React.FC = () => {
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
 
-
-  // Get display name from auth profile
-  const displayName = profile
-    ? `${profile.first_name} ${profile.last_name}`.trim() || t('profile.fallbackName')
-    : user?.email?.split('@')[0] || t('profile.fallbackName');
-
   const handleSignOut = () => {
     Alert.alert(
       t('alerts.signOut.title'),
@@ -110,17 +105,81 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
+  const handleTestNotification = async () => {
+    try {
+      // Check permission status first
+      const { canRequest, shouldGoToSettings } = await notificationService.canRequestPermissions();
+      const hasPermission = await notificationService.getPermissionStatus();
+
+      if (hasPermission !== 'granted') {
+        if (shouldGoToSettings) {
+          // Permission was denied - provide better guidance
+          const guidance = notificationService.getNotificationGuidance();
+
+          Alert.alert(
+            guidance.title,
+            `${guidance.message}\n\nSteps to enable:\n${guidance.steps.join('\n')}`,
+            [
+              { text: 'Not Now', style: 'cancel' },
+              {
+                text: 'Open Settings',
+                style: 'default',
+                onPress: () => notificationService.openSettings()
+              }
+            ]
+          );
+          return;
+        } else if (canRequest) {
+          // Can request permission
+          const granted = await notificationService.requestPermissions();
+          if (!granted) {
+            Alert.alert(
+              'Permission Required',
+              'Test notifications require notification permissions to be enabled.',
+              [{ text: 'OK', style: 'default' }]
+            );
+            return;
+          }
+        } else {
+          Alert.alert(
+            'Permission Required',
+            'Please enable notifications in your device settings to test notifications.',
+            [{ text: 'OK', style: 'default' }]
+          );
+          return;
+        }
+      }
+
+      // Send test notification
+      await notificationService.sendTestNotification();
+
+      Alert.alert(
+        'Test Notification Sent!',
+        'Check your notification panel to see if it appeared.',
+        [{ text: 'OK', style: 'default' }]
+      );
+    } catch (error) {
+      console.error('Error sending test notification:', error);
+      Alert.alert(
+        'Error',
+        'Failed to send test notification. Please try again.',
+        [{ text: 'OK', style: 'default' }]
+      );
+    }
+  };
+
   const menuItems = [
 
     { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: 'Edit Profile', action: () => setShowEditProfile(true) },
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: 'Chat History', action: () => setShowChatHistory(true) },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: 'Voice Settings', action: () => setShowTTSSettings(true) },
     { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: 'Notifications', badge: '3' },
+    { icon: Bell, label: 'Test Notification', action: handleTestNotification, highlight: false },
     { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: 'Privacy & Security' },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: 'Dark Mode', toggle: true },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: 'Help & Support' },
     // Conditionally show Sign Out (for logged in users) or Login (for anonymous users)
-    ...(isAnonymous 
+    ...(isAnonymous
       ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true }]
       : [{ icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }]
     )
@@ -136,7 +195,7 @@ const ProfileScreen: React.FC = () => {
         pointerEvents="none"
       />
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -334,12 +393,12 @@ const ProfileScreen: React.FC = () => {
                            item.label === t('profile.menu.chatHistory') ? t('profile.menuSubtitles.chatHistory') :
                            item.label === t('profile.menu.voiceSettings') ? t('profile.menuSubtitles.voiceSettings') :
                            item.label === t('profile.menu.notifications') ? t('profile.menuSubtitles.notifications') :
+                           item.label === 'Test Notification' ? 'Send a test notification now' :
                            item.label === t('profile.menu.privacy') ? t('profile.menuSubtitles.privacy') :
                            item.label === t('profile.menu.darkMode') ? t('profile.menuSubtitles.darkMode') :
                            item.label === t('profile.menu.help') ? t('profile.menuSubtitles.help') :
                            item.label === t('profile.menu.signOut') ? t('profile.menuSubtitles.signOut') :
                            t('profile.menuSubtitles.default')}
-
                         </Text>
                       </View>
                       <View style={styles.menuActions}>

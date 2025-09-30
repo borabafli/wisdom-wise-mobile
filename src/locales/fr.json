@@ -351,7 +351,7 @@
     "exerciseProgress": "Étape {{current}} sur {{total}} • {{title}}",
     "inProgress": "En cours",
     "therapeuticExercise": "{{duration}} • Exercice thérapeutique",
-    "loadingSpace": "Chargement de votre espace doux...",
+    "loadingSpace": "Préparation de votre espace sûr...",
     "safeSpace": "Votre espace sûr pour la réflexion",
     "almostAtLimit": "Presque à la limite quotidienne ! {{remaining}} restant.",
     "limitUsed": "{{percentage}}% de la limite quotidienne utilisée.",
@@ -916,6 +916,166 @@
       "button": "Tester la Voix",
       "stopButton": "Arrêter le Test",
       "text": "Bonjour, je suis votre gentil guide tortue. Voici comment ma voix sonnera avec ces paramètres."
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Salut, je suis Anu !",
+      "subtitle": "Votre guide vers plus de calme et de clarté chaque jour.",
+      "startButton": "Commençons !"
+    },
+    "valueProp": {
+      "title": "Votre parcours vers le bien-être commence ici",
+      "description": "Découvrez des outils personnalisés et un accompagnement bienveillant pour soutenir votre parcours de santé mentale.",
+      "continueButton": "Commencer"
+    },
+    "personalValues": {
+      "headline": "Personnalisons votre expérience avec Anu.",
+      "promptText": "Quelles valeurs comptent le plus pour vous ? Choisissez celles qui vous semblent justes.",
+      "continueButton": "Continuer"
+    },
+    "focusAreas": {
+      "headline": "Sur quoi aimeriez-vous vous concentrer ?",
+      "promptText": "Sélectionnez les domaines où vous souhaitez du soutien. Vous pourrez toujours les modifier plus tard.",
+      "areas": {
+        "anxiety": "Anxiété",
+        "stress": "Stress",
+        "sleepIssues": "Problèmes de sommeil",
+        "lowMood": "Humeur maussade",
+        "focusProblems": "Problèmes de concentration",
+        "relationshipIssues": "Problèmes relationnels",
+        "workPressure": "Pression au travail",
+        "selfConfidence": "Confiance en soi"
+      },
+      "continueButton": "Continuer"
+    },
+    "ageGroup": {
+      "headline": "Aidez-moi à mieux vous comprendre",
+      "promptText": "Cela m'aide à adapter mes conseils à votre étape de vie.",
+      "ranges": {
+        "18-25": "18-25",
+        "26-35": "26-35",
+        "36-45": "36-45",
+        "46-55": "46-55",
+        "56-65": "56-65",
+        "65+": "65+"
+      },
+      "continueButton": "Continuer"
+    },
+    "personalization": {
+      "headline": "Comment vous appelez-vous ?",
+      "promptText": "Choisissez comment Anu devrait vous appeler.",
+      "placeholder": "Votre nom préféré",
+      "caption": "Vous pourrez toujours changer cela plus tard dans les paramètres",
+      "continueButton": "Continuer",
+      "skipButton": "Passer pour l'instant"
+    },
+    "motivation": {
+      "title": "Parlez-moi davantage de ce qui vous amène ici",
+      "subtitle": "Cela m'aide à comprendre comment mieux vous accompagner",
+      "inputLabel": "Partagez ce qui vous préoccupe",
+      "placeholder": "Je me sens dépassé(e) au travail et...",
+      "characterCount": "{{count}}/200",
+      "chipsLabel": "Ou choisissez parmi ces expériences courantes :",
+      "chips": {
+        "stress": "Se sentir stressé(e)",
+        "overthinking": "Tout sur-analyser",
+        "relationships": "Défis relationnels",
+        "burnout": "Épuisement professionnel",
+        "mood": "Humeur maussade",
+        "sleep": "Problèmes de sommeil",
+        "exploring": "Simple exploration"
+      },
+      "selectedChipsLabel": "Vous avez partagé :",
+      "loading": "Anu répond...",
+      "responseLabel": "Réponse d'Anu",
+      "continueButton": "Partager avec Anu",
+      "continueAfterResponse": "Continuer",
+      "skipButton": "Passer pour l'instant"
+    },
+    "baseline": {
+      "title": "Faisons le point",
+      "subtitle": "Cela m'aide à suivre vos progrès au fil du temps",
+      "moodLabel": "Comment est votre humeur aujourd'hui ?",
+      "continueButton": "Continuer",
+      "skipButton": "Passer pour l'instant"
+    },
+    "final": {
+      "mainTitle": "Nous préparons votre chemin personnel vers l'avant...",
+      "subtitle": "Configuration de votre expérience personnalisée avec des outils fondés sur des preuves",
+      "features": {
+        "analyzing": {
+          "title": "Analyse de vos préférences",
+          "description": "Comprendre vos besoins uniques"
+        },
+        "creating": {
+          "title": "Création de votre plan thérapeutique",
+          "description": "Adaptation des exercices à vos objectifs"
+        },
+        "preparing": {
+          "title": "Préparation de votre boîte à outils",
+          "description": "Configuration des ressources personnalisées"
+        }
+      },
+      "continueButton": "Entrer dans WisdomWise"
+    },
+    "notifications": {
+      "mainTitle": "Le bien-être grandit par de petits pas quotidiens.",
+      "subtitle": "Des rappels bienveillants peuvent vous aider à développer des habitudes saines et à rester connecté(e) à votre pratique de pleine conscience.",
+      "loading": "Configuration de vos rappels...",
+      "reminders": {
+        "morning": {
+          "label": "Réflexion matinale",
+          "description": "Commencer avec intention"
+        },
+        "afternoon": {
+          "label": "Point de mi-journée",
+          "description": "Pause et respiration"
+        },
+        "evening": {
+          "label": "Détente du soir",
+          "description": "Réfléchir et se détendre"
+        }
+      },
+      "timePickerTitle": "Sélectionner l'heure",
+      "enableButton": "Activer les rappels",
+      "skipButton": "Passer pour l'instant",
+      "saveButton": "Sauvegarder",
+      "cancelButton": "Annuler",
+      "permissionGuidance": {
+        "title": "Activer les rappels bienveillants",
+        "message": "Anu peut vous envoyer des rappels de pleine conscience bienveillants pour soutenir votre parcours de santé mentale. Ils sont entièrement optionnels et personnalisables.",
+        "setupLater": "Souhaitez-vous activer les notifications dans les paramètres ? Vous pourrez toujours configurer cela plus tard dans votre profil.",
+        "steps": {
+          "ios": {
+            "step1": "1. Appuyez sur \"Ouvrir les paramètres\" ci-dessous",
+            "step2": "2. Activez \"Autoriser les notifications\"",
+            "step3": "3. Choisissez votre style de notification préféré",
+            "step4": "4. Revenez à WisdomWise une fois terminé"
+          },
+          "android": {
+            "step1": "1. Appuyez sur \"Ouvrir les paramètres\" ci-dessous",
+            "step2": "2. Activez \"Afficher les notifications\"",
+            "step3": "3. Choisissez vos préférences de notification",
+            "step4": "4. Appuyez sur retour pour revenir à WisdomWise"
+          }
+        },
+        "buttons": {
+          "skipForNow": "Passer pour l'instant",
+          "enableInSettings": "Activer dans les paramètres",
+          "openSettings": "Ouvrir les paramètres",
+          "notNow": "Pas maintenant"
+        }
+      }
+    },
+    "common": {
+      "continueButton": "Continuer",
+      "skipButton": "Passer",
+      "backButton": "Retour",
+      "nextButton": "Suivant",
+      "doneButton": "Terminé",
+      "loading": "Chargement...",
+      "selectPlaceholder": "Sélectionner une option"
     }
   }
 }

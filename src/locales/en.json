@@ -349,7 +349,7 @@
     "exerciseProgress": "Step {{current}} of {{total}} • {{title}}",
     "inProgress": "In Progress",
     "therapeuticExercise": "{{duration}} • Therapeutic Exercise",
-    "loadingSpace": "Loading your gentle space...",
+    "loadingSpace": "Preparing your safe space...",
     "safeSpace": "Your safe space for reflection",
     "almostAtLimit": "Almost at daily limit! {{remaining}} left.",
     "limitUsed": "{{percentage}}% of daily limit used.",
@@ -974,6 +974,166 @@
       "button": "Test Voice",
       "stopButton": "Stop Test",
       "text": "Hello, I'm your gentle turtle guide. This is how my voice will sound with these settings."
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Hey, I'm Anu!",
+      "subtitle": "Your guide to more calm and clarity each day.",
+      "startButton": "Let's start!"
+    },
+    "valueProp": {
+      "title": "Your Journey to Wellbeing Starts Here",
+      "description": "Discover personalized tools and gentle guidance to support your mental health journey.",
+      "continueButton": "Get Started"
+    },
+    "personalValues": {
+      "headline": "Let's personalize your experience with Anu.",
+      "promptText": "What values matter most to you? Choose the ones that feel right.",
+      "continueButton": "Continue"
+    },
+    "focusAreas": {
+      "headline": "What would you like to focus on?",
+      "promptText": "Select the areas where you'd like support. You can always change these later.",
+      "areas": {
+        "anxiety": "Anxiety",
+        "stress": "Stress",
+        "sleepIssues": "Sleep Issues",
+        "lowMood": "Low Mood",
+        "focusProblems": "Focus Problems",
+        "relationshipIssues": "Relationship Issues",
+        "workPressure": "Work Pressure",
+        "selfConfidence": "Self-Confidence"
+      },
+      "continueButton": "Continue"
+    },
+    "ageGroup": {
+      "headline": "Help me to understand you better",
+      "promptText": "This helps me tailor my guidance to your life stage.",
+      "ranges": {
+        "18-25": "18-25",
+        "26-35": "26-35",
+        "36-45": "36-45",
+        "46-55": "46-55",
+        "56-65": "56-65",
+        "65+": "65+"
+      },
+      "continueButton": "Continue"
+    },
+    "personalization": {
+      "headline": "What's your name",
+      "promptText": "Choose how Anu should call you.",
+      "placeholder": "Your preferred name",
+      "caption": "You can always change this later in settings",
+      "continueButton": "Continue",
+      "skipButton": "Skip for now"
+    },
+    "motivation": {
+      "title": "Tell me more about what brings you here",
+      "subtitle": "This helps me understand how to best support you",
+      "inputLabel": "Share what's on your mind",
+      "placeholder": "I've been feeling overwhelmed at work and...",
+      "characterCount": "{{count}}/200",
+      "chipsLabel": "Or choose from these common experiences:",
+      "chips": {
+        "stress": "Feeling stressed",
+        "overthinking": "Overthinking everything",
+        "relationships": "Relationship challenges",
+        "burnout": "Work burnout",
+        "mood": "Low mood",
+        "sleep": "Sleep issues",
+        "exploring": "Just exploring"
+      },
+      "selectedChipsLabel": "You shared:",
+      "loading": "Anu is responding...",
+      "responseLabel": "Anu's Response",
+      "continueButton": "Share with Anu",
+      "continueAfterResponse": "Continue",
+      "skipButton": "Skip for now"
+    },
+    "baseline": {
+      "title": "Let's check in",
+      "subtitle": "This helps me track your progress over time",
+      "moodLabel": "How's your mood today?",
+      "continueButton": "Continue",
+      "skipButton": "Skip for now"
+    },
+    "final": {
+      "mainTitle": "We're preparing your personal path forward...",
+      "subtitle": "Setting up your personalized experience with evidence-based tools",
+      "features": {
+        "analyzing": {
+          "title": "Analyzing your preferences",
+          "description": "Understanding your unique needs"
+        },
+        "creating": {
+          "title": "Creating your therapy plan",
+          "description": "Tailoring exercises to your goals"
+        },
+        "preparing": {
+          "title": "Preparing your toolkit",
+          "description": "Setting up personalized resources"
+        }
+      },
+      "continueButton": "Enter WisdomWise"
+    },
+    "notifications": {
+      "mainTitle": "Wellbeing grows with small, daily steps.",
+      "subtitle": "Gentle reminders can help you build healthy habits and stay connected to your mindfulness practice.",
+      "loading": "Setting up your reminders...",
+      "reminders": {
+        "morning": {
+          "label": "Morning Reflection",
+          "description": "Start with intention"
+        },
+        "afternoon": {
+          "label": "Midday Check-in",
+          "description": "Pause and breathe"
+        },
+        "evening": {
+          "label": "Evening Unwind",
+          "description": "Reflect and unwind"
+        }
+      },
+      "timePickerTitle": "Select Time",
+      "enableButton": "Enable Reminders",
+      "skipButton": "Skip for Now",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "permissionGuidance": {
+        "title": "Enable Gentle Reminders",
+        "message": "Anu can send you gentle mindfulness reminders to support your mental health journey. These are completely optional and can be customized.",
+        "setupLater": "Would you like to enable notifications in settings? You can always set this up later in your profile.",
+        "steps": {
+          "ios": {
+            "step1": "1. Tap \"Open Settings\" below",
+            "step2": "2. Toggle on \"Allow Notifications\"",
+            "step3": "3. Choose your preferred notification style",
+            "step4": "4. Return to WisdomWise when done"
+          },
+          "android": {
+            "step1": "1. Tap \"Open Settings\" below",
+            "step2": "2. Turn on \"Show notifications\"",
+            "step3": "3. Choose your notification preferences",
+            "step4": "4. Press back to return to WisdomWise"
+          }
+        },
+        "buttons": {
+          "skipForNow": "Skip for Now",
+          "enableInSettings": "Enable in Settings",
+          "openSettings": "Open Settings",
+          "notNow": "Not Now"
+        }
+      }
+    },
+    "common": {
+      "continueButton": "Continue",
+      "skipButton": "Skip",
+      "backButton": "Back",
+      "nextButton": "Next",
+      "doneButton": "Done",
+      "loading": "Loading...",
+      "selectPlaceholder": "Select an option"
     }
   }
 }

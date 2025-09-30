@@ -2,12 +2,14 @@ import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../tokens/colors';
 import { typography } from '../../tokens/typography';
 import { spacing } from '../../tokens/spacing';
+import { shadows } from '../../tokens/shadows';
 
 const { width, height } = Dimensions.get('window');
 
 export const onboardingFinalStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8',
   },
 
   safeArea: {
@@ -15,37 +17,49 @@ export const onboardingFinalStyles = StyleSheet.create({
     paddingHorizontal: spacing[8], // 16px
   },
 
+  // Back button
+  backButton: {
+    position: 'absolute',
+    top: spacing[8], // 16px - standardized position
+    left: spacing[8], // 16px - moved more to the left, standardized
+    zIndex: 10,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   // Main Content Layout
   contentContainer: {
     flex: 1,
-    paddingVertical: spacing[12], // 24px
+    paddingVertical: spacing[4], // 8px - much more compact
   },
 
 
   // Header Section
   headerContainer: {
     alignItems: 'center',
-    paddingHorizontal: spacing[8],
-    marginBottom: spacing[24], // 48px - increased spacing
-    marginTop: spacing[12], // 24px
+    paddingHorizontal: spacing[12], // 24px - reduced horizontal padding for headings
+    marginBottom: spacing[24], // Increase space below header to move subtext lower
+    marginTop: spacing[32], // Move header down more like other screens
   },
 
   mainTitle: {
-    fontSize: 32, // Display Extra Large
+    fontSize: 28, // Smaller for compactness
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: colors.teal[800],
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     letterSpacing: -0.5,
-    lineHeight: 38,
-    marginBottom: spacing[8], // 16px
+    lineHeight: 32, // Tighter line height
+    marginBottom: spacing[8], // Increase space below title to move subtext lower (was 4px, now 8px)
   },
 
   subtitle: {
-    fontSize: 18, // H3 size
+    fontSize: 16, // Smaller for compactness
     fontFamily: typography.fontFamily.ubuntuMedium,
-    color: colors.teal[600],
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 22, // Tighter line height
     opacity: 0.9,
     paddingHorizontal: spacing[4], // 8px
   },
@@ -55,60 +69,48 @@ export const onboardingFinalStyles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: spacing[8],
     justifyContent: 'flex-start',
-    paddingTop: spacing[4], // Add some top padding
-    marginTop: -spacing[8], // Move boxes slightly higher
+    paddingTop: spacing[6], // Move cards slightly lower (was spacing[4], now spacing[6])
+    marginTop: -spacing[2], // Less negative margin to move cards lower (was -spacing[4], now -spacing[2])
   },
 
   featureItem: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: spacing[8], // 16px - reduced spacing
-    paddingVertical: spacing[6], // 12px - reduced padding
-    paddingHorizontal: spacing[8], // 16px
+    alignItems: 'center',
+    marginBottom: spacing[3],
+    paddingVertical: 16,
+    paddingHorizontal: spacing[4],
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: 'rgba(45, 178, 157, 0.1)',
+    borderRadius: 10,
+    width: '86%',
+    alignSelf: 'center',
   },
 
   featureIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.teal[100],
+    width: 28, // Even smaller icon container
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#e6eff5', // Light blue-gray background
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: spacing[8], // 16px
-    marginTop: 2, // Slight adjustment for alignment
-  },
-
-  featureContent: {
-    flex: 1,
-    paddingRight: spacing[4], // 8px
+    marginRight: spacing[4], // 8px - more compact
   },
 
   featureTitle: {
-    fontSize: 18, // H3 size
-    fontFamily: typography.fontFamily.ubuntuBold,
-    color: colors.teal[800],
-    lineHeight: 24,
-    marginBottom: spacing[4], // 8px
+    flex: 1,
+    fontSize: 13,
+    fontFamily: typography.fontFamily.ubuntu,
+    color: '#1F2937',
+    textAlign: 'left',
+    marginRight: spacing[3],
   },
 
   featureDescription: {
-    fontSize: 16, // Body text
+    fontSize: 14,
     fontFamily: typography.fontFamily.ubuntu,
-    color: colors.teal[600],
-    lineHeight: 22,
+    color: '#1F2937',
+    lineHeight: 20,
     opacity: 0.8,
+    textAlign: 'left',
   },
 
   checkmarkContainer: {
@@ -120,7 +122,7 @@ export const onboardingFinalStyles = StyleSheet.create({
 
   checkmark: {
     fontSize: 18,
-    color: colors.teal[500],
+    color: '#437690', // Selected state color
     fontWeight: 'bold',
   },
 
@@ -133,7 +135,7 @@ export const onboardingFinalStyles = StyleSheet.create({
 
   arrow: {
     fontSize: 16,
-    color: colors.teal[400],
+    color: '#437690', // Selected state color
     fontWeight: 'bold',
   },
 
@@ -141,30 +143,26 @@ export const onboardingFinalStyles = StyleSheet.create({
   actionContainer: {
     alignItems: 'center',
     width: '100%',
+    zIndex: 1000, // Absolute foreground
+    position: 'relative',
   },
 
   primaryButton: {
     paddingHorizontal: 40,
     minWidth: 240,
     height: 52,
-    backgroundColor: colors.teal[500],
-    borderRadius: 26,
+    backgroundColor: '#36657d', // Match notification screen button color
+    borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.teal[500],
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
+    ...shadows.components.onboardingButton,
+    shadowColor: '#36657d', // Keep custom color but use improved shadow properties
   },
 
   primaryButtonText: {
     fontSize: 18,
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: colors.white,
+    color: '#FFFFFF', // Match notification screen button text color
     letterSpacing: 0.2,
   },
 
@@ -188,22 +186,23 @@ export const onboardingFinalStyles = StyleSheet.create({
     width: width * 0.12,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.teal[300],
+    backgroundColor: '#9bb3c7', // Medium blue-gray background
     marginHorizontal: spacing[2], // Small gap between boxes
   },
 
   // Main Screen Turtle and Progress
   mainTurtleContainer: {
     alignItems: 'center',
-    marginBottom: -spacing[24], // Negative margin to position turtle on progress bar
-    zIndex: 10, // Higher z-index to appear above loading bar
+    marginBottom: spacing[6], // Positive margin for spacing
+    marginTop: -spacing[8], // Move turtle up further (was spacing[4], now -spacing[8])
+    zIndex: 10,
   },
 
   mainTurtleImage: {
-    width: Math.min(width * 0.35, 160),
-    height: Math.min(width * 0.35, 160),
-    maxWidth: 160,
-    maxHeight: 160,
+    width: Math.min(width * 0.35, 150),
+    height: Math.min(width * 0.35, 150),
+    maxWidth: 150,
+    maxHeight: 150,
   },
 
   mainProgressContainer: {
@@ -216,25 +215,37 @@ export const onboardingFinalStyles = StyleSheet.create({
   progressBarBackground: {
     width: '100%',
     height: 8, // Made thicker
-    backgroundColor: colors.teal[200],
+    backgroundColor: '#c2d1de', // Medium-light blue-gray background
     borderRadius: 4,
     overflow: 'hidden',
   },
 
   progressBarFill: {
     height: '100%',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Match notification screen button color
     borderRadius: 4,
   },
 
   // Disabled Button Styles
   disabledButton: {
-    backgroundColor: colors.teal[300],
-    opacity: 0.6,
+    backgroundColor: colors.gray[300], // Same gray as age screen
+    shadowOpacity: 0, // Remove shadow when disabled
+    elevation: 0, // Remove elevation when disabled
   },
 
   disabledButtonText: {
-    opacity: 0.8,
+    color: colors.gray[500], // Same gray text as age screen
+  },
+
+  // Loader container
+  loaderContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(30, 114, 109, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: spacing[4], // 8px
   },
 
   // Tick animation styles
@@ -242,7 +253,7 @@ export const onboardingFinalStyles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Match notification screen button color
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: spacing[4], // 8px
@@ -257,7 +268,7 @@ export const onboardingFinalStyles = StyleSheet.create({
   // Bottom fixed area for progress and button
   bottomFixedArea: {
     position: 'absolute',
-    bottom: -30,
+    bottom: -15, // Move button up (was -30, now -15)
     left: 0,
     right: 0,
     alignItems: 'center',

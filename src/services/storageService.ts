@@ -24,6 +24,10 @@ export interface UserProfile {
   challenges?: string[];
   goals?: string[];
   onboardingValues?: string[];
+  onboardingFocusAreas?: string[];
+  onboardingAgeGroup?: string;
+  valuesTimestamp?: string;
+  focusAreasTimestamp?: string;
   challengesTimestamp?: string;
   baselineMood?: number;
   baselineMoodTimestamp?: string;
@@ -59,7 +63,8 @@ const STORAGE_KEYS = {
   USER_SETTINGS: 'user_settings',
   USER_PROFILE: 'user_profile',
   THOUGHT_PATTERNS: 'thought_patterns',
-  INSIGHTS_HISTORY: 'insights_history'
+  INSIGHTS_HISTORY: 'insights_history',
+  FIRST_MESSAGE_ROUTING: 'first_message_routing'
 };
 
 class StorageService {
@@ -483,6 +488,28 @@ class StorageService {
     } catch (error) {
       console.error('Error clearing thought patterns:', error);
       throw error;
+    }
+  }
+
+  // First Message Routing Usage Tracking
+  async getFirstMessageRoutingUsage(): Promise<Record<string, number>> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.FIRST_MESSAGE_ROUTING);
+      return data ? JSON.parse(data) : {};
+    } catch (error) {
+      console.error('Error getting first message routing usage:', error);
+      return {};
+    }
+  }
+
+  async trackFirstMessageRouting(routingVariant: string): Promise<void> {
+    try {
+      const usage = await this.getFirstMessageRoutingUsage();
+      usage[routingVariant] = (usage[routingVariant] || 0) + 1;
+      await AsyncStorage.setItem(STORAGE_KEYS.FIRST_MESSAGE_ROUTING, JSON.stringify(usage));
+      console.log('📊 [ROUTING USAGE] Updated:', routingVariant, '→', usage[routingVariant]);
+    } catch (error) {
+      console.error('Error tracking first message routing:', error);
     }
   }
 

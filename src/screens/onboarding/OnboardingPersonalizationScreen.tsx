@@ -9,10 +9,14 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Heart } from 'lucide-react-native';
+import { User, Heart, ChevronLeft } from 'lucide-react-native';
+import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { onboardingPersonalizationStyles as styles } from '../../styles/components/onboarding/OnboardingPersonalization.styles';
 
 const { height } = Dimensions.get('window');
@@ -20,20 +24,28 @@ const { height } = Dimensions.get('window');
 interface OnboardingPersonalizationScreenProps {
   onContinue: (name: string) => void;
   onSkip: () => void;
+  onBack?: () => void;
 }
 
-const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenProps> = ({ 
-  onContinue, 
-  onSkip 
+const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenProps> = ({
+  onContinue,
+  onSkip,
+  onBack
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const heartPulseAnim = useRef(new Animated.Value(1)).current;
   const inputFocusAnim = useRef(new Animated.Value(0)).current;
+  const buttonFadeAnim = useRef(new Animated.Value(0)).current;
+  const buttonSlideAnim = useRef(new Animated.Value(30)).current;
 
   useEffect(() => {
+    // Set Android navigation bar color to match background
+    NavigationBar.setBackgroundColorAsync('#EDF8F8');
+
     // Entrance animations
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -47,6 +59,15 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
         useNativeDriver: true,
       }),
     ]).start();
+
+    // Button fades in after main animations (no float/slide)
+    setTimeout(() => {
+      Animated.timing(buttonFadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start();
+    }, 1200); // Appear after main content
 
     // Heart pulse animation
     const heartAnimation = Animated.loop(
@@ -98,109 +119,108 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
   });
 
   return (
-    <LinearGradient
-      colors={['#f0fdfa', '#e6fffa', '#ccfbf1']}
-      style={styles.container}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
+    <View style={styles.container}>
+      <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           style={styles.keyboardContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <Animated.View
-            style={[
-              styles.contentContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }],
-              }
-            ]}
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            {/* Progress Indicator */}
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <View style={styles.progressFill} />
-              </View>
+            {/* Back Button */}
+            {onBack && (
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={onBack}
+                activeOpacity={0.7}
+              >
+                <ChevronLeft size={24} color="#36657d" />
+              </TouchableOpacity>
+            )}
+            <Animated.View
+              style={[
+                styles.contentContainer,
+                {
+                  opacity: fadeAnim,
+                  transform: [{ translateY: slideAnim }],
+                }
+              ]}
+            >
+            {/* Header Text */}
+            <View style={styles.headerContainer}>
+              <Text style={styles.headline}>{t('onboarding.personalization.headline')}</Text>
+              <Text style={styles.promptText}>
+                {t('onboarding.personalization.promptText')}
+              </Text>
             </View>
-              
-            {/* Anu Avatar with Message */}
-            <View style={styles.anuContainer}>
-              <View style={styles.anuAvatarContainer}>
-                <Image
-                  source={require('../../../assets/images/turtle-anu-greetings.png')}
-                  style={styles.anuAvatar}
-                  resizeMode="contain"
-                />
-              </View>
-              
-              <View style={styles.speechBubble}>
-                <Text style={styles.speechText}>What should I call you?</Text>
-                <View style={styles.speechTail} />
-              </View>
+
+            {/* Turtle Image */}
+            <View style={styles.imageContainer}>
+              <Image
+                source={require('../../../assets/images/onboarding/turtle-welcome-calm-smile.png')}
+                style={styles.turtleImage}
+                resizeMode="contain"
+              />
             </View>
 
             {/* Name Input Section */}
             <View style={styles.inputSection}>
               <View style={styles.inputContainer}>
-                <User size={20} color="#14b8a6" style={styles.inputIcon} />
-                <Animated.View
-                  style={[
-                    styles.textInputWrapper,
-                    {
-                      borderColor: inputBorderColor,
-                      shadowOpacity: inputShadowOpacity,
-                    }
-                  ]}
-                >
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Your preferred name"
-                    placeholderTextColor="rgba(20, 184, 166, 0.5)"
-                    value={name}
-                    onChangeText={setName}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    autoCapitalize="words"
-                    autoCorrect={false}
-                    maxLength={30}
-                  />
-                </Animated.View>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder={t('onboarding.personalization.placeholder')}
+                  placeholderTextColor="#9CA3AF"
+                  value={name}
+                  onChangeText={setName}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  maxLength={30}
+                />
               </View>
-              
+
               <Text style={styles.inputCaption}>
-                You can always change this later in settings
+                {t('onboarding.personalization.caption')}
               </Text>
             </View>
 
             {/* Action Buttons */}
-            <View style={styles.actionContainer}>
-              <TouchableOpacity 
-                style={styles.primaryButton} 
+            <Animated.View
+              style={[
+                styles.actionContainer,
+                {
+                  opacity: buttonFadeAnim,
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={styles.primaryButton}
                 onPress={handleContinue}
+                activeOpacity={0.8}
               >
-                <LinearGradient
-                  colors={['#5BA3B8', '#357A8A']}
-                  style={styles.buttonGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.primaryButtonText}>Continue</Text>
-                </LinearGradient>
+                <Text style={styles.primaryButtonText}>{t('onboarding.personalization.continueButton')}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
-                style={styles.secondaryButton} 
+              <TouchableOpacity
+                style={styles.secondaryButton}
                 onPress={handleSkip}
+                activeOpacity={0.8}
               >
-                <Text style={styles.secondaryButtonText}>Skip for now</Text>
+                <Text style={styles.secondaryButtonText}>{t('onboarding.personalization.skipButton')}</Text>
               </TouchableOpacity>
-            </View>
-          </Animated.View>
+            </Animated.View>
+
+            </Animated.View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 };
 

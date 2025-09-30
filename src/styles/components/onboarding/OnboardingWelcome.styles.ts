@@ -8,6 +8,7 @@ const { width, height } = Dimensions.get('window');
 export const onboardingWelcomeStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8',
   },
 
   safeArea: {
@@ -30,7 +31,23 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     maxHeight: height * 0.6,
-    marginTop: spacing.xl, // 32px
+    marginTop: spacing.xl, // Restored to original 32px
+  },
+
+  videoContainer: {
+    position: 'relative',
+  },
+
+  videoPlaceholder: {
+    width: Math.min(width * 0.8, 350),
+    height: Math.min(width * 0.8, 350),
+    maxWidth: 350,
+    maxHeight: 350,
+    backgroundColor: '#EDF8F8', // Match screen background
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 1,
   },
 
   antuImage: {
@@ -40,22 +57,33 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     maxHeight: 350,
   },
 
+  backgroundOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#EDF8F8', // Match screen background
+    zIndex: 1,
+  },
+
   // Text Content Container
   textContainer: {
     alignItems: 'center',
-    paddingHorizontal: spacing.large, // 24px
-    marginBottom: spacing.medium, // 16px - reduced from 32px to bring text closer
+    paddingHorizontal: spacing.large,
+    marginBottom: spacing[8], // Reduce bottom margin
+    marginTop: -spacing[56], // Increased negative margin to bring text closer to video
   },
 
   // Initial greeting text
   greetingContainer: {
-    marginBottom: spacing.small, // 8px - reduced from 16px to bring text closer
+    marginBottom: spacing[16], // Reduced spacing between greeting and subtitle
   },
 
   greetingText: {
     fontSize: 32, // Display Extra Large
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: colors.teal[800], // Hero Teal from design principles
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     letterSpacing: -0.5,
     lineHeight: 38,
@@ -63,13 +91,14 @@ export const onboardingWelcomeStyles = StyleSheet.create({
 
   // Animated subtitle
   subtitleContainer: {
-    paddingHorizontal: spacing.small, // 8px
+    paddingHorizontal: spacing[32], // More side padding
+    marginTop: -spacing[8], // Move subtitle higher
   },
 
   subtitleText: {
     fontSize: 20, // H2 size
     fontFamily: typography.fontFamily.ubuntuMedium,
-    color: colors.teal[600], // Soft Sage from design principles
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 28,
     opacity: 0.9,
@@ -79,8 +108,11 @@ export const onboardingWelcomeStyles = StyleSheet.create({
   actionContainer: {
     width: '100%',
     alignItems: 'center',
-    paddingHorizontal: spacing.large, // 24px
-    paddingBottom: 30, // Match other onboarding pages exactly
+    paddingHorizontal: spacing.large,
+    paddingBottom: 30,
+    marginTop: -spacing[16], // Restored to reasonable negative margin
+    zIndex: 1000, // Absolute foreground
+    position: 'relative',
   },
 
   // Primary Button - Following design principles
@@ -88,24 +120,17 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     paddingHorizontal: 32, // Standard button padding
     minWidth: 200, // Minimum width for button
     height: 48, // Design principles height
-    backgroundColor: colors.teal[500], // Hero Teal
-    borderRadius: 24, // Pill-shaped from design principles
+    backgroundColor: '#36657d', // Match notification screen button color
+    borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.teal[500],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    // No shadow to avoid white bar during animation
   },
 
   primaryButtonText: {
     fontSize: 16, // Button text size from design principles
     fontFamily: typography.fontFamily.ubuntuMedium,
-    color: colors.white,
+    color: '#FFFFFF', // Match notification screen button text color
     letterSpacing: 0.2,
   },
 

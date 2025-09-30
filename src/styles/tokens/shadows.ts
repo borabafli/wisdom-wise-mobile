@@ -69,6 +69,24 @@ export const shadows = {
       elevation: 3,
     },
 
+    // Onboarding buttons - more diffused shadows for fade-in animations
+    onboardingButton: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.08, // Reduced opacity for smoother appearance
+      shadowRadius: 16,    // Increased radius for more diffused shadow
+      elevation: 4,
+    },
+
+    // Onboarding cards - more diffused shadows for fade-in animations
+    onboardingCard: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06, // Reduced opacity for smoother appearance
+      shadowRadius: 12,    // Increased radius for more diffused shadow
+      elevation: 3,
+    },
+
     // Message bubbles
     messageBubble: {
       shadowColor: '#000',
