@@ -89,9 +89,9 @@ const INSIGHT_EXTRACTION_PROMPT = `You are analyzing a therapy conversation to e
 - NEVER extract single-word or short phrase responses without context
 - Only extract insights that represent clear patterns across multiple messages (minimum 3+ related exchanges)
 - Focus on recurring themes, personal struggles, meaningful self-discovery, or emotional patterns
-- Each insight must be personally relevant and therapeutically valuable (minimum 15 words)
+- Each insight must be personally relevant and therapeutically valuable (minimum 20 words)
 - Assign confidence scores based on evidence strength and personal relevance
-- Require minimum confidence of 0.7 for any extraction
+- Require minimum confidence of 0.75 for any extraction
 
 **CATEGORIES (Only extract if substantial evidence exists):**
 1. **automatic_thoughts**: Recurring negative thought patterns, cognitive distortions, self-critical inner dialogue that show consistent patterns
@@ -101,11 +101,39 @@ const INSIGHT_EXTRACTION_PROMPT = `You are analyzing a therapy conversation to e
 5. **strengths**: Resilience factors, positive coping skills, personal resources demonstrated consistently
 6. **life_context**: Important relationships, life circumstances, environmental factors with therapeutic relevance
 
+**CRITICAL VALIDATION RULES:**
+
+1. **BE SPECIFIC, NOT VAGUE**: Do not use generic statements that could apply to anyone. Include specific details from the conversation.
+   - ❌ BAD: "User experiences stress at work"
+   - ✅ GOOD: "User experiences acute anxiety during client presentations, particularly when presenting to senior stakeholders, stemming from fear of being perceived as incompetent"
+
+2. **REQUIRE CLEAR EVIDENCE**: The pattern must appear in at least 3 different exchanges or be explicitly stated multiple times.
+   - If user mentions something once in passing, do NOT extract it
+   - If user explores a topic in depth across multiple messages, extract it
+
+3. **NO HALLUCINATION**: Do not infer patterns that aren't explicitly discussed. Stick to what the user actually shared.
+
+4. **RETURN EMPTY IF NOTHING CLEAR**: If the conversation is too brief, superficial, or lacks therapeutic depth, return:
+{
+  "insights": []
+}
+This is better than extracting weak patterns.
+
+5. **MINIMUM CONFIDENCE 0.75**: Only extract patterns where you have high confidence based on clear, repeated evidence.
+
 **QUALITY FILTERS:**
-- Content must be at least 15 words describing a meaningful pattern or insight
+- Content must be at least 20 words describing a meaningful pattern with specific details
 - Must relate to personal growth, mental health, or therapeutic development
 - Must show evidence from multiple conversation exchanges
 - Must be actionable or reflective for the user's journey
+- Must be specific to this user, not generic therapy language
+
+**VALID REASONS TO RETURN EMPTY ARRAY:**
+- Conversation was too brief (fewer than 8-10 meaningful exchanges)
+- Only surface-level topics were discussed
+- No recurring patterns emerged
+- Conversation was primarily logistical or procedural
+- User didn't share enough personal or emotional content
 
 **RESPONSE FORMAT:**
 Return only a JSON object with this structure:
@@ -113,11 +141,13 @@ Return only a JSON object with this structure:
   "insights": [
     {
       "category": "automatic_thoughts",
-      "content": "Shows a consistent pattern of catastrophic thinking about work performance, often jumping to worst-case scenarios when receiving any feedback",
+      "content": "Shows a consistent pattern of catastrophic thinking about work performance, particularly anticipating negative outcomes when receiving feedback from managers, often imagining termination scenarios even when feedback is constructive",
       "confidence": 0.85
     }
   ]
-}`;
+}
+
+**QUALITY OVER QUANTITY**: Better to extract 0-2 highly specific insights than 5+ vague ones.`;
 
 const SESSION_SUMMARY_PROMPT = `Create a warm, personal session summary (1-4 sentences) that feels like clear feedback from a caring friend. Write directly TO the user, using "you" language. Make it encouraging and recognizable to them.
 
@@ -298,14 +328,56 @@ Deno.serve(async (req: Request) => {
       case 'extract_insights':
         // New memory insights extraction
         const insights = await extractMemoryInsights(OPENROUTER_API_KEY, messages);
+
+        // Enhanced validation for insights
+        const validatedInsights = insights.filter(insight => {
+          // Check minimum confidence (0.75)
+          if (insight.confidence < 0.75) {
+            console.warn(`Skipping insight - confidence too low: ${insight.confidence}`);
+            return false;
+          }
+
+          // Check minimum content length (20 words for specificity)
+          const wordCount = insight.content?.split(/\s+/).length || 0;
+          if (wordCount < 20) {
+            console.warn(`Skipping insight - too short: ${wordCount} words`);
+            return false;
+          }
+
+          // Check for vague language patterns
+          const vagueIndicators = ['sometimes', 'might', 'could be', 'possibly', 'tends to', 'appears to', 'seems to'];
+          const vagueCount = vagueIndicators.filter(v =>
+            insight.content?.toLowerCase().includes(v)
+          ).length;
+          if (vagueCount > 2) {
+            console.warn(`Skipping insight - too vague (${vagueCount} vague indicators)`);
+            return false;
+          }
+
+          // Check it's not trivial
+          if (isTrivialgainextract(insight.content || '')) {
+            console.warn(`Skipping insight - trivial content`);
+            return false;
+          }
+
+          // Check for generic therapy statements
+          const genericPatterns = [
+            /^(user|they|the person) (feels?|experiences?|has) (stress|anxiety|worry)/i,
+            /^(user|they|the person) (wants?|needs?|desires?) (to feel|to be) (better|happy|calm)/i
+          ];
+          if (genericPatterns.some(pattern => pattern.test(insight.content || ''))) {
+            console.warn(`Skipping insight - too generic`);
+            return false;
+          }
+
+          return true;
+        });
+
+        console.log(`Insight validation: ${validatedInsights.length} of ${insights.length} insights passed`);
+
         response = {
           success: true,
-          insights: insights.filter(insight =>
-            insight.confidence >= 0.7 &&
-            insight.content &&
-            insight.content.length >= 15 &&
-            !isTrivialgainextract(insight.content)
-          ),
+          insights: validatedInsights,
           processingTime: Math.round(performance.now() - startTime)
         };
         break;
@@ -494,7 +566,7 @@ ${conversationContext}
 
 TASK: Extract thought patterns from the user's messages. For each automatic thought identified:
 
-1. Quote the EXACT automatic thought from the user's message
+1. Quote the EXACT automatic thought from the user's message (word-for-word, no paraphrasing)
 2. Identify the cognitive distortions present (from the list below)
 3. Provide a realistic, balanced reframe
 4. Assign a confidence score (0.0-1.0)
@@ -502,13 +574,32 @@ TASK: Extract thought patterns from the user's messages. For each automatic thou
 COGNITIVE DISTORTIONS TO IDENTIFY:
 ${COGNITIVE_DISTORTIONS.map((d, i) => `${i + 1}. ${d}`).join('\n')}
 
+**CRITICAL VALIDATION RULES - You MUST follow these:**
+
+1. **EXACT QUOTES ONLY**: The "originalThought" must be a direct quote from the user's message above. Do not paraphrase, summarize, or infer. If you cannot find an exact quote, do not extract that pattern.
+
+2. **VERIFY DISTORTION EXISTS**: The quoted thought must clearly demonstrate the distortion type you're assigning. Do not assign distortions that "might" be there - only assign if it's evident in the exact words.
+
+3. **MINIMUM CONFIDENCE 0.75**: Only extract patterns where you have high confidence (0.75+). If you're unsure, do not extract.
+
+4. **MEANINGFUL REFRAMES**: The reframe must be meaningfully different from the original thought. If the reframe is too similar, do not extract.
+
+5. **NO HALLUCINATION**: Do not invent thoughts or patterns that aren't clearly stated by the user. When in doubt, return an empty array.
+
+6. **RETURN EMPTY IF NOTHING CLEAR**: If there are no clear, obvious automatic thoughts with distortions, return:
+{
+  "thoughtPatterns": []
+}
+
+This is better than extracting weak or uncertain patterns.
+
 OUTPUT FORMAT (JSON):
 {
   "thoughtPatterns": [
     {
-      "originalThought": "exact quote from user",
-      "distortionTypes": ["distortion name", "another distortion"],
-      "reframedThought": "balanced, realistic alternative thought",
+      "originalThought": "exact quote from user - must match conversation above word-for-word",
+      "distortionTypes": ["distortion name from the list above"],
+      "reframedThought": "balanced, realistic alternative thought that is clearly different",
       "confidence": 0.85,
       "context": "brief context about when this occurred",
       "sourceMessage": "partial quote to identify source message"
@@ -516,19 +607,22 @@ OUTPUT FORMAT (JSON):
   ]
 }
 
+**QUALITY OVER QUANTITY**: It's better to extract 0-2 high-quality patterns than 5+ questionable ones.
+
 GUIDELINES:
 - Only extract thoughts that show clear cognitive distortions
 - Be conservative - high accuracy over quantity
 - Reframes should be realistic, not just positive
 - Include enough context to understand the situation
 - Confidence should reflect how clear the distortion is
+- If the conversation is too brief or lacks clear distorted thoughts, return empty array
 
 Analyze the conversation now:`;
 }
 
 function parseAnalysisResult(
-  analysisResult: string, 
-  userMessages: Message[], 
+  analysisResult: string,
+  userMessages: Message[],
   sessionId: string
 ): ThoughtPattern[] {
   try {
@@ -542,34 +636,94 @@ function parseAnalysisResult(
     const parsed = JSON.parse(jsonMatch[0]);
     const thoughtPatterns = parsed.thoughtPatterns || [];
 
-    return thoughtPatterns.map((pattern: any, index: number) => {
-      // Find the source message by matching content
-      const sourceMessage = userMessages.find(msg => {
-        const content = msg.text || msg.content || '';
-        return content.includes(pattern.originalThought) || 
-               (pattern.sourceMessage && content.includes(pattern.sourceMessage));
-      }) || userMessages[0]; // Fallback to first message
+    // Map and validate patterns
+    const validatedPatterns = thoughtPatterns
+      .map((pattern: any, index: number) => {
+        // Find the source message by matching content
+        const sourceMessage = userMessages.find(msg => {
+          const content = msg.text || msg.content || '';
+          return content.includes(pattern.originalThought) ||
+                 (pattern.sourceMessage && content.includes(pattern.sourceMessage));
+        });
 
-      return {
-        id: `pattern_${sessionId}_${Date.now()}_${index}`,
-        originalThought: pattern.originalThought || '',
-        distortionTypes: Array.isArray(pattern.distortionTypes) ? pattern.distortionTypes : [],
-        reframedThought: pattern.reframedThought || '',
-        confidence: Math.min(1, Math.max(0, pattern.confidence || 0.5)),
-        extractedFrom: {
-          messageId: sourceMessage.id,
-          sessionId: sessionId
-        },
-        timestamp: new Date().toISOString(),
-        context: pattern.context || ''
-      } as ThoughtPattern;
-    });
+        // VALIDATION: If we can't find the quote in actual messages, skip this pattern
+        if (!sourceMessage) {
+          console.warn(`Skipping pattern - quote not found in messages: "${pattern.originalThought}"`);
+          return null;
+        }
+
+        return {
+          id: `pattern_${sessionId}_${Date.now()}_${index}`,
+          originalThought: pattern.originalThought || '',
+          distortionTypes: Array.isArray(pattern.distortionTypes) ? pattern.distortionTypes : [],
+          reframedThought: pattern.reframedThought || '',
+          confidence: Math.min(1, Math.max(0, pattern.confidence || 0.5)),
+          extractedFrom: {
+            messageId: sourceMessage.id,
+            sessionId: sessionId
+          },
+          timestamp: new Date().toISOString(),
+          context: pattern.context || ''
+        } as ThoughtPattern;
+      })
+      .filter((pattern): pattern is ThoughtPattern => {
+        if (!pattern) return false;
+
+        // Additional validation checks
+
+        // Check minimum confidence (0.75)
+        if (pattern.confidence < 0.75) {
+          console.warn(`Skipping pattern - confidence too low: ${pattern.confidence}`);
+          return false;
+        }
+
+        // Check that originalThought is substantial (20+ characters)
+        if (pattern.originalThought.length < 20) {
+          console.warn(`Skipping pattern - thought too short: "${pattern.originalThought}"`);
+          return false;
+        }
+
+        // Check that reframe is different from original
+        const similarity = calculateTextSimilarity(pattern.originalThought, pattern.reframedThought);
+        if (similarity > 0.8) {
+          console.warn(`Skipping pattern - reframe too similar to original`);
+          return false;
+        }
+
+        // Check that distortion types are valid
+        const validDistortions = pattern.distortionTypes.filter(d =>
+          COGNITIVE_DISTORTIONS.includes(d)
+        );
+        if (validDistortions.length === 0) {
+          console.warn(`Skipping pattern - no valid distortion types`);
+          return false;
+        }
+        pattern.distortionTypes = validDistortions;
+
+        return true;
+      });
+
+    console.log(`Validation complete: ${validatedPatterns.length} of ${thoughtPatterns.length} patterns passed`);
+    return validatedPatterns;
 
   } catch (error) {
     console.error('Failed to parse analysis result:', error);
     console.error('Raw result:', analysisResult);
     return [];
   }
+}
+
+// Helper function to calculate text similarity (simple word overlap)
+function calculateTextSimilarity(text1: string, text2: string): number {
+  const words1 = text1.toLowerCase().split(/\W+/).filter(w => w.length > 2);
+  const words2 = text2.toLowerCase().split(/\W+/).filter(w => w.length > 2);
+
+  if (words1.length === 0 || words2.length === 0) return 0;
+
+  const commonWords = words1.filter(word => words2.includes(word));
+  const totalUniqueWords = new Set([...words1, ...words2]).size;
+
+  return commonWords.length / totalUniqueWords;
 }
 
 async function extractMemoryInsights(apiKey: string, messages: Message[]): Promise<any[]> {

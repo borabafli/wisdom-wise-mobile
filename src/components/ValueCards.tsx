@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList, Dimensions, Modal } from 'react-native';
-import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar } from 'lucide-react-native';
+import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar, Trash2 } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { ValuesReflectButton } from './ReflectButton';
 import Svg, { Rect, Defs, LinearGradient, Stop } from 'react-native-svg';
@@ -11,6 +11,8 @@ interface ValueCardsProps {
   onStartReflection?: (valueId: string, prompt: string, valueName: string, valueDescription: string) => void;
   showBarChart?: boolean;
   maxValues?: number;
+  onDelete?: (reflectionId: string) => void;
+  onDeleteValue?: (valueId: string) => void;
 }
 
 interface ReflectionPrompt {
@@ -36,7 +38,9 @@ const { width: screenWidth } = Dimensions.get('window');
 export const ValueCards: React.FC<ValueCardsProps> = ({
   onStartReflection,
   showBarChart = true,
-  maxValues = 6
+  maxValues = 6,
+  onDelete,
+  onDeleteValue
 }) => {
   const { t } = useTranslation();
   const [values, setValues] = useState<UserValue[]>([]);
@@ -277,6 +281,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
             borderRadius: 10,
             paddingVertical: 8,
             paddingHorizontal: 12,
+            marginBottom: 10,
           }}
           activeOpacity={0.8}
         >
@@ -291,6 +296,38 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
 {valueReflections.length === 1 ? t('insights.values.viewReflectionSingle') : t('insights.values.viewReflections', { count: valueReflections.length })}
           </Text>
         </TouchableOpacity>
+      )}
+
+      {/* Delete Button */}
+      {onDeleteValue && (
+        <View style={{
+          marginTop: valueReflections.length > 0 ? 0 : 2,
+          alignItems: 'center',
+        }}>
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation();
+              onDeleteValue(value.id);
+            }}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+            }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Trash2 size={16} color="#698991" opacity={0.6} style={{ marginRight: 6 }} />
+            <Text style={{
+              color: '#698991',
+              fontSize: 13,
+              fontWeight: '500',
+              opacity: 0.6,
+            }}>
+              Delete value
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
     );
@@ -602,6 +639,38 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
                         • {insight}
                       </Text>
                     ))}
+                  </View>
+                )}
+
+                {/* Delete Button */}
+                {onDelete && (
+                  <View style={{
+                    marginTop: 12,
+                    alignItems: 'center',
+                  }}>
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        onDelete(reflection.id);
+                      }}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                      }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Trash2 size={16} color="#698991" opacity={0.6} style={{ marginRight: 6 }} />
+                      <Text style={{
+                        color: '#698991',
+                        fontSize: 13,
+                        fontWeight: '500',
+                        opacity: 0.6,
+                      }}>
+                        Delete reflection
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 )}
               </View>

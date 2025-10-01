@@ -6,9 +6,12 @@ interface AppContextType {
   showChat: boolean;
   showBreathing: boolean;
   currentExercise: Exercise | null;
+  breathingExercise: Exercise | null;
   chatWithActionPalette: boolean;
+  initialChatMessage: string | null;
   handleStartSession: (exercise?: Exercise | null) => void;
   handleNewSession: () => void;
+  handleStartChatWithContext: (context: string) => void;
   handleBackFromChat: () => void;
   handleBackFromBreathing: () => void;
   handleExerciseClick: (exercise?: Exercise) => void;

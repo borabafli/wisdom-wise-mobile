@@ -115,7 +115,7 @@ export const personalValuesStyles = StyleSheet.create({
 
   valueChipText: {
     fontSize: 16, // Large body
-    fontFamily: typography.fontFamily.ubuntuBold, // Use Ubuntu Bold for more bold font
+    fontFamily: typography.fontFamily.ubuntu, // Use Ubuntu regular for lighter font
     color: colors.gray[700],
     textAlign: 'center',
   },

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground, FlatList, Dimensions, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
-import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react-native';
+import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight, Trash2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
@@ -19,6 +19,7 @@ interface MoodInsightsCardProps {
   currentPatternIndex?: number;
   onPatternSwipeLeft?: () => void;
   onPatternSwipeRight?: () => void;
+  onDeletePattern?: (patternId: string) => void;
 }
 
 interface DataAvailability {
@@ -33,7 +34,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
   displayPatterns = [],
   currentPatternIndex = 0,
   onPatternSwipeLeft,
-  onPatternSwipeRight
+  onPatternSwipeRight,
+  onDeletePattern
 }) => {
   const { t } = useTranslation();
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
@@ -355,6 +357,40 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             </LinearGradient>
           </View>
         </View>
+
+        {/* Delete Button */}
+        {onDeletePattern && pattern.id && !pattern.id.startsWith('mock_') && (
+          <View style={{
+            marginHorizontal: 16,
+            marginTop: -8,
+            marginBottom: 20,
+            alignItems: 'center',
+          }}>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                onDeletePattern(pattern.id);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Trash2 size={16} color="#2B4A5C" opacity={0.6} style={{ marginRight: 6 }} />
+              <Text style={{
+                color: '#2B4A5C',
+                fontSize: 13,
+                fontWeight: '500',
+                opacity: 0.6,
+              }}>
+                Delete insight
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
@@ -431,12 +467,16 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         const currentAvg = currentWeekRatings.reduce((sum, r) => sum + r.rating, 0) / currentWeekRatings.length;
         const previousAvg = previousWeekRatings.reduce((sum, r) => sum + r.rating, 0) / previousWeekRatings.length;
 
-        if (currentAvg > previousAvg) {
+        // Add wiggle room: ±0.3 on 0-5 scale (6% tolerance)
+        const threshold = 0.3;
+        const difference = currentAvg - previousAvg;
+
+        if (difference > threshold) {
           setWeeklyTrend('improving');
-        } else if (currentAvg === previousAvg) {
-          setWeeklyTrend('steady');
-        } else {
+        } else if (difference < -threshold) {
           setWeeklyTrend('declining');
+        } else {
+          setWeeklyTrend('steady');
         }
       }
     } catch (error) {
@@ -845,7 +885,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   color: '#6B7280',
                   fontFamily: 'Ubuntu-Light',
                   marginTop: 2
-                }}>{t('insights.moodInsights.trackEmotions')}</Text>
+                }}>{t('insights.moodInsights.trackMoodJourney')}</Text>
               </View>
             </View>
 
@@ -886,6 +926,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 borderRadius: 12,
                 paddingHorizontal: 12,
                 paddingVertical: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
                 <Text style={{
                   color: '#FFFFFF',

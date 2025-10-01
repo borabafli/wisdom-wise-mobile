@@ -12,14 +12,15 @@ interface FocusArea {
 }
 
 const focusAreas: FocusArea[] = [
-  { id: '1', name: 'Anxiety' },
-  { id: '2', name: 'Stress' },
-  { id: '3', name: 'Sleep Issues' },
-  { id: '4', name: 'Low Mood' },
-  { id: '5', name: 'Focus Problems' },
-  { id: '6', name: 'Relationship Issues' },
-  { id: '7', name: 'Work Pressure' },
-  { id: '8', name: 'Self-Confidence' },
+  { id: '1', name: 'Feel Calmer (reduce anxiety)' },
+  { id: '2', name: 'Handle Stress' },
+  { id: '3', name: 'Sleep Better' },
+  { id: '4', name: 'Brighter Mood' },
+  { id: '5', name: 'Focus & Drive' },
+  { id: '6', name: 'Confidence & Self-Worth' },
+  { id: '7', name: 'Relationships & Communication' },
+  { id: '8', name: 'Clarity & Decisions' },
+  { id: '9', name: 'Something else…' },
 ];
 
 interface FocusAreasScreenProps {
@@ -144,9 +145,9 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
           >
             {/* Header Text */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>What would you like to focus on?</Text>
+              <Text style={styles.headline}>What do you want to focus on right now?</Text>
               <Text style={styles.promptText}>
-                Select areas where you'd like support (choose any that apply)
+                Pick a few. You can change this anytime.
               </Text>
             </View>
 

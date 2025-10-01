@@ -484,38 +484,38 @@ export const getExerciseFlows = (t: (key: string) => string): Record<string, any
   'tell-your-story': {
     name: t('exerciseLibrary.names.tellYourStory'),
     color: 'yellow',
-    useAI: false, // This uses the custom StorytellingExercise component
-    isCustomComponent: true,
+    useAI: true, // Changed to AI-guided for conversational flow
+    isCustomComponent: false,
     steps: [
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step1.title'),
+        title: 'Set the Scene',
         stepNumber: 1,
-        description: t('exerciseLibrary.steps.tellYourStory.step1.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step1.instruction')
+        description: 'Start with who you are today.',
+        instruction: "You are Anu, a calm, supportive guide. Ask the user to describe who they are today in 3–5 short sentences (age range, roles, where they live, what matters right now). Keep tone warm and neutral. Ask exactly one open question. Then wait. Do not analyze yet. If user seems unsure, offer 3 quick prompts as chips: ['work/study', 'relationships', 'health/wellbeing']."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step2.title'),
+        title: 'Chapters & Turning Points',
         stepNumber: 2,
-        description: t('exerciseLibrary.steps.tellYourStory.step2.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step2.instruction')
+        description: 'Name 3–5 life chapters and key moments.',
+        instruction: "Invite the user to split their life into 3–5 simple chapters with a title and a key turning point for each (e.g., 'Moving cities', 'First big job', 'A loss', 'New start'). Ask for bullet points. One request at a time. Keep it short and pressure-free. If helpful, suggest a template: 'Chapter title — turning point — how it changed me (1 line)'."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step3.title'),
+        title: 'Meanings & Beliefs',
         stepNumber: 3,
-        description: t('exerciseLibrary.steps.tellYourStory.step3.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step3.instruction')
+        description: 'What beliefs grew from those moments?',
+        instruction: "Ask the user to pick 1–2 turning points that still affect them and write the belief that formed (helpful or unhelpful). Then ask for evidence for and against each belief (1–2 bullets each). Use CBT tone: curious, non-judgmental. One belief at a time. Offer optional chips: ['evidence for', 'evidence against', 'how it helped', 'how it limited me']."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step4.title'),
+        title: 'Reframe & Strengths',
         stepNumber: 4,
-        description: t('exerciseLibrary.steps.tellYourStory.step4.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step4.instruction')
+        description: 'Rewrite the belief and name strengths.',
+        instruction: "Guide a concise reframe for each chosen belief (1–2 sentences) using the user's own words and evidence. Then ask them to list 2–3 strengths shown in their story (e.g., persistence, kindness, courage, learning). Keep it practical and kind. If they struggle, offer a short menu of strengths to choose from."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step5.title'),
+        title: 'Next Chapter',
         stepNumber: 5,
-        description: t('exerciseLibrary.steps.tellYourStory.step5.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step5.instruction')
+        description: 'Choose a small action and a chapter title.',
+        instruction: "Ask the user to name a 7-day, small, doable action that fits their reframe (must be specific, time-bound, <15 minutes). Then ask them to title their 'next chapter' in 3–5 words, hopeful and concrete. End with a 2-sentence summary: new belief, strength highlights, and the next action. Offer to save as a note and set a reminder."
       }
     ]
   },

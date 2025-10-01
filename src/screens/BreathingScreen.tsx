@@ -14,6 +14,7 @@ const { width } = Dimensions.get('window');
 
 interface BreathingScreenProps {
   onBack: () => void;
+  exercise?: any;
 }
 
 interface BreathingPreset {
@@ -78,8 +79,27 @@ const BREATHING_PRESETS: BreathingPreset[] = [
 
 const STORAGE_KEY = 'breathing_last_preset';
 
-const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
-  const [selectedPreset, setSelectedPreset] = useState<BreathingPreset>(BREATHING_PRESETS[0]);
+const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) => {
+  // Map exercise ID to preset ID
+  const getPresetFromExercise = (exercise: any): BreathingPreset => {
+    if (!exercise || !exercise.id) {
+      return BREATHING_PRESETS[0]; // Default to 4-7-8
+    }
+
+    // Map exercise IDs to preset IDs
+    const presetMap: Record<string, string> = {
+      'breathing': '4-7-8',
+      'box-breathing': 'box',
+      'triangle-breathing': 'triangle',
+      'coherent-breathing': 'coherent',
+    };
+
+    const presetId = presetMap[exercise.id] || '4-7-8';
+    const preset = BREATHING_PRESETS.find(p => p.id === presetId);
+    return preset || BREATHING_PRESETS[0];
+  };
+
+  const [selectedPreset, setSelectedPreset] = useState<BreathingPreset>(getPresetFromExercise(exercise));
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<'inhale' | 'hold' | 'exhale' | 'holdAfterExhale'>('inhale');
   const [cyclesCompleted, setCyclesCompleted] = useState(0);

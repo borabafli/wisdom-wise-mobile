@@ -10,6 +10,26 @@ export interface JournalReminderTime {
   description: string;
 }
 
+export interface PersonalizedNotificationConfig {
+  morningTime?: string; // HH:MM
+  middayTime?: string; // HH:MM
+  eveningTime?: string; // HH:MM
+  extraSupportEnabled?: boolean; // Allow 2 notifications per day instead of 1
+  streakRemindersEnabled?: boolean;
+  insightRemindersEnabled?: boolean;
+  goalRemindersEnabled?: boolean;
+}
+
+export interface UserNotificationContext {
+  lastActiveTimestamp?: number;
+  streakDays?: number;
+  topValue?: string;
+  savedReframes?: Array<{ id: string; title: string; lastUsed: number }>;
+  goals?: Array<{ id: string; title: string; lastActivity: number }>;
+  newInsights?: Array<{ id: string; title: string; createdAt: number; viewed: boolean }>;
+  hasJournaledToday?: boolean;
+}
+
 // Set the notification handler
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,6 +43,9 @@ Notifications.setNotificationHandler({
 
 class NotificationService {
   private readonly STORAGE_KEY = 'journal_reminder_settings';
+  private readonly PERSONALIZED_CONFIG_KEY = 'personalized_notification_config';
+  private readonly USER_CONTEXT_KEY = 'user_notification_context';
+  private readonly LAST_NOTIFICATION_KEY = 'last_notification_sent';
 
   // Default reminder times
   private defaultReminderTimes: JournalReminderTime[] = [
@@ -48,6 +71,108 @@ class NotificationService {
       description: 'Reflect and unwind'
     }
   ];
+
+  // Personalized notification messages with action routing
+  private notificationTemplates = {
+    morning: [
+      {
+        title: '☀️ Good morning',
+        body: 'One minute to set today\'s focus?',
+        actionType: 'chat',
+        chatContext: 'I want to do a quick morning check-in and set my focus for today.'
+      },
+      {
+        title: '💪 One small step',
+        body: 'One small step for your goal today?',
+        actionType: 'chat',
+        chatContext: 'I want to work on taking one small step toward my goal today.'
+      },
+      {
+        title: '😌 Breathe first',
+        body: 'Breathe first, then act. 2-min reset?',
+        actionType: 'breathing',
+        chatContext: '' // Not used for breathing
+      },
+    ],
+    midday: [
+      {
+        title: '🌀 Stuck on a thought?',
+        body: 'Try a quick reframe.',
+        actionType: 'chat',
+        chatContext: 'I\'m stuck on a thought and want to try reframing it.'
+      },
+      {
+        title: '🧘 Quick reset',
+        body: 'Quick reset for your afternoon? 2 min, eyes open.',
+        actionType: 'breathing',
+        chatContext: '' // Not used for breathing
+      },
+      {
+        title: '📓 Label and move on',
+        body: 'Want to label what\'s present and move on?',
+        actionType: 'chat',
+        chatContext: 'I want to do a quick mood check-in and label what I\'m feeling right now.'
+      },
+    ],
+    evening: [
+      {
+        title: '🌙 Close your day',
+        body: 'One line: what mattered most?',
+        actionType: 'journal',
+        chatContext: '' // Will use guided journaling
+      },
+      {
+        title: '📝 Busy mind?',
+        body: 'Quick brain dump before bed?',
+        actionType: 'journal',
+        chatContext: '' // Will use guided journaling
+      },
+      {
+        title: '✨ Gentle wrap-up',
+        body: 'A gentle wrap-up helps sleep. Want a 3-min review?',
+        actionType: 'journal',
+        chatContext: '' // Will use guided journaling
+      },
+    ],
+    personalized: {
+      streak: {
+        title: '🔥 {{streak_days}}-day streak!',
+        body: 'Keep it going with a check-in.',
+        actionType: 'chat',
+        chatContext: 'I have a {{streak_days}}-day streak going and want to do a check-in to keep the momentum.'
+      },
+      savedReframe: {
+        title: '🔑 Your saved reframe',
+        body: '\'{{saved_reframe_title}}\' is waiting for you.',
+        actionType: 'chat',
+        chatContext: 'I want to revisit my saved reframe: {{saved_reframe_title}}'
+      },
+      newInsight: {
+        title: '✨ New insight found',
+        body: '\'{{insight_title}}\'',
+        actionType: 'insights',
+        chatContext: '' // Will navigate to insights screen
+      },
+      valueStep: {
+        title: '🌱 Your value',
+        body: 'You chose {{top_value}} as important. Want a tiny action for it today?',
+        actionType: 'chat',
+        chatContext: 'I want to take a small action aligned with my value: {{top_value}}'
+      },
+      goalNudge: {
+        title: '💪 Keep momentum',
+        body: 'Your goal is waiting. Take one small step?',
+        actionType: 'chat',
+        chatContext: 'I want to work on my goal and take one small step forward.'
+      },
+      eveningJournal: {
+        title: '🌙 Day review',
+        body: 'No journal today yet. Close your day with reflection?',
+        actionType: 'journal',
+        chatContext: '' // Will use guided journaling
+      },
+    },
+  };
 
   /**
    * Request notification permissions from the user
@@ -354,6 +479,319 @@ class NotificationService {
       });
     } catch (error) {
       console.error('Error sending test notification:', error);
+    }
+  }
+
+  // ==================== PERSONALIZED NOTIFICATIONS ====================
+
+  /**
+   * Save personalized notification configuration
+   */
+  async savePersonalizedConfig(config: PersonalizedNotificationConfig): Promise<void> {
+    try {
+      await AsyncStorage.setItem(this.PERSONALIZED_CONFIG_KEY, JSON.stringify(config));
+    } catch (error) {
+      console.error('Error saving personalized config:', error);
+    }
+  }
+
+  /**
+   * Get personalized notification configuration
+   */
+  async getPersonalizedConfig(): Promise<PersonalizedNotificationConfig> {
+    try {
+      const stored = await AsyncStorage.getItem(this.PERSONALIZED_CONFIG_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+      return {
+        morningTime: '08:00',
+        middayTime: '14:00',
+        eveningTime: '20:00',
+        extraSupportEnabled: false,
+        streakRemindersEnabled: true,
+        insightRemindersEnabled: true,
+        goalRemindersEnabled: true,
+      };
+    } catch (error) {
+      console.error('Error getting personalized config:', error);
+      return {};
+    }
+  }
+
+  /**
+   * Update user notification context (to be called by app when user data changes)
+   */
+  async updateUserContext(context: Partial<UserNotificationContext>): Promise<void> {
+    try {
+      const existing = await this.getUserContext();
+      const updated = { ...existing, ...context };
+      await AsyncStorage.setItem(this.USER_CONTEXT_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error('Error updating user context:', error);
+    }
+  }
+
+  /**
+   * Get user notification context
+   */
+  async getUserContext(): Promise<UserNotificationContext> {
+    try {
+      const stored = await AsyncStorage.getItem(this.USER_CONTEXT_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+      return {};
+    } catch (error) {
+      console.error('Error getting user context:', error);
+      return {};
+    }
+  }
+
+  /**
+   * Check if user was recently active (within last 2 hours)
+   */
+  private isRecentlyActive(lastActiveTimestamp?: number): boolean {
+    if (!lastActiveTimestamp) return false;
+    const twoHoursAgo = Date.now() - (2 * 60 * 60 * 1000);
+    return lastActiveTimestamp > twoHoursAgo;
+  }
+
+  /**
+   * Check if we should skip notification based on daily limit
+   */
+  private async shouldSkipDueToLimit(config: PersonalizedNotificationConfig): Promise<boolean> {
+    try {
+      const lastNotificationData = await AsyncStorage.getItem(this.LAST_NOTIFICATION_KEY);
+      if (!lastNotificationData) return false;
+
+      const { date, count } = JSON.parse(lastNotificationData);
+      const today = new Date().toDateString();
+
+      if (date !== today) return false; // Different day, reset count
+
+      const maxPerDay = config.extraSupportEnabled ? 2 : 1;
+      return count >= maxPerDay;
+    } catch (error) {
+      console.error('Error checking notification limit:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Record that a notification was sent
+   */
+  private async recordNotificationSent(): Promise<void> {
+    try {
+      const today = new Date().toDateString();
+      const lastNotificationData = await AsyncStorage.getItem(this.LAST_NOTIFICATION_KEY);
+
+      let count = 1;
+      if (lastNotificationData) {
+        const { date, count: prevCount } = JSON.parse(lastNotificationData);
+        if (date === today) {
+          count = prevCount + 1;
+        }
+      }
+
+      await AsyncStorage.setItem(
+        this.LAST_NOTIFICATION_KEY,
+        JSON.stringify({ date: today, count })
+      );
+    } catch (error) {
+      console.error('Error recording notification:', error);
+    }
+  }
+
+  /**
+   * Determine which personalized notification to send based on context
+   */
+  private selectPersonalizedNotification(
+    context: UserNotificationContext,
+    config: PersonalizedNotificationConfig,
+    timeOfDay: 'morning' | 'midday' | 'evening'
+  ): { title: string; body: string; actionType: string; chatContext: string } | null {
+    // Priority 1: Streak reminders (3+ days)
+    if (
+      config.streakRemindersEnabled &&
+      context.streakDays &&
+      context.streakDays >= 3
+    ) {
+      const template = this.notificationTemplates.personalized.streak;
+      return {
+        title: template.title.replace('{{streak_days}}', context.streakDays.toString()),
+        body: template.body,
+        actionType: template.actionType,
+        chatContext: template.chatContext.replace('{{streak_days}}', context.streakDays.toString()),
+      };
+    }
+
+    // Priority 2: Unused saved reframe (3+ days idle)
+    if (context.savedReframes && context.savedReframes.length > 0) {
+      const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
+      const unusedReframe = context.savedReframes.find(r => r.lastUsed < threeDaysAgo);
+      if (unusedReframe) {
+        const template = this.notificationTemplates.personalized.savedReframe;
+        return {
+          title: template.title,
+          body: template.body.replace('{{saved_reframe_title}}', unusedReframe.title),
+          actionType: template.actionType,
+          chatContext: template.chatContext.replace('{{saved_reframe_title}}', unusedReframe.title),
+        };
+      }
+    }
+
+    // Priority 3: New unviewed insights (48+ hours)
+    if (
+      config.insightRemindersEnabled &&
+      context.newInsights &&
+      context.newInsights.length > 0
+    ) {
+      const twoDaysAgo = Date.now() - (48 * 60 * 60 * 1000);
+      const unviewedInsight = context.newInsights.find(
+        i => !i.viewed && i.createdAt < twoDaysAgo
+      );
+      if (unviewedInsight) {
+        const template = this.notificationTemplates.personalized.newInsight;
+        return {
+          title: template.title,
+          body: template.body.replace('{{insight_title}}', unviewedInsight.title),
+          actionType: template.actionType,
+          chatContext: template.chatContext.replace('{{insight_title}}', unviewedInsight.title),
+        };
+      }
+    }
+
+    // Priority 4: Idle goals (3+ days)
+    if (
+      config.goalRemindersEnabled &&
+      context.goals &&
+      context.goals.length > 0 &&
+      timeOfDay === 'morning'
+    ) {
+      const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
+      const idleGoal = context.goals.find(g => g.lastActivity < threeDaysAgo);
+      if (idleGoal) {
+        return this.notificationTemplates.personalized.goalNudge;
+      }
+    }
+
+    // Priority 5: No journal today (evening only, after 8pm)
+    if (timeOfDay === 'evening' && !context.hasJournaledToday) {
+      const currentHour = new Date().getHours();
+      if (currentHour >= 20) {
+        return this.notificationTemplates.personalized.eveningJournal;
+      }
+    }
+
+    // Priority 6: Value-based action (if top value exists)
+    if (context.topValue && timeOfDay === 'morning') {
+      const template = this.notificationTemplates.personalized.valueStep;
+      return {
+        title: template.title,
+        body: template.body.replace('{{top_value}}', context.topValue),
+        actionType: template.actionType,
+        chatContext: template.chatContext.replace('{{top_value}}', context.topValue),
+      };
+    }
+
+    // Fallback: Rotate through standard time-based notifications
+    const templates = this.notificationTemplates[timeOfDay];
+    const randomIndex = Math.floor(Math.random() * templates.length);
+    return templates[randomIndex];
+  }
+
+  /**
+   * Schedule intelligent personalized notifications
+   */
+  async schedulePersonalizedNotifications(): Promise<void> {
+    try {
+      const config = await this.getPersonalizedConfig();
+      const context = await this.getUserContext();
+
+      // Skip if user was recently active
+      if (this.isRecentlyActive(context.lastActiveTimestamp)) {
+        console.log('User recently active, skipping notification scheduling');
+        return;
+      }
+
+      // Skip if daily limit reached
+      if (await this.shouldSkipDueToLimit(config)) {
+        console.log('Daily notification limit reached');
+        return;
+      }
+
+      // Cancel existing personalized notifications
+      await this.cancelPersonalizedNotifications();
+
+      // Determine time slots
+      const times = [
+        { time: config.morningTime || '08:00', period: 'morning' as const },
+        { time: config.middayTime || '14:00', period: 'midday' as const },
+        { time: config.eveningTime || '20:00', period: 'evening' as const },
+      ];
+
+      // Schedule notifications for each time slot
+      for (const { time, period } of times) {
+        const notification = this.selectPersonalizedNotification(context, config, period);
+        if (notification) {
+          const [hours, minutes] = time.split(':').map(Number);
+
+          await Notifications.scheduleNotificationAsync({
+            identifier: `personalized-${period}`,
+            content: {
+              title: notification.title,
+              body: notification.body,
+              sound: 'default',
+              data: {
+                type: 'personalized-notification',
+                actionType: notification.actionType,
+                chatContext: notification.chatContext,
+                period,
+              },
+            },
+            trigger: {
+              channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
+              repeats: false, // Send once, then reschedule based on context
+              hour: hours,
+              minute: minutes,
+            },
+          });
+        }
+      }
+
+      await this.recordNotificationSent();
+      console.log('Personalized notifications scheduled');
+    } catch (error) {
+      console.error('Error scheduling personalized notifications:', error);
+    }
+  }
+
+  /**
+   * Cancel personalized notifications
+   */
+  async cancelPersonalizedNotifications(): Promise<void> {
+    try {
+      const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+      const personalizedNotifications = scheduled.filter(notification =>
+        notification.identifier.startsWith('personalized-')
+      );
+
+      for (const notification of personalizedNotifications) {
+        await Notifications.cancelScheduledNotificationAsync(notification.identifier);
+      }
+    } catch (error) {
+      console.error('Error canceling personalized notifications:', error);
+    }
+  }
+
+  /**
+   * Refresh personalized notifications (call this when user context changes significantly)
+   */
+  async refreshPersonalizedNotifications(): Promise<void> {
+    const hasPermission = await this.getPermissionStatus();
+    if (hasPermission === 'granted') {
+      await this.schedulePersonalizedNotifications();
     }
   }
 }

@@ -127,6 +127,10 @@
     "goals": "Goals",
     "memoryInsights": "Memory Insights",
     "longTermPatterns": "Long-term patterns & themes",
+    "deleteConfirm": {
+      "title": "Delete Insight?",
+      "message": "Are you sure you want to delete this insight? This action cannot be undone."
+    },
     "motivational": {
       "fallbackMessage": "Your wellness journey continues",
       "startingToday": "starting today"
@@ -136,7 +140,19 @@
       "subtitle": "What matters to you",
       "overview": "Core Values",
       "pagination": "{{current}} of {{total}}",
-      "swipeToExplore": "Swipe to explore"
+      "swipeToExplore": "Swipe to explore",
+      "reflectionPrompt": "Reflect on this",
+      "prompts": {
+        "liveToday": "How did you live this value today?",
+        "feltAligned": "When did you feel most aligned with this value recently?",
+        "smallAction": "What's one small action you could take to honor this value?",
+        "relationships": "How does this value show up in your relationships?",
+        "prioritizeMore": "What would it look like to prioritize this value more?",
+        "bringToWork": "How could you bring more of this value into your work?",
+        "barriers": "What barriers keep you from living this value fully?",
+        "evolved": "How has this value evolved for you over time?",
+        "idealDay": "In an ideal day, how would this value be present?"
+      }
     },
     "sessionSummaries": {
       "title": "Session Summaries",
@@ -313,6 +329,7 @@
       "editProfile": "Edit Profile",
       "chatHistory": "Chat History",
       "voiceSettings": "Voice Settings",
+      "restartOnboarding": "Restart Onboarding",
       "notifications": "Notifications",
       "privacy": "Privacy & Security",
       "darkMode": "Dark Mode",
@@ -323,12 +340,18 @@
       "editProfile": "Update your information",
       "chatHistory": "View past conversations",
       "voiceSettings": "Configure speech options",
+      "restartOnboarding": "View intro again",
       "notifications": "Manage alerts",
       "privacy": "Control your data",
       "darkMode": "Toggle dark theme",
       "help": "Get assistance",
       "signOut": "Leave your account",
       "default": "Tap to access"
+    },
+    "restartOnboarding": {
+      "title": "Restart Onboarding?",
+      "message": "This will take you back to the introduction screens. Your data will not be affected.",
+      "confirm": "Restart"
     },
     "version": "Version 1.0.0",
     "madeWith": "Made with 💙 for your wellness"

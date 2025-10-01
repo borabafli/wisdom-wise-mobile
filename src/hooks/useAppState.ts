@@ -9,7 +9,9 @@ export const useAppState = () => {
   const [showBreathing, setShowBreathing] = useState<boolean>(false);
   const [showTherapyGoals, setShowTherapyGoals] = useState<boolean>(false);
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
+  const [breathingExercise, setBreathingExercise] = useState<Exercise | null>(null);
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
+  const [initialChatMessage, setInitialChatMessage] = useState<string | null>(null);
 
   const handleStartSession = useCallback((exercise: Exercise | null = null) => {
     console.log('=== START SESSION ===');
@@ -24,20 +26,29 @@ export const useAppState = () => {
     setChatWithActionPalette(true);
   }, []);
 
+  const handleStartChatWithContext = useCallback((context: string) => {
+    console.log('=== START CHAT WITH CONTEXT ===');
+    console.log('Context:', context);
+    setInitialChatMessage(context);
+    setShowChat(true);
+  }, []);
+
   const handleBackFromChat = useCallback(() => {
     console.log('handleBackFromChat called - starting cleanup');
     console.log('Current state - showChat:', showChat, 'chatWithActionPalette:', chatWithActionPalette, 'currentExercise:', currentExercise);
-    
+
     setShowChat(false);
     setChatWithActionPalette(false);
     setCurrentExercise(null);
-    
+    setInitialChatMessage(null);
+
     console.log('handleBackFromChat completed - should return to main app');
   }, [showChat, chatWithActionPalette, currentExercise]);
 
   const handleBackFromBreathing = useCallback(() => {
     console.log('handleBackFromBreathing called');
     setShowBreathing(false);
+    setBreathingExercise(null);
     console.log('Returned to main app from breathing screen');
   }, []);
 
@@ -58,11 +69,12 @@ export const useAppState = () => {
     console.log('Exercise clicked:', exercise);
     if (exercise) {
       console.log('Starting session with exercise:', exercise.type, exercise.name);
-      
+
       // Special handling for breathing exercises
       if (exercise.type === 'breathing') {
+        setBreathingExercise(exercise);
         setShowBreathing(true);
-        console.log('Opening dedicated breathing screen');
+        console.log('Opening dedicated breathing screen with exercise:', exercise.id);
       } else {
         handleStartSession(exercise);
       }
@@ -190,6 +202,7 @@ export const useAppState = () => {
       case 'breathing':
       case 'featured-breathing':
         console.log('Opening breathing screen from quick actions');
+        setBreathingExercise(null); // No specific exercise, will default to 4-7-8
         setShowBreathing(true);
         break;
       default:
@@ -202,9 +215,12 @@ export const useAppState = () => {
     showBreathing,
     showTherapyGoals,
     currentExercise,
+    breathingExercise,
     chatWithActionPalette,
+    initialChatMessage,
     handleStartSession,
     handleNewSession,
+    handleStartChatWithContext,
     handleBackFromChat,
     handleBackFromBreathing,
     handleTherapyGoalsClick,

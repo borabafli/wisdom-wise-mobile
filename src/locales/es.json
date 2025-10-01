@@ -113,6 +113,10 @@
     "goals": "Objetivos",
     "memoryInsights": "Perspectivas a largo plazo",
     "longTermPatterns": "Patrones y temas a largo plazo",
+    "deleteConfirm": {
+      "title": "¿Eliminar perspectiva?",
+      "message": "¿Está seguro de que desea eliminar esta perspectiva? Esta acción no se puede deshacer."
+    },
     "motivational": {
       "fallbackMessage": "Tu viaje de bienestar continúa",
       "startingToday": "comenzando hoy"
@@ -122,7 +126,19 @@
       "subtitle": "Lo que te importa",
       "overview": "Valores Fundamentales",
       "pagination": "{{current}} de {{total}}",
-      "swipeToExplore": "Desliza para explorar"
+      "swipeToExplore": "Desliza para explorar",
+      "reflectionPrompt": "Reflexiona sobre esto",
+      "prompts": {
+        "liveToday": "¿Cómo viviste este valor hoy?",
+        "feltAligned": "¿Cuándo te sentiste más alineado con este valor recientemente?",
+        "smallAction": "¿Qué pequeña acción podrías tomar para honrar este valor?",
+        "relationships": "¿Cómo se manifiesta este valor en tus relaciones?",
+        "prioritizeMore": "¿Cómo sería darle más prioridad a este valor?",
+        "bringToWork": "¿Cómo podrías traer más de este valor a tu trabajo?",
+        "barriers": "¿Qué barreras te impiden vivir plenamente este valor?",
+        "evolved": "¿Cómo ha evolucionado este valor para ti con el tiempo?",
+        "idealDay": "En un día ideal, ¿cómo estaría presente este valor?"
+      }
     },
     "sessionSummaries": {
       "title": "Resúmenes de Sesiones",
@@ -226,7 +242,7 @@
     },
     "moodInsights": {
       "yourMood": "Tu Estado de Ánimo",
-      "trackEmotions": "Sigue tu viaje emocional",
+      "trackMoodJourney": "Sigue tu viaje emocional",
       "yourThoughts": "Tus Pensamientos",
       "identifyPatterns": "Identificar y reenmarcar patrones",
       "distortedThought": "Pensamiento Distorsionado",
@@ -315,6 +331,7 @@
       "editProfile": "Editar Perfil",
       "chatHistory": "Historial de Chat",
       "voiceSettings": "Configuración de Voz",
+      "restartOnboarding": "Reiniciar Introducción",
       "notifications": "Notificaciones",
       "privacy": "Privacidad y Seguridad",
       "darkMode": "Modo Oscuro",
@@ -325,12 +342,18 @@
       "editProfile": "Actualizar tu información",
       "chatHistory": "Ver conversaciones pasadas",
       "voiceSettings": "Configurar opciones de voz",
+      "restartOnboarding": "Ver introducción de nuevo",
       "notifications": "Gestionar alertas",
       "privacy": "Controlar tus datos",
       "darkMode": "Alternar tema oscuro",
       "help": "Obtener asistencia",
       "signOut": "Salir de tu cuenta",
       "default": "Toca para acceder"
+    },
+    "restartOnboarding": {
+      "title": "¿Reiniciar Introducción?",
+      "message": "Esto te llevará de vuelta a las pantallas de introducción. Tus datos no se verán afectados.",
+      "confirm": "Reiniciar"
     },
     "version": "Versión 1.0.0",
     "madeWith": "Hecho con 💙 para tu bienestar"

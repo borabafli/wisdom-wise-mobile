@@ -48,6 +48,7 @@ import { ChatInterfaceProps } from '../types';
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onBack,
   currentExercise,
+  initialMessage,
   onActionSelect,
   onExerciseClick
 }) => {
@@ -176,7 +177,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     if (currentExercise) {
       console.log('Initializing chat with exercise:', currentExercise.type);
-      
+
       if (currentExercise.type === 'value_reflection') {
         console.log('Starting value reflection with context:', currentExercise.context);
         startValueReflection(
@@ -202,14 +203,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           chatSession.setSuggestions
         );
       }
-      
+
       setIsInitialized(true);
       return;
     }
-    
+
     chatSession.initializeChatSession();
     setIsInitialized(true);
   }, [currentExercise]);
+
+  // Handle initial message from notification
+  useEffect(() => {
+    if (initialMessage && isInitialized && chatSession.messages.length === 1) {
+      // Only send if chat is initialized and we're still at the welcome message
+      console.log('Sending initial message from notification:', initialMessage);
+      chatSession.sendMessage(initialMessage);
+    }
+  }, [initialMessage, isInitialized, chatSession.messages.length]);
 
   // Handle input text changes
   const handleInputTextChange = (text: string) => {

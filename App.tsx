@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { loadFonts } from './src/config/fonts';
 import * as SplashScreen from 'expo-splash-screen';
 import * as NavigationBar from 'expo-navigation-bar';
+import * as Notifications from 'expo-notifications';
 
 // Import components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
@@ -14,6 +15,7 @@ import { AppContent } from './src/components/AppContent';
 
 // Import i18n service to initialize it
 import './src/services/i18nService';
+import { notificationService } from './src/services/notificationService';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();

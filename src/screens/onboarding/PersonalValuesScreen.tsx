@@ -12,14 +12,14 @@ interface PersonalValue {
 }
 
 const personalValues: PersonalValue[] = [
-  { id: '1', name: 'Family & Connection' },
-  { id: '2', name: 'Personal Growth' },
-  { id: '3', name: 'Health & Wellness' },
-  { id: '4', name: 'Creativity' },
+  { id: '1', name: 'Health & Vitality' },
+  { id: '2', name: 'Close Relationships' },
+  { id: '3', name: 'Growth & Learning' },
+  { id: '4', name: 'Peace & Balance' },
   { id: '5', name: 'Freedom & Independence' },
-  { id: '6', name: 'Achievement & Success' },
-  { id: '7', name: 'Helping Others' },
-  { id: '8', name: 'Adventure & Fun' },
+  { id: '6', name: 'Purpose & Meaning' },
+  { id: '7', name: 'Creativity & Play' },
+  { id: '8', name: 'Achievement & Progress' },
 ];
 
 interface PersonalValuesScreenProps {
@@ -126,9 +126,9 @@ const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue,
           >
             {/* Header Text */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>Let's personalize your experience with Anu.</Text>
+              <Text style={styles.headline}>What matters most to you?</Text>
               <Text style={styles.promptText}>
-                What is most important to you?
+                This helps tailor your plan.
               </Text>
             </View>
 

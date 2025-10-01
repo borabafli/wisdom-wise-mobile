@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Switch, Alert, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { User, Settings, Bell, Shield, HelpCircle, LogOut, LogIn, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight } from 'lucide-react-native';
+import { User, Settings, Bell, Shield, HelpCircle, LogOut, LogIn, Moon, Heart, Award, Calendar, Brain, MessageCircle, History, Volume2, Edit3, ArrowRight, RotateCcw } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -10,10 +10,14 @@ import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigat
 import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
+import DataPrivacyScreen from './DataPrivacyScreen';
+import NotificationSettingsModal from '../components/NotificationSettingsModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
+import { OnboardingService } from '../services/onboardingService';
+import { useOnboardingControl } from '../components/AppContent';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -23,6 +27,7 @@ const ProfileScreen: React.FC = () => {
   const { t } = useTranslation();
 
   const { user, profile, isAnonymous, signOut, requestLogin } = useAuth();
+  const { restartOnboarding } = useOnboardingControl();
   
 
   // Apply dynamic navigation bar styling
@@ -51,15 +56,17 @@ const ProfileScreen: React.FC = () => {
   }, [user, profile]);
   
   const stats = [
-    { label: t('profile.stats.sessions'), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
-    { label: t('profile.stats.streak'), value: t('profile.stats.daysStreak'), iconImage: require('../../assets/images/New Icons/icon-7.png') },
-    { label: t('profile.stats.insights'), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
-    { label: t('profile.stats.exercises'), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
+    { label: String(t('profile.stats.sessions')), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
+    { label: String(t('profile.stats.streak')), value: String(t('profile.stats.daysStreak')), iconImage: require('../../assets/images/New Icons/icon-7.png') },
+    { label: String(t('profile.stats.insights')), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
+    { label: String(t('profile.stats.exercises')), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
   ];
 
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showDataPrivacy, setShowDataPrivacy] = useState(false);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
 
   const handleSignOut = () => {
     Alert.alert(
@@ -168,20 +175,48 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handleRestartOnboarding = () => {
+    Alert.alert(
+      t('profile.restartOnboarding.title'),
+      t('profile.restartOnboarding.message'),
+      [
+        {
+          text: t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('profile.restartOnboarding.confirm'),
+          style: 'default',
+          onPress: async () => {
+            try {
+              await restartOnboarding();
+              // Navigation happens automatically - no success alert needed as user will see onboarding
+            } catch (error) {
+              console.error('Error resetting onboarding:', error);
+              Alert.alert(t('common.error'), t('errors.genericError'));
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const menuItems = [
 
-    { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: 'Edit Profile', action: () => setShowEditProfile(true) },
-    { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: 'Chat History', action: () => setShowChatHistory(true) },
-    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: 'Voice Settings', action: () => setShowTTSSettings(true) },
-    { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: 'Notifications', badge: '3' },
-    { icon: Bell, label: 'Test Notification', action: handleTestNotification, highlight: false },
-    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: 'Privacy & Security' },
-    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: 'Dark Mode', toggle: true },
-    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: 'Help & Support' },
+    { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: t('profile.menu.editProfile'), action: () => setShowEditProfile(true), subtitle: t('profile.menuSubtitles.editProfile') },
+    { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: t('profile.menu.chatHistory'), action: () => setShowChatHistory(true), subtitle: t('profile.menuSubtitles.chatHistory') },
+    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.voiceSettings'), action: () => setShowTTSSettings(true), subtitle: t('profile.menuSubtitles.voiceSettings') },
+    { icon: Shield, label: 'Your Data & Privacy', action: () => setShowDataPrivacy(true), highlight: false, subtitle: 'How we protect and handle your information' },
+    { icon: RotateCcw, label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, highlight: false, subtitle: t('profile.menuSubtitles.restartOnboarding') },
+    { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
+    { icon: Bell, label: 'Test Notification', action: handleTestNotification, highlight: false, subtitle: 'Send a test notification now' },
+    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), subtitle: t('profile.menuSubtitles.privacy') },
+    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, subtitle: t('profile.menuSubtitles.darkMode') },
+    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), subtitle: t('profile.menuSubtitles.help') },
     // Conditionally show Sign Out (for logged in users) or Login (for anonymous users)
     ...(isAnonymous
-      ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true }]
-      : [{ icon: LogOut, label: 'Sign Out', danger: true, action: handleSignOut }]
+      ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true, subtitle: 'Save your progress and access all features' }]
+      : [{ icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut, subtitle: t('profile.menuSubtitles.signOut') }]
     )
   ];
 
@@ -242,9 +277,9 @@ const ProfileScreen: React.FC = () => {
                   <Text style={styles.memberSince}>
                     {isAnonymous
                       ? t('profile.anonymousGuest')
-                      : profile
+                      : profile && profile.created_at
                         ? `${t('profile.memberSince')} ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
-                        : user?.email || t('profile.welcomeMessage')
+                        : (user?.email || t('profile.welcomeMessage'))
                     }
                   </Text>
                   <Text style={styles.premiumBadge}>
@@ -283,7 +318,7 @@ const ProfileScreen: React.FC = () => {
                     >
                       <View style={styles.statCardContent}>
                         <View style={styles.statIcon}>
-                          <Image 
+                          <Image
                             source={stat.iconImage}
                             style={styles.statIconImage}
                             contentFit="contain"
@@ -316,7 +351,7 @@ const ProfileScreen: React.FC = () => {
                     >
                       <View style={styles.statCardContent}>
                         <View style={styles.statIcon}>
-                          <Image 
+                          <Image
                             source={stat.iconImage}
                             style={styles.statIconImage}
                             contentFit="contain"
@@ -389,16 +424,7 @@ const ProfileScreen: React.FC = () => {
                           {item.label}
                         </Text>
                         <Text style={styles.menuSubtitle}>
-                          {item.label === t('profile.menu.editProfile') ? t('profile.menuSubtitles.editProfile') :
-                           item.label === t('profile.menu.chatHistory') ? t('profile.menuSubtitles.chatHistory') :
-                           item.label === t('profile.menu.voiceSettings') ? t('profile.menuSubtitles.voiceSettings') :
-                           item.label === t('profile.menu.notifications') ? t('profile.menuSubtitles.notifications') :
-                           item.label === 'Test Notification' ? 'Send a test notification now' :
-                           item.label === t('profile.menu.privacy') ? t('profile.menuSubtitles.privacy') :
-                           item.label === t('profile.menu.darkMode') ? t('profile.menuSubtitles.darkMode') :
-                           item.label === t('profile.menu.help') ? t('profile.menuSubtitles.help') :
-                           item.label === t('profile.menu.signOut') ? t('profile.menuSubtitles.signOut') :
-                           t('profile.menuSubtitles.default')}
+                          {item.subtitle || t('profile.menuSubtitles.default')}
                         </Text>
                       </View>
                       <View style={styles.menuActions}>
@@ -455,6 +481,22 @@ const ProfileScreen: React.FC = () => {
       <EditProfileModal
         visible={showEditProfile}
         onClose={() => setShowEditProfile(false)}
+      />
+
+      {/* Data Privacy Modal */}
+      <Modal
+        visible={showDataPrivacy}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowDataPrivacy(false)}
+      >
+        <DataPrivacyScreen onBack={() => setShowDataPrivacy(false)} />
+      </Modal>
+
+      {/* Notification Settings Modal */}
+      <NotificationSettingsModal
+        visible={showNotificationSettings}
+        onClose={() => setShowNotificationSettings(false)}
       />
     </SafeAreaWrapper>
   );

@@ -1,9 +1,10 @@
-import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback, useMemo } from 'react';
 import { NavigationContainer, useNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
+import * as Notifications from 'expo-notifications';
 
-import { View, Platform } from 'react-native';
+import { View, Platform, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
@@ -26,6 +27,7 @@ import { OnboardingNavigator } from '../navigation/OnboardingNavigator';
 
 // Import services
 import { OnboardingService } from '../services/onboardingService';
+import { notificationService } from '../services/notificationService';
 
 // Import contexts
 import { useApp } from '../contexts';
@@ -51,6 +53,21 @@ const customTheme = {
   },
 };
 
+// Create context for onboarding control
+interface OnboardingContextType {
+  restartOnboarding: () => Promise<void>;
+}
+
+const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+
+export const useOnboardingControl = () => {
+  const context = useContext(OnboardingContext);
+  if (!context) {
+    throw new Error('useOnboardingControl must be used within AppContent');
+  }
+  return context;
+};
+
 export const AppContent: React.FC = () => {
 
   const insets = useSafeAreaInsets();
@@ -66,9 +83,12 @@ export const AppContent: React.FC = () => {
     showBreathing,
     showTherapyGoals,
     currentExercise,
+    breathingExercise,
     chatWithActionPalette,
+    initialChatMessage,
     handleStartSession,
     handleNewSession,
+    handleStartChatWithContext,
     handleBackFromChat,
     handleBackFromBreathing,
     handleTherapyGoalsClick,
@@ -98,10 +118,83 @@ export const AppContent: React.FC = () => {
     checkOnboardingStatus();
   }, []);
 
+  // Handle notification taps
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const actionType = response.notification.request.content.data?.actionType;
+      const chatContext = response.notification.request.content.data?.chatContext;
+
+      console.log('Notification tapped - actionType:', actionType, 'chatContext:', chatContext);
+
+      if (!actionType) return;
+
+      switch (actionType) {
+        case 'chat':
+          // Open chat with context
+          if (chatContext && typeof chatContext === 'string') {
+            handleStartChatWithContext(chatContext);
+          } else {
+            handleNewSession();
+          }
+          break;
+
+        case 'breathing':
+          // Open breathing screen
+          handleActionSelect('breathing');
+          break;
+
+        case 'journal':
+          // Navigate to journal tab
+          if (navigationRef.isReady()) {
+            navigationRef.navigate('Journal');
+          }
+          break;
+
+        case 'insights':
+          // Navigate to insights tab
+          if (navigationRef.isReady()) {
+            navigationRef.navigate('Insights');
+          }
+          break;
+
+        default:
+          console.warn('Unknown notification action type:', actionType);
+      }
+    });
+
+    return () => subscription.remove();
+  }, [handleStartChatWithContext, handleNewSession, handleActionSelect, navigationRef]);
+
+  // Track user activity for notifications
+  useEffect(() => {
+    const updateActivity = async () => {
+      try {
+        await notificationService.updateUserContext({
+          lastActiveTimestamp: Date.now(),
+        });
+      } catch (error) {
+        console.error('Error updating user activity:', error);
+      }
+    };
+
+    updateActivity();
+  }, []);
+
   // Handle onboarding completion
   const handleOnboardingComplete = useCallback(() => {
     setIsOnboardingComplete(true);
   }, []);
+
+  // Handle onboarding restart
+  const restartOnboarding = useCallback(async () => {
+    await OnboardingService.resetOnboarding();
+    setIsOnboardingComplete(false);
+  }, []);
+
+  // Memoize context value
+  const onboardingContextValue = useMemo(() => ({
+    restartOnboarding
+  }), [restartOnboarding]);
 
   const handleNavigateToExercises = useCallback(() => {
     if (navigationRef.isReady()) {
@@ -125,6 +218,33 @@ export const AppContent: React.FC = () => {
       chatWithActionPalette,
     });
   }, [showChat, showBreathing, showTherapyGoals, currentExercise, chatWithActionPalette]);
+
+  // Handle Android back button
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // If any overlay screens are showing, handle back navigation
+      if (showChat) {
+        handleBackFromChat();
+        return true; // Prevent default behavior
+      }
+      if (showBreathing) {
+        handleBackFromBreathing();
+        return true;
+      }
+      if (showTherapyGoals) {
+        handleBackFromTherapyGoals();
+        return true;
+      }
+
+      // Let React Navigation handle back for nested navigators (Journal, Auth, Onboarding)
+      // Return false to allow default behavior
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [showChat, showBreathing, showTherapyGoals, handleBackFromChat, handleBackFromBreathing, handleBackFromTherapyGoals]);
 
   // Use a key to force ChatInterface to remount when starting a new exercise
   const chatKey = `chat-session-${currentExercise ? currentExercise.id : 'default'}`;
@@ -152,7 +272,7 @@ export const AppContent: React.FC = () => {
     return (
       <>
         <StatusBar style="dark" backgroundColor="#e9eff1" />
-        <BreathingScreen onBack={handleBackFromBreathing} />
+        <BreathingScreen onBack={handleBackFromBreathing} exercise={breathingExercise} />
       </>
     );
   }
@@ -177,11 +297,12 @@ export const AppContent: React.FC = () => {
     return (
       <>
         <StatusBar style="dark" backgroundColor="#e9eff1" />
-        <ChatInterface 
+        <ChatInterface
           key={chatKey}
           onBack={handleBackFromChat}
           currentExercise={currentExercise}
           startWithActionPalette={chatWithActionPalette}
+          initialMessage={initialChatMessage}
           onActionSelect={handleActionSelect}
           onExerciseClick={handleExerciseClick}
         />
@@ -190,12 +311,13 @@ export const AppContent: React.FC = () => {
   }
 
   return (
-    <NavigationContainer ref={navigationRef} theme={customTheme}>
-        <StatusBar style="dark" backgroundColor="#e9eff1" />
-        <Tab.Navigator
-        tabBar={(props: any) => (
-          <CustomTabBar 
-            {...props} 
+    <OnboardingContext.Provider value={onboardingContextValue}>
+      <NavigationContainer ref={navigationRef} theme={customTheme}>
+          <StatusBar style="dark" backgroundColor="#e9eff1" />
+          <Tab.Navigator
+          tabBar={(props: any) => (
+            <CustomTabBar
+              {...props} 
             onNewSession={handleNewSession}
             onActionSelect={handleActionSelect}
           />
@@ -226,6 +348,7 @@ export const AppContent: React.FC = () => {
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
+    </OnboardingContext.Provider>
   );
 };
   

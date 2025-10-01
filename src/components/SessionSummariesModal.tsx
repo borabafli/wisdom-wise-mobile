@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
-import { X, TrendingUp, Calendar, MessageCircle, ArrowRight, Filter } from 'lucide-react-native';
+import { X, TrendingUp, Calendar, MessageCircle, ArrowRight, Filter, Trash2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { memoryService, Summary } from '../services/memoryService';
 import { sessionSummariesStyles as styles } from '../styles/components/SessionSummaries.styles';
@@ -10,13 +10,15 @@ interface SessionSummariesModalProps {
   onClose: () => void;
   initialSummaries?: Summary[];
   totalCount?: number;
+  onDelete?: (summaryId: string) => void;
 }
 
 export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
   visible,
   onClose,
   initialSummaries = [],
-  totalCount = 0
+  totalCount = 0,
+  onDelete
 }) => {
   const [summaries, setSummaries] = useState<Summary[]>(initialSummaries);
   const [filter, setFilter] = useState<'all' | 'session' | 'consolidated'>('all');
@@ -122,28 +124,42 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
               {summary.type === 'consolidated' ? 'Consolidated' : 'Session'}
             </Text>
           </View>
-          
+
           <Text style={styles.summaryTitle}>
-            {summary.type === 'consolidated' 
+            {summary.type === 'consolidated'
               ? 'Therapeutic Themes'
               : `Session ${summaries.filter(s => s.type === 'session').length - index}`
             }
           </Text>
         </View>
-        
-        <View style={styles.summaryMeta}>
-          <View style={styles.metaItem}>
-            <Calendar size={14} color="#6b7280" />
-            <Text style={styles.metaText}>
-              {new Date(summary.date).toLocaleDateString()}
-            </Text>
-          </View>
-          
-          <View style={styles.metaItem}>
-            <MessageCircle size={14} color="#6b7280" />
-            <Text style={styles.metaText}>
-              {summary.messageCount} messages
-            </Text>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {onDelete && (
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                onDelete(summary.id);
+              }}
+              style={{ padding: 4 }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Trash2 size={14} color="#d97706" opacity={0.6} />
+            </TouchableOpacity>
+          )}
+          <View style={styles.summaryMeta}>
+            <View style={styles.metaItem}>
+              <Calendar size={14} color="#6b7280" />
+              <Text style={styles.metaText}>
+                {new Date(summary.date).toLocaleDateString()}
+              </Text>
+            </View>
+
+            <View style={styles.metaItem}>
+              <MessageCircle size={14} color="#6b7280" />
+              <Text style={styles.metaText}>
+                {summary.messageCount} messages
+              </Text>
+            </View>
           </View>
         </View>
       </View>

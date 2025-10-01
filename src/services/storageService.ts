@@ -482,6 +482,30 @@ class StorageService {
     }
   }
 
+  async deleteThoughtPattern(patternId: string): Promise<void> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      const updatedPatterns = patterns.filter(p => p.id !== patternId);
+      await AsyncStorage.setItem(STORAGE_KEYS.THOUGHT_PATTERNS, JSON.stringify(updatedPatterns));
+    } catch (error) {
+      console.error('Error deleting thought pattern:', error);
+      throw error;
+    }
+  }
+
+  async updateThoughtPattern(patternId: string, updates: Partial<ThoughtPattern>): Promise<void> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      const updatedPatterns = patterns.map(p =>
+        p.id === patternId ? { ...p, ...updates } : p
+      );
+      await AsyncStorage.setItem(STORAGE_KEYS.THOUGHT_PATTERNS, JSON.stringify(updatedPatterns));
+    } catch (error) {
+      console.error('Error updating thought pattern:', error);
+      throw error;
+    }
+  }
+
   async clearThoughtPatterns(): Promise<void> {
     try {
       await AsyncStorage.removeItem(STORAGE_KEYS.THOUGHT_PATTERNS);

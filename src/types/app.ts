@@ -22,6 +22,7 @@ export interface ChatInterfaceProps {
   onBack: () => void;
   currentExercise?: Exercise | null;
   startWithActionPalette: boolean;
+  initialMessage?: string | null;
   onActionSelect: (actionId: string) => void;
   onExerciseClick?: (exercise: Exercise) => void;
 }

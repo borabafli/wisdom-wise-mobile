@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Animated, FlatList, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { Brain, Target, CheckCircle2, ArrowRight, Heart, Plus, Lightbulb, FileText, ChevronLeft, ChevronRight, Edit3, Trash2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
@@ -23,6 +23,7 @@ import { MoodInsightsCard } from '../components/MoodInsightsCard';
 import { ValueCards } from '../components/ValueCards';
 import { VisionInsightsCard } from '../components/VisionInsightsCard';
 import { thinkingPatternsService, ThinkingPatternReflectionSummary } from '../services/thinkingPatternsService';
+import { valuesService } from '../services/valuesService';
 import { VisionDetailsModal } from '../components/VisionDetailsModal';
 import { useUserProfile } from '../hooks';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
@@ -222,6 +223,140 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     });
   };
 
+  const handleDeleteInsight = (insightId: string) => {
+    Alert.alert(
+      t('insights.deleteConfirm.title'),
+      t('insights.deleteConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await memoryService.deleteInsight(insightId);
+              setMemoryInsights(prev => prev.filter(i => i.id !== insightId));
+            } catch (error) {
+              console.error('Error deleting insight:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleDeletePattern = (patternId: string) => {
+    Alert.alert(
+      t('insights.deleteConfirm.title'),
+      t('insights.deleteConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await storageService.deleteThoughtPattern(patternId);
+              setThinkingPatterns(prev => prev.filter(p => p.id !== patternId));
+            } catch (error) {
+              console.error('Error deleting pattern:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleDeleteReflection = (reflectionId: string) => {
+    Alert.alert(
+      t('insights.deleteConfirm.title'),
+      t('insights.deleteConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await thinkingPatternsService.deleteReflectionSummary(reflectionId);
+              setThinkingPatternReflections(prev => prev.filter(r => r.id !== reflectionId));
+            } catch (error) {
+              console.error('Error deleting reflection:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleDeleteSummary = (summaryId: string) => {
+    Alert.alert(
+      t('insights.deleteConfirm.title'),
+      t('insights.deleteConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await memoryService.deleteSummary(summaryId);
+              setSummaries(prev => prev.filter(s => s.id !== summaryId));
+            } catch (error) {
+              console.error('Error deleting summary:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleDeleteValueReflection = (reflectionId: string) => {
+    Alert.alert(
+      t('insights.deleteConfirm.title'),
+      t('insights.deleteConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await valuesService.deleteReflectionSummary(reflectionId);
+              // Reload insights to update values card reflections
+              loadInsightData();
+            } catch (error) {
+              console.error('Error deleting value reflection:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleDeleteValue = (valueId: string) => {
+    Alert.alert(
+      t('insights.deleteConfirm.title'),
+      t('insights.deleteConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await valuesService.deleteValue(valueId);
+              // Reload insights to update values cards
+              loadInsightData();
+            } catch (error) {
+              console.error('Error deleting value:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   // Mock data for demonstration when no patterns exist
   const mockPatterns = [
     {
@@ -328,9 +463,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             <View style={styles.motivationalContent}>
               <View style={styles.motivationalText}>
                 <Text style={styles.motivationalTitle}>
-
-                  {(motivationalCard?.message?.emoji ? `${motivationalCard.message.emoji} ` : '') + (motivationalCard?.message?.text || t('insights.motivational.fallbackMessage'))}
-
+                  {motivationalCard?.message?.emoji ? `${motivationalCard.message.emoji} ` : ''}
+                  {motivationalCard?.message?.text || t('insights.motivational.fallbackMessage')}
                 </Text>
               </View>
               <View style={styles.motivationalStats}>
@@ -364,6 +498,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           currentPatternIndex={currentPatternIndex}
           onPatternSwipeLeft={handlePatternSwipeLeft}
           onPatternSwipeRight={handlePatternSwipeRight}
+          onDeletePattern={handleDeletePattern}
         />
 
 
@@ -413,17 +548,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             </View>
           </View>
 
-          <ValueCards 
+          <ValueCards
             onStartReflection={(valueId, prompt, valueName, valueDescription) => {
-              onInsightClick('value_reflection', { 
-                valueId, 
-                prompt, 
-                valueName, 
-                valueDescription 
+              onInsightClick('value_reflection', {
+                valueId,
+                prompt,
+                valueName,
+                valueDescription
               });
             }}
             showBarChart={true}
             maxValues={4}
+            onDelete={handleDeleteValueReflection}
+            onDeleteValue={handleDeleteValue}
           />
         </View>
 
@@ -519,16 +656,28 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                   >
                     <View style={styles.patternContent}>
                       <View style={styles.patternContentLeft}>
-                        <Text style={styles.patternName}>
-                          {categoryName}
-                        </Text>
-                        
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <Text style={styles.patternName}>
+                            {categoryName}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              handleDeleteInsight(insight.id);
+                            }}
+                            style={{ padding: 4, marginLeft: 8 }}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                          >
+                            <Trash2 size={14} color="#d97706" opacity={0.6} />
+                          </TouchableOpacity>
+                        </View>
+
                         {!isExpanded && (
                           <Text style={styles.insightPreview}>
                             {previewText}
                           </Text>
                         )}
-                        
+
                         <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
                           {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
                         </Text>
@@ -837,6 +986,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             prompt: prompt
           });
         }}
+        onDelete={handleDeletePattern}
       />
 
       {/* Thinking Pattern Reflections Modal */}
@@ -848,6 +998,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           setThinkingPatternReflectionsModalVisible(false);
           // Optional: Handle reflection press if needed
         }}
+        onDelete={handleDeleteReflection}
       />
 
       {/* Goal Details Modal */}
@@ -873,6 +1024,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
         onClose={() => setSessionSummariesVisible(false)}
         initialSummaries={sessionSummaries}
         totalCount={memoryStats.sessionSummaries}
+        onDelete={handleDeleteSummary}
       />
 
       {/* Vision Details Modal */}

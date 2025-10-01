@@ -113,6 +113,10 @@
     "goals": "Hedefler",
     "memoryInsights": "Uzun Vadeli Görüşler",
     "longTermPatterns": "Uzun vadeli desenler ve temalar",
+    "deleteConfirm": {
+      "title": "İçgörüyü sil?",
+      "message": "Bu içgörüyü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    },
     "motivational": {
       "fallbackMessage": "Sağlık yolculuğunuz devam ediyor",
       "startingToday": "bugünden başlayarak"
@@ -122,7 +126,19 @@
       "subtitle": "Size ne önemli",
       "overview": "Temel Değerler",
       "pagination": "{{current}} / {{total}}",
-      "swipeToExplore": "Keşfetmek için kaydırın"
+      "swipeToExplore": "Keşfetmek için kaydırın",
+      "reflectionPrompt": "Bunu düşünün",
+      "prompts": {
+        "liveToday": "Bugün bu değeri nasıl yaşadınız?",
+        "feltAligned": "Son zamanlarda bu değerle en uyumlu ne zaman hissettiniz?",
+        "relationships": "Bu değer ilişkilerinizde nasıl ortaya çıkıyor?",
+        "smallAction": "Bu değeri onurlandırmak için atabileceğiniz küçük bir adım ne olabilir?",
+        "prioritizeMore": "Bu değere daha fazla öncelik vermek nasıl görünürdü?",
+        "bringToWork": "Bu değerden daha fazlasını işinize nasıl getirebilirsiniz?",
+        "barriers": "Bu değeri tam olarak yaşamanızı engelleyen neler var?",
+        "evolved": "Bu değer sizin için zaman içinde nasıl evrildi?",
+        "idealDay": "İdeal bir günde, bu değer nasıl mevcut olurdu?"
+      }
     },
     "sessionSummaries": {
       "title": "Seans Özetleri",
@@ -226,7 +242,7 @@
     },
     "moodInsights": {
       "yourMood": "Ruh Haliniz",
-      "trackEmotions": "Duygusal yolculuğunuzu takip edin",
+      "trackMoodJourney": "Duygusal yolculuğunuzu takip edin",
       "yourThoughts": "Düşünceleriniz",
       "identifyPatterns": "Kalıpları tanımlayın ve yeniden çerçeveleyin",
       "distortedThought": "Çarpık Düşünce",
@@ -315,6 +331,7 @@
       "editProfile": "Profili Düzenle",
       "chatHistory": "Sohbet Geçmişi",
       "voiceSettings": "Ses Ayarları",
+      "restartOnboarding": "Tanıtımı Yeniden Başlat",
       "notifications": "Bildirimler",
       "privacy": "Gizlilik ve Güvenlik",
       "darkMode": "Karanlık Mod",
@@ -325,12 +342,18 @@
       "editProfile": "Bilgilerinizi güncelleyin",
       "chatHistory": "Geçmiş konuşmaları görüntüleyin",
       "voiceSettings": "Konuşma seçeneklerini yapılandırın",
+      "restartOnboarding": "Tanıtımı tekrar görüntüleyin",
       "notifications": "Uyarıları yönetin",
       "privacy": "Verilerinizi kontrol edin",
       "darkMode": "Karanlık temayı aç/kapat",
       "help": "Yardım alın",
       "signOut": "Hesabınızdan çıkın",
       "default": "Erişmek için dokunun"
+    },
+    "restartOnboarding": {
+      "title": "Tanıtım Yeniden Başlatılsın mı?",
+      "message": "Bu sizi tanıtım ekranlarına geri götürecektir. Verileriniz etkilenmeyecektir.",
+      "confirm": "Yeniden Başlat"
     },
     "version": "Sürüm 1.0.0",
     "madeWith": "İyilik haliniz için 💙 ile yapıldı"

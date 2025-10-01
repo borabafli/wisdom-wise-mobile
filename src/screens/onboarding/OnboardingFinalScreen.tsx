@@ -218,7 +218,7 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
                     }
                   ]}
                 >
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.featureIconContainer,
                       {
@@ -229,11 +229,20 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
                       }
                     ]}
                   >
-                    <IconComponent 
-                      size={24} 
-                      color="#36657d"
-                      strokeWidth={2}
-                    />
+                    <Animated.View
+                      style={{
+                        opacity: featureAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.3, 1],
+                        }),
+                      }}
+                    >
+                      <IconComponent
+                        size={24}
+                        color="#36657d"
+                        strokeWidth={2}
+                      />
+                    </Animated.View>
                   </Animated.View>
                   <Animated.Text
                     style={[

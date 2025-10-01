@@ -60,23 +60,25 @@ export const authScreenStyles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 28, // Reduced from 32
+    fontSize: 32,
     fontWeight: '700',
-    color: colors.text.primary,
-    marginBottom: spacing.therapy.sm, // Reduced from md
-    fontFamily: 'Inter',
+    color: '#1F2937', // Match onboarding heading color
+    marginBottom: spacing.therapy.sm,
+    fontFamily: 'Ubuntu-Bold', // Match onboarding font
     textAlign: 'center',
-    lineHeight: 34, // Adjusted for smaller font
+    lineHeight: 38,
+    letterSpacing: -0.5,
   },
 
   subtitle: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.text.secondary,
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#1F2937', // Match onboarding heading color
     textAlign: 'center',
-    lineHeight: 24,
-    fontFamily: 'Inter',
-    paddingHorizontal: spacing.therapy.lg, // More generous padding
+    lineHeight: 28,
+    fontFamily: 'Ubuntu-Medium', // Match onboarding font
+    paddingHorizontal: spacing.therapy.lg,
+    opacity: 0.9,
   },
 
   // Form Section
@@ -196,25 +198,26 @@ export const authScreenStyles = StyleSheet.create({
 
   // Primary Button
   primaryButton: {
-    backgroundColor: '#5BA3B8', // Primary blue-teal from style guide
-    borderRadius: 50, // radius-full from style guide
-    paddingVertical: spacing.therapy.md, // Reduced padding
-    paddingHorizontal: spacing.therapy.lg,
-    marginTop: spacing.therapy.lg, // Reduced margin
+    backgroundColor: '#36657d', // Match onboarding button color
+    borderRadius: 18, // Match onboarding button radius
+    paddingVertical: spacing.therapy.md,
+    paddingHorizontal: 32,
+    marginTop: spacing.therapy.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48, // Reduced height
+    minHeight: 48,
   },
 
   primaryButtonDisabled: {
-    backgroundColor: '#A8D5E8', // Primary light from style guide
+    backgroundColor: '#A8D5E8',
   },
 
   primaryButtonText: {
-    color: colors.white,
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Inter',
+    fontWeight: '500',
+    fontFamily: 'Ubuntu-Medium', // Match onboarding button font
+    letterSpacing: 0.2,
   },
 
   // Google Sign-In Button
@@ -307,27 +310,13 @@ export const authScreenStyles = StyleSheet.create({
     opacity: 0.03,
   },
 
-  // Calming Visual Elements
+  // Calming Visual Elements - REMOVED for cleaner look matching onboarding
   decorativeElement: {
-    position: 'absolute',
-    top: '12%',
-    left: 20,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#A8D5E8', // Primary light from style guide
-    opacity: 0.15,
+    display: 'none', // Hide background bubbles
   },
 
   decorativeElement2: {
-    position: 'absolute',
-    bottom: '18%',
-    right: 30,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#B5A7E6', // Lavender accent from style guide
-    opacity: 0.12,
+    display: 'none', // Hide background bubbles
   },
 
   // Responsive adjustments

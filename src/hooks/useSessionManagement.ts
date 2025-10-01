@@ -111,20 +111,20 @@ export const useSessionManagement = () => {
           const lastSession = currentSession[0]; // Most recent session
           
           if (lastSession && lastSession.messages) {
-            // Check if this was a reflection session (values or thinking patterns) or specific exercise
-            const isReflectionSession = exerciseContext?.isValueReflection || exerciseContext?.isThinkingPatternReflection;
-            const isSpecificExercise = exerciseContext?.exerciseType && exerciseContext.exerciseType !== 'breathing' && exerciseContext.exerciseType !== 'mindfulness';
+            // Check if this was the Automatic Thoughts exercise
+            const isAutomaticThoughtsExercise = exerciseContext?.exerciseType === 'automatic-thoughts';
 
-            // Only extract thought patterns from regular therapy sessions (not exercises or reflections)
-            if (!isReflectionSession && !isSpecificExercise) {
+            // ONLY extract CBT thought patterns after Automatic Thoughts exercise
+            if (isAutomaticThoughtsExercise) {
+              console.log('🧠 Automatic Thoughts exercise completed - extracting CBT thought patterns with distortions and reframes');
               const patterns = await insightService.extractAtSessionEnd(lastSession.messages);
               if (patterns.length > 0) {
-                console.log(`✅ Background: Extracted ${patterns.length} thought patterns`);
+                console.log(`✅ Background: Extracted ${patterns.length} CBT thought patterns`);
+              } else {
+                console.log(`ℹ️ No clear thought patterns with distortions found in this session`);
               }
-            } else if (isReflectionSession) {
-              console.log(`⏭️ Skipping thought pattern extraction - detected reflection session`);
-            } else if (isSpecificExercise) {
-              console.log(`⏭️ Skipping thought pattern extraction - detected ${exerciseContext.exerciseType} exercise`);
+            } else {
+              console.log(`⏭️ Skipping CBT thought pattern extraction - not Automatic Thoughts exercise`);
             }
 
             // Exercise-specific insight extraction based on context
@@ -214,21 +214,21 @@ export const useSessionManagement = () => {
         try {
           // Get current messages before clearing
           const currentMessages = await storageService.getMessages();
-          
-          // Check if this was a specific exercise or reflection - same logic as above
-          const isReflectionSession = exerciseContext?.isValueReflection || exerciseContext?.isThinkingPatternReflection;
-          const isSpecificExercise = exerciseContext?.exerciseType && exerciseContext.exerciseType !== 'breathing' && exerciseContext.exerciseType !== 'mindfulness';
 
-          // Only extract thought patterns from regular therapy sessions (not exercises or reflections)
-          if (!isReflectionSession && !isSpecificExercise) {
+          // Check if this was the Automatic Thoughts exercise
+          const isAutomaticThoughtsExercise = exerciseContext?.exerciseType === 'automatic-thoughts';
+
+          // ONLY extract CBT thought patterns after Automatic Thoughts exercise
+          if (isAutomaticThoughtsExercise) {
+            console.log('🧠 Automatic Thoughts exercise completed - extracting CBT thought patterns (conversation not saved)');
             const patterns = await insightService.extractAtSessionEnd();
             if (patterns.length > 0) {
-              console.log(`✅ Background: Extracted ${patterns.length} thought patterns (conversation not saved)`);
+              console.log(`✅ Background: Extracted ${patterns.length} CBT thought patterns (conversation not saved)`);
+            } else {
+              console.log(`ℹ️ No clear thought patterns with distortions found (conversation not saved)`);
             }
-          } else if (isReflectionSession) {
-            console.log(`⏭️ Skipping thought pattern extraction - detected reflection session (conversation not saved)`);
-          } else if (isSpecificExercise) {
-            console.log(`⏭️ Skipping thought pattern extraction - detected ${exerciseContext.exerciseType} exercise (conversation not saved)`);
+          } else {
+            console.log(`⏭️ Skipping CBT thought pattern extraction - not Automatic Thoughts exercise (conversation not saved)`);
           }
 
           // Extract insights based on exercise type even if not saving conversation
