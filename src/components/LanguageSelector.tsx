@@ -134,13 +134,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageCh
                             styles.languageOptionName,
                             isSelected && styles.selectedLanguageOptionName
                           ]}>
-                            {languageName}
+                            {String(languageName)}
                           </Text>
                           <Text style={[
                             styles.languageCode,
                             isSelected && styles.selectedLanguageCode
                           ]}>
-                            {code.toUpperCase()}
+                            {String(code.toUpperCase())}
                           </Text>
                         </View>
 
