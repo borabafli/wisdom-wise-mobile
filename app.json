@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ZenMind",
-    "slug": "zenmind",
+    "slug": "wisdomwise",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -117,6 +117,9 @@
       "eas": {
         "projectId": "bee70e2e-8050-4ef6-ac3b-1d699f00bb47"
       }
+    },
+    "cli": {
+      "appVersionSource": "remote"
     }
   }
 }
