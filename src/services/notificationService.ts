@@ -30,16 +30,7 @@ export interface UserNotificationContext {
   hasJournaledToday?: boolean;
 }
 
-// Set the notification handler
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// Notification handler will be set during initialization
 
 class NotificationService {
   private readonly STORAGE_KEY = 'journal_reminder_settings';
@@ -454,6 +445,17 @@ class NotificationService {
    */
   async initialize(): Promise<void> {
     try {
+      // Set the notification handler
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+          shouldShowBanner: true,
+          shouldShowList: true,
+        }),
+      });
+
       const hasPermission = await this.getPermissionStatus();
 
       if (hasPermission === 'granted') {
@@ -461,6 +463,7 @@ class NotificationService {
       }
     } catch (error) {
       console.error('Error initializing notification service:', error);
+      // Don't throw - allow app to continue even if notifications fail
     }
   }
 

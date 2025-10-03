@@ -21,7 +21,7 @@
       },
       "android": {
         "resourceClass": "medium",
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "apk"
       }
     },
     "production": {
