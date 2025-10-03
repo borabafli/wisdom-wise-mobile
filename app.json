@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "primaryColor": "#3b82f6",
     "description": "Your gentle companion for mindful wellness and mental health support",
     "keywords": [
