@@ -107,7 +107,6 @@
       "expo-sqlite",
       "expo-image-picker",
       "expo-notifications",
-      "@siteed/expo-audio-studio",
       "expo-navigation-bar",
       "react-native-audio-api",
       "expo-web-browser",
