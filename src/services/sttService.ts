@@ -2,9 +2,23 @@ import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
-import { AudioContext, AnalyserNode, AudioRecorder, RecorderAdapterNode } from 'react-native-audio-api';
 
-// Import react-native-audio-record for better PCM audio data on mobile
+// Optional: Import react-native-audio-api if available (fallback to Expo Audio if not)
+let AudioContext: any = null;
+let AnalyserNode: any = null;
+let AudioRecorder: any = null;
+let RecorderAdapterNode: any = null;
+try {
+  const audioApi = require('react-native-audio-api');
+  AudioContext = audioApi.AudioContext;
+  AnalyserNode = audioApi.AnalyserNode;
+  AudioRecorder = audioApi.AudioRecorder;
+  RecorderAdapterNode = audioApi.RecorderAdapterNode;
+} catch (error) {
+  console.warn('react-native-audio-api not available, will use Expo Audio fallback:', error);
+}
+
+// Optional: Import react-native-audio-record for better PCM audio data on mobile
 let AudioRecord: any = null;
 try {
   // @ts-ignore - Package might not have TypeScript declarations
