@@ -27,36 +27,40 @@ export default function App() {
   console.log('App component rendering, fontsLoaded:', fontsLoaded);
 
   useEffect(() => {
-    console.log('App useEffect starting...');
+    console.log('🚀 [APP] useEffect starting...');
     async function prepare() {
       try {
-        console.log('Starting font loading...');
+        console.log('📝 [APP] Step 1: Starting font loading...');
         await loadFonts();
-        console.log('Fonts loaded successfully');
+        console.log('✅ [APP] Step 1: Fonts loaded successfully');
 
         // Proper Android navigation bar configuration
         if (Platform.OS === 'android') {
-          console.log('Configuring Android navigation bar...');
+          console.log('📝 [APP] Step 2: Configuring Android navigation bar...');
           await NavigationBar.setBackgroundColorAsync('#e9eff1');
           await NavigationBar.setButtonStyleAsync('dark');
-          console.log('Android navigation bar configured');
+          console.log('✅ [APP] Step 2: Android navigation bar configured');
         }
 
         // Initialize notification service
+        console.log('📝 [APP] Step 3: Initializing notification service...');
         await notificationService.initialize();
-        console.log('Notification service initialized');
+        console.log('✅ [APP] Step 3: Notification service initialized');
       } catch (e) {
-        console.error('Error in prepare function:', e);
+        console.error('❌ [APP] FATAL ERROR in prepare function:', e);
+        console.error('❌ [APP] Error stack:', e.stack);
         // Even if there's an error, allow app to load
         // This prevents crashes from non-critical initialization failures
       } finally {
-        console.log('Setting fontsLoaded to true');
+        console.log('📝 [APP] Step 4: Setting fontsLoaded to true');
         setFontsLoaded(true);
         // Safely hide splash screen
         try {
+          console.log('📝 [APP] Step 5: Hiding splash screen...');
           await SplashScreen.hideAsync();
+          console.log('✅ [APP] Step 5: Splash screen hidden');
         } catch (err) {
-          console.error('Error hiding splash screen:', err);
+          console.error('❌ [APP] Error hiding splash screen:', err);
         }
       }
     }
