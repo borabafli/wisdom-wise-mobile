@@ -120,12 +120,12 @@ const ProfileScreen: React.FC = () => {
 
       if (hasPermission !== 'granted') {
         if (shouldGoToSettings) {
-          // Permission was denied - provide better guidance
-          const guidance = notificationService.getNotificationGuidance();
+          // Permission was denied - provide simplified guidance
+          const guidance = notificationService.getDeniedGuidance();
 
           Alert.alert(
             guidance.title,
-            `${guidance.message}\n\nSteps to enable:\n${guidance.steps.join('\n')}`,
+            guidance.message,
             [
               { text: 'Not Now', style: 'cancel' },
               {

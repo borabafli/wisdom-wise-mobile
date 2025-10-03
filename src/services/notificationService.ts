@@ -173,12 +173,7 @@ class NotificationService {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
 
-      // If permission was explicitly denied, we can't request again
-      if (existingStatus === 'denied') {
-        console.log('Notification permission was previously denied');
-        return false;
-      }
-
+      // Request permission if not already determined
       if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
@@ -187,7 +182,7 @@ class NotificationService {
       // For Android, also set up notification channel
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('journal-reminders', {
-          name: 'MindWise',
+          name: 'ZenMind',
           importance: Notifications.AndroidImportance.DEFAULT,
           vibrationPattern: [0, 250, 250, 250],
           lightColor: '#2DB29D',
@@ -249,7 +244,33 @@ class NotificationService {
   }
 
   /**
-   * Create better user guidance for enabling notifications
+   * Get notification prompt for first-time request
+   */
+  getFirstTimePrompt(): { title: string; message: string; allowText: string; declineText: string } {
+    return {
+      title: 'Enable Gentle Reminders?',
+      message: 'Get optional mindfulness reminders to support your mental health journey. You can customize or disable them anytime.',
+      allowText: 'Enable',
+      declineText: 'Not Now'
+    };
+  }
+
+  /**
+   * Get simplified guidance for when notifications were denied
+   */
+  getDeniedGuidance(): { title: string; message: string } {
+    const isIOS = Platform.OS === 'ios';
+
+    return {
+      title: 'Enable Notifications in Settings',
+      message: isIOS
+        ? 'To enable reminders, go to your iPhone Settings → ZenMind → Notifications, then turn on "Allow Notifications".'
+        : 'To enable reminders, go to your phone Settings → Apps → ZenMind → Notifications, then turn on "Show notifications".'
+    };
+  }
+
+  /**
+   * Create better user guidance for enabling notifications (legacy - kept for backward compatibility)
    */
   getNotificationGuidance(): { title: string; message: string; steps: string[] } {
     const isIOS = Platform.OS === 'ios';
@@ -448,7 +469,7 @@ class NotificationService {
       // Set the notification handler
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
-          shouldShowAlert: true,
+          shouldShowAlert: false, // Deprecated, use shouldShowBanner instead
           shouldPlaySound: true,
           shouldSetBadge: false,
           shouldShowBanner: true,

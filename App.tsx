@@ -12,6 +12,7 @@ import * as Notifications from 'expo-notifications';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { AppProvider, AuthProvider } from './src/contexts';
 import { AppContent } from './src/components/AppContent';
+import { NotificationPrompt } from './src/components/NotificationPrompt';
 
 // Import i18n service to initialize it
 import './src/services/i18nService';
@@ -46,10 +47,17 @@ export default function App() {
         console.log('Notification service initialized');
       } catch (e) {
         console.error('Error in prepare function:', e);
+        // Even if there's an error, allow app to load
+        // This prevents crashes from non-critical initialization failures
       } finally {
         console.log('Setting fontsLoaded to true');
         setFontsLoaded(true);
-        SplashScreen.hideAsync();
+        // Safely hide splash screen
+        try {
+          await SplashScreen.hideAsync();
+        } catch (err) {
+          console.error('Error hiding splash screen:', err);
+        }
       }
     }
 
@@ -70,6 +78,7 @@ export default function App() {
           <AuthProvider>
             <AppProvider>
               <AppContent />
+              <NotificationPrompt />
             </AppProvider>
           </AuthProvider>
         </GestureHandlerRootView>

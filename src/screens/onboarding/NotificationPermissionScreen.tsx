@@ -114,37 +114,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
 
   const handleContinue = async () => {
     try {
-      // Check current permission status
-      const { canRequest, shouldGoToSettings } = await notificationService.canRequestPermissions();
-
-      if (shouldGoToSettings) {
-        // Permission was previously denied - offer to go to settings
-        const guidance = notificationService.getNotificationGuidance();
-
-        Alert.alert(
-          guidance.title,
-          `${guidance.message}\n\nWould you like to enable notifications in settings? You can always set this up later in your profile.`,
-          [
-            {
-              text: 'Skip for Now',
-              style: 'cancel',
-              onPress: () => onContinue()
-            },
-            {
-              text: 'Enable in Settings',
-              style: 'default',
-              onPress: async () => {
-                await notificationService.openSettings();
-                // Continue after opening settings (user can return to app)
-                onContinue();
-              }
-            }
-          ]
-        );
-        return;
-      }
-
-      // Try to request permission
+      // Simply request permission - standard system prompt
       const hasPermission = await notificationService.requestPermissions();
 
       if (hasPermission) {

@@ -24,6 +24,16 @@
         "buildType": "apk"
       }
     },
+    "internal": {
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "resourceClass": "medium",
+        "buildType": "apk"
+      }
+    },
     "production": {
       "ios": {
         "resourceClass": "m-medium"

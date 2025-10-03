@@ -88,10 +88,10 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
         await notificationService.refreshPersonalizedNotifications();
         Alert.alert('Notifications Enabled', 'You\'ll now receive personalized reminders.');
       } else {
-        const guidance = notificationService.getNotificationGuidance();
+        const guidance = notificationService.getDeniedGuidance();
         Alert.alert(
           guidance.title,
-          `${guidance.message}\n\nSteps:\n${guidance.steps.join('\n')}`,
+          guidance.message,
           [
             { text: 'Not Now', style: 'cancel' },
             {
