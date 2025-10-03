@@ -40,6 +40,10 @@ export default function App() {
           await NavigationBar.setButtonStyleAsync('dark');
           console.log('Android navigation bar configured');
         }
+
+        // Initialize notification service
+        await notificationService.initialize();
+        console.log('Notification service initialized');
       } catch (e) {
         console.error('Error in prepare function:', e);
       } finally {

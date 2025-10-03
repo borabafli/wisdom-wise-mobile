@@ -196,7 +196,7 @@ class NotificationService {
       // For Android, also set up notification channel
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('journal-reminders', {
-          name: 'Journal Reminders',
+          name: 'MindWise',
           importance: Notifications.AndroidImportance.DEFAULT,
           vibrationPattern: [0, 250, 250, 250],
           lightColor: '#2DB29D',
@@ -242,7 +242,7 @@ class NotificationService {
         // On Android, try to open app-specific notification settings
         try {
           await Linking.sendIntent('android.settings.APP_NOTIFICATION_SETTINGS', [
-            { key: 'android.provider.extra.APP_PACKAGE', value: 'your.app.package.name' }
+            { key: 'android.provider.extra.APP_PACKAGE', value: 'com.wisdomwise.app' }
           ]);
         } catch {
           // Fallback to general app settings
@@ -270,12 +270,12 @@ class NotificationService {
         '1. Tap "Open Settings" below',
         '2. Toggle on "Allow Notifications"',
         '3. Choose your preferred notification style',
-        '4. Return to WisdomWise when done'
+        '4. Return to ZenMind when done'
       ] : [
         '1. Tap "Open Settings" below',
         '2. Turn on "Show notifications"',
         '3. Choose your notification preferences',
-        '4. Press back to return to WisdomWise'
+        '4. Press back to return to ZenMind'
       ]
     };
   }
@@ -471,7 +471,7 @@ class NotificationService {
     try {
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "Test from WisdomWise",
+          title: "Test from ZenMind",
           body: "Your notifications are working! Anu is ready to support your mindfulness journey.",
           sound: 'default',
         },
