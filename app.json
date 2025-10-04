@@ -110,7 +110,15 @@
       "expo-navigation-bar",
       "react-native-audio-api",
       "expo-web-browser",
-      "expo-localization"
+      "expo-localization",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "nikolaibora"
+        }
+      ]
     ],
     "scheme": "zenmind",
     "extra": {
