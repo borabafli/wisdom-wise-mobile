@@ -18,14 +18,6 @@ try {
   console.warn('react-native-audio-api not available, will use Expo Audio fallback:', error);
 }
 
-// Optional: Import react-native-audio-record for better PCM audio data on mobile
-let AudioRecord: any = null;
-try {
-  // @ts-ignore - Package might not have TypeScript declarations
-  AudioRecord = require('react-native-audio-record').default;
-} catch (error) {
-  console.warn('react-native-audio-record not available:', error);
-}
 
 // Enhanced simulation for mobile audio levels (no native dependencies required)
 
@@ -76,11 +68,6 @@ class STTService {
   // Expo Speech Recognition specific properties
   private partialResultBuffer = '';
   private speechRecognitionTask?: any;
-
-  // react-native-audio-record properties for better waveform data
-  private pcmAudioRecord?: any;
-  private pcmRecordingActive = false;
-  private pcmAnalysisInterval?: NodeJS.Timeout;
 
 
   private defaultSettings: STTSettings = {
@@ -549,99 +536,25 @@ class STTService {
   // Real-time metering callback approach
   private meteringCallbackActive = false;
 
-  // Enhanced mobile waveform method using react-native-audio-record
+  // Enhanced mobile waveform method using react-native-audio-api or Expo Audio metering
   private async startEnhancedMobileWaveform(
     onAudioLevel: (level: number, frequencyData?: number[]) => void,
     expoRecording: Audio.Recording
   ): Promise<void> {
-    console.log('🎵 Starting react-native-audio-record...');
-    
-    if (AudioRecord && this.canUseReactNativeAudioRecord()) {
-      console.log('🔥 Using react-native-audio-record for real PCM data');
-      await this.startPCMBasedWaveform(onAudioLevel);
-    } else {
-      console.error('❌ react-native-audio-record not available - native module required');
-      throw new Error('react-native-audio-record requires native linking or Expo development build');
-    }
-  }
+    console.log('🎵 Starting mobile audio visualization...');
 
-  // Check if react-native-audio-record can be used
-  private canUseReactNativeAudioRecord(): boolean {
-    try {
-      return AudioRecord && (Platform.OS === 'android' || Platform.OS === 'ios');
-    } catch (error) {
-      console.warn('react-native-audio-record check failed:', error);
-      return false;
-    }
-  }
+    // Use react-native-audio-api or fall back to Expo Audio metering
+    console.log('🔬 Attempting react-native-audio-api initialization...');
 
-  // Real PCM-based waveform using react-native-audio-record
-  private async startPCMBasedWaveform(
-    onAudioLevel: (level: number, frequencyData?: number[]) => void
-  ): Promise<void> {
-    try {
-      console.log('🎤 Initializing react-native-audio-record...');
-      
-      const audioConfig = {
-        sampleRate: 16000,
-        bitsPerSample: 16,
-        channelCount: 1,
-        wavFile: 'temp.wav'
-      };
-
-      // Initialize AudioRecord with config
-      await AudioRecord.init(audioConfig);
-      
-      // Set up real-time PCM data callback (only 'data' event is supported)
-      AudioRecord.on('data', (data: string) => {
-        if (!this.pcmRecordingActive || !onAudioLevel) return;
-        
-        try {
-          // Process the base64 PCM data
-          const binaryString = atob(data);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          
-          // Convert to 16-bit PCM samples
-          const samples = new Int16Array(bytes.buffer);
-          
-          // Calculate simple RMS level
-          let sum = 0;
-          for (let i = 0; i < samples.length; i++) {
-            sum += (samples[i] / 32768) ** 2;
-          }
-          const rms = Math.sqrt(sum / samples.length);
-          
-          // Generate frequency bands from PCM data
-          const bands = Array.from({ length: 7 }, (_, i) => {
-            const start = Math.floor((i / 7) * samples.length);
-            const end = Math.floor(((i + 1) / 7) * samples.length);
-            let bandSum = 0;
-            for (let j = start; j < end; j++) {
-              bandSum += Math.abs(samples[j] / 32768);
-            }
-            return Math.min(1, bandSum / (end - start) * 2);
-          });
-          
-          onAudioLevel(Math.min(1, rms * 3), bands);
-        } catch (error) {
-          console.warn('Error processing PCM data:', error);
-          this.pcmRecordingActive = false;
-        }
+    this.startModernAudioAnalysis(onAudioLevel)
+      .then(() => {
+        console.log('✅ react-native-audio-api initialized successfully');
+      })
+      .catch((error) => {
+        console.warn('⚠️ react-native-audio-api failed, falling back to Expo Audio metering:', error.message);
+        console.log('🔄 Starting Expo Audio metering fallback...');
+        this.startExpoAudioMeteringVisualization(onAudioLevel, expoRecording);
       });
-
-      // Start recording
-      await AudioRecord.start();
-      this.pcmRecordingActive = true;
-      
-      console.log('✅ Real PCM recording started');
-      
-    } catch (error) {
-      console.error('Failed to start PCM recording:', error);
-      throw error;
-    }
   }
 
   
@@ -1251,27 +1164,7 @@ class STTService {
   // Cleanup modern audio monitoring
   private async cleanupRealAudioLevelMonitoring(): Promise<void> {
     console.log('🧹 Cleaning up modern audio analysis pipeline...');
-    
-    // Stop PCM recording for waveform
-    if (this.pcmRecordingActive) {
-      try {
-        this.pcmRecordingActive = false;
-        if (AudioRecord) {
-          AudioRecord.stop();
-          // Remove data listener by setting empty callback
-          try {
-            AudioRecord.on('data', () => {});
-          } catch (e) {
-            // Ignore listener cleanup errors
-          }
-        }
-        this.pcmAudioRecord = undefined;
-        console.log('✅ PCM waveform recording stopped and cleaned up');
-      } catch (error) {
-        console.warn('⚠️ Error stopping PCM waveform recording:', error);
-      }
-    }
-    
+
     // Stop real-time analysis interval
     if (this.audioAnalysisInterval) {
       clearInterval(this.audioAnalysisInterval);
