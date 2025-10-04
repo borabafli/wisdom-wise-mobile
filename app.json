@@ -9,22 +9,11 @@
     "newArchEnabled": false,
     "primaryColor": "#3b82f6",
     "description": "Your gentle companion for mindful wellness and mental health support",
-    "keywords": [
-      "wellness",
-      "mindfulness",
-      "mental health",
-      "meditation",
-      "therapy"
-    ],
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "statusBar": {
-        "style": "dark",
-        "backgroundColor": "#EDF8F8"
-      },
       "bundleIdentifier": "com.wisdomwise.app",
       "infoPlist": {
         "NSSpeechRecognitionUsageDescription": "Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions.",
@@ -38,18 +27,6 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#EDF8F8"
-      },
-      "edgeToEdgeEnabled": false,
-      "statusBar": {
-        "backgroundColor": "#EDF8F8",
-        "translucent": false
-      },
-      "androidNavigationBar": {
-        "visible": true,
-        "backgroundColor": "#EDF8F8"
-      },
-      "androidStatusBar": {
-        "translucent": false
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.wisdomwise.app",
@@ -110,9 +87,6 @@
       "eas": {
         "projectId": "bee70e2e-8050-4ef6-ac3b-1d699f00bb47"
       }
-    },
-    "cli": {
-      "appVersionSource": "remote"
     }
   }
 }
