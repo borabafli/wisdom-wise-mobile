@@ -33,23 +33,39 @@ import { AppContent } from './src/components/AppContent';
 import { NotificationPrompt } from './src/components/NotificationPrompt';
 
 // Import i18n service to initialize it
-import './src/services/i18nService';
-import { notificationService } from './src/services/notificationService';
+try {
+  require('./src/services/i18nService');
+  console.log('✅ i18n service imported successfully');
+} catch (e) {
+  console.error('❌ CRASH: Failed to import i18n service:', e);
+  if (typeof Alert !== 'undefined') {
+    Alert.alert('IMPORT ERROR', `i18n: ${e.message}`);
+  }
+}
+
+let notificationService: any = null;
+try {
+  notificationService = require('./src/services/notificationService').notificationService;
+  console.log('✅ notification service imported successfully');
+} catch (e) {
+  console.error('❌ CRASH: Failed to import notification service:', e);
+  if (typeof Alert !== 'undefined') {
+    Alert.alert('IMPORT ERROR', `notifications: ${e.message}`);
+  }
+}
+
 import * as Sentry from '@sentry/react-native';
 
-Sentry.init({
-  dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
-
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
-  sendDefaultPii: true,
-
-  // Enable Logs
-  enableLogs: true,
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
-});
+try {
+  Sentry.init({
+    dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
+    sendDefaultPii: true,
+    enableLogs: true,
+  });
+  console.log('✅ Sentry initialized successfully');
+} catch (e) {
+  console.error('❌ CRASH: Failed to initialize Sentry:', e);
+}
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -58,6 +74,11 @@ export default Sentry.wrap(function App() {
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
   console.log('App component rendering, fontsLoaded:', fontsLoaded);
+
+  // Show alert IMMEDIATELY when component mounts (before useEffect)
+  useEffect(() => {
+    Alert.alert('🎯 APP STARTED', 'App component mounted successfully!');
+  }, []);
 
   useEffect(() => {
     console.log('🚀 [APP] useEffect starting...');
