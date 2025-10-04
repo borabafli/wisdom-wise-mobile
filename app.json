@@ -89,7 +89,8 @@
             "enableJetifier": true
           }
         }
-      ]
+      ],
+      "./plugins/withAndroidManifestFix"
     ],
     "scheme": "zenmind",
     "extra": {
