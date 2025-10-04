@@ -210,9 +210,9 @@ const ProfileScreen: React.FC = () => {
     { icon: RotateCcw, label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, highlight: false, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
     { icon: Bell, label: 'Test Notification', action: handleTestNotification, highlight: false, subtitle: 'Send a test notification now' },
-    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), subtitle: t('profile.menuSubtitles.privacy') },
-    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, subtitle: t('profile.menuSubtitles.darkMode') },
-    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), subtitle: t('profile.menuSubtitles.help') },
+    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => console.log('Privacy tapped'), subtitle: t('profile.menuSubtitles.privacy') },
+    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
+    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
     // Conditionally show Sign Out (for logged in users) or Login (for anonymous users)
     ...(isAnonymous
       ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true, subtitle: 'Save your progress and access all features' }]
