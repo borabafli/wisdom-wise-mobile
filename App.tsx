@@ -1,16 +1,28 @@
-// BINARY SEARCH TEST - STEP 2: Add back basic infrastructure
-// Working: fonts, splash
-// Testing: global.css, SafeAreaProvider, GestureHandler, ErrorBoundary
-// Still removed: Sentry, i18n, notification service, contexts, AppContent
+// BINARY SEARCH TEST - STEP 3: Add back services (Sentry, i18n, notifications)
+// Working: fonts, splash, global.css, SafeAreaProvider, GestureHandler, ErrorBoundary
+// Testing: Sentry, i18n service, notification service
+// Still removed: contexts (AuthProvider, AppProvider), AppContent, NotificationPrompt
 
 import './global.css';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Alert } from 'react-native';
+import { View, Platform, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
+import * as NavigationBar from 'expo-navigation-bar';
 import { loadFonts } from './src/config/fonts';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+
+// Add back services
+import './src/services/i18nService';
+import { notificationService } from './src/services/notificationService';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
+  sendDefaultPii: true,
+  enableLogs: true,
+});
 
 // Global error handler
 if (typeof ErrorUtils !== 'undefined') {
@@ -23,7 +35,7 @@ if (typeof ErrorUtils !== 'undefined') {
 
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
+export default Sentry.wrap(function App() {
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
   console.log('App component rendering, fontsLoaded:', fontsLoaded);
@@ -34,6 +46,16 @@ export default function App() {
         Alert.alert('Test', 'Loading fonts...');
         await loadFonts();
         Alert.alert('Success!', 'Fonts loaded ✅');
+
+        // Android navigation bar
+        if (Platform.OS === 'android') {
+          await NavigationBar.setBackgroundColorAsync('#e9eff1');
+          await NavigationBar.setButtonStyleAsync('dark');
+        }
+
+        // Initialize notification service
+        await notificationService.initialize();
+
         setFontsLoaded(true);
         await SplashScreen.hideAsync();
       } catch (e) {
