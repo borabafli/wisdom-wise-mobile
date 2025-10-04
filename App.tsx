@@ -1,6 +1,7 @@
-// BINARY SEARCH TEST - STEP 3: Add back services (Sentry, i18n, notifications)
+// BINARY SEARCH TEST - STEP 3: Add back services (i18n, notifications)
 // Working: fonts, splash, global.css, SafeAreaProvider, GestureHandler, ErrorBoundary
-// Testing: Sentry, i18n service, notification service
+// Testing: i18n service, notification service
+// Removed: Sentry (not needed for now)
 // Still removed: contexts (AuthProvider, AppProvider), AppContent, NotificationPrompt
 
 import './global.css';
@@ -16,13 +17,6 @@ import { ErrorBoundary } from './src/components/ErrorBoundary';
 // Add back services
 import './src/services/i18nService';
 import { notificationService } from './src/services/notificationService';
-import * as Sentry from '@sentry/react-native';
-
-Sentry.init({
-  dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
-  sendDefaultPii: true,
-  enableLogs: true,
-});
 
 // Global error handler
 if (typeof ErrorUtils !== 'undefined') {
@@ -35,7 +29,7 @@ if (typeof ErrorUtils !== 'undefined') {
 
 SplashScreen.preventAutoHideAsync();
 
-export default Sentry.wrap(function App() {
+export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
   console.log('App component rendering, fontsLoaded:', fontsLoaded);
