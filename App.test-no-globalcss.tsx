@@ -1,39 +1,60 @@
-// Using STUB AuthProvider - bypasses all Supabase/storage calls
-// App runs in anonymous mode only for now
-
 import './global.css';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Platform } from 'react-native';
+import { View, Platform, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { loadFonts } from './src/config/fonts';
 import * as SplashScreen from 'expo-splash-screen';
 import * as NavigationBar from 'expo-navigation-bar';
-import { loadFonts } from './src/config/fonts';
+import * as Notifications from 'expo-notifications';
 
-// Components and contexts
-import { ErrorBoundary } from './src/components/ErrorBoundary';
-import { AppProvider, AuthProvider } from './src/contexts';
-import { AppContent } from './src/components/AppContent';
-import { NotificationPrompt } from './src/components/NotificationPrompt';
-
-// Services
-import './src/services/i18nService';
-import { notificationService } from './src/services/notificationService';
-
-// Global error handler
+// Global error handler to catch crashes
 if (typeof ErrorUtils !== 'undefined') {
   const originalHandler = ErrorUtils.getGlobalHandler();
   ErrorUtils.setGlobalHandler((error, isFatal) => {
     console.error('💥 GLOBAL ERROR CAUGHT:', error);
     console.error('💥 IS FATAL:', isFatal);
     console.error('💥 ERROR STACK:', error.stack);
-    if (originalHandler) originalHandler(error, isFatal);
+    Alert.alert(
+      'App Error',
+      `${error.name}: ${error.message}\n\nStack: ${error.stack?.substring(0, 200)}`,
+      [{ text: 'OK' }]
+    );
+    if (originalHandler) {
+      originalHandler(error, isFatal);
+    }
   });
 }
 
+// Import components and contexts
+import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { AppProvider, AuthProvider } from './src/contexts';
+import { AppContent } from './src/components/AppContent';
+import { NotificationPrompt } from './src/components/NotificationPrompt';
+
+// Import i18n service to initialize it
+import './src/services/i18nService';
+import { notificationService } from './src/services/notificationService';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
+
+// Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
+export default Sentry.wrap(function App() {
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
   console.log('App component rendering, fontsLoaded:', fontsLoaded);
@@ -101,4 +122,4 @@ export default function App() {
       </ErrorBoundary>
     </SafeAreaProvider>
   );
-}
+});
