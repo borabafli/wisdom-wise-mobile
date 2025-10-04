@@ -1,4 +1,4 @@
-import './global.css';
+// import './global.css'; // TESTING: Removed to see if this causes crash
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, Platform, Alert } from 'react-native';
@@ -33,39 +33,23 @@ import { AppContent } from './src/components/AppContent';
 import { NotificationPrompt } from './src/components/NotificationPrompt';
 
 // Import i18n service to initialize it
-try {
-  require('./src/services/i18nService');
-  console.log('✅ i18n service imported successfully');
-} catch (e) {
-  console.error('❌ CRASH: Failed to import i18n service:', e);
-  if (typeof Alert !== 'undefined') {
-    Alert.alert('IMPORT ERROR', `i18n: ${e.message}`);
-  }
-}
-
-let notificationService: any = null;
-try {
-  notificationService = require('./src/services/notificationService').notificationService;
-  console.log('✅ notification service imported successfully');
-} catch (e) {
-  console.error('❌ CRASH: Failed to import notification service:', e);
-  if (typeof Alert !== 'undefined') {
-    Alert.alert('IMPORT ERROR', `notifications: ${e.message}`);
-  }
-}
-
+import './src/services/i18nService';
+import { notificationService } from './src/services/notificationService';
 import * as Sentry from '@sentry/react-native';
 
-try {
-  Sentry.init({
-    dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
-    sendDefaultPii: true,
-    enableLogs: true,
-  });
-  console.log('✅ Sentry initialized successfully');
-} catch (e) {
-  console.error('❌ CRASH: Failed to initialize Sentry:', e);
-}
+Sentry.init({
+  dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -75,41 +59,29 @@ export default Sentry.wrap(function App() {
 
   console.log('App component rendering, fontsLoaded:', fontsLoaded);
 
-  // Show alert IMMEDIATELY when component mounts (before useEffect)
-  useEffect(() => {
-    Alert.alert('🎯 APP STARTED', 'App component mounted successfully!');
-  }, []);
-
   useEffect(() => {
     console.log('🚀 [APP] useEffect starting...');
     async function prepare() {
       try {
-        Alert.alert('Checkpoint 1', 'About to load fonts');
         console.log('📝 [APP] Step 1: Starting font loading...');
         await loadFonts();
         console.log('✅ [APP] Step 1: Fonts loaded successfully');
-        Alert.alert('Checkpoint 2', 'Fonts loaded! ✅');
 
         // Proper Android navigation bar configuration
         if (Platform.OS === 'android') {
-          Alert.alert('Checkpoint 3', 'About to configure navigation bar');
           console.log('📝 [APP] Step 2: Configuring Android navigation bar...');
           await NavigationBar.setBackgroundColorAsync('#e9eff1');
           await NavigationBar.setButtonStyleAsync('dark');
           console.log('✅ [APP] Step 2: Android navigation bar configured');
-          Alert.alert('Checkpoint 4', 'Nav bar configured! ✅');
         }
 
         // Initialize notification service
-        Alert.alert('Checkpoint 5', 'About to initialize notifications');
         console.log('📝 [APP] Step 3: Initializing notification service...');
         await notificationService.initialize();
         console.log('✅ [APP] Step 3: Notification service initialized');
-        Alert.alert('Checkpoint 6', 'Notifications initialized! ✅');
       } catch (e) {
         console.error('❌ [APP] FATAL ERROR in prepare function:', e);
         console.error('❌ [APP] Error stack:', e.stack);
-        Alert.alert('ERROR in prepare', `${e.name}: ${e.message}`);
         // Even if there's an error, allow app to load
         // This prevents crashes from non-critical initialization failures
       } finally {
@@ -117,14 +89,11 @@ export default Sentry.wrap(function App() {
         setFontsLoaded(true);
         // Safely hide splash screen
         try {
-          Alert.alert('Checkpoint 7', 'About to hide splash');
           console.log('📝 [APP] Step 5: Hiding splash screen...');
           await SplashScreen.hideAsync();
           console.log('✅ [APP] Step 5: Splash screen hidden');
-          Alert.alert('Checkpoint 8', 'Splash hidden! ✅');
         } catch (err) {
           console.error('❌ [APP] Error hiding splash screen:', err);
-          Alert.alert('ERROR hiding splash', String(err));
         }
       }
     }
