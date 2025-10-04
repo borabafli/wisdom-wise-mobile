@@ -1,20 +1,16 @@
-// BINARY SEARCH TEST: Remove ALL potentially problematic imports
-// Keep ONLY what worked in minimal test
+// BINARY SEARCH TEST - STEP 2: Add back basic infrastructure
+// Working: fonts, splash
+// Testing: global.css, SafeAreaProvider, GestureHandler, ErrorBoundary
+// Still removed: Sentry, i18n, notification service, contexts, AppContent
 
+import './global.css';
 import React, { useState, useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, Alert } from 'react-native';
-
-// REMOVED (testing):
-// - global.css
-// - Sentry
-// - i18n service
-// - notification service
-// - contexts (AuthProvider, AppProvider)
-// - ErrorBoundary, AppContent, NotificationPrompt
-
-// Keep basic expo modules for now
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
 import { loadFonts } from './src/config/fonts';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 // Global error handler
 if (typeof ErrorUtils !== 'undefined') {
@@ -52,8 +48,14 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
-      {/* Fonts loaded successfully - app works! */}
-    </View>
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
+            {/* UI infrastructure loaded - if you see this blank screen, these imports work! */}
+          </View>
+        </GestureHandlerRootView>
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
