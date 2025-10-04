@@ -1,8 +1,7 @@
-// BINARY SEARCH TEST - STEP 4: Add back contexts
+// BINARY SEARCH TEST - STEP 5: Test AuthProvider only
 // Working: fonts, splash, global.css, SafeAreaProvider, GestureHandler, ErrorBoundary, i18n, notifications
-// Testing: AuthProvider, AppProvider
-// Removed: Sentry (not needed for now)
-// Still removed: AppContent, NotificationPrompt
+// Testing: AuthProvider ONLY
+// Removed: Sentry (not needed for now), AppProvider, AppContent, NotificationPrompt
 
 import './global.css';
 import React, { useState, useEffect } from 'react';
@@ -18,8 +17,8 @@ import { ErrorBoundary } from './src/components/ErrorBoundary';
 import './src/services/i18nService';
 import { notificationService } from './src/services/notificationService';
 
-// Contexts
-import { AppProvider, AuthProvider } from './src/contexts';
+// Test AuthProvider only
+import { AuthProvider } from './src/contexts';
 
 // Global error handler
 if (typeof ErrorUtils !== 'undefined') {
@@ -71,11 +70,9 @@ export default function App() {
       <ErrorBoundary>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AuthProvider>
-            <AppProvider>
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
-                {/* Contexts loaded - if you see this blank screen, contexts work! */}
-              </View>
-            </AppProvider>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
+              {/* Testing AuthProvider only */}
+            </View>
           </AuthProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>
