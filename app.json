@@ -86,12 +86,22 @@
           "android": {
             "useAndroidX": true,
             "enableProguardInReleaseBuilds": false,
-            "enableJetifier": true
+            "enableJetifier": true,
+            "extraDependencies": [
+              "androidx.core:core:1.13.1"
+            ],
+            "packagingOptions": {
+              "pickFirst": [
+                "lib/armeabi-v7a/libc++_shared.so",
+                "lib/arm64-v8a/libc++_shared.so",
+                "lib/x86/libc++_shared.so",
+                "lib/x86_64/libc++_shared.so"
+              ]
+            }
           }
         }
       ],
-      "./plugins/withAndroidManifestFix",
-      "./plugins/withGradleExclusions"
+      "./plugins/withAndroidManifestFix"
     ],
     "scheme": "zenmind",
     "extra": {
