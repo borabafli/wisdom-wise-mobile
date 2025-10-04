@@ -9,9 +9,10 @@ module.exports = function withAndroidManifestFix(config) {
       androidManifest.manifest.$['xmlns:tools'] = 'http://schemas.android.com/tools';
     }
 
-    // Add tools:replace to application element
+    // Add appComponentFactory value AND tools:replace to application element
     const application = androidManifest.manifest.application[0];
     if (application) {
+      application.$['android:appComponentFactory'] = 'androidx.core.app.CoreComponentFactory';
       application.$['tools:replace'] = 'android:appComponentFactory';
     }
 
