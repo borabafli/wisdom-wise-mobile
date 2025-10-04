@@ -102,7 +102,8 @@
         }
       ],
       "./plugins/withAndroidManifestFix",
-      "./plugins/withForceExcludeSupport"
+      "./plugins/withForceExcludeSupport",
+      "@sentry/react-native/expo"
     ],
     "scheme": "zenmind",
     "extra": {
