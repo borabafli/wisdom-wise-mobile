@@ -1,0 +1,125 @@
+import './global.css';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View, Platform, Alert } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { loadFonts } from './src/config/fonts';
+import * as SplashScreen from 'expo-splash-screen';
+import * as NavigationBar from 'expo-navigation-bar';
+import * as Notifications from 'expo-notifications';
+
+// Global error handler to catch crashes
+if (typeof ErrorUtils !== 'undefined') {
+  const originalHandler = ErrorUtils.getGlobalHandler();
+  ErrorUtils.setGlobalHandler((error, isFatal) => {
+    console.error('💥 GLOBAL ERROR CAUGHT:', error);
+    console.error('💥 IS FATAL:', isFatal);
+    console.error('💥 ERROR STACK:', error.stack);
+    Alert.alert(
+      'App Error',
+      `${error.name}: ${error.message}\n\nStack: ${error.stack?.substring(0, 200)}`,
+      [{ text: 'OK' }]
+    );
+    if (originalHandler) {
+      originalHandler(error, isFatal);
+    }
+  });
+}
+
+// Import components and contexts
+import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { AppProvider, AuthProvider } from './src/contexts';
+import { AppContent } from './src/components/AppContent';
+import { NotificationPrompt } from './src/components/NotificationPrompt';
+
+// Import i18n service to initialize it
+import './src/services/i18nService';
+import { notificationService } from './src/services/notificationService';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://b89c4c218716d1508037918de6c943f9@o4510130467766272.ingest.de.sentry.io/4510130469994576',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
+
+// Prevent splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
+
+export default Sentry.wrap(function App() {
+  const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
+
+  console.log('App component rendering, fontsLoaded:', fontsLoaded);
+
+  useEffect(() => {
+    console.log('🚀 [APP] useEffect starting...');
+    async function prepare() {
+      try {
+        console.log('📝 [APP] Step 1: Starting font loading...');
+        await loadFonts();
+        console.log('✅ [APP] Step 1: Fonts loaded successfully');
+
+        // Proper Android navigation bar configuration
+        if (Platform.OS === 'android') {
+          console.log('📝 [APP] Step 2: Configuring Android navigation bar...');
+          await NavigationBar.setBackgroundColorAsync('#e9eff1');
+          await NavigationBar.setButtonStyleAsync('dark');
+          console.log('✅ [APP] Step 2: Android navigation bar configured');
+        }
+
+        // Initialize notification service
+        console.log('📝 [APP] Step 3: Initializing notification service...');
+        await notificationService.initialize();
+        console.log('✅ [APP] Step 3: Notification service initialized');
+      } catch (e) {
+        console.error('❌ [APP] FATAL ERROR in prepare function:', e);
+        console.error('❌ [APP] Error stack:', e.stack);
+        // Even if there's an error, allow app to load
+        // This prevents crashes from non-critical initialization failures
+      } finally {
+        console.log('📝 [APP] Step 4: Setting fontsLoaded to true');
+        setFontsLoaded(true);
+        // Safely hide splash screen
+        try {
+          console.log('📝 [APP] Step 5: Hiding splash screen...');
+          await SplashScreen.hideAsync();
+          console.log('✅ [APP] Step 5: Splash screen hidden');
+        } catch (err) {
+          console.error('❌ [APP] Error hiding splash screen:', err);
+        }
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!fontsLoaded) {
+    console.log('Fonts not loaded yet, showing loading view');
+    return <View style={{ flex: 1, backgroundColor: '#e9eff1' }} />;
+  }
+
+  console.log('Fonts loaded, rendering main app');
+
+  return (
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <AuthProvider>
+            <AppProvider>
+              <AppContent />
+              <NotificationPrompt />
+            </AppProvider>
+          </AuthProvider>
+        </GestureHandlerRootView>
+      </ErrorBoundary>
+    </SafeAreaProvider>
+  );
+});
