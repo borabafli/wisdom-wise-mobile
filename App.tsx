@@ -1,5 +1,5 @@
-// Using STUB AuthProvider - bypasses all Supabase/storage calls
-// App runs in anonymous mode only for now
+// Full production app with all features
+// Using real AuthProvider with defensive Supabase initialization
 
 import './global.css';
 import React, { useState, useEffect } from 'react';
