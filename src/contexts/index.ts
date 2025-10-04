@@ -3,5 +3,5 @@
  */
 
 export { AppProvider, useApp } from './AppContext';
-// Using stub AuthProvider to bypass production crash
-export { AuthProvider, useAuth } from './AuthContext.stub';
+// Using real AuthProvider with proper Supabase checks
+export { AuthProvider, useAuth } from './AuthContext';

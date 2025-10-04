@@ -1,28 +1,46 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl) {
-  throw new Error('Missing EXPO_PUBLIC_SUPABASE_URL environment variable');
+// Don't throw errors in production - log and create null client
+let supabase: SupabaseClient | null = null;
+let supabaseInitError: string | null = null;
+
+try {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    supabaseInitError = 'Missing Supabase environment variables';
+    console.error('[Supabase] INIT FAILED:', supabaseInitError);
+    console.error('[Supabase] URL present:', !!supabaseUrl);
+    console.error('[Supabase] KEY present:', !!supabaseAnonKey);
+  } else {
+    console.log("[Supabase] Initializing with URL:", supabaseUrl);
+    console.log("[Supabase] KEY (first 6 chars):", supabaseAnonKey.slice(0, 6));
+
+    supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        storage: AsyncStorage,
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: false,
+      },
+    });
+
+    console.log('[Supabase] Client created successfully');
+  }
+} catch (error) {
+  supabaseInitError = `Supabase initialization error: ${error}`;
+  console.error('[Supabase] INIT ERROR:', error);
 }
 
-if (!supabaseAnonKey) {
-  throw new Error('Missing EXPO_PUBLIC_SUPABASE_ANON_KEY environment variable');
-}
+// Export supabase client (can be null if init failed)
+export { supabase, supabaseInitError };
 
-console.log("ENV URL:", process.env.EXPO_PUBLIC_SUPABASE_URL);
-console.log("ENV KEY (first 6 chars):", process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 6));
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+// Helper to check if Supabase is available
+export const isSupabaseAvailable = (): boolean => {
+  return supabase !== null && supabaseInitError === null;
+};
 
 // Types
 export interface User {
