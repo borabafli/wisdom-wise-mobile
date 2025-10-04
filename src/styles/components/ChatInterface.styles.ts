@@ -977,6 +977,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     backgroundColor: '#94a3b8', // Light gray fill
     ...shadows.sm,
     marginBottom: 15, // Use marginBottom instead of marginTop to position from bottom
+    zIndex: 10, // Ensure button is above other elements
+    elevation: 10, // Android elevation
   },
 
   // Wave with Timer Container
@@ -1007,6 +1009,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     backgroundColor: '#61a8b4', // Updated to requested color
     ...shadows.sm,
     marginBottom: 15, // Use marginBottom instead of marginTop to position from bottom
+    zIndex: 10, // Ensure button is above other elements
+    elevation: 10, // Android elevation
   },
 
 

@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWith
 import { useTranslation } from 'react-i18next';
 import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { RecordingWave } from '../RecordingWave';
+import { SimpleVolumeWaveform } from '../audio';
 import { SafeAreaWrapper } from '../SafeAreaWrapper';
 import { chatInterfaceStyles as styles } from '../../styles/components/ChatInterface.styles';
 
@@ -104,32 +104,49 @@ const [inputHeight, setInputHeight] = useState(40);
             
             ) : (
               /* Recording Interface: X button - Wave with Timer inside chatbox - Check button */
-              <View style={styles.recordingInterfaceWithTimer}>
+              <View style={styles.recordingInterfaceWithTimer} pointerEvents="box-none">
                 {/* Cancel Button (X) - Left side, light filled */}
-                <TouchableOpacity 
-                  onPress={onCancelRecording}
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('❌❌❌ CANCEL BUTTON PRESSED - ChatInput ❌❌❌');
+                    onCancelRecording();
+                  }}
                   style={styles.cancelButton}
                   activeOpacity={0.7}
+                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                  accessible={true}
+                  accessibilityLabel="Cancel recording"
+                  accessibilityRole="button"
+                  pointerEvents="auto"
                 >
                   <X size={20} color="#ffffff" />
                 </TouchableOpacity>
 
                 {/* Wave and Timer Container - Center */}
-                <View style={styles.waveWithTimerInside}>
-                  <RecordingWave
-                    audioLevel={audioLevel} // Use direct audio level
+                <View style={styles.waveWithTimerInside} pointerEvents="box-none">
+                  <SimpleVolumeWaveform
+                    audioLevel={audioLevel}
                     isRecording={isRecording}
-                    variant="bars"
-                    size="medium"
                     showTimer={true}
+                    width={230}
+                    height={68}
+                    barCount={28}
                   />
                 </View>
 
                 {/* Submit Button (Check) - Right side, filled like send button */}
-                <TouchableOpacity 
-                  onPress={onStopRecording}
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('✅✅✅ SUBMIT BUTTON PRESSED - ChatInput ✅✅✅');
+                    onStopRecording();
+                  }}
                   style={styles.submitRecordingButton}
                   activeOpacity={0.7}
+                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                  accessible={true}
+                  accessibilityLabel="Submit recording"
+                  accessibilityRole="button"
+                  pointerEvents="auto"
                 >
                   <Check size={20} color="#ffffff" />
                 </TouchableOpacity>

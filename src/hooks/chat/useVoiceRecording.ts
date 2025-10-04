@@ -10,6 +10,7 @@ interface UseVoiceRecordingReturn {
   sttError: string | null;
   partialTranscript: string;
   audioLevel: number; // Single audio level instead of array
+  frequencyData: number[]; // Real-time frequency spectrum data
   waveAnimations: Animated.Value[];
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
@@ -25,7 +26,8 @@ export const useVoiceRecording = (
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
-  
+  const [frequencyData, setFrequencyData] = useState<number[]>([]);
+
   // Use direct audio levels hook
   const { audioLevel, updateAudioLevel, resetLevel } = useDirectAudioLevels();
 
@@ -90,13 +92,19 @@ export const useVoiceRecording = (
         }
       },
       // On audio level - use direct STT metering
-      (level, frequencyData) => {
+      (level, freqData) => {
         updateAudioLevel(level); // Pass normalized level (0-1) to direct audio levels hook
-        updateSoundWaves(audioLevel); // Update wave animations with processed level
-        
+        // Use the incoming level directly for immediate wave updates
+        updateSoundWaves(level);
+
+        // Update frequency data for Skia waveform
+        if (freqData && freqData.length > 0) {
+          setFrequencyData(freqData);
+        }
+
         // Debug logging for silence issue
         if (Math.random() < 0.02) { // 2% of the time
-          console.log(`🎤 Voice recording: level=${level.toFixed(4)}, audioLevel=${audioLevel.toFixed(4)}`);
+          console.log(`🎤 Voice recording: level=${level.toFixed(4)}, freqBands=${freqData?.length || 0}`);
         }
       }
     );
@@ -125,19 +133,24 @@ export const useVoiceRecording = (
   };
 
   const cancelRecording = async () => {
-    console.log('Cancelling recording...');
+    console.log('🚫🚫🚫 CANCEL RECORDING CALLED - useVoiceRecording 🚫🚫🚫');
+    console.log('Current state before cancel:', { isRecording, isListening, isTranscribing });
+
+    // Reset UI state immediately
+    setIsRecording(false);
+    setIsListening(false);
+    setIsTranscribing(false);
+    setPartialTranscript('');
+    setSttError(null);
+    resetLevel(); // Reset direct audio level
+    resetSoundWaves();
+
     try {
+      // Then cleanup the service
       await sttService.cancelRecognition();
-      setIsRecording(false);
-      setIsListening(false);
-      setIsTranscribing(false);
-      setPartialTranscript('');
-      setSttError(null);
-      resetLevel(); // Reset direct audio level
-      resetSoundWaves();
-      console.log('Recording cancelled successfully');
+      console.log('✅ Recording cancelled successfully in useVoiceRecording');
     } catch (error) {
-      console.error('Error cancelling recording:', error);
+      console.error('❌ Error cancelling recording:', error);
       setSttError('Failed to cancel recording');
     }
   };
@@ -187,6 +200,7 @@ export const useVoiceRecording = (
     sttError,
     partialTranscript,
     audioLevel, // Return single audio level instead of array
+    frequencyData, // Return real-time frequency spectrum
     waveAnimations,
     startRecording,
     stopRecording,
