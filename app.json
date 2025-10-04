@@ -90,7 +90,8 @@
           }
         }
       ],
-      "./plugins/withAndroidManifestFix"
+      "./plugins/withAndroidManifestFix",
+      "./plugins/withGradleExclusions"
     ],
     "scheme": "zenmind",
     "extra": {
