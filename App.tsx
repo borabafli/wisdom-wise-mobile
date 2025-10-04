@@ -1,5 +1,5 @@
-// Full app restored with AuthProvider fix
-// Sentry removed (not needed for now)
+// SYSTEMATIC TEST: Test AuthProvider fix ONLY
+// AuthProvider bug was fixed, testing if fix works before adding more
 
 import './global.css';
 import React, { useState, useEffect } from 'react';
@@ -12,9 +12,7 @@ import { loadFonts } from './src/config/fonts';
 
 // Components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
-import { AppProvider, AuthProvider } from './src/contexts';
-import { AppContent } from './src/components/AppContent';
-import { NotificationPrompt } from './src/components/NotificationPrompt';
+import { AuthProvider } from './src/contexts';
 
 // Services
 import './src/services/i18nService';
@@ -92,10 +90,9 @@ export default function App() {
       <ErrorBoundary>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AuthProvider>
-            <AppProvider>
-              <AppContent />
-              <NotificationPrompt />
-            </AppProvider>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
+              {/* AuthProvider fix test - if you see blank screen, fix works! */}
+            </View>
           </AuthProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>
