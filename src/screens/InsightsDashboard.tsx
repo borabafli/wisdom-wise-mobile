@@ -82,7 +82,6 @@ const getPatternExplanation = (patternType: string, t: any): string => {
 
 const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, onTherapyGoalsClick }) => {
   const { t } = useTranslation();
-  const { firstName } = useUserProfile();
   
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.insightsDashboard);
@@ -149,9 +148,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   const loadInsightData = async () => {
     try {
       setIsLoading(true);
-      
-      // DEBUG: Log what we're trying to load
-      console.log('🔍 [INSIGHTS DEBUG] Loading insight data...');
+      console.log('[InsightsDashboard] Starting to load insight data...');
       
       // Load recent thought patterns (existing system) - show all 10
       const recentPatterns = await insightService.getRecentPatterns(10);
@@ -201,13 +198,19 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
       console.log('🔍 [INSIGHTS DEBUG] Motivational card loaded:', motivationalData);
       
     } catch (error) {
-      console.error('Error loading insight data:', error);
-      // Fallback to mock data if needed
+      console.error('[InsightsDashboard] Error loading insight data:', error);
+      // Set safe fallback values to prevent crashes
       setThinkingPatterns([]);
+      setThinkingPatternReflections([]);
       setMemoryInsights([]);
       setSummaries([]);
+      setActiveGoals([]);
+      setMemoryStats({ totalInsights: 0, sessionSummaries: 0, consolidatedSummaries: 0 });
+      setGoalStats({ totalGoals: 0, activeGoals: 0, averageProgress: 0 });
+      setMotivationalCard(null);
     } finally {
       setIsLoading(false);
+      console.log('[InsightsDashboard] Finished loading insight data');
     }
   };
 
