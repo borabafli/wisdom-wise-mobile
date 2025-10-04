@@ -1,12 +1,30 @@
 import './global.css';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Platform } from 'react-native';
+import { View, Platform, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { loadFonts } from './src/config/fonts';
 import * as SplashScreen from 'expo-splash-screen';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as Notifications from 'expo-notifications';
+
+// Global error handler to catch crashes
+if (typeof ErrorUtils !== 'undefined') {
+  const originalHandler = ErrorUtils.getGlobalHandler();
+  ErrorUtils.setGlobalHandler((error, isFatal) => {
+    console.error('💥 GLOBAL ERROR CAUGHT:', error);
+    console.error('💥 IS FATAL:', isFatal);
+    console.error('💥 ERROR STACK:', error.stack);
+    Alert.alert(
+      'App Error',
+      `${error.name}: ${error.message}\n\nStack: ${error.stack?.substring(0, 200)}`,
+      [{ text: 'OK' }]
+    );
+    if (originalHandler) {
+      originalHandler(error, isFatal);
+    }
+  });
+}
 
 // Import components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
