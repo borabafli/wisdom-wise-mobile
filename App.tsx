@@ -1,5 +1,5 @@
-// SYSTEMATIC TEST: Test AuthProvider fix ONLY
-// AuthProvider bug was fixed, testing if fix works before adding more
+// SKIP AUTHPROVIDER TEST - bypass it entirely
+// Use AppProvider only, skip auth entirely for now
 
 import './global.css';
 import React, { useState, useEffect } from 'react';
@@ -12,7 +12,7 @@ import { loadFonts } from './src/config/fonts';
 
 // Components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
-import { AuthProvider } from './src/contexts';
+import { AppProvider } from './src/contexts';
 
 // Services
 import './src/services/i18nService';
@@ -89,11 +89,11 @@ export default function App() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <AuthProvider>
+          <AppProvider>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
-              {/* AuthProvider fix test - if you see blank screen, fix works! */}
+              {/* Testing AppProvider WITHOUT AuthProvider - if this works, AuthProvider is definitely the problem */}
             </View>
-          </AuthProvider>
+          </AppProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>
     </SafeAreaProvider>
