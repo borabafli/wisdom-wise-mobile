@@ -56,10 +56,10 @@ const ProfileScreen: React.FC = () => {
   }, [user, profile]);
   
   const stats = [
-    { label: String(t('profile.stats.sessions')), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
-    { label: String(t('profile.stats.streak')), value: String(t('profile.stats.daysStreak')), iconImage: require('../../assets/images/New Icons/icon-7.png') },
-    { label: String(t('profile.stats.insights')), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
-    { label: String(t('profile.stats.exercises')), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
+    { label: t('profile.stats.sessions'), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
+    { label: t('profile.stats.streak'), value: t('profile.stats.daysStreak'), iconImage: require('../../assets/images/New Icons/icon-7.png') },
+    { label: t('profile.stats.insights'), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
+    { label: t('profile.stats.exercises'), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
   ];
 
   const [showChatHistory, setShowChatHistory] = useState(false);
@@ -245,8 +245,8 @@ const ProfileScreen: React.FC = () => {
                 contentFit="contain"
               />
               <View style={styles.titleAndSubtitleContainer}>
-                <Text style={styles.headerTitle}>{String(t('profile.title'))}</Text>
-                <Text style={styles.headerSubtitle}>{String(t('profile.subtitle'))}</Text>
+                <Text style={styles.headerTitle}>{t('profile.title')}</Text>
+                <Text style={styles.headerSubtitle}>{t('profile.subtitle')}</Text>
               </View>
             </View>
           </View>
@@ -273,17 +273,17 @@ const ProfileScreen: React.FC = () => {
                   </LinearGradient>
                 </View>
                 <View style={styles.userDetails}>
-                  <Text style={styles.userName}>{String(displayName)}</Text>
+                  <Text style={styles.userName}>{displayName}</Text>
                   <Text style={styles.memberSince}>
-                    {String(isAnonymous
+                    {isAnonymous
                       ? t('profile.anonymousGuest')
                       : profile && profile.created_at
                         ? `${t('profile.memberSince')} ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
                         : (user?.email || t('profile.welcomeMessage'))
-                    )}
+                    }
                   </Text>
                   <Text style={styles.premiumBadge}>
-                    {String(isAnonymous ? t('profile.anonymousGuest') : t('profile.premiumMember'))}
+                    {isAnonymous ? t('profile.anonymousGuest') : t('profile.premiumMember')}
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
@@ -297,7 +297,7 @@ const ProfileScreen: React.FC = () => {
         {/* Stats Grid - HomeScreen Style */}
         <View style={styles.statsSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{String(t('profile.yourProgress'))}</Text>
+            <Text style={styles.sectionTitle}>{t('profile.yourProgress')}</Text>
           </View>
           
           <View style={styles.statsGrid}>
@@ -325,8 +325,8 @@ const ProfileScreen: React.FC = () => {
                           />
                         </View>
                         <View style={styles.statInfo}>
-                          <Text style={styles.statValue}>{String(stat.value)}</Text>
-                          <Text style={styles.statLabel}>{String(stat.label)}</Text>
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                          <Text style={styles.statLabel}>{stat.label}</Text>
                         </View>
                       </View>
                     </LinearGradient>
@@ -358,8 +358,8 @@ const ProfileScreen: React.FC = () => {
                           />
                         </View>
                         <View style={styles.statInfo}>
-                          <Text style={styles.statValue}>{String(stat.value)}</Text>
-                          <Text style={styles.statLabel}>{String(stat.label)}</Text>
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                          <Text style={styles.statLabel}>{stat.label}</Text>
                         </View>
                       </View>
                     </LinearGradient>
@@ -373,7 +373,7 @@ const ProfileScreen: React.FC = () => {
         {/* Menu Items Section */}
         <View style={styles.menuSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{String(t('profile.settings'))}</Text>
+            <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
           </View>
 
           {/* Language Selector */}
@@ -421,16 +421,16 @@ const ProfileScreen: React.FC = () => {
                           item.danger && styles.menuTitleDanger,
                           item.highlight && { color: '#22c55e', fontWeight: '600' }
                         ]}>
-                          {String(item.label)}
+                          {item.label}
                         </Text>
                         <Text style={styles.menuSubtitle}>
-                          {String(item.subtitle || t('profile.menuSubtitles.default'))}
+                          {item.subtitle || t('profile.menuSubtitles.default')}
                         </Text>
                       </View>
                       <View style={styles.menuActions}>
                         {item.badge && (
                           <View style={styles.badge}>
-                            <Text style={styles.badgeText}>{String(item.badge)}</Text>
+                            <Text style={styles.badgeText}>{item.badge}</Text>
                           </View>
                         )}
                         {item.toggle && (
@@ -459,8 +459,8 @@ const ProfileScreen: React.FC = () => {
 
         {/* App Version */}
         <View style={styles.versionSection}>
-          <Text style={styles.versionText}>{String(t('profile.version'))}</Text>
-          <Text style={styles.versionSubtext}>{String(t('profile.madeWith'))}</Text>
+          <Text style={styles.versionText}>{t('profile.version')}</Text>
+          <Text style={styles.versionSubtext}>{t('profile.madeWith')}</Text>
         </View>
         </View> {/* Close contentContainer */}
       </ScrollView>
