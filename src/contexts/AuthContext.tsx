@@ -32,7 +32,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Check for existing session on app start
   useEffect(() => {
     checkInitialSession();
-    setupAuthListener();
+    const cleanup = setupAuthListener();
+    return cleanup; // Properly cleanup subscription on unmount
   }, []);
 
   const checkInitialSession = async () => {
@@ -81,41 +82,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const setupAuthListener = () => {
-    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
-      
-      if (session?.user) {
-        setIsAuthenticated(true);
-        setUser(session.user);
-        setIsAnonymous(false);
-        
-        // Get display name with priority: onboarding > signup > fallback
-        const displayName = await storageService.getDisplayNameWithPriority(session.user);
-        const [firstName, ...lastNameParts] = displayName.split(' ');
-        const lastName = lastNameParts.join(' ');
-        
-        setProfile({
-          first_name: firstName || 'Friend',
-          last_name: lastName || '',
-          created_at: session.user.created_at
-        });
-      } else {
-        // Don't change authenticated status if in anonymous mode
-        const checkAnonymous = async () => {
-          const anonymousMode = await authService.getAnonymousMode();
-          if (!anonymousMode) {
-            setIsAuthenticated(false);
-            setUser(null);
-            setProfile(null);
-            setIsAnonymous(false);
-          }
-        };
-        checkAnonymous();
-      }
-      setIsLoading(false);
-    });
+    try {
+      const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+        console.log('Auth state changed:', event);
 
-    return () => subscription.unsubscribe();
+        if (session?.user) {
+          setIsAuthenticated(true);
+          setUser(session.user);
+          setIsAnonymous(false);
+
+          // Get display name with priority: onboarding > signup > fallback
+          const displayName = await storageService.getDisplayNameWithPriority(session.user);
+          const [firstName, ...lastNameParts] = displayName.split(' ');
+          const lastName = lastNameParts.join(' ');
+
+          setProfile({
+            first_name: firstName || 'Friend',
+            last_name: lastName || '',
+            created_at: session.user.created_at
+          });
+        } else {
+          // Don't change authenticated status if in anonymous mode
+          const checkAnonymous = async () => {
+            const anonymousMode = await authService.getAnonymousMode();
+            if (!anonymousMode) {
+              setIsAuthenticated(false);
+              setUser(null);
+              setProfile(null);
+              setIsAnonymous(false);
+            }
+          };
+          checkAnonymous();
+        }
+        setIsLoading(false);
+      });
+
+      return () => subscription.unsubscribe();
+    } catch (error) {
+      console.error('Error setting up auth listener:', error);
+      setIsLoading(false);
+      // Return a no-op cleanup function if setup fails
+      return () => {};
+    }
   };
 
   const signIn = async (email: string, password: string) => {
