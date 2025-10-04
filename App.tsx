@@ -1,8 +1,8 @@
-// BINARY SEARCH TEST - STEP 3: Add back services (i18n, notifications)
-// Working: fonts, splash, global.css, SafeAreaProvider, GestureHandler, ErrorBoundary
-// Testing: i18n service, notification service
+// BINARY SEARCH TEST - STEP 4: Add back contexts
+// Working: fonts, splash, global.css, SafeAreaProvider, GestureHandler, ErrorBoundary, i18n, notifications
+// Testing: AuthProvider, AppProvider
 // Removed: Sentry (not needed for now)
-// Still removed: contexts (AuthProvider, AppProvider), AppContent, NotificationPrompt
+// Still removed: AppContent, NotificationPrompt
 
 import './global.css';
 import React, { useState, useEffect } from 'react';
@@ -14,9 +14,12 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { loadFonts } from './src/config/fonts';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 
-// Add back services
+// Services
 import './src/services/i18nService';
 import { notificationService } from './src/services/notificationService';
+
+// Contexts
+import { AppProvider, AuthProvider } from './src/contexts';
 
 // Global error handler
 if (typeof ErrorUtils !== 'undefined') {
@@ -67,9 +70,13 @@ export default function App() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
-            {/* UI infrastructure loaded - if you see this blank screen, these imports work! */}
-          </View>
+          <AuthProvider>
+            <AppProvider>
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e9eff1' }}>
+                {/* Contexts loaded - if you see this blank screen, contexts work! */}
+              </View>
+            </AppProvider>
+          </AuthProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>
     </SafeAreaProvider>
