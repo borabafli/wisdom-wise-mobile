@@ -16,11 +16,6 @@
       "meditation",
       "therapy"
     ],
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#EDF8F8"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -43,9 +38,6 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#EDF8F8"
-      },
-      "notification": {
-        "icon": "./assets/navigation-icon.png"
       },
       "edgeToEdgeEnabled": false,
       "statusBar": {
@@ -111,14 +103,7 @@
       "react-native-audio-api",
       "expo-web-browser",
       "expo-localization",
-      [
-        "@sentry/react-native/expo",
-        {
-          "url": "https://sentry.io/",
-          "project": "react-native",
-          "organization": "nikolaibora"
-        }
-      ]
+      "@sentry/react-native/expo"
     ],
     "scheme": "zenmind",
     "extra": {
