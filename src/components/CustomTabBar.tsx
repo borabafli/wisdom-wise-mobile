@@ -162,9 +162,15 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     }
   ];
 
+  // Hide tab bar on KeyboardTest screen
+  const currentRoute = state.routes[state.index]?.name;
+  if (currentRoute === 'KeyboardTest') {
+    return null;
+  }
+
   return (
     <>
-      
+
       <LinearGradient
         colors={['#e9eff1', '#e9eff1']}
         style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}

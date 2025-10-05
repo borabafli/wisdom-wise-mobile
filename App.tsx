@@ -51,6 +51,11 @@ export default function App() {
           console.log('📝 [APP] Step 2: Configuring Android navigation bar...');
           await NavigationBar.setBackgroundColorAsync('#e9eff1');
           await NavigationBar.setButtonStyleAsync('dark');
+
+           // 🔧 Add these:
+  await NavigationBar.setBehaviorAsync('inset-swipe'); // content gets inset by system bar
+  await NavigationBar.setVisibilityAsync('visible');   // make sure it’s not overlay-hidden
+        
           console.log('✅ [APP] Step 2: Android navigation bar configured');
         }
 

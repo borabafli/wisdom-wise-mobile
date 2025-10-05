@@ -401,8 +401,8 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
         <KeyboardAvoidingView
           style={styles.keyboardView}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+
         >
           {/* Header */}
           <Animated.View style={[
@@ -572,7 +572,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               />
             )}
           </ScrollView>
-
+          <View>
 
           {/* Suggestion Chips */}
           <SuggestionChips
@@ -662,7 +662,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               setInputText(textBeforeVoiceRef.current);
             }}
           />
-
+</View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaWrapper>

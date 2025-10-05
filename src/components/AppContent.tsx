@@ -318,7 +318,7 @@ export const AppContent: React.FC = () => {
           <Tab.Navigator
           tabBar={(props: any) => (
             <CustomTabBar
-              {...props} 
+              {...props}
             onNewSession={handleNewSession}
             onActionSelect={handleActionSelect}
           />
@@ -347,7 +347,13 @@ export const AppContent: React.FC = () => {
           {() => <InsightsDashboard onInsightClick={handleInsightClick} onTherapyGoalsClick={handleTherapyGoalsClick} />}
         </Tab.Screen>
         <Tab.Screen name="Profile" component={ProfileScreen} />
-        <Tab.Screen name="KeyboardTest" component={KeyboardTest} options={{ title: '🧪 Test' }} />
+        <Tab.Screen
+          name="KeyboardTest"
+          component={KeyboardTest}
+          options={{
+            title: '🧪 Test',
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
     </OnboardingContext.Provider>

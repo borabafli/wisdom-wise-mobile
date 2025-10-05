@@ -18,9 +18,8 @@ export const KeyboardTest: React.FC = () => {
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
-        // This is the key prop. 'padding' for iOS and 'height' for Android
-        // are the most reliable behaviors.
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        // iOS uses padding behavior, Android uses native adjustResize from app.json
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {/* The messages are in a separate ScrollView */}
         <ScrollView contentContainerStyle={styles.scrollContent}>
