@@ -15,8 +15,8 @@ const CONFIG = {
   barWidth: 4, // Thicker bars for visibility
   barSpacing: 3, // More space between bars
   barRadius: 2,
-  minHeight: 12, // Larger minimum for better visibility
-  maxHeight: 54, // Slightly reduced max for better proportion
+  minHeight: 4, // Small dot for silence (same as barWidth for perfect circle)
+  maxHeight: 54, // Max height for loud speech
   color: '#87BAA3',
   activeColor: '#436E59',
 };
@@ -55,49 +55,39 @@ export const SimpleVolumeWaveform: React.FC<SimpleVolumeWaveformProps> = ({
       return;
     }
 
-    console.log('🎵 SimpleVolumeWaveform: Starting animation loop');
-
     // MUCH SLOWER scroll - update only 8 times per second
     const interval = setInterval(() => {
       const volume = audioLevelRef.current; // Get CURRENT value from ref
-
-      // Debug: ALWAYS log to see what's happening
-      console.log(`🔊 WAVEFORM audioLevel=${volume.toFixed(4)}, isRecording=${isRecording}`);
 
       setBars((prevBars) => {
         // Scroll: remove first, add new at end
         const newBars = [...prevBars.slice(1)];
 
-        // AGGRESSIVE boost for visibility
+        // LIGHT boost - most work done in dB conversion
         let boostedVolume = volume;
 
-        if (volume > 0.01) { // If there's ANY sound
-          // Power curve to make quiet sounds visible
-          boostedVolume = Math.pow(volume, 0.4) * 3.0; // Much more aggressive
+        if (volume > 0.02) {
+          // Gentle power curve for smooth gradation
+          boostedVolume = Math.pow(volume, 0.8) * 1.1; // Light boost
         }
 
         // Clamp between 0 and 1
         boostedVolume = Math.min(1.0, boostedVolume);
 
-        // Map to bar height with larger range
+        // Map to bar height
         const heightRange = CONFIG.maxHeight - CONFIG.minHeight;
         const calculatedHeight = CONFIG.minHeight + (boostedVolume * heightRange);
 
-        // Add variation for organic feel
-        const variation = (Math.random() - 0.5) * 5; // Bigger variation
+        // Small variation for organic feel
+        const variation = (Math.random() - 0.5) * 2; // Subtle variation
         const finalHeight = Math.max(CONFIG.minHeight, Math.min(CONFIG.maxHeight, calculatedHeight + variation));
-
-        console.log(`  📊 Bar: volume=${volume.toFixed(4)} → boosted=${boostedVolume.toFixed(4)} → height=${finalHeight.toFixed(1)}px`);
 
         newBars.push(finalHeight);
         return newBars;
       });
     }, 120); // MUCH slower - only ~8 updates per second
 
-    return () => {
-      console.log('🎵 SimpleVolumeWaveform: Stopping animation loop');
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [isRecording, barCount]); // REMOVED audioLevel dependency - using ref instead!
 
   // Calculate positions

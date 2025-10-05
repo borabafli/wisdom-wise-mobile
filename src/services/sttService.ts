@@ -442,10 +442,15 @@ class STTService {
         console.log('🔧 Preparing recording with simple settings...');
         await recording.prepareToRecordAsync(simpleOptions);
         console.log('✅ Recording prepared successfully');
-        
+
         console.log('▶️ Starting recording...');
         await recording.startAsync();
-        console.log('✅ Recording started successfully');
+        console.log('✅ Recording started - waiting for initialization...');
+
+        // CRITICAL: Wait for recording to fully initialize before starting metering
+        // This prevents the "80% reliability" issue, especially on first attempt
+        await new Promise(resolve => setTimeout(resolve, 150));
+        console.log('✅ Recording initialized and ready');
       } catch (prepareError: any) {
         console.log('ℹ️ Primary recording config not compatible, trying fallback...');
         
@@ -474,14 +479,17 @@ class STTService {
             };
             
             console.log('📊 Using compatibility options for iOS');
-            
+
             // Create a new recording instance for fallback
             const fallbackRecording = new Audio.Recording();
             await fallbackRecording.prepareToRecordAsync(fallbackOptions);
             await fallbackRecording.startAsync();
-            
+
+            // Wait for fallback recording to initialize too
+            await new Promise(resolve => setTimeout(resolve, 150));
+
             this.audioRecording = fallbackRecording; // Use fallback recording
-            console.log('✅ iOS compatibility mode recording started successfully');
+            console.log('✅ iOS compatibility mode recording started and initialized');
           } catch (fallbackError: any) {
             console.error('❌ iOS fallback also failed:', fallbackError);
             onError('iOS recording failed. Please check microphone permissions and try restarting the app.');
@@ -502,37 +510,37 @@ class STTService {
 
       console.log('✅ Mobile audio recording started successfully');
 
-      // CRITICAL TEST: Check if mic is actually recording
-      setTimeout(async () => {
-        try {
-          const rec = this.audioRecording;
-          if (!rec) return;
-
-          const testStatus = await rec.getStatusAsync();
-          console.log('');
-          console.log('🧪🧪🧪 METERING TEST (500ms after start) 🧪🧪🧪');
-          console.log('  isRecording:', testStatus.isRecording);
-          console.log('  metering:', testStatus.metering, 'dB');
-          console.log('  duration:', testStatus.durationMillis, 'ms');
-
-          if (testStatus.metering === -160) {
-            console.warn('');
-            console.warn('⚠️⚠️⚠️ MIC SHOWS -160dB = SILENCE ⚠️⚠️⚠️');
-            console.warn('  SPEAK LOUDLY NOW TO TEST!');
-            console.warn('');
-          } else {
-            console.log(`✅ MIC WORKING! ${testStatus.metering.toFixed(1)}dB`);
-          }
-        } catch (err) {
-          console.error('Test error:', err);
-        }
-      }, 500);
-
-      // Setup enhanced real-time waveform data
+      // Setup enhanced real-time waveform data AFTER recording is fully initialized
       if (onAudioLevel) {
-        console.log('🎵🎵🎵 STARTING AUDIO LEVEL MONITORING 🎵🎵🎵');
-        // ALWAYS use Expo Audio metering - it works!
-        this.startExpoAudioMeteringVisualization(onAudioLevel, recording);
+        const recordingToUse = this.audioRecording;
+        if (!recordingToUse) {
+          console.warn('⚠️ No recording instance available for metering');
+          return false;
+        }
+
+        // Verify recording is actually working before starting metering
+        try {
+          const initialStatus = await recordingToUse.getStatusAsync();
+          console.log('📊 Initial recording status:', {
+            isRecording: initialStatus.isRecording,
+            canRecord: initialStatus.canRecord,
+            metering: initialStatus.metering
+          });
+
+          if (!initialStatus.isRecording) {
+            console.error('❌ Recording not active despite successful start');
+            onError('Recording failed to initialize properly');
+            return false;
+          }
+
+          console.log('🎵🎵🎵 STARTING AUDIO LEVEL MONITORING 🎵🎵🎵');
+          // ALWAYS use Expo Audio metering - it works!
+          this.startExpoAudioMeteringVisualization(onAudioLevel, recordingToUse);
+        } catch (statusError) {
+          console.error('❌ Failed to verify recording status:', statusError);
+          onError('Recording initialization check failed');
+          return false;
+        }
       }
 
       return true;
@@ -861,7 +869,6 @@ class STTService {
     
     const getMeteringData = async () => {
       if (!self.isRecording || !onAudioLevel || !self.meteringFallbackActive) {
-        console.log('⚠️ Metering skipped:', { isRecording: self.isRecording, hasCallback: !!onAudioLevel, active: self.meteringFallbackActive });
         return;
       }
 
@@ -869,67 +876,62 @@ class STTService {
         // Get REAL metering data from Expo Audio
         const status = await recording.getStatusAsync();
 
-        // DEBUG: ALWAYS log to see what's happening
-        console.log('📊 Recording status:', {
-          isRecording: status.isRecording,
-          meteringType: typeof status.metering,
-          meteringValue: status.metering,
-          canRecord: status.canRecord,
-          isDoneRecording: status.isDoneRecording
-        });
-
         if (status.isRecording && typeof status.metering === 'number') {
           // Convert Expo Audio metering (-160 to 0 dB) to normalized level (0 to 1)
           const dbLevel = status.metering;
 
-          // AGGRESSIVE dB to amplitude conversion for better visualization
+          // BALANCED dB to amplitude conversion with good dynamic range
           let amplitude: number;
-          if (dbLevel <= -70) {
-            // Deep silence
+
+          if (dbLevel <= -60) {
+            // True silence
             amplitude = 0;
+          } else if (dbLevel <= -40) {
+            // Whisper to quiet speech (-60 to -40 dB) → 0 to 0.3
+            const range = (dbLevel + 60) / 20; // 0 to 1 in this range
+            amplitude = Math.pow(range, 0.6) * 0.3; // Gentle curve to 30%
+          } else if (dbLevel <= -20) {
+            // Normal speech (-40 to -20 dB) → 0.3 to 0.7
+            const range = (dbLevel + 40) / 20; // 0 to 1 in this range
+            amplitude = 0.3 + (Math.pow(range, 0.5) * 0.4); // 30% to 70%
           } else {
-            // Map dB range (-70 to 0) to amplitude (0 to 1) with boost
-            // Normal speech is around -40 to -20 dB
-            const clampedDb = Math.max(-70, Math.min(0, dbLevel));
-
-            // Linear mapping with huge boost for quiet sounds
-            const normalized = (clampedDb + 70) / 70; // 0 to 1
-
-            // Power curve + aggressive boost
-            amplitude = Math.pow(normalized, 0.3) * 5.0; // VERY aggressive
-            amplitude = Math.min(1.0, amplitude);
+            // Loud speech (-20 to 0 dB) → 0.7 to 1.0
+            const range = (dbLevel + 20) / 20; // 0 to 1 in this range
+            amplitude = 0.7 + (range * 0.3); // 70% to 100%
           }
-          const normalizedLevel = amplitude;
 
-          // ALWAYS LOG to show conversion
-          console.log(`🎙️ dB=${dbLevel.toFixed(1)} → amplitude=${amplitude.toFixed(3)} (${(amplitude*100).toFixed(0)}%)`);
-          
+          const normalizedLevel = Math.min(1.0, amplitude);
+
+          // MINIMAL logging - only 2% of the time to avoid UI blocking
+          if (Math.random() < 0.02) {
+            console.log(`🎙️ ${dbLevel.toFixed(1)}dB → ${(normalizedLevel*100).toFixed(0)}%`);
+          }
+
           // Keep history for smoothing (last 5 readings)
           meteringHistory.push(normalizedLevel);
           if (meteringHistory.length > 5) {
             meteringHistory.shift();
           }
-          
+
           // Smooth the audio level using recent history
           const smoothedLevel = meteringHistory.reduce((sum, val) => sum + val, 0) / meteringHistory.length;
-          
+
           // Generate 7-band frequency spectrum based on REAL metering level
           const frequencyData = self.generateVoiceOptimizedSpectrum(smoothedLevel);
-          
-          // Call the callback with REAL audio data
-          console.log(`🔊 CALLING CALLBACK: smoothed=${smoothedLevel.toFixed(3)}, freqBands=${frequencyData.length}`);
+
+          // Call the callback with REAL audio data (NO LOGGING - causes freezing)
           onAudioLevel(smoothedLevel, frequencyData);
         } else {
-          // If metering not available
-          console.warn('⚠️ Expo Audio metering not available - status:', status.isRecording, 'metering:', status.metering);
-
-          // Call with 0 so we know callback is working
+          // Call with 0 if metering not available (log only first time)
           onAudioLevel(0, []);
         }
       } catch (error) {
-        console.warn('⚠️ Error getting REAL metering data:', error);
-        
-        // Only as last resort - provide minimal levels
+        // Only log errors occasionally
+        if (Math.random() < 0.1) {
+          console.warn('⚠️ Error getting metering:', error);
+        }
+
+        // Provide minimal levels
         const minimalSpectrum = self.generateVoiceOptimizedSpectrum(0.02);
         onAudioLevel(0.02, minimalSpectrum);
       }
