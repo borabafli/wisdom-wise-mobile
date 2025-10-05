@@ -536,6 +536,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     paddingHorizontal: 12, // Standard horizontal padding
     paddingVertical: 6, // Standard vertical padding for proper spacing
     minHeight: 44, // Standard minimum touch target height
+    overflow: 'hidden', // Ensure expanding circle stays within rounded borders
   },
   inputRow: {
     flexDirection: 'row',
@@ -545,7 +546,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputButtonsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[2],
+    gap: spacing[4],
   },
   expandButton: {
     padding: spacing[2],
@@ -814,7 +815,7 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#007AFF', // Standard iOS blue
+    backgroundColor: '#63A5A5', // Custom teal color
   },
   sendButtonActive: {
     backgroundColor: '#2a656f',
@@ -946,15 +947,14 @@ export const chatInterfaceStyles = StyleSheet.create({
     flex: 1,
   },
 
-  // Cancel Button (X) - Light filled
+  // Cancel Button (X) - Match send button size
   cancelButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#94a3b8',
-    ...shadows.sm,
   },
 
   // Wave with Timer Container

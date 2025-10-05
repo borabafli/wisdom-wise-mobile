@@ -132,31 +132,31 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const tabs = [
     {
       name: 'Home',
-      label: t('navigation.today'),
+      label: String(t('navigation.today') || 'Today'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-home-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home-blue.png')
     },
     {
       name: 'Exercises',
-      label: t('navigation.exercises'),
+      label: String(t('navigation.exercises') || 'Exercises'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-exercises-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-exercises-blue.png')
     },
     {
       name: 'Journal',
-      label: t('navigation.journal'),
+      label: String(t('navigation.journal') || 'Journal'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal-blue.png')
     },
     {
       name: 'Insights',
-      label: t('navigation.insights'),
+      label: String(t('navigation.insights') || 'Insights'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-insights-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-insights-blue.png')
     },
     {
       name: 'Profile',
-      label: t('navigation.profile'),
+      label: String(t('navigation.profile') || 'Profile'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-profile-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-profile-blue.png')
     }

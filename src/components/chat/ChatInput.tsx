@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TextInput, TouchableOpacity, Modal, Text, Keyboard, TouchableWithoutFeedback, Platform, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Mic, ArrowUp, Expand, X, Check } from 'lucide-react-native';
+import { Mic, ArrowUp, X, Check } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SimpleVolumeWaveform } from '../audio';
 import { SafeAreaWrapper } from '../SafeAreaWrapper';
@@ -38,6 +38,41 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
   const insets = useSafeAreaInsets();
 
+  // Animation values - simple and performant
+  const iconFade = useRef(new Animated.Value(0)).current;
+  const backgroundColorAnim = useRef(new Animated.Value(0)).current;
+
+  // Simple, performant animations
+  useEffect(() => {
+    if (isRecording) {
+      Animated.parallel([
+        Animated.timing(backgroundColorAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false, // backgroundColor requires non-native
+        }),
+        Animated.timing(iconFade, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(backgroundColorAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(iconFade, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isRecording]);
+
   const handleInputTextChange = (text: string) => {
     onInputTextChange(text);
   };
@@ -54,100 +89,90 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     <>
       {/* Input Area */}
       <View style={styles.inputContainer}>
-        <View style={styles.inputCard}>
+        <Animated.View
+          style={[
+            styles.inputCard,
+            {
+              backgroundColor: backgroundColorAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['#F0F0F0', '#2C5F6F'], // Grey → Dark Blue
+              }),
+            }
+          ]}
+        >
+
           <View style={styles.inputRow}>
             {!isRecording ? (
               <TextInput
-              value={inputText}
-              onChangeText={handleInputTextChange}
-              placeholder={isTranscribing ? t('chat.transcribing') : t('chat.typeOrSpeak')}
-              placeholderTextColor="#9CA3AF"
-              multiline
-              style={[
-                styles.textInput,
-                {
-                  maxHeight: 100, // Standard ~5 lines max
-                }
-              ]}
-              editable={!isTranscribing}
-              selectionColor="#007AFF"
-            />
-            
+                value={inputText}
+                onChangeText={handleInputTextChange}
+                placeholder={isTranscribing ? t('chat.transcribing') : t('chat.typeOrSpeak')}
+                placeholderTextColor="#9CA3AF"
+                multiline
+                style={[
+                  styles.textInput,
+                  {
+                    maxHeight: 100,
+                  }
+                ]}
+                editable={!isTranscribing}
+                selectionColor="#007AFF"
+              />
             ) : (
-              /* Recording Interface: X button - Wave with Timer inside chatbox - Check button */
-              <View style={styles.recordingInterfaceWithTimer} pointerEvents="box-none">
-                {/* Cancel Button (X) - Left side, light filled */}
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log('❌❌❌ CANCEL BUTTON PRESSED - ChatInput ❌❌❌');
-                    onCancelRecording();
-                  }}
-                  style={styles.cancelButton}
-                  activeOpacity={0.7}
-                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-                  accessible={true}
-                  accessibilityLabel="Cancel recording"
-                  accessibilityRole="button"
-                  pointerEvents="auto"
-                >
-                  <X size={20} color="#ffffff" />
-                </TouchableOpacity>
-
-                {/* Wave and Timer Container - Center */}
-                <View style={styles.waveWithTimerInside} pointerEvents="box-none">
-                  <SimpleVolumeWaveform
-                    audioLevel={audioLevel}
-                    isRecording={isRecording}
-                    showTimer={true}
-                    width={230}
-                    height={68}
-                    barCount={28}
-                  />
-                </View>
-
-                {/* Submit Button (Check) - Right side, filled like send button */}
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log('✅✅✅ SUBMIT BUTTON PRESSED - ChatInput ✅✅✅');
-                    onStopRecording();
-                  }}
-                  style={styles.submitRecordingButton}
-                  activeOpacity={0.7}
-                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-                  accessible={true}
-                  accessibilityLabel="Submit recording"
-                  accessibilityRole="button"
-                  pointerEvents="auto"
-                >
-                  <Check size={20} color="#ffffff" />
-                </TouchableOpacity>
-              </View>
+              <Animated.View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: iconFade,
+                }}
+              >
+                <SimpleVolumeWaveform
+                  audioLevel={audioLevel}
+                  isRecording={isRecording}
+                  showTimer={true}
+                  width={230}
+                  height={50}
+                  barCount={28}
+                />
+              </Animated.View>
             )}
 
-            {!isRecording && (
-              <View style={styles.inputButtonsContainer}>
-                {inputText.trim() ? (
-                  <TouchableOpacity
-                    onPress={() => onSend()}
-                    style={styles.sendButton}
-                    activeOpacity={0.7}
-                  >
-                    <ArrowUp size={20} color="#ffffff" />
-                  </TouchableOpacity>
+            {/* Buttons Container */}
+            <View style={styles.inputButtonsContainer}>
+              {/* Left Button: Mic morphs to X (Cancel) */}
+              <TouchableOpacity
+                onPressIn={isRecording ? undefined : onMicPressIn}
+                onPressOut={isRecording ? undefined : onMicPressOut}
+                onPress={isRecording ? onCancelRecording : undefined}
+                style={[
+                  styles.micButton,
+                  isRecording && styles.cancelButton,
+                ]}
+                activeOpacity={0.7}
+              >
+                {!isRecording ? (
+                  <Mic size={26} color="#334155" />
                 ) : (
-                  <TouchableOpacity
-                    onPressIn={onMicPressIn}
-                    onPressOut={onMicPressOut}
-                    style={styles.micButton}
-                    activeOpacity={0.7}
-                  >
-                    <Mic size={26} color="#334155" />
-                  </TouchableOpacity>
+                  <X size={24} color="#ffffff" strokeWidth={2.5} />
                 )}
-              </View>
-            )}
+              </TouchableOpacity>
+
+              {/* Right Button: Send morphs to Check (Accept) */}
+              <TouchableOpacity
+                onPress={isRecording ? onStopRecording : () => onSend()}
+                style={styles.sendButton}
+                activeOpacity={0.7}
+              >
+                {!isRecording ? (
+                  <ArrowUp size={20} color="#ffffff" />
+                ) : (
+                  <Check size={24} color="#ffffff" strokeWidth={2.5} />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </Animated.View>
       </View>
 
       {/* Fullscreen Input Modal */}
@@ -159,11 +184,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       >
         <SafeAreaWrapper style={styles.fullscreenInputContainer}>
           <View style={styles.fullscreenInputHeader}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setIsFullscreenInput(false)}
               style={styles.fullscreenCloseButton}
             >
-              <X size={24} color="#6b7280" />
+              <X size={24} color="#6b7280" strokeWidth={2.5} />
             </TouchableOpacity>
             <Text style={styles.fullscreenInputTitle}>{t('chat.composeMessage')}</Text>
             <TouchableOpacity 

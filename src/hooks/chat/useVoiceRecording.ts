@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Alert, Animated } from 'react-native';
+import { Alert } from 'react-native';
 import { sttService } from '../../services/sttService';
 import { useDirectAudioLevels } from '../useDirectAudioLevels';
 
@@ -11,11 +11,9 @@ interface UseVoiceRecordingReturn {
   partialTranscript: string;
   audioLevel: number; // Single audio level instead of array
   frequencyData: number[]; // Real-time frequency spectrum data
-  waveAnimations: Animated.Value[];
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
   cancelRecording: () => Promise<void>;
-  resetSoundWaves: () => void;
 }
 
 export const useVoiceRecording = (
@@ -31,10 +29,9 @@ export const useVoiceRecording = (
   // Use direct audio levels hook
   const { audioLevel, updateAudioLevel, resetLevel } = useDirectAudioLevels();
 
-  // Audio level animations for real sound wave visualization
-  const waveAnimations = useRef(
-    Array.from({ length: 7 }, () => new Animated.Value(0.05))
-  ).current;
+  // Throttle audio level updates to prevent excessive re-renders
+  const lastAudioUpdateTime = useRef(0);
+  const AUDIO_UPDATE_THROTTLE = 50; // ms - 20 updates/sec for better reactivity
 
   const startRecording = async () => {
     console.log('🎤 Starting recording...');
@@ -88,14 +85,16 @@ export const useVoiceRecording = (
           setIsListening(false);
           setIsTranscribing(false);
           setPartialTranscript('');
-          resetSoundWaves();
         }
       },
-      // On audio level - use direct STT metering
+      // On audio level - use direct STT metering with throttling
       (level, freqData) => {
-        updateAudioLevel(level); // Pass normalized level (0-1) to direct audio levels hook
-        // Use the incoming level directly for immediate wave updates
-        updateSoundWaves(level);
+        // Throttle audioLevel updates to prevent excessive re-renders during consistent talking
+        const now = Date.now();
+        if (now - lastAudioUpdateTime.current >= AUDIO_UPDATE_THROTTLE) {
+          updateAudioLevel(level); // Pass normalized level (0-1) to direct audio levels hook
+          lastAudioUpdateTime.current = now;
+        }
 
         // Update frequency data for Skia waveform
         if (freqData && freqData.length > 0) {
@@ -117,18 +116,18 @@ export const useVoiceRecording = (
 
   const stopRecording = async () => {
     console.log('🛑 stopRecording called - current state:', isRecording);
-    
+
     // Set transcribing state before stopping
     setIsTranscribing(true);
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
     resetLevel(); // Reset direct audio level
-    resetSoundWaves();
-    
+    lastAudioUpdateTime.current = 0; // Reset throttle timer
+
     // Always stop the service regardless of current state
     await sttService.stopRecognition();
-    
+
     console.log('✅ Recording stopped and state reset');
   };
 
@@ -143,7 +142,7 @@ export const useVoiceRecording = (
     setPartialTranscript('');
     setSttError(null);
     resetLevel(); // Reset direct audio level
-    resetSoundWaves();
+    lastAudioUpdateTime.current = 0; // Reset throttle timer
 
     try {
       // Then cleanup the service
@@ -155,44 +154,6 @@ export const useVoiceRecording = (
     }
   };
 
-  // Update sound waves - simplified to just animate wave bars based on single audio level
-  const updateSoundWaves = (currentAudioLevel: number) => {
-    // Use the processed audio level from direct audio levels hook
-    const baseLevel = Math.max(0.02, Math.min(1, currentAudioLevel));
-    
-    // Create minimal variation across bars for visual interest only
-    const newLevels = Array.from({ length: 7 }, (_, i) => {
-      if (baseLevel < 0.05) {
-        // True silence - all bars very low
-        return 0.02;
-      } else {
-        // During speech, minimal natural variation (±10%)
-        const variation = (Math.random() - 0.5) * 0.1;
-        return Math.max(0.02, Math.min(1, baseLevel + variation));
-      }
-    });
-    
-    // Animate all bars with very fast response for continuous movement
-    newLevels.forEach((targetLevel, index) => {
-      Animated.timing(waveAnimations[index], {
-        toValue: targetLevel,
-        duration: 100, // Fast but smooth animation
-        useNativeDriver: false,
-      }).start();
-    });
-  };
-
-  const resetSoundWaves = () => {
-    // Reset all animations to true baseline for silence
-    waveAnimations.forEach(anim => {
-      Animated.timing(anim, {
-        toValue: 0.02, // True silence baseline
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    });
-  };
-
   return {
     isRecording,
     isListening,
@@ -201,11 +162,9 @@ export const useVoiceRecording = (
     partialTranscript,
     audioLevel, // Return single audio level instead of array
     frequencyData, // Return real-time frequency spectrum
-    waveAnimations,
     startRecording,
     stopRecording,
     cancelRecording,
-    resetSoundWaves,
   };
 };
 

@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Canvas, RoundedRect, Group, Skia } from '@shopify/react-native-skia';
+import { Canvas, RoundedRect, Group } from '@shopify/react-native-skia';
 
 interface SimpleVolumeWaveformProps {
   audioLevel: number; // REAL 0-1 audio level from microphone
@@ -16,7 +16,7 @@ const CONFIG = {
   barSpacing: 3, // More space between bars
   barRadius: 2,
   minHeight: 4, // Small dot for silence (same as barWidth for perfect circle)
-  maxHeight: 54, // Max height for loud speech
+  maxHeight: 54, // Full height restored for better visual quality
   color: '#87BAA3',
   activeColor: '#436E59',
 };
@@ -31,10 +31,10 @@ export const SimpleVolumeWaveform: React.FC<SimpleVolumeWaveformProps> = ({
 }) => {
   const [bars, setBars] = React.useState<number[]>(Array(barCount).fill(CONFIG.minHeight));
   const [recordingTime, setRecordingTime] = React.useState(0);
+  const audioLevelRef = useRef(audioLevel);
 
-  // Use ref to avoid stale closure
-  const audioLevelRef = React.useRef(audioLevel);
-  React.useEffect(() => {
+  // Update ref when audioLevel changes
+  useEffect(() => {
     audioLevelRef.current = audioLevel;
   }, [audioLevel]);
 
@@ -48,47 +48,45 @@ export const SimpleVolumeWaveform: React.FC<SimpleVolumeWaveformProps> = ({
     return () => clearInterval(timer);
   }, [isRecording]);
 
-  // SIMPLE volume-based animation
+  // Beautiful smooth wave animation - ORIGINAL SETTINGS
   useEffect(() => {
     if (!isRecording) {
       setBars(Array(barCount).fill(CONFIG.minHeight));
       return;
     }
 
-    // MUCH SLOWER scroll - update only 8 times per second
     const interval = setInterval(() => {
-      const volume = audioLevelRef.current; // Get CURRENT value from ref
+      const volume = audioLevelRef.current;
 
       setBars((prevBars) => {
-        // Scroll: remove first, add new at end
-        const newBars = [...prevBars.slice(1)];
+        const newBars = prevBars.slice(1);
 
-        // LIGHT boost - most work done in dB conversion
-        let boostedVolume = volume;
-
+        // Process volume with gentle curve
+        let processedVolume = volume;
         if (volume > 0.02) {
-          // Gentle power curve for smooth gradation
-          boostedVolume = Math.pow(volume, 0.8) * 1.1; // Light boost
+          processedVolume = Math.pow(volume, 0.85);
         }
-
-        // Clamp between 0 and 1
-        boostedVolume = Math.min(1.0, boostedVolume);
+        processedVolume = Math.min(1.0, processedVolume);
 
         // Map to bar height
         const heightRange = CONFIG.maxHeight - CONFIG.minHeight;
-        const calculatedHeight = CONFIG.minHeight + (boostedVolume * heightRange);
+        const calculatedHeight = CONFIG.minHeight + (processedVolume * heightRange);
 
-        // Small variation for organic feel
-        const variation = (Math.random() - 0.5) * 2; // Subtle variation
-        const finalHeight = Math.max(CONFIG.minHeight, Math.min(CONFIG.maxHeight, calculatedHeight + variation));
+        // Smooth with previous bar for organic flow
+        const lastBarHeight = prevBars[prevBars.length - 1] || CONFIG.minHeight;
+        const smoothed = lastBarHeight * 0.25 + calculatedHeight * 0.75;
+
+        // Add variation for natural movement
+        const variation = (Math.random() - 0.5) * (processedVolume * 2.0);
+        const finalHeight = Math.max(CONFIG.minHeight, Math.min(CONFIG.maxHeight, smoothed + variation));
 
         newBars.push(finalHeight);
         return newBars;
       });
-    }, 120); // MUCH slower - only ~8 updates per second
+    }, 110); // Original smooth update rate
 
     return () => clearInterval(interval);
-  }, [isRecording, barCount]); // REMOVED audioLevel dependency - using ref instead!
+  }, [isRecording, barCount]);
 
   // Calculate positions
   const totalBarWidth = CONFIG.barWidth + CONFIG.barSpacing;
@@ -104,7 +102,6 @@ export const SimpleVolumeWaveform: React.FC<SimpleVolumeWaveformProps> = ({
 
   const getColor = (vol: number) => {
     if (vol < 0.1) return CONFIG.color;
-    // Interpolate between base and active color
     const t = Math.min(1, vol * 2);
     const base = { r: 135, g: 186, b: 163 }; // #87BAA3
     const active = { r: 67, g: 110, b: 89 }; // #436E59
@@ -116,17 +113,11 @@ export const SimpleVolumeWaveform: React.FC<SimpleVolumeWaveformProps> = ({
 
   return (
     <View style={styles.container}>
-      {showTimer && isRecording && (
-        <Text style={styles.timer}>{formatTime(recordingTime)}</Text>
-      )}
-
       <Canvas style={{ width, height }}>
         <Group>
           {bars.map((barHeight, i) => {
             const x = startX + i * totalBarWidth;
-            const y = centerY - barHeight / 2; // Center vertically
-
-            // Color based on height (taller = darker)
+            const y = centerY - barHeight / 2;
             const intensity = (barHeight - CONFIG.minHeight) / (CONFIG.maxHeight - CONFIG.minHeight);
             const color = getColor(intensity);
 
@@ -145,6 +136,10 @@ export const SimpleVolumeWaveform: React.FC<SimpleVolumeWaveformProps> = ({
           })}
         </Group>
       </Canvas>
+
+      {showTimer && isRecording && (
+        <Text style={styles.timer}>{formatTime(recordingTime)}</Text>
+      )}
     </View>
   );
 };
@@ -153,13 +148,17 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   timer: {
-    fontSize: 13,
-    color: '#374151',
+    position: 'absolute',
+    top: -24,
+    left: 0,
+    right: 0,
+    fontSize: 16,
+    color: '#FFFFFF',
     fontFamily: 'Inter-Medium',
-    letterSpacing: 0.3,
-    marginBottom: 4,
-    marginTop: 8,
+    letterSpacing: 0.5,
+    textAlign: 'center',
   },
 });
