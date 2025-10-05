@@ -18,6 +18,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import ChatInterface from '../screens/ChatInterface';
 import BreathingScreen from '../screens/BreathingScreen';
 import TherapyGoalsScreen from '../screens/TherapyGoalsScreen';
+import KeyboardTest from '../screens/KeyboardTest'; // TEMPORARY: For keyboard testing
 import CustomTabBar from './CustomTabBar';
 
 // Import navigators
@@ -346,6 +347,7 @@ export const AppContent: React.FC = () => {
           {() => <InsightsDashboard onInsightClick={handleInsightClick} onTherapyGoalsClick={handleTherapyGoalsClick} />}
         </Tab.Screen>
         <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="KeyboardTest" component={KeyboardTest} options={{ title: '🧪 Test' }} />
       </Tab.Navigator>
     </NavigationContainer>
     </OnboardingContext.Provider>

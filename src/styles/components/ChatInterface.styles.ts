@@ -521,29 +521,26 @@ export const chatInterfaceStyles = StyleSheet.create({
     letterSpacing: 0.4,
   },
 
-  // Input Area - Modern Glass
+  // Input Area - Industry Standard (WhatsApp/iMessage style)
   inputContainer: {
-    paddingHorizontal: spacing.layout.screenPadding - 4, // Make chatbar wider by reducing side padding
-    paddingTop: 16, // Normal top padding - don't affect default state
-    backgroundColor: 'rgba(255, 255, 254, 0.98)', // More opaque background
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(226, 232, 240, 0.3)', // Subtle separator
-    zIndex: 10, // Lower z-index to avoid blocking other elements
+    paddingHorizontal: spacing.layout.screenPadding - 4, // Keep original width
+    paddingTop: 8, // Standard top padding
+    paddingBottom: Platform.OS === 'ios' ? 34 : 8, // iOS safe area built-in, Android base padding
+    backgroundColor: '#FFFFFF', // Clean white background
+    borderTopWidth: 0.5,
+    borderTopColor: 'rgba(0, 0, 0, 0.08)', // Subtle separator like WhatsApp
   },
   inputCard: {
-    backgroundColor: '#e2e8f0', // Much lighter gray (slate-200) for lighter appearance
-    borderWidth: 0, // No border
-    borderRadius: 24, // Consistent rounded corners that scale well
-    paddingHorizontal: spacing[4], // Adequate horizontal padding for circular shape
-    paddingVertical: spacing[1], // Minimal vertical padding for lower height
-    zIndex: 11, // Slightly above container, but not too high
-    elevation: 0, // No elevation/shadow
+    backgroundColor: '#F0F0F0', // Standard light gray like iMessage
+    borderRadius: 20, // Standard pill shape
+    paddingHorizontal: 12, // Standard horizontal padding
+    paddingVertical: 6, // Standard vertical padding for proper spacing
+    minHeight: 44, // Standard minimum touch target height
   },
   inputRow: {
     flexDirection: 'row',
-    alignItems: 'center', // Center items for perfect circular alignment
-    gap: spacing[3],
-    minHeight: 48, // Reduced from 60 to 48 for standard chat height
+    alignItems: 'flex-end', // Align to bottom like standard chat apps
+    gap: 8, // Standard gap between elements
   },
   inputButtonsContainer: {
     flexDirection: 'row',
@@ -560,15 +557,11 @@ export const chatInterfaceStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   micButton: {
-    padding: spacing[2],
-    borderRadius: 20,
-    backgroundColor: 'transparent',
-    width: 40,
-    height: 40,
+    width: 32,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 12, // Moderate z-index for buttons
-    marginRight: spacing[2],
+    backgroundColor: 'transparent',
   },
   iconButton: {
     padding: spacing[1],
@@ -633,22 +626,18 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16, // Slightly smaller for better proportions with shorter height
-    fontFamily: 'Inter-Regular', // Match chat font family
+    fontSize: 17, // Standard iOS/Android text size
+    fontFamily: 'Inter-Regular',
     fontWeight: '400',
-    color: '#64748b', // Lighter gray-blue for input text
-    minHeight: 32, // Reduced minimum height for standard chat size
-    maxHeight: 200,
-    paddingVertical: 8, // Reduced vertical padding for shorter height
-    paddingHorizontal: spacing[6], // Further increased padding to move text more to the right
+    color: '#000000', // Standard black text like WhatsApp/iMessage
+    minHeight: 32, // Standard single-line height
+    maxHeight: 100, // Standard ~5 lines max like WhatsApp
+    paddingVertical: 0, // No extra vertical padding
+    paddingHorizontal: 0, // No horizontal padding (card handles it)
     backgroundColor: 'transparent',
-    lineHeight: 20, // Adjusted line height for better centering with shorter input
-    letterSpacing: 0.2, // Match AI message letter spacing
-    textAlignVertical: 'center', // Center text vertically
-    includeFontPadding: false, // Remove extra font padding on Android
-    zIndex: 11, // Moderate z-index for text input
-    justifyContent: 'center', // Additional centering
-    alignItems: 'center', // Additional centering
+    lineHeight: 22, // Standard line height for 17px text
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
   partialTranscriptOverlay: {
     position: 'absolute',
@@ -820,19 +809,12 @@ export const chatInterfaceStyles = StyleSheet.create({
 
   // Send Button - Match Mic Button
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#61a8b4', // Updated to requested color
-    // Minimal shadow for send button
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
-    zIndex: 12, // Moderate z-index for buttons
+    backgroundColor: '#007AFF', // Standard iOS blue
   },
   sendButtonActive: {
     backgroundColor: '#2a656f',
@@ -956,15 +938,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     height: 76, // Match the wave container height for precise alignment
   },
 
-  // Recording Interface with Timer Inside
+  // Recording Interface - Standard alignment
   recordingInterfaceWithTimer: {
     flexDirection: 'row',
-    alignItems: 'flex-end', // Changed from center to flex-end to align buttons lower
+    alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1,
-    paddingHorizontal: spacing[2],
-    paddingVertical: spacing[1], // Further reduced padding for standard chat height
-    minHeight: 48, // Reduced to match inputRow height
   },
 
   // Cancel Button (X) - Light filled
@@ -974,11 +953,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#94a3b8', // Light gray fill
+    backgroundColor: '#94a3b8',
     ...shadows.sm,
-    marginBottom: 15, // Use marginBottom instead of marginTop to position from bottom
-    zIndex: 10, // Ensure button is above other elements
-    elevation: 10, // Android elevation
   },
 
   // Wave with Timer Container
@@ -989,14 +965,12 @@ export const chatInterfaceStyles = StyleSheet.create({
     marginHorizontal: spacing[3],
   },
 
-  // Wave with Timer Inside Chatbox
+  // Wave with Timer Inside - Clean centered
   waveWithTimerInside: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: spacing[3],
-    flexDirection: 'column', // Stack timer and wave vertically
-    marginTop: 6, // Move timer slightly lower
+    flexDirection: 'column',
   },
 
   // Submit Recording Button (Check) - Filled like send button
@@ -1006,11 +980,8 @@ export const chatInterfaceStyles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#61a8b4', // Updated to requested color
+    backgroundColor: '#61a8b4',
     ...shadows.sm,
-    marginBottom: 15, // Use marginBottom instead of marginTop to position from bottom
-    zIndex: 10, // Ensure button is above other elements
-    elevation: 10, // Android elevation
   },
 
 

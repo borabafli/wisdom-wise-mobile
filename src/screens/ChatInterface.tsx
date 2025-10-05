@@ -376,7 +376,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         backgroundColor="#ffffff"
         translucent={false}
       />
-      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
+      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.backgroundImage}>
         <LinearGradient
           colors={['rgba(255, 255, 254, 0.9)', 'rgba(255, 255, 254, 1.0)']}
@@ -399,11 +399,10 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           </Animated.View>
         </View>
 
-        <KeyboardAvoidingView 
-          style={styles.keyboardView} 
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={0}
-          enabled={Platform.OS === 'ios'}
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
           {/* Header */}
           <Animated.View style={[
@@ -469,7 +468,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
 
           {/* Messages Area */}
-          <ScrollView 
+          <ScrollView
             ref={scrollViewRef}
             style={styles.messagesArea}
             contentContainerStyle={styles.messagesContent}
@@ -477,9 +476,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="interactive"
-            automaticallyAdjustKeyboardInsets={false}
-            automaticallyAdjustContentInsets={false}
-            contentInsetAdjustmentBehavior="never"
           >
 
             

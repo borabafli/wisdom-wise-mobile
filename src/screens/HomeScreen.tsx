@@ -299,6 +299,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             <Text style={styles.sectionTitle}>{t('home.quickActions')}</Text>
           </View>
 
+          {/* TEMPORARY: Keyboard Test Button */}
+          <TouchableOpacity
+            onPress={() => navigation?.navigate('KeyboardTest')}
+            style={{
+              backgroundColor: '#FF6B6B',
+              padding: 16,
+              borderRadius: 12,
+              marginBottom: 12,
+              alignItems: 'center',
+            }}
+            activeOpacity={0.8}
+          >
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>
+              🧪 TEST KEYBOARD (TEMPORARY)
+            </Text>
+          </TouchableOpacity>
+
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
               onPress={onNavigateToExercises}
