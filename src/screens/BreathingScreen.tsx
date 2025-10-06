@@ -88,14 +88,11 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
   });
 
   // Map exercise ID to preset ID
-  const getPresetFromExercise = (exercise: any): BreathingPreset => {
-    console.log('DEBUG: getPresetFromExercise received exercise:', exercise);
-    if (!exercise || !exercise.id) {
-      console.log('DEBUG: No exercise or exercise.id, defaulting to 4-7-8');
-      return BREATHING_PRESETS[0]; // Default to 4-7-8
+  const getPresetFromExercise = (exerciseData: any): BreathingPreset => {
+    if (!exerciseData) {
+      return BREATHING_PRESETS[0];
     }
 
-    // Map exercise IDs to preset IDs
     const presetMap: Record<string, string> = {
       'breathing': '4-7-8',
       'box-breathing': 'box',
@@ -103,8 +100,11 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
       'coherent-breathing': 'coherent',
     };
 
-    const presetId = presetMap[exercise.id] || '4-7-8';
-    console.log('DEBUG: Determined presetId:', presetId);
+    const candidateKey =
+      (typeof exerciseData.slug === 'string' && exerciseData.slug) ||
+      (typeof exerciseData.id === 'string' ? exerciseData.id : undefined);
+
+    const presetId = (candidateKey && presetMap[candidateKey]) || '4-7-8';
     const preset = BREATHING_PRESETS.find(p => p.id === presetId);
     return preset || BREATHING_PRESETS[0];
   };
@@ -419,6 +419,12 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
       }),
     ]).start();
   };
+
+  useEffect(() => {
+    const preset = getPresetFromExercise(exercise);
+    setSelectedPreset(preset);
+    handleReset();
+  }, [exercise]);
 
   const handlePresetChange = (preset: BreathingPreset) => {
     if (preset.id === 'custom') {
