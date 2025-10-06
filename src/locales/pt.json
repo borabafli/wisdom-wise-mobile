@@ -124,6 +124,15 @@
       "fallbackMessage": "Sua jornada de bem-estar continua",
       "startingToday": "começando hoje"
     },
+    "dailyCheckIn": {
+      "title": "Check-in diário",
+      "subtitle": "Continue com o ritmo!",
+      "dayStreak": "Sequência de dias",
+      "lastActivity": "Última atividade",
+      "today": "Hoje",
+      "completeTask": "Completar tarefa diária",
+      "streakUpdated": "Sequência atualizada! Continue assim"
+    },
     "values": {
       "title": "Seus Valores",
       "subtitle": "O que importa para você",

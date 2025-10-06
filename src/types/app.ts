@@ -25,6 +25,7 @@ export interface HomeScreenProps {
   onNavigateToExercises: () => void;
   onNavigateToInsights: () => void;
   navigation?: any;
+  onActionSelect?: (actionId: string) => void;
 }
 
 export interface ChatInterfaceProps {

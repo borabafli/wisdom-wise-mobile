@@ -170,10 +170,10 @@ export const journalScreenStyles = StyleSheet.create({
   promptCardButton: {
     position: 'absolute',
     bottom: spacing[12],
-    left: '15%', // Match DailyPromptCard positioning
-    backgroundColor: '#4c908b', // Match DailyPromptCard color
-    paddingHorizontal: spacing[10],
-    paddingVertical: spacing[5],
+    left: '15%',
+    backgroundColor: '#36657D',
+    paddingHorizontal: spacing[16],
+    paddingVertical: spacing[8],
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -184,7 +184,7 @@ export const journalScreenStyles = StyleSheet.create({
 
   promptCardButtonText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 13, // Match DailyPromptCard font size
+    fontSize: 13,
     color: '#FFFFFF',
     fontWeight: '600',
     textAlign: 'center',
@@ -194,8 +194,8 @@ export const journalScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing[8], // Reduced top margin
-    marginBottom: spacing[4], // Reduced bottom margin
+    marginTop: spacing[8],
+    marginBottom: spacing[4],
     gap: spacing[6],
   },
 
@@ -207,7 +207,7 @@ export const journalScreenStyles = StyleSheet.create({
   },
 
   pageIndicatorDotActive: {
-    backgroundColor: '#065F46',
+    backgroundColor: '#36657D',
     width: 8,
     height: 8,
     borderRadius: 4,

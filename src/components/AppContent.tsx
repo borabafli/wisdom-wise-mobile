@@ -425,6 +425,7 @@ export const AppContent: React.FC = () => {
                     onInsightClick={handleInsightClick}
                     onNavigateToExercises={handleNavigateToExercises}
                     onNavigateToInsights={handleNavigateToInsights}
+                    onActionSelect={handleActionSelect}
                   />
                 </TabSlideView>
               )}

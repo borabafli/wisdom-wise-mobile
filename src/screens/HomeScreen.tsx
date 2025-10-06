@@ -21,8 +21,9 @@ import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
 import { useExercisePreview } from '../hooks/useExercisePreview';
 import DailyPromptCard from '../components/DailyPromptCard';
 import JournalPromptService from '../services/journalPromptService';
+import streakService from '../services/streakService';
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation, onActionSelect }) => {
   const { t } = useTranslation();
   const { currentQuote } = useQuote();
   const { width, height } = Dimensions.get('window');
@@ -41,6 +42,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   const [hiddenCardIds, setHiddenCardIds] = useState<string[]>([]);
   const [completedExerciseIds, setCompletedExerciseIds] = useState<string[]>([]);
   const [dailyPrompt, setDailyPrompt] = useState<string>('');
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [hasCheckedInToday, setHasCheckedInToday] = useState<boolean>(false);
 
   // Apply dynamic navigation bar styling
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.homeScreen);
@@ -72,33 +75,38 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   
   // Load hidden card IDs and completed exercises on mount
   useEffect(() => {
-    const loadData = async () => {
-      const hiddenIds = await CardHidingService.getHiddenCardIds();
-      setHiddenCardIds(hiddenIds);
-
-      const completedIds = await ExerciseCompletionService.getCompletedExerciseIds();
-      setCompletedExerciseIds(completedIds);
-
-      // Load daily prompt
-      const prompt = await JournalPromptService.getTodaysMainPrompt();
-      setDailyPrompt(prompt);
-
-      // Update exercise progress with completion status
-      const newProgress: ExerciseProgress = {};
-      completedIds.forEach(id => {
-        newProgress[id] = {
-          completed: true,
-          completedCount: 1,
-          rating: Math.floor(Math.random() * 5) + 1,
-          moodImprovement: Math.floor(Math.random() * 8) + 2,
-          lastCompleted: new Date(),
-        };
-      });
-      setExerciseProgress(newProgress);
-    };
-    loadData();
-  }, []);
-
+          const loadData = async () => {
+            const hiddenIds = await CardHidingService.getHiddenCardIds();
+            setHiddenCardIds(hiddenIds);
+    
+            const completedIds = await ExerciseCompletionService.getCompletedExerciseIds();
+            setCompletedExerciseIds(completedIds);
+    
+            // Load daily prompt
+            const prompt = await JournalPromptService.getTodaysMainPrompt();
+            setDailyPrompt(prompt);
+    
+            // Load streak data
+            const streak = await streakService.getStreak();
+            setCurrentStreak(streak);
+            const checkedIn = await streakService.hasCheckedInToday();
+            setHasCheckedInToday(checkedIn);
+    
+            // Update exercise progress with completion status
+            const newProgress: ExerciseProgress = {};
+            completedIds.forEach(id => {
+              newProgress[id] = {
+                completed: true,
+                completedCount: 1,
+                rating: Math.floor(Math.random() * 5) + 1,
+                moodImprovement: Math.floor(Math.random() * 8) + 2,
+                lastCompleted: new Date(),
+              };
+            });
+            setExerciseProgress(newProgress);
+          };
+          loadData();
+        }, []);
   // Static welcome message
   const welcomeMessage = {
     title: t('home.moodCheck'),
@@ -213,55 +221,67 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
 
           {/* Start Check-In Button */}
-          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-            <TouchableOpacity
-              ref={checkInButtonRef}
-              onPressIn={() => {
-                // Shrink button on press
-                Animated.spring(buttonScale, {
-                  toValue: 0.95,
-                  tension: 300,
-                  friction: 10,
-                  useNativeDriver: true,
-                }).start();
-              }}
-              onPressOut={() => {
-                // Return to normal size
-                Animated.spring(buttonScale, {
-                  toValue: 1,
-                  tension: 300,
-                  friction: 10,
-                  useNativeDriver: true,
-                }).start();
-              }}
-              onPress={() => {
-                checkInButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
-                  // Pass button position to onStartSession
-                  onStartSession({ x: pageX, y: pageY, width, height });
-                });
-              }}
-              activeOpacity={1}
-            >
-              <ImageBackground
-                source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
-                style={styles.checkInButton}
-                imageStyle={{ borderRadius: 10 }}
-                resizeMode="cover"
+          {hasCheckedInToday ? (
+            <View style={styles.checkedInMessageContainer}>
+              <Text style={styles.checkedInMessageText}>{t('home.checkedInToday')}</Text>
+              <Text style={styles.currentStreakText}>{t('home.currentStreak', { count: currentStreak })}</Text>
+            </View>
+          ) : (
+            <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+              <TouchableOpacity
+                ref={checkInButtonRef}
+                onPressIn={() => {
+                  Animated.spring(buttonScale, {
+                    toValue: 0.95,
+                    tension: 300,
+                    friction: 10,
+                    useNativeDriver: true,
+                  }).start();
+                }}
+                onPressOut={() => {
+                  Animated.spring(buttonScale, {
+                    toValue: 1,
+                    tension: 300,
+                    friction: 10,
+                    useNativeDriver: true,
+                  }).start();
+                }}
+                onPress={async () => {
+                  const newStreak = await streakService.recordCheckIn();
+                  setCurrentStreak(newStreak);
+                  setHasCheckedInToday(true);
+                  checkInButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+                    onStartSession({ x: pageX, y: pageY, width, height });
+                  });
+                }}
+                activeOpacity={1}
               >
-              <Text style={styles.checkInButtonText}>{t('home.checkInNow')}</Text>
-              <View style={styles.checkInButtonIcons}>
-                <View style={styles.iconCircle}>
-                  <MessageCircle size={18} color="#7d9db6" />
-                  <Text style={styles.iconLabel}>{t('home.type')}</Text>
-                </View>
-                <View style={styles.iconCircle}>
-                  <Mic size={18} color="#7d9db6" />
-                  <Text style={styles.iconLabel}>{t('home.talk')}</Text>
-                </View>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
-        </Animated.View>
+                <ImageBackground
+                  source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
+                  style={styles.checkInButton}
+                  imageStyle={{ borderRadius: 10 }}
+                  resizeMode="cover"
+                >
+                  <Text style={styles.checkInButtonText}>{t('home.checkInNow')}</Text>
+                  <View style={styles.checkInButtonIcons}>
+                    <View style={styles.iconCircle}>
+                      <MessageCircle size={18} color="#7d9db6" />
+                      <Text style={styles.iconLabel}>{t('home.type')}</Text>
+                    </View>
+                    <View style={styles.iconCircle}>
+                      <Mic size={18} color="#7d9db6" />
+                      <Text style={styles.iconLabel}>{t('home.talk')}</Text>
+                    </View>
+                  </View>
+                  {currentStreak > 0 && (
+                    <View style={styles.streakDisplayContainer}>
+                      <Text style={styles.streakDisplayText}>{currentStreak} {t('home.dayStreak')}</Text>
+                    </View>
+                  )}
+                </ImageBackground>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
         </View>
 
         {/* For You Today Section */}
@@ -375,7 +395,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => navigation?.navigate('BreathingScreen')}
+              onPress={() => onActionSelect?.('breathing')}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >

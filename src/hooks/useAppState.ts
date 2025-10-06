@@ -1,5 +1,8 @@
 import { useState, useCallback } from 'react';
+import { Platform } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
 import { Exercise, ButtonPosition } from '../types';
+import { navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 
 /**
  * Custom hook for managing app-level state
@@ -44,8 +47,18 @@ export const useAppState = () => {
     setShowChat(true);
   }, []);
 
-  const handleBackFromChat = useCallback(() => {
+  const handleBackFromChat = useCallback(async () => {
     console.log('handleBackFromChat called - starting cleanup');
+
+    // Immediately reset navigation bar color (before animation)
+    if (Platform.OS === 'android') {
+      try {
+        await NavigationBar.setBackgroundColorAsync(navigationBarConfigs.homeScreen.backgroundColor);
+        await NavigationBar.setButtonStyleAsync(navigationBarConfigs.homeScreen.style === 'light' ? 'dark' : 'light');
+      } catch (error) {
+        console.warn('Failed to reset navigation bar:', error);
+      }
+    }
 
     setShowChat(false);
     setChatWithActionPalette(false);

@@ -124,6 +124,15 @@
       "fallbackMessage": "Tu viaje de bienestar continúa",
       "startingToday": "comenzando hoy"
     },
+    "dailyCheckIn": {
+      "title": "Registro diario",
+      "subtitle": "¡Mantén el impulso!",
+      "dayStreak": "Racha de días",
+      "lastActivity": "Última actividad",
+      "today": "Hoy",
+      "completeTask": "Completar tarea diaria",
+      "streakUpdated": "¡Racha actualizada! Sigue así"
+    },
     "values": {
       "title": "Tus Valores",
       "subtitle": "Lo que te importa",

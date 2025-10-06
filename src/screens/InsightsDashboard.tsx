@@ -29,6 +29,7 @@ import { ValuesReflectButton } from '../components/ReflectButton';
 import { generateSampleMoodData } from '../utils/sampleMoodData';
 import { generateSampleValuesData } from '../utils/sampleValuesData';
 import { getTopExercises, ExerciseProgress } from '../utils/exercisePriority';
+import streakService from '../services/streakService';
 
 interface InsightsDashboardProps {
   onInsightClick: (type: string, insight?: any) => void;
@@ -67,22 +68,15 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     data: MotivationalData;
   } | null>(null);
   const [nextExercise, setNextExercise] = useState<any>(null);
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.95)).current;
+
 
   useEffect(() => {
     loadInsightData();
   }, []);
 
-  useEffect(() => {
-    if (motivationalCard) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
-        Animated.spring(scaleAnim, { toValue: 1, tension: 20, friction: 7, useNativeDriver: true }),
-      ]).start();
-    }
-  }, [motivationalCard, fadeAnim, scaleAnim]);
+
 
   const loadInsightData = async () => {
     try {
@@ -114,6 +108,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
 
       const motivationalData = await motivationalCardService.getCompleteMotivationalCard();
       setMotivationalCard(motivationalData);
+
+      const streak = await streakService.getStreak();
+      setCurrentStreak(streak);
 
       // Get the first scheduled exercise
       const exerciseProgress: ExerciseProgress = {};
@@ -402,7 +399,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   const journeyData = {
     sessionsCompleted: 3,
     exercisesCompleted: 7,
-    streakDays: 5,
+    streakDays: currentStreak,
     nextSuggestion: t('insights.mockData.journey.nextSuggestion') || 'mindfulness breathing',
     achievements: [
       t('insights.mockData.journey.achievements.firstSession') || 'First Session Completed',
@@ -503,7 +500,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
 
         <View style={styles.contentContainer}>
           {/* Motivational Card - Daily Check-in */}
-          <Animated.View style={[styles.motivationalCard, { opacity: motivationalCard ? fadeAnim : 0.3, transform: [{ scale: motivationalCard ? scaleAnim : 0.95 }] }]}>
+          <View style={styles.motivationalCard}>
             <LinearGradient
               colors={['#FDFEFF', '#F9FCFA', '#F5FAF7']}
               start={{ x: 0, y: 0 }}
@@ -550,7 +547,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 <Text style={styles.streakUpdatedLabel}>{t('insights.dailyCheckIn.streakUpdated') || 'Streak updated! Keep it up'}</Text>
               </View>
             </LinearGradient>
-          </Animated.View>
+          </View></Animated.View>
 
           {/* --- NEW THOUGHTS SECTION (COMMENTED OUT) --- */}
           {/* {currentPattern && (

@@ -124,6 +124,15 @@
       "fallbackMessage": "Sağlık yolculuğunuz devam ediyor",
       "startingToday": "bugünden başlayarak"
     },
+    "dailyCheckIn": {
+      "title": "Günlük kontrol",
+      "subtitle": "Hızını koru!",
+      "dayStreak": "Gün serisi",
+      "lastActivity": "Son aktivite",
+      "today": "Bugün",
+      "completeTask": "Günlük görevi tamamla",
+      "streakUpdated": "Seri güncellendi! Devam et"
+    },
     "values": {
       "title": "Değerleriniz",
       "subtitle": "Size ne önemli",

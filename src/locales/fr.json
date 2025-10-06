@@ -124,6 +124,15 @@
       "fallbackMessage": "Votre parcours de bien-être continue",
       "startingToday": "à partir d'aujourd'hui"
     },
+    "dailyCheckIn": {
+      "title": "Bilan quotidien",
+      "subtitle": "Gardez l'élan!",
+      "dayStreak": "Série de jours",
+      "lastActivity": "Dernière activité",
+      "today": "Aujourd'hui",
+      "completeTask": "Terminer la tâche quotidienne",
+      "streakUpdated": "Série mise à jour! Continuez"
+    },
     "values": {
       "title": "Vos Valeurs",
       "subtitle": "Ce qui compte pour vous",

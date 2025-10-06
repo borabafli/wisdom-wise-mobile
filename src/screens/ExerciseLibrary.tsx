@@ -72,8 +72,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
   // Filter options
   const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
-  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-Discovery', 'Mental Clarity', 'Stress Relief', 'Focus', 'Emotional Balance'];
-  const styleFilters = ['All', 'CBT', 'Breathing', 'Meditation', 'Journaling', 'Mindfulness', 'ACT'];
+  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-Discovery', 'Mental Clarity', 'Stress Relief', 'Focus', 'Emotional Balance', 'Breathing', 'Without Breathing'];
+  const styleFilters = ['All', 'CBT', 'Meditation', 'Journaling', 'Mindfulness', 'ACT'];
 
   // Helper function to get duration in minutes
   const getDurationInMinutes = (duration: string) => {
@@ -164,6 +164,12 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     if (selectedBenefitFilter !== 'All') {
       filtered = filtered.filter(exercise => {
         const benefit = selectedBenefitFilter.toLowerCase();
+        if (benefit === 'breathing') {
+          return exercise.category.toLowerCase().includes('breathing');
+        }
+        if (benefit === 'without breathing') {
+          return !exercise.category.toLowerCase().includes('breathing');
+        }
         return exercise.category.toLowerCase().includes(benefit) ||
                exercise.description.toLowerCase().includes(benefit) ||
                exercise.name.toLowerCase().includes(benefit);
@@ -172,9 +178,12 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
     // Style filter
     if (selectedStyleFilter !== 'All') {
-      filtered = filtered.filter(exercise => 
-        exercise.category.toLowerCase().includes(selectedStyleFilter.toLowerCase())
-      );
+      filtered = filtered.filter(exercise => {
+        if (selectedStyleFilter === 'Without Breathing') {
+          return !exercise.category.toLowerCase().includes('breathing');
+        }
+        return exercise.category.toLowerCase().includes(selectedStyleFilter.toLowerCase());
+      });
     }
 
     return filtered;
@@ -189,6 +198,9 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   }) => {
     // Get background color based on filter type
     const getBackgroundColor = () => {
+      if (label === 'Breathing' || label === 'Without Breathing') {
+        return '#A9CDC3'; // A lighter, more subtle shade for these specific filters
+      }
       switch (filterType) {
         case 'duration': return '#DBEDF4'; // Same as tag background
         case 'benefits': return '#C6E2F0'; // Slightly darker blue
@@ -362,7 +374,19 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
           marginBottom: spacing[8],
         }}>
           <View style={exerciseLibraryStyles.filterRowCompact}>
-            {benefitFilters.map((filter) => (
+            {benefitFilters.filter(f => f !== 'Breathing' && f !== 'Without Breathing').map((filter) => (
+              <FilterChip
+                key={filter}
+                label={filter}
+                selected={selectedBenefitFilter === filter}
+                onPress={() => setSelectedBenefitFilter(filter)}
+                filterType="benefits"
+              />
+            ))}
+          </View>
+          <View style={{ borderTopWidth: 1, borderColor: '#E0E0E0', width: '80%', alignSelf: 'center', paddingTop: spacing[1], marginTop: 0 }} />
+          <View style={[exerciseLibraryStyles.filterRowCompact, { marginTop: spacing[4] }]}>
+            {benefitFilters.filter(f => f === 'Breathing' || f === 'Without Breathing').map((filter) => (
               <FilterChip
                 key={filter}
                 label={filter}

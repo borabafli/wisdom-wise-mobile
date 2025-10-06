@@ -60,6 +60,9 @@
     "viewInsights": "View\nInsights",
     "startBreathing": "Start\nBreathing",
     "realTimeAudioWaves": "Real-Time Audio Waves",
+    "checkedInToday": "You've checked in today!",
+    "currentStreak": "Current Streak: {{count}} days",
+    "dayStreak": "day streak",
     "quickBreathingExercise": {
       "name": "Deep Breathing",
       "duration": "5 min",
@@ -137,6 +140,15 @@
     "motivational": {
       "fallbackMessage": "Your wellness journey continues",
       "startingToday": "starting today"
+    },
+    "dailyCheckIn": {
+      "title": "Daily Check-in",
+      "subtitle": "Keep the momentum going!",
+      "dayStreak": "Day Streak",
+      "lastActivity": "Last activity",
+      "today": "Today",
+      "completeTask": "Complete Daily Task",
+      "streakUpdated": "Streak updated! Keep it up"
     },
     "values": {
       "title": "Your Values",
@@ -322,7 +334,9 @@
       "streak": "Streak",
       "insights": "Insights",
       "exercises": "Exercises",
-      "daysStreak": "7 days"
+      "daysStreak": "7 days",
+      "days": "{{count}} day",
+      "days_plural": "{{count}} days"
     },
     "fallbackName": "Friend",
     "welcomeMessage": "Welcome to WisdomWise",

@@ -90,17 +90,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         }
       }
     };
-    
+
     setupNavigationBar();
-    
-    // Cleanup when component unmounts
-    return () => {
-      if (Platform.OS === 'android') {
-        // Reset to system default (usually matches app theme)
-        NavigationBar.setBackgroundColorAsync(navigationBarConfigs.homeScreen.backgroundColor).catch(() => {});
-        NavigationBar.setButtonStyleAsync(navigationBarConfigs.homeScreen.style === 'light' ? 'dark' : 'light').catch(() => {});
-      }
-    };
+
+    // Note: Cleanup is handled in handleBackFromChat for immediate color change
   }, []);
 
   // Basic state

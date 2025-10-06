@@ -124,6 +124,15 @@
       "fallbackMessage": "Deine Wellnessreise geht weiter",
       "startingToday": "ab heute"
     },
+    "dailyCheckIn": {
+      "title": "Tägliches Check-in",
+      "subtitle": "Bleib am Ball!",
+      "dayStreak": "Tages-Serie",
+      "lastActivity": "Letzte Aktivität",
+      "today": "Heute",
+      "completeTask": "Tagesaufgabe abschließen",
+      "streakUpdated": "Serie aktualisiert! Weiter so"
+    },
     "values": {
       "title": "Deine Werte",
       "subtitle": "Was dir wichtig ist",

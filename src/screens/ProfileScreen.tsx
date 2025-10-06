@@ -19,6 +19,7 @@ import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
 import { useOnboardingControl } from '../components/AppContent';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
+import streakService from '../services/streakService';
 
 const ProfileScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -33,21 +34,25 @@ const ProfileScreen: React.FC = () => {
   const [showDataPrivacy, setShowDataPrivacy] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
 
   useEffect(() => {
-    const updateDisplayName = async () => {
+    const updateDisplayNameAndStreak = async () => {
       try {
         const name = await storageService.getDisplayNameWithPriority(user);
         setDisplayName(name);
+
+        const streak = await streakService.getStreak();
+        setCurrentStreak(streak);
       } catch (error) {
-        console.error('Error updating display name:', error);
+        console.error('Error updating display name or streak:', error);
         const fallbackName = profile
           ? `${profile.first_name} ${profile.last_name}`.trim() || 'Friend'
           : user?.email?.split('@')[0] || 'Friend';
         setDisplayName(fallbackName);
       }
     };
-    updateDisplayName();
+    updateDisplayNameAndStreak();
   }, [user, profile]);
 
   const handleSignOut = () => {
@@ -143,7 +148,7 @@ const ProfileScreen: React.FC = () => {
 
   const stats = [
     { label: t('profile.stats.sessions'), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
-    { label: t('profile.stats.streak'), value: t('profile.stats.daysStreak'), iconImage: require('../../assets/images/New Icons/icon-7.png') },
+    { label: t('profile.stats.streak'), value: t('profile.stats.days', { count: currentStreak }), iconImage: require('../../assets/images/New Icons/icon-7.png') },
     { label: t('profile.stats.insights'), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
     { label: t('profile.stats.exercises'), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
   ];
