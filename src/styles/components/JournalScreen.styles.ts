@@ -42,19 +42,19 @@ export const journalScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: spacing[2],
-    marginLeft: -spacing[16],
+    marginLeft: -spacing[8],
     marginTop: -spacing[12],
   },
   headerTurtleIcon: {
     width: 162,
     height: 162,
     marginRight: spacing[4],
-    marginTop: -spacing[8],
+    marginTop: -spacing[4],
   },
   titleAndSubtitleContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginLeft: -spacing[12],
+    marginLeft: -spacing[4],
     marginTop: spacing[20],
   },
   headerTitle: {

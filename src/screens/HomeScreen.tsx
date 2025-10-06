@@ -224,7 +224,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           {hasCheckedInToday ? (
             <View style={styles.checkedInMessageContainer}>
               <Text style={styles.checkedInMessageText}>{t('home.checkedInToday')}</Text>
-              <Text style={styles.currentStreakText}>{t('home.currentStreak', { count: currentStreak })}</Text>
+              <Text style={styles.currentStreakText}>{t('home.currentStreak', { count: currentStreak === 0 ? 1 : currentStreak })}</Text>
             </View>
           ) : (
             <Animated.View style={{ transform: [{ scale: buttonScale }] }}>

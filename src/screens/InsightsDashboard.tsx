@@ -518,11 +518,11 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                       style={styles.streakIconImage}
                       contentFit="contain"
                     />
-                    <Text style={styles.streakNumber}>{journeyData.streakDays}</Text>
+                    <Text style={styles.streakNumber}>{currentStreak === 0 ? 1 : currentStreak}</Text>
                   </View>
                 </View>
 
-                <Text style={styles.streakDayLabel}>{journeyData.streakDays} {t('insights.dailyCheckIn.dayStreak')}</Text>
+                <Text style={styles.streakDayLabel}>{currentStreak === 0 ? 1 : currentStreak} {t('insights.dailyCheckIn.dayStreak')}</Text>
                 <Text style={styles.lastActivityLabel}>{t('insights.dailyCheckIn.lastActivity') || 'Last activity'}: {t('insights.dailyCheckIn.today') || 'Today'}!</Text>
 
                 <TouchableOpacity
@@ -547,7 +547,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 <Text style={styles.streakUpdatedLabel}>{t('insights.dailyCheckIn.streakUpdated') || 'Streak updated! Keep it up'}</Text>
               </View>
             </LinearGradient>
-          </View></Animated.View>
+          </View>
 
           {/* --- NEW THOUGHTS SECTION (COMMENTED OUT) --- */}
           {/* {currentPattern && (
@@ -924,7 +924,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 <Text style={styles.statLabel}>{t('insights.journey.exercises')}</Text>
               </View>
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{journeyData.streakDays}</Text>
+                <Text style={styles.statValue}>{currentStreak === 0 ? 1 : currentStreak}</Text>
                 <Text style={styles.statLabel}>{t('insights.journey.dayStreak')}</Text>
               </View>
             </View>
