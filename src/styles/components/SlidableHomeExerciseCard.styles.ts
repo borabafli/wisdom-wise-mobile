@@ -17,7 +17,8 @@ export const slidableHomeExerciseCardStyles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    paddingLeft: spacing[8],
+    paddingLeft: spacing[12],
+    paddingBottom: spacing[4],
     zIndex: 0,
   },
   slideText: {

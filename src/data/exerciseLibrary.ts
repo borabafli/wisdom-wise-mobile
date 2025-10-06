@@ -491,31 +491,31 @@ export const getExerciseFlows = (t: (key: string) => string): Record<string, any
         title: 'Set the Scene',
         stepNumber: 1,
         description: 'Start with who you are today.',
-        instruction: "You are Anu, a calm, supportive guide. Ask the user to describe who they are today in 3â€“5 short sentences (age range, roles, where they live, what matters right now). Keep tone warm and neutral. Ask exactly one open question. Then wait. Do not analyze yet. If user seems unsure, offer 3 quick prompts as chips: ['work/study', 'relationships', 'health/wellbeing']."
+        instruction: "You are Anu, a calm, supportive guide. Ask the user to describe who they are today in 3ÔÇô5 short sentences (age range, roles, where they live, what matters right now). Keep tone warm and neutral. Ask exactly one open question. Then wait. Do not analyze yet. If user seems unsure, offer 3 quick prompts as chips: ['work/study', 'relationships', 'health/wellbeing']."
       },
       {
         title: 'Chapters & Turning Points',
         stepNumber: 2,
-        description: 'Name 3â€“5 life chapters and key moments.',
-        instruction: "Invite the user to split their life into 3â€“5 simple chapters with a title and a key turning point for each (e.g., 'Moving cities', 'First big job', 'A loss', 'New start'). Ask for bullet points. One request at a time. Keep it short and pressure-free. If helpful, suggest a template: 'Chapter title â€” turning point â€” how it changed me (1 line)'."
+        description: 'Name 3ÔÇô5 life chapters and key moments.',
+        instruction: "Invite the user to split their life into 3ÔÇô5 simple chapters with a title and a key turning point for each (e.g., 'Moving cities', 'First big job', 'A loss', 'New start'). Ask for bullet points. One request at a time. Keep it short and pressure-free. If helpful, suggest a template: 'Chapter title ÔÇö turning point ÔÇö how it changed me (1 line)'."
       },
       {
         title: 'Meanings & Beliefs',
         stepNumber: 3,
         description: 'What beliefs grew from those moments?',
-        instruction: "Ask the user to pick 1â€“2 turning points that still affect them and write the belief that formed (helpful or unhelpful). Then ask for evidence for and against each belief (1â€“2 bullets each). Use CBT tone: curious, non-judgmental. One belief at a time. Offer optional chips: ['evidence for', 'evidence against', 'how it helped', 'how it limited me']."
+        instruction: "Ask the user to pick 1ÔÇô2 turning points that still affect them and write the belief that formed (helpful or unhelpful). Then ask for evidence for and against each belief (1ÔÇô2 bullets each). Use CBT tone: curious, non-judgmental. One belief at a time. Offer optional chips: ['evidence for', 'evidence against', 'how it helped', 'how it limited me']."
       },
       {
         title: 'Reframe & Strengths',
         stepNumber: 4,
         description: 'Rewrite the belief and name strengths.',
-        instruction: "Guide a concise reframe for each chosen belief (1â€“2 sentences) using the user's own words and evidence. Then ask them to list 2â€“3 strengths shown in their story (e.g., persistence, kindness, courage, learning). Keep it practical and kind. If they struggle, offer a short menu of strengths to choose from."
+        instruction: "Guide a concise reframe for each chosen belief (1ÔÇô2 sentences) using the user's own words and evidence. Then ask them to list 2ÔÇô3 strengths shown in their story (e.g., persistence, kindness, courage, learning). Keep it practical and kind. If they struggle, offer a short menu of strengths to choose from."
       },
       {
         title: 'Next Chapter',
         stepNumber: 5,
         description: 'Choose a small action and a chapter title.',
-        instruction: "Ask the user to name a 7-day, small, doable action that fits their reframe (must be specific, time-bound, <15 minutes). Then ask them to title their 'next chapter' in 3â€“5 words, hopeful and concrete. End with a 2-sentence summary: new belief, strength highlights, and the next action. Offer to save as a note and set a reminder."
+        instruction: "Ask the user to name a 7-day, small, doable action that fits their reframe (must be specific, time-bound, <15 minutes). Then ask them to title their 'next chapter' in 3ÔÇô5 words, hopeful and concrete. End with a 2-sentence summary: new belief, strength highlights, and the next action. Offer to save as a note and set a reminder."
       }
     ]
   },

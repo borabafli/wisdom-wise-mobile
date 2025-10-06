@@ -209,54 +209,6 @@ export const homeScreenStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  checkedInMessageContainer: {
-    backgroundColor: '#D8E9E9', // A light, calming background
-    borderRadius: 12,
-    paddingVertical: spacing[8],
-    paddingHorizontal: spacing[16],
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    width: '90%', // Match checkInButton width
-    minHeight: 150, // Match checkInButton height
-    shadowColor: '#0388bb',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 7,
-    elevation: 5,
-    marginBottom: spacing[24],
-  },
-  checkedInMessageText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#2B475E',
-    fontFamily: 'IBMPlexSans-Medium',
-    textAlign: 'center',
-    marginBottom: spacing[4],
-  },
-  currentStreakText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#002d14',
-    fontFamily: 'IBMPlexSans-Bold',
-    textAlign: 'center',
-  },
-  streakDisplayContainer: {
-    position: 'absolute',
-    bottom: spacing[4],
-    right: spacing[4],
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 8,
-    paddingHorizontal: spacing[8],
-    paddingVertical: spacing[2],
-  },
-  streakDisplayText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#002d14',
-    fontFamily: 'IBMPlexSans-Medium',
-  },
-
   // Exercises Section
   exercisesSection: {
     paddingHorizontal: spacing.layout.screenPadding,

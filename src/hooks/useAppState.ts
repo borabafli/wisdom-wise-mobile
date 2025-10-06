@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Exercise, ButtonPosition } from '../types';
 import { navigationBarConfigs } from '../hooks/useNavigationBarStyle';
+import streakService from '../services/streakService';
 
 /**
  * Custom hook for managing app-level state
@@ -16,10 +17,30 @@ export const useAppState = () => {
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
   const [initialChatMessage, setInitialChatMessage] = useState<string | null>(null);
   const [buttonPosition, setButtonPosition] = useState<ButtonPosition | null>(null);
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [hasCheckedInToday, setHasCheckedInToday] = useState<boolean>(false);
 
-  const handleStartSession = useCallback((params: Exercise | ButtonPosition | null = null) => {
+  // Load initial streak and check-in status
+  useEffect(() => {
+    const loadStreakData = async () => {
+      const streak = await streakService.getStreak();
+      setCurrentStreak(streak);
+      const checkedIn = await streakService.hasCheckedInToday();
+      setHasCheckedInToday(checkedIn);
+    };
+    loadStreakData();
+  }, []);
+
+  const handleStartSession = useCallback(async (params: Exercise | ButtonPosition | null = null) => {
     console.log('=== START SESSION ===');
     console.log('Params passed to session:', params);
+
+    // Record check-in if not already done today
+    if (!hasCheckedInToday) {
+      const newStreak = await streakService.recordCheckIn();
+      setCurrentStreak(newStreak);
+      setHasCheckedInToday(true);
+    }
 
     // Check if params is a ButtonPosition (has x, y, width, height)
     if (params && 'x' in params && 'y' in params) {
@@ -33,7 +54,7 @@ export const useAppState = () => {
 
     setShowChat(true);
     console.log('Session state updated - should show chat');
-  }, []);
+  }, [hasCheckedInToday]);
 
   const handleNewSession = useCallback(() => {
     setShowChat(true);
@@ -96,6 +117,7 @@ export const useAppState = () => {
 
       // Special handling for breathing exercises
       if (exercise.type === 'breathing') {
+        console.log('DEBUG: Breathing exercise clicked:', exercise);
         setBreathingExercise(exercise);
         setShowBreathing(true);
         console.log('Opening dedicated breathing screen with exercise:', exercise.id);

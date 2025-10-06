@@ -60,9 +60,6 @@
     "viewInsights": "View\nInsights",
     "startBreathing": "Start\nBreathing",
     "realTimeAudioWaves": "Real-Time Audio Waves",
-    "checkedInToday": "You've checked in today!",
-    "currentStreak": "Current Streak: {{count}} days",
-    "dayStreak": "day streak",
     "quickBreathingExercise": {
       "name": "Deep Breathing",
       "duration": "5 min",
