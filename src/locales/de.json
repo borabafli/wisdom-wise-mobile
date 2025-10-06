@@ -113,6 +113,9 @@
     "goals": "Ziele",
     "memoryInsights": "Langzeit-Erkenntnisse",
     "longTermPatterns": "Langfristige Muster & Themen",
+    "deeperInsights": {
+      "title": "Tiefere Einsichten"
+    },
     "deleteConfirm": {
       "title": "Erkenntnis löschen?",
       "message": "Möchten Sie diese Erkenntnis wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."

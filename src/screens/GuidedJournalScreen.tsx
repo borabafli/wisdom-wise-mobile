@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, Modal, Keyboard } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Check, ArrowLeft, Mic, MicOff, Volume2, VolumeX, X } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -348,16 +348,18 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                 /* Recording Interface: X button - Wave with Timer - Check button */
                 <View style={styles.recordingInterfaceWithTimer}>
                   {/* Cancel Button (X) - Left side */}
-                  <TouchableOpacity
-                    onPress={cancelRecording}
-                    style={styles.recordingCancelButton}
-                    activeOpacity={0.7}
-                  >
-                    <X size={20} color="#ffffff" />
-                  </TouchableOpacity>
+                  <View style={styles.recordingButtonContainer}>
+                    <TouchableOpacity
+                      onPress={cancelRecording}
+                      style={styles.recordingCancelButton}
+                      activeOpacity={0.7}
+                    >
+                      <X size={20} color="#ffffff" />
+                    </TouchableOpacity>
+                  </View>
 
                   {/* Wave and Timer Container - Center */}
-                  <View style={styles.waveWithTimerInside}>
+                  <View style={styles.waveContainer}>
                     <RecordingWave
                       audioLevel={audioLevel}
                       isRecording={isRecording}
@@ -368,13 +370,15 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                   </View>
 
                   {/* Submit Button (Check) - Right side */}
-                  <TouchableOpacity
-                    onPress={stopRecording}
-                    style={styles.submitRecordingButton}
-                    activeOpacity={0.7}
-                  >
-                    <Check size={20} color="#ffffff" />
-                  </TouchableOpacity>
+                  <View style={styles.recordingButtonContainer}>
+                    <TouchableOpacity
+                      onPress={stopRecording}
+                      style={styles.submitRecordingButton}
+                      activeOpacity={0.7}
+                    >
+                      <Check size={20} color="#ffffff" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
 

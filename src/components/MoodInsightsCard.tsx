@@ -42,14 +42,17 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
   // Helper function to determine font size based on text length
   // Baseline: current balanced thought length (~80-120 chars) = 15px
-  const getDynamicFontSize = (text: string) => {
-    const length = text.length;
-    if (length <= 25) return 24;     // Very short text - even larger font
-    if (length <= 50) return 20;
-    if (length <= 80) return 17;     // Normal length - good readable size
-    if (length <= 120) return 16;    // Longer text - still readable
-    if (length <= 180) return 15;    // Long text - smaller but readable
-    return 14;                       // Very long text - minimum readable size
+  const getDynamicFontSize = (text: string, maxFontSize: number = 20, minFontSize: number = 14, containerWidth: number = Dimensions.get('window').width - 64) => {
+    const baseLength = 80; // Ideal length for maxFontSize
+    const scalingFactor = 0.002; // How aggressively to reduce font size
+
+    // Calculate a font size that scales down with length
+    let fontSize = maxFontSize - (Math.max(0, text.length - baseLength) * scalingFactor);
+
+    // Ensure font size is within min/max bounds
+    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
+
+    return fontSize;
   };
 
   // Get pattern name and explanation using translation keys (same as InsightsDashboard)
@@ -127,7 +130,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
 
           <ImageBackground
-            source={require('../../assets/images/red-box.png')}
+            source={require('../../assets/images/distorted-new-4.png')}
             style={{
               width: Dimensions.get('window').width - 32,
               aspectRatio: 1.2,
@@ -146,7 +149,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               alignItems: 'center',
               width: '78%',
               alignSelf: 'center',
-              marginTop: -25,
+              marginTop: -15,
+              marginLeft: 12, // Nudge text to the right
             }}>
               <Text style={{
                 fontSize: getDynamicFontSize(pattern.originalThought),
@@ -164,10 +168,10 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Arrow Overlay - Much bigger floating in background */}
             <View style={{
               position: 'absolute',
-              bottom: -95,
-              left: '15%',
+              bottom: -105,
+              left: '12%',
               transform: [{ translateX: -75 }],
-              zIndex: -1,
+              zIndex: 1,
               pointerEvents: 'none',
               opacity: 0.6,
             }}>
@@ -221,7 +225,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 marginBottom: 6,
                 fontFamily: 'Ubuntu-Medium',
               }}>
-                {getPatternName(pattern.distortionTypes[0]) || t('insights.thinkingPatterns.thoughtPattern')}
+                {pattern.distortionTypes && pattern.distortionTypes.length > 0 ? getPatternName(pattern.distortionTypes[0]) : t('insights.thinkingPatterns.thoughtPattern')}
               </Text>
               <Text style={{
                 fontSize: 13,
@@ -229,7 +233,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 lineHeight: 18,
                 fontFamily: 'Ubuntu-Light',
               }}>
-                {getDistortionExplanation(pattern.distortionTypes[0])}
+                {pattern.distortionTypes && pattern.distortionTypes.length > 0 ? getDistortionExplanation(pattern.distortionTypes[0]) : ''}
               </Text>
             </View>
         </View>
@@ -238,14 +242,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         <View style={{
           marginHorizontal: 16,
           marginBottom: 15,
-          marginTop: 10,
+          marginTop: 20,
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'visible',
         }}>
           {/* Balanced Thought Label - Above Picture */}
           <View style={{
-            marginBottom: 10,
+            marginBottom: 0,
             alignItems: 'center',
             width: '100%',
           }}>
@@ -261,13 +265,14 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
 
           <ImageBackground
-            source={require('../../assets/images/green-box-2.png')}
+            source={require('../../assets/images/balanced-new-4.png')}
             style={{
               width: Dimensions.get('window').width - 32,
               aspectRatio: 1.2,
               justifyContent: 'center',
               alignItems: 'center',
               alignSelf: 'center',
+              marginTop: -10, // Pull image up to reduce gap
             }}
             imageStyle={{ borderRadius: 8, opacity: 0.8 }}
             resizeMode="contain"
@@ -300,7 +305,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         {/* Reflect on This Button */}
         <View style={{
           marginHorizontal: 16,
-          marginTop: 8,
+          marginTop: -25,
           marginBottom: 20,
         }}>
           <View style={{
@@ -1091,7 +1096,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             justifyContent: 'center',
             alignItems: 'center',
             gap: 24,
-            marginTop: 8,
+            marginTop: -5,
             marginBottom: 12,
           }}>
             <TouchableOpacity

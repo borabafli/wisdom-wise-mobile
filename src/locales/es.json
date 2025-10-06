@@ -113,6 +113,9 @@
     "goals": "Objetivos",
     "memoryInsights": "Perspectivas a largo plazo",
     "longTermPatterns": "Patrones y temas a largo plazo",
+    "deeperInsights": {
+      "title": "Perspectivas más profundas"
+    },
     "deleteConfirm": {
       "title": "¿Eliminar perspectiva?",
       "message": "¿Está seguro de que desea eliminar esta perspectiva? Esta acción no se puede deshacer."

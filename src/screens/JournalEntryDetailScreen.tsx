@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { StatusBar } from 'expo-status-bar';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Trash2 } from 'lucide-react-native';
 import { JournalEntry } from '../services/journalStorageService';
+import JournalStorageService from '../services/journalStorageService';
 import { useTranslation } from 'react-i18next';
 
 interface JournalEntryDetailScreenProps {
@@ -35,6 +36,29 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const handleDeleteEntry = async () => {
+    Alert.alert(
+      t('journal.deleteEntry'),
+      t('journal.deleteEntryConfirm'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await JournalStorageService.deleteJournalEntry(entry.id);
+              navigation.goBack(); // Go back to the list after deletion
+            } catch (error) {
+              console.error('Error deleting entry:', error);
+              Alert.alert(t('common.error'), t('journal.failedToDelete'));
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -258,6 +282,33 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
             ))}
           </View>
         )}
+
+        {/* Delete Button */}
+        <TouchableOpacity
+          onPress={handleDeleteEntry}
+          style={{
+            backgroundColor: 'transparent',
+            borderRadius: 12,
+            paddingVertical: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 20,
+            flexDirection: 'row',
+            gap: 8,
+            borderWidth: 1,
+            borderColor: '#EF4444',
+          }}
+        >
+          <Trash2 size={20} color="#EF4444" />
+          <Text style={{
+            fontFamily: 'Ubuntu-Medium',
+            fontSize: 16,
+            color: '#EF4444',
+            fontWeight: '600',
+          }}>
+            {t('common.deleteEntry')}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaWrapper>
   );

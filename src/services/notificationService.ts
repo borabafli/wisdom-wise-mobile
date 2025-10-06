@@ -594,7 +594,7 @@ class NotificationService {
 
       if (date !== today) return false; // Different day, reset count
 
-      const maxPerDay = config.extraSupportEnabled ? 2 : 1;
+      const maxPerDay = config.extraSupportEnabled ? 3 : 1;
       return count >= maxPerDay;
     } catch (error) {
       console.error('Error checking notification limit:', error);

@@ -24,13 +24,13 @@ const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <ArrowLeft size={24} color="#002d14" />
         </TouchableOpacity>
-        <View style={styles.headerTitleContainer}>
+        <View style={styles.simplifiedHeaderContent}>
           <Image
-            source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-5.png')}
-            style={styles.headerTurtleIcon}
+            source={require('../../assets/images/New Icons/8.png')}
+            style={styles.simplifiedHeaderIcon}
             contentFit="contain"
           />
-          <Text style={styles.headerTitle}>Your Data & Privacy</Text>
+          <Text style={styles.simplifiedHeaderTitle}>Your Data & Privacy</Text>
         </View>
       </View>
 
@@ -41,37 +41,22 @@ const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
       >
         <View style={styles.contentContainer}>
 
-          {/* Main Content Card */}
-          <View style={styles.mainCard}>
-            <LinearGradient
-              colors={['rgba(255, 255, 255, 0.95)', 'rgba(249, 250, 251, 0.9)']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.cardGradient}
-            >
-              <View style={styles.iconHeader}>
-                <Shield size={32} color="#36657d" />
-              </View>
+          {/* Main Content Text */}
+          <Text style={styles.cardText}>
+            This is a private space. Your notes, exercises, moods, and insights are saved so Anu can guide you and so you can see your progress over time. We keep your data encrypted and we don't sell it. No one at our company can read your private entries unless you choose to share them.
+          </Text>
 
-              <Text style={styles.cardTitle}>About your data</Text>
+          <Text style={styles.cardText}>
+            When you chat, your message is sent securely to our AI service to generate a reply. We don't use your personal data to train AI models unless you say yes. Some features (like timers and local tools) run on your device; your journals and exercise history sync to our secure servers so you can use multiple devices.
+          </Text>
 
-              <Text style={styles.cardText}>
-                This is a private space. Your notes, exercises, moods, and insights are saved so Anu can guide you and so you can see your progress over time. We keep your data encrypted and we don't sell it. No one at our company can read your private entries unless you choose to share them.
-              </Text>
+          <Text style={styles.cardText}>
+            You're in control. You can turn off personalized suggestions, switch off anonymous analytics, or opt in/out of helping us improve the app with anonymized data. You can also edit, export, or delete your data at any time from this screen.
+          </Text>
 
-              <Text style={styles.cardText}>
-                When you chat, your message is sent securely to our AI service to generate a reply. We don't use your personal data to train AI models unless you say yes. Some features (like timers and local tools) run on your device; your journals and exercise history sync to our secure servers so you can use multiple devices.
-              </Text>
-
-              <Text style={styles.cardText}>
-                You're in control. You can turn off personalized suggestions, switch off anonymous analytics, or opt in/out of helping us improve the app with anonymized data. You can also edit, export, or delete your data at any time from this screen.
-              </Text>
-
-              <Text style={styles.cardText}>
-                If you ever have questions, write to us. We'll answer in plain language. Your wellbeing comes first, and your data stays yours.
-              </Text>
-            </LinearGradient>
-          </View>
+          <Text style={styles.cardText}>
+            If you ever have questions, write to us. We'll answer in plain language. Your wellbeing comes first, and your data stays yours.
+          </Text>
 
           {/* Privacy Features */}
           <View style={styles.featuresSection}>

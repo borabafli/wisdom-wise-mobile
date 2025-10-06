@@ -110,21 +110,25 @@ const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onProm
   );
 };
 
-const JournalEntryCard: React.FC<{
+interface JournalEntryCardProps {
   entry: JournalEntry;
   onPress: () => void;
   onDelete: () => void;
-}> = ({ entry, onPress, onDelete }) => {
+  entryNumber: number;
+}
+
+const JournalEntryCard: React.FC<JournalEntryCardProps> = ({ entry, onPress, onDelete, entryNumber }) => {
   const { t } = useTranslation();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+
+    if (date.getFullYear() !== now.getFullYear()) {
+      options.year = 'numeric';
+    }
+    return date.toLocaleDateString('en-US', options);
   };
 
   const truncateText = (text: string, maxLength: number = 100) => {
@@ -133,16 +137,23 @@ const JournalEntryCard: React.FC<{
 
   return (
     <TouchableOpacity style={styles.entryCard} onPress={onPress} activeOpacity={0.8}>
-      <View style={styles.entryCardHeader}>
-        <Text style={styles.entryDate}>{formatDate(entry.date)}</Text>
-        <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
-          <Trash2 size={16} color="#EF4444" />
-        </TouchableOpacity>
-      </View>
+      <View style={styles.cardContentWrapper}>
+        <Image
+          source={require('../../assets/images/journal-icon-1.png')}
+          style={styles.journalIcon}
+          contentFit="contain"
+        />
+        <View style={styles.mainTextContent}>
+          <View style={styles.entryCardHeader}>
+            <Text style={styles.entryNumber}>{entryNumber}.</Text>
+            <Text style={styles.entryDate}>{formatDate(entry.date)}</Text>
+          </View>
 
-      <Text style={styles.entryPrompt} numberOfLines={2}>
-        {entry.initialPrompt}
-      </Text>
+          <Text style={styles.entryPrompt} numberOfLines={2}>
+            {entry.initialPrompt}
+          </Text>
+        </View>
+      </View>
 
       <Text style={styles.entrySummary} numberOfLines={3}>
         {truncateText(entry.summary)}
@@ -151,9 +162,13 @@ const JournalEntryCard: React.FC<{
       {entry.insights.length > 0 && (
         <View style={styles.insightsPreview}>
           <Text style={styles.insightsLabel}>{t('journal.keyInsights')}</Text>
-          <Text style={styles.insightsText} numberOfLines={2}>
-            {entry.insights.join(' • ')}
-          </Text>
+          <View style={styles.insightsChipContainer}>
+            {entry.insights.map((insight, index) => (
+              <View key={index} style={styles.insightsChip}>
+                <Text style={styles.insightsChipText}>{insight}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       )}
 
@@ -234,11 +249,12 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
     );
   };
 
-  const renderEntryItem = ({ item }: { item: JournalEntry }) => (
+  const renderEntryItem = ({ item, index }: { item: JournalEntry; index: number }) => (
     <JournalEntryCard
       entry={item}
       onPress={() => handleEntryPress(item)}
       onDelete={() => handleDeleteEntry(item.id)}
+      entryNumber={journalEntries.length - index}
     />
   );
 

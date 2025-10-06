@@ -113,6 +113,9 @@
     "goals": "Hedefler",
     "memoryInsights": "Uzun Vadeli Görüşler",
     "longTermPatterns": "Uzun vadeli desenler ve temalar",
+    "deeperInsights": {
+      "title": "Daha Derin Görüşler"
+    },
     "deleteConfirm": {
       "title": "İçgörüyü sil?",
       "message": "Bu içgörüyü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."

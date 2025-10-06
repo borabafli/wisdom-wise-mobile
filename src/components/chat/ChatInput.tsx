@@ -241,20 +241,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   flex: 1,
                   flexDirection: 'row',
                   alignItems: 'center',
+                  justifyContent: 'space-between',
                   opacity: iconFade,
-                  gap: 12,
+                  paddingHorizontal: 4,
                 }}
               >
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                  <SimpleVolumeWaveform
-                    audioLevel={audioLevel}
-                    isRecording={isRecording}
-                    showTimer={true}
-                    width={180}
-                    height={40}
-                    barCount={24}
-                  />
-                </View>
+                <SimpleVolumeWaveform
+                  audioLevel={audioLevel}
+                  isRecording={isRecording}
+                  showTimer={true}
+                  width={200}
+                  height={40}
+                  barCount={24}
+                />
                 <View style={styles.recordingActions}>
                   <TouchableOpacity
                     onPress={onCancelRecording}

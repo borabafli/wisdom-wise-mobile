@@ -121,6 +121,7 @@ export const guidedJournalStyles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: spacing[20],
     paddingVertical: spacing[16],
     minHeight: 100,
@@ -161,52 +162,47 @@ export const guidedJournalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1,
-    paddingHorizontal: spacing[10],
-    paddingVertical: spacing[3],
-    minHeight: 72,
-    marginHorizontal: spacing[3],
-    gap: spacing[8],
+  },
+  recordingButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing[4],
+  },
+  waveContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: spacing[12],
   },
 
   recordingCancelButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    marginRight: spacing[4],
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(148, 163, 184, 0.9)',
-    shadowColor: 'rgba(15, 23, 42, 0.25)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 6,
-    elevation: 5,
+    zIndex: 30,
+    marginLeft: -spacing[8],
   },
 
   waveWithTimerInside: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    paddingBottom: spacing[1],
-    paddingHorizontal: spacing[6],
+    height: '100%',
+    paddingHorizontal: spacing[8],
   },
 
   submitRecordingButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignSelf: 'center',
-    marginLeft: spacing[4],
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2B475E',
-    shadowColor: 'rgba(15, 23, 42, 0.25)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 6,
-    elevation: 5,
-    alignSelf: 'center',
+    zIndex: 30,
+    marginRight: -spacing[8],
   },
 
   previousEntriesContainer: {
@@ -334,7 +330,7 @@ export const guidedJournalStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // Save Modal Styles
+  // Save Modal Styles - Compact version matching app button styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -346,9 +342,9 @@ export const guidedJournalStyles = StyleSheet.create({
   saveModal: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: spacing[24],
+    padding: spacing[20],
     width: '100%',
-    maxWidth: 300,
+    maxWidth: 320,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -359,25 +355,31 @@ export const guidedJournalStyles = StyleSheet.create({
 
   saveModalTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
-    color: '#374151',
-    marginBottom: spacing[24],
+    color: '#2B475E',
+    marginBottom: spacing[20],
     textAlign: 'center',
   },
 
   saveModalButton: {
-    backgroundColor: '#065F46',
-    paddingVertical: spacing[12],
-    paddingHorizontal: spacing[24],
-    borderRadius: 12,
+    backgroundColor: '#36657D',
+    height: 48,
+    paddingHorizontal: spacing[20],
+    borderRadius: 16,
     width: '100%',
-    marginBottom: spacing[12],
+    marginBottom: spacing[10],
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
   dontSaveButton: {
-    backgroundColor: '#DC2626',
+    backgroundColor: '#d28686',
   },
 
   saveModalButtonText: {
@@ -394,7 +396,7 @@ export const guidedJournalStyles = StyleSheet.create({
   cancelButton: {
     paddingVertical: spacing[8],
     paddingHorizontal: spacing[16],
-    marginTop: spacing[8],
+    marginTop: spacing[6],
   },
 
   cancelButtonText: {

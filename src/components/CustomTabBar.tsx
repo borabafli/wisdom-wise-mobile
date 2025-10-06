@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { View, TouchableOpacity, Text, Platform, Image, Animated, Easing, PanResponder } from 'react-native';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { View, TouchableOpacity, Text, Platform, Image, Animated, Easing, PanResponder, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
@@ -30,7 +30,24 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const { t } = useTranslation();
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [circleAnimations, setCircleAnimations] = useState<{[key: string]: Animated.Value}>({});
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const insets = useSafeAreaInsets();
+
+  // Listen to keyboard events to hide tab bar when keyboard is visible
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setIsKeyboardVisible(true);
+    });
+
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setIsKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   
   // Simple single circle animation effect
   const createCircleEffect = useCallback((tabIndex: number) => {
@@ -176,6 +193,11 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     return null;
   }
 
+  // Hide tab bar when keyboard is visible
+  if (isKeyboardVisible) {
+    return null;
+  }
+
   return (
     <>
 
@@ -216,36 +238,61 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                   {Object.entries(circleAnimations).map(([key, anim]) => {
                     if (!key.startsWith(`${index}-`) || !anim) return null;
                     return (
-                      <Animated.View
-                        key={key}
-                        style={[
-                          styles.tabCircle1, // Use the first circle style
-                          {
-                            opacity: anim.interpolate({
-                              inputRange: [0, 0.5, 1],
-                              outputRange: [0.8, 0.4, 0],
-                            }),
+                      <React.Fragment key={key}>
+                        {/* Background circle */}
+                        <Animated.View
+                          style={[
+                            styles.tabCircle1,
+                            {
+                              opacity: anim.interpolate({
+                                inputRange: [0, 0.3, 0.6, 1],
+                                outputRange: [0.9, 0.6, 0.3, 0],
+                              }),
+                              transform: [
+                                {
+                                  scale: anim.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.6, 1.1], // Smaller expansion - stays within tab bounds
+                                  })
+                                }
+                              ],
+                            }
+                          ]}
+                        />
+                        {/* Icon scale animation */}
+                        <Animated.View
+                          style={{
+                            zIndex: 10,
                             transform: [
                               {
                                 scale: anim.interpolate({
-                                  inputRange: [0, 1],
-                                  outputRange: [0.85, 1],
+                                  inputRange: [0, 0.2, 0.4, 1],
+                                  outputRange: [1, 1.15, 1.1, 1], // Slight bounce effect
                                 })
                               }
                             ],
-                          }
-                        ]}
-                      />
+                          }}
+                        >
+                          <TabIcon
+                            selectedIcon={tab.selectedIcon}
+                            unselectedIcon={tab.unselectedIcon}
+                            isFocused={isFocused}
+                          />
+                        </Animated.View>
+                      </React.Fragment>
                     );
                   })}
 
-                  <View style={{ zIndex: 10 }}>
-                    <TabIcon
-                      selectedIcon={tab.selectedIcon}
-                      unselectedIcon={tab.unselectedIcon}
-                      isFocused={isFocused}
-                    />
-                  </View>
+                  {/* Static icon when no animation */}
+                  {!Object.keys(circleAnimations).some(key => key.startsWith(`${index}-`)) && (
+                    <View style={{ zIndex: 10 }}>
+                      <TabIcon
+                        selectedIcon={tab.selectedIcon}
+                        unselectedIcon={tab.unselectedIcon}
+                        isFocused={isFocused}
+                      />
+                    </View>
+                  )}
                   <Text
                     style={[
                       styles.tabLabel,

@@ -11,7 +11,7 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: '90%',
+    flex: 1, // Reverted to flex: 1
     ...shadows.large,
   },
   header: {
@@ -38,6 +38,7 @@ export const notificationSettingsModalStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    // Removed temporary debugging background
   },
   loadingText: {
     ...typography.body.medium,
@@ -83,7 +84,8 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     marginBottom: spacing['3'],
   },
   sectionTitle: {
-    ...typography.heading.h4,
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.text.primary,
   },
   sectionDescription: {
@@ -104,6 +106,7 @@ export const notificationSettingsModalStyles = StyleSheet.create({
   settingLabel: {
     ...typography.body.medium,
     color: colors.text.primary,
+    fontWeight: '600',
     marginBottom: spacing['1'],
   },
   settingDescription: {
@@ -128,14 +131,65 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   saveButton: {
-    backgroundColor: '#0f766e',
-    paddingVertical: spacing['4'],
+    backgroundColor: '#36657D',
+    paddingVertical: spacing['5'],
     borderRadius: 12,
     alignItems: 'center',
     ...shadows.small,
   },
   saveButtonText: {
+    fontFamily: 'Ubuntu-Medium',
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+
+  timeDisplay: {
+    ...typography.body.medium,
+    color: '#36657D',
+    fontWeight: typography.fontWeight.semibold,
+  },
+
+  timePickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  timePickerContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: spacing[4],
+    padding: spacing[5],
+    width: '85%',
+    alignItems: 'center',
+    ...shadows.medium,
+  },
+  timePickerTitle: {
+    ...typography.heading.h4,
+    color: colors.text.primary,
+    marginBottom: spacing[4],
+  },
+  timePickerActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: spacing[5],
+    gap: spacing[3],
+  },
+  timePickerButton: {
+    flex: 1,
+    paddingVertical: spacing[3],
+    borderRadius: spacing[3],
+    alignItems: 'center',
+    backgroundColor: colors.gray[200],
+  },
+  timePickerButtonText: {
     ...typography.body.mediumBold,
+    color: colors.text.secondary,
+  },
+  timePickerSaveButton: {
+    backgroundColor: '#36657D',
+  },
+  timePickerSaveButtonText: {
     color: '#ffffff',
   },
 });

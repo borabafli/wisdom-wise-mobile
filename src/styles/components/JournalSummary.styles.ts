@@ -38,30 +38,25 @@ export const journalSummaryStyles = StyleSheet.create({
 
   scrollView: {
     flex: 1,
-    paddingHorizontal: spacing[12],
+    paddingHorizontal: spacing[16],
   },
 
   summaryCard: {
-    marginVertical: spacing[16],
+    marginTop: spacing[4],
+    marginBottom: spacing[12],
     borderRadius: 20,
-    padding: spacing[16],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: '#2B475E',
+    padding: spacing[12],
+    backgroundColor: 'transparent',
   },
 
   summaryHeader: {
     alignItems: 'center',
-    marginBottom: spacing[12],
+    marginBottom: spacing[8],
   },
 
   summaryTitle: {
     fontFamily: 'Ubuntu-Bold',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#2B475E',
     textAlign: 'center',
@@ -69,68 +64,68 @@ export const journalSummaryStyles = StyleSheet.create({
 
   summaryText: {
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 15,
+    lineHeight: 22,
     color: '#2B475E',
     textAlign: 'left',
-    marginBottom: spacing[12],
+    marginBottom: spacing[6],
   },
 
   insightsContainer: {
-    marginTop: spacing[12],
-    paddingTop: spacing[12],
+    marginTop: spacing[8],
+    paddingTop: spacing[8],
     borderTopWidth: 1,
     borderTopColor: 'rgba(43, 71, 94, 0.3)',
   },
 
   insightsTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: '#2B475E',
-    marginBottom: spacing[8],
+    marginBottom: spacing[6],
   },
 
   insightItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: spacing[8],
+    marginBottom: spacing[6],
   },
 
   insightBullet: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
     backgroundColor: '#2B475E',
-    marginTop: 8,
-    marginRight: spacing[12],
+    marginTop: 7,
+    marginRight: spacing[10],
   },
 
   insightText: {
     flex: 1,
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 18,
     color: '#2B475E',
     fontStyle: 'italic',
   },
 
   saveOptionsContainer: {
-    paddingVertical: spacing[12],
+    paddingVertical: spacing[8],
   },
 
   saveOptionsTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#2B475E',
     textAlign: 'center',
-    marginBottom: spacing[16],
+    marginBottom: spacing[12],
   },
 
   saveButtonContainer: {
     borderRadius: 16,
-    marginBottom: spacing[12],
+    marginBottom: spacing[10],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -142,7 +137,7 @@ export const journalSummaryStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing[12],
+    height: 48,
     paddingHorizontal: spacing[16],
     borderRadius: 16,
     gap: spacing[6],
@@ -157,7 +152,7 @@ export const journalSummaryStyles = StyleSheet.create({
 
   saveAndPolishButtonContainer: {
     borderRadius: 16,
-    marginBottom: spacing[8],
+    marginBottom: spacing[6],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -169,7 +164,7 @@ export const journalSummaryStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing[12],
+    height: 48,
     paddingHorizontal: spacing[16],
     borderRadius: 16,
     gap: spacing[6],
@@ -184,12 +179,12 @@ export const journalSummaryStyles = StyleSheet.create({
 
   polishDescription: {
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 12,
+    fontSize: 11,
     color: 'rgba(43, 71, 94, 0.8)',
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 15,
     fontStyle: 'italic',
     paddingHorizontal: spacing[8],
-    marginTop: spacing[4],
+    marginTop: spacing[2],
   },
 });

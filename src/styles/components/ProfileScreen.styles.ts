@@ -39,7 +39,7 @@ export const profileScreenStyles = StyleSheet.create({
   // Header Styles - Match Insights
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[16],
+    paddingTop: spacing[8],
     paddingBottom: spacing[4],
   },
   headerContent: {
@@ -50,6 +50,7 @@ export const profileScreenStyles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: spacing[2],
     paddingRight: spacing[8],
+    marginLeft: -spacing[8],
   },
   headerTurtleIcon: {
     width: 162,
@@ -61,7 +62,7 @@ export const profileScreenStyles = StyleSheet.create({
   titleAndSubtitleContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginTop: spacing[20],
+    marginTop: spacing[12],
     flex: 1,
   },
   headerTitle: {
@@ -172,22 +173,39 @@ export const profileScreenStyles = StyleSheet.create({
   },
   userInfoContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: spacing.components.cardGap,
   },
   avatarContainer: {
     flexShrink: 0,
   },
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: spacing.radius.lg,
+    width: 72,
+    height: 72,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(43, 71, 94, 0.12)',
+    padding: spacing[4],
+    ...shadows.sm,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 18,
   },
   userDetails: {
     flex: 1,
+    paddingRight: spacing[4],
+  },
+  userEditButton: {
+    padding: spacing[3],
+    borderRadius: 16,
+    backgroundColor: 'rgba(43, 71, 94, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   userName: {
     fontSize: 20,
@@ -441,3 +459,5 @@ export const profileScreenStyles = StyleSheet.create({
     color: colors.text.secondary,
   },
 });
+
+

@@ -52,6 +52,24 @@ export const dataPrivacyStyles = StyleSheet.create({
     letterSpacing: -0.5,
   },
 
+  simplifiedHeaderContent: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: spacing[4],
+    flex: 1,
+  },
+  simplifiedHeaderTitle: {
+    fontSize: 24,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#2B475E',
+    textAlign: 'center',
+  },
+  simplifiedHeaderIcon: {
+    width: 48,
+    height: 48,
+    marginBottom: spacing[2],
+  },
+
   // Scroll View
   scrollView: {
     flex: 1,
@@ -65,30 +83,7 @@ export const dataPrivacyStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding,
   },
 
-  // Main Card
-  mainCard: {
-    marginBottom: spacing[24],
-    borderRadius: 20,
-    overflow: 'hidden',
-    ...shadows.md,
-  },
 
-  cardGradient: {
-    padding: spacing[24],
-  },
-
-  iconHeader: {
-    alignItems: 'center',
-    marginBottom: spacing[16],
-  },
-
-  cardTitle: {
-    fontSize: 20,
-    fontFamily: 'Ubuntu-Bold',
-    color: '#1F2937',
-    marginBottom: spacing[16],
-    textAlign: 'center',
-  },
 
   cardText: {
     fontSize: 16,

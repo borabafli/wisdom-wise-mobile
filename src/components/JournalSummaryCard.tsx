@@ -40,7 +40,7 @@ const JournalSummaryCard: React.FC<JournalSummaryCardProps> = ({
         <StatusBar style="dark" backgroundColor="transparent" translucent />
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Journal Summary</Text>
+          <Text style={styles.headerTitle}>Your Reflection</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <X size={24} color="#2B475E" />
           </TouchableOpacity>
@@ -48,16 +48,7 @@ const JournalSummaryCard: React.FC<JournalSummaryCardProps> = ({
 
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* Summary Card */}
-          <LinearGradient
-            colors={['rgba(255, 255, 255, 0.9)', 'rgba(246, 243, 239, 0.9)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.summaryCard}
-          >
-            <View style={styles.summaryHeader}>
-              <Text style={styles.summaryTitle}>Your Reflection</Text>
-            </View>
-
+          <View style={styles.summaryCard}>
             <Text style={styles.summaryText}>{summary}</Text>
 
             {insights.length > 0 && (
@@ -71,7 +62,7 @@ const JournalSummaryCard: React.FC<JournalSummaryCardProps> = ({
                 ))}
               </View>
             )}
-          </LinearGradient>
+          </View>
 
           {/* Save Options */}
           <View style={styles.saveOptionsContainer}>

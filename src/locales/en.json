@@ -127,6 +127,9 @@
     "goals": "Goals",
     "memoryInsights": "Memory Insights",
     "longTermPatterns": "Long-term patterns & themes",
+    "deeperInsights": {
+      "title": "Deeper Insights"
+    },
     "deleteConfirm": {
       "title": "Delete Insight?",
       "message": "Are you sure you want to delete this insight? This action cannot be undone."
@@ -334,7 +337,8 @@
       "privacy": "Privacy & Security",
       "darkMode": "Dark Mode",
       "help": "Help & Support",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "language": "Language"
     },
     "menuSubtitles": {
       "editProfile": "Update your information",
@@ -346,6 +350,7 @@
       "darkMode": "Toggle dark theme",
       "help": "Get assistance",
       "signOut": "Leave your account",
+      "language": "Change the app language",
       "default": "Tap to access"
     },
     "restartOnboarding": {

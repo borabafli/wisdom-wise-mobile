@@ -113,6 +113,9 @@
     "goals": "Objetivos",
     "memoryInsights": "Perspectivas de Longo Prazo",
     "longTermPatterns": "Padrões e temas de longo prazo",
+    "deeperInsights": {
+      "title": "Perspectivas Mais Profundas"
+    },
     "deleteConfirm": {
       "title": "Excluir insight?",
       "message": "Tem certeza de que deseja excluir este insight? Esta ação não pode ser desfeita."

@@ -454,9 +454,11 @@ class StorageService {
   async getRecentThoughtPatterns(limit: number = 10): Promise<ThoughtPattern[]> {
     try {
       const patterns = await this.getThoughtPatterns();
-      return patterns
+      const recentPatterns = patterns
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         .slice(0, limit);
+      console.log('[StorageService] getRecentThoughtPatterns returning:', recentPatterns.length, recentPatterns);
+      return recentPatterns;
     } catch (error) {
       console.error('Error loading recent patterns:', error);
       return [];

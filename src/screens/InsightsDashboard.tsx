@@ -28,13 +28,15 @@ import { insightsDashboardStyles as styles } from '../styles/components/Insights
 import { ValuesReflectButton } from '../components/ReflectButton';
 import { generateSampleMoodData } from '../utils/sampleMoodData';
 import { generateSampleValuesData } from '../utils/sampleValuesData';
+import { getTopExercises, ExerciseProgress } from '../utils/exercisePriority';
 
 interface InsightsDashboardProps {
   onInsightClick: (type: string, insight?: any) => void;
   onTherapyGoalsClick?: () => void;
+  onExerciseClick?: (exercise?: any) => void;
 }
 
-const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, onTherapyGoalsClick }) => {
+const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, onTherapyGoalsClick, onExerciseClick }) => {
   const { t } = useTranslation();
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.insightsDashboard);
 
@@ -64,6 +66,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     stats: Array<{ value: string; label: string }>;
     data: MotivationalData;
   } | null>(null);
+  const [nextExercise, setNextExercise] = useState<any>(null);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
@@ -85,6 +88,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     try {
       setIsLoading(true);
       const recentPatterns = await insightService.getRecentPatterns(10);
+      console.log('[InsightsDashboard] Loaded thinking patterns:', recentPatterns.length, recentPatterns);
       setThinkingPatterns(recentPatterns);
 
       const reflectionSummaries = await thinkingPatternsService.getRecentReflections(10);
@@ -110,6 +114,13 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
 
       const motivationalData = await motivationalCardService.getCompleteMotivationalCard();
       setMotivationalCard(motivationalData);
+
+      // Get the first scheduled exercise
+      const exerciseProgress: ExerciseProgress = {};
+      const topExercises = getTopExercises(exerciseProgress, [], t);
+      if (topExercises.length > 0) {
+        setNextExercise(topExercises[0]);
+      }
     } catch (error) {
       console.error('[InsightsDashboard] Error loading insight data:', error);
       setThinkingPatterns([]);
@@ -119,6 +130,88 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
       setActiveGoals([]);
       setMemoryStats({ totalInsights: 0, sessionSummaries: 0, consolidatedSummaries: 0 });
       setMotivationalCard(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGenerateDummyInsights = async () => {
+    try {
+      setIsLoading(true);
+      const dummyPatterns: ThoughtPattern[] = [
+        {
+          id: `dummy_${Date.now()}_1`,
+          originalThought: 'I completely failed my presentation, everyone must think I\'m an idiot.',
+          reframedThought: 'I wasn\'t as prepared as I wanted, but I got through it. It\'s a learning experience.',
+          distortionTypes: ['All-or-Nothing Thinking', 'Mind Reading'],
+          confidence: 0.9,
+          timestamp: new Date().toISOString(),
+          context: 'Work presentation',
+          extractedFrom: { sessionId: 'dummy_session', messageId: 'dummy_message_1' },
+        },
+        {
+          id: `dummy_${Date.now()}_2`,
+          originalThought: 'I haven\'t heard back about the job, so I\'m definitely not going to get it. I\'m a failure.',
+          reframedThought: 'The hiring process takes time. I will follow up next week and continue exploring other opportunities.',
+          distortionTypes: ['Catastrophizing', 'Labeling'],
+          confidence: 0.88,
+          timestamp: new Date().toISOString(),
+          context: 'Job application',
+          extractedFrom: { sessionId: 'dummy_session', messageId: 'dummy_message_2' },
+        },
+      ];
+
+      await storageService.saveSessionInsights('dummy_session', dummyPatterns);
+
+      await loadInsightData();
+      Alert.alert('Success', 'Dummy thought patterns have been generated.');
+    } catch (error) {
+      console.error('Error generating dummy patterns:', error);
+      Alert.alert('Error', 'Could not generate dummy patterns.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGenerateDummyMemoryInsights = async () => {
+    try {
+      setIsLoading(true);
+      const dummyMemoryInsights: Insight[] = [
+        {
+          id: `mem_dummy_${Date.now()}_1`,
+          category: 'automatic_thoughts',
+          content: 'Frequently engages in all-or-nothing thinking, especially regarding personal achievements.',
+          date: new Date().toISOString(),
+          sourceMessageIds: ['dummy_msg_1', 'dummy_msg_2'],
+          confidence: 0.95,
+        },
+        {
+          id: `mem_dummy_${Date.now()}_2`,
+          category: 'emotions',
+          content: 'Experiences heightened anxiety in social situations, often leading to avoidance behaviors.',
+          date: new Date().toISOString(),
+          sourceMessageIds: ['dummy_msg_3', 'dummy_msg_4'],
+          confidence: 0.88,
+        },
+        {
+          id: `mem_dummy_${Date.now()}_3`,
+          category: 'values_goals',
+          content: 'Places a high value on personal growth and continuous learning, seeking new challenges.',
+          date: new Date().toISOString(),
+          sourceMessageIds: ['dummy_msg_5', 'dummy_msg_6'],
+          confidence: 0.92,
+        },
+      ];
+
+      for (const insight of dummyMemoryInsights) {
+        await memoryService.saveInsight(insight);
+      }
+
+      await loadInsightData();
+      Alert.alert('Success', 'Dummy memory insights have been generated.');
+    } catch (error) {
+      console.error('Error generating dummy memory insights:', error);
+      Alert.alert('Error', 'Could not generate dummy memory insights.');
     } finally {
       setIsLoading(false);
     }
@@ -292,6 +385,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   ];
 
   const displayPatterns = thinkingPatterns.length > 0 ? thinkingPatterns : mockPatterns;
+  console.log('[InsightsDashboard] Display patterns:', displayPatterns.length, displayPatterns);
 
   const handlePatternSwipeLeft = () => {
     if (currentPatternIndex < displayPatterns.length - 1) {
@@ -318,13 +412,17 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   };
 
   // Helper functions for new UI
-  const getDynamicFontSize = (text: string) => {
-    const length = text.length;
-    if (length <= 25) return 18;
-    if (length <= 50) return 16;
-    if (length <= 80) return 14;
-    if (length <= 120) return 13;
-    return 12;
+  const getDynamicFontSize = (text: string, maxFontSize: number = 18, minFontSize: number = 12, containerWidth: number = Dimensions.get('window').width / 2 - 32) => {
+    const baseLength = 50; // Ideal length for maxFontSize
+    const scalingFactor = 0.005; // How aggressively to reduce font size
+
+    // Calculate a font size that scales down with length
+    let fontSize = maxFontSize - (Math.max(0, text.length - baseLength) * scalingFactor);
+
+    // Ensure font size is within min/max bounds
+    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
+
+    return fontSize;
   };
 
   const getPatternName = (patternType: string): string => {
@@ -366,6 +464,14 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   };
 
   const currentPattern = displayPatterns[currentPatternIndex];
+  const memoryInsightCategories = [
+    'Automatic Thoughts',
+    'Emotional Patterns',
+    'Behavioral Patterns',
+    'Values & Goals',
+    'Personal Strengths',
+    'Life Context'
+  ];
 
   return (
     <SafeAreaWrapper style={styles.container}>
@@ -396,49 +502,59 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
         </View>
 
         <View style={styles.contentContainer}>
-          {/* Motivational Card */}
+          {/* Motivational Card - Daily Check-in */}
           <Animated.View style={[styles.motivationalCard, { opacity: motivationalCard ? fadeAnim : 0.3, transform: [{ scale: motivationalCard ? scaleAnim : 0.95 }] }]}>
             <LinearGradient
-              colors={['rgba(255, 255, 255, 1)', 'rgba(249, 250, 251, 1)', 'rgba(243, 244, 246, 1)']}
+              colors={['#FDFEFF', '#F9FCFA', '#F5FAF7']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.motivationalGradient}
             >
               <View style={styles.motivationalContent}>
-                <View style={styles.motivationalText}>
-                  <Text style={styles.motivationalTitle}>
-                    {`${motivationalCard?.message?.emoji ? `${motivationalCard.message.emoji} ` : ''}${motivationalCard?.message?.text || t('insights.motivational.fallbackMessage')}`}
+                <Text style={styles.dailyCheckInTitle}>{t('insights.dailyCheckIn.title') || 'Daily Check-in'}</Text>
+                <Text style={styles.dailyCheckInSubtitle}>{t('insights.dailyCheckIn.subtitle') || 'Keep the momentum going!'}</Text>
+
+                <View style={styles.streakContainer}>
+                  <View style={styles.streakIconContainer}>
+                    <Image
+                      source={require('../../assets/images/streak-icon.png')}
+                      style={styles.streakIconImage}
+                      contentFit="contain"
+                    />
+                    <Text style={styles.streakNumber}>{journeyData.streakDays}</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.streakDayLabel}>{journeyData.streakDays} Day Streak</Text>
+                <Text style={styles.lastActivityLabel}>{t('insights.dailyCheckIn.lastActivity') || 'Last activity'}: {t('insights.dailyCheckIn.today') || 'Today'}!</Text>
+
+                <TouchableOpacity
+                  style={styles.completeDailyTaskButton}
+                  onPress={() => {
+                    console.log('[InsightsDashboard] Complete Daily Task button pressed');
+                    console.log('[InsightsDashboard] Next exercise:', nextExercise);
+                    if (nextExercise && onExerciseClick) {
+                      console.log('[InsightsDashboard] Calling onExerciseClick with:', nextExercise);
+                      onExerciseClick(nextExercise);
+                    } else {
+                      console.log('[InsightsDashboard] No exercise or onExerciseClick not available');
+                    }
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.completeDailyTaskButtonText}>
+                    {t('insights.dailyCheckIn.completeTask') || 'Complete Daily Task'}
                   </Text>
-                </View>
-                <View style={styles.motivationalStats}>
-                  {motivationalCard?.stats && motivationalCard.stats.length > 0 ? (
-                    motivationalCard.stats.map((stat, index) => (
-                      <View key={index} style={styles.motivationalStat}>
-                        <Text style={[
-                          styles.motivationalNumber,
-                          motivationalCard?.message?.category === 'vision' && styles.motivationalNumberVision,
-                          motivationalCard?.message?.category === 'achievement' && styles.motivationalNumberAchievement
-                        ]}>
-                          {stat?.value || '0'}
-                        </Text>
-                        <Text style={styles.motivationalLabel}>{stat?.label || 'metric'}</Text>
-                      </View>
-                    ))
-                  ) : (
-                    <View style={styles.motivationalStat}>
-                      <Text style={styles.motivationalNumber}>1</Text>
-                      <Text style={styles.motivationalLabel}>{t('insights.motivational.startingToday')}</Text>
-                    </View>
-                  )}
-                </View>
+                </TouchableOpacity>
+
+                <Text style={styles.streakUpdatedLabel}>{t('insights.dailyCheckIn.streakUpdated') || 'Streak updated! Keep it up'}</Text>
               </View>
             </LinearGradient>
           </Animated.View>
 
-          {/* --- NEW THOUGHTS SECTION --- */}
-          {currentPattern && (
+          {/* --- NEW THOUGHTS SECTION (COMMENTED OUT) --- */}
+          {/* {currentPattern && (
             <View style={{ marginBottom: 20 }}>
-              {/* Header for Your Thought Patterns */}
               <View style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -469,9 +585,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 </View>
               </View>
 
-              {/* Side-by-side thoughts */}
               <View style={{ flexDirection: 'row', marginHorizontal: -16 }}>
-                {/* Distorted Thought */}
                 <ImageBackground 
                                     source={require('../../assets/images/distorted-new-1.png')}
                                     style={{ width: Dimensions.get('window').width / 2, aspectRatio: 1, justifyContent: 'center', alignItems: 'center' }}
@@ -489,7 +603,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                   </Text>
                 </ImageBackground>
 
-                {/* Balanced Thought */}
                 <ImageBackground 
                   source={require('../../assets/images/balanced-new-1.png')} 
                   style={{ width: Dimensions.get('window').width / 2, aspectRatio: 1, justifyContent: 'center', alignItems: 'center' }}
@@ -509,7 +622,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 </ImageBackground>
               </View>
 
-              {/* Explanation Box */}
               <View style={{
                 marginHorizontal: 16,
                 marginTop: 20,
@@ -559,7 +671,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                   </View>
               </View>
             </View>
-          )}
+          )} */}
 
           <MoodInsightsCard
             onInsightPress={(type, data) => onInsightClick(type, data)}
@@ -639,7 +751,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 <Image source={require('../../assets/images/New Icons/icon-7.png')} style={{ width: 60, height: 60 }} contentFit="contain" />
               </View>
               <View style={styles.patternsTitleContainer}>
-                <Text style={styles.patternsTitle}>{t('insights.memoryInsights') || 'Memory Insights'}</Text>
+                <Text style={styles.patternsTitle}>{t('insights.deeperInsights.title') || 'Deeper Insights'}</Text>
                 <Text style={styles.patternsSubtitle}>{t('insights.longTermPatterns') || 'Long-term patterns'}</Text>
               </View>
               <View style={styles.patternArrow}>
@@ -647,72 +759,80 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               </View>
             </TouchableOpacity>
 
-            {memoryInsightsSectionExpanded && memoryInsights.length > 0 && (
-              <View style={styles.patternsContainer}>
-                {memoryInsights.map((insight) => {
-                  const isExpanded = expandedMemoryInsights.has(insight.id);
-                  const previewText = generateInsightPreview(insight);
-                  const categoryName = getCategoryDisplayName(insight.category);
+            {memoryInsightsSectionExpanded && (
+              memoryInsights.length > 0 ? (
+                <View style={styles.patternsContainer}>
+                  {memoryInsights.map((insight) => {
+                    const isExpanded = expandedMemoryInsights.has(insight.id);
+                    const previewText = generateInsightPreview(insight);
+                    const categoryName = getCategoryDisplayName(insight.category);
 
-                  return (
-                    <TouchableOpacity key={insight.id} onPress={() => toggleMemoryInsightExpansion(insight.id)} style={styles.patternCard} activeOpacity={0.9}>
-                      <View style={styles.patternContent}>
-                        <View style={styles.patternContentLeft}>
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <Text style={styles.patternName}>{categoryName}</Text>
-                            <TouchableOpacity
-                              onPress={(e) => {
-                                e.stopPropagation();
-                                handleDeleteInsight(insight.id);
-                              }}
-                              style={{ padding: 4, marginLeft: 8 }}
-                              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                            >
-                              <Trash2 size={14} color="#d97706" opacity={0.6} />
-                            </TouchableOpacity>
+                    return (
+                      <TouchableOpacity key={insight.id} onPress={() => toggleMemoryInsightExpansion(insight.id)} style={styles.patternCard} activeOpacity={0.9}>
+                        <View style={styles.patternContent}>
+                          <View style={styles.patternContentLeft}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                              <Text style={styles.patternName}>{categoryName}</Text>
+                            </View>
+
+                            {!isExpanded && <Text style={styles.insightPreview}>{previewText}</Text>}
+
+                            <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
+                              {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
+                            </Text>
+
+                            {isExpanded && (
+                              <>
+                                <View style={styles.thoughtContainer}>
+                                  <Text style={styles.summaryText}>{insight.content}</Text>
+                                </View>
+
+                                <View style={styles.memoryActionButtons}>
+                                  <ValuesReflectButton
+                                    onPress={() => {
+                                      const prompt = t('insights.prompts.strengthReflection').replace('{{content}}', insight.content);
+                                      onInsightClick('strength_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
+                                    }}
+                                    text={t('insights.actions.reflectOnStrengths')}
+                                    style={{ marginBottom: 8 }}
+                                  />
+
+                                  <ValuesReflectButton
+                                    onPress={() => {
+                                      const prompt = t('insights.prompts.emotionReflection').replace('{{content}}', insight.content);
+                                      onInsightClick('emotion_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
+                                    }}
+                                    text={t('insights.actions.spendTimeWithEmotions')}
+                                  />
+                                </View>
+                              </>
+                            )}
                           </View>
-
-                          {!isExpanded && <Text style={styles.insightPreview}>{previewText}</Text>}
-
-                          <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
-                            {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
-                          </Text>
-
-                          {isExpanded && (
-                            <>
-                              <View style={styles.thoughtContainer}>
-                                <Text style={styles.summaryText}>{insight.content}</Text>
-                              </View>
-
-                              <View style={styles.memoryActionButtons}>
-                                <ValuesReflectButton
-                                  onPress={() => {
-                                    const prompt = t('insights.prompts.strengthReflection').replace('{{content}}', insight.content);
-                                    onInsightClick('strength_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
-                                  }}
-                                  text={t('insights.actions.reflectOnStrengths')}
-                                  style={{ marginBottom: 8 }}
-                                />
-
-                                <ValuesReflectButton
-                                  onPress={() => {
-                                    const prompt = t('insights.prompts.emotionReflection').replace('{{content}}', insight.content);
-                                    onInsightClick('emotion_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
-                                  }}
-                                  text={t('insights.actions.spendTimeWithEmotions')}
-                                />
-                              </View>
-                            </>
-                          )}
+                          <View style={styles.patternArrow}>
+                            <ArrowRight size={16} color="#d97706" style={isExpanded ? { transform: [{ rotate: '90deg' }] } : {}} />
+                          </View>
                         </View>
-                        <View style={styles.patternArrow}>
-                          <ArrowRight size={16} color="#d97706" style={isExpanded ? { transform: [{ rotate: '90deg' }] } : {}} />
-                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View style={{ padding: 20, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#374151', marginBottom: 16, textAlign: 'center' }}>
+                    No Memory Insights Yet
+                  </Text>
+                  <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 20 }}>
+                    As you continue your sessions, long-term patterns and themes will be generated here in categories such as:
+                  </Text>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
+                    {memoryInsightCategories.map(category => (
+                      <View key={category} style={styles.distortionTag}>
+                        <Text style={styles.distortionTagText}>{category}</Text>
                       </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+                    ))}
+                  </View>
+                </View>
+              )
             )}
           </View>
 
@@ -849,6 +969,40 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={handleGenerateDummyInsights}
+              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
+              activeOpacity={0.8}
+            >
+              <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>Generate Temp Thought Patterns</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleGenerateDummyMemoryInsights}
+              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
+              activeOpacity={0.8}
+            >
+              <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>Generate Temp Memory Insights</Text>
+            </TouchableOpacity>
+
+
+            {/*
+            <TouchableOpacity
+              onPress={async () => {
+                await memoryService.clearAllMemories();
+                await loadInsightData();
+                Alert.alert('Storage Cleared', 'The corrupted data has been wiped. The app should now be stable.');
+              }}
+              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: '#ef4444', overflow: 'hidden' }}
+              activeOpacity={0.8}
+            >
+              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>Clear Bad Data</Text>
+            </TouchableOpacity>
+            */}
+
+            {/*
+            <TouchableOpacity
               onPress={loadInsightData}
               style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
               activeOpacity={0.8}
@@ -856,6 +1010,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
               <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>{t('insights.actions.refresh')}</Text>
             </TouchableOpacity>
+            */}
           </View>
         </View>
       </ScrollView>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { User, Settings, LogOut, LogIn, ArrowRight } from 'lucide-react-native';
+import { Settings, LogOut, LogIn, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -13,6 +13,7 @@ import EditProfileModal from '../components/EditProfileModal';
 import DataPrivacyScreen from './DataPrivacyScreen';
 import NotificationSettingsModal from '../components/NotificationSettingsModal';
 import { LanguageSelector } from '../components/LanguageSelector';
+import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
@@ -31,6 +32,7 @@ const ProfileScreen: React.FC = () => {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showDataPrivacy, setShowDataPrivacy] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   useEffect(() => {
     const updateDisplayName = async () => {
@@ -151,14 +153,15 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: t('profile.menu.chatHistory'), action: () => setShowChatHistory(true), subtitle: t('profile.menuSubtitles.chatHistory') },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.voiceSettings'), action: () => setShowTTSSettings(true), subtitle: t('profile.menuSubtitles.voiceSettings') },
     { iconImage: require('../../assets/images/New Icons/14.png'), label: 'Your Data & Privacy', action: () => setShowDataPrivacy(true), subtitle: 'How we protect and handle your information' },
+
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
-    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
+    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => { console.log('Notifications menu item pressed'); setShowNotificationSettings(true); }, subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: 'Test Notification', action: handleTestNotification, subtitle: 'Send a test notification now' },
     { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => console.log('Privacy tapped'), subtitle: t('profile.menuSubtitles.privacy') },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
     ...(isAnonymous
-      ? [{ icon: LogIn, label: 'Create Account', action: handleLogin, highlight: true, subtitle: 'Save your progress and access all features' }]
+      ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: 'Create Account', action: handleLogin, highlight: true, subtitle: 'Save your progress and access all features' }]
       : [{ icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut, subtitle: t('profile.menuSubtitles.signOut') }]
     )
   ];
@@ -197,21 +200,26 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.contentContainer}>
           {/* User Info */}
           <View style={styles.userInfoSection}>
-            <View style={styles.userInfoCard}>
+            <TouchableOpacity
+              style={styles.userInfoCard}
+              activeOpacity={0.9}
+              onPress={() => setShowEditProfile(true)}
+            >
               <LinearGradient
-                colors={['rgba(255, 255, 255, 1)', 'rgba(249, 250, 251, 1)', 'rgba(243, 244, 246, 1)']}
+                colors={['rgba(255, 255, 255, 1)', 'rgba(244, 248, 250, 1)', 'rgba(226, 238, 243, 1)']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.userInfoCardGradient}
               >
                 <View style={styles.userInfoContent}>
                   <View style={styles.avatarContainer}>
-                    <LinearGradient
-                      colors={['#3b82f6', '#0ea5e9']}
-                      style={styles.avatar}
-                    >
-                      <User size={32} color="white" />
-                    </LinearGradient>
+                    <View style={styles.avatar}>
+                      <Image
+                        source={require('../../assets/images/New Icons/15.png')}
+                        style={styles.avatarImage}
+                        contentFit="contain"
+                      />
+                    </View>
                   </View>
                   <View style={styles.userDetails}>
                     <Text style={styles.userName}>{displayName}</Text>
@@ -220,19 +228,22 @@ const ProfileScreen: React.FC = () => {
                         ? t('profile.anonymousGuest')
                         : profile?.created_at
                           ? `${t('profile.memberSince')} ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
-                          : user?.email || t('profile.welcomeMessage')
-                      }
+                          : user?.email || t('profile.welcomeMessage')}
                     </Text>
                     <Text style={styles.premiumBadge}>
                       {isAnonymous ? t('profile.anonymousGuest') : t('profile.premiumMember')}
                     </Text>
                   </View>
-                  <TouchableOpacity onPress={() => setShowEditProfile(true)} style={{ padding: 4 }}>
-                    <Settings size={20} color="#002d14" />
+                  <TouchableOpacity
+                    onPress={() => setShowEditProfile(true)}
+                    style={styles.userEditButton}
+                    activeOpacity={0.7}
+                  >
+                    <Settings size={20} color="#2B475E" />
                   </TouchableOpacity>
                 </View>
               </LinearGradient>
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* Stats Grid */}
@@ -311,7 +322,7 @@ const ProfileScreen: React.FC = () => {
               <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
             </View>
 
-            <LanguageSelector onLanguageChange={(lang) => console.log('Language changed to:', lang)} />
+            <LanguageSelector onPress={() => setShowLanguageSelector(true)} />
 
             <View style={styles.menuGrid}>
               {menuItems.map((item, index) => {
@@ -401,8 +412,13 @@ const ProfileScreen: React.FC = () => {
         <DataPrivacyScreen onBack={() => setShowDataPrivacy(false)} />
       </Modal>
       <NotificationSettingsModal visible={showNotificationSettings} onClose={() => setShowNotificationSettings(false)} />
+      <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
     </SafeAreaWrapper>
   );
 };
 
 export default ProfileScreen;
+
+
+
+

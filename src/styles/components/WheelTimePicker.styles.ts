@@ -59,20 +59,18 @@ export const wheelTimePickerStyles = StyleSheet.create({
 
   wheelItemText: {
     ...typography.body.lg,
-    fontSize: 16, // Smaller text
+    fontSize: 16,
     fontWeight: '500',
-    color: colors.text.tertiary,
-    fontFamily: typography.fontFamily.alanSansSemiBold, // Match notification screen
+    color: '#36657D',
+    fontFamily: 'Ubuntu-Medium',
     textAlign: 'center',
-    // No shadows
   },
 
   wheelItemTextSelected: {
-    fontSize: width > 400 ? 18 : 17, // Smaller selected text
+    fontSize: width > 400 ? 18 : 17,
     fontWeight: '700',
-    color: colors.text.primary, // Dark text for visibility against subtle background
-    fontFamily: typography.fontFamily.alanSansSemiBold, // Match notification screen
-    // No shadows
+    color: '#36657D',
+    fontFamily: 'Ubuntu-Medium',
   },
 
   wheelItemTextFaded: {
@@ -85,11 +83,11 @@ export const wheelTimePickerStyles = StyleSheet.create({
   },
 
   separator: {
-    fontSize: 20, // Smaller separator
+    fontSize: 20,
     fontWeight: '700',
-    color: colors.text.secondary,
-    marginHorizontal: spacing[6], // Less margin
-    fontFamily: typography.fontFamily.alanSansSemiBold, // Match notification screen
+    color: '#36657D',
+    marginHorizontal: spacing[6],
+    fontFamily: 'Ubuntu-Medium',
     alignSelf: 'center',
     height: ITEM_HEIGHT * VISIBLE_ITEMS,
     textAlignVertical: 'center',

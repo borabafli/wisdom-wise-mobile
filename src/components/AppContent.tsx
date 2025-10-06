@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
-import { NavigationContainer, useNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef, DefaultTheme, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
@@ -439,7 +439,15 @@ export const AppContent: React.FC = () => {
                 </TabSlideView>
               )}
             </Tab.Screen>
-            <Tab.Screen name="Journal">
+            <Tab.Screen
+              name="Journal"
+              options={({ route }) => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? 'JournalHome';
+                return {
+                  tabBarStyle: routeName === 'GuidedJournal' ? { display: 'none' } : undefined,
+                };
+              }}
+            >
               {() => (
                 <TabSlideView>
                   <JournalNavigator />
@@ -453,6 +461,7 @@ export const AppContent: React.FC = () => {
                     {...props}
                     onInsightClick={handleInsightClick}
                     onTherapyGoalsClick={handleTherapyGoalsClick}
+                    onExerciseClick={handleExerciseClick}
                   />
                 </TabSlideView>
               )}

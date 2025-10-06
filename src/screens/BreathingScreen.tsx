@@ -477,19 +477,12 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent />
 
-      {/* Top Background Color */}
-      <View
-        style={[styles.topBackground, { backgroundColor: '#FFE7CF' }]}
-        pointerEvents="none"
-      />
-
-      {/* Ocean Background */}
-      <Image
-        source={require('../../assets/images/ocean.png')}
-        style={styles.oceanBackground}
-        contentFit="cover"
-      />
-
+      {/* Background */}
+      <ImageBackground
+        source={require('../../assets/images/breathing-screen.png')}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
       <View style={styles.contentContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -632,7 +625,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#9ED0DD', '#7BC1CE']}
+              colors={['#C0E0E6', '#A9CFD6']}
               style={styles.playButtonGradient}
             >
               {isPlaying ? (
@@ -642,8 +635,6 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
               )}
             </LinearGradient>
           </TouchableOpacity>
-          
-          <View style={styles.secondaryButton} />
         </View>
       </View>
 
@@ -781,7 +772,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#C6C0A8', // Android navigation bar color
+    backgroundColor: '#2E605E', // Android navigation bar color
   },
 
   // Top Background Color for Status Bar Area
