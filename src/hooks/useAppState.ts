@@ -46,7 +46,6 @@ export const useAppState = () => {
 
   const handleBackFromChat = useCallback(() => {
     console.log('handleBackFromChat called - starting cleanup');
-    console.log('Current state - showChat:', showChat, 'chatWithActionPalette:', chatWithActionPalette, 'currentExercise:', currentExercise);
 
     setShowChat(false);
     setChatWithActionPalette(false);
@@ -55,7 +54,7 @@ export const useAppState = () => {
     setButtonPosition(null); // Clear button position
 
     console.log('handleBackFromChat completed - should return to main app');
-  }, [showChat, chatWithActionPalette, currentExercise]);
+  }, []);
 
   const handleBackFromBreathing = useCallback(() => {
     console.log('handleBackFromBreathing called');

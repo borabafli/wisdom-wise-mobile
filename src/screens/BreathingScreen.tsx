@@ -637,6 +637,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
           </TouchableOpacity>
         </View>
       </View>
+      </ImageBackground>
 
       {/* Custom Settings Modal */}
       <Modal

@@ -525,7 +525,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                   </View>
                 </View>
 
-                <Text style={styles.streakDayLabel}>{journeyData.streakDays} Day Streak</Text>
+                <Text style={styles.streakDayLabel}>{journeyData.streakDays} {t('insights.dailyCheckIn.dayStreak')}</Text>
                 <Text style={styles.lastActivityLabel}>{t('insights.dailyCheckIn.lastActivity') || 'Last activity'}: {t('insights.dailyCheckIn.today') || 'Today'}!</Text>
 
                 <TouchableOpacity

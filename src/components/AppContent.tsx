@@ -257,7 +257,7 @@ export const AppContent: React.FC = () => {
 
   // Simple scale + fade animation when chat opens/closes
   useEffect(() => {
-    if (showChat) {
+    if (showChat && !isChatVisible) {
       // Show the modal first
       setIsChatVisible(true);
 
@@ -285,7 +285,7 @@ export const AppContent: React.FC = () => {
           useNativeDriver: true,
         }),
       ]).start();
-    } else if (isChatVisible) {
+    } else if (!showChat && isChatVisible) {
       // Animate out with spring for smooth minimize effect
       Animated.parallel([
         Animated.spring(chatScale, {
@@ -309,7 +309,7 @@ export const AppContent: React.FC = () => {
         setIsChatVisible(false);
       });
     }
-  }, [showChat]);
+  }, [showChat, isChatVisible]);
 
   // Log state changes for debugging
   useEffect(() => {

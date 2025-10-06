@@ -184,7 +184,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
                             onPress={() => confirmDeleteSession(session)}
                             style={styles.deleteButton}
                           >
-                            <Trash2 size={16} color="#EF4444" />
+                            <Trash2 size={16} color="rgba(239, 68, 68, 0.3)" />
                           </TouchableOpacity>
                         </View>
                         
