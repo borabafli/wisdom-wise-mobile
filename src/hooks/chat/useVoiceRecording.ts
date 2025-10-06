@@ -10,7 +10,6 @@ interface UseVoiceRecordingReturn {
   sttError: string | null;
   partialTranscript: string;
   audioLevel: number; // Single audio level instead of array
-  frequencyData: number[]; // Real-time frequency spectrum data
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
   cancelRecording: () => Promise<void>;
@@ -24,14 +23,13 @@ export const useVoiceRecording = (
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
-  const [frequencyData, setFrequencyData] = useState<number[]>([]);
 
   // Use direct audio levels hook
   const { audioLevel, updateAudioLevel, resetLevel } = useDirectAudioLevels();
 
-  // Throttle audio level updates to prevent excessive re-renders
+  // Throttle audio level updates to match wave update interval (83ms = ~12 updates/sec)
   const lastAudioUpdateTime = useRef(0);
-  const AUDIO_UPDATE_THROTTLE = 50; // ms - 20 updates/sec for better reactivity
+  const AUDIO_UPDATE_THROTTLE = 83; // ms - Match wave update rate for optimal performance
 
   const startRecording = async () => {
     console.log('🎤 Starting recording...');
@@ -96,11 +94,6 @@ export const useVoiceRecording = (
           lastAudioUpdateTime.current = now;
         }
 
-        // Update frequency data for Skia waveform
-        if (freqData && freqData.length > 0) {
-          setFrequencyData(freqData);
-        }
-
         // Debug logging for silence issue
         if (Math.random() < 0.02) { // 2% of the time
           console.log(`🎤 Voice recording: level=${level.toFixed(4)}, freqBands=${freqData?.length || 0}`);
@@ -161,7 +154,6 @@ export const useVoiceRecording = (
     sttError,
     partialTranscript,
     audioLevel, // Return single audio level instead of array
-    frequencyData, // Return real-time frequency spectrum
     startRecording,
     stopRecording,
     cancelRecording,
