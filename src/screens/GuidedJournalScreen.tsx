@@ -350,7 +350,7 @@ Make the summary supportive and affirming. Keep insights concise and meaningful.
                   {/* Cancel Button (X) - Left side */}
                   <TouchableOpacity
                     onPress={cancelRecording}
-                    style={styles.cancelButton}
+                    style={styles.recordingCancelButton}
                     activeOpacity={0.7}
                   >
                     <X size={20} color="#ffffff" />

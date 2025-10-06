@@ -1,16 +1,25 @@
 import { Exercise } from './exercise';
 
+// Button position for animations
+export interface ButtonPosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 // App State types
 export interface AppState {
   showChat: boolean;
   currentExercise: Exercise | null;
   chatWithActionPalette: boolean;
   fontsLoaded: boolean;
+  buttonPosition?: ButtonPosition | null;
 }
 
 // Component Props types
 export interface HomeScreenProps {
-  onStartSession: (exercise?: Exercise) => void;
+  onStartSession: (params?: Exercise | ButtonPosition) => void;
   onExerciseClick: (exercise?: Exercise) => void;
   onInsightClick: (type: string, insight?: any) => void;
   onNavigateToExercises: () => void;

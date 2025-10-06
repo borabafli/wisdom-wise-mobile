@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { User, Settings, Bell, Shield, LogOut, LogIn, ArrowRight, RotateCcw } from 'lucide-react-native';
+import { User, Settings, LogOut, LogIn, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -150,10 +150,10 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: t('profile.menu.editProfile'), action: () => setShowEditProfile(true), subtitle: t('profile.menuSubtitles.editProfile') },
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: t('profile.menu.chatHistory'), action: () => setShowChatHistory(true), subtitle: t('profile.menuSubtitles.chatHistory') },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.voiceSettings'), action: () => setShowTTSSettings(true), subtitle: t('profile.menuSubtitles.voiceSettings') },
-    { icon: Shield, label: 'Your Data & Privacy', action: () => setShowDataPrivacy(true), subtitle: 'How we protect and handle your information' },
-    { icon: RotateCcw, label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
-    { iconImage: require('../../assets/images/New Icons/icon-13.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
-    { icon: Bell, label: 'Test Notification', action: handleTestNotification, subtitle: 'Send a test notification now' },
+    { iconImage: require('../../assets/images/New Icons/14.png'), label: 'Your Data & Privacy', action: () => setShowDataPrivacy(true), subtitle: 'How we protect and handle your information' },
+    { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
+    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
+    { iconImage: require('../../assets/images/New Icons/11.png'), label: 'Test Notification', action: handleTestNotification, subtitle: 'Send a test notification now' },
     { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => console.log('Privacy tapped'), subtitle: t('profile.menuSubtitles.privacy') },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
@@ -182,7 +182,7 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.headerContent}>
             <View style={styles.headerTitleContainer}>
               <Image
-                source={require('../../assets/new-design/Turtle Hero Section/insights-hero.png')}
+                source={require('../../assets/new-design/Turtle Hero Section/profile-hero.png')}
                 style={styles.headerTurtleIcon}
                 contentFit="contain"
               />
@@ -324,12 +324,7 @@ const ProfileScreen: React.FC = () => {
                     onPress={item.action}
                   >
                     <LinearGradient
-                      colors={item.danger
-                        ? ['rgba(254, 202, 202, 0.25)', 'rgba(252, 165, 165, 0.15)', 'rgba(255, 255, 255, 0.8)']
-                        : item.highlight
-                          ? ['rgba(34, 197, 94, 0.25)', 'rgba(74, 222, 128, 0.15)', 'rgba(255, 255, 255, 0.8)']
-                          : ['rgba(161, 214, 242, 0.25)', 'rgba(184, 224, 245, 0.15)', 'rgba(255, 255, 255, 0.8)']
-                      }
+                      colors={['#FFFFFF', '#FFFFFF']}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                       style={styles.menuCardGradient}

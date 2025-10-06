@@ -6,6 +6,7 @@ import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
 import QuickActionsPopup from './QuickActionsPopup';
 import { customTabBarStyles as styles } from '../styles/components/CustomTabBar.styles';
+import { useApp } from '../contexts';
 import { colors, gradients } from '../styles/tokens';
 
 interface CustomTabBarProps {
@@ -14,6 +15,7 @@ interface CustomTabBarProps {
   navigation: any;
   onNewSession: () => void;
   onActionSelect: (actionId: string) => void;
+  onTabChange?: (nextIndex: number) => void;
 }
 
 const CustomTabBar: React.FC<CustomTabBarProps> = ({
@@ -21,8 +23,10 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   descriptors,
   navigation,
   onNewSession,
-  onActionSelect
+  onActionSelect,
+  onTabChange
 }) => {
+  const { showChat } = useApp();
   const { t } = useTranslation();
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [circleAnimations, setCircleAnimations] = useState<{[key: string]: Animated.Value}>({});
@@ -162,6 +166,10 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
     }
   ];
 
+  if (showChat) {
+    return null;
+  }
+
   // Hide tab bar on KeyboardTest screen
   const currentRoute = state.routes[state.index]?.name;
   if (currentRoute === 'KeyboardTest') {
@@ -188,6 +196,9 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 });
 
                 if (!isFocused && !event.defaultPrevented) {
+                  if (onTabChange) {
+                    onTabChange(index);
+                  }
                   handleTabPress(index, () => navigation.navigate(tab.name));
                 } else {
                   handleTabPress(index, () => {});
@@ -281,3 +292,6 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
 
 export default CustomTabBar;
+
+
+

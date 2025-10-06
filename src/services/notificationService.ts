@@ -361,7 +361,6 @@ class NotificationService {
       const [hours, minutes] = reminder.time.split(':').map(Number);
 
       await Notifications.scheduleNotificationAsync({
-        identifier: `journal-reminder-${reminder.id}`,
         content: {
           title: "Time for mindful reflection",
           body: `${reminder.description}. Anu is here to support you.`,
@@ -389,9 +388,10 @@ class NotificationService {
   async cancelAllReminders(): Promise<void> {
     try {
       const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-      const journalReminders = scheduled.filter(notification =>
-        notification.identifier.startsWith('journal-reminder-')
-      );
+      const journalReminders = scheduled.filter(notification => {
+        const data = (notification as any).content?.data as { type?: string } | undefined;
+        return data?.type === 'journal-reminder';
+      });
 
       for (const notification of journalReminders) {
         await Notifications.cancelScheduledNotificationAsync(notification.identifier);

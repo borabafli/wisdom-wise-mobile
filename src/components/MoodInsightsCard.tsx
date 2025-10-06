@@ -103,7 +103,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         {/* Distorted Thought Container */}
         <View style={{
           marginHorizontal: 16,
-          marginBottom: 0,
+          marginBottom: 16,
           marginTop: 5,
           alignItems: 'center',
           justifyContent: 'center',
@@ -127,7 +127,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
 
           <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-bubble-4.png')}
+            source={require('../../assets/images/red-box.png')}
             style={{
               width: Dimensions.get('window').width - 32,
               aspectRatio: 1.2,
@@ -135,7 +135,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               alignItems: 'center',
               alignSelf: 'center',
             }}
-            imageStyle={{ borderRadius: 8 }}
+            imageStyle={{ borderRadius: 8, opacity: 0.8 }}
             resizeMode="contain"
           >
 
@@ -153,7 +153,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 color: '#374151',
                 fontWeight: '500',
                 textAlign: 'center',
-                fontFamily: 'BubblegumSans-Regular',
+                fontFamily: 'Ubuntu-Medium',
                 lineHeight: getDynamicFontSize(pattern.originalThought) * 1.3,
               }}>
                 {pattern.originalThought}
@@ -164,15 +164,15 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Arrow Overlay - Much bigger floating in background */}
             <View style={{
               position: 'absolute',
-              bottom: -85,
-              left: '18%',
+              bottom: -95,
+              left: '15%',
               transform: [{ translateX: -75 }],
               zIndex: -1,
               pointerEvents: 'none',
               opacity: 0.6,
             }}>
               <Image
-                source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-2.png')}
+                source={require('../../assets/images/arrow-red-green.png')}
                 style={{
                   width: 155,
                   height: 155,
@@ -238,7 +238,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         <View style={{
           marginHorizontal: 16,
           marginBottom: 15,
-          marginTop: 20,
+          marginTop: 10,
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'visible',
@@ -261,7 +261,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
 
           <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought.png')}
+            source={require('../../assets/images/green-box-2.png')}
             style={{
               width: Dimensions.get('window').width - 32,
               aspectRatio: 1.2,
@@ -269,7 +269,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               alignItems: 'center',
               alignSelf: 'center',
             }}
-            imageStyle={{ borderRadius: 8 }}
+            imageStyle={{ borderRadius: 8, opacity: 0.8 }}
             resizeMode="contain"
           >
 

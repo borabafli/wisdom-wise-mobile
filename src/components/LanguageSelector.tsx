@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Check, ChevronDown, Globe, ArrowRight } from 'lucide-react-native';
+import { Check, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import {
   SUPPORTED_LANGUAGES,
   LANGUAGE_CODES,
   changeLanguage,
   getCurrentLanguage,
-  getLanguageName
+  getLanguageName,
 } from '../services/i18nService';
 import { languageSelectorStyles as styles } from '../styles/components/LanguageSelector.styles';
 
@@ -20,40 +21,37 @@ interface LanguageSelectorProps {
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange }) => {
   const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pendingLanguage, setPendingLanguage] = useState<string | null>(null);
   const [isChanging, setIsChanging] = useState(false);
 
   const currentLanguage = getCurrentLanguage();
   const currentLanguageName = getLanguageName(currentLanguage);
 
-  console.log('LanguageSelector render - isModalVisible:', isModalVisible);
-  console.log('LANGUAGE_CODES length:', LANGUAGE_CODES.length);
-
-
   const handleLanguageSelect = async (languageCode: string) => {
-    if (languageCode === currentLanguage || isChanging) return;
+    if (languageCode === currentLanguage || isChanging) {
+      return;
+    }
 
     setIsChanging(true);
+    setPendingLanguage(languageCode);
+
     try {
       await changeLanguage(languageCode);
       onLanguageChange?.(languageCode);
       setIsModalVisible(false);
     } catch (error) {
       console.error('Failed to change language:', error);
-      // Could show an error toast here
     } finally {
       setIsChanging(false);
+      setPendingLanguage(null);
     }
   };
 
   return (
     <>
-      {/* Language Selection Button - Styled like Profile Menu Buttons */}
       <TouchableOpacity
         style={styles.selectorButton}
-        onPress={() => {
-          console.log('Language selector button pressed!');
-          setIsModalVisible(true);
-        }}
+        onPress={() => setIsModalVisible(true)}
         activeOpacity={0.9}
       >
         <LinearGradient
@@ -81,74 +79,111 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageCh
         </LinearGradient>
       </TouchableOpacity>
 
-      {/* Language Selection Modal */}
       <Modal
         visible={isModalVisible}
-        animationType="slide"
+        animationType="fade"
         transparent
         onRequestClose={() => setIsModalVisible(false)}
         statusBarTranslucent
         hardwareAccelerated
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            {/* Modal Header */}
+          <BlurView intensity={35} tint="light" style={styles.modalBlur} />
+          <TouchableOpacity
+            style={styles.modalBackdrop}
+            activeOpacity={1}
+            onPress={() => setIsModalVisible(false)}
+          />
+
+          <LinearGradient
+            colors={['#f9fdff', '#f1f7fb']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.sheetContainer}
+          >
+            <View style={styles.sheetHandle} />
+
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{t('language.selectLanguage')}</Text>
+              <View>
+                <Text style={styles.modalTitle}>{t('language.selectLanguage')}</Text>
+                <Text style={styles.modalSubtitle}>{t('language.changeLanguage')}</Text>
+              </View>
               <TouchableOpacity
                 onPress={() => setIsModalVisible(false)}
                 style={styles.closeButton}
+                accessibilityLabel={t('common.close')}
               >
-                <Text style={styles.closeButtonText}>×</Text>
+                <X size={18} color="#2B475E" />
               </TouchableOpacity>
             </View>
 
-            {/* Language List */}
-            <ScrollView style={styles.languageList}>
+            <ScrollView
+              style={styles.languageList}
+              contentContainerStyle={styles.languageListContent}
+              showsVerticalScrollIndicator={false}
+            >
               {LANGUAGE_CODES.map((code) => {
                 const isSelected = code === currentLanguage;
                 const languageName = SUPPORTED_LANGUAGES[code as keyof typeof SUPPORTED_LANGUAGES];
-                console.log(`Rendering language: ${code} - ${languageName}`);
 
                 return (
                   <TouchableOpacity
                     key={code}
                     style={[
                       styles.languageOption,
-                      isSelected && styles.selectedLanguageOption
+                      isSelected && styles.selectedLanguageOption,
                     ]}
                     onPress={() => handleLanguageSelect(code)}
                     disabled={isChanging}
-                    activeOpacity={0.7}
+                    activeOpacity={0.85}
                   >
                     <LinearGradient
                       colors={isSelected
-                        ? ['rgba(43, 71, 94, 0.1)', 'rgba(43, 71, 94, 0.05)']
-                        : ['transparent', 'transparent']
+                        ? ['rgba(59, 180, 245, 0.18)', 'rgba(67, 156, 255, 0.12)']
+                        : ['rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.2)']
                       }
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
                       style={styles.languageOptionGradient}
                     >
                       <View style={styles.languageOptionContent}>
                         <View style={styles.languageDetails}>
-                          <Text style={[
-                            styles.languageOptionName,
-                            isSelected && styles.selectedLanguageOptionName
-                          ]}>
+                          <Text
+                            style={[
+                              styles.languageOptionName,
+                              isSelected && styles.selectedLanguageOptionName,
+                            ]}
+                          >
                             {String(languageName)}
                           </Text>
-                          <Text style={[
-                            styles.languageCode,
-                            isSelected && styles.selectedLanguageCode
-                          ]}>
-                            {String(code.toUpperCase())}
-                          </Text>
+                          <View style={styles.languageMetaRow}>
+                            <Text
+                              style={[
+                                styles.languageCode,
+                                isSelected && styles.selectedLanguageCode,
+                              ]}
+                            >
+                              {String(code.toUpperCase())}
+                            </Text>
+                            {isSelected && (
+                              <View style={styles.currentBadge}>
+                                <Text style={styles.currentBadgeText}>
+                                  {t('language.currentLanguage')}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
                         </View>
 
-                        {isSelected && (
-                          <View style={styles.checkContainer}>
-                            <Check size={20} color="#2B475E" />
-                          </View>
-                        )}
+                        {isSelected ? (
+                          isChanging && pendingLanguage === code ? (
+                            <ActivityIndicator size="small" color="#2B475E" />
+                          ) : (
+                            <View style={styles.checkContainer}>
+                              <Check size={20} color="#2B475E" />
+                            </View>
+                          )
+                        ) : null}
                       </View>
                     </LinearGradient>
                   </TouchableOpacity>
@@ -156,15 +191,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageCh
               })}
             </ScrollView>
 
-            {/* Instructions */}
             <View style={styles.instructionsContainer}>
-              <Text style={styles.instructionsText}>
-                {t('language.changeLanguage')}
-              </Text>
+              <Text style={styles.instructionsText}>{t('language.changeLanguage')}</Text>
             </View>
-          </View>
+          </LinearGradient>
         </View>
       </Modal>
     </>
   );
 };
+

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { Exercise } from '../types';
+import { Exercise, ButtonPosition } from '../types';
 import { useAppState } from '../hooks';
 
 interface AppContextType {
@@ -9,7 +9,8 @@ interface AppContextType {
   breathingExercise: Exercise | null;
   chatWithActionPalette: boolean;
   initialChatMessage: string | null;
-  handleStartSession: (exercise?: Exercise | null) => void;
+  buttonPosition: ButtonPosition | null;
+  handleStartSession: (params?: Exercise | ButtonPosition | null) => void;
   handleNewSession: () => void;
   handleStartChatWithContext: (context: string) => void;
   handleBackFromChat: () => void;

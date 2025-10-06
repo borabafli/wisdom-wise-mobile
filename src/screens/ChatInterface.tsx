@@ -97,8 +97,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     return () => {
       if (Platform.OS === 'android') {
         // Reset to system default (usually matches app theme)
-        NavigationBar.setBackgroundColorAsync('transparent').catch(() => {});
-        NavigationBar.setButtonStyleAsync('dark').catch(() => {});
+        NavigationBar.setBackgroundColorAsync(navigationBarConfigs.homeScreen.backgroundColor).catch(() => {});
+        NavigationBar.setButtonStyleAsync(navigationBarConfigs.homeScreen.style === 'light' ? 'dark' : 'light').catch(() => {});
       }
     };
   }, []);
@@ -661,6 +661,12 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               // Restore text that was there before recording started
               setInputText(textBeforeVoiceRef.current);
             }}
+            simpleRecordingLayout={
+              // Use simple layout only for specific guided journal types
+              currentExercise?.type === 'gratitude' ||
+              currentExercise?.type === 'journaling' ||
+              currentExercise?.type === 'daily-reflection'
+            }
           />
 </View>
         </KeyboardAvoidingView>
@@ -671,3 +677,5 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 };
 
 export default ChatInterface;
+
+

@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform, Alert } from 'react-native';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform, Alert, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
@@ -28,6 +28,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   const { width, height } = Dimensions.get('window');
   const [showWaveformDemo, setShowWaveformDemo] = useState(false);
   const insets = useSafeAreaInsets();
+
+  // Ref for check-in button to get its position
+  const checkInButtonRef = useRef<TouchableOpacity>(null);
+
+  // Animation for button shrink on press
+  const buttonScale = useRef(new Animated.Value(1)).current;
 
   // Exercise progress state - in real app, this would come from storage/API
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress>({});
@@ -207,16 +213,41 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
 
           {/* Start Check-In Button */}
-          <TouchableOpacity
-            onPress={() => onStartSession()}
-            activeOpacity={0.7}
-          >
-            <ImageBackground
-              source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
-              style={styles.checkInButton}
-              imageStyle={{ borderRadius: 10 }}
-              resizeMode="cover"
+          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+            <TouchableOpacity
+              ref={checkInButtonRef}
+              onPressIn={() => {
+                // Shrink button on press
+                Animated.spring(buttonScale, {
+                  toValue: 0.95,
+                  tension: 300,
+                  friction: 10,
+                  useNativeDriver: true,
+                }).start();
+              }}
+              onPressOut={() => {
+                // Return to normal size
+                Animated.spring(buttonScale, {
+                  toValue: 1,
+                  tension: 300,
+                  friction: 10,
+                  useNativeDriver: true,
+                }).start();
+              }}
+              onPress={() => {
+                checkInButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+                  // Pass button position to onStartSession
+                  onStartSession({ x: pageX, y: pageY, width, height });
+                });
+              }}
+              activeOpacity={1}
             >
+              <ImageBackground
+                source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
+                style={styles.checkInButton}
+                imageStyle={{ borderRadius: 10 }}
+                resizeMode="cover"
+              >
               <Text style={styles.checkInButtonText}>{t('home.checkInNow')}</Text>
               <View style={styles.checkInButtonIcons}>
                 <View style={styles.iconCircle}>
@@ -230,6 +261,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               </View>
             </ImageBackground>
           </TouchableOpacity>
+        </Animated.View>
         </View>
 
         {/* For You Today Section */}

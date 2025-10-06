@@ -20,6 +20,7 @@ interface ChatInputProps {
   onMicPressOut: () => void;
   onStopRecording: () => void;
   onCancelRecording: () => void;
+  simpleRecordingLayout?: boolean; // New prop for guided journal layout
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -34,6 +35,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onMicPressOut,
   onStopRecording,
   onCancelRecording,
+  simpleRecordingLayout = false,
 }) => {
   const { t } = useTranslation();
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
@@ -162,8 +164,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             }
           ]}
         >
-          {/* Animated circle - only during expansion/shrinking */}
-          {showCircle && (
+          {/* Animated circle - only during expansion/shrinking - hidden in simple layout */}
+          {!simpleRecordingLayout && showCircle && (
             <Animated.View
               style={{
                 position: 'absolute',
@@ -193,8 +195,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             />
           )}
 
-          {/* Static circle - during recording (no animations, no transforms, maximum performance) */}
-          {showStaticCircle && (
+          {/* Static circle - during recording (no animations, no transforms, maximum performance) - hidden in simple layout */}
+          {!simpleRecordingLayout && showStaticCircle && (
             <View
               style={{
                 position: 'absolute',
@@ -232,7 +234,46 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 editable={true}
                 selectionColor="#007AFF"
               />
+            ) : simpleRecordingLayout ? (
+              // Simple layout for guided journal - waveform left, buttons right
+              <Animated.View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  opacity: iconFade,
+                  gap: 12,
+                }}
+              >
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                  <SimpleVolumeWaveform
+                    audioLevel={audioLevel}
+                    isRecording={isRecording}
+                    showTimer={true}
+                    width={180}
+                    height={40}
+                    barCount={24}
+                  />
+                </View>
+                <View style={styles.recordingActions}>
+                  <TouchableOpacity
+                    onPress={onCancelRecording}
+                    style={styles.recordingButton}
+                    activeOpacity={0.7}
+                  >
+                    <X size={20} color="#ef4444" strokeWidth={2} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={onStopRecording}
+                    style={[styles.recordingButton, { backgroundColor: '#63A5A5' }]}
+                    activeOpacity={0.7}
+                  >
+                    <Check size={20} color="#ffffff" strokeWidth={2} />
+                  </TouchableOpacity>
+                </View>
+              </Animated.View>
             ) : (
+              // Original layout with expanding circle
               <Animated.View
                 style={{
                   flex: 1,
@@ -252,79 +293,81 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               </Animated.View>
             )}
 
-            {/* Buttons Container */}
-            <Animated.View
-              style={[
-                styles.inputButtonsContainer,
-                {
-                  transform: [{
-                    translateY: buttonsVerticalPosition.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, -8], // Move up by 8px
-                    })
-                  }]
-                }
-              ]}
-            >
-              {/* Left Button: Mic morphs to X (Cancel) */}
-              <TouchableOpacity
-                onPressIn={isRecording ? undefined : onMicPressIn}
-                onPressOut={isRecording ? undefined : onMicPressOut}
-                onPress={isRecording ? onCancelRecording : undefined}
+            {/* Buttons Container - hidden when recording in simple layout */}
+            {!(isRecording && simpleRecordingLayout) && (
+              <Animated.View
                 style={[
-                  styles.micButton,
-                  isRecording && styles.cancelButton,
+                  styles.inputButtonsContainer,
+                  {
+                    transform: [{
+                      translateY: buttonsVerticalPosition.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, -8], // Move up by 8px
+                      })
+                    }]
+                  }
                 ]}
-                activeOpacity={0.7}
               >
-                {!isRecording ? (
-                  <Mic size={26} color="#334155" strokeWidth={1.5} />
-                ) : (
-                  <X size={24} color="#ffffff" strokeWidth={2} />
-                )}
-              </TouchableOpacity>
+                {/* Left Button: Mic morphs to X (Cancel) */}
+                <TouchableOpacity
+                  onPressIn={isRecording ? undefined : onMicPressIn}
+                  onPressOut={isRecording ? undefined : onMicPressOut}
+                  onPress={isRecording ? onCancelRecording : undefined}
+                  style={[
+                    styles.micButton,
+                    isRecording && styles.cancelButton,
+                  ]}
+                  activeOpacity={0.7}
+                >
+                  {!isRecording ? (
+                    <Mic size={26} color="#334155" strokeWidth={1.5} />
+                  ) : (
+                    <X size={24} color="#ffffff" strokeWidth={2} />
+                  )}
+                </TouchableOpacity>
 
-              {/* Right Button: Send morphs to Check (Accept) */}
-              <TouchableOpacity
-                onPress={isRecording ? onStopRecording : () => onSend()}
-                style={styles.sendButton}
-                activeOpacity={0.7}
-              >
-                <View style={{ position: 'relative', width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
-                  {/* ArrowUp - rotates and fades out */}
-                  <Animated.View
-                    style={{
-                      position: 'absolute',
-                      opacity: sendIconRotation.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 0],
-                      }),
-                      transform: [{
-                        rotate: sendIconRotation.interpolate({
+                {/* Right Button: Send morphs to Check (Accept) */}
+                <TouchableOpacity
+                  onPress={isRecording ? onStopRecording : () => onSend()}
+                  style={styles.sendButton}
+                  activeOpacity={0.7}
+                >
+                  <View style={{ position: 'relative', width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
+                    {/* ArrowUp - rotates and fades out */}
+                    <Animated.View
+                      style={{
+                        position: 'absolute',
+                        opacity: sendIconRotation.interpolate({
                           inputRange: [0, 1],
-                          outputRange: ['0deg', '90deg'],
-                        })
-                      }]
-                    }}
-                  >
-                    <ArrowUp size={20} color="#ffffff" strokeWidth={2} />
-                  </Animated.View>
+                          outputRange: [1, 0],
+                        }),
+                        transform: [{
+                          rotate: sendIconRotation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0deg', '90deg'],
+                          })
+                        }]
+                      }}
+                    >
+                      <ArrowUp size={20} color="#ffffff" strokeWidth={2} />
+                    </Animated.View>
 
-                  {/* Check - fades in */}
-                  <Animated.View
-                    style={{
-                      position: 'absolute',
-                      opacity: sendIconRotation.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 1],
-                      }),
-                    }}
-                  >
-                    <Check size={24} color="#ffffff" strokeWidth={2} />
-                  </Animated.View>
-                </View>
-              </TouchableOpacity>
-            </Animated.View>
+                    {/* Check - fades in */}
+                    <Animated.View
+                      style={{
+                        position: 'absolute',
+                        opacity: sendIconRotation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 1],
+                        }),
+                      }}
+                    >
+                      <Check size={24} color="#ffffff" strokeWidth={2} />
+                    </Animated.View>
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+            )}
           </View>
         </Animated.View>
       </View>

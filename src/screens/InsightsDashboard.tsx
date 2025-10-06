@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated, Alert, ImageBackground, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
@@ -317,6 +317,56 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     ].filter(Boolean)
   };
 
+  // Helper functions for new UI
+  const getDynamicFontSize = (text: string) => {
+    const length = text.length;
+    if (length <= 25) return 18;
+    if (length <= 50) return 16;
+    if (length <= 80) return 14;
+    if (length <= 120) return 13;
+    return 12;
+  };
+
+  const getPatternName = (patternType: string): string => {
+    const patterns: Record<string, string> = {
+      'All-or-Nothing Thinking': 'allOrNothing',
+      'Catastrophizing': 'catastrophizing',
+      'Mental Filter': 'mentalFilter',
+      'Overgeneralization': 'overgeneralization',
+      'Mind Reading': 'mindReading',
+      'Fortune Telling': 'fortuneTelling',
+      'Emotional Reasoning': 'emotionalReasoning',
+      'Should Statements': 'shouldStatements',
+      'Labeling': 'labeling',
+      'Personalization': 'personalization',
+      'Magnification': 'magnification',
+      'Minimization': 'minimization'
+    };
+    const key = patterns[patternType];
+    return key ? t(`insights.thinkingPatterns.${key}`) : t('insights.thinkingPatterns.thoughtPattern');
+  };
+
+  const getDistortionExplanation = (distortionType: string): string => {
+    const patterns: Record<string, string> = {
+      'All-or-Nothing Thinking': 'allOrNothing',
+      'Catastrophizing': 'catastrophizing',
+      'Mental Filter': 'mentalFilter',
+      'Overgeneralization': 'overgeneralization',
+      'Mind Reading': 'mindReading',
+      'Fortune Telling': 'fortuneTelling',
+      'Emotional Reasoning': 'emotionalReasoning',
+      'Should Statements': 'shouldStatements',
+      'Labeling': 'labeling',
+      'Personalization': 'personalization',
+      'Magnification': 'magnification',
+      'Minimization': 'minimization'
+    };
+    const key = patterns[distortionType];
+    return key ? t(`insights.thinkingPatterns.explanations.${key}`) : t('insights.thinkingPatterns.explanations.thoughtPattern');
+  };
+
+  const currentPattern = displayPatterns[currentPatternIndex];
+
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
@@ -385,7 +435,132 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             </LinearGradient>
           </Animated.View>
 
-          {/* Mood Insights Card */}
+          {/* --- NEW THOUGHTS SECTION --- */}
+          {currentPattern && (
+            <View style={{ marginBottom: 20 }}>
+              {/* Header for Your Thought Patterns */}
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 16,
+                marginLeft: 24,
+                marginTop: 46,
+                gap: 12
+              }}>
+                <Image
+                  source={require('../../assets/images/New Icons/new-4.png')}
+                  style={{ width: 40, height: 40 }}
+                  contentFit="contain"
+                />
+                <View>
+                  <Text style={{
+                    fontSize: 24,
+                    fontWeight: '700',
+                    color: '#1F2937',
+                    fontFamily: 'Ubuntu-Medium',
+                    letterSpacing: -0.5
+                  }}>{t('insights.moodInsights.yourThoughts')}</Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#6B7280',
+                    fontFamily: 'Ubuntu-Light',
+                    marginTop: 2
+                  }}>{t('insights.moodInsights.identifyPatterns')}</Text>
+                </View>
+              </View>
+
+              {/* Side-by-side thoughts */}
+              <View style={{ flexDirection: 'row', marginHorizontal: -16 }}>
+                {/* Distorted Thought */}
+                <ImageBackground 
+                                    source={require('../../assets/images/distorted-new-1.png')}
+                                    style={{ width: Dimensions.get('window').width / 2, aspectRatio: 1, justifyContent: 'center', alignItems: 'center' }}
+                                    resizeMode="cover"                >
+                  <Text style={{
+                    fontSize: getDynamicFontSize(currentPattern.originalThought),
+                    color: '#374151',
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    fontFamily: 'Ubuntu-Medium',
+                    paddingHorizontal: 10,
+                    lineHeight: getDynamicFontSize(currentPattern.originalThought) * 1.3,
+                  }}>
+                    {currentPattern.originalThought}
+                  </Text>
+                </ImageBackground>
+
+                {/* Balanced Thought */}
+                <ImageBackground 
+                  source={require('../../assets/images/balanced-new-1.png')} 
+                  style={{ width: Dimensions.get('window').width / 2, aspectRatio: 1, justifyContent: 'center', alignItems: 'center' }}
+                  resizeMode="cover"
+                >
+                  <Text style={{
+                    fontSize: getDynamicFontSize(currentPattern.reframedThought),
+                    color: '#374151',
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    fontFamily: 'Ubuntu-Medium',
+                    paddingHorizontal: 10,
+                    lineHeight: getDynamicFontSize(currentPattern.reframedThought) * 1.3,
+                  }}>
+                    {currentPattern.reframedThought}
+                  </Text>
+                </ImageBackground>
+              </View>
+
+              {/* Explanation Box */}
+              <View style={{
+                marginHorizontal: 16,
+                marginTop: 20,
+                marginBottom: 4,
+                alignItems: 'center',
+                backgroundColor: 'rgba(173, 216, 230, 0.2)',
+                borderRadius: 20,
+                paddingVertical: 10,
+                paddingHorizontal: 14,
+                flexDirection: 'row',
+                width: '85%',
+                alignSelf: 'center',
+                shadowColor: 'rgba(0, 0, 0, 0.05)',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 4,
+                elevation: 1,
+              }}>
+                  <Image
+                    source={require('../../assets/images/New Icons/new-5-red.png')}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      marginRight: 12,
+                      marginTop: -2,
+                    }}
+                    contentFit="contain"
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{
+                      fontSize: 15,
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: 6,
+                      fontFamily: 'Ubuntu-Medium',
+                    }}>
+                      {getPatternName(currentPattern.distortionTypes[0]) || t('insights.thinkingPatterns.thoughtPattern')}
+                    </Text>
+                    <Text style={{
+                      fontSize: 13,
+                      color: '#6B7280',
+                      lineHeight: 18,
+                      fontFamily: 'Ubuntu-Light',
+                    }}>
+                      {getDistortionExplanation(currentPattern.distortionTypes[0])}
+                    </Text>
+                  </View>
+              </View>
+            </View>
+          )}
+
           <MoodInsightsCard
             onInsightPress={(type, data) => onInsightClick(type, data)}
             displayPatterns={displayPatterns}

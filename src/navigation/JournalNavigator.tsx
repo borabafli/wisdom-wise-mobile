@@ -1,6 +1,7 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { JournalStackParamList } from '../types/navigation';
+import { smoothSlideTransition } from './transitions';
 
 // Import screens
 import JournalScreen from '../screens/JournalScreen';
@@ -14,6 +15,7 @@ export const JournalNavigator: React.FC = () => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        ...smoothSlideTransition,
       }}
     >
       <Stack.Screen name="JournalHome" component={JournalScreen} />
@@ -26,6 +28,7 @@ export const JournalNavigator: React.FC = () => {
         component={GuidedJournalScreen}
         options={{
           presentation: 'modal',
+          ...TransitionPresets.ModalSlideFromBottomIOS,
         }}
       />
     </Stack.Navigator>

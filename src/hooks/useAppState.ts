@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Exercise } from '../types';
+import { Exercise, ButtonPosition } from '../types';
 
 /**
  * Custom hook for managing app-level state
@@ -12,13 +12,24 @@ export const useAppState = () => {
   const [breathingExercise, setBreathingExercise] = useState<Exercise | null>(null);
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
   const [initialChatMessage, setInitialChatMessage] = useState<string | null>(null);
+  const [buttonPosition, setButtonPosition] = useState<ButtonPosition | null>(null);
 
-  const handleStartSession = useCallback((exercise: Exercise | null = null) => {
+  const handleStartSession = useCallback((params: Exercise | ButtonPosition | null = null) => {
     console.log('=== START SESSION ===');
-    console.log('Exercise passed to session:', exercise);
-    setCurrentExercise(exercise);
+    console.log('Params passed to session:', params);
+
+    // Check if params is a ButtonPosition (has x, y, width, height)
+    if (params && 'x' in params && 'y' in params) {
+      setButtonPosition(params as ButtonPosition);
+      setCurrentExercise(null);
+    } else {
+      // It's an Exercise
+      setCurrentExercise(params as Exercise | null);
+      setButtonPosition(null);
+    }
+
     setShowChat(true);
-    console.log('Session state updated - should show chat with exercise:', exercise?.type);
+    console.log('Session state updated - should show chat');
   }, []);
 
   const handleNewSession = useCallback(() => {
@@ -41,6 +52,7 @@ export const useAppState = () => {
     setChatWithActionPalette(false);
     setCurrentExercise(null);
     setInitialChatMessage(null);
+    setButtonPosition(null); // Clear button position
 
     console.log('handleBackFromChat completed - should return to main app');
   }, [showChat, chatWithActionPalette, currentExercise]);
@@ -218,6 +230,7 @@ export const useAppState = () => {
     breathingExercise,
     chatWithActionPalette,
     initialChatMessage,
+    buttonPosition,
     handleStartSession,
     handleNewSession,
     handleStartChatWithContext,

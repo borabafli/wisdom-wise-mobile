@@ -49,20 +49,20 @@ export const profileScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: spacing[2],
-    marginLeft: -spacing[16],
-    marginTop: -spacing[12],
+    paddingRight: spacing[8],
   },
   headerTurtleIcon: {
     width: 162,
     height: 162,
     marginRight: spacing[4],
     marginTop: -spacing[8],
+    flexShrink: 0,
   },
   titleAndSubtitleContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginLeft: -spacing[12],
     marginTop: spacing[20],
+    flex: 1,
   },
   headerTitle: {
     fontSize: 32,
@@ -344,9 +344,6 @@ export const profileScreenStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: typography.fontWeight.semibold,
     letterSpacing: 0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
     marginBottom: spacing[1],
   },
   menuSubtitle: {
