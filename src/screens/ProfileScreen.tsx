@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Settings, LogOut, LogIn, ArrowRight } from 'lucide-react-native';
@@ -22,6 +22,7 @@ import { profileScreenStyles as styles } from '../styles/components/ProfileScree
 import streakService from '../services/streakService';
 
 const ProfileScreen: React.FC = () => {
+  const dataPrivacyPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
   const { t } = useTranslation();
   const { user, profile, isAnonymous, signOut, requestLogin } = useAuth();
   const { restartOnboarding } = useOnboardingControl();
@@ -413,7 +414,7 @@ const ProfileScreen: React.FC = () => {
       <ChatHistory visible={showChatHistory} onClose={() => setShowChatHistory(false)} />
       <TTSSettings visible={showTTSSettings} onClose={() => setShowTTSSettings(false)} />
       <EditProfileModal visible={showEditProfile} onClose={() => setShowEditProfile(false)} />
-      <Modal visible={showDataPrivacy} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowDataPrivacy(false)}>
+      <Modal visible={showDataPrivacy} animationType="slide" presentationStyle={dataPrivacyPresentationStyle} onRequestClose={() => setShowDataPrivacy(false)}>
         <DataPrivacyScreen onBack={() => setShowDataPrivacy(false)} />
       </Modal>
       <NotificationSettingsModal visible={showNotificationSettings} onClose={() => setShowNotificationSettings(false)} />
@@ -423,6 +424,7 @@ const ProfileScreen: React.FC = () => {
 };
 
 export default ProfileScreen;
+
 
 
 

@@ -19,6 +19,7 @@ import { NotificationPrompt } from './src/components/NotificationPrompt';
 // Services
 import './src/services/i18nService';
 import { notificationService } from './src/services/notificationService';
+import { registerBackgroundNotificationTask } from './src/tasks/notificationBackground';
 
 // Global error handler
 if (typeof ErrorUtils !== 'undefined') {
@@ -63,6 +64,11 @@ export default function App() {
         console.log('📝 [APP] Step 3: Initializing notification service...');
         await notificationService.initialize();
         console.log('✅ [APP] Step 3: Notification service initialized');
+
+        // Register background notification task
+        console.log('📝 [APP] Step 4: Registering background notification task...');
+        await registerBackgroundNotificationTask();
+        console.log('✅ [APP] Step 4: Background notification task registered');
       } catch (e) {
         console.error('❌ [APP] FATAL ERROR in prepare function:', e);
         console.error('❌ [APP] Error stack:', e.stack);

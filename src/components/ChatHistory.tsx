@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Alert, Platform } from 'react-native';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, MessageCircle, Clock, Trash2, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,6 +9,8 @@ import SessionDetailModal from './SessionDetailModal';
 import { Image } from 'expo-image';
 
 const { width, height } = Dimensions.get('window');
+
+const modalPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
 
 interface ChatHistoryProps {
   visible: boolean;
@@ -128,7 +130,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal visible={visible} animationType="slide" presentationStyle={modalPresentationStyle}>
       <SafeAreaWrapper style={styles.container}>
 
 

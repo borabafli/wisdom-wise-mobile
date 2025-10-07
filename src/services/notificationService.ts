@@ -14,7 +14,6 @@ export interface PersonalizedNotificationConfig {
   morningTime?: string; // HH:MM
   middayTime?: string; // HH:MM
   eveningTime?: string; // HH:MM
-  extraSupportEnabled?: boolean; // Allow 2 notifications per day instead of 1
   streakRemindersEnabled?: boolean;
   insightRemindersEnabled?: boolean;
   goalRemindersEnabled?: boolean;
@@ -478,9 +477,13 @@ class NotificationService {
       });
 
       const hasPermission = await this.getPermissionStatus();
+      console.log('NotificationService initialized. Permission status:', hasPermission);
 
       if (hasPermission === 'granted') {
+        console.log('Permissions granted, scheduling reminders...');
         await this.scheduleReminders();
+      } else {
+        console.log('Permissions not granted, skipping reminder scheduling.');
       }
     } catch (error) {
       console.error('Error initializing notification service:', error);
@@ -532,7 +535,6 @@ class NotificationService {
         morningTime: '08:00',
         middayTime: '14:00',
         eveningTime: '20:00',
-        extraSupportEnabled: false,
         streakRemindersEnabled: true,
         insightRemindersEnabled: true,
         goalRemindersEnabled: true,
@@ -584,6 +586,13 @@ class NotificationService {
   /**
    * Check if we should skip notification based on daily limit
    */
+  private getConfiguredReminderSlots(config: PersonalizedNotificationConfig): string[] {
+    const slots = [config.morningTime, config.middayTime, config.eveningTime].filter(
+      (time): time is string => Boolean(time)
+    );
+    return Array.from(new Set(slots));
+  }
+
   private async shouldSkipDueToLimit(config: PersonalizedNotificationConfig): Promise<boolean> {
     try {
       const lastNotificationData = await AsyncStorage.getItem(this.LAST_NOTIFICATION_KEY);
@@ -594,7 +603,7 @@ class NotificationService {
 
       if (date !== today) return false; // Different day, reset count
 
-      const maxPerDay = config.extraSupportEnabled ? 3 : 1;
+      const maxPerDay = Math.max(this.getConfiguredReminderSlots(config).length, 1);
       return count >= maxPerDay;
     } catch (error) {
       console.error('Error checking notification limit:', error);
@@ -755,8 +764,15 @@ class NotificationService {
         { time: config.eveningTime || '20:00', period: 'evening' as const },
       ];
 
+      const scheduledPeriods = new Set<string>();
+
       // Schedule notifications for each time slot
       for (const { time, period } of times) {
+        if (!time || scheduledPeriods.has(period)) {
+          continue;
+        }
+
+        scheduledPeriods.add(period);
         const notification = this.selectPersonalizedNotification(context, config, period);
         if (notification) {
           const [hours, minutes] = time.split(':').map(Number);
@@ -776,7 +792,7 @@ class NotificationService {
             },
             trigger: {
               channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
-              repeats: false, // Send once, then reschedule based on context
+              repeats: true, // Changed to true for recurring personalized notifications
               hour: hours,
               minute: minutes,
             },

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, Dimensions, Platform } from 'react-native';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, MessageCircle, Clock, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +7,8 @@ import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
 import { sessionDetailModalStyles as styles } from '../styles/components/SessionDetailModal.styles';
 
 const { width, height } = Dimensions.get('window');
+
+const detailModalPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
 
 // Simple markdown processing to clean up AI responses
 const cleanMarkdownText = (text: string): string => {
@@ -137,7 +139,7 @@ const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ visible, onClos
   const conversationDate = session.metadata?.savedAt || session.createdAt;
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal visible={visible} animationType="slide" presentationStyle={detailModalPresentationStyle}>
       <SafeAreaWrapper style={styles.container}>
         <LinearGradient
           colors={['#F8FCFC', '#E8F4F1']}

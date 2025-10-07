@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { X, Bell, Clock, Zap } from 'lucide-react-native';
+import { X, Bell, Clock } from 'lucide-react-native';
 import { notificationService, PersonalizedNotificationConfig } from '../services/notificationService';
 import { notificationSettingsModalStyles as styles } from '../styles/components/NotificationSettingsModal.styles';
 import WheelTimePicker from './WheelTimePicker';
@@ -29,7 +29,6 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     morningTime: '08:00',
     middayTime: '14:00',
     eveningTime: '20:00',
-    extraSupportEnabled: false,
     streakRemindersEnabled: true,
     insightRemindersEnabled: true,
     goalRemindersEnabled: true,

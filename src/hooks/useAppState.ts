@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Exercise, ButtonPosition } from '../types';
 import { navigationBarConfigs } from '../hooks/useNavigationBarStyle';
-import streakService from '../services/streakService';
 
 /**
  * Custom hook for managing app-level state
@@ -19,17 +18,6 @@ export const useAppState = () => {
   const [buttonPosition, setButtonPosition] = useState<ButtonPosition | null>(null);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [hasCheckedInToday, setHasCheckedInToday] = useState<boolean>(false);
-
-  // Load initial streak and check-in status
-  useEffect(() => {
-    const loadStreakData = async () => {
-      const streak = await streakService.getStreak();
-      setCurrentStreak(streak);
-      const checkedIn = await streakService.hasCheckedInToday();
-      setHasCheckedInToday(checkedIn);
-    };
-    loadStreakData();
-  }, []);
 
   const handleStartSession = useCallback(async (params: Exercise | ButtonPosition | null = null) => {
     console.log('=== START SESSION ===');

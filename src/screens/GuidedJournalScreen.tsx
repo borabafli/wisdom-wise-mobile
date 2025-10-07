@@ -113,12 +113,19 @@ const GuidedJournalScreen: React.FC<GuidedJournalScreenProps> = ({ route, naviga
 
 ${context}
 
-Latest response: "${userResponse}"
+For the user's latest reflection: "${userResponse}"
 
-Generate a thoughtful follow-up question that goes deeper into their reflection. This is ${stepNumber === 0 ? 'the first' : 'the second'} follow-up question. Make it:
-- Personal and introspective
-- Related to what they just wrote
-- Designed to help them explore their thoughts and feelings more deeply
+Generate one powerful follow-up question that invites deeper insight and meaningful reflection - a question ideal for inspiring guided journaling. 
+This is ${stepNumber === 0 ? 'the first' : 'the second'} follow-up question. 
+
+The question should:
+- Be like coming from the person with the deepest wisdom and the deepest truths about life, with all the life wisdom, sharp and direct but still empathetic like a therapist
+- Build on what the user shared but don't hesitate to open new perspectives
+- Encourage deep reflection, questioning, self-discovery, clarity, or new perspective
+- Stay open-ended (no yes/no questions)
+- Spark genuine introspection — something the user would *want* to think about
+- You don't need much words and you are to the point.
+- Return only the question, no explanations or extra text.
 - A single question, not multiple questions
 
 Return only the question, no additional text.`;
@@ -146,17 +153,23 @@ Return only the question, no additional text.`;
       `Question: ${entry.prompt}\nResponse: ${entry.response}`
     ).join('\n\n');
 
-    const prompt = `Please create a brief, encouraging summary of this journal entry and extract 1-2 key insights:
+    const prompt = `You are a wise, empathetic and insightful guide that can help the user reflect on anything in life. 
+Your goal is to create a short, meaningful summary and key insights based on their journal entry:
 
 ${fullJournalText}
 
 IMPORTANT: You must respond with ONLY valid JSON in exactly this format (no additional text before or after):
 {
-  "summary": "A warm, brief summary (2-3 sentences) of their reflection",
+  "summary": "2 to 3 sentences capturing the emotional and thematic essence of the user's reflection — warm, clear, and human, instead of 'the user' rather phrase it in 'you-form', possibly like in a journal.",
   "insights": ["Key insight 1", "Key insight 2 (optional)"]
 }
 
-Make the summary supportive and affirming. Keep insights concise and meaningful. Respond with JSON only.`;
+Each insight should:
+- Feel like timeless wisdom or life advice that a wise person would share.  
+- Be to the point and emotionally resonant.  
+- Sound true, practical, and wise, with deep insight.  
+- Connect and relevant to the user's reflection but can still be a universal truth or guidance.  
+- Be something the user might want to save, reread, or live by to live a better life. Respond with JSON only.`;
 
     try {
       const response = await chatService.sendMessage(prompt, []);
