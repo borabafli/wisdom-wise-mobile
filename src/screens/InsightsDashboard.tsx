@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Animated, Alert, ImageBackground, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
@@ -30,6 +30,7 @@ import { generateSampleMoodData } from '../utils/sampleMoodData';
 import { generateSampleValuesData } from '../utils/sampleValuesData';
 import { getTopExercises, ExerciseProgress } from '../utils/exercisePriority';
 import streakService from '../services/streakService';
+import { moodInsightsService, MoodInsight } from '../services/moodInsightsService';
 
 interface InsightsDashboardProps {
   onInsightClick: (type: string, insight?: any) => void;
@@ -69,6 +70,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   } | null>(null);
   const [nextExercise, setNextExercise] = useState<any>(null);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [weeklyHighlights, setWeeklyHighlights] = useState<MoodInsight[]>([]);
 
 
 
@@ -108,6 +110,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
 
       const motivationalData = await motivationalCardService.getCompleteMotivationalCard();
       setMotivationalCard(motivationalData);
+
+      const moodInsightsData = await moodInsightsService.generateMoodInsights();
+      setWeeklyHighlights(moodInsightsData.highlights);
 
       const streak = await streakService.getStreak();
       setCurrentStreak(streak);
@@ -775,7 +780,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             {!isExpanded && <Text style={styles.insightPreview}>{previewText}</Text>}
 
                             <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
-                              {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
+                              {getShortConfidenceLabel(insight.confidence, 'insight')} â€¢ {new Date(insight.date).toLocaleDateString()}
                             </Text>
 
                             {isExpanded && (
@@ -876,7 +881,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             <View style={[styles.goalProgressFill, { width: `${goal.progress}%` }]} />
                           </View>
                           <Text style={styles.patternDescription}>
-                            {goal.progress}% {t('insights.therapyGoals.complete') || 'complete'} • {goal.timeline || ''}
+                            {goal.progress}% {t('insights.therapyGoals.complete') || 'complete'} â€¢ {goal.timeline || ''}
                           </Text>
                         </View>
                       </View>
@@ -947,6 +952,20 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 ))}
               </View>
             </View>
+
+            {weeklyHighlights.length > 0 && (
+              <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(226, 232, 240, 0.6)' }}>
+                <Text style={styles.achievementsTitle}>{t('insights.journey.recentHighlights')}</Text>
+                <View style={styles.achievementsList}>
+                  {weeklyHighlights.map((highlight, index) => (
+                    <View key={highlight.id} style={styles.achievementItem}>
+                      <CheckCircle2 size={18} color="#059669" />
+                      <Text style={styles.achievementText}>{highlight.text}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
           </View>
 
           {/* Testing: control buttons hidden */}

@@ -204,7 +204,8 @@
       "completedSessions": "You've completed",
       "guidedSessions": "guided sessions!",
       "nextUp": "Next up:",
-      "recentAchievements": "Recent Achievements"
+      "recentAchievements": "Recent Achievements",
+      "recentHighlights": "Recent Highlights"
     },
     "actions": {
       "reflectOnStrengths": "Reflect on Strengths",
@@ -241,6 +242,10 @@
         "keepBuilding": "Keep building your insights! ⭐",
         "checkingData": "Checking your data... ✨"
       }
+    },
+    "weeklyHighlights": {
+      "title": "Weekly Highlights",
+      "subtitle": "Your progress this week"
     },
     "thinkingPatterns": {
       "allOrNothing": "All-or-Nothing Thinking",
