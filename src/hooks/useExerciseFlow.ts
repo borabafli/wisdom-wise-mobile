@@ -40,7 +40,14 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
   ) => {
     try {
       console.log('Generating and starting dynamic exercise:', currentExercise.type);
-      const flow = getExerciseFlow(currentExercise.type, t || ((key: string) => key));
+
+      // Standardize breathing exercises to use the same flow
+      const isBreathingExercise = currentExercise.category === 'Breathing' || currentExercise.type.includes('breathing');
+      const exerciseTypeForFlow = isBreathingExercise ? 'breathing' : currentExercise.type;
+      
+      console.log(`Exercise type for flow lookup: ${exerciseTypeForFlow}`);
+
+      const flow = getExerciseFlow(exerciseTypeForFlow, t || ((key: string) => key));
 
       if (!flow || !flow.steps || flow.steps.length === 0) {
         console.error('Failed to generate exercise flow');

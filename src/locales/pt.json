@@ -444,11 +444,30 @@
   },
   "journal": {
     "title": "Diário Guiado",
+    "writeHint": "Digite o texto",
+    "summaryWellDone": "Muito bem!",
+    "summarySubheading": "Hoje você deu voz aos seus pensamentos.",
     "promptTitle": "Pergunta de Reflexão",
     "yourResponse": "Sua Resposta",
     "finish": "Finalizar",
     "saveSession": "Salvar Sessão?",
-    "dontSave": "Não Salvar"
+    "dontSave": "Não Salvar",
+    "generatingFallback": "Processando...",
+    "waitingPhrases": [
+      "🌿 Calmo e autêntico",
+      "Refletindo sobre isso",
+      "Reunindo meus pensamentos",
+      "Colocando isso em palavras",
+      "Encontrando o insight certo",
+      "Fazendo uma pausa consciente",
+      "Processando o que você compartilhou",
+      "Acolhedor e sábio",
+      "Destilando um pouco de sabedoria",
+      "Lapidando seu insight",
+      "Transformando pensamentos em clareza",
+      "Olhando um pouco mais fundo",
+      "Vamos ver qual verdade emerge"
+    ]
   },
   "breathing": {
     "title": "Exercício de Respiração",
@@ -1080,3 +1099,6 @@
     }
   }
 }
+
+
+

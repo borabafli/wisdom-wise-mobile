@@ -2,12 +2,15 @@ import { useState, useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Exercise, ButtonPosition } from '../types';
+import streakService from '../services/streakService';
 import { navigationBarConfigs } from '../hooks/useNavigationBarStyle';
+
+type TFunction = (key: string) => string;
 
 /**
  * Custom hook for managing app-level state
  */
-export const useAppState = () => {
+export const useAppState = (t: TFunction) => {
   const [showChat, setShowChat] = useState<boolean>(false);
   const [showBreathing, setShowBreathing] = useState<boolean>(false);
   const [showTherapyGoals, setShowTherapyGoals] = useState<boolean>(false);
@@ -98,17 +101,11 @@ export const useAppState = () => {
   }, []);
 
   const handleExerciseClick = useCallback((exercise?: Exercise) => {
-    console.log('=== EXERCISE CLICK ===');
-    console.log('Exercise clicked:', exercise);
     if (exercise) {
-      console.log('Starting session with exercise:', exercise.type, exercise.name);
-
       // Special handling for breathing exercises
-      if (exercise.type === 'breathing') {
-        console.log('DEBUG: Breathing exercise clicked:', exercise);
+      if (exercise.category === t('exerciseLibrary.categories.breathing') || exercise.type.includes('breathing')) {
         setBreathingExercise(exercise);
         setShowBreathing(true);
-        console.log('Opening dedicated breathing screen with exercise:', exercise.id);
       } else {
         handleStartSession(exercise);
       }
@@ -213,12 +210,15 @@ export const useAppState = () => {
   }, [handleStartSession]);
 
   const handleActionSelect = useCallback((actionId: string) => {
+    const allExercises = getExercisesArray(t);
+
     switch (actionId) {
       case 'guided-session':
         handleStartSession();
         break;
       case 'guided-journaling':
-        handleStartSession({
+        const gratitudeExercise = allExercises.find(ex => ex.type === 'gratitude');
+        handleStartSession(gratitudeExercise || {
           type: 'gratitude',
           name: 'Guided Journaling',
           duration: '10 min',
@@ -226,7 +226,8 @@ export const useAppState = () => {
         });
         break;
       case 'suggested-exercises':
-        handleStartSession({
+        const mindfulnessExercise = allExercises.find(ex => ex.type === 'mindfulness');
+        handleStartSession(mindfulnessExercise || {
           type: 'mindfulness',
           name: 'Morning Mindfulness',
           duration: '8 min',
@@ -242,7 +243,7 @@ export const useAppState = () => {
       default:
         handleStartSession();
     }
-  }, [handleStartSession]);
+  }, [handleStartSession, t]);
 
   return {
     showChat,

@@ -21,6 +21,7 @@ import { JournalEntry } from '../services/journalStorageService';
 import JournalStorageService from '../services/journalStorageService';
 import JournalPromptService from '../services/journalPromptService';
 import DailyPromptCard from '../components/DailyPromptCard';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface JournalScreenProps {
   navigation: any;
@@ -191,6 +192,12 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const loadData = async () => {
     try {

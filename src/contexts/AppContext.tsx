@@ -1,4 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
+import { useLocalization } from './LocalizationContext';
 import { Exercise, ButtonPosition } from '../types';
 import { useAppState } from '../hooks';
 
@@ -27,7 +28,8 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const appState = useAppState();
+  const { t } = useLocalization();
+  const appState = useAppState(t);
 
   return (
     <AppContext.Provider value={appState}>

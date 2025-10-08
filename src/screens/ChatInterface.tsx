@@ -279,20 +279,32 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
     // Handle exercise card actions
-    // Handle exercise card actions
 const handleExerciseCardStart = (exerciseInfo: any) => {
   console.log("=== EXERCISE CARD CLICKED FROM CHAT ===", exerciseInfo);
 
-  // Clear the card
+  // Clear the card from the chat interface
   chatSession.setShowExerciseCard(null);
 
-  // ✅ Start exercise inline (keep chat messages)
-  startDynamicAIGuidedExercise(
-    exerciseInfo,
-    chatSession.setMessages,
-    chatSession.setIsTyping,
-    chatSession.setSuggestions
-  );
+  // Check if the exercise is a breathing exercise
+  const isBreathingExercise = exerciseInfo.category === t('exerciseLibrary.categories.breathing') || exerciseInfo.type.includes('breathing');
+  if (isBreathingExercise) {
+    // If it is, call the onExerciseClick handler passed in props.
+    // This handler, defined in useAppState.ts, will show the BreathingScreen.
+    if (onExerciseClick) {
+      onExerciseClick(exerciseInfo);
+    } else {
+      console.warn("onExerciseClick is not defined in ChatInterface props");
+    }
+  } else {
+    // For all other exercises, start the dynamic AI-guided exercise flow
+    // which happens within the chat interface.
+    startDynamicAIGuidedExercise(
+      exerciseInfo,
+      chatSession.setMessages,
+      chatSession.setIsTyping,
+      chatSession.setSuggestions
+    );
+  }
 };
 
 

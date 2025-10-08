@@ -145,14 +145,14 @@ class FirstMessageService {
     // Always include neutral opens with high base weight for variety (but still decay)
     options.push({
       variant: 'neutral_open',
-      weight: applyUsageDecay(40, 'neutral_open')
+      weight: applyUsageDecay(20, 'neutral_open')
     });
 
     // Recent reframe (< 72h) - high priority but with usage decay
     if (context.recentReflections.length > 0 && hoursSince < 72) {
       options.push({
         variant: 'reframe_followup',
-        weight: applyUsageDecay(35, 'reframe_followup')
+        weight: applyUsageDecay(55, 'reframe_followup')
       });
     }
 
@@ -180,21 +180,21 @@ class FirstMessageService {
     if (context.goals.length > 0) {
       options.push({
         variant: 'goal_check',
-        weight: applyUsageDecay(15, 'goal_check')
+        weight: applyUsageDecay(45, 'goal_check')
       });
     }
 
     // Onboarding reference - starts high, decays with time AND usage
     if (context.onboarding.focusAreas && context.onboarding.focusAreas.length > 0) {
       // Higher initial weight, but decays based on time
-      let baseOnboardingWeight = 50; // Increased from 30 to 40 for higher likelihood
+      let baseOnboardingWeight = 70; // Increased from 30 to 40 for higher likelihood
 
       // Time-based decay (gentler decay)
       if (hoursSince > 336) { // After 2 weeks
-        baseOnboardingWeight = 30; // Increased from 15 to 20
+        baseOnboardingWeight = 50; // Increased from 15 to 20
       }
       if (hoursSince > 672) { // After 4 weeks
-        baseOnboardingWeight = 18; // Increased from 8 to 12
+        baseOnboardingWeight = 28; // Increased from 8 to 12
       }
 
       options.push({
@@ -248,7 +248,8 @@ ${this.getRoutingGuidelines(routingHint, context)}
 
 **Critical Style Rules:**
 - Natural and conversational, NOT formulaic or robotic
-- VARIETY IS KEY: Don't ask about the same thing every session - mix it up
+- Structure the message in paragraph: you must use \n (the newline character) 
+- Try to be sharp and to the point, leading to deeper truths of their personal life, help them to reflect, be compassionate
 - Use casual greetings: "Hi", "Hey", or "Hello" (NEVER use "Welcome" or "Welcome back")
 - Reference relevant context but don't force it - be flexible like a real therapist
 - Stay open and inviting - make space for them to bring up anything
@@ -257,7 +258,7 @@ ${this.getRoutingGuidelines(routingHint, context)}
 - Provide variety in chips: specific topics, feelings, actions, or "guide me" options
 - Keep it brief - therapists don't overwhelm at the start
 - If context feels thin or forced, default to warm neutral opening
-- Avoid repetitive patterns - vary your opening style each time
+
 
 **Important:** You have permission to deviate from the routing hint if you sense it would feel more natural or fresh. Trust your therapeutic judgment and prioritize avoiding repetition.
 
@@ -343,7 +344,7 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
   • "Hey ${context.firstName}. Last time you worked on reframing that '${context.recentReflections[0]?.originalThought.substring(0, 40)}...' thought. Has that pattern shown up again?"
   • "Hi. I'm curious—did that reframe we explored help when similar thoughts came up?"
 - Chips should include: check-in options, apply to new situation, talk about something else
-- Stay flexible: if they want to discuss something new, that's perfectly fine`,
+- Stay flexible: if they want to discuss something new, that's perfectly fine. Ask about it in a second paragraph.`,
 
       thought_pattern_followup: `**Thought Pattern Followup:**
 - Reference the recurring pattern you've noticed (e.g., catastrophizing, black-white thinking)
@@ -355,7 +356,6 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
       values_check: `**Values Check Focus:**
 - Reference one of their top values naturally
 - Use language that reflects whether this is from onboarding (they mentioned it) vs. past sessions (we talked about it)
-- Example: "You mentioned that ${context.topValues[0]?.name} is important to you. Was there a moment recently where you felt connected to that, or wanted to be?"
 - Keep it light and exploratory
 - Chips: I lived it / I wanted to / New topic / Plan an action`,
 
@@ -363,15 +363,15 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
 - Gently reference their active goal
 - Ask about progress, a highlight, or a challenge
 - Use casual greetings: Hi, Hey, or Hello (not "Welcome")
-- Don't make it feel like homework—keep it supportive
-- Example: "Hey ${context.firstName}. You've been working on ${context.goals[0]?.mainGoal.substring(0, 40)}... Want to share a highlight or something that's felt hard?"
+- Don't make it feel like homework—keep it supportive, and be the guide we all need in life
 - Chips: Highlight / Challenge / Show progress / Talk about something else`,
 
       onboarding_reference: `**Onboarding Reference:**
-- Subtly reference something from their initial setup (focus area, challenge, motivation)
+- Gently make it about something from their initial setup and help them work towards it (focus area, challenge, motivation)
+- Always has ask an important first question to help them work towards it
+- Important: Ask a question that helps the user and guide the conversation.
 - IMPORTANT: Use "you mentioned" or "you shared" language, NOT "we talked about" since this is from onboarding
-- Keep it open—they may want to talk about something completely different
-- Example: "Hey ${context.firstName}. You mentioned that ${context.onboarding.focusAreas?.[0]} was something you wanted to explore. Has that been on your mind, or is there something else today?"
+- Keep it open—they may want to talk about something completely different, use a second separate paragraph to ask about it.
 - Chips: That topic / Something else / Guide me / Quick exercise`,
 
       neutral_open: `**Neutral Open Focus:**

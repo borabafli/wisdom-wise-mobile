@@ -444,11 +444,30 @@
   },
   "journal": {
     "title": "Rehberli Günlük",
+    "writeHint": "Metin gir",
+    "summaryWellDone": "Harika iş çıkardın!",
+    "summarySubheading": "Bugün düşüncelerine bir ses verdin.",
     "promptTitle": "Yansıtma Sorusu",
     "yourResponse": "Cevabınız",
     "finish": "Bitir",
     "saveSession": "Seans Kaydedilsin mi?",
-    "dontSave": "Kaydetme"
+    "dontSave": "Kaydetme",
+    "generatingFallback": "İşleniyor...",
+    "waitingPhrases": [
+      "🌿 Sakin ve özgün",
+      "Bunu düşünüyorum",
+      "Düşüncelerimi topluyorum",
+      "Bunu kelimelere döküyorum",
+      "Doğru içgörüyü buluyorum",
+      "Bilinçli bir mola veriyorum",
+      "Paylaştıklarını sindiriyorum",
+      "Sıcak ve bilge",
+      "Biraz bilgelik süzüyorum",
+      "İçgörünü şekillendiriyorum",
+      "Düşünceleri açıklığa dönüştürüyorum",
+      "Biraz daha derine bakıyorum",
+      "Hangi gerçeğin ortaya çıkacağını görelim"
+    ]
   },
   "breathing": {
     "title": "Nefes Egzersizi",
@@ -1080,3 +1099,4 @@
     }
   }
 }
+

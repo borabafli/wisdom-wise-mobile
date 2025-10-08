@@ -12,7 +12,7 @@ import { loadFonts } from './src/config/fonts';
 
 // Components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
-import { AppProvider, AuthProvider } from './src/contexts';
+import { AppProvider, AuthProvider, LocalizationProvider } from './src/contexts';
 import { AppContent } from './src/components/AppContent';
 import { NotificationPrompt } from './src/components/NotificationPrompt';
 
@@ -102,12 +102,14 @@ export default function App() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <AuthProvider>
-            <AppProvider>
-              <AppContent />
-              <NotificationPrompt />
-            </AppProvider>
-          </AuthProvider>
+          <LocalizationProvider>
+            <AuthProvider>
+              <AppProvider>
+                <AppContent />
+                <NotificationPrompt />
+              </AppProvider>
+            </AuthProvider>
+          </LocalizationProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>
     </SafeAreaProvider>

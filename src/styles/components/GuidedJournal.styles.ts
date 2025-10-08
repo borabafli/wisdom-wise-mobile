@@ -66,12 +66,8 @@ export const guidedJournalStyles = StyleSheet.create({
 
   promptContainer: {
     marginTop: spacing[8],
-    marginBottom: spacing[8],
-    padding: spacing[20],
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#2B475E',
+    marginBottom: spacing[12],
+    paddingHorizontal: spacing[4],
   },
 
   promptHeader: {
@@ -112,7 +108,7 @@ export const guidedJournalStyles = StyleSheet.create({
   inputContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 16,
-    marginBottom: spacing[20],
+    marginBottom: spacing[8],
     borderWidth: 1,
     borderColor: '#2B475E',
     marginHorizontal: spacing[4],
@@ -123,8 +119,8 @@ export const guidedJournalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    minHeight: 100,
+    paddingVertical: spacing[14],
+    minHeight: 96,
   },
 
   textInput: {
@@ -162,17 +158,22 @@ export const guidedJournalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1,
+    paddingVertical: 0,
+    height: 96,
   },
   recordingButtonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing[4],
+    marginTop: 0,
+    height: '100%',
+    paddingVertical: 0,
+    flexShrink: 0,
   },
   waveContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: spacing[12],
+    marginHorizontal: spacing[10],
   },
 
   recordingCancelButton: {
@@ -184,6 +185,7 @@ export const guidedJournalStyles = StyleSheet.create({
     backgroundColor: 'rgba(148, 163, 184, 0.9)',
     zIndex: 30,
     marginLeft: -spacing[8],
+    transform: [{ translateY: 12 }],
   },
 
   waveWithTimerInside: {
@@ -203,6 +205,7 @@ export const guidedJournalStyles = StyleSheet.create({
     backgroundColor: '#2B475E',
     zIndex: 30,
     marginRight: -spacing[8],
+    transform: [{ translateY: 12 }],
   },
 
   previousEntriesContainer: {
@@ -211,7 +214,7 @@ export const guidedJournalStyles = StyleSheet.create({
 
   previousEntriesTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 12,
+    fontSize: 14,
     color: '#2B475E',
     marginBottom: spacing[8],
     fontWeight: '600',
@@ -220,28 +223,26 @@ export const guidedJournalStyles = StyleSheet.create({
   },
 
   previousEntry: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
-    padding: spacing[12],
-    marginBottom: spacing[8],
-    borderWidth: 1,
-    borderColor: 'rgba(43, 71, 94, 0.8)',
+    borderRadius: 16,
+    paddingVertical: spacing[10],
+    paddingHorizontal: spacing[12],
+    marginBottom: spacing[10],
+    backgroundColor: 'rgba(41, 69, 98, 0.18)',
   },
 
   previousPrompt: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 12,
-    color: 'rgba(43, 71, 94, 0.8)',
-    marginBottom: spacing[6],
+    fontSize: 13.5,
+    color: '#2B475E',
+    marginBottom: spacing[4],
     fontWeight: '600',
   },
 
   previousResponse: {
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 12,
-    lineHeight: 16,
-    color: 'rgba(43, 71, 94, 0.8)',
-    fontStyle: 'italic',
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#2B475E',
   },
 
   bottomBar: {
@@ -258,22 +259,18 @@ export const guidedJournalStyles = StyleSheet.create({
 
   compactNextButtonContainer: {
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    alignSelf: 'center',
   },
 
   compactNextButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
     paddingVertical: spacing[6],
     paddingHorizontal: spacing[12],
     borderRadius: 8,
     gap: spacing[3],
-    minWidth: 80,
   },
 
   compactNextButtonDisabled: {
@@ -282,16 +279,29 @@ export const guidedJournalStyles = StyleSheet.create({
 
   compactNextButtonText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 11,
+    fontSize: 13.5,
     color: '#FFFFFF',
     fontWeight: '600',
   },
 
   scrollableContinueButtonContainer: {
     alignItems: 'center',
-    paddingVertical: spacing[12],
-    paddingHorizontal: spacing[12],
-    marginTop: spacing[8],
+    paddingVertical: spacing[6],
+    paddingHorizontal: spacing[6],
+    marginTop: spacing[4],
+    marginBottom: spacing[4],
+  },
+
+  loadingTextContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  continueButtonIcon: {
+    width: 82,
+    height: 82,
+    marginTop: spacing[18],
   },
 
   // Legacy styles (keeping for compatibility)

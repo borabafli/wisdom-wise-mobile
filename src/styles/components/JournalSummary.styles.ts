@@ -41,6 +41,11 @@ export const journalSummaryStyles = StyleSheet.create({
     paddingHorizontal: spacing[16],
   },
 
+  scrollContent: {
+    paddingBottom: spacing[24],
+    flexGrow: 1,
+  },
+
   summaryCard: {
     marginTop: spacing[4],
     marginBottom: spacing[12],
@@ -54,10 +59,29 @@ export const journalSummaryStyles = StyleSheet.create({
     marginBottom: spacing[8],
   },
 
-  summaryTitle: {
+  summaryHeaderVisual: {
+    alignItems: 'center',
+    marginBottom: spacing[10],
+  },
+
+  summaryHeaderImage: {
+    width: 88,
+    height: 88,
+    marginBottom: spacing[4],
+  },
+
+  summaryMainTitle: {
     fontFamily: 'Ubuntu-Bold',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1F3E56',
+    textAlign: 'center',
+    marginBottom: spacing[2],
+  },
+
+  summarySubtitle: {
+    fontFamily: 'Ubuntu-Medium',
+    fontSize: 14,
     color: '#2B475E',
     textAlign: 'center',
   },

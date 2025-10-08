@@ -7,6 +7,7 @@ import { smoothSlideTransition } from './transitions';
 import JournalScreen from '../screens/JournalScreen';
 import GuidedJournalScreen from '../screens/GuidedJournalScreen';
 import JournalEntryDetailScreen from '../screens/JournalEntryDetailScreen';
+import JournalSummaryScreen from '../screens/JournalSummaryScreen';
 
 const Stack = createStackNavigator<JournalStackParamList>();
 
@@ -30,6 +31,10 @@ export const JournalNavigator: React.FC = () => {
           presentation: 'modal',
           ...TransitionPresets.ModalSlideFromBottomIOS,
         }}
+      />
+      <Stack.Screen
+        name="JournalSummary"
+        component={JournalSummaryScreen}
       />
     </Stack.Navigator>
   );

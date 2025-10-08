@@ -336,6 +336,12 @@ class NotificationService {
    */
   async scheduleReminders(): Promise<void> {
     try {
+      const personalizedConfig = await this.getPersonalizedConfig();
+      if (this.hasActivePersonalizedConfig(personalizedConfig)) {
+        console.log('Personalized reminders enabled; skipping standard reminder scheduling to avoid duplicates.');
+        return;
+      }
+
       // Cancel existing notifications
       await this.cancelAllReminders();
 
@@ -468,7 +474,7 @@ class NotificationService {
       // Set the notification handler
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
-          shouldShowAlert: false, // Deprecated, use shouldShowBanner instead
+          shouldShowAlert: true,
           shouldPlaySound: true,
           shouldSetBadge: false,
           shouldShowBanner: true,
@@ -477,11 +483,17 @@ class NotificationService {
       });
 
       const hasPermission = await this.getPermissionStatus();
-      console.log('NotificationService initialized. Permission status:', hasPermission);
+      const personalizedConfig = await this.getPersonalizedConfig();
+      const personalizedEnabled = this.hasActivePersonalizedConfig(personalizedConfig);
+      console.log('NotificationService initialized. Permission status:', hasPermission, 'personalizedEnabled:', personalizedEnabled);
 
       if (hasPermission === 'granted') {
-        console.log('Permissions granted, scheduling reminders...');
-        await this.scheduleReminders();
+        if (personalizedEnabled) {
+          console.log('Permissions granted, scheduling personalized reminders...');
+        } else {
+          console.log('Permissions granted, scheduling reminders...');
+          await this.scheduleReminders();
+        }
       } else {
         console.log('Permissions not granted, skipping reminder scheduling.');
       }
@@ -740,6 +752,14 @@ class NotificationService {
   async schedulePersonalizedNotifications(): Promise<void> {
     try {
       const config = await this.getPersonalizedConfig();
+      const personalizedEnabled = this.hasActivePersonalizedConfig(config);
+      if (!personalizedEnabled) {
+        console.log('Personalized reminders disabled. Falling back to standard reminders.');
+        await this.cancelPersonalizedNotifications();
+        await this.scheduleReminders();
+        return;
+      }
+
       const context = await this.getUserContext();
 
       // Skip if user was recently active
@@ -756,6 +776,8 @@ class NotificationService {
 
       // Cancel existing personalized notifications
       await this.cancelPersonalizedNotifications();
+      // Remove standard reminders to avoid duplicate alerts when personalized reminders are active
+      await this.cancelAllReminders();
 
       // Determine time slots
       const times = [
@@ -792,7 +814,7 @@ class NotificationService {
             },
             trigger: {
               channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
-              repeats: true, // Changed to true for recurring personalized notifications
+              repeats: false, // Changed to false, background task will re-schedule with fresh content
               hour: hours,
               minute: minutes,
             },
@@ -825,6 +847,17 @@ class NotificationService {
     }
   }
 
+  private hasActivePersonalizedConfig(config: PersonalizedNotificationConfig | null): boolean {
+    if (!config) {
+      return false;
+    }
+
+    return Boolean(
+      config.streakRemindersEnabled ||
+      config.insightRemindersEnabled ||
+      config.goalRemindersEnabled
+    );
+  }
   /**
    * Refresh personalized notifications (call this when user context changes significantly)
    */
@@ -832,6 +865,18 @@ class NotificationService {
     const hasPermission = await this.getPermissionStatus();
     if (hasPermission === 'granted') {
       await this.schedulePersonalizedNotifications();
+    }
+  }
+
+  async scheduleBackgroundNotificationRefresh(): Promise<void> {
+    const hasPermission = await this.getPermissionStatus();
+    if (hasPermission === 'granted') {
+      // This will trigger the background task to run and re-schedule personalized notifications
+      // The background task itself is responsible for calling this.schedulePersonalizedNotifications()
+      // We just need to ensure the task is registered and potentially triggered.
+      // The task is registered in App.tsx, so here we just ensure it's active.
+      // For now, this method will simply log that it's being called.
+      console.log('scheduleBackgroundNotificationRefresh called. Background task should handle scheduling.');
     }
   }
 }

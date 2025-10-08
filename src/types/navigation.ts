@@ -16,4 +16,10 @@ export type JournalStackParamList = {
   JournalHome: undefined;
   GuidedJournal: { initialPrompt: string };
   JournalEntryDetail: { entry: JournalEntry };
+  JournalSummary: {
+    summary: string;
+    insights: string[];
+    initialPrompt: string;
+    entries: { prompt: string; response: string }[];
+  };
 };

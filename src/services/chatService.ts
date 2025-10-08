@@ -1,7 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
+
+
 import { DEBUG, API_CONFIG } from '../config/constants';
 import { APIErrorHandler } from '../utils/apiErrorHandler';
 import { getLanguageInstruction } from './i18nService';
+import { getExerciseTypeEnum } from '../data/exerciseEnum';
 
 export interface AIResponse {
   success: boolean;
@@ -136,8 +139,15 @@ if (enhancedSystemMessage && typeof enhancedSystemMessage === 'string') {
           prompt_tokens: response.data.usage.prompt_tokens,
           completion_tokens: response.data.usage.completion_tokens,
           total_tokens: response.data.usage.total_tokens,
-          max_tokens: this.config.maxTokens
         });
+      }
+
+      if (response.data.nextAction === 'showExerciseCard' && response.data.exerciseData) {
+        const ExerciseType = getExerciseTypeEnum();
+        if (!Object.values(ExerciseType).includes(response.data.exerciseData.type)) {
+          console.error('Invalid exercise type from AI:', response.data.exerciseData.type);
+          response.data.nextAction = 'none';
+        }
       }
 
       return response.data;
@@ -202,10 +212,9 @@ if (enhancedSystemMessage && typeof enhancedSystemMessage === 'string') {
 
 
 
- // Send a simple message and get response (for journal prompts)
-async sendMessage(prompt: string, context: any[] = [], systemMessage?: string): Promise<string> {
+ // Send a simple message and get response with metadata
+async sendMessageWithMetadata(prompt: string, context: any[] = [], systemMessage?: string): Promise<AIResponse> {
   try {
-    // Add language instruction to the prompt
     const languageInstruction = getLanguageInstruction();
     const enhancedPrompt = languageInstruction + prompt;
 
@@ -220,16 +229,31 @@ async sendMessage(prompt: string, context: any[] = [], systemMessage?: string): 
       }
     ];
 
-    // Add language instruction to system message if provided
     const enhancedSystemMessage = systemMessage ? languageInstruction + systemMessage : undefined;
 
     const response = await this.getChatCompletionWithContext(messages, enhancedSystemMessage);
 
+    if (response.success) {
+      return response;
+    }
+
+    throw new Error(response.error || 'Failed to get AI response');
+  } catch (error) {
+    console.error('Error in sendMessageWithMetadata:', error);
+    throw error;
+  }
+}
+
+ // Send a simple message and get response (for journal prompts)
+async sendMessage(prompt: string, context: any[] = [], systemMessage?: string): Promise<string> {
+  try {
+    const response = await this.sendMessageWithMetadata(prompt, context, systemMessage);
+
     if (response.success && response.message) {
       return response.message;
-    } else {
-      throw new Error(response.error || 'Failed to get AI response');
     }
+
+    throw new Error(response.error || 'Failed to get AI response');
   } catch (error) {
     console.error('Error in sendMessage:', error);
     throw error;

@@ -5,7 +5,9 @@ import { memoryService, MemoryContext } from './memoryService';
 import { goalService, TherapyGoal } from './goalService';
 import { apiService } from './apiService';
 import { API_CONFIG } from '../config/constants';
-import { getLanguageInstruction } from './i18nService';
+import { getExercisesArray } from '../data/exerciseLibrary';
+
+import { getLanguageInstruction, safeT } from './i18nService';
 
 export interface ContextConfig {
   maxTurns: number;
@@ -75,9 +77,15 @@ class ContextService {
 }
 
 
-  private config: ContextConfig = {
+    private _getFormattedExerciseList(): string {
+    const exercises = getExercisesArray(safeT);
+    return exercises.map(ex => `- ${ex.name} (${ex.slug}): ${ex.description}`).join('\n');
+  }
+
+  private config: ContextConfig = {
     maxTurns: 10,
     systemPrompt: `(v3) You are **Anu**, a compassionate therapist.  
+CRITICAL: You must follow the exercise rules precisely. When the user confirms an exercise, you MUST set nextAction to 'showExerciseCard' and provide the exerciseData.
 Your purpose is to be an empathetic, collaborative guide who helps the user explore feelings and thoughts.  
 
 ---
@@ -95,7 +103,7 @@ Your purpose is to be an empathetic, collaborative guide who helps the user expl
     - Do NOT use therapist-style prompts (e.g., “Describe the situation”, “Tell me more…”).  
     - Do NOT use fillers like “I don’t know”.  
   • **nextAction**: 'showExerciseCard' if the user confirms an exercise; otherwise 'none'.  
-  • **exerciseData**: Required when nextAction = 'showExerciseCard' → { "type": "exercise-type", "name": "Exercise Name" }.  
+  • **exerciseData**: Required when nextAction = 'showExerciseCard' → { "type": "the-exercise-slug-from-the-list-in-parentheses", "name": "Exercise Name" }.  
 
 ---
 
@@ -125,14 +133,11 @@ Your purpose is to be an empathetic, collaborative guide who helps the user expl
 - Frame as an invitation, not a requirement.  
 - When proposing an exercise, include a brief “why/how it helps” line.  
 - If the user confirms (e.g., “yes”, “let’s do it”, “okay”), set nextAction='showExerciseCard' and include exerciseData.  
+- **Consistency**: The exercise mentioned in the 'message' MUST EXACTLY MATCH the exercise in 'exerciseData'. Do not mention one exercise and provide data for another.
+- **Data Integrity**: The 'type' (slug) and 'name' in 'exerciseData' MUST belong to the same exercise from the 'Available exercises' list. Double-check this before responding.
 
 **Available exercises:**  
-- Automatic Thoughts CBT (negative thought patterns)  
-- Body Scan (stress/tension)  
-- 4-7-8 Breathing (anxiety)  
-- Gratitude Practice (low mood)  
-- Self-Compassion (self-criticism)  
-- Values (disconnection)  
+{EXERCISE_LIST}
 
 ---
 
@@ -168,8 +173,9 @@ Final check: Output must be a single valid JSON object, nothing else.`
 
   // Regular chat context assembly with memory integration
   async assembleContext(recentMessages: Message[]): Promise<any[]> {
-    const personalizedPrompt = await this.getPersonalizedSystemPrompt();
-    
+        const exerciseList = this._getFormattedExerciseList();
+    const personalizedPrompt = this.config.systemPrompt.replace('{USER_NAME}', await storageService.getFirstName().catch(() => 'friend')).replace('{EXERCISE_LIST}', exerciseList);
+        
     // Get memory context for long-term continuity
     console.log('🧠 [DEBUG] Getting memory context...');
     const memoryContext = await memoryService.getMemoryContext();

@@ -7,6 +7,7 @@ interface RecordingWaveProps {
   variant?: 'bars' | 'pulse';
   size?: 'small' | 'medium' | 'large';
   showTimer?: boolean; // Show recording timer
+  colorScheme?: 'default' | 'blue';
 }
 
 // WhatsApp-style design constants with maximum height bars
@@ -52,6 +53,21 @@ const getBarColor = (level: number): string => {
   return `rgb(${r}, ${g}, ${b})`;
 };
 
+const getBlueBarColor = (level: number): string => {
+  const normalizedLevel = Math.max(0, Math.min(1, level));
+
+  const softSkyBlue = { r: 186, g: 219, b: 255 }; // #BADBFF
+  const deepOceanBlue = { r: 45, g: 90, b: 140 }; // #2D5A8C
+
+  const intensifiedLevel = Math.pow(normalizedLevel, 0.7);
+
+  const r = Math.round(softSkyBlue.r + (deepOceanBlue.r - softSkyBlue.r) * intensifiedLevel);
+  const g = Math.round(softSkyBlue.g + (deepOceanBlue.g - softSkyBlue.g) * intensifiedLevel);
+  const b = Math.round(softSkyBlue.b + (deepOceanBlue.b - softSkyBlue.b) * intensifiedLevel);
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 
 export const RecordingWave: React.FC<RecordingWaveProps> = ({
   audioLevel = 0,
@@ -59,6 +75,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
   variant = 'bars',
   size = 'medium',
   showTimer = true,
+  colorScheme = 'default',
 }) => {
   // State hooks - always called in same order
   const [audioHistory, setAudioHistory] = useState<number[]>([]);
@@ -141,7 +158,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           width: 32,
           height: 32,
           borderRadius: 16,
-          backgroundColor: WHATSAPP_STYLE.color,
+          backgroundColor: colorScheme === 'blue' ? '#4F7EBF' : WHATSAPP_STYLE.color,
           opacity: isRecording ? 0.9 : 0.6,
           transform: [{ scale: isRecording ? 1.1 : 1 }],
         }}
@@ -153,18 +170,18 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
   const renderBars = () => {
     // Show baseline when no data
     if (audioHistory.length === 0) {
-      return Array.from({ length: Math.min(8, dimensions.bars) }).map((_, index) => (
-        <View
-          key={`baseline-${index}`}
-          style={{
-            width: WHATSAPP_STYLE.barWidth,
-            height: WHATSAPP_STYLE.minHeight,
-            backgroundColor: getBarColor(0), // Very light blue for silence baseline
-            borderRadius: WHATSAPP_STYLE.barRadius,
-            marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
-            opacity: WHATSAPP_STYLE.inactiveOpacity,
-            alignSelf: 'center',
-          }}
+    return Array.from({ length: Math.min(8, dimensions.bars) }).map((_, index) => (
+      <View
+        key={`baseline-${index}`}
+        style={{
+          width: WHATSAPP_STYLE.barWidth,
+          height: WHATSAPP_STYLE.minHeight,
+          backgroundColor: colorScheme === 'blue' ? getBlueBarColor(0) : getBarColor(0),
+          borderRadius: WHATSAPP_STYLE.barRadius,
+          marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
+          opacity: WHATSAPP_STYLE.inactiveOpacity,
+          alignSelf: 'center',
+        }}
         />
       ));
     }
@@ -181,17 +198,13 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
       );
       
       // Debug logging for silence issue
-      if (index === 0 && Math.random() < 0.01) { // Log occasionally for first bar
-        console.log(`🎵 Bar ${index}: level=${level.toFixed(4)}, calculated=${calculatedHeight.toFixed(1)}px, final=${barHeight.toFixed(1)}px`);
-      }
-
       return (
         <View
           key={index}
           style={{
             width: WHATSAPP_STYLE.barWidth,
             height: barHeight,
-            backgroundColor: getBarColor(level), // Dynamic color based on audio level
+            backgroundColor: colorScheme === 'blue' ? getBlueBarColor(level) : getBarColor(level),
             borderRadius: WHATSAPP_STYLE.barRadius,
             marginHorizontal: WHATSAPP_STYLE.barSpacing / 2,
             opacity: isRecording ? WHATSAPP_STYLE.activeOpacity : WHATSAPP_STYLE.inactiveOpacity,
@@ -207,7 +220,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
       style={{
         alignItems: 'center',
         backgroundColor: 'transparent',
-        paddingHorizontal: 8,
+        paddingHorizontal: colorScheme === 'blue' ? 12 : 8,
       }}
     >
       {/* Recording Timer - Inside chatbox, positioned lower */}
@@ -219,7 +232,7 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
         }}>
           <Text style={{
             fontSize: 13,
-            color: '#374151',
+            color: colorScheme === 'blue' ? '#1E3A8A' : '#374151',
             fontFamily: 'Inter-Medium',
             letterSpacing: 0.3,
             opacity: 0.9,
@@ -238,7 +251,6 @@ export const RecordingWave: React.FC<RecordingWaveProps> = ({
           justifyContent: 'center',
           width: dimensions.width,
           height: dimensions.height,
-          position: 'relative',
         }}
       >
         {renderBars()}

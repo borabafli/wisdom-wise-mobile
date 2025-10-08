@@ -444,6 +444,9 @@
   },
   "journal": {
     "title": "Geführtes Tagebuch",
+    "writeHint": "Text eingeben",
+    "summaryWellDone": "Gut gemacht!",
+    "summarySubheading": "Du hast deinen Gedanken heute eine Stimme gegeben.",
     "promptTitle": "Reflexionsfrage",
     "yourResponse": "Deine Antwort",
     "finish": "Beenden",
@@ -467,7 +470,22 @@
     "stepIndicator": "{{current}}/{{total}}",
     "typeOrSpeak": "Schreibe oder sprich deine Gedanken...",
     "transcribing": "Wird übersetzt...",
-    "generating": "...",
+    "generatingFallback": "Wird verarbeitet...",
+    "waitingPhrases": [
+      "🌿 Ruhig & authentisch",
+      "Ich denke darüber nach",
+      "Ich sammle meine Gedanken",
+      "Ich bringe das in Worte",
+      "Ich finde die passende Einsicht",
+      "Ich gönne mir eine achtsame Pause",
+      "Ich verarbeite, was du geteilt hast",
+      "Warm & weise",
+      "Ich destilliere ein wenig Weisheit",
+      "Ich forme deine Einsicht",
+      "Ich verwandle Gedanken in Klarheit",
+      "Ich schaue ein wenig tiefer",
+      "Mal sehen, welche Wahrheit auftaucht"
+    ],
     "continue": "Weiter",
     "previousReflections": "Deine vorherigen Reflexionen:",
     "pleaseWriteSomething": "Bitte schreibe etwas",
@@ -1174,3 +1192,5 @@
     }
   }
 }
+
+

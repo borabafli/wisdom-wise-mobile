@@ -444,6 +444,9 @@
   },
   "journal": {
     "title": "Journal guidé",
+    "writeHint": "Saisir du texte",
+    "summaryWellDone": "Bravo !",
+    "summarySubheading": "Tu as donné une voix à tes pensées aujourd’hui.",
     "promptTitle": "Question de réflexion",
     "yourResponse": "Votre réponse",
     "finish": "Terminer",
@@ -467,7 +470,22 @@
     "stepIndicator": "{{current}}/{{total}}",
     "typeOrSpeak": "Tapez ou parlez vos pensées...",
     "transcribing": "Transcription...",
-    "generating": "...",
+    "generatingFallback": "Traitement en cours...",
+    "waitingPhrases": [
+      "🌿 Calme et authentique",
+      "Je réfléchis à cela",
+      "Je rassemble mes pensées",
+      "Je mets tout ça en mots",
+      "Je cherche la bonne intuition",
+      "Je prends une pause attentive",
+      "J'intègre ce que tu as partagé",
+      "Chaleureux et sage",
+      "Je distille un peu de sagesse",
+      "Je façonne ton insight",
+      "Je transforme les pensées en clarté",
+      "Je regarde un peu plus en profondeur",
+      "Voyons quelle vérité émerge"
+    ],
     "continue": "Continuer",
     "previousReflections": "Vos Réflexions Précédentes:",
     "pleaseWriteSomething": "Veuillez écrire quelque chose",
@@ -1114,3 +1132,5 @@
     }
   }
 }
+
+

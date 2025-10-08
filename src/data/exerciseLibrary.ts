@@ -71,11 +71,11 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     icon: Star,
     color: ['#E0F2FE', '#7DD3FC'],
     image: require('../../assets/images/18.png'),
-    keywords: ['vision', 'future', 'goals', 'dreams', 'inspiration', 'values', 'purpose', 'life direction', 'imagination', 'hope'],
+    keywords: ['vision', 'future', 'goals', 'dreams', 'inspiration', 'life direction', 'imagination', 'hope'],
   },
   'box-breathing': {
     id: 10,
-    type: 'breathing',
+    type: 'box-breathing',
     name: t('exerciseLibrary.names.boxBreathing'),
     duration: '8 min',
     description: t('exerciseLibrary.descriptions.boxBreathing'),
@@ -89,7 +89,7 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
   },
   'triangle-breathing': {
     id: 11,
-    type: 'breathing',
+    type: 'triangle-breathing',
     name: t('exerciseLibrary.names.triangleBreathing'),
     duration: '6 min',
     description: t('exerciseLibrary.descriptions.triangleBreathing'),
@@ -103,7 +103,7 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
   },
   'coherent-breathing': {
     id: 12,
-    type: 'breathing',
+    type: 'coherent-breathing',
     name: t('exerciseLibrary.names.coherentBreathing'),
     duration: '10 min',
     description: t('exerciseLibrary.descriptions.coherentBreathing'),

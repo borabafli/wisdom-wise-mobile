@@ -95,12 +95,9 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
         {/* Date and Time */}
         <View style={{
-          backgroundColor: '#FFFFFF',
           borderRadius: 12,
-          padding: 16,
+          paddingVertical: 4,
           marginBottom: 16,
-          borderWidth: 1,
-          borderColor: '#E5E7EB',
         }}>
           <Text style={{
             fontFamily: 'Ubuntu-Medium',
@@ -169,12 +166,9 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
         {/* Journal Entries */}
         {entry.entries.map((journalEntry, index) => (
           <View key={index} style={{
-            backgroundColor: '#FFFFFF',
             borderRadius: 12,
-            padding: 16,
+            paddingVertical: 8,
             marginBottom: 16,
-            borderWidth: 1,
-            borderColor: '#E5E7EB',
           }}>
             <Text style={{
               fontFamily: 'Ubuntu-Medium',
@@ -255,31 +249,28 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
             }}>
               {t('journal.keyInsightsTitle')}
             </Text>
-            {entry.insights.map((insight, index) => (
-              <View key={index} style={{
-                flexDirection: 'row',
-                alignItems: 'flex-start',
-                marginBottom: index < entry.insights.length - 1 ? 8 : 0,
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+            }}>
+              <Text style={{
+                fontFamily: 'Ubuntu-Regular',
+                fontSize: 16,
+                color: '#15803D',
+                marginRight: 8,
               }}>
-                <Text style={{
-                  fontFamily: 'Ubuntu-Regular',
-                  fontSize: 16,
-                  color: '#15803D',
-                  marginRight: 8,
-                }}>
-                  •
-                </Text>
-                <Text style={{
-                  fontFamily: 'Ubuntu-Regular',
-                  fontSize: 16,
-                  lineHeight: 24,
-                  color: '#0F172A',
-                  flex: 1,
-                }}>
-                  {insight}
-                </Text>
-              </View>
-            ))}
+                •
+              </Text>
+              <Text style={{
+                fontFamily: 'Ubuntu-Regular',
+                fontSize: 16,
+                lineHeight: 24,
+                color: '#0F172A',
+                flex: 1,
+              }}>
+                {entry.insights[0]}
+              </Text>
+            </View>
           </View>
         )}
 
