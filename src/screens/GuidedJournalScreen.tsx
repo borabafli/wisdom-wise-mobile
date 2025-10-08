@@ -333,6 +333,41 @@ Respond with JSON only.`;
       return splitIntoSentences(text);
     };
 
+    const stripCodeFence = (value: string): string => {
+      if (!value) return '';
+      const trimmed = value.trim();
+      if (!trimmed.startsWith('```')) {
+        return trimmed;
+      }
+
+      const afterFence = trimmed.replace(/^```[a-zA-Z0-9_-]*\s*/u, '');
+      const closingIndex = afterFence.lastIndexOf('```');
+      if (closingIndex !== -1) {
+        return afterFence.slice(0, closingIndex).trim();
+      }
+
+      return afterFence.trim();
+    };
+
+    const extractJsonPayload = (raw: string): Record<string, unknown> | null => {
+      if (!raw) return null;
+      const stripped = stripCodeFence(raw);
+      const start = stripped.indexOf('{');
+      const end = stripped.lastIndexOf('}');
+      if (start === -1 || end === -1 || end <= start) {
+        return null;
+      }
+
+      const candidate = stripped.slice(start, end + 1);
+      try {
+        const parsed = JSON.parse(candidate);
+        return parsed && typeof parsed === 'object' ? parsed as Record<string, unknown> : null;
+      } catch (jsonError) {
+        console.warn('Unable to parse JSON summary payload', jsonError);
+        return null;
+      }
+    };
+
     const parseSuggestionsFromDump = (rawDump: string): string[] => {
       if (!rawDump) return [];
       const key = '"suggestions"';
@@ -407,10 +442,11 @@ Respond with JSON only.`;
     };
 
     try {
-      const aiResponse = await chatService.sendMessageWithMetadata(prompt, []);
+      const aiResponse = await chatService.generateSummary(prompt);
       console.log('Raw summary response:', aiResponse);
 
       const messageText = typeof aiResponse?.message === 'string' ? aiResponse.message.trim() : '';
+      const sanitizedMessage = stripCodeFence(messageText);
       const serializedResponse = (() => {
         try {
           return JSON.stringify(aiResponse);
@@ -421,40 +457,62 @@ Respond with JSON only.`;
       })();
 
       const candidateInsights = new Set<string>();
-    const addCandidate = (value: string) => {
-      const cleaned = normalizeInsightText(value);
-      if (cleaned) {
-        candidateInsights.add(cleaned);
+      const addCandidate = (value: string) => {
+        const cleaned = normalizeInsightText(value);
+        if (cleaned) {
+          candidateInsights.add(cleaned);
+        }
+      };
+
+      let structuredSummary: string | null = null;
+
+      const parsedPayload = extractJsonPayload(messageText);
+      if (parsedPayload) {
+        const typedPayload = parsedPayload as { summary?: unknown; suggestions?: unknown; insights?: unknown };
+        if (typeof typedPayload.summary === 'string') {
+          const cleaned = normalizeInsightText(typedPayload.summary);
+          if (cleaned) {
+            structuredSummary = cleaned;
+          }
+        }
+
+        const payloadSuggestions = typedPayload.suggestions ?? typedPayload.insights;
+        if (Array.isArray(payloadSuggestions)) {
+          toStringArray(payloadSuggestions).forEach(addCandidate);
+        } else if (typeof payloadSuggestions === 'string') {
+          extractInsightsFromString(payloadSuggestions).forEach(addCandidate);
+        }
       }
-    };
 
-    const responseSuggestions = (aiResponse as any)?.suggestions;
-    if (Array.isArray(responseSuggestions)) {
-      toStringArray(responseSuggestions).forEach(addCandidate);
-    } else if (typeof responseSuggestions === 'string') {
-      extractInsightsFromString(responseSuggestions).forEach(addCandidate);
-      const cleaned = normalizeInsightText(responseSuggestions);
-      if (cleaned) {
-        candidateInsights.add(cleaned);
+      const responseSuggestions = (aiResponse as any)?.suggestions;
+      if (Array.isArray(responseSuggestions)) {
+        toStringArray(responseSuggestions).forEach(addCandidate);
+      } else if (typeof responseSuggestions === 'string') {
+        extractInsightsFromString(responseSuggestions).forEach(addCandidate);
+        const cleaned = normalizeInsightText(responseSuggestions);
+        if (cleaned) {
+          candidateInsights.add(cleaned);
+        }
       }
-    }
 
-    parseSuggestionsFromDump(serializedResponse).forEach(addCandidate);
+      parseSuggestionsFromDump(serializedResponse).forEach(addCandidate);
 
-    let summaryText = normalizeInsightText(messageText) || defaultSummaryText;
+      let summaryText = structuredSummary || normalizeInsightText(sanitizedMessage) || defaultSummaryText;
 
-    const quotedSummaryMatch = messageText.match(/^"([\s\S]*?)"$/);
-    if (quotedSummaryMatch) {
-      const extracted = normalizeInsightText(quotedSummaryMatch[1]);
-      if (extracted) {
-        summaryText = extracted;
+      if (!structuredSummary) {
+        const quotedSummaryMatch = sanitizedMessage.match(/^"([\s\S]*?)"$/);
+        if (quotedSummaryMatch) {
+          const extracted = normalizeInsightText(quotedSummaryMatch[1]);
+          if (extracted) {
+            summaryText = extracted;
+          }
+        }
       }
-    }
 
-    const insightList = Array.from(candidateInsights)
-      .filter(insight => insight && insight !== summaryText)
-      .slice(0, 1);
-    const fallbackInsight = defaultSuggestions[0] || summaryText;
+      const insightList = Array.from(candidateInsights)
+        .filter(insight => insight && insight !== summaryText)
+        .slice(0, 1);
+      const fallbackInsight = defaultSuggestions[0] || summaryText;
 
       navigation.navigate('JournalSummary', {
         summary: summaryText,

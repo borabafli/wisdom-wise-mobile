@@ -74,7 +74,7 @@ export const JournalSummaryScreen: React.FC<JournalSummaryScreenProps> = ({
           <View style={styles.summaryCard}>
             <View style={styles.summaryHeaderVisual}>
               <Image
-                source={require('../../assets/images/hand-heart-3.png')}
+                source={require('../../assets/images/hand-heart-4.png')}
                 style={styles.summaryHeaderImage}
                 contentFit="contain"
               />
@@ -86,10 +86,7 @@ export const JournalSummaryScreen: React.FC<JournalSummaryScreenProps> = ({
             {primaryInsight && (
               <View style={styles.insightsContainer}>
                 <Text style={styles.insightsTitle}>{t('journal.keyInsights', 'Key Insights')}</Text>
-                <View style={styles.insightItem}>
-                  <View style={styles.insightBullet} />
-                  <Text style={styles.insightText}>{primaryInsight}</Text>
-                </View>
+                <Text style={styles.insightText}>{primaryInsight}</Text>
               </View>
             )}
           </View>

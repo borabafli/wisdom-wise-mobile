@@ -47,10 +47,12 @@ export const journalSummaryStyles = StyleSheet.create({
   },
 
   summaryCard: {
-    marginTop: spacing[4],
+    marginTop: spacing[1],
     marginBottom: spacing[12],
     borderRadius: 20,
-    padding: spacing[12],
+    paddingHorizontal: spacing[12],
+    paddingBottom: spacing[1],
+    paddingTop: spacing[1],
     backgroundColor: 'transparent',
   },
 
@@ -61,13 +63,13 @@ export const journalSummaryStyles = StyleSheet.create({
 
   summaryHeaderVisual: {
     alignItems: 'center',
-    marginBottom: spacing[10],
+    marginBottom: spacing[14],
   },
 
   summaryHeaderImage: {
     width: 88,
     height: 88,
-    marginBottom: spacing[4],
+    marginBottom: spacing[1],
   },
 
   summaryMainTitle: {
@@ -104,32 +106,16 @@ export const journalSummaryStyles = StyleSheet.create({
 
   insightsTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
     color: '#2B475E',
     marginBottom: spacing[6],
   },
 
-  insightItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: spacing[6],
-  },
-
-  insightBullet: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: '#2B475E',
-    marginTop: 7,
-    marginRight: spacing[10],
-  },
-
   insightText: {
-    flex: 1,
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 15,
+    lineHeight: 20,
     color: '#2B475E',
     fontStyle: 'italic',
   },

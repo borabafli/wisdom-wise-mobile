@@ -213,6 +213,63 @@ if (enhancedSystemMessage && typeof enhancedSystemMessage === 'string') {
 
 
  // Send a simple message and get response with metadata
+
+  async generateSummary(prompt: string, context: any[] = [], systemMessage?: string): Promise<AIResponse> {
+    try {
+      const languageInstruction = getLanguageInstruction();
+      const enhancedPrompt = languageInstruction + prompt;
+
+      const messages = [
+        ...context.map(item => ({
+          role: item.role || 'user',
+          content: item.content || item.message || String(item)
+        })),
+        {
+          role: 'user',
+          content: enhancedPrompt
+        }
+      ];
+
+      const finalMessages = systemMessage
+        ? [{ role: 'system', content: languageInstruction + systemMessage }, ...messages]
+        : messages;
+
+      const response = await this.client.post('/ai-chat', {
+        action: 'generateSummary',
+        messages: finalMessages,
+        model: this.config.model,
+        maxTokens: this.config.maxTokens,
+        temperature: 0.3
+      });
+
+      const normalizeMessage = (value: unknown): string => {
+        if (typeof value === 'string') {
+          return value;
+        }
+        if (Array.isArray(value)) {
+          return value
+            .map(item => {
+              if (item && typeof item === 'object' && 'type' in item && (item as any).type === 'text') {
+                return String((item as any).text || '');
+              }
+              return typeof item === 'string' ? item : '';
+            })
+            .filter(Boolean)
+            .join(' ');
+        }
+        return '';
+      };
+
+      return {
+        ...response.data,
+        message: normalizeMessage(response.data?.message)
+      };
+    } catch (error) {
+      console.error('Error in generateSummary:', error);
+      throw error;
+    }
+  }
+
 async sendMessageWithMetadata(prompt: string, context: any[] = [], systemMessage?: string): Promise<AIResponse> {
   try {
     const languageInstruction = getLanguageInstruction();
