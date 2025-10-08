@@ -5,6 +5,8 @@ import { apiService } from '../services/apiService';
 import { getExerciseFlow, exerciseLibraryData } from '../data/exerciseLibrary';
 import { ttsService } from '../services/ttsService';
 import { memoryService } from '../services/memoryService';
+import { moodRatingService } from '../services/moodRatingService';
+import type { MoodRating } from '../services/moodRatingService';
 import { valuesService } from '../services/valuesService';
 import { thinkingPatternsService } from '../services/thinkingPatternsService';
 
@@ -211,10 +213,37 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
   ) => {
     console.log('Pre-exercise mood rating:', rating);
     setShowPreExerciseMoodSlider(false);
+
+    const { dynamicFlow: flow, currentExercise } = exerciseData;
+
+    if (currentExercise) {
+      try {
+        const preRating: MoodRating = {
+          id: `pre_${Date.now()}`,
+          exerciseType: currentExercise.type,
+          exerciseName: currentExercise.name,
+          moodRating: rating,
+          sessionId: currentExercise.id ? String(currentExercise.id) : undefined,
+          stage: 'pre',
+          timestamp: new Date().toISOString(),
+        };
+        await moodRatingService.saveMoodRating(preRating);
+      } catch (error) {
+        console.error('Error saving pre-exercise mood rating:', error);
+      }
+    }
     
     // Now start the actual exercise
-    const { dynamicFlow: flow, currentExercise } = exerciseData;
-    
+    if (!flow || !flow.steps || flow.steps.length === 0) {
+      console.error('No exercise flow available to start.');
+      return;
+    }
+
+    if (!currentExercise) {
+      console.error('No current exercise available when attempting to start the flow.');
+      return;
+    }
+
     setExerciseMode(true);
     setExerciseStep(0);
     setStepMessageCount({ 0: 1 });

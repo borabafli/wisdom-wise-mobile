@@ -51,10 +51,6 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
             style={{width: '100%', height: '100%'}}
             contentFit="cover"
           />
-          <LinearGradient
-            colors={[exercise.color[0], exercise.color[1], `${exercise.color[1]}80`]}
-            style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
-          />
           <View style={{position: 'absolute', top: 15, right: 15}}>
             <LinearGradient
               colors={['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0.95)']}

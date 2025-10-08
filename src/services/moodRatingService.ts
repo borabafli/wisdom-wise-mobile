@@ -9,6 +9,7 @@ export interface MoodRating {
   helpfulnessRating?: number; // 0-5 scale
   sessionId?: string;
   notes?: string;
+  stage?: 'pre' | 'post' | 'baseline';
   timestamp: string;
 }
 

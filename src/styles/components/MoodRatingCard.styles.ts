@@ -10,8 +10,8 @@ export const moodRatingCardStyles = StyleSheet.create({
     marginHorizontal: 0, // Remove all horizontal margins for maximum width
     paddingVertical: spacing[20],
     paddingHorizontal: spacing[8], // Minimal padding
-    borderWidth: 3, // Very thick border to be clearly visible
-    borderColor: colors.text.primary, // Edge lines in same color as text
+    borderWidth: 0,
+    borderColor: 'transparent',
     overflow: 'hidden', // Needed for gradient
   },
   

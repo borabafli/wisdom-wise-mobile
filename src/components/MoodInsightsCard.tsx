@@ -42,17 +42,13 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 
   // Helper function to determine font size based on text length
   // Baseline: current balanced thought length (~80-120 chars) = 15px
-  const getDynamicFontSize = (text: string, maxFontSize: number = 20, minFontSize: number = 14, containerWidth: number = Dimensions.get('window').width - 64) => {
-    const baseLength = 80; // Ideal length for maxFontSize
-    const scalingFactor = 0.002; // How aggressively to reduce font size
+  const getDynamicFontSize = (text: string, maxFontSize: number = 20, minFontSize: number = 12) => {
+    const baseLength = 90; // Length before scaling kicks in
+    const scalingFactor = 0.045; // Stronger scaling for longer passages
 
-    // Calculate a font size that scales down with length
-    let fontSize = maxFontSize - (Math.max(0, text.length - baseLength) * scalingFactor);
+    let fontSize = maxFontSize - Math.max(0, text.length - baseLength) * scalingFactor;
 
-    // Ensure font size is within min/max bounds
-    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize));
-
-    return fontSize;
+    return Math.max(minFontSize, Math.min(maxFontSize, fontSize));
   };
 
   // Get pattern name and explanation using translation keys (same as InsightsDashboard)
@@ -143,8 +139,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           >
 
             <View style={{
-              paddingHorizontal: 12,
-              paddingVertical: 20,
+              paddingHorizontal: 16,
+              paddingVertical: 14,
               justifyContent: 'center',
               alignItems: 'center',
               width: '78%',
@@ -279,8 +275,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           >
 
             <View style={{
-              paddingHorizontal: 12,
-              paddingVertical: 20,
+              paddingHorizontal: 16,
+              paddingVertical: 14,
               justifyContent: 'center',
               alignItems: 'center',
               width: '78%',

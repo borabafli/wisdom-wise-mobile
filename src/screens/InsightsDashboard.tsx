@@ -949,66 +949,8 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             </View>
           </View>
 
-          {/* Control Buttons */}
-          <View style={{ flexDirection: 'row', marginTop: 30, marginBottom: 20, marginHorizontal: 16, gap: 12 }}>
-            <TouchableOpacity
-              onPress={async () => {
-                setIsLoading(true);
-                await Promise.all([generateSampleMoodData(), generateSampleValuesData()]);
-                await loadInsightData();
-                setIsLoading(false);
-              }}
-              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
-              activeOpacity={0.8}
-            >
-              <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>{t('insights.actions.generateData')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleGenerateDummyInsights}
-              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
-              activeOpacity={0.8}
-            >
-              <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>Generate Temp Thought Patterns</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleGenerateDummyMemoryInsights}
-              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
-              activeOpacity={0.8}
-            >
-              <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>Generate Temp Memory Insights</Text>
-            </TouchableOpacity>
-
-
-            {/*
-            <TouchableOpacity
-              onPress={async () => {
-                await memoryService.clearAllMemories();
-                await loadInsightData();
-                Alert.alert('Storage Cleared', 'The corrupted data has been wiped. The app should now be stable.');
-              }}
-              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', backgroundColor: '#ef4444', overflow: 'hidden' }}
-              activeOpacity={0.8}
-            >
-              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>Clear Bad Data</Text>
-            </TouchableOpacity>
-            */}
-
-            {/*
-            <TouchableOpacity
-              onPress={loadInsightData}
-              style={{ flex: 1, borderRadius: 12, paddingVertical: 14, alignItems: 'center', overflow: 'hidden' }}
-              activeOpacity={0.8}
-            >
-              <LinearGradient colors={['#4A6B7C', '#1A2B36']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-              <Text style={{ fontSize: 14, color: 'white', fontWeight: '600', fontFamily: 'Ubuntu-Medium' }}>{t('insights.actions.refresh')}</Text>
-            </TouchableOpacity>
-            */}
-          </View>
+          {/* Testing: control buttons hidden */}
+          <View style={{ height: 0 }} />
         </View>
       </ScrollView>
 
