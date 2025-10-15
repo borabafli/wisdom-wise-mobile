@@ -56,20 +56,8 @@ const customTheme = {
   },
 };
 
-// Create context for onboarding control
-interface OnboardingContextType {
-  restartOnboarding: () => Promise<void>;
-}
-
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
-
-export const useOnboardingControl = () => {
-  const context = useContext(OnboardingContext);
-  if (!context) {
-    throw new Error('useOnboardingControl must be used within AppContent');
-  }
-  return context;
-};
+// Import onboarding context
+import { OnboardingContext, OnboardingContextType } from '../hooks/useOnboardingControl';
 
 export const AppContent: React.FC = () => {
 

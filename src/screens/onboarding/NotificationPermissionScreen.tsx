@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -66,7 +67,9 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
 
   const initializeScreen = async () => {
     try {
-      NavigationBar.setBackgroundColorAsync('#EDF8F8');
+      if (Platform.OS === 'android') {
+        NavigationBar.setBackgroundColorAsync('#EDF8F8');
+      }
 
       // Use default reminders for this screen
       setReminderTimes(defaultReminders);
@@ -114,7 +117,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
 
   const handleContinue = async () => {
     try {
-      // Simply request permission - standard system prompt
+      // Request permission only when user explicitly continues
       const hasPermission = await notificationService.requestPermissions();
 
       if (hasPermission) {

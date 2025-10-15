@@ -525,7 +525,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding - 4, // Keep original width
     paddingTop: 8, // Standard top padding
-    paddingBottom: Platform.OS === 'ios' ? 34 : 8, // iOS safe area built-in, Android base padding
+    paddingBottom: Platform.OS === 'ios' ? 12 : 8, // Minimal padding for iOS, KeyboardAvoidingView handles rest
     backgroundColor: '#FFFFFF', // Clean white background
     borderTopWidth: 0.5,
     borderTopColor: 'rgba(0, 0, 0, 0.08)', // Subtle separator like WhatsApp

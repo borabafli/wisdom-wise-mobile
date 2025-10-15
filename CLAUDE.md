@@ -157,6 +157,7 @@ The app supports 6 languages: English (en) as default, plus German (de), French 
 All new development must use translation keys immediately to prevent future regression.
 
 ### Development Guides
+- DO NOT CHANGE or BREAK anything that is special for Androd, i am now only testing and working on IOS platform.
 - If the requested functionality is too complex to handle within the code alone, you may suggest alternative approaches (e.g., "we should create a database for this in the following way...").
 - If a new edge function needs to be created, it should also be created within /supabase/functions. We must always have Supabase functions available locally. This is a MUST DO.
 - Follow React Native best practices. Instead of creating large single components, check for opportunities to split them and improve reusability.

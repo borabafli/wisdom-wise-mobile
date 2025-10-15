@@ -24,7 +24,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   visible,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const [config, setConfig] = useState<PersonalizedNotificationConfig>({
     morningTime: '08:00',
     middayTime: '14:00',
@@ -168,7 +168,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
 
 
 
-  if (loading) {
+  if (loading || !config) {
     return (
       <Modal visible={visible} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
@@ -182,179 +182,61 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
 
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
+      <View style={{
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+      }}>
+        <View style={{
+          backgroundColor: 'white',
+          borderRadius: 20,
+          padding: 20,
+          width: '100%',
+          maxHeight: '80%',
+        }}>
           {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerTitleContainer}>
-              <Bell size={24} color="#0f766e" strokeWidth={2} />
-              <Text style={styles.title}>Notification Settings</Text>
-            </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <X size={24} color="#6b7280" />
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 20,
+          }}>
+            <Text style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: '#333',
+            }}>Notification Settings</Text>
+            <TouchableOpacity onPress={onClose} style={{
+              padding: 8,
+            }}>
+              <Text style={{ fontSize: 16, color: '#666' }}>✕</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={{ flex: 1 }}> {/* Added flex: 1 here */}
-            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
-              {/* Permission Status */}
-              {!hasPermission && (
-                <View style={styles.permissionBanner}>
-                  <Text style={styles.permissionText}>
-                    Enable notifications to receive personalized reminders
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.enableButton}
-                    onPress={handleEnableNotifications}
-                  >
-                    <Text style={styles.enableButtonText}>Enable</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+          {/* Content */}
+          <Text style={{ fontSize: 16, marginBottom: 20 }}>
+            Configure your notification preferences here.
+          </Text>
 
-              {/* Notification Times */}
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Clock size={20} color="#0f766e" />
-                  <Text style={styles.sectionTitle}>Notification Times</Text>
-                </View>
-                <Text style={styles.sectionDescription}>
-                  Set your preferred times for daily reminders.
-                </Text>
-
-                <TouchableOpacity style={styles.settingRow} onPress={() => openTimePicker('morningTime')}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Morning Reminder</Text>
-                    <Text style={styles.settingDescription}>Set a reminder to start your day mindfully.</Text>
-                  </View>
-                  <Text style={styles.timeDisplay}>{config.morningTime}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.settingRow} onPress={() => openTimePicker('middayTime')}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Midday Check-in</Text>
-                    <Text style={styles.settingDescription}>Pause and re-center during your day.</Text>
-                  </View>
-                  <Text style={styles.timeDisplay}>{config.middayTime}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.settingRow} onPress={() => openTimePicker('eveningTime')}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Evening Reflection</Text>
-                    <Text style={styles.settingDescription}>Reflect on your day and unwind.</Text>
-                  </View>
-                  <Text style={styles.timeDisplay}>{config.eveningTime}</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Extra Support (Removed) */}
-
-              {/* Personalized Triggers */}
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Clock size={20} color="#0f766e" />
-                  <Text style={styles.sectionTitle}>Smart Reminders</Text>
-                </View>
-                <Text style={styles.sectionDescription}>
-                  Anu will personalize notifications based on your activity
-                </Text>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Streak Reminders</Text>
-                    <Text style={styles.settingDescription}>
-                      Get reminded when you have a 3+ day streak
-                    </Text>
-                  </View>
-                  <Switch
-                    value={config.streakRemindersEnabled}
-                    onValueChange={() => toggleSetting('streakRemindersEnabled')}
-                    trackColor={{ false: '#d1d5db', true: '#36657D' }}
-                    thumbColor="#ffffff"
-                  />
-                </View>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Insight Reminders</Text>
-                    <Text style={styles.settingDescription}>
-                      Notified about new insights you haven't viewed
-                    </Text>
-                  </View>
-                  <Switch
-                    value={config.insightRemindersEnabled}
-                  trackColor={{ false: '#d1d5db', true: '#36657D' }}
-                    thumbColor="#ffffff"
-                  />
-                </View>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Goal Reminders</Text>
-                    <Text style={styles.settingDescription}>
-                      Keep momentum on goals you haven't worked on
-                    </Text>
-                  </View>
-                  <Switch
-                    value={config.goalRemindersEnabled}
-                    onValueChange={() => toggleSetting('goalRemindersEnabled')}
-                    trackColor={{ false: '#d1d5db', true: '#36657D' }}
-                    thumbColor="#ffffff"
-                  />
-                </View>
-              </View>
-
-              {/* Info Section */}
-              <View style={styles.infoSection}>
-                <Text style={styles.infoText}>
-                  🌿 Smart notifications adapt to your usage patterns and skip when you're already active in the app.
-                </Text>
-              </View>
-            </ScrollView>
-
-            {/* Save Button */}
-            <View style={styles.footer}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Save Settings</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              backgroundColor: '#0f766e',
+              padding: 15,
+              borderRadius: 10,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+              Close
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      {/* Time Picker Modal */}
-      <Modal
-        visible={showTimePicker}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={handleCancelTimeChange}
-      >
-        <View style={styles.timePickerOverlay}>
-          <View style={styles.timePickerContainer}>
-            <Text style={styles.timePickerTitle}>Select Time</Text>
-            <WheelTimePicker
-              selectedHour={tempSelectedTime.hour}
-              selectedMinute={tempSelectedTime.minute}
-              selectedPeriod={tempSelectedTime.period}
-              onHourChange={(hour) => setTempSelectedTime(prev => ({ ...prev, hour }))}
-              onMinuteChange={(minute) => setTempSelectedTime(prev => ({ ...prev, minute }))}
-              onPeriodChange={(period) => setTempSelectedTime(prev => ({ ...prev, period }))}
-            />
-            <View style={styles.timePickerActions}>
-              <TouchableOpacity onPress={handleCancelTimeChange} style={styles.timePickerButton}>
-                <Text style={styles.timePickerButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleTimeChange} style={[styles.timePickerButton, styles.timePickerSaveButton]}>
-                <Text style={[styles.timePickerButtonText, styles.timePickerSaveButtonText]}>Set</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </Modal>
   );
 };
-
-export default NotificationSettingsModal;
 
 export default NotificationSettingsModal;

@@ -11,13 +11,14 @@ import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
 import DataPrivacyScreen from './DataPrivacyScreen';
+import PrivacyPolicyScreen from './PrivacyPolicyScreen';
 import NotificationSettingsModal from '../components/NotificationSettingsModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
-import { useOnboardingControl } from '../components/AppContent';
+import { useOnboardingControl } from '../hooks/useOnboardingControl';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 import streakService from '../services/streakService';
 
@@ -33,6 +34,7 @@ const ProfileScreen: React.FC = () => {
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showDataPrivacy, setShowDataPrivacy] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
@@ -163,7 +165,7 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => { console.log('Notifications menu item pressed'); setShowNotificationSettings(true); }, subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: 'Test Notification', action: handleTestNotification, subtitle: 'Send a test notification now' },
-    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => console.log('Privacy tapped'), subtitle: t('profile.menuSubtitles.privacy') },
+    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => setShowPrivacyPolicy(true), subtitle: t('profile.menuSubtitles.privacy') },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
     ...(isAnonymous
@@ -416,6 +418,9 @@ const ProfileScreen: React.FC = () => {
       <EditProfileModal visible={showEditProfile} onClose={() => setShowEditProfile(false)} />
       <Modal visible={showDataPrivacy} animationType="slide" presentationStyle={dataPrivacyPresentationStyle} onRequestClose={() => setShowDataPrivacy(false)}>
         <DataPrivacyScreen onBack={() => setShowDataPrivacy(false)} />
+      </Modal>
+      <Modal visible={showPrivacyPolicy} animationType="slide" presentationStyle={dataPrivacyPresentationStyle} onRequestClose={() => setShowPrivacyPolicy(false)}>
+        <PrivacyPolicyScreen onBack={() => setShowPrivacyPolicy(false)} />
       </Modal>
       <NotificationSettingsModal visible={showNotificationSettings} onClose={() => setShowNotificationSettings(false)} />
       <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />

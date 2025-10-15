@@ -16,6 +16,7 @@ export const NotificationPrompt: React.FC = () => {
 
   const checkAndShowPrompt = async () => {
     try {
+      // Disable automatic prompt - permissions handled in onboarding
       // Check if we've already shown the prompt
       const hasShown = await AsyncStorage.getItem(PROMPT_SHOWN_KEY);
       if (hasShown) return;
@@ -23,11 +24,10 @@ export const NotificationPrompt: React.FC = () => {
       // Check current permission status
       const status = await notificationService.getPermissionStatus();
 
-      // Only show if undetermined (never asked before)
-      if (status === 'undetermined') {
-        // Small delay to let the app settle
-        setTimeout(() => setVisible(true), 2000);
-      }
+      // Disabled: Only show during onboarding, not automatically
+      // if (status === 'undetermined') {
+      //   setTimeout(() => setVisible(true), 2000);
+      // }
     } catch (error) {
       console.error('Error checking notification prompt:', error);
     }

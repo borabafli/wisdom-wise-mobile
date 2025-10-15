@@ -58,7 +58,13 @@ const detectLanguage = async (): Promise<string> => {
     // If no saved preference, detect device language
     let deviceLanguage = 'en';
     try {
-      deviceLanguage = Localization.locale.split('-')[0]; // Extract language code (e.g., 'en' from 'en-US')
+      // Safely access Localization.locale with fallback
+      const locale = Localization?.locale || Localization?.locales?.[0] || 'en-US';
+      if (typeof locale === 'string' && locale.includes('-')) {
+        deviceLanguage = locale.split('-')[0]; // Extract language code (e.g., 'en' from 'en-US')
+      } else if (typeof locale === 'string') {
+        deviceLanguage = locale; // Already just a language code
+      }
     } catch (localizationError) {
       console.warn('Localization not available:', localizationError);
     }

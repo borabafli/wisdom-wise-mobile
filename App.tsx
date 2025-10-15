@@ -65,10 +65,12 @@ export default function App() {
         await notificationService.initialize();
         console.log('✅ [APP] Step 3: Notification service initialized');
 
-        // Register background notification task
+        // Register background notification task (non-blocking)
         console.log('📝 [APP] Step 4: Registering background notification task...');
-        await registerBackgroundNotificationTask();
-        console.log('✅ [APP] Step 4: Background notification task registered');
+        registerBackgroundNotificationTask()
+          .then(() => console.log('✅ [APP] Step 4: Background notification task registered'))
+          .catch((err) => console.error('⚠️ [APP] Step 4: Failed to register background task (non-critical):', err));
+        console.log('✅ [APP] Step 4: Background notification task registration initiated');
       } catch (e) {
         console.error('❌ [APP] FATAL ERROR in prepare function:', e);
         console.error('❌ [APP] Error stack:', e.stack);
