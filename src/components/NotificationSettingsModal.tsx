@@ -5,15 +5,16 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  Switch,
   Alert,
+  Image,
+  Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { X, Bell, Clock } from 'lucide-react-native';
-import { notificationService, PersonalizedNotificationConfig } from '../services/notificationService';
+import { ChevronLeft, Bell, Sun, Coffee, Moon, Plus } from 'lucide-react-native';
+import { notificationService, JournalReminderTime } from '../services/notificationService';
 import { notificationSettingsModalStyles as styles } from '../styles/components/NotificationSettingsModal.styles';
 import WheelTimePicker from './WheelTimePicker';
-import { wheelTimePickerStyles } from '../styles/components/WheelTimePicker.styles';
 
 interface NotificationSettingsModalProps {
   visible: boolean;
@@ -24,24 +25,15 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   visible,
   onClose,
 }) => {
-  // const { t } = useTranslation();
-  const [config, setConfig] = useState<PersonalizedNotificationConfig>({
-    morningTime: '08:00',
-    middayTime: '14:00',
-    eveningTime: '20:00',
-    streakRemindersEnabled: true,
-    insightRemindersEnabled: true,
-    goalRemindersEnabled: true,
-  });
+  const { t } = useTranslation();
+  const [reminderTimes, setReminderTimes] = useState<JournalReminderTime[]>([]);
   const [hasPermission, setHasPermission] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [editingTimeKey, setEditingTimeKey] = useState<'morningTime' | 'middayTime' | 'eveningTime' | null>(null);
-  const [tempSelectedTime, setTempSelectedTime] = useState({
-    hour: 0,
-    minute: 0,
-    period: 'AM' as 'AM' | 'PM',
-  });
+  const [editingReminder, setEditingReminder] = useState<string | null>(null);
+  const [selectedHour, setSelectedHour] = useState(8);
+  const [selectedMinute, setSelectedMinute] = useState(0);
+  const [selectedPeriod, setSelectedPeriod] = useState<'AM' | 'PM'>('AM');
 
   useEffect(() => {
     if (visible) {
@@ -52,13 +44,11 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   const loadSettings = async () => {
     try {
       setLoading(true);
-      const savedConfig = await notificationService.getPersonalizedConfig();
+      const savedSettings = await notificationService.getReminderSettings();
       const permissionStatus = await notificationService.getPermissionStatus();
 
-      setConfig(savedConfig);
+      setReminderTimes(savedSettings);
       setHasPermission(permissionStatus === 'granted');
-      console.log('[NotificationSettingsModal] Loaded config:', savedConfig);
-      console.log('[NotificationSettingsModal] Has permission:', permissionStatus === 'granted');
     } catch (error) {
       console.error('Error loading notification settings:', error);
     } finally {
@@ -66,38 +56,11 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     }
   };
 
-  const handleSave = async () => {
-    try {
-      await notificationService.savePersonalizedConfig(config);
-
-      if (hasPermission) {
-        await notificationService.refreshPersonalizedNotifications();
-        Alert.alert(
-          'Settings Saved',
-          'Your notification preferences have been updated.',
-          [{ text: 'OK', onPress: onClose }]
-        );
-      } else {
-        Alert.alert(
-          'Settings Saved',
-          'Enable notifications to receive personalized reminders.',
-          [{ text: 'OK', onPress: onClose }]
-        );
-      }
-    } catch (error) {
-      console.error('Error saving notification settings:', error);
-      Alert.alert('Error', 'Failed to save settings. Please try again.');
-    }
-  };
-
   const handleEnableNotifications = async () => {
     try {
-      const granted = await notificationService.requestPermissions();
-      if (granted) {
-        setHasPermission(true);
-        await notificationService.refreshPersonalizedNotifications();
-        Alert.alert('Notifications Enabled', 'You\'ll now receive personalized reminders.');
-      } else {
+      const { canRequest, shouldGoToSettings } = await notificationService.canRequestPermissions();
+
+      if (shouldGoToSettings) {
         const guidance = notificationService.getDeniedGuidance();
         Alert.alert(
           guidance.title,
@@ -110,131 +73,410 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
             },
           ]
         );
+        return;
+      }
+
+      if (canRequest) {
+        const granted = await notificationService.requestPermissions();
+        if (granted) {
+          setHasPermission(true);
+          await notificationService.scheduleReminders();
+          Alert.alert('Notifications Enabled', 'You\'ll now receive mindful reminders.');
+        }
       }
     } catch (error) {
       console.error('Error enabling notifications:', error);
+      Alert.alert('Error', 'Failed to enable notifications. Please try again.');
     }
   };
 
-  const toggleSetting = (key: keyof PersonalizedNotificationConfig) => {
-    setConfig(prev => ({ ...prev, [key]: !prev[key] }));
-  };
+  const handleToggleReminder = async (reminderId: string, enabled: boolean) => {
+    try {
+      setReminderTimes(prev =>
+        prev.map(reminder =>
+          reminder.id === reminderId ? { ...reminder, enabled } : reminder
+        )
+      );
 
-  const parseTime = (timeString: string) => {
-    const [hourStr, minuteStr] = timeString.split(':');
-    let hour = parseInt(hourStr, 10);
-    const minute = parseInt(minuteStr, 10);
-    let period: 'AM' | 'PM' = 'AM';
-
-    if (hour >= 12) {
-      period = 'PM';
-      if (hour > 12) hour -= 12;
+      await notificationService.updateReminderSetting(reminderId, { enabled });
+    } catch (error) {
+      console.error('Error updating reminder setting:', error);
+      // Revert on error
+      setReminderTimes(prev =>
+        prev.map(reminder =>
+          reminder.id === reminderId ? { ...reminder, enabled: !enabled } : reminder
+        )
+      );
     }
-    if (hour === 0) hour = 12; // 00:xx is 12 AM
-
-    return { hour, minute, period };
   };
 
-  const formatTime = (hour: number, minute: number, period: 'AM' | 'PM') => {
-    let h = hour;
-    if (period === 'PM' && hour !== 12) h += 12;
-    if (period === 'AM' && hour === 12) h = 0; // 12 AM is 00:xx
-    
-    const hourStr = h.toString().padStart(2, '0');
-    const minuteStr = minute.toString().padStart(2, '0');
-    return `${hourStr}:${minuteStr}`;
-  };
+  const handleTimePress = (reminderId: string, currentTime: string) => {
+    const [hours24, minutes] = currentTime.split(':').map(Number);
 
-  const openTimePicker = (key: 'morningTime' | 'middayTime' | 'eveningTime') => {
-    setEditingTimeKey(key);
-    const { hour, minute, period } = parseTime(config[key]);
-    setTempSelectedTime({ hour, minute, period });
+    // Convert 24-hour to 12-hour format
+    const period: 'AM' | 'PM' = hours24 >= 12 ? 'PM' : 'AM';
+    const hours12 = hours24 === 0 ? 12 : hours24 > 12 ? hours24 - 12 : hours24;
+
+    setSelectedHour(hours12);
+    setSelectedMinute(minutes);
+    setSelectedPeriod(period);
+    setEditingReminder(reminderId);
     setShowTimePicker(true);
   };
 
-  const handleTimeChange = () => {
-    if (editingTimeKey) {
-      const newTime = formatTime(tempSelectedTime.hour, tempSelectedTime.minute, tempSelectedTime.period);
-      setConfig(prev => ({ ...prev, [editingTimeKey]: newTime }));
+  const handleTimeConfirm = async () => {
+    if (editingReminder) {
+      // Convert 12-hour format back to 24-hour format
+      let hours24 = selectedHour;
+      if (selectedPeriod === 'PM' && selectedHour !== 12) {
+        hours24 = selectedHour + 12;
+      } else if (selectedPeriod === 'AM' && selectedHour === 12) {
+        hours24 = 0;
+      }
+
+      const newTime = `${hours24.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')}`;
+
+      // Update local state
+      const newReminderTimes = reminderTimes.map(reminder =>
+        reminder.id === editingReminder ? { ...reminder, time: newTime } : { ...reminder }
+      );
+
+      setReminderTimes(newReminderTimes);
+
+      // Update the service
+      try {
+        await notificationService.updateReminderSetting(editingReminder, { time: newTime });
+      } catch (error) {
+        console.error('Error updating reminder time:', error);
+      }
     }
+
     setShowTimePicker(false);
-    setEditingTimeKey(null);
+    setEditingReminder(null);
   };
 
-  const handleCancelTimeChange = () => {
+  const handleTimePickerClose = () => {
     setShowTimePicker(false);
-    setEditingTimeKey(null);
+    setEditingReminder(null);
   };
 
+  const handleAddCustomReminder = () => {
+    Alert.prompt(
+      'Add Custom Reminder',
+      'Enter a label for your custom reminder',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Add',
+          onPress: async (label) => {
+            if (label && label.trim()) {
+              try {
+                await notificationService.addCustomReminder({
+                  time: '12:00',
+                  enabled: true,
+                  label: label.trim(),
+                  description: 'Custom mindful reminder',
+                });
+                await loadSettings();
+              } catch (error) {
+                console.error('Error adding custom reminder:', error);
+                Alert.alert('Error', 'Failed to add custom reminder.');
+              }
+            }
+          },
+        },
+      ],
+      'plain-text'
+    );
+  };
 
+  const handleDeleteReminder = (reminderId: string) => {
+    // Only allow deletion of custom reminders (not the default 3)
+    const isCustom = !['morning', 'daytime', 'afternoon', 'evening'].includes(reminderId);
 
-  if (loading || !config) {
+    if (!isCustom) {
+      return; // Don't allow deletion of default reminders
+    }
+
+    Alert.alert(
+      'Delete Reminder',
+      'Are you sure you want to delete this reminder?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await notificationService.removeReminder(reminderId);
+              await loadSettings();
+            } catch (error) {
+              console.error('Error deleting reminder:', error);
+              Alert.alert('Error', 'Failed to delete reminder.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleSave = async () => {
+    try {
+      await notificationService.saveReminderSettings(reminderTimes);
+
+      if (hasPermission) {
+        await notificationService.scheduleReminders();
+        Alert.alert(
+          'Settings Saved',
+          'Your notification preferences have been updated.',
+          [{ text: 'OK', onPress: onClose }]
+        );
+      } else {
+        Alert.alert(
+          'Settings Saved',
+          'Enable notifications to receive reminders.',
+          [{ text: 'OK', onPress: onClose }]
+        );
+      }
+    } catch (error) {
+      console.error('Error saving notification settings:', error);
+      Alert.alert('Error', 'Failed to save settings. Please try again.');
+    }
+  };
+
+  const getIconForReminder = (reminderId: string) => {
+    switch (reminderId) {
+      case 'morning':
+        return Sun;
+      case 'daytime':
+      case 'afternoon':
+        return Coffee;
+      case 'evening':
+        return Moon;
+      default:
+        return Bell;
+    }
+  };
+
+  const formatTimeDisplay = (time: string): string => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
+  // Custom Toggle Component
+  const CustomToggle = ({ value, onValueChange }: { value: boolean, onValueChange: (value: boolean) => void }) => {
     return (
-      <Modal visible={visible} animationType="slide" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.loadingText}>Loading settings...</Text>
-          </View>
+      <TouchableOpacity
+        style={[
+          styles.customToggleTrack,
+          value ? styles.customToggleTrackActive : styles.customToggleTrackInactive
+        ]}
+        onPress={() => onValueChange(!value)}
+        activeOpacity={0.8}
+      >
+        <View
+          style={[
+            styles.customToggleThumb,
+            {
+              transform: [{
+                translateX: value ? 24 : 2,
+              }]
+            }
+          ]}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  if (loading) {
+    return (
+      <Modal visible={visible} animationType="slide" presentationStyle="fullScreen">
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading settings...</Text>
         </View>
       </Modal>
     );
   }
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={{
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-      }}>
-        <View style={{
-          backgroundColor: 'white',
-          borderRadius: 20,
-          padding: 20,
-          width: '100%',
-          maxHeight: '80%',
-        }}>
-          {/* Header */}
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 20,
-          }}>
-            <Text style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              color: '#333',
-            }}>Notification Settings</Text>
-            <TouchableOpacity onPress={onClose} style={{
-              padding: 8,
-            }}>
-              <Text style={{ fontSize: 16, color: '#666' }}>✕</Text>
-            </TouchableOpacity>
+    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen">
+      <SafeAreaView style={styles.safeArea}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onClose} style={styles.backButton}>
+            <ChevronLeft size={24} color="#0f766e" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Notification Settings</Text>
+          <View style={styles.headerPlaceholder} />
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Permission Banner */}
+          {!hasPermission && (
+            <View style={styles.permissionBanner}>
+              <Text style={styles.permissionText}>
+                Enable notifications to receive mindful reminders
+              </Text>
+              <TouchableOpacity
+                style={styles.enableButton}
+                onPress={handleEnableNotifications}
+              >
+                <Text style={styles.enableButtonText}>Enable</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Preview Image */}
+          <View style={styles.previewImageContainer}>
+            <Image
+              source={require('../../assets/images/onboarding/notifications-preview.png')}
+              style={styles.previewImage}
+              resizeMode="contain"
+            />
           </View>
 
-          {/* Content */}
-          <Text style={{ fontSize: 16, marginBottom: 20 }}>
-            Configure your notification preferences here.
-          </Text>
-
-          <TouchableOpacity
-            onPress={onClose}
-            style={{
-              backgroundColor: '#0f766e',
-              padding: 15,
-              borderRadius: 10,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-              Close
+          {/* Section Header */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Daily Reminders</Text>
+            </View>
+            <Text style={styles.sectionDescription}>
+              Pick the times that work best for your daily wellbeing practice.
             </Text>
+
+            {/* Reminder Cards */}
+            <View style={styles.remindersContainer}>
+              {reminderTimes.map((reminder) => {
+                const IconComponent = getIconForReminder(reminder.id);
+                const timeFormatted = formatTimeDisplay(reminder.time);
+                const isCustom = !['morning', 'daytime', 'afternoon', 'evening'].includes(reminder.id);
+
+                return (
+                  <TouchableOpacity
+                    key={reminder.id}
+                    style={styles.reminderCard}
+                    activeOpacity={0.95}
+                    onLongPress={isCustom ? () => handleDeleteReminder(reminder.id) : undefined}
+                  >
+                    <View style={styles.reminderIconContainer}>
+                      <IconComponent
+                        size={18}
+                        color="#FFFFFF"
+                        strokeWidth={2}
+                      />
+                    </View>
+
+                    <View style={styles.reminderContent}>
+                      <Text style={styles.reminderLabel}>
+                        {reminder.label}
+                      </Text>
+                      <TouchableOpacity
+                        style={styles.timeRow}
+                        onPress={() => handleTimePress(reminder.id, reminder.time)}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.timeDisplay}>
+                          {timeFormatted}
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.reminderDescription}>
+                        {reminder.description}
+                      </Text>
+                    </View>
+
+                    <CustomToggle
+                      value={reminder.enabled}
+                      onValueChange={(enabled) => handleToggleReminder(reminder.id, enabled)}
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+
+              {/* Add Custom Reminder Button */}
+              <TouchableOpacity
+                style={styles.addReminderCard}
+                onPress={handleAddCustomReminder}
+                activeOpacity={0.8}
+              >
+                <View style={styles.addIconContainer}>
+                  <Plus size={18} color="#FFFFFF" strokeWidth={2} />
+                </View>
+                <View style={styles.addContent}>
+                  <Text style={styles.addLabel}>Add Custom Reminder</Text>
+                  <Text style={styles.addDescription}>Create your own reminder time</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Info Section */}
+          <View style={styles.infoSection}>
+            <Text style={styles.infoText}>
+              You can customize these reminders anytime. Long press custom reminders to delete them. Notifications help maintain consistency in your mindfulness practice.
+            </Text>
+          </View>
+        </ScrollView>
+
+        {/* Footer with Save Button */}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSave}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.saveButtonText}>Save Changes</Text>
           </TouchableOpacity>
         </View>
-      </View>
+
+        {/* Time Picker Modal */}
+        {showTimePicker && (
+          <Modal transparent={true} visible={showTimePicker} animationType="slide">
+            <View style={styles.timePickerOverlay}>
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                activeOpacity={1}
+                onPress={handleTimePickerClose}
+              />
+              <View style={styles.timePickerContainer}>
+                <Text style={styles.timePickerTitle}>Select Time</Text>
+
+                <WheelTimePicker
+                  selectedHour={selectedHour}
+                  selectedMinute={selectedMinute}
+                  selectedPeriod={selectedPeriod}
+                  onHourChange={setSelectedHour}
+                  onMinuteChange={setSelectedMinute}
+                  onPeriodChange={setSelectedPeriod}
+                />
+
+                <View style={styles.timePickerActions}>
+                  <TouchableOpacity
+                    style={styles.timePickerButton}
+                    onPress={handleTimePickerClose}
+                  >
+                    <Text style={styles.timePickerButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.timePickerButton, styles.timePickerSaveButton]}
+                    onPress={handleTimeConfirm}
+                  >
+                    <Text style={[styles.timePickerButtonText, styles.timePickerSaveButtonText]}>
+                      Save
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
+      </SafeAreaView>
     </Modal>
   );
 };

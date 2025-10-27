@@ -25,20 +25,27 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSlider, setCurrentSlider] = useState<'mood' | 'helpfulness'>('mood');
   const [showTestSlider, setShowTestSlider] = useState(false);
+  const submittingRef = React.useRef(false); // Ref-based guard for async reliability
 
   const handleMoodComplete = (rating: number) => {
+    if (isSubmitting) return; // Prevent any action if already submitting
     setMoodRating(rating);
     setCurrentSlider('helpfulness');
   };
 
   const handleHelpfulnessComplete = async (rating: number) => {
+    if (isSubmitting || submittingRef.current) return; // Guard against double-calls
     setHelpfulnessRating(rating);
     await submitRating(rating);
   };
 
   const submitRating = async (finalHelpfulnessRating?: number) => {
-    if (isSubmitting) return;
-    
+    if (isSubmitting || submittingRef.current) {
+      console.log('Already submitting mood rating, ignoring duplicate call');
+      return;
+    }
+
+    submittingRef.current = true; // Set ref immediately for synchronous guard
     setIsSubmitting(true);
     
     try {
@@ -79,6 +86,7 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
       onComplete(rating);
     } finally {
       setIsSubmitting(false);
+      submittingRef.current = false; // Reset ref guard
     }
   };
 

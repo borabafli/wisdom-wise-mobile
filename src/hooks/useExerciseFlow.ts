@@ -197,7 +197,14 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
 
   const handleMoodRatingComplete = useCallback((rating: any) => {
     console.log('Mood rating completed:', rating);
-    setShowMoodRating(false);
+    // Use functional update to ensure we're working with latest state
+    setShowMoodRating(prevShowMoodRating => {
+      if (!prevShowMoodRating) {
+        console.log('Mood rating already hidden, ignoring duplicate completion call');
+        return false;
+      }
+      return false;
+    });
   }, []);
 
   const handleMoodRatingSkip = useCallback(() => {

@@ -351,10 +351,13 @@
       "restartOnboarding": "Restart Onboarding",
       "notifications": "Notifications",
       "privacy": "Privacy & Security",
+      "dataPrivacy": "Your Data & Privacy",
       "darkMode": "Dark Mode",
       "help": "Help & Support",
       "signOut": "Sign Out",
-      "language": "Language"
+      "language": "Language",
+      "testNotification": "Test Notification",
+      "createAccount": "Create Account"
     },
     "menuSubtitles": {
       "editProfile": "Update your information",
@@ -363,10 +366,13 @@
       "restartOnboarding": "View intro again",
       "notifications": "Manage alerts",
       "privacy": "Control your data",
+      "dataPrivacy": "How we protect and handle your information",
       "darkMode": "Toggle dark theme",
       "help": "Get assistance",
       "signOut": "Leave your account",
       "language": "Change the app language",
+      "testNotification": "Send a test notification now",
+      "createAccount": "Save your progress and access all features",
       "default": "Tap to access"
     },
     "restartOnboarding": {

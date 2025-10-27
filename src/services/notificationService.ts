@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -336,9 +337,11 @@ class NotificationService {
    */
   async scheduleReminders(): Promise<void> {
     try {
+      console.log('📅 [NotificationService] Starting to schedule reminders...');
+
       const personalizedConfig = await this.getPersonalizedConfig();
       if (this.hasActivePersonalizedConfig(personalizedConfig)) {
-        console.log('Personalized reminders enabled; skipping standard reminder scheduling to avoid duplicates.');
+        console.log('⚠️ [NotificationService] Personalized reminders enabled; skipping standard reminder scheduling to avoid duplicates.');
         return;
       }
 
@@ -348,13 +351,15 @@ class NotificationService {
       const settings = await this.getReminderSettings();
       const enabledReminders = settings.filter(reminder => reminder.enabled);
 
+      console.log(`📋 [NotificationService] Found ${enabledReminders.length} enabled reminders out of ${settings.length} total`);
+
       for (const reminder of enabledReminders) {
         await this.scheduleReminderNotification(reminder);
       }
 
-      console.log(`Scheduled ${enabledReminders.length} journal reminders`);
+      console.log(`✅ [NotificationService] Successfully scheduled ${enabledReminders.length} daily journal reminders`);
     } catch (error) {
-      console.error('Error scheduling reminders:', error);
+      console.error('❌ [NotificationService] Error scheduling reminders:', error);
     }
   }
 
@@ -376,14 +381,15 @@ class NotificationService {
           },
         },
         trigger: {
+          type: SchedulableTriggerInputTypes.DAILY,
           channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
-          repeats: true,
           hour: hours,
           minute: minutes,
         },
       });
+      console.log(`✅ Scheduled daily notification for ${reminder.label} at ${hours}:${minutes}`);
     } catch (error) {
-      console.error(`Error scheduling notification for ${reminder.id}:`, error);
+      console.error(`❌ Error scheduling notification for ${reminder.id}:`, error);
     }
   }
 
@@ -398,11 +404,15 @@ class NotificationService {
         return data?.type === 'journal-reminder';
       });
 
+      console.log(`🗑️ [NotificationService] Canceling ${journalReminders.length} existing journal reminders (out of ${scheduled.length} total scheduled notifications)`);
+
       for (const notification of journalReminders) {
         await Notifications.cancelScheduledNotificationAsync(notification.identifier);
       }
+
+      console.log(`✅ [NotificationService] Canceled all journal reminders`);
     } catch (error) {
-      console.error('Error canceling reminders:', error);
+      console.error('❌ [NotificationService] Error canceling reminders:', error);
     }
   }
 
@@ -813,8 +823,9 @@ class NotificationService {
               },
             },
             trigger: {
+              type: SchedulableTriggerInputTypes.CALENDAR,
               channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
-              repeats: false, // Changed to false, background task will re-schedule with fresh content
+              repeats: false, // One-time notification, background task will re-schedule with fresh content
               hour: hours,
               minute: minutes,
             },
