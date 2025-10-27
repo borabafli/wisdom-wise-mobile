@@ -780,7 +780,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             {!isExpanded && <Text style={styles.insightPreview}>{previewText}</Text>}
 
                             <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
-                              {getShortConfidenceLabel(insight.confidence, 'insight')} â€¢ {new Date(insight.date).toLocaleDateString()}
+                              {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
                             </Text>
 
                             {isExpanded && (
@@ -881,7 +881,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             <View style={[styles.goalProgressFill, { width: `${goal.progress}%` }]} />
                           </View>
                           <Text style={styles.patternDescription}>
-                            {goal.progress}% {t('insights.therapyGoals.complete') || 'complete'} â€¢ {goal.timeline || ''}
+                            {goal.progress}% {t('insights.therapyGoals.complete') || 'complete'} • {goal.timeline || ''}
                           </Text>
                         </View>
                       </View>

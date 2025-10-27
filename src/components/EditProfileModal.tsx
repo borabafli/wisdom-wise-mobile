@@ -7,10 +7,9 @@ import {
   TextInput,
   Alert,
   KeyboardAvoidingView,
-  Platform,
   ScrollView
 } from 'react-native';
-import { X, Check, AlertCircle } from 'lucide-react-native';
+import { Check, AlertCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useUserProfile } from '../hooks';
@@ -20,10 +19,11 @@ import { editProfileModalStyles as styles } from '../styles/components/EditProfi
 interface EditProfileModalProps {
   visible: boolean;
   onClose: () => void;
+  onProfileUpdated?: () => void;
 }
 
-const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose }) => {
-  const { profile: userProfile, updateProfile, isLoading, error } = useUserProfile();
+const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, onProfileUpdated }) => {
+  const { profile: userProfile, updateProfile, error } = useUserProfile();
   const { profile: authProfile, isAnonymous } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -57,14 +57,21 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
   const validateField = (field: 'firstName' | 'lastName', value: string) => {
     const nextErrors = { ...validationErrors };
 
-    if (value.length < 1) {
+    // Last name is optional, so only validate if not empty
+    if (field === 'lastName' && value.length === 0) {
+      delete nextErrors[field];
+      setValidationErrors(nextErrors);
+      return;
+    }
+
+    if (value.length > 0 && value.length <= 50 && /^[a-zA-Z\s\-']+$/.test(value)) {
+      delete nextErrors[field];
+    } else if (value.length < 1) {
       nextErrors[field] = `${field === 'firstName' ? 'First' : 'Last'} name is required`;
     } else if (value.length > 50) {
       nextErrors[field] = `${field === 'firstName' ? 'First' : 'Last'} name must be 50 characters or less`;
-    } else if (!/^[a-zA-Z\s\-']+$/.test(value)) {
-      nextErrors[field] = 'Only letters, spaces, hyphens, and apostrophes are allowed';
     } else {
-      delete nextErrors[field];
+      nextErrors[field] = 'Only letters, spaces, hyphens, and apostrophes are allowed';
     }
 
     setValidationErrors(nextErrors);
@@ -83,7 +90,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
   const canSave = () =>
     hasChanges &&
     firstName.length > 0 &&
-    lastName.length > 0 &&
     Object.keys(validationErrors).length === 0 &&
     !isSaving;
 
@@ -93,15 +99,23 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
     setIsSaving(true);
 
     try {
+      const trimmedFirstName = firstName.trim();
+      const trimmedLastName = lastName.trim();
+      
       const success = await updateProfile({
-        firstName: firstName.trim(),
-        lastName: lastName.trim()
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName || '' // Empty string if no last name provided
       });
 
       if (success) {
+        // Notify parent to refresh
+        if (onProfileUpdated) {
+          onProfileUpdated();
+        }
+        const displayName = trimmedLastName ? `${trimmedFirstName} ${trimmedLastName}` : trimmedFirstName;
         Alert.alert(
           'Profile Updated',
-          `Your profile has been updated successfully! Anu will now address you as ${firstName}.`,
+          `Your profile has been updated successfully! Anu will now address you as ${displayName}.`,
           [{ text: 'Great!', onPress: onClose }]
         );
       } else {
@@ -210,7 +224,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Last Name</Text>
+                  <Text style={styles.inputLabel}>Last Name (Optional)</Text>
                   <View
                     style={[
                       styles.inputContainer,
@@ -221,7 +235,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose })
                       style={styles.textInput}
                       value={lastName}
                       onChangeText={handleLastNameChange}
-                      placeholder='Enter your last name'
+                      placeholder='Enter your last name (optional)'
                       placeholderTextColor='#94a3b8'
                       autoCapitalize='words'
                       autoCorrect={false}

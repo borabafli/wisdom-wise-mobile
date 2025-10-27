@@ -19,8 +19,7 @@ const focusAreas: FocusArea[] = [
   { id: '5', name: 'Focus & Drive' },
   { id: '6', name: 'Confidence & Self-Worth' },
   { id: '7', name: 'Relationships & Communication' },
-  { id: '8', name: 'Clarity & Decisions' },
-  { id: '9', name: 'Something else…' },
+  { id: '8', name: 'Something else…' },
 ];
 
 interface FocusAreasScreenProps {

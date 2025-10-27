@@ -156,6 +156,20 @@ export const editProfileModalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  cancelButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: '#2B475E',
+    fontFamily: typography.fontFamily.primary,
+  },
+  saveButton: {
+    flex: 1,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  saveButtonDisabled: {
+    opacity: 0.6,
+  },
   saveButtonGradient: {
     height: 48,
     paddingHorizontal: spacing[20],

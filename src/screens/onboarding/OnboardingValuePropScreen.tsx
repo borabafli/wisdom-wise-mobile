@@ -33,7 +33,7 @@ const onboardingPages: OnboardingPage[] = [
     id: 3,
     icon: require('../../../assets/images/onboarding/guided-icon-4.png'),
     title: 'Guided Growth, Made Simple',
-    description: 'Anu always know the next step and suggests exercises designed just for you.',
+    description: 'Anu always knows the next step and suggests exercises designed just for you.',
   },
   {
     id: 4,
@@ -143,7 +143,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <Animated.View 
+        <Animated.View
           style={[
             styles.contentContainer,
             {
@@ -209,26 +209,25 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             </View>
           </View>
 
-        </Animated.View>
-
-        {/* Action Button - OUTSIDE animated container with smooth fade */}
-        <Animated.View
-          style={[
-            styles.actionContainer,
-            {
-              opacity: buttonFadeAnim,
-            }
-          ]}
-        >
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={onContinue}
-            activeOpacity={0.8}
+          {/* Action Button - INSIDE animated container for consistency */}
+          <Animated.View
+            style={[
+              styles.actionContainer,
+              {
+                opacity: buttonFadeAnim,
+              }
+            ]}
           >
-            <Text style={styles.primaryButtonText}>
-              {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={onContinue}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.primaryButtonText}>
+                {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </Animated.View>
       </SafeAreaView>
     </View>

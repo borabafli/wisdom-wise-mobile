@@ -91,9 +91,9 @@ export const notificationPermissionStyles = StyleSheet.create({
 
   remindersContainer: {
     gap: spacing[2], // Even more reduced gap between cards (was 4, now 2)
-    paddingBottom: spacing[0], // Further reduced to make more room for buttons
+    paddingBottom: spacing[4], // Add some padding at bottom
     paddingTop: spacing[5], // Slightly increased to move cards down a bit
-    marginBottom: spacing[0], // Add margin to create space before buttons
+    marginBottom: spacing[2], // Minimal margin before buttons
     zIndex: 1, // Ensure cards appear above image
     position: 'relative',
   },
@@ -228,10 +228,11 @@ export const notificationPermissionStyles = StyleSheet.create({
   },
 
   bottomSection: {
-    paddingBottom: spacing[0],
-    paddingTop: spacing[4],
+    paddingBottom: 30, // Match other onboarding screens
+    paddingTop: spacing[24], // Increased from 4 (8px) to 24 (48px) for more space
     alignItems: 'center',
     zIndex: 10, // Bring button to foreground
+    marginTop: 'auto', // Push buttons to bottom
   },
 
   nextButton: {

@@ -74,10 +74,10 @@ export const onboardingValuePropStyles = StyleSheet.create({
   staticAnuContainer: {
     alignItems: 'center', // Center the image
     justifyContent: 'center',
-    flex: 1,
+    height: height * 0.35, // Fixed height instead of flex to control space
     paddingTop: 0,
-    paddingBottom: spacing[48], // More space from button to move video higher
-    marginTop: -spacing[24], // Move container up slightly
+    paddingBottom: spacing[16], // Reduced spacing
+    marginTop: -spacing[16], // Move container up slightly
   },
 
   videoContainer: {
@@ -120,7 +120,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: spacing[12], // Reduced from 24px to 12px to bring dots closer to text
-    paddingBottom: spacing[48], // 48px from Anu - increased spacing from image
+    paddingBottom: spacing[24], // Reduced to 24px for tighter spacing
     gap: spacing[8], // 8px
     position: 'relative',
     zIndex: 10, // Ensure dots appear above video
@@ -139,17 +139,15 @@ export const onboardingValuePropStyles = StyleSheet.create({
     opacity: 1,
   },
 
-  // Action Button Container - positioned at bottom
+  // Action Button Container - consistent with other onboarding screens
   actionContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     alignItems: 'center',
     paddingHorizontal: spacing[24], // 24px
     paddingBottom: 30, // Match other onboarding pages exactly
+    paddingTop: spacing[8], // Add top padding for separation
     backgroundColor: 'transparent',
     zIndex: 1000, // Absolute foreground
+    position: 'relative', // Changed from absolute to relative for consistency
   },
 
   // Primary Button - Following design principles
@@ -178,22 +176,26 @@ export const onboardingValuePropStyles = StyleSheet.create({
     swipeContainer: {
       height: height * 0.22,
     },
-    
+
+    staticAnuContainer: {
+      height: height * 0.3, // Reduced for smaller screens
+    },
+
     pageTitle: {
       fontSize: 24,
       lineHeight: 30,
     },
-    
+
     pageDescription: {
       fontSize: 16, // Increased from 15 to 16
       lineHeight: 24, // Increased from 22 to 24
     },
-    
+
     staticAnuImage: {
-      width: Math.min(width * 0.55, 240), // Reduced proportionally
-      height: Math.min(width * 0.55, 240), // Reduced proportionally
-      maxWidth: 240,
-      maxHeight: 240,
+      width: Math.min(width * 0.5, 220), // Reduced proportionally
+      height: Math.min(width * 0.5, 220), // Reduced proportionally
+      maxWidth: 220,
+      maxHeight: 220,
     },
   },
 
@@ -202,22 +204,26 @@ export const onboardingValuePropStyles = StyleSheet.create({
     swipeContainer: {
       height: height * 0.2,
     },
-    
+
+    staticAnuContainer: {
+      height: height * 0.25, // Further reduced for very small screens
+    },
+
     pageTitle: {
       fontSize: 22,
       lineHeight: 28,
     },
-    
+
     pageDescription: {
       fontSize: 15, // Increased from 14 to 15
       lineHeight: 22, // Increased from 20 to 22
     },
-    
+
     staticAnuImage: {
-      width: Math.min(width * 0.5, 200), // Reduced proportionally
-      height: Math.min(width * 0.5, 200), // Reduced proportionally
-      maxWidth: 200,
-      maxHeight: 200,
+      width: Math.min(width * 0.45, 180), // Reduced proportionally
+      height: Math.min(width * 0.45, 180), // Reduced proportionally
+      maxWidth: 180,
+      maxHeight: 180,
     },
   },
 });

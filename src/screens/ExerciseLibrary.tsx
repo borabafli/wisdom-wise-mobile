@@ -2,13 +2,12 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Search, Filter, Clock, Heart, Brain, Wind, Eye, Sparkles, X } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Search, Sparkles, X } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { getExercisesArray } from '../data/exerciseLibrary';
-import { colors, gradients, shadows, spacing } from '../styles/tokens';
-import { exerciseLibraryStyles, getTagColor, getExerciseCardGradient } from '../styles/components/ExerciseLibrary.styles';
+import { colors, spacing } from '../styles/tokens';
+import { exerciseLibraryStyles } from '../styles/components/ExerciseLibrary.styles';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { getExerciseEmojis } from '../utils/emojiUtils';
 import { useUserProfile } from '../hooks/useUserProfile';
@@ -70,34 +69,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   // Use unified exercises from exerciseLibrary.ts
   const exercises = getExercisesArray(t);
 
-  // Filter options
-  const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
-  const benefitFilters = ['All', 'Anxiety', 'Mood', 'Self-Discovery', 'Mental Clarity', 'Stress Relief', 'Focus', 'Emotional Balance', 'Breathing', 'Without Breathing'];
-  const styleFilters = ['All', 'CBT', 'Meditation', 'Journaling', 'Mindfulness', 'ACT'];
-
-  // Helper function to get duration in minutes
-  const getDurationInMinutes = (duration: string) => {
-    const match = duration.match(/(\d+)/);
-    return match ? parseInt(match[1]) : 0;
-  };
-
-  // Count active filters
-  const activeFiltersCount = useMemo(() => {
-    let count = 0;
-    if (selectedTimeFilter !== 'All') count++;
-    if (selectedBenefitFilter !== 'All') count++;
-    if (selectedStyleFilter !== 'All') count++;
-    return count;
-  }, [selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
-
-  // Clear all filters
-  const clearAllFilters = () => {
-    setSelectedTimeFilter('All');
-    setSelectedBenefitFilter('All');
-    setSelectedStyleFilter('All');
-  };
-
-  // Extract benefit from exercise description or category
+  // Helper function to extract benefit from exercise description or category
   const getBenefitFromExercise = (exercise: any) => {
     const description = exercise.description.toLowerCase();
     const name = exercise.name.toLowerCase();
@@ -121,6 +93,60 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     
     // Default fallback
     return 'Focus';
+  };
+
+  // Helper function to get duration in minutes
+  const getDurationInMinutes = (duration: string) => {
+    const match = /(\d+)/.exec(duration);
+    return match ? Number.parseInt(match[1], 10) : 0;
+  };
+
+  // Filter options - time filters remain static
+  const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
+  
+  // Dynamically generate style filters from available exercises
+  const styleFilters = useMemo(() => {
+    const categories = new Set<string>();
+    for (const exercise of exercises) {
+      if (exercise.category) {
+        categories.add(exercise.category);
+      }
+    }
+    return ['All', ...Array.from(categories).sort((a, b) => a.localeCompare(b))];
+  }, [exercises]);
+
+  // Dynamically generate benefit filters from available exercises
+  const benefitFilters = useMemo(() => {
+    const benefits = new Set<string>();
+    for (const exercise of exercises) {
+      const benefit = getBenefitFromExercise(exercise);
+      if (benefit) {
+        benefits.add(benefit);
+      }
+    }
+    // Add special filters
+    const hasBreathing = exercises.some(ex => ex.category.toLowerCase().includes('breathing'));
+    if (hasBreathing) {
+      benefits.add('Breathing');
+      benefits.add('Without Breathing');
+    }
+    return ['All', ...Array.from(benefits).sort((a, b) => a.localeCompare(b))];
+  }, [exercises]);
+
+  // Count active filters
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (selectedTimeFilter !== 'All') count++;
+    if (selectedBenefitFilter !== 'All') count++;
+    if (selectedStyleFilter !== 'All') count++;
+    return count;
+  }, [selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedTimeFilter('All');
+    setSelectedBenefitFilter('All');
+    setSelectedStyleFilter('All');
   };
 
   // Handle card hiding

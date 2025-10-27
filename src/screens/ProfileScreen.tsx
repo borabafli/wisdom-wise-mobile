@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Settings, LogOut, LogIn, ArrowRight } from 'lucide-react-native';
+import { Settings, LogOut, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -21,6 +21,7 @@ import { notificationService } from '../services/notificationService';
 import { useOnboardingControl } from '../hooks/useOnboardingControl';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 import streakService from '../services/streakService';
+import { ExerciseCompletionService } from '../services/exerciseCompletionService';
 
 const ProfileScreen: React.FC = () => {
   const dataPrivacyPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
@@ -30,6 +31,7 @@ const ProfileScreen: React.FC = () => {
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
 
   const [displayName, setDisplayName] = useState('Friend');
+  const [hasCustomName, setHasCustomName] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
@@ -38,25 +40,71 @@ const ProfileScreen: React.FC = () => {
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [sessionsCount, setSessionsCount] = useState<number>(0);
+  const [insightsCount, setInsightsCount] = useState<number>(0);
+  const [exercisesCount, setExercisesCount] = useState<number>(0);
 
   useEffect(() => {
-    const updateDisplayNameAndStreak = async () => {
+    const updateDisplayNameAndStats = async () => {
       try {
         const name = await storageService.getDisplayNameWithPriority(user);
         setDisplayName(name);
 
+        // Check if user has set a custom name
+        const localProfile = await storageService.getUserProfile();
+        setHasCustomName(!!localProfile?.firstName && localProfile.firstName.trim() !== '');
+
+        // Get streak
         const streak = await streakService.getStreak();
         setCurrentStreak(streak);
+
+        // Get sessions count from chat history
+        const history = await storageService.getChatHistory();
+        setSessionsCount(history.length);
+
+        // Get insights count from thought patterns
+        const patterns = await storageService.getThoughtPatterns();
+        setInsightsCount(patterns.length);
+
+        // Get completed exercises count
+        const completedExercises = await ExerciseCompletionService.getAllCompletedExercisesInfo();
+        setExercisesCount(completedExercises.length);
       } catch (error) {
-        console.error('Error updating display name or streak:', error);
+        console.error('Error updating display name or stats:', error);
         const fallbackName = profile
           ? `${profile.first_name} ${profile.last_name}`.trim() || 'Friend'
           : user?.email?.split('@')[0] || 'Friend';
         setDisplayName(fallbackName);
+        setHasCustomName(false);
       }
     };
-    updateDisplayNameAndStreak();
-  }, [user, profile]);
+    updateDisplayNameAndStats();
+  }, [user, profile, refreshTrigger]);
+
+  const handleProfileUpdated = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const getMemberSinceText = () => {
+    if (isAnonymous && !hasCustomName) {
+      return t('profile.anonymousGuest');
+    }
+    if (isAnonymous && hasCustomName) {
+      return t('profile.welcomeMessage');
+    }
+    if (profile?.created_at) {
+      return `${t('profile.memberSince')} ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+    }
+    return user?.email || t('profile.welcomeMessage');
+  };
+
+  const getPremiumBadgeText = () => {
+    if (isAnonymous) {
+      return ''; // Keep empty for anonymous users
+    }
+    return t('profile.premiumMember');
+  };
 
   const handleSignOut = () => {
     Alert.alert(
@@ -67,12 +115,11 @@ const ProfileScreen: React.FC = () => {
         {
           text: t('profile.signOut'),
           style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut();
-            } catch (error) {
+          onPress: () => {
+            signOut().catch((error) => {
+              console.error('Error signing out:', error);
               Alert.alert(t('common.error'), t('errors.genericError'));
-            }
+            });
           },
         },
       ]
@@ -90,41 +137,45 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
-  const handleTestNotification = async () => {
-    try {
-      const { canRequest, shouldGoToSettings } = await notificationService.canRequestPermissions();
-      const hasPermission = await notificationService.getPermissionStatus();
+  const handleTestNotification = () => {
+    const testNotification = async () => {
+      try {
+        const { canRequest, shouldGoToSettings } = await notificationService.canRequestPermissions();
+        const hasPermission = await notificationService.getPermissionStatus();
 
-      if (hasPermission !== 'granted') {
-        if (shouldGoToSettings) {
-          const guidance = notificationService.getDeniedGuidance();
-          Alert.alert(
-            guidance.title,
-            guidance.message,
-            [
-              { text: 'Not Now', style: 'cancel' },
-              { text: 'Open Settings', style: 'default', onPress: () => notificationService.openSettings() }
-            ]
-          );
-          return;
-        } else if (canRequest) {
-          const granted = await notificationService.requestPermissions();
-          if (!granted) {
-            Alert.alert('Permission Required', 'Test notifications require notification permissions to be enabled.');
+        if (hasPermission !== 'granted') {
+          if (shouldGoToSettings) {
+            const guidance = notificationService.getDeniedGuidance();
+            Alert.alert(
+              guidance.title,
+              guidance.message,
+              [
+                { text: 'Not Now', style: 'cancel' },
+                { text: 'Open Settings', style: 'default', onPress: () => { notificationService.openSettings(); } }
+              ]
+            );
+            return;
+          } else if (canRequest) {
+            const granted = await notificationService.requestPermissions();
+            if (!granted) {
+              Alert.alert('Permission Required', 'Test notifications require notification permissions to be enabled.');
+              return;
+            }
+          } else {
+            Alert.alert('Permission Required', 'Please enable notifications in your device settings to test notifications.');
             return;
           }
-        } else {
-          Alert.alert('Permission Required', 'Please enable notifications in your device settings to test notifications.');
-          return;
         }
-      }
 
-      await notificationService.sendTestNotification();
-      Alert.alert('Test Notification Sent!', 'Check your notification panel to see if it appeared.');
-    } catch (error) {
-      console.error('Error sending test notification:', error);
-      Alert.alert('Error', 'Failed to send test notification. Please try again.');
-    }
+        await notificationService.sendTestNotification();
+        Alert.alert('Test Notification Sent!', 'Check your notification panel to see if it appeared.');
+      } catch (error) {
+        console.error('Error sending test notification:', error);
+        Alert.alert('Error', 'Failed to send test notification. Please try again.');
+      }
+    };
+    
+    testNotification();
   };
 
   const handleRestartOnboarding = () => {
@@ -136,13 +187,11 @@ const ProfileScreen: React.FC = () => {
         {
           text: t('profile.restartOnboarding.confirm'),
           style: 'default',
-          onPress: async () => {
-            try {
-              await restartOnboarding();
-            } catch (error) {
+          onPress: () => {
+            restartOnboarding().catch((error) => {
               console.error('Error resetting onboarding:', error);
               Alert.alert(t('common.error'), t('errors.genericError'));
-            }
+            });
           },
         },
       ]
@@ -150,10 +199,10 @@ const ProfileScreen: React.FC = () => {
   };
 
   const stats = [
-    { label: t('profile.stats.sessions'), value: '47', iconImage: require('../../assets/images/New Icons/icon-6.png') },
+    { label: t('profile.stats.sessions'), value: sessionsCount.toString(), iconImage: require('../../assets/images/New Icons/icon-6.png') },
     { label: t('profile.stats.streak'), value: t('profile.stats.days', { count: currentStreak }), iconImage: require('../../assets/images/New Icons/icon-7.png') },
-    { label: t('profile.stats.insights'), value: '23', iconImage: require('../../assets/images/New Icons/icon-8.png') },
-    { label: t('profile.stats.exercises'), value: '31', iconImage: require('../../assets/images/New Icons/icon-9.png') }
+    { label: t('profile.stats.insights'), value: insightsCount.toString(), iconImage: require('../../assets/images/New Icons/icon-8.png') },
+    { label: t('profile.stats.exercises'), value: exercisesCount.toString(), iconImage: require('../../assets/images/New Icons/icon-9.png') }
   ];
 
   const menuItems = [
@@ -163,7 +212,7 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/14.png'), label: 'Your Data & Privacy', action: () => setShowDataPrivacy(true), subtitle: 'How we protect and handle your information' },
 
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
-    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => { console.log('Notifications menu item pressed'); setShowNotificationSettings(true); }, subtitle: t('profile.menuSubtitles.notifications') },
+    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: 'Test Notification', action: handleTestNotification, subtitle: 'Send a test notification now' },
     { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => setShowPrivacyPolicy(true), subtitle: t('profile.menuSubtitles.privacy') },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
@@ -232,14 +281,10 @@ const ProfileScreen: React.FC = () => {
                   <View style={styles.userDetails}>
                     <Text style={styles.userName}>{displayName}</Text>
                     <Text style={styles.memberSince}>
-                      {isAnonymous
-                        ? t('profile.anonymousGuest')
-                        : profile?.created_at
-                          ? `${t('profile.memberSince')} ${new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
-                          : user?.email || t('profile.welcomeMessage')}
+                      {getMemberSinceText()}
                     </Text>
                     <Text style={styles.premiumBadge}>
-                      {isAnonymous ? t('profile.anonymousGuest') : t('profile.premiumMember')}
+                      {getPremiumBadgeText()}
                     </Text>
                   </View>
                   <TouchableOpacity
@@ -415,7 +460,11 @@ const ProfileScreen: React.FC = () => {
 
       <ChatHistory visible={showChatHistory} onClose={() => setShowChatHistory(false)} />
       <TTSSettings visible={showTTSSettings} onClose={() => setShowTTSSettings(false)} />
-      <EditProfileModal visible={showEditProfile} onClose={() => setShowEditProfile(false)} />
+      <EditProfileModal 
+        visible={showEditProfile} 
+        onClose={() => setShowEditProfile(false)} 
+        onProfileUpdated={handleProfileUpdated}
+      />
       <Modal visible={showDataPrivacy} animationType="slide" presentationStyle={dataPrivacyPresentationStyle} onRequestClose={() => setShowDataPrivacy(false)}>
         <DataPrivacyScreen onBack={() => setShowDataPrivacy(false)} />
       </Modal>
