@@ -1,0 +1,44 @@
+# Build artifacts (CRITICAL - saves ~3 GB)
+ios/build/
+ios/Pods/
+android/app/build/
+android/.gradle/
+.expo/
+dist/
+
+# Development dependencies
+node_modules/
+.git/
+
+# Backup and temp files
+.backup-native/
+temp_*.tsx
+*.backup
+
+# Documentation (not needed for build)
+docs/
+architecture.md
+*.md
+!README.md
+
+# IDE and system files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing and automation
+.playwright-mcp/
+.cursor/
+
+# Claude configuration (optional - keep if you want Claude context in cloud builds)
+.claude/
+CLAUDE.md
+
+# Unused assets - consider cleaning these manually
+# assets/unused icons/
+# assets/images/not-used-turtle-style/
+# assets/images/old-man-style/
+# assets/fonts/*.zip

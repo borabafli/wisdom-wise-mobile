@@ -39,6 +39,10 @@
       }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://tarwryruagxsoaljzoot.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kwdqWqCQQgbHMoIikvhkUw_W7YS5_F_"
+      },
       "ios": {
         "resourceClass": "m-medium"
       },

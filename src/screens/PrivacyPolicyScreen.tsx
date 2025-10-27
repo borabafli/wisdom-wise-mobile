@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { ArrowLeft } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import { privacyPolicyScreenStyles as styles } from '../styles/components/PrivacyPolicyScreen.styles';
 
 interface PrivacyPolicyScreenProps {
@@ -13,11 +12,10 @@ interface PrivacyPolicyScreenProps {
 
 const PrivacyPolicyScreen: React.FC<PrivacyPolicyScreenProps> = ({ onBack }) => {
   const { t } = useTranslation();
-  const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.defaultScreen);
 
   return (
     <SafeAreaWrapper style={styles.container}>
-      <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
+      <StatusBar style="dark" backgroundColor="transparent" translucent />
 
       {/* Header */}
       <View style={styles.header}>

@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PostHog } from 'posthog-react-native';
 
 const COMPLETED_EXERCISES_KEY = 'completed_exercises';
+
+// Store PostHog instance for tracking
+let posthogInstance: PostHog | null = null;
 
 export interface CompletedExercise {
   exerciseId: string;
@@ -9,6 +13,11 @@ export interface CompletedExercise {
 }
 
 export class ExerciseCompletionService {
+  // Initialize PostHog instance (call this from App.tsx)
+  static initializeAnalytics(posthog: PostHog | null): void {
+    posthogInstance = posthog;
+  }
+
   private static async getCompletedExercises(): Promise<CompletedExercise[]> {
     try {
       const completedExercisesJson = await AsyncStorage.getItem(COMPLETED_EXERCISES_KEY);
@@ -42,7 +51,7 @@ export class ExerciseCompletionService {
     }
   }
 
-  static async markExerciseCompleted(exerciseId: string): Promise<void> {
+  static async markExerciseCompleted(exerciseId: string, exerciseName?: string, duration?: number): Promise<void> {
     try {
       const completedExercises = await this.getCompletedExercises();
 
@@ -60,6 +69,16 @@ export class ExerciseCompletionService {
 
       filteredExercises.push(newCompletion);
       await this.saveCompletedExercises(filteredExercises);
+
+      // 🎯 Track exercise completion in PostHog
+      posthogInstance?.capture('exercise_completed', {
+        exerciseId,
+        exerciseName: exerciseName || exerciseId,
+        duration: duration || 0,
+        completedAt: new Date().toISOString(),
+      });
+
+      console.log('[Analytics] Exercise completed tracked:', exerciseId);
     } catch (error) {
       console.error('Error marking exercise as completed:', error);
     }
@@ -106,5 +125,22 @@ export class ExerciseCompletionService {
   // Debug method to get all completed exercises with their info
   static async getAllCompletedExercisesInfo(): Promise<CompletedExercise[]> {
     return this.getCompletedExercises();
+  }
+
+  // 🎯 Track when user abandons an exercise (exits without completing)
+  static trackExerciseAbandoned(exerciseId: string, exerciseName?: string, timeSpent?: number, reason?: string): void {
+    try {
+      posthogInstance?.capture('exercise_abandoned', {
+        exerciseId,
+        exerciseName: exerciseName || exerciseId,
+        timeSpent: timeSpent || 0,
+        reason: reason || 'unknown',
+        abandonedAt: new Date().toISOString(),
+      });
+
+      console.log('[Analytics] Exercise abandoned tracked:', exerciseId);
+    } catch (error) {
+      console.error('Error tracking exercise abandonment:', error);
+    }
   }
 }

@@ -3,6 +3,7 @@ import { NavigationContainer, useNavigationContainerRef, DefaultTheme, getFocuse
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
+import { usePostHog } from 'posthog-react-native';
 
 import { View, Platform, BackHandler, Animated, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,6 +30,8 @@ import { OnboardingNavigator } from '../navigation/OnboardingNavigator';
 // Import services
 import { OnboardingService } from '../services/onboardingService';
 import { notificationService } from '../services/notificationService';
+import { firstActionTracker } from '../services/firstActionTracker';
+import { ExerciseCompletionService } from '../services/exerciseCompletionService';
 
 // Import contexts
 import { useApp } from '../contexts';
@@ -62,8 +65,9 @@ import { OnboardingContext, OnboardingContextType } from '../hooks/useOnboarding
 export const AppContent: React.FC = () => {
 
   const insets = useSafeAreaInsets();
+  const posthog = usePostHog();
 
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user, isAnonymous } = useAuth();
 
   // Onboarding state management
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);
@@ -133,9 +137,18 @@ export const AppContent: React.FC = () => {
   );
 
   const navigateToTab = useCallback(
-    (tabName: keyof RootTabParamList) => {
+    async (tabName: keyof RootTabParamList) => {
       if (!navigationRef.isReady()) {
         return;
+      }
+
+      // 🎯 Track first action - tab navigation
+      if (tabName === 'Exercises') {
+        await firstActionTracker.trackFirstAction('exercises_tab_visited');
+      } else if (tabName === 'Insights') {
+        await firstActionTracker.trackFirstAction('insights_tab_visited');
+      } else if (tabName === 'Profile') {
+        await firstActionTracker.trackFirstAction('profile_tab_visited');
       }
 
       setDirectionForTab(tabName);
@@ -143,6 +156,12 @@ export const AppContent: React.FC = () => {
     },
     [navigationRef, setDirectionForTab]
   );
+
+  // Initialize first action tracker and exercise completion service on app load
+  useEffect(() => {
+    firstActionTracker.initialize(posthog);
+    ExerciseCompletionService.initializeAnalytics(posthog);
+  }, [posthog]);
 
   // Check onboarding status on app load
   useEffect(() => {

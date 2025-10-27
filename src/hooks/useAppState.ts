@@ -1,9 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
+import { usePostHog } from 'posthog-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Exercise, ButtonPosition } from '../types';
 import streakService from '../services/streakService';
 import { navigationBarConfigs } from '../hooks/useNavigationBarStyle';
+import { firstActionTracker } from '../services/firstActionTracker';
+import { getExercisesArray } from '../data/exerciseLibrary';
 
 type TFunction = (key: string) => string;
 
@@ -11,6 +14,7 @@ type TFunction = (key: string) => string;
  * Custom hook for managing app-level state
  */
 export const useAppState = (t: TFunction) => {
+  const posthog = usePostHog();
   const [showChat, setShowChat] = useState<boolean>(false);
   const [showBreathing, setShowBreathing] = useState<boolean>(false);
   const [showTherapyGoals, setShowTherapyGoals] = useState<boolean>(false);
@@ -25,6 +29,12 @@ export const useAppState = (t: TFunction) => {
   const handleStartSession = useCallback(async (params: Exercise | ButtonPosition | null = null) => {
     console.log('=== START SESSION ===');
     console.log('Params passed to session:', params);
+
+    // 🎯 Track first action - chat session started
+    await firstActionTracker.trackFirstAction('chat_session_started', {
+      hasExercise: !!(params && !('x' in params)),
+      exerciseType: (params && !('x' in params) && 'type' in params) ? (params as Exercise).type : undefined,
+    });
 
     // Record check-in if not already done today
     if (!hasCheckedInToday) {
@@ -59,8 +69,19 @@ export const useAppState = (t: TFunction) => {
     setShowChat(true);
   }, []);
 
-  const handleBackFromChat = useCallback(async () => {
+  const handleBackFromChat = useCallback(async (wasCompleted: boolean = false, exerciseData?: { exerciseId: string; exerciseName: string; timeSpent?: number }) => {
     console.log('handleBackFromChat called - starting cleanup');
+
+    // 🎯 Track exercise abandonment if user is leaving an exercise without completing
+    if (currentExercise && !wasCompleted && exerciseData) {
+      const { ExerciseCompletionService } = await import('../services/exerciseCompletionService');
+      ExerciseCompletionService.trackExerciseAbandoned(
+        exerciseData.exerciseId,
+        exerciseData.exerciseName,
+        exerciseData.timeSpent,
+        'back_button'
+      );
+    }
 
     // Immediately reset navigation bar color (before animation)
     if (Platform.OS === 'android') {
@@ -79,7 +100,7 @@ export const useAppState = (t: TFunction) => {
     setButtonPosition(null); // Clear button position
 
     console.log('handleBackFromChat completed - should return to main app');
-  }, []);
+  }, [currentExercise]);
 
   const handleBackFromBreathing = useCallback(() => {
     console.log('handleBackFromBreathing called');
@@ -100,19 +121,37 @@ export const useAppState = (t: TFunction) => {
     console.log('Returned to main app from therapy goals screen');
   }, []);
 
-  const handleExerciseClick = useCallback((exercise?: Exercise) => {
+  const handleExerciseClick = useCallback((exercise?: Exercise, source: string = 'unknown') => {
     if (exercise) {
+      // 🎯 Track exercise viewed
+      posthog?.capture('exercise_viewed', {
+        exerciseId: exercise.type,
+        exerciseName: exercise.name,
+        exerciseCategory: exercise.category,
+        source
+      });
+
       // Special handling for breathing exercises
       if (exercise.category === t('exerciseLibrary.categories.breathing') || exercise.type.includes('breathing')) {
+        posthog?.capture('exercise_started', {
+          exerciseId: exercise.type,
+          exerciseName: exercise.name,
+          exerciseType: 'breathing'
+        });
         setBreathingExercise(exercise);
         setShowBreathing(true);
       } else {
+        posthog?.capture('exercise_started', {
+          exerciseId: exercise.type,
+          exerciseName: exercise.name,
+          exerciseType: exercise.type
+        });
         handleStartSession(exercise);
       }
     } else {
       console.log('No exercise provided to handleExerciseClick');
     }
-  }, [handleStartSession]);
+  }, [handleStartSession, posthog, t]);
 
   const handleInsightClick = useCallback((type: string, insight?: any) => {
     console.log('=== INSIGHT CLICK ===');
@@ -195,6 +234,10 @@ export const useAppState = (t: TFunction) => {
       case 'goal-setting':
         // Handle therapy goal setting button click
         console.log('Starting therapy goal setting exercise');
+
+        // 🎯 Track first action - therapy goal setting started
+        firstActionTracker.trackFirstAction('therapy_goal_setting_started');
+
         const goalSettingExercise = {
           type: 'goal-setting',
           name: 'Therapy Goal-Setting',

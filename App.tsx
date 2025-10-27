@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
 import * as NavigationBar from 'expo-navigation-bar';
 import { loadFonts } from './src/config/fonts';
+import { PostHogProvider } from 'posthog-react-native';
 
 // Components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
@@ -54,8 +55,8 @@ export default function App() {
           await NavigationBar.setButtonStyleAsync('dark');
 
            // 🔧 Add these:
-  await NavigationBar.setBehaviorAsync('inset-swipe'); // content gets inset by system bar
-  await NavigationBar.setVisibilityAsync('visible');   // make sure it’s not overlay-hidden
+          await NavigationBar.setBehaviorAsync('inset-swipe'); // content gets inset by system bar
+          await NavigationBar.setVisibilityAsync('visible');   // make sure it’s not overlay-hidden
         
           console.log('✅ [APP] Step 2: Android navigation bar configured');
         }
@@ -101,19 +102,28 @@ export default function App() {
   console.log('Fonts loaded, rendering main app');
 
   return (
-    <SafeAreaProvider>
-      <ErrorBoundary>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <LocalizationProvider>
-            <AuthProvider>
-              <AppProvider>
-                <AppContent />
-                <NotificationPrompt />
-              </AppProvider>
-            </AuthProvider>
-          </LocalizationProvider>
-        </GestureHandlerRootView>
-      </ErrorBoundary>
-    </SafeAreaProvider>
+    <PostHogProvider
+      apiKey="phc_DWyIcrWUIUW7wShwLuOzxB2wA08vl8CBpFzBHPxFvGe"
+      options={{
+        host: 'https://us.i.posthog.com',
+        enableSessionReplay: true,
+      }}
+      autocapture
+    >
+      <SafeAreaProvider>
+        <ErrorBoundary>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <LocalizationProvider>
+              <AuthProvider>
+                <AppProvider>
+                  <AppContent />
+                  <NotificationPrompt />
+                </AppProvider>
+              </AuthProvider>
+            </LocalizationProvider>
+          </GestureHandlerRootView>
+        </ErrorBoundary>
+      </SafeAreaProvider>
+    </PostHogProvider>
   );
 }
