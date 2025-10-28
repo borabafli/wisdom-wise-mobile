@@ -1,17 +1,36 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { ArrowLeft, Shield, Lock, Eye, Database, Download, Trash2 } from 'lucide-react-native';
+import { ArrowLeft, Lock, Eye, Database, Download, Trash2, ExternalLink } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { dataPrivacyStyles as styles } from '../styles/components/DataPrivacyScreen.styles';
+import { LEGAL_URLS, CONTACT_INFO } from '../constants/legal';
 
 interface DataPrivacyScreenProps {
   onBack: () => void;
 }
 
 const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
+  const handleOpenPrivacyPolicy = async () => {
+    try {
+      await Linking.openURL(LEGAL_URLS.PRIVACY_POLICY);
+    } catch (error) {
+      console.error('Error opening privacy policy:', error);
+      Alert.alert('Error', 'Unable to open privacy policy. Please try again.');
+    }
+  };
+
+  const handleEmailPrivacy = async () => {
+    try {
+      await Linking.openURL(`mailto:${CONTACT_INFO.PRIVACY_EMAIL}`);
+    } catch (error) {
+      console.error('Error opening email:', error);
+      Alert.alert('Error', 'Unable to open email client.');
+    }
+  };
+
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style="dark" backgroundColor="#e9eff1" translucent />
@@ -125,11 +144,30 @@ const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
             </TouchableOpacity>
           </View>
 
+          {/* Full Privacy Policy Link */}
+          <TouchableOpacity 
+            style={styles.policyLinkButton}
+            onPress={handleOpenPrivacyPolicy}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['#FFFFFF', '#F8FAFA']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.policyLinkGradient}
+            >
+              <ExternalLink size={20} color="#36657d" />
+              <Text style={styles.policyLinkText}>View Full Privacy Policy</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
           {/* Contact Section */}
           <View style={styles.contactSection}>
             <Text style={styles.contactText}>
               Have questions? Email us at{' '}
-              <Text style={styles.contactLink}>privacy@wisdomwise.app</Text>
+              <Text style={styles.contactLink} onPress={handleEmailPrivacy}>
+                {CONTACT_INFO.PRIVACY_EMAIL}
+              </Text>
             </Text>
           </View>
 

@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, ExternalLink } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { privacyPolicyScreenStyles as styles } from '../styles/components/PrivacyPolicyScreen.styles';
+import { LEGAL_URLS } from '../constants/legal';
 
 interface PrivacyPolicyScreenProps {
   onBack: () => void;
@@ -12,6 +13,20 @@ interface PrivacyPolicyScreenProps {
 
 const PrivacyPolicyScreen: React.FC<PrivacyPolicyScreenProps> = ({ onBack }) => {
   const { t } = useTranslation();
+
+  const handleOpenFullPolicy = async () => {
+    try {
+      const canOpen = await Linking.canOpenURL(LEGAL_URLS.PRIVACY_POLICY);
+      if (canOpen) {
+        await Linking.openURL(LEGAL_URLS.PRIVACY_POLICY);
+      } else {
+        Alert.alert('Error', 'Unable to open the privacy policy online.');
+      }
+    } catch (error) {
+      console.error('Error opening privacy policy URL:', error);
+      Alert.alert('Error', 'Failed to open privacy policy. Please try again.');
+    }
+  };
 
   return (
     <SafeAreaWrapper style={styles.container}>
@@ -39,6 +54,16 @@ const PrivacyPolicyScreen: React.FC<PrivacyPolicyScreenProps> = ({ onBack }) => 
 
           <Text style={styles.title}>PRIVACY POLICY</Text>
           <Text style={styles.lastUpdated}>Last updated October 07, 2025</Text>
+
+          {/* View Full Policy Button */}
+          <TouchableOpacity 
+            style={styles.fullPolicyButton}
+            onPress={handleOpenFullPolicy}
+            activeOpacity={0.7}
+          >
+            <ExternalLink size={18} color="#36657d" />
+            <Text style={styles.fullPolicyButtonText}>View Full Privacy Policy Online</Text>
+          </TouchableOpacity>
 
           <Text style={styles.mainText}>
             This Privacy Notice for Zenify ("we," "us," or "our"), describes how and why we might access, collect, store, use, and/or share ("process") your personal information when you use our services ("Services"), including when you:

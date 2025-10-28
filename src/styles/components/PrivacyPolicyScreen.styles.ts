@@ -112,4 +112,22 @@ export const privacyPolicyScreenStyles = StyleSheet.create({
     marginBottom: spacing.md,
     fontFamily: 'monospace',
   },
+  fullPolicyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    backgroundColor: '#E3EEF3',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: 12,
+    marginBottom: spacing.xl,
+    borderWidth: 1,
+    borderColor: '#36657d20',
+  },
+  fullPolicyButtonText: {
+    ...typography.body.medium,
+    color: '#36657d',
+    fontWeight: '600',
+  },
 });

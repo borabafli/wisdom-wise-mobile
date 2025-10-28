@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useAuth } from '../../contexts';
 import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
 import { GoogleIcon } from '../../components/GoogleIcon';
+import { LEGAL_URLS } from '../../constants/legal';
 
 export const SignUpScreen: React.FC<{ 
   onNavigateToSignIn: () => void;
@@ -90,6 +91,20 @@ export const SignUpScreen: React.FC<{
     }
   };
 
+  const handleOpenPrivacyPolicy = async () => {
+    try {
+      const canOpen = await Linking.canOpenURL(LEGAL_URLS.PRIVACY_POLICY);
+      if (canOpen) {
+        await Linking.openURL(LEGAL_URLS.PRIVACY_POLICY);
+      } else {
+        Alert.alert('Error', 'Unable to open privacy policy. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error opening privacy policy:', error);
+      Alert.alert('Error', 'Failed to open privacy policy.');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
@@ -108,10 +123,10 @@ export const SignUpScreen: React.FC<{
             />
           </View>
           <Text style={styles.title}>
-            Welcome Back to WisdomWise
+            Create Your Account
           </Text>
           <Text style={styles.subtitle}>
-            See your progress and insights over time.
+            Start your mindful wellness journey with Anu
           </Text>
         </View>
 
@@ -204,24 +219,48 @@ export const SignUpScreen: React.FC<{
           </View>
 
           {/* Privacy Policy Checkbox */}
-          <TouchableOpacity 
-            style={styles.checkboxContainer}
-            onPress={() => setPrivacyAccepted(!privacyAccepted)}
-            activeOpacity={0.7}
-          >
-            <View style={[
-              styles.checkbox,
-              privacyAccepted && styles.checkboxChecked
-            ]}>
-              {privacyAccepted && (
-                <Text style={styles.checkmark}>✓</Text>
-              )}
-            </View>
-            <Text style={styles.checkboxText}>
-              I trust WisdomWise to keep my information private and safe as outlined in{' '}
-              <Text style={styles.privacyPolicyLink}>Privacy Policy</Text>
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.checkboxContainer}>
+            <TouchableOpacity 
+              style={styles.checkboxRow}
+              onPress={() => setPrivacyAccepted(!privacyAccepted)}
+              activeOpacity={0.7}
+            >
+              <View style={[
+                styles.checkbox,
+                privacyAccepted && styles.checkboxChecked
+              ]}>
+                {privacyAccepted && (
+                  <Text style={styles.checkmark}>✓</Text>
+                )}
+              </View>
+              <Text style={styles.checkboxText}>
+                I accept the{' '}
+                <Text 
+                  style={styles.privacyPolicyLink}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleOpenPrivacyPolicy();
+                  }}
+                >
+                  Privacy Policy
+                </Text>
+                {' '}and{' '}
+                <Text 
+                  style={styles.privacyPolicyLink}
+                  onPress={async (e) => {
+                    e.stopPropagation();
+                    try {
+                      await Linking.openURL(LEGAL_URLS.TERMS_OF_SERVICE);
+                    } catch (error) {
+                      console.error('Error opening terms:', error);
+                    }
+                  }}
+                >
+                  Terms of Service
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Create Account Button */}
           <TouchableOpacity
@@ -234,7 +273,7 @@ export const SignUpScreen: React.FC<{
             activeOpacity={0.8}
           >
             <Text style={styles.primaryButtonText}>
-              {isLoading ? 'Signing In...' : 'Sign In'}
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </Text>
           </TouchableOpacity>
 
@@ -263,7 +302,7 @@ export const SignUpScreen: React.FC<{
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={onNavigateToSignIn} activeOpacity={0.7}>
             <Text style={styles.footerText}>
-              New to WisdomWise? Create Account
+              Already have an account? Sign in
             </Text>
           </TouchableOpacity>
         </View>

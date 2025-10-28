@@ -153,10 +153,13 @@ export const authScreenStyles = StyleSheet.create({
 
   // Privacy Policy Checkbox
   checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     marginTop: spacing.therapy.sm, // Reduced margin
     paddingHorizontal: spacing.therapy.xs,
+  },
+
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
 
   checkbox: {

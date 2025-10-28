@@ -177,6 +177,30 @@ export const dataPrivacyStyles = StyleSheet.create({
   },
 
   // Contact Section
+  policyLinkButton: {
+    marginTop: spacing[20],
+    marginBottom: spacing[16],
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+
+  policyLinkGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing[8],
+    paddingVertical: spacing[16],
+    paddingHorizontal: spacing[20],
+    borderWidth: 1,
+    borderColor: 'rgba(54, 101, 125, 0.15)',
+  },
+
+  policyLinkText: {
+    fontSize: 16,
+    fontFamily: 'Ubuntu-Medium',
+    color: '#36657d',
+  },
+
   contactSection: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     borderRadius: 16,

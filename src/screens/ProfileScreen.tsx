@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal, Platform, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Settings, LogOut, ArrowRight } from 'lucide-react-native';
@@ -11,7 +11,6 @@ import ChatHistory from '../components/ChatHistory';
 import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
 import DataPrivacyScreen from './DataPrivacyScreen';
-import PrivacyPolicyScreen from './PrivacyPolicyScreen';
 import NotificationSettingsModal from '../components/NotificationSettingsModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
@@ -22,6 +21,7 @@ import { useOnboardingControl } from '../hooks/useOnboardingControl';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 import streakService from '../services/streakService';
 import { ExerciseCompletionService } from '../services/exerciseCompletionService';
+import { LEGAL_URLS } from '../constants/legal';
 
 const ProfileScreen: React.FC = () => {
   const dataPrivacyPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
@@ -36,7 +36,6 @@ const ProfileScreen: React.FC = () => {
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showDataPrivacy, setShowDataPrivacy] = useState(false);
-  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
@@ -198,6 +197,13 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
+  const handleOpenPrivacyPolicy = () => {
+    Linking.openURL(LEGAL_URLS.PRIVACY_POLICY).catch((error) => {
+      console.error('Error opening privacy policy:', error);
+      Alert.alert('Error', 'Failed to open privacy policy. Please try again later.');
+    });
+  };
+
   const stats = [
     { label: t('profile.stats.sessions'), value: sessionsCount.toString(), iconImage: require('../../assets/images/New Icons/icon-6.png') },
     { label: t('profile.stats.streak'), value: t('profile.stats.days', { count: currentStreak }), iconImage: require('../../assets/images/New Icons/icon-7.png') },
@@ -214,8 +220,7 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.testNotification'), action: handleTestNotification, subtitle: t('profile.menuSubtitles.testNotification') },
-    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => setShowPrivacyPolicy(true), subtitle: t('profile.menuSubtitles.privacy') },
-    { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
+    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: handleOpenPrivacyPolicy, subtitle: 'View our privacy policy online' },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
     ...(isAnonymous
       ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: t('profile.menu.createAccount'), action: handleLogin, highlight: true, subtitle: t('profile.menuSubtitles.createAccount') }]
@@ -467,9 +472,6 @@ const ProfileScreen: React.FC = () => {
       />
       <Modal visible={showDataPrivacy} animationType="slide" presentationStyle={dataPrivacyPresentationStyle} onRequestClose={() => setShowDataPrivacy(false)}>
         <DataPrivacyScreen onBack={() => setShowDataPrivacy(false)} />
-      </Modal>
-      <Modal visible={showPrivacyPolicy} animationType="slide" presentationStyle={dataPrivacyPresentationStyle} onRequestClose={() => setShowPrivacyPolicy(false)}>
-        <PrivacyPolicyScreen onBack={() => setShowPrivacyPolicy(false)} />
       </Modal>
       <NotificationSettingsModal visible={showNotificationSettings} onClose={() => setShowNotificationSettings(false)} />
       <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />

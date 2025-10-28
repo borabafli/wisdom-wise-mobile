@@ -59,10 +59,10 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
             />
           </View>
           <Text style={styles.title}>
-            Create Your Account
+            Welcome Back to WisdomWise
           </Text>
           <Text style={styles.subtitle}>
-            Start your mindful wellness journey with Anu
+            See your progress and insights over time.
           </Text>
         </View>
 
@@ -107,7 +107,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
             activeOpacity={0.8}
           >
             <Text style={styles.primaryButtonText}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </Text>
           </TouchableOpacity>
 
@@ -136,7 +136,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={onNavigateToSignUp} activeOpacity={0.7}>
             <Text style={styles.footerText}>
-              Already have an account? Sign in
+              New to WisdomWise? Create Account
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
