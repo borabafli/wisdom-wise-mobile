@@ -367,7 +367,8 @@
       "signOut": "Cerrar Sesión",
       "language": "Idioma",
       "testNotification": "Notificación de Prueba",
-      "createAccount": "Crear Cuenta"
+      "createAccount": "Crear Cuenta",
+      "featureRequest": "Solicitar Función"
     },
     "menuSubtitles": {
       "editProfile": "Actualizar tu información",
@@ -383,6 +384,7 @@
       "language": "Cambiar el idioma de la aplicación",
       "testNotification": "Enviar una notificación de prueba ahora",
       "createAccount": "Guarda tu progreso y accede a todas las funciones",
+      "featureRequest": "Comparte tus ideas con nosotros",
       "default": "Toca para acceder"
     },
     "restartOnboarding": {
@@ -415,6 +417,24 @@
     },
     "version": "Versión 1.0.0",
     "madeWith": "Hecho con 💙 para tu bienestar"
+  },
+  "featureRequest": {
+    "title": "Solicitar una Función",
+    "description": "¡Nos encantaría escuchar tus ideas! Comparte las funciones o mejoras que te gustaría ver en WisdomWise.",
+    "placeholder": "Comparte tu idea de función con nosotros...",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "characterCount": "{{count}}/500 caracteres",
+    "successTitle": "¡Gracias!",
+    "successMessage": "Tu solicitud de función ha sido enviada. ¡Apreciamos tus comentarios!",
+    "errorTitle": "Error en el Envío",
+    "errorMessage": "No se pudo enviar tu solicitud. Por favor, inténtalo de nuevo más tarde.",
+    "tooShort": "Por favor, escribe al menos 10 caracteres",
+    "tooLong": "Por favor, mantén tu solicitud por debajo de 500 caracteres",
+    "infoText": "Tus comentarios nos ayudan a mejorar WisdomWise. Revisamos todas las solicitudes de funciones y priorizamos según las necesidades de los usuarios.",
+    "discardTitle": "¿Descartar Solicitud?",
+    "discardMessage": "Tienes cambios sin guardar. ¿Estás seguro de que quieres descartar tu solicitud de función?",
+    "discard": "Descartar"
   },
   "chat": {
     "title": "Conversación con Anu",

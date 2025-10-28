@@ -367,7 +367,8 @@
       "signOut": "Sair",
       "language": "Idioma",
       "testNotification": "Notificação de Teste",
-      "createAccount": "Criar Conta"
+      "createAccount": "Criar Conta",
+      "featureRequest": "Solicitar Recurso"
     },
     "menuSubtitles": {
       "editProfile": "Atualize suas informações",
@@ -383,6 +384,7 @@
       "language": "Alterar o idioma do aplicativo",
       "testNotification": "Enviar uma notificação de teste agora",
       "createAccount": "Salve seu progresso e acesse todos os recursos",
+      "featureRequest": "Compartilhe suas ideias conosco",
       "default": "Toque para acessar"
     },
     "restartOnboarding": {
@@ -415,6 +417,24 @@
     },
     "version": "Versão 1.0.0",
     "madeWith": "Feito com 💙 para seu bem-estar"
+  },
+  "featureRequest": {
+    "title": "Solicitar um Recurso",
+    "description": "Adoraríamos ouvir suas ideias! Compartilhe os recursos ou melhorias que você gostaria de ver no WisdomWise.",
+    "placeholder": "Compartilhe sua ideia de recurso conosco...",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "characterCount": "{{count}}/500 caracteres",
+    "successTitle": "Obrigado!",
+    "successMessage": "Sua solicitação de recurso foi enviada. Agradecemos seu feedback!",
+    "errorTitle": "Falha no Envio",
+    "errorMessage": "Não foi possível enviar sua solicitação. Por favor, tente novamente mais tarde.",
+    "tooShort": "Por favor, escreva pelo menos 10 caracteres",
+    "tooLong": "Por favor, mantenha sua solicitação abaixo de 500 caracteres",
+    "infoText": "Seu feedback nos ajuda a melhorar o WisdomWise. Revisamos todas as solicitações de recursos e priorizamos com base nas necessidades dos usuários.",
+    "discardTitle": "Descartar Solicitação?",
+    "discardMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartar sua solicitação de recurso?",
+    "discard": "Descartar"
   },
   "chat": {
     "title": "Conversa com Anu",

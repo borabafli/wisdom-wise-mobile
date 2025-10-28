@@ -367,7 +367,8 @@
       "signOut": "Çıkış Yap",
       "language": "Dil",
       "testNotification": "Test Bildirimi",
-      "createAccount": "Hesap Oluştur"
+      "createAccount": "Hesap Oluştur",
+      "featureRequest": "Özellik İsteği"
     },
     "menuSubtitles": {
       "editProfile": "Bilgilerinizi güncelleyin",
@@ -383,6 +384,7 @@
       "language": "Uygulama dilini değiştirin",
       "testNotification": "Şimdi bir test bildirimi gönderin",
       "createAccount": "İlerlemenizi kaydedin ve tüm özelliklere erişin",
+      "featureRequest": "Fikirlerinizi bizimle paylaşın",
       "default": "Erişmek için dokunun"
     },
     "restartOnboarding": {
@@ -415,6 +417,24 @@
     },
     "version": "Sürüm 1.0.0",
     "madeWith": "İyilik haliniz için 💙 ile yapıldı"
+  },
+  "featureRequest": {
+    "title": "Özellik İsteği",
+    "description": "Fikirlerinizi duymak isteriz! WisdomWise'da görmek istediğiniz özellikleri veya iyileştirmeleri paylaşın.",
+    "placeholder": "Özellik fikrinizi bizimle paylaşın...",
+    "submit": "Gönder",
+    "cancel": "İptal",
+    "characterCount": "{{count}}/500 karakter",
+    "successTitle": "Teşekkürler!",
+    "successMessage": "Özellik isteğiniz gönderildi. Geri bildiriminiz için teşekkür ederiz!",
+    "errorTitle": "Gönderim Başarısız",
+    "errorMessage": "İsteğiniz gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+    "tooShort": "Lütfen en az 10 karakter yazın",
+    "tooLong": "Lütfen isteğinizi 500 karakterin altında tutun",
+    "infoText": "Geri bildiriminiz WisdomWise'ı geliştirmemize yardımcı olur. Tüm özellik isteklerini inceler ve kullanıcı ihtiyaçlarına göre önceliklendiririz.",
+    "discardTitle": "İsteği İptal Et?",
+    "discardMessage": "Kaydedilmemiş değişiklikleriniz var. Özellik isteğinizi iptal etmek istediğinizden emin misiniz?",
+    "discard": "İptal Et"
   },
   "chat": {
     "title": "Anu ile Sohbet",

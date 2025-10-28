@@ -367,7 +367,8 @@
       "signOut": "Abmelden",
       "language": "Sprache",
       "testNotification": "Test-Benachrichtigung",
-      "createAccount": "Konto erstellen"
+      "createAccount": "Konto erstellen",
+      "featureRequest": "Funktion anfordern"
     },
     "menuSubtitles": {
       "editProfile": "Informationen aktualisieren",
@@ -383,6 +384,7 @@
       "language": "App-Sprache ändern",
       "testNotification": "Jetzt eine Test-Benachrichtigung senden",
       "createAccount": "Fortschritt speichern und auf alle Funktionen zugreifen",
+      "featureRequest": "Teilen Sie uns Ihre Ideen mit",
       "default": "Zum Zugriff tippen"
     },
     "restartOnboarding": {
@@ -415,6 +417,24 @@
     },
     "version": "Version 1.0.0",
     "madeWith": "Mit 💙 für dein Wohlbefinden gemacht"
+  },
+  "featureRequest": {
+    "title": "Funktion anfordern",
+    "description": "Wir würden gerne Ihre Ideen hören! Teilen Sie uns mit, welche Funktionen oder Verbesserungen Sie in WisdomWise sehen möchten.",
+    "placeholder": "Teilen Sie uns Ihre Funktionsidee mit...",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "characterCount": "{{count}}/500 Zeichen",
+    "successTitle": "Vielen Dank!",
+    "successMessage": "Ihre Funktionsanfrage wurde eingereicht. Wir schätzen Ihr Feedback!",
+    "errorTitle": "Übermittlung fehlgeschlagen",
+    "errorMessage": "Ihre Anfrage konnte nicht übermittelt werden. Bitte versuchen Sie es später erneut.",
+    "tooShort": "Bitte schreiben Sie mindestens 10 Zeichen",
+    "tooLong": "Bitte halten Sie Ihre Anfrage unter 500 Zeichen",
+    "infoText": "Ihr Feedback hilft uns, WisdomWise zu verbessern. Wir prüfen alle Funktionsanfragen und priorisieren sie basierend auf Benutzerbedürfnissen.",
+    "discardTitle": "Anfrage verwerfen?",
+    "discardMessage": "Sie haben nicht gespeicherte Änderungen. Möchten Sie Ihre Funktionsanfrage wirklich verwerfen?",
+    "discard": "Verwerfen"
   },
   "chat": {
     "title": "Gespräch mit Anu",

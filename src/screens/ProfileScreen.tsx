@@ -14,6 +14,7 @@ import DataPrivacyScreen from './DataPrivacyScreen';
 import NotificationSettingsModal from '../components/NotificationSettingsModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
+import FeatureRequestModal from '../components/modals/FeatureRequestModal';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
@@ -38,6 +39,7 @@ const ProfileScreen: React.FC = () => {
   const [showDataPrivacy, setShowDataPrivacy] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+  const [showFeatureRequest, setShowFeatureRequest] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [sessionsCount, setSessionsCount] = useState<number>(0);
@@ -220,8 +222,8 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.testNotification'), action: handleTestNotification, subtitle: t('profile.menuSubtitles.testNotification') },
-    { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: handleOpenPrivacyPolicy, subtitle: 'View our privacy policy online' },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
+    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.featureRequest'), action: () => setShowFeatureRequest(true), subtitle: t('profile.menuSubtitles.featureRequest') },
     ...(isAnonymous
       ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: t('profile.menu.createAccount'), action: handleLogin, highlight: true, subtitle: t('profile.menuSubtitles.createAccount') }]
       : [{ icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut, subtitle: t('profile.menuSubtitles.signOut') }]
@@ -455,8 +457,16 @@ const ProfileScreen: React.FC = () => {
             </View>
           </View>
 
-          {/* App Version */}
+          {/* App Version & Legal Links */}
           <View style={styles.versionSection}>
+            <TouchableOpacity 
+              onPress={handleOpenPrivacyPolicy}
+              style={styles.legalLink}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.legalLinkText}>{t('profile.menu.privacy')}</Text>
+            </TouchableOpacity>
+            
             <Text style={styles.versionText}>{t('profile.version')}</Text>
             <Text style={styles.versionSubtext}>{t('profile.madeWith')}</Text>
           </View>
@@ -475,6 +485,7 @@ const ProfileScreen: React.FC = () => {
       </Modal>
       <NotificationSettingsModal visible={showNotificationSettings} onClose={() => setShowNotificationSettings(false)} />
       <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
+      <FeatureRequestModal visible={showFeatureRequest} onClose={() => setShowFeatureRequest(false)} />
     </SafeAreaWrapper>
   );
 };

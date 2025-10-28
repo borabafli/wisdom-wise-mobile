@@ -152,7 +152,7 @@ export const profileScreenStyles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 40, // Reduced from 120 to remove excessive bottom space
   },
   userInfoSection: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -448,6 +448,17 @@ export const profileScreenStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding,
     paddingTop: spacing[8],
     alignItems: 'center',
+  },
+  legalLink: {
+    marginBottom: spacing[4],
+    paddingVertical: spacing[2],
+  },
+  legalLinkText: {
+    fontSize: 13,
+    color: '#36657d',
+    fontWeight: '500',
+    textDecorationLine: 'underline',
+    textDecorationColor: '#36657d',
   },
   versionText: {
     ...typography.textStyles.caption,

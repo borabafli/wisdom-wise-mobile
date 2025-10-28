@@ -367,7 +367,8 @@
       "signOut": "Se déconnecter",
       "language": "Langue",
       "testNotification": "Notification Test",
-      "createAccount": "Créer un Compte"
+      "createAccount": "Créer un Compte",
+      "featureRequest": "Demander une Fonctionnalité"
     },
     "menuSubtitles": {
       "editProfile": "Mettre à jour vos informations",
@@ -383,6 +384,7 @@
       "language": "Changer la langue de l'application",
       "testNotification": "Envoyer une notification test maintenant",
       "createAccount": "Sauvegarder votre progression et accéder à toutes les fonctionnalités",
+      "featureRequest": "Partagez vos idées avec nous",
       "default": "Appuyer pour accéder"
     },
     "restartOnboarding": {
@@ -415,6 +417,24 @@
     },
     "version": "Version 1.0.0",
     "madeWith": "Fait avec 💙 pour votre bien-être"
+  },
+  "featureRequest": {
+    "title": "Demander une Fonctionnalité",
+    "description": "Nous aimerions entendre vos idées ! Partagez les fonctionnalités ou améliorations que vous aimeriez voir dans WisdomWise.",
+    "placeholder": "Partagez votre idée de fonctionnalité avec nous...",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "characterCount": "{{count}}/500 caractères",
+    "successTitle": "Merci !",
+    "successMessage": "Votre demande de fonctionnalité a été soumise. Nous apprécions vos commentaires !",
+    "errorTitle": "Échec de la soumission",
+    "errorMessage": "Impossible de soumettre votre demande. Veuillez réessayer plus tard.",
+    "tooShort": "Veuillez écrire au moins 10 caractères",
+    "tooLong": "Veuillez garder votre demande sous 500 caractères",
+    "infoText": "Vos commentaires nous aident à améliorer WisdomWise. Nous examinons toutes les demandes de fonctionnalités et priorisons en fonction des besoins des utilisateurs.",
+    "discardTitle": "Abandonner la demande ?",
+    "discardMessage": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir abandonner votre demande de fonctionnalité ?",
+    "discard": "Abandonner"
   },
   "chat": {
     "title": "Conversation avec Anu",

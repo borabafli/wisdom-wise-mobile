@@ -372,7 +372,8 @@
       "signOut": "Sign Out",
       "language": "Language",
       "testNotification": "Test Notification",
-      "createAccount": "Create Account"
+      "createAccount": "Create Account",
+      "featureRequest": "Request Feature"
     },
     "menuSubtitles": {
       "editProfile": "Update your information",
@@ -388,6 +389,7 @@
       "language": "Change the app language",
       "testNotification": "Send a test notification now",
       "createAccount": "Save your progress and access all features",
+      "featureRequest": "Share your ideas with us",
       "default": "Tap to access"
     },
     "restartOnboarding": {
@@ -420,6 +422,24 @@
     },
     "version": "Version 1.0.0",
     "madeWith": "Made with 💙 for your wellness"
+  },
+  "featureRequest": {
+    "title": "Request a Feature",
+    "description": "We'd love to hear your ideas! Share what features or improvements you'd like to see in WisdomWise.",
+    "placeholder": "Share your feature idea with us...",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "characterCount": "{{count}}/500 characters",
+    "successTitle": "Thank You!",
+    "successMessage": "Your feature request has been submitted. We appreciate your feedback!",
+    "errorTitle": "Submission Failed",
+    "errorMessage": "Unable to submit your request. Please try again later.",
+    "tooShort": "Please write at least 10 characters",
+    "tooLong": "Please keep your request under 500 characters",
+    "infoText": "Your feedback helps us improve WisdomWise. We review all feature requests and prioritize based on user needs.",
+    "discardTitle": "Discard Request?",
+    "discardMessage": "You have unsaved changes. Are you sure you want to discard your feature request?",
+    "discard": "Discard"
   },
   "chat": {
     "title": "Chat with Anu",
