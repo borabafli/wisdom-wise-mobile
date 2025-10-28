@@ -41,7 +41,7 @@ export const onboardingFinalStyles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing[12], // 24px - reduced horizontal padding for headings
     marginBottom: spacing[24], // Increase space below header to move subtext lower
-    marginTop: spacing[32], // Move header down more like other screens
+    marginTop: spacing[64], // Move header down more like other screens
   },
 
   mainTitle: {

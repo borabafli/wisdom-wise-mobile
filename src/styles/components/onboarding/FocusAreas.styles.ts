@@ -31,15 +31,16 @@ export const focusAreasStyles = StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: spacing[8],
+    flexGrow: 1, // Makes content container expand to fill space - required for marginTop: 'auto' to work
+    paddingBottom: spacing[32], // Increased from 8 to 32 (64px) for better spacing
   },
 
   // Content Section
   contentContainer: {
+    flex: 1, // Changed from minHeight: '100%' for natural flow
     paddingHorizontal: spacing[24],
     paddingVertical: spacing[24],
-    minHeight: '100%',
-    justifyContent: 'center',
+    // Removed justifyContent: 'center' to prevent content jumping
   },
 
   // Header
@@ -115,7 +116,8 @@ export const focusAreasStyles = StyleSheet.create({
   actionContainer: {
     alignItems: 'center',
     paddingBottom: 30, // Standardized across all personalization screens
-    marginTop: spacing[8], // Reduced from 24px to 16px for tighter spacing
+    paddingTop: spacing[8], // 16px top padding
+    marginTop: 'auto', // Pushes button to bottom for consistent positioning across all screens
     zIndex: 1000, // Absolute foreground
     position: 'relative',
   },
