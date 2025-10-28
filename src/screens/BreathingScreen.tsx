@@ -130,6 +130,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [showCustomModal, setShowCustomModal] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [customSettings, setCustomSettings] = useState({
     inhale: 4,
     hold: 4,
@@ -383,7 +384,23 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
               setIsPlaying(false);
               isPlayingRef.current = false;
               setIsPaused(false);
+              setIsCompleted(true);
               triggerHaptics('heavy');
+
+              // Animate to a completion state
+              Animated.parallel([
+                Animated.spring(scaleAnimation, {
+                  toValue: 0.85,
+                  useNativeDriver: false,
+                  friction: 8,
+                }),
+                Animated.timing(opacityAnimation, {
+                  toValue: 1,
+                  duration: 500,
+                  useNativeDriver: false,
+                }),
+              ]).start();
+
               return;
             }
           }
@@ -431,15 +448,16 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
     setCyclesCompleted(0);
     setCurrentPhase('inhale');
     setTimeRemaining(0);
-    
+    setIsCompleted(false);
+
     // Reset refs
     phaseIndexRef.current = 0;
     cycleCountRef.current = 0;
-    
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-    
+
     // Reset animations
     Animated.parallel([
       Animated.timing(scaleAnimation, {
@@ -643,9 +661,18 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
                 colors={getPhaseColor()}
                 style={styles.breathingGradient}
               >
-                <Text style={[styles.phaseText, { color: getPhaseTextColor() }]}>{getPhaseText()}</Text>
-                {timeRemaining > 0 && (
-                  <Text style={[styles.timerText, { color: getPhaseTextColor() }]}>{timeRemaining}</Text>
+                {isCompleted ? (
+                  <>
+                    <Text style={[styles.completionText, { color: getPhaseTextColor() }]}>Well Done!</Text>
+                    <Text style={[styles.completionSubtext, { color: getPhaseTextColor() }]}>Session Complete</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={[styles.phaseText, { color: getPhaseTextColor() }]}>{getPhaseText()}</Text>
+                    {timeRemaining > 0 && (
+                      <Text style={[styles.timerText, { color: getPhaseTextColor() }]}>{timeRemaining}</Text>
+                    )}
+                  </>
                 )}
               </LinearGradient>
             </Animated.View>
@@ -1059,6 +1086,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.white,
     textAlign: 'center',
+  },
+  completionText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.white,
+    textAlign: 'center',
+    marginBottom: spacing.therapy.xs,
+  },
+  completionSubtext: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.white,
+    textAlign: 'center',
+    opacity: 0.9,
   },
 
   // Progress
