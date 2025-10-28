@@ -10,11 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ImageStyle,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Heart, ChevronLeft } from 'lucide-react-native';
+import { ChevronLeft } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useTranslation } from 'react-i18next';
 import { onboardingPersonalizationStyles as styles } from '../../styles/components/onboarding/OnboardingPersonalization.styles';
@@ -34,13 +34,10 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
 }) => {
   const { t } = useTranslation();
   const [name, setName] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
-  const heartPulseAnim = useRef(new Animated.Value(1)).current;
-  const inputFocusAnim = useRef(new Animated.Value(0)).current;
   const buttonFadeAnim = useRef(new Animated.Value(0)).current;
-  const buttonSlideAnim = useRef(new Animated.Value(30)).current;
+  const heartPulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     // Set Android navigation bar color to match background
@@ -60,7 +57,7 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
       }),
     ]).start();
 
-    // Button fades in after main animations (no float/slide)
+    // Button fades in after main animations
     setTimeout(() => {
       Animated.timing(buttonFadeAnim, {
         toValue: 1,
@@ -91,15 +88,6 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
     };
   }, []);
 
-  // Input focus animations
-  useEffect(() => {
-    Animated.timing(inputFocusAnim, {
-      toValue: isFocused ? 1 : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [isFocused]);
-
   const handleContinue = () => {
     onContinue(name.trim());
   };
@@ -107,16 +95,6 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
   const handleSkip = () => {
     onSkip();
   };
-
-  const inputBorderColor = inputFocusAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['rgba(20, 184, 166, 0.3)', 'rgba(20, 184, 166, 1)'],
-  });
-
-  const inputShadowOpacity = inputFocusAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.1, 0.3],
-  });
 
   return (
     <View style={styles.container}>
@@ -126,12 +104,13 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
           style={styles.keyboardContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+          <View style={{ flex: 1 }}>
+            <ScrollView
+              style={styles.scrollContainer}
+              contentContainerStyle={styles.scrollContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
             {/* Back Button */}
             {onBack && (
               <TouchableOpacity
@@ -163,7 +142,7 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
             <View style={styles.imageContainer}>
               <Image
                 source={require('../../../assets/images/onboarding/turtle-welcome-calm-smile.png')}
-                style={styles.turtleImage}
+                style={styles.turtleImage as ImageStyle}
                 resizeMode="contain"
               />
             </View>
@@ -177,8 +156,6 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
                   placeholderTextColor="#9CA3AF"
                   value={name}
                   onChangeText={setName}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
                   autoCapitalize="words"
                   autoCorrect={false}
                   maxLength={30}
@@ -190,7 +167,10 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
               </Text>
             </View>
 
-            {/* Action Buttons */}
+            </Animated.View>
+            </ScrollView>
+
+            {/* Fixed Footer Buttons */}
             <Animated.View
               style={[
                 styles.actionContainer,
@@ -216,8 +196,7 @@ const OnboardingPersonalizationScreen: React.FC<OnboardingPersonalizationScreenP
               </TouchableOpacity>
             </Animated.View>
 
-            </Animated.View>
-          </ScrollView>
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>

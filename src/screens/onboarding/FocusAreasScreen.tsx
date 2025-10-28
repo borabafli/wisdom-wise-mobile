@@ -115,12 +115,13 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
           {/* Back Button */}
           {onBack && (
             <TouchableOpacity
@@ -155,28 +156,30 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
               {focusAreas.map(renderAreaChip)}
             </View>
 
-            {/* Continue Button */}
-            <Animated.View
-              style={[
-                styles.actionContainer,
-                {
-                  opacity: buttonFadeAnim,
-                  transform: [{ translateY: buttonSlideAnim }],
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={styles.continueButton}
-                onPress={handleContinue}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.continueButtonText}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
           </Animated.View>
         </ScrollView>
+
+        {/* Fixed Footer Button (animated) */}
+        <Animated.View
+          style={[
+            styles.actionContainer,
+            {
+              opacity: buttonFadeAnim,
+              transform: [{ translateY: buttonSlideAnim }],
+            }
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={handleContinue}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.continueButtonText}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+        </View>
       </SafeAreaView>
     </View>
   );

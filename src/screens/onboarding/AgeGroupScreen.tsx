@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
@@ -88,12 +88,13 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
           {/* Back Button */}
           {onBack && (
             <TouchableOpacity
@@ -128,27 +129,29 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
               {ageGroups.map(renderAgeChip)}
             </View>
 
-            {/* Continue Button */}
-            <View style={styles.actionContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.continueButton,
-                  !selectedAge && styles.disabledButton
-                ]}
-                onPress={handleContinue}
-                activeOpacity={selectedAge ? 0.8 : 1}
-                disabled={!selectedAge}
-              >
-                <Text style={[
-                  styles.continueButtonText,
-                  !selectedAge && styles.disabledButtonText
-                ]}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
-            </View>
           </Animated.View>
         </ScrollView>
+
+        {/* Fixed Footer Button */}
+        <View style={styles.actionContainer}>
+          <TouchableOpacity
+            style={[
+              styles.continueButton,
+              !selectedAge && styles.disabledButton
+            ]}
+            onPress={handleContinue}
+            activeOpacity={selectedAge ? 0.8 : 1}
+            disabled={!selectedAge}
+          >
+            <Text style={[
+              styles.continueButtonText,
+              !selectedAge && styles.disabledButtonText
+            ]}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+        </View>
+        </View>
       </SafeAreaView>
     </View>
   );

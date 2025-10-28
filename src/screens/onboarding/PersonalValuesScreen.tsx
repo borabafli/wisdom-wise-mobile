@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
@@ -97,12 +97,13 @@ const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue,
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
           {/* Back Button */}
           {onBack && (
             <TouchableOpacity
@@ -137,21 +138,22 @@ const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue,
               {personalValues.map(renderValueChip)}
             </View>
 
-            {/* Continue Button */}
-            <View style={styles.actionContainer}>
-              <TouchableOpacity
-                style={styles.continueButton}
-                onPress={handleContinue}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.continueButtonText}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
-
-            </View>
           </Animated.View>
         </ScrollView>
+
+        {/* Fixed Footer Button */}
+        <View style={styles.actionContainer}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={handleContinue}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.continueButtonText}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+        </View>
+        </View>
       </SafeAreaView>
     </View>
   );
