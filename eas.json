@@ -21,7 +21,21 @@
       },
       "android": {
         "resourceClass": "medium",
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "apk"
+      }
+    },
+    "internal": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://tarwryruagxsoaljzoot.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kwdqWqCQQgbHMoIikvhkUw_W7YS5_F_"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "resourceClass": "medium",
+        "buildType": "apk"
       }
     },
     "production": {

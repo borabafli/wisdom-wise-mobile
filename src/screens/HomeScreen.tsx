@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform, Alert } from 'react-native';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ImageBackground, Modal, Platform, Alert, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
@@ -21,13 +21,20 @@ import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
 import { useExercisePreview } from '../hooks/useExercisePreview';
 import DailyPromptCard from '../components/DailyPromptCard';
 import JournalPromptService from '../services/journalPromptService';
+import streakService from '../services/streakService';
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation, onActionSelect }) => {
   const { t } = useTranslation();
   const { currentQuote } = useQuote();
   const { width, height } = Dimensions.get('window');
   const [showWaveformDemo, setShowWaveformDemo] = useState(false);
   const insets = useSafeAreaInsets();
+
+  // Ref for check-in button to get its position
+  const checkInButtonRef = useRef<TouchableOpacity>(null);
+
+  // Animation for button shrink on press
+  const buttonScale = useRef(new Animated.Value(1)).current;
 
   // Exercise progress state - in real app, this would come from storage/API
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress>({});
@@ -66,34 +73,32 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
   
   // Load hidden card IDs and completed exercises on mount
   useEffect(() => {
-    const loadData = async () => {
-      const hiddenIds = await CardHidingService.getHiddenCardIds();
-      setHiddenCardIds(hiddenIds);
-
-      const completedIds = await ExerciseCompletionService.getCompletedExerciseIds();
-      setCompletedExerciseIds(completedIds);
-
-      // Load daily prompt
-      const prompt = await JournalPromptService.getTodaysMainPrompt();
-      setDailyPrompt(prompt);
-
-      // Update exercise progress with completion status
-      const newProgress: ExerciseProgress = {};
-      completedIds.forEach(id => {
-        newProgress[id] = {
-          completed: true,
-          completedCount: 1,
-          rating: Math.floor(Math.random() * 5) + 1,
-          moodImprovement: Math.floor(Math.random() * 8) + 2,
-          lastCompleted: new Date(),
-        };
-      });
-      setExerciseProgress(newProgress);
-    };
-    loadData();
-  }, []);
-
-  // Static welcome message
+                const loadData = async () => {
+                  const hiddenIds = await CardHidingService.getHiddenCardIds();
+                  setHiddenCardIds(hiddenIds);
+          
+                  const completedIds = await ExerciseCompletionService.getCompletedExerciseIds();
+                  setCompletedExerciseIds(completedIds);
+          
+                  // Load daily prompt
+                  const prompt = await JournalPromptService.getTodaysMainPrompt();
+                  setDailyPrompt(prompt);
+          
+                  // Update exercise progress with completion status
+                  const newProgress: ExerciseProgress = {};
+                  completedIds.forEach(id => {
+                    newProgress[id] = {
+                      completed: true,
+                      completedCount: 1,
+                      rating: Math.floor(Math.random() * 5) + 1,
+                      moodImprovement: Math.floor(Math.random() * 8) + 2,
+                      lastCompleted: new Date(),
+                    };
+                  });
+                  setExerciseProgress(newProgress);
+                };
+                loadData();
+              }, []);  // Static welcome message
   const welcomeMessage = {
     title: t('home.moodCheck'),
     subtitle: "" // Removed subtitle
@@ -207,16 +212,41 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
           </View>
 
           {/* Start Check-In Button */}
-          <TouchableOpacity
-            onPress={() => onStartSession()}
-            activeOpacity={0.7}
-          >
-            <ImageBackground
-              source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
-              style={styles.checkInButton}
-              imageStyle={{ borderRadius: 10 }}
-              resizeMode="cover"
+          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+            <TouchableOpacity
+              ref={checkInButtonRef}
+              onPressIn={() => {
+                // Shrink button on press
+                Animated.spring(buttonScale, {
+                  toValue: 0.95,
+                  tension: 300,
+                  friction: 10,
+                  useNativeDriver: true,
+                }).start();
+              }}
+              onPressOut={() => {
+                // Return to normal size
+                Animated.spring(buttonScale, {
+                  toValue: 1,
+                  tension: 300,
+                  friction: 10,
+                  useNativeDriver: true,
+                }).start();
+              }}
+              onPress={() => {
+                checkInButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+                  // Pass button position to onStartSession
+                  onStartSession({ x: pageX, y: pageY, width, height });
+                });
+              }}
+              activeOpacity={1}
             >
+              <ImageBackground
+                source={require('../../assets/new-design/Homescreen/Cards/check-in-card.png')}
+                style={styles.checkInButton}
+                imageStyle={{ borderRadius: 10 }}
+                resizeMode="cover"
+              >
               <Text style={styles.checkInButtonText}>{t('home.checkInNow')}</Text>
               <View style={styles.checkInButtonIcons}>
                 <View style={styles.iconCircle}>
@@ -230,6 +260,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
               </View>
             </ImageBackground>
           </TouchableOpacity>
+        </Animated.View>
         </View>
 
         {/* For You Today Section */}
@@ -299,6 +330,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             <Text style={styles.sectionTitle}>{t('home.quickActions')}</Text>
           </View>
 
+
+
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
               onPress={onNavigateToExercises}
@@ -341,12 +374,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => onStartSession({
-                type: 'breathing',
-                name: t('home.quickBreathingExercise.name'),
-                duration: t('home.quickBreathingExercise.duration'),
-                description: t('home.quickBreathingExercise.description')
-              })}
+              onPress={() => onActionSelect?.('breathing')}
               style={styles.quickActionButton}
               activeOpacity={0.9}
             >

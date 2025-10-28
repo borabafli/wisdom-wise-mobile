@@ -1,11 +1,12 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { View, TouchableOpacity, Text, Platform, Image, Animated, Easing, PanResponder } from 'react-native';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { View, TouchableOpacity, Text, Platform, Image, Animated, Easing, PanResponder, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
 import QuickActionsPopup from './QuickActionsPopup';
 import { customTabBarStyles as styles } from '../styles/components/CustomTabBar.styles';
+import { useApp } from '../contexts';
 import { colors, gradients } from '../styles/tokens';
 
 interface CustomTabBarProps {
@@ -14,6 +15,7 @@ interface CustomTabBarProps {
   navigation: any;
   onNewSession: () => void;
   onActionSelect: (actionId: string) => void;
+  onTabChange?: (nextIndex: number) => void;
 }
 
 const CustomTabBar: React.FC<CustomTabBarProps> = ({
@@ -21,12 +23,31 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   descriptors,
   navigation,
   onNewSession,
-  onActionSelect
+  onActionSelect,
+  onTabChange
 }) => {
+  const { showChat } = useApp();
   const { t } = useTranslation();
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [circleAnimations, setCircleAnimations] = useState<{[key: string]: Animated.Value}>({});
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const insets = useSafeAreaInsets();
+
+  // Listen to keyboard events to hide tab bar when keyboard is visible
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setIsKeyboardVisible(true);
+    });
+
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setIsKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   
   // Simple single circle animation effect
   const createCircleEffect = useCallback((tabIndex: number) => {
@@ -132,39 +153,54 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const tabs = [
     {
       name: 'Home',
-      label: t('navigation.today'),
+      label: String(t('navigation.today') || 'Today'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-home-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-home-blue.png')
     },
     {
       name: 'Exercises',
-      label: t('navigation.exercises'),
+      label: String(t('navigation.exercises') || 'Exercises'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-exercises-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-exercises-blue.png')
     },
     {
       name: 'Journal',
-      label: t('navigation.journal'),
+      label: String(t('navigation.journal') || 'Journal'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-journal-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-journal-blue.png')
     },
     {
       name: 'Insights',
-      label: t('navigation.insights'),
+      label: String(t('navigation.insights') || 'Insights'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-insights-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-insights-blue.png')
     },
     {
       name: 'Profile',
-      label: t('navigation.profile'),
+      label: String(t('navigation.profile') || 'Profile'),
       selectedIcon: require('../../assets/navigation-icons/First Version/selected-profile-blue.png'),
       unselectedIcon: require('../../assets/navigation-icons/First Version/unselected-profile-blue.png')
     }
   ];
 
+  if (showChat) {
+    return null;
+  }
+
+  // Hide tab bar on KeyboardTest screen
+  const currentRoute = state.routes[state.index]?.name;
+  if (currentRoute === 'KeyboardTest') {
+    return null;
+  }
+
+  // Hide tab bar when keyboard is visible
+  if (isKeyboardVisible) {
+    return null;
+  }
+
   return (
     <>
-      
+
       <LinearGradient
         colors={['#e9eff1', '#e9eff1']}
         style={[styles.tabBarGradient, { paddingBottom: (insets.bottom || 0) + 40 }]}
@@ -182,6 +218,9 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                 });
 
                 if (!isFocused && !event.defaultPrevented) {
+                  if (onTabChange) {
+                    onTabChange(index);
+                  }
                   handleTabPress(index, () => navigation.navigate(tab.name));
                 } else {
                   handleTabPress(index, () => {});
@@ -199,36 +238,61 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
                   {Object.entries(circleAnimations).map(([key, anim]) => {
                     if (!key.startsWith(`${index}-`) || !anim) return null;
                     return (
-                      <Animated.View
-                        key={key}
-                        style={[
-                          styles.tabCircle1, // Use the first circle style
-                          {
-                            opacity: anim.interpolate({
-                              inputRange: [0, 0.5, 1],
-                              outputRange: [0.8, 0.4, 0],
-                            }),
+                      <React.Fragment key={key}>
+                        {/* Background circle */}
+                        <Animated.View
+                          style={[
+                            styles.tabCircle1,
+                            {
+                              opacity: anim.interpolate({
+                                inputRange: [0, 0.3, 0.6, 1],
+                                outputRange: [0.9, 0.6, 0.3, 0],
+                              }),
+                              transform: [
+                                {
+                                  scale: anim.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.6, 1.1], // Smaller expansion - stays within tab bounds
+                                  })
+                                }
+                              ],
+                            }
+                          ]}
+                        />
+                        {/* Icon scale animation */}
+                        <Animated.View
+                          style={{
+                            zIndex: 10,
                             transform: [
                               {
                                 scale: anim.interpolate({
-                                  inputRange: [0, 1],
-                                  outputRange: [0.85, 1],
+                                  inputRange: [0, 0.2, 0.4, 1],
+                                  outputRange: [1, 1.15, 1.1, 1], // Slight bounce effect
                                 })
                               }
                             ],
-                          }
-                        ]}
-                      />
+                          }}
+                        >
+                          <TabIcon
+                            selectedIcon={tab.selectedIcon}
+                            unselectedIcon={tab.unselectedIcon}
+                            isFocused={isFocused}
+                          />
+                        </Animated.View>
+                      </React.Fragment>
                     );
                   })}
 
-                  <View style={{ zIndex: 10 }}>
-                    <TabIcon
-                      selectedIcon={tab.selectedIcon}
-                      unselectedIcon={tab.unselectedIcon}
-                      isFocused={isFocused}
-                    />
-                  </View>
+                  {/* Static icon when no animation */}
+                  {!Object.keys(circleAnimations).some(key => key.startsWith(`${index}-`)) && (
+                    <View style={{ zIndex: 10 }}>
+                      <TabIcon
+                        selectedIcon={tab.selectedIcon}
+                        unselectedIcon={tab.unselectedIcon}
+                        isFocused={isFocused}
+                      />
+                    </View>
+                  )}
                   <Text
                     style={[
                       styles.tabLabel,
@@ -275,3 +339,6 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
 
 export default CustomTabBar;
+
+
+

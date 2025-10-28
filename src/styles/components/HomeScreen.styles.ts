@@ -524,9 +524,9 @@ export const homeScreenStyles = StyleSheet.create({
   
   exercisesLineBackground: {
     position: 'absolute',
-    left: -35,
+    left: -25,
     right: -25,
-    top: -50,
+    top: -70,
     width: '190%',
     height: 450,
     opacity: 1.0,

@@ -136,7 +136,10 @@ const initI18n = async () => {
         },
         lng: detectedLanguage,
         fallbackLng: 'en',
-        debug: false, // Disable debug to reduce noise
+        returnNull: false,
+        returnEmptyString: false,
+        saveMissing: false,
+        debug: false, // Disabled - production mode
         interpolation: {
           escapeValue: false, // React already escapes values
         },
@@ -197,5 +200,21 @@ export const changeLanguage = async (languageCode: string): Promise<void> => {
 initI18n().catch(error => {
   console.error('Failed to initialize i18n:', error);
 });
+
+// Safe translation wrapper that ensures we always get a string
+export const safeT = (key: string, defaultValue?: string): string => {
+  try {
+    const result = i18n.t(key);
+    // If result is the key itself (translation missing), use default or key
+    if (result === key && defaultValue) {
+      return defaultValue;
+    }
+    // Always return a string, never null/undefined
+    return String(result || defaultValue || key);
+  } catch (error) {
+    console.warn(`Translation error for key: ${key}`, error);
+    return defaultValue || key;
+  }
+};
 
 export default i18n;

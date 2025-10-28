@@ -1,14 +1,13 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors, typography, spacing, shadows } from '../tokens';
+import { spacing } from '../tokens';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export const languageSelectorStyles = StyleSheet.create({
-  // Selector Button - Styled like Profile Menu Buttons
   selectorButton: {
     backgroundColor: 'transparent',
     overflow: 'hidden',
-    marginVertical: spacing[2],
+    marginBottom: spacing.components.cardGap,
   },
 
   selectorGradient: {
@@ -37,7 +36,6 @@ export const languageSelectorStyles = StyleSheet.create({
   languageIconImage: {
     width: 48,
     height: 48,
-    borderRadius: 0,
   },
 
   languageInfo: {
@@ -49,9 +47,6 @@ export const languageSelectorStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: 0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
     marginBottom: spacing[1],
   },
 
@@ -77,38 +72,47 @@ export const languageSelectorStyles = StyleSheet.create({
     letterSpacing: 0.1,
   },
 
-  // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
 
-  modalContainer: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: height * 0.8,
-    minHeight: 400, // Ensure minimum height for Android
-    paddingBottom: spacing[6],
-    elevation: 10, // Android shadow
-    shadowColor: '#000', // iOS shadow
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+  modalBlur: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
+  sheetContainer: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingTop: spacing[5],
+    paddingBottom: spacing[8],
+    paddingHorizontal: spacing[6],
+    maxHeight: height * 0.82,
+    shadowColor: 'rgba(27, 63, 89, 0.25)',
+    shadowOpacity: 0.32,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: -6 },
+    elevation: 16,
+  },
+
+  sheetHandle: {
+    alignSelf: 'center',
+    width: 58,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(43, 71, 94, 0.18)',
+    marginBottom: spacing[4],
   },
 
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing[6],
-    paddingVertical: spacing[5],
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    marginBottom: spacing[4],
   },
 
   modalTitle: {
@@ -118,44 +122,45 @@ export const languageSelectorStyles = StyleSheet.create({
     fontFamily: 'Ubuntu-Bold',
   },
 
+  modalSubtitle: {
+    marginTop: spacing[1],
+    fontSize: 12,
+    color: 'rgba(43, 71, 94, 0.7)',
+    fontFamily: 'Ubuntu-Regular',
+  },
+
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: 'rgba(43, 71, 94, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
   },
 
-  closeButtonText: {
-    fontSize: 20,
-    color: '#6B7280',
-    fontWeight: '400',
+  languageList: {
+    // flex: 1, // This was causing the scrollview to collapse
   },
 
-  // Language List
-  languageList: {
-    flex: 1,
-    paddingHorizontal: spacing[6],
-    minHeight: 300, // Ensure minimum height for Android
+  languageListContent: {
+    paddingBottom: spacing[2],
   },
 
   languageOption: {
-    borderRadius: 12,
-    marginVertical: spacing[1],
+    borderRadius: 18,
+    marginBottom: spacing[3],
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF', // Explicit background for Android
-    elevation: 1, // Small elevation for Android visibility
   },
 
   selectedLanguageOption: {
-    borderWidth: 1,
-    borderColor: 'rgba(43, 71, 94, 0.2)',
+    borderWidth: 0, // Border removed as per request
+    borderColor: 'rgba(59, 180, 245, 0.35)',
   },
 
   languageOptionGradient: {
-    paddingHorizontal: spacing[4],
+    paddingHorizontal: spacing[5],
     paddingVertical: spacing[4],
+    borderRadius: 17,
   },
 
   languageOptionContent: {
@@ -168,12 +173,18 @@ export const languageSelectorStyles = StyleSheet.create({
     flex: 1,
   },
 
+  languageMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    marginTop: spacing[1],
+  },
+
   languageOptionName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#374151',
     fontFamily: 'Ubuntu-SemiBold',
-    marginBottom: 2,
   },
 
   selectedLanguageOptionName: {
@@ -188,28 +199,45 @@ export const languageSelectorStyles = StyleSheet.create({
   },
 
   selectedLanguageCode: {
-    color: '#6B7280',
+    color: '#2B475E',
+  },
+
+  currentBadge: {
+    backgroundColor: 'rgba(59, 180, 245, 0.15)',
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1],
+    borderRadius: 999,
+  },
+
+  currentBadgeText: {
+    fontSize: 10,
+    color: '#2B475E',
+    fontFamily: 'Ubuntu-Medium',
+    letterSpacing: 0.2,
   },
 
   checkContainer: {
-    width: 24,
-    height: 24,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(43, 71, 94, 0.12)',
   },
 
-  // Instructions
   instructionsContainer: {
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[4],
+    marginTop: spacing[4],
+    paddingTop: spacing[3],
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
+    borderTopColor: 'rgba(43, 71, 94, 0.1)',
   },
 
   instructionsText: {
-    fontSize: 14,
-    color: '#6B7280',
+    fontSize: 12,
+    color: 'rgba(43, 71, 94, 0.7)',
     textAlign: 'center',
     fontFamily: 'Ubuntu-Regular',
+    letterSpacing: 0.2,
   },
 });
+

@@ -15,7 +15,7 @@ export const customTabBarStyles = StyleSheet.create({
     backgroundColor: colors.appBackground, // Match HomeScreen background
     paddingTop: 4, // More space at the top
     paddingBottom: 8, // More space at the bottom
-    overflow: 'visible', // Allow plus button to extend outside
+    overflow: 'hidden', // Clip circles at tab bar boundaries
   },
   tabBarContent: {
     flexDirection: 'row',
@@ -25,6 +25,7 @@ export const customTabBarStyles = StyleSheet.create({
     paddingHorizontal: spacing.components.cardPadding,
     flex: 1, // Take full width
     minHeight: 90, // Much more height for text
+    overflow: 'visible', // Allow circles to show
   },
 
   // Tab Buttons
@@ -50,7 +51,7 @@ export const customTabBarStyles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 0,
     position: 'relative',
-    overflow: 'hidden', // Cut off tap circles at tab button level only
+    overflow: 'visible', // Allow circle to show fully
   },
   tabButtonActive: {
     backgroundColor: 'transparent',
@@ -67,15 +68,15 @@ export const customTabBarStyles = StyleSheet.create({
   // Simple single circle animation effect
   tabCircle1: {
     position: 'absolute',
-    backgroundColor: 'rgba(20, 184, 166, 0.15)', // Light teal
-    width: 100, // Bigger circle
+    backgroundColor: 'rgba(59, 130, 246, 0.22)', // More bluish - sky blue with better opacity
+    width: 100, // Reasonable size to stay within tab
     height: 100,
     borderRadius: 50, // Exactly half of width/height for perfect circle
     left: '50%', // Centered horizontally
-    top: '25%', // Even higher position to be cut off at optimal point
+    top: '30%', // Center around icon area
     marginLeft: -50, // Exactly half of width for perfect centering
     marginTop: -50, // Exactly half of height for perfect centering
-    zIndex: -1, // Behind all icons and text
+    zIndex: 0, // Behind icon but visible
   },
   tabLabel: {
     ...typography.textStyles.caption,

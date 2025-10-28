@@ -6,6 +6,7 @@ const { width, height } = Dimensions.get('window');
 export const onboardingPrivacyStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8', // Same as other onboarding screens
   },
 
   safeArea: {
@@ -33,7 +34,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   progressFill: {
     width: '20%', // 2/10
     height: '100%',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Primary color
     borderRadius: 2,
   },
 
@@ -161,7 +162,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   },
 
   checkboxChecked: {
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Primary color
     borderColor: colors.teal[500],
   },
 
@@ -205,7 +206,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   primaryButton: {
     width: '80%',
     height: 56,
-    borderRadius: 28,
+    borderRadius: 18, // Slightly less rounded
     marginBottom: 16,
     shadowColor: colors.teal[500],
     shadowOffset: {
@@ -224,7 +225,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
 
   buttonGradient: {
     flex: 1,
-    borderRadius: 28,
+    borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
   },

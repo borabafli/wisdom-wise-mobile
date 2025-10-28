@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { Lightbulb, X, FileText } from 'lucide-react-native';
+import { Lightbulb, X, FileText, Trash2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThinkingPatternReflectionSummary } from '../services/thinkingPatternsService';
 
@@ -9,13 +9,15 @@ interface ThinkingPatternReflectionsModalProps {
   reflections: ThinkingPatternReflectionSummary[];
   onClose: () => void;
   onReflectionPress?: (reflection: ThinkingPatternReflectionSummary) => void;
+  onDelete?: (reflectionId: string) => void;
 }
 
 export const ThinkingPatternReflectionsModal: React.FC<ThinkingPatternReflectionsModalProps> = ({
   visible,
   reflections,
   onClose,
-  onReflectionPress
+  onReflectionPress,
+  onDelete
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -184,6 +186,18 @@ export const ThinkingPatternReflectionsModal: React.FC<ThinkingPatternReflection
                       {formatDate(reflection.date)}
                     </Text>
                   </View>
+                  {onDelete && (
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        onDelete(reflection.id);
+                      }}
+                      style={{ padding: 4, marginLeft: 8 }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Trash2 size={14} color="#d97706" opacity={0.6} />
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 {/* Original Thought */}

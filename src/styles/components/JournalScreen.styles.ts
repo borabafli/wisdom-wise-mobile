@@ -42,19 +42,19 @@ export const journalScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: spacing[2],
-    marginLeft: -spacing[16],
+    marginLeft: -spacing[8],
     marginTop: -spacing[12],
   },
   headerTurtleIcon: {
     width: 162,
     height: 162,
     marginRight: spacing[4],
-    marginTop: -spacing[8],
+    marginTop: -spacing[4],
   },
   titleAndSubtitleContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginLeft: -spacing[12],
+    marginLeft: -spacing[4],
     marginTop: spacing[20],
   },
   headerTitle: {
@@ -170,10 +170,10 @@ export const journalScreenStyles = StyleSheet.create({
   promptCardButton: {
     position: 'absolute',
     bottom: spacing[12],
-    left: '15%', // Match DailyPromptCard positioning
-    backgroundColor: '#4c908b', // Match DailyPromptCard color
-    paddingHorizontal: spacing[10],
-    paddingVertical: spacing[5],
+    left: '15%',
+    backgroundColor: '#36657D',
+    paddingHorizontal: spacing[16],
+    paddingVertical: spacing[8],
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -184,7 +184,7 @@ export const journalScreenStyles = StyleSheet.create({
 
   promptCardButtonText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 13, // Match DailyPromptCard font size
+    fontSize: 13,
     color: '#FFFFFF',
     fontWeight: '600',
     textAlign: 'center',
@@ -194,8 +194,8 @@ export const journalScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: spacing[8], // Reduced top margin
-    marginBottom: spacing[4], // Reduced bottom margin
+    marginTop: spacing[8],
+    marginBottom: spacing[4],
     gap: spacing[6],
   },
 
@@ -207,7 +207,7 @@ export const journalScreenStyles = StyleSheet.create({
   },
 
   pageIndicatorDotActive: {
-    backgroundColor: '#065F46',
+    backgroundColor: '#36657D',
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -222,34 +222,54 @@ export const journalScreenStyles = StyleSheet.create({
   entryCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: spacing[16],
-    marginHorizontal: spacing[20],
+    padding: spacing[12],
+    marginHorizontal: spacing[12],
     marginBottom: spacing[12],
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
   },
 
   entryCardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing[12],
+    marginBottom: spacing[4],
+  },
+
+  cardContentWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing[8],
+  },
+
+  journalIcon: {
+    width: 40,
+    height: 40,
+    marginRight: spacing[12],
+    marginTop: spacing[4],
+  },
+
+  mainTextContent: {
+    flex: 1,
+  },
+
+  entryHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+
+  entryNumber: {
+    fontFamily: 'Ubuntu-Bold',
+    fontSize: 18,
+    color: '#36657D',
+    marginRight: spacing[4],
+    fontWeight: '700',
   },
 
   entryDate: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 14,
-    color: '#6B7280',
-    fontWeight: '500',
-  },
-
-  deleteButton: {
-    padding: spacing[4],
+    fontSize: 16,
+    color: '#374151',
+    fontWeight: '600',
+    flex: 1,
   },
 
   entryPrompt: {
@@ -257,7 +277,7 @@ export const journalScreenStyles = StyleSheet.create({
     fontSize: 16,
     color: '#111827',
     fontWeight: '600',
-    marginBottom: spacing[8],
+    marginBottom: spacing[4],
     lineHeight: 22,
   },
 
@@ -266,29 +286,43 @@ export const journalScreenStyles = StyleSheet.create({
     fontSize: 14,
     color: '#4B5563',
     lineHeight: 20,
-    marginBottom: spacing[12],
+    marginBottom: spacing[8],
   },
 
   insightsPreview: {
-    marginBottom: spacing[8],
+    marginBottom: spacing[4],
   },
 
   insightsLabel: {
     fontFamily: 'Ubuntu-Medium',
     fontSize: 12,
-    color: '#065F46',
+    color: '#36657D',
     fontWeight: '600',
-    marginBottom: spacing[4],
+    marginBottom: spacing[8],
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
 
-  insightsText: {
+  insightsChipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing[8],
+  },
+
+  insightsChip: {
+    backgroundColor: 'rgba(54, 101, 125, 0.1)',
+    borderRadius: 16,
+    paddingVertical: spacing[6],
+    paddingHorizontal: spacing[12],
+    borderWidth: 1,
+    borderColor: 'rgba(54, 101, 125, 0.2)',
+  },
+
+  insightsChipText: {
     fontFamily: 'Ubuntu-Regular',
     fontSize: 13,
-    color: '#059669',
-    lineHeight: 18,
-    fontStyle: 'italic',
+    color: '#36657D',
+    fontWeight: '500',
   },
 
   polishedBadge: {

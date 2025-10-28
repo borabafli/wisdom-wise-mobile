@@ -1,11 +1,13 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../tokens/colors';
+import { shadows } from '../../tokens/shadows';
 
 const { width, height } = Dimensions.get('window');
 
 export const onboardingMotivationStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8', // Same as other onboarding screens
   },
 
   safeArea: {
@@ -33,7 +35,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   progressFill: {
     width: '100%', // 7/7 pages (final screen)
     height: '100%',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Primary color
     borderRadius: 2,
   },
 
@@ -101,7 +103,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   speechText: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Medium',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -131,7 +133,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontFamily: 'BubblegumSans-Regular',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     marginBottom: 8,
     lineHeight: 30,
@@ -190,7 +192,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   speechText: {
     fontSize: 16,
     fontFamily: 'BubblegumSans-Regular',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -198,7 +200,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     fontFamily: 'Ubuntu-Regular',
-    color: '#64748B',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     marginTop: 12,
     lineHeight: 20,
@@ -213,7 +215,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Medium',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     marginBottom: 12,
   },
 
@@ -248,20 +250,20 @@ export const onboardingMotivationStyles = StyleSheet.create({
   textArea: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Regular',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     lineHeight: 22,
     textAlignVertical: 'top',
     minHeight: 88,
   },
 
   textAreaDisabled: {
-    color: '#64748B',
+    color: '#1F2937', // Match notification screen heading color
   },
 
   characterCount: {
     fontSize: 12,
     fontFamily: 'Ubuntu-Regular',
-    color: '#64748B',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'right',
     marginTop: 8,
   },
@@ -278,7 +280,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   chipsLabel: {
     fontSize: 14,
     fontFamily: 'Ubuntu-Medium',
-    color: '#64748B',
+    color: '#1F2937', // Match notification screen heading color
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -327,14 +329,14 @@ export const onboardingMotivationStyles = StyleSheet.create({
   selectedChipsLabel: {
     fontSize: 12,
     fontFamily: 'Ubuntu-Medium',
-    color: '#64748B',
+    color: '#1F2937', // Match notification screen heading color
     marginBottom: 4,
   },
 
   selectedChipsText: {
     fontSize: 14,
     fontFamily: 'Ubuntu-Regular',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     lineHeight: 20,
   },
 
@@ -376,7 +378,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   responseText: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Regular',
-    color: '#1A2332',
+    color: '#1F2937', // Match notification screen heading color
     lineHeight: 24,
   },
 
@@ -404,7 +406,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   primaryButton: {
     width: '100%',
     height: 56,
-    borderRadius: 28,
+    borderRadius: 18, // Slightly less rounded
     shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
@@ -421,7 +423,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
 
   buttonGradient: {
     flex: 1,
-    borderRadius: 28,
+    borderRadius: 18, // Slightly less rounded
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -445,7 +447,7 @@ export const onboardingMotivationStyles = StyleSheet.create({
   skipButtonText: {
     fontSize: 16,
     fontFamily: 'Ubuntu-Medium',
-    color: '#64748B',
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
   },
 

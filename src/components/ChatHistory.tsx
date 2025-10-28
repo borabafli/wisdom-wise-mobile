@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, Modal, Alert, Platform } from 'react-native';
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, MessageCircle, Clock, Trash2, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { storageService } from '../services/storageService';
 import { chatHistoryStyles as styles } from '../styles/components/ChatHistory.styles';
 import SessionDetailModal from './SessionDetailModal';
+import { Image } from 'expo-image';
 
 const { width, height } = Dimensions.get('window');
+
+const modalPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
 
 interface ChatHistoryProps {
   visible: boolean;
@@ -57,18 +60,12 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffTime = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
 
-    if (diffDays === 0) {
-      return 'Today';
-    } else if (diffDays === 1) {
-      return 'Yesterday';
-    } else if (diffDays < 7) {
-      return `${diffDays} days ago`;
-    } else {
-      return date.toLocaleDateString();
+    if (date.getFullYear() !== now.getFullYear()) {
+      options.year = 'numeric';
     }
+    return date.toLocaleDateString('en-US', options);
   };
 
   const confirmDeleteSession = (session: HistorySession) => {
@@ -133,12 +130,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal visible={visible} animationType="slide" presentationStyle={modalPresentationStyle}>
       <SafeAreaWrapper style={styles.container}>
-        <LinearGradient
-          colors={['#F8FCFC', '#E8F4F1']}
-          style={styles.backgroundGradient}
-        />
+
 
         {/* Header */}
         <View style={styles.header}>
@@ -173,17 +167,18 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
             <View style={styles.sessionsList}>
               {sessions.map((session) => (
                 <View key={session.id} style={styles.sessionCard}>
-                  <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.95)', 'rgba(232, 244, 241, 0.8)']}
-                    style={styles.sessionGradient}
+                  <TouchableOpacity
+                    style={styles.sessionContent}
+                    onPress={() => handleSessionPress(session)}
                   >
-                    <TouchableOpacity
-                      style={styles.sessionContent}
-                      onPress={() => handleSessionPress(session)}
-                    >
-                      <View style={styles.sessionInfo}>
+                    <View style={styles.cardContentWrapper}>
+                      <Image
+                        source={require('../../assets/images/journal-icon-1.png')}
+                        style={styles.chatIcon}
+                        contentFit="contain"
+                      />
+                      <View style={styles.mainTextContent}>
                         <View style={styles.sessionHeader}>
-                          <MessageCircle size={20} color="#4A9B8E" />
                           <Text style={styles.sessionDate}>
                             {formatDate(session.metadata?.savedAt || session.createdAt)}
                           </Text>
@@ -191,7 +186,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
                             onPress={() => confirmDeleteSession(session)}
                             style={styles.deleteButton}
                           >
-                            <Trash2 size={16} color="#FFB5A0" />
+                            <Trash2 size={16} color="rgba(239, 68, 68, 0.3)" />
                           </TouchableOpacity>
                         </View>
                         
@@ -201,21 +196,21 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
                         
                         <View style={styles.sessionMeta}>
                           <View style={styles.metaItem}>
-                            <MessageCircle size={12} color="#6BB3A5" />
+                            <MessageCircle size={12} color="#36657D" />
                             <Text style={styles.metaText}>
                               {session.metadata?.userMessageCount || 0} messages
                             </Text>
                           </View>
                           <View style={styles.metaItem}>
-                            <Clock size={12} color="#6BB3A5" />
+                            <Clock size={12} color="#36657D" />
                             <Text style={styles.metaText}>
                               {session.metadata?.duration || '< 1 min'}
                             </Text>
                           </View>
                         </View>
                       </View>
-                    </TouchableOpacity>
-                  </LinearGradient>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               ))}
             </View>

@@ -127,16 +127,44 @@
     "goals": "Goals",
     "memoryInsights": "Memory Insights",
     "longTermPatterns": "Long-term patterns & themes",
+    "deeperInsights": {
+      "title": "Deeper Insights"
+    },
+    "deleteConfirm": {
+      "title": "Delete Insight?",
+      "message": "Are you sure you want to delete this insight? This action cannot be undone."
+    },
     "motivational": {
       "fallbackMessage": "Your wellness journey continues",
       "startingToday": "starting today"
+    },
+    "dailyCheckIn": {
+      "title": "Daily Check-in",
+      "subtitle": "Keep the momentum going!",
+      "dayStreak": "Day Streak",
+      "lastActivity": "Last activity",
+      "today": "Today",
+      "completeTask": "Complete Daily Task",
+      "streakUpdated": "Streak updated! Keep it up"
     },
     "values": {
       "title": "Your Values",
       "subtitle": "What matters to you",
       "overview": "Core Values",
       "pagination": "{{current}} of {{total}}",
-      "swipeToExplore": "Swipe to explore"
+      "swipeToExplore": "Swipe to explore",
+      "reflectionPrompt": "Reflect on this",
+      "prompts": {
+        "liveToday": "How did you live this value today?",
+        "feltAligned": "When did you feel most aligned with this value recently?",
+        "smallAction": "What's one small action you could take to honor this value?",
+        "relationships": "How does this value show up in your relationships?",
+        "prioritizeMore": "What would it look like to prioritize this value more?",
+        "bringToWork": "How could you bring more of this value into your work?",
+        "barriers": "What barriers keep you from living this value fully?",
+        "evolved": "How has this value evolved for you over time?",
+        "idealDay": "In an ideal day, how would this value be present?"
+      }
     },
     "sessionSummaries": {
       "title": "Session Summaries",
@@ -176,7 +204,8 @@
       "completedSessions": "You've completed",
       "guidedSessions": "guided sessions!",
       "nextUp": "Next up:",
-      "recentAchievements": "Recent Achievements"
+      "recentAchievements": "Recent Achievements",
+      "recentHighlights": "Recent Highlights"
     },
     "actions": {
       "reflectOnStrengths": "Reflect on Strengths",
@@ -213,6 +242,10 @@
         "keepBuilding": "Keep building your insights! ⭐",
         "checkingData": "Checking your data... ✨"
       }
+    },
+    "weeklyHighlights": {
+      "title": "Weekly Highlights",
+      "subtitle": "Your progress this week"
     },
     "thinkingPatterns": {
       "allOrNothing": "All-or-Nothing Thinking",
@@ -303,7 +336,9 @@
       "streak": "Streak",
       "insights": "Insights",
       "exercises": "Exercises",
-      "daysStreak": "7 days"
+      "daysStreak": "7 days",
+      "days": "{{count}} day",
+      "days_plural": "{{count}} days"
     },
     "fallbackName": "Friend",
     "welcomeMessage": "Welcome to WisdomWise",
@@ -313,22 +348,31 @@
       "editProfile": "Edit Profile",
       "chatHistory": "Chat History",
       "voiceSettings": "Voice Settings",
+      "restartOnboarding": "Restart Onboarding",
       "notifications": "Notifications",
       "privacy": "Privacy & Security",
       "darkMode": "Dark Mode",
       "help": "Help & Support",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "language": "Language"
     },
     "menuSubtitles": {
       "editProfile": "Update your information",
       "chatHistory": "View past conversations",
       "voiceSettings": "Configure speech options",
+      "restartOnboarding": "View intro again",
       "notifications": "Manage alerts",
       "privacy": "Control your data",
       "darkMode": "Toggle dark theme",
       "help": "Get assistance",
       "signOut": "Leave your account",
+      "language": "Change the app language",
       "default": "Tap to access"
+    },
+    "restartOnboarding": {
+      "title": "Restart Onboarding?",
+      "message": "This will take you back to the introduction screens. Your data will not be affected.",
+      "confirm": "Restart"
     },
     "version": "Version 1.0.0",
     "madeWith": "Made with 💙 for your wellness"
@@ -349,7 +393,7 @@
     "exerciseProgress": "Step {{current}} of {{total}} • {{title}}",
     "inProgress": "In Progress",
     "therapeuticExercise": "{{duration}} • Therapeutic Exercise",
-    "loadingSpace": "Loading your gentle space...",
+    "loadingSpace": "Preparing your safe space...",
     "safeSpace": "Your safe space for reflection",
     "almostAtLimit": "Almost at daily limit! {{remaining}} left.",
     "limitUsed": "{{percentage}}% of daily limit used.",
@@ -430,7 +474,25 @@
     "stepIndicator": "{{current}}/{{total}}",
     "typeOrSpeak": "Type or speak your thoughts...",
     "transcribing": "Transcribing...",
-    "generating": "...",
+    "writeHint": "Enter text...",
+    "summaryWellDone": "Well done!",
+    "summarySubheading": "You gave your thoughts a voice today.",
+    "generatingFallback": "Processing...",
+    "waitingPhrases": [
+      "🌿 Calm & Authentic",
+      "Reflecting on that",
+      "Gathering my thoughts",
+      "Putting this into words",
+      "Finding the right insight",
+      "Taking a mindful pause",
+      "Processing what you shared",
+      "Warm & Wise",
+      "Distilling a little wisdom",
+      "Crafting your insight",
+      "Turning thoughts into clarity",
+      "Looking a bit deeper",
+      "Let's see what truth emerges"
+    ],
     "continue": "Continue",
     "previousReflections": "Your Previous Reflections:",
     "pleaseWriteSomething": "Please write something",
@@ -974,6 +1036,166 @@
       "button": "Test Voice",
       "stopButton": "Stop Test",
       "text": "Hello, I'm your gentle turtle guide. This is how my voice will sound with these settings."
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Hey, I'm Anu!",
+      "subtitle": "Your guide to more calm and clarity each day.",
+      "startButton": "Let's start!"
+    },
+    "valueProp": {
+      "title": "Your Journey to Wellbeing Starts Here",
+      "description": "Discover personalized tools and gentle guidance to support your mental health journey.",
+      "continueButton": "Get Started"
+    },
+    "personalValues": {
+      "headline": "Let's personalize your experience with Anu.",
+      "promptText": "What values matter most to you? Choose the ones that feel right.",
+      "continueButton": "Continue"
+    },
+    "focusAreas": {
+      "headline": "What would you like to focus on?",
+      "promptText": "Select the areas where you'd like support. You can always change these later.",
+      "areas": {
+        "anxiety": "Anxiety",
+        "stress": "Stress",
+        "sleepIssues": "Sleep Issues",
+        "lowMood": "Low Mood",
+        "focusProblems": "Focus Problems",
+        "relationshipIssues": "Relationship Issues",
+        "workPressure": "Work Pressure",
+        "selfConfidence": "Self-Confidence"
+      },
+      "continueButton": "Continue"
+    },
+    "ageGroup": {
+      "headline": "Help me to understand you better",
+      "promptText": "This helps me tailor my guidance to your life stage.",
+      "ranges": {
+        "18-25": "18-25",
+        "26-35": "26-35",
+        "36-45": "36-45",
+        "46-55": "46-55",
+        "56-65": "56-65",
+        "65+": "65+"
+      },
+      "continueButton": "Continue"
+    },
+    "personalization": {
+      "headline": "What's your name",
+      "promptText": "Choose how Anu should call you.",
+      "placeholder": "Your preferred name",
+      "caption": "You can always change this later in settings",
+      "continueButton": "Continue",
+      "skipButton": "Skip for now"
+    },
+    "motivation": {
+      "title": "Tell me more about what brings you here",
+      "subtitle": "This helps me understand how to best support you",
+      "inputLabel": "Share what's on your mind",
+      "placeholder": "I've been feeling overwhelmed at work and...",
+      "characterCount": "{{count}}/200",
+      "chipsLabel": "Or choose from these common experiences:",
+      "chips": {
+        "stress": "Feeling stressed",
+        "overthinking": "Overthinking everything",
+        "relationships": "Relationship challenges",
+        "burnout": "Work burnout",
+        "mood": "Low mood",
+        "sleep": "Sleep issues",
+        "exploring": "Just exploring"
+      },
+      "selectedChipsLabel": "You shared:",
+      "loading": "Anu is responding...",
+      "responseLabel": "Anu's Response",
+      "continueButton": "Share with Anu",
+      "continueAfterResponse": "Continue",
+      "skipButton": "Skip for now"
+    },
+    "baseline": {
+      "title": "Let's check in",
+      "subtitle": "This helps me track your progress over time",
+      "moodLabel": "How's your mood today?",
+      "continueButton": "Continue",
+      "skipButton": "Skip for now"
+    },
+    "final": {
+      "mainTitle": "We're preparing your personal path forward...",
+      "subtitle": "Setting up your personalized experience with evidence-based tools",
+      "features": {
+        "analyzing": {
+          "title": "Analyzing your preferences",
+          "description": "Understanding your unique needs"
+        },
+        "creating": {
+          "title": "Creating your therapy plan",
+          "description": "Tailoring exercises to your goals"
+        },
+        "preparing": {
+          "title": "Preparing your toolkit",
+          "description": "Setting up personalized resources"
+        }
+      },
+      "continueButton": "Enter WisdomWise"
+    },
+    "notifications": {
+      "mainTitle": "Wellbeing grows with small, daily steps.",
+      "subtitle": "Gentle reminders can help you build healthy habits and stay connected to your mindfulness practice.",
+      "loading": "Setting up your reminders...",
+      "reminders": {
+        "morning": {
+          "label": "Morning Reflection",
+          "description": "Start with intention"
+        },
+        "afternoon": {
+          "label": "Midday Check-in",
+          "description": "Pause and breathe"
+        },
+        "evening": {
+          "label": "Evening Unwind",
+          "description": "Reflect and unwind"
+        }
+      },
+      "timePickerTitle": "Select Time",
+      "enableButton": "Enable Reminders",
+      "skipButton": "Skip for Now",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "permissionGuidance": {
+        "title": "Enable Gentle Reminders",
+        "message": "Anu can send you gentle mindfulness reminders to support your mental health journey. These are completely optional and can be customized.",
+        "setupLater": "Would you like to enable notifications in settings? You can always set this up later in your profile.",
+        "steps": {
+          "ios": {
+            "step1": "1. Tap \"Open Settings\" below",
+            "step2": "2. Toggle on \"Allow Notifications\"",
+            "step3": "3. Choose your preferred notification style",
+            "step4": "4. Return to WisdomWise when done"
+          },
+          "android": {
+            "step1": "1. Tap \"Open Settings\" below",
+            "step2": "2. Turn on \"Show notifications\"",
+            "step3": "3. Choose your notification preferences",
+            "step4": "4. Press back to return to WisdomWise"
+          }
+        },
+        "buttons": {
+          "skipForNow": "Skip for Now",
+          "enableInSettings": "Enable in Settings",
+          "openSettings": "Open Settings",
+          "notNow": "Not Now"
+        }
+      }
+    },
+    "common": {
+      "continueButton": "Continue",
+      "skipButton": "Skip",
+      "backButton": "Back",
+      "nextButton": "Next",
+      "doneButton": "Done",
+      "loading": "Loading...",
+      "selectPlaceholder": "Select an option"
     }
   }
 }

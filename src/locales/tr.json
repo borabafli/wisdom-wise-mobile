@@ -113,16 +113,44 @@
     "goals": "Hedefler",
     "memoryInsights": "Uzun Vadeli Görüşler",
     "longTermPatterns": "Uzun vadeli desenler ve temalar",
+    "deeperInsights": {
+      "title": "Daha Derin Görüşler"
+    },
+    "deleteConfirm": {
+      "title": "İçgörüyü sil?",
+      "message": "Bu içgörüyü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    },
     "motivational": {
       "fallbackMessage": "Sağlık yolculuğunuz devam ediyor",
       "startingToday": "bugünden başlayarak"
+    },
+    "dailyCheckIn": {
+      "title": "Günlük kontrol",
+      "subtitle": "Hızını koru!",
+      "dayStreak": "Gün serisi",
+      "lastActivity": "Son aktivite",
+      "today": "Bugün",
+      "completeTask": "Günlük görevi tamamla",
+      "streakUpdated": "Seri güncellendi! Devam et"
     },
     "values": {
       "title": "Değerleriniz",
       "subtitle": "Size ne önemli",
       "overview": "Temel Değerler",
       "pagination": "{{current}} / {{total}}",
-      "swipeToExplore": "Keşfetmek için kaydırın"
+      "swipeToExplore": "Keşfetmek için kaydırın",
+      "reflectionPrompt": "Bunu düşünün",
+      "prompts": {
+        "liveToday": "Bugün bu değeri nasıl yaşadınız?",
+        "feltAligned": "Son zamanlarda bu değerle en uyumlu ne zaman hissettiniz?",
+        "relationships": "Bu değer ilişkilerinizde nasıl ortaya çıkıyor?",
+        "smallAction": "Bu değeri onurlandırmak için atabileceğiniz küçük bir adım ne olabilir?",
+        "prioritizeMore": "Bu değere daha fazla öncelik vermek nasıl görünürdü?",
+        "bringToWork": "Bu değerden daha fazlasını işinize nasıl getirebilirsiniz?",
+        "barriers": "Bu değeri tam olarak yaşamanızı engelleyen neler var?",
+        "evolved": "Bu değer sizin için zaman içinde nasıl evrildi?",
+        "idealDay": "İdeal bir günde, bu değer nasıl mevcut olurdu?"
+      }
     },
     "sessionSummaries": {
       "title": "Seans Özetleri",
@@ -226,7 +254,7 @@
     },
     "moodInsights": {
       "yourMood": "Ruh Haliniz",
-      "trackEmotions": "Duygusal yolculuğunuzu takip edin",
+      "trackMoodJourney": "Duygusal yolculuğunuzu takip edin",
       "yourThoughts": "Düşünceleriniz",
       "identifyPatterns": "Kalıpları tanımlayın ve yeniden çerçeveleyin",
       "distortedThought": "Çarpık Düşünce",
@@ -315,6 +343,7 @@
       "editProfile": "Profili Düzenle",
       "chatHistory": "Sohbet Geçmişi",
       "voiceSettings": "Ses Ayarları",
+      "restartOnboarding": "Tanıtımı Yeniden Başlat",
       "notifications": "Bildirimler",
       "privacy": "Gizlilik ve Güvenlik",
       "darkMode": "Karanlık Mod",
@@ -325,12 +354,18 @@
       "editProfile": "Bilgilerinizi güncelleyin",
       "chatHistory": "Geçmiş konuşmaları görüntüleyin",
       "voiceSettings": "Konuşma seçeneklerini yapılandırın",
+      "restartOnboarding": "Tanıtımı tekrar görüntüleyin",
       "notifications": "Uyarıları yönetin",
       "privacy": "Verilerinizi kontrol edin",
       "darkMode": "Karanlık temayı aç/kapat",
       "help": "Yardım alın",
       "signOut": "Hesabınızdan çıkın",
       "default": "Erişmek için dokunun"
+    },
+    "restartOnboarding": {
+      "title": "Tanıtım Yeniden Başlatılsın mı?",
+      "message": "Bu sizi tanıtım ekranlarına geri götürecektir. Verileriniz etkilenmeyecektir.",
+      "confirm": "Yeniden Başlat"
     },
     "version": "Sürüm 1.0.0",
     "madeWith": "İyilik haliniz için 💙 ile yapıldı"
@@ -351,7 +386,7 @@
     "exerciseProgress": "Adım {{current}}/{{total}} • {{title}}",
     "inProgress": "Devam Ediyor",
     "therapeuticExercise": "{{duration}} • Terapotik Egzersiz",
-    "loadingSpace": "Nazik alanınız yükleniyor...",
+    "loadingSpace": "Güvenli alanınız hazırlanıyor...",
     "safeSpace": "Yansıtma için güvenli alanınız",
     "almostAtLimit": "Günlük limite yaklaştınız! {{remaining}} kaldı.",
     "limitUsed": "Günlük limitin %{{percentage}}'i kullanıldı.",
@@ -409,11 +444,30 @@
   },
   "journal": {
     "title": "Rehberli Günlük",
+    "writeHint": "Metin gir",
+    "summaryWellDone": "Harika iş çıkardın!",
+    "summarySubheading": "Bugün düşüncelerine bir ses verdin.",
     "promptTitle": "Yansıtma Sorusu",
     "yourResponse": "Cevabınız",
     "finish": "Bitir",
     "saveSession": "Seans Kaydedilsin mi?",
-    "dontSave": "Kaydetme"
+    "dontSave": "Kaydetme",
+    "generatingFallback": "İşleniyor...",
+    "waitingPhrases": [
+      "🌿 Sakin ve özgün",
+      "Bunu düşünüyorum",
+      "Düşüncelerimi topluyorum",
+      "Bunu kelimelere döküyorum",
+      "Doğru içgörüyü buluyorum",
+      "Bilinçli bir mola veriyorum",
+      "Paylaştıklarını sindiriyorum",
+      "Sıcak ve bilge",
+      "Biraz bilgelik süzüyorum",
+      "İçgörünü şekillendiriyorum",
+      "Düşünceleri açıklığa dönüştürüyorum",
+      "Biraz daha derine bakıyorum",
+      "Hangi gerçeğin ortaya çıkacağını görelim"
+    ]
   },
   "breathing": {
     "title": "Nefes Egzersizi",
@@ -883,5 +937,166 @@
       "stopButton": "Testi Durdur",
       "text": "Merhaba, ben sizin nazik kaplumbağa kılavuzunuzum. Bu ayarlarla sesim böyle çıkacak."
     }
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Merhaba, ben Anu!",
+      "subtitle": "Her gün daha fazla sakinlik ve berraklığa ulaşmanız için rehberiniz.",
+      "startButton": "Hadi başlayalım!"
+    },
+    "valueProp": {
+      "title": "İyilik Hali Yolculuğunuz Burada Başlıyor",
+      "description": "Ruh sağlığı yolculuğunuzu desteklemek için kişiselleştirilmiş araçlar ve nazik rehberlik keşfedin.",
+      "continueButton": "Başlayın"
+    },
+    "personalValues": {
+      "headline": "Anu ile deneyiminizi kişiselleştirelim.",
+      "promptText": "Size en çok hangi değerler önemli? Doğru hissettiren değerleri seçin.",
+      "continueButton": "Devam Et"
+    },
+    "focusAreas": {
+      "headline": "Neye odaklanmak istersiniz?",
+      "promptText": "Destek almak istediğiniz alanları seçin. Bunları daha sonra her zaman değiştirebilirsiniz.",
+      "areas": {
+        "anxiety": "Kaygı",
+        "stress": "Stres",
+        "sleepIssues": "Uyku Sorunları",
+        "lowMood": "Kötü Ruh Hali",
+        "focusProblems": "Odaklanma Sorunları",
+        "relationshipIssues": "İlişki Sorunları",
+        "workPressure": "İş Baskısı",
+        "selfConfidence": "Özgüven"
+      },
+      "continueButton": "Devam Et"
+    },
+    "ageGroup": {
+      "headline": "Sizi daha iyi anlamamı sağlayın",
+      "promptText": "Bu, rehberliğimi yaşam aşamanıza göre uyarlamama yardımcı olur.",
+      "ranges": {
+        "18-25": "18-25",
+        "26-35": "26-35",
+        "36-45": "36-45",
+        "46-55": "46-55",
+        "56-65": "56-65",
+        "65+": "65+"
+      },
+      "continueButton": "Devam Et"
+    },
+    "personalization": {
+      "headline": "Adınız nedir",
+      "promptText": "Anu'nun size nasıl hitap etmesini istediğinizi seçin.",
+      "placeholder": "Tercih ettiğiniz isim",
+      "caption": "Bunu daha sonra ayarlarda her zaman değiştirebilirsiniz",
+      "continueButton": "Devam Et",
+      "skipButton": "Şimdilik geç"
+    },
+    "motivation": {
+      "title": "Sizi buraya getiren şey hakkında bana daha fazla anlatın",
+      "subtitle": "Bu, size en iyi şekilde nasıl destek olacağımı anlamamı sağlar",
+      "inputLabel": "Aklınızdan geçenleri paylaşın",
+      "placeholder": "İşte kendimi bunalmış hissediyorum ve...",
+      "characterCount": "{{count}}/200",
+      "chipsLabel": "Veya bu yaygın deneyimlerden birini seçin:",
+      "chips": {
+        "stress": "Stresli hissetmek",
+        "overthinking": "Her şeyi aşırı düşünmek",
+        "relationships": "İlişki zorlukları",
+        "burnout": "İş tükenmişliği",
+        "mood": "Kötü ruh hali",
+        "sleep": "Uyku sorunları",
+        "exploring": "Sadece keşfediyorum"
+      },
+      "selectedChipsLabel": "Paylaştıklarınız:",
+      "loading": "Anu yanıtlıyor...",
+      "responseLabel": "Anu'nun Yanıtı",
+      "continueButton": "Anu ile paylaş",
+      "continueAfterResponse": "Devam Et",
+      "skipButton": "Şimdilik geç"
+    },
+    "baseline": {
+      "title": "Hadi durum değerlendirmesi yapalım",
+      "subtitle": "Bu, zamanla ilerlemenizi takip etmeme yardımcı olur",
+      "moodLabel": "Bugün ruh haliniz nasıl?",
+      "continueButton": "Devam Et",
+      "skipButton": "Şimdilik geç"
+    },
+    "final": {
+      "mainTitle": "Kişisel ilerleme yolunuzu hazırlıyoruz...",
+      "subtitle": "Kanıta dayalı araçlarla kişiselleştirilmiş deneyiminizi kuruyoruz",
+      "features": {
+        "analyzing": {
+          "title": "Tercihlerinizi analiz ediyoruz",
+          "description": "Benzersiz ihtiyaçlarınızı anlıyoruz"
+        },
+        "creating": {
+          "title": "Terapi planınızı oluşturuyoruz",
+          "description": "Egzersizleri hedeflerinize göre uyarlıyoruz"
+        },
+        "preparing": {
+          "title": "Araç setinizi hazırlıyoruz",
+          "description": "Kişiselleştirilmiş kaynakları ayarlıyoruz"
+        }
+      },
+      "continueButton": "WisdomWise'a Gir"
+    },
+    "notifications": {
+      "mainTitle": "İyilik hali küçük, günlük adımlarla büyür.",
+      "subtitle": "Nazik hatırlatmalar sağlıklı alışkanlıklar geliştirmenize ve farkındalık pratiğinizle bağlantınızı korumanıza yardımcı olabilir.",
+      "loading": "Hatırlatıcılarınız kuruluyor...",
+      "reminders": {
+        "morning": {
+          "label": "Sabah Yansıtması",
+          "description": "Niyetle başlayın"
+        },
+        "afternoon": {
+          "label": "Öğlen Kontrolü",
+          "description": "Durun ve nefes alın"
+        },
+        "evening": {
+          "label": "Akşam Rahatlama",
+          "description": "Yansıtın ve rahatın"
+        }
+      },
+      "timePickerTitle": "Zamanı Seçin",
+      "enableButton": "Hatırlatıcıları Etkinleştir",
+      "skipButton": "Şimdilik Geç",
+      "saveButton": "Kaydet",
+      "cancelButton": "İptal",
+      "permissionGuidance": {
+        "title": "Nazik Hatırlatıcıları Etkinleştir",
+        "message": "Anu ruh sağlığı yolculuğunuzu desteklemek için nazik farkındalık hatırlatıcıları gönderebilir. Bunlar tamamen isteğe bağlıdır ve özelleştirilebilir.",
+        "setupLater": "Ayarlarda bildirimleri etkinleştirmek ister misiniz? Bunu her zaman profilinizde daha sonra kurabilirsiniz.",
+        "steps": {
+          "ios": {
+            "step1": "1. Aşağıdaki \"Ayarları Aç\" butonuna dokunun",
+            "step2": "2. \"Bildirimlere İzin Ver\" seçeneğini açın",
+            "step3": "3. Tercih ettiğiniz bildirim stilini seçin",
+            "step4": "4. İşiniz bittiğinde WisdomWise'a geri dönün"
+          },
+          "android": {
+            "step1": "1. Aşağıdaki \"Ayarları Aç\" butonuna dokunun",
+            "step2": "2. \"Bildirimleri göster\" seçeneğini açın",
+            "step3": "3. Bildirim tercihlerinizi seçin",
+            "step4": "4. WisdomWise'a dönmek için geri tuşuna basın"
+          }
+        },
+        "buttons": {
+          "skipForNow": "Şimdilik Geç",
+          "enableInSettings": "Ayarlarda Etkinleştir",
+          "openSettings": "Ayarları Aç",
+          "notNow": "Şimdi Değil"
+        }
+      }
+    },
+    "common": {
+      "continueButton": "Devam Et",
+      "skipButton": "Geç",
+      "backButton": "Geri",
+      "nextButton": "İleri",
+      "doneButton": "Tamam",
+      "loading": "Yükleniyor...",
+      "selectPlaceholder": "Bir seçenek belirleyin"
+    }
   }
 }
+

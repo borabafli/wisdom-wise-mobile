@@ -32,7 +32,6 @@ class JournalStorageService {
       const id = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const date = new Date().toISOString().split('T')[0];
       const timestamp = Date.now();
-
       let polishedContent = '';
       if (shouldPolish) {
         polishedContent = await this.polishJournalEntry(entries, summary, insights);
@@ -58,7 +57,6 @@ class JournalStorageService {
 
       // Update entries index
       await this.updateEntriesIndex(id);
-
       return id;
     } catch (error) {
       console.error('Error saving journal entry:', error);
@@ -284,6 +282,20 @@ ${insights.map(insight => `- ${insight}`).join('\n')}`;
         entriesThisWeek: 0,
         entriesThisMonth: 0,
       };
+    }
+  }
+
+  // Clear all journal entries and their index
+  static async clearAllEntries(): Promise<void> {
+    try {
+      const entriesIndex = await this.getEntriesIndex();
+      const allKeys = entriesIndex.map(id => `${this.ENTRY_PREFIX}${id}`);
+      allKeys.push(this.STORAGE_KEY); // Also remove the index itself
+      await AsyncStorage.multiRemove(allKeys);
+      console.log('All journal entries and index cleared.');
+    } catch (error) {
+      console.error('Error clearing all journal entries:', error);
+      throw error;
     }
   }
 }

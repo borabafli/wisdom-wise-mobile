@@ -32,7 +32,7 @@ export const slidableExerciseCardStyles = StyleSheet.create({
   cardPatternBackground: {
     position: 'absolute',
     top: -2,
-    right: -2,
+    right: 0,
     width: 50,
     height: 50,
     opacity: 0.8,
@@ -41,7 +41,7 @@ export const slidableExerciseCardStyles = StyleSheet.create({
   cardPatternBackgroundPurple: {
     width: 52,
     height: 52,
-    right: -3,
+    right: 0,
     top: -3,
   },
   exerciseImageContainer: {

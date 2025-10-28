@@ -1,15 +1,16 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MessageCircle, Brain, BookOpen } from 'lucide-react-native';
+import { Video, ResizeMode } from 'expo-av';
+import * as NavigationBar from 'expo-navigation-bar';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 
 const { width, height } = Dimensions.get('window');
 
 interface OnboardingPage {
   id: number;
-  icon: React.ComponentType<any>;
+  icon: any; // Image source for PNG icons
   title: string;
   description: string;
   isMainPage?: boolean;
@@ -18,21 +19,27 @@ interface OnboardingPage {
 const onboardingPages: OnboardingPage[] = [
   {
     id: 1,
-    icon: MessageCircle,
-    title: 'Chat with a Guide Who Remembers',
-    description: 'Our conversations build on each other. I\'ll remember your insights and progress to provide truly personal support.',
+    icon: require('../../../assets/images/onboarding/calm-icon-1.png'),
+    title: 'Think Clearer, Feel Better',
+    description: 'Learn to spot unhelpful thoughts and reframe them with science-backed CBT techniques',
   },
   {
     id: 2,
-    icon: Brain,
-    title: 'Uncover Your Thinking Patterns',
-    description: 'We\'ll go beyond simple mood tracking to gently identify and reframe unhelpful thoughts on your personal Insights Dashboard.',
+    icon: require('../../../assets/images/onboarding/understand-icon-2.png'),
+    title: 'Understand yourself better',
+    description: 'Discover patterns in your thoughts and feelings. Insights help you understand yourself—and how to grow.',
   },
   {
     id: 3,
-    icon: BookOpen,
-    title: 'Build Real Skills with Proven Tools',
-    description: 'Practice and grow with a library of guided exercises rooted in proven methods like CBT and Mindfulness.',
+    icon: require('../../../assets/images/onboarding/guided-icon-4.png'),
+    title: 'Guided Growth, Made Simple',
+    description: 'Anu always know the next step and suggests exercises designed just for you.',
+  },
+  {
+    id: 4,
+    icon: require('../../../assets/images/onboarding/growth-icon-3.png'),
+    title: 'Your Progress, Made Visible',
+    description: 'See your journey unfold with saved exercises, insights, and milestones.',
   },
 ];
 
@@ -42,24 +49,62 @@ interface OnboardingValuePropScreenProps {
 
 const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ onContinue }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [overlayVisible, setOverlayVisible] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const overlayFadeAnim = useRef(new Animated.Value(1)).current;
+  const buttonFadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Entrance animations
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
+    // Set Android navigation bar color to match background
+    NavigationBar.setBackgroundColorAsync('#EDF8F8');
+
+    // Elements appear one after the other
+    Animated.sequence([
+      // Short delay first
+      Animated.delay(200),
+      // Text content appears first
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Much shorter delay before button - wait for overlay to disappear first
+      Animated.delay(800), // Wait for overlay to finish disappearing (1000ms + 600ms fade = 1600ms, start button at 1800ms)
+      // Button appears after overlay is gone
+      Animated.timing(buttonFadeAnim, {
         toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
+        duration: 600,
         useNativeDriver: true,
       }),
     ]).start();
+  }, []);
+
+  useEffect(() => {
+    // Show video with slight delay - 0.4 second delay (increased from 0.2 second)
+    setTimeout(() => {
+      setShowVideo(true);
+    }, 800);
+
+    // Fade out overlay even earlier - 1 second delay (reduced from 1.5 seconds)
+    setTimeout(() => {
+      Animated.timing(overlayFadeAnim, {
+        toValue: 0,
+        duration: 600, // Even faster fade (reduced from 800ms)
+        useNativeDriver: true,
+      }).start(() => {
+        setOverlayVisible(false); // Remove overlay completely after fade
+      });
+    }, 1000);
   }, []);
 
   const handleScroll = (event: any) => {
@@ -68,14 +113,25 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
     setCurrentPage(pageIndex);
   };
 
+  const handleVideoLoad = () => {
+    console.log('Video loaded, starting fade animation');
+  };
+
+
 
   const renderPage = (page: OnboardingPage) => (
     <View key={page.id} style={styles.pageContainer}>
-      {/* Text Content Only */}
+      {/* Text Content with Icon */}
       <View style={styles.textContent}>
         <Text style={styles.pageTitle}>
           {page.title}
         </Text>
+        {/* Icon between heading and subtext */}
+        <Image
+          source={page.icon}
+          style={styles.pageIcon}
+          resizeMode="contain"
+        />
         <Text style={styles.pageDescription}>
           {page.description}
         </Text>
@@ -84,12 +140,8 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   );
 
   return (
-    <LinearGradient
-      colors={['#F8FAFB', '#E8F4F1']}
-      style={styles.container}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
+    <View style={styles.container}>
+      <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
         <Animated.View 
           style={[
@@ -114,7 +166,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             {onboardingPages.map((page) => renderPage(page))}
           </ScrollView>
 
-          {/* Page Indicators - Right below text */}
+          {/* Page Indicators - Above video */}
           <View style={styles.pageIndicators}>
             {onboardingPages.map((_, index) => (
               <View
@@ -127,30 +179,59 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             ))}
           </View>
 
-          {/* Static Anu Image - Never moves */}
+          {/* Static Anu Video - With overlay */}
           <View style={styles.staticAnuContainer}>
-            <Image
-              source={require('../../../assets/images/turtle-hero-3.png')}
-              style={styles.staticAnuImage}
-              resizeMode="contain"
-            />
+            <View style={styles.videoContainer}>
+              {/* Static overlay that only animates when fading out */}
+              {overlayVisible && (
+                <Animated.View
+                  style={[
+                    styles.backgroundOverlay,
+                    {
+                      opacity: overlayFadeAnim,
+                    }
+                  ]}
+                />
+              )}
+              {/* Video - only render after 0.5s delay */}
+              {showVideo && (
+                <Video
+                  source={require('../../../assets/images/onboarding/videos/meditating-turtle.mp4')}
+                  style={styles.staticAnuImage}
+                  resizeMode={ResizeMode.CONTAIN}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={true}
+                  useNativeControls={false}
+                  onLoad={handleVideoLoad}
+                />
+              )}
+            </View>
           </View>
 
-          {/* Action Button */}
-          <View style={styles.actionContainer}>
-            <TouchableOpacity 
-              style={styles.primaryButton} 
-              onPress={onContinue}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.primaryButtonText}>
-                {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+        </Animated.View>
+
+        {/* Action Button - OUTSIDE animated container with smooth fade */}
+        <Animated.View
+          style={[
+            styles.actionContainer,
+            {
+              opacity: buttonFadeAnim,
+            }
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={onContinue}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.primaryButtonText}>
+              {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
+            </Text>
+          </TouchableOpacity>
         </Animated.View>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 };
 

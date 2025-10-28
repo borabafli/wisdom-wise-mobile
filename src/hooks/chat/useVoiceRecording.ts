@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Alert, Animated } from 'react-native';
+import { Alert } from 'react-native';
 import { sttService } from '../../services/sttService';
 import { useDirectAudioLevels } from '../useDirectAudioLevels';
 
@@ -10,11 +10,9 @@ interface UseVoiceRecordingReturn {
   sttError: string | null;
   partialTranscript: string;
   audioLevel: number; // Single audio level instead of array
-  waveAnimations: Animated.Value[];
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
   cancelRecording: () => Promise<void>;
-  resetSoundWaves: () => void;
 }
 
 export const useVoiceRecording = (
@@ -25,14 +23,13 @@ export const useVoiceRecording = (
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
   const [partialTranscript, setPartialTranscript] = useState('');
-  
+
   // Use direct audio levels hook
   const { audioLevel, updateAudioLevel, resetLevel } = useDirectAudioLevels();
 
-  // Audio level animations for real sound wave visualization
-  const waveAnimations = useRef(
-    Array.from({ length: 7 }, () => new Animated.Value(0.05))
-  ).current;
+  // Throttle audio level updates to match wave update interval (83ms = ~12 updates/sec)
+  const lastAudioUpdateTime = useRef(0);
+  const AUDIO_UPDATE_THROTTLE = 83; // ms - Match wave update rate for optimal performance
 
   const startRecording = async () => {
     console.log('🎤 Starting recording...');
@@ -86,17 +83,20 @@ export const useVoiceRecording = (
           setIsListening(false);
           setIsTranscribing(false);
           setPartialTranscript('');
-          resetSoundWaves();
         }
       },
-      // On audio level - use direct STT metering
-      (level, frequencyData) => {
-        updateAudioLevel(level); // Pass normalized level (0-1) to direct audio levels hook
-        updateSoundWaves(audioLevel); // Update wave animations with processed level
-        
+      // On audio level - use direct STT metering with throttling
+      (level, freqData) => {
+        // Throttle audioLevel updates to prevent excessive re-renders during consistent talking
+        const now = Date.now();
+        if (now - lastAudioUpdateTime.current >= AUDIO_UPDATE_THROTTLE) {
+          updateAudioLevel(level); // Pass normalized level (0-1) to direct audio levels hook
+          lastAudioUpdateTime.current = now;
+        }
+
         // Debug logging for silence issue
         if (Math.random() < 0.02) { // 2% of the time
-          console.log(`🎤 Voice recording: level=${level.toFixed(4)}, audioLevel=${audioLevel.toFixed(4)}`);
+          console.log(`🎤 Voice recording: level=${level.toFixed(4)}, freqBands=${freqData?.length || 0}`);
         }
       }
     );
@@ -109,75 +109,42 @@ export const useVoiceRecording = (
 
   const stopRecording = async () => {
     console.log('🛑 stopRecording called - current state:', isRecording);
-    
+
     // Set transcribing state before stopping
     setIsTranscribing(true);
     setIsRecording(false);
     setIsListening(false);
     setPartialTranscript('');
     resetLevel(); // Reset direct audio level
-    resetSoundWaves();
-    
+    lastAudioUpdateTime.current = 0; // Reset throttle timer
+
     // Always stop the service regardless of current state
     await sttService.stopRecognition();
-    
+
     console.log('✅ Recording stopped and state reset');
   };
 
   const cancelRecording = async () => {
-    console.log('Cancelling recording...');
+    console.log('🚫🚫🚫 CANCEL RECORDING CALLED - useVoiceRecording 🚫🚫🚫');
+    console.log('Current state before cancel:', { isRecording, isListening, isTranscribing });
+
+    // Reset UI state immediately
+    setIsRecording(false);
+    setIsListening(false);
+    setIsTranscribing(false);
+    setPartialTranscript('');
+    setSttError(null);
+    resetLevel(); // Reset direct audio level
+    lastAudioUpdateTime.current = 0; // Reset throttle timer
+
     try {
+      // Then cleanup the service
       await sttService.cancelRecognition();
-      setIsRecording(false);
-      setIsListening(false);
-      setIsTranscribing(false);
-      setPartialTranscript('');
-      setSttError(null);
-      resetLevel(); // Reset direct audio level
-      resetSoundWaves();
-      console.log('Recording cancelled successfully');
+      console.log('✅ Recording cancelled successfully in useVoiceRecording');
     } catch (error) {
-      console.error('Error cancelling recording:', error);
+      console.error('❌ Error cancelling recording:', error);
       setSttError('Failed to cancel recording');
     }
-  };
-
-  // Update sound waves - simplified to just animate wave bars based on single audio level
-  const updateSoundWaves = (currentAudioLevel: number) => {
-    // Use the processed audio level from direct audio levels hook
-    const baseLevel = Math.max(0.02, Math.min(1, currentAudioLevel));
-    
-    // Create minimal variation across bars for visual interest only
-    const newLevels = Array.from({ length: 7 }, (_, i) => {
-      if (baseLevel < 0.05) {
-        // True silence - all bars very low
-        return 0.02;
-      } else {
-        // During speech, minimal natural variation (±10%)
-        const variation = (Math.random() - 0.5) * 0.1;
-        return Math.max(0.02, Math.min(1, baseLevel + variation));
-      }
-    });
-    
-    // Animate all bars with very fast response for continuous movement
-    newLevels.forEach((targetLevel, index) => {
-      Animated.timing(waveAnimations[index], {
-        toValue: targetLevel,
-        duration: 100, // Fast but smooth animation
-        useNativeDriver: false,
-      }).start();
-    });
-  };
-
-  const resetSoundWaves = () => {
-    // Reset all animations to true baseline for silence
-    waveAnimations.forEach(anim => {
-      Animated.timing(anim, {
-        toValue: 0.02, // True silence baseline
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    });
   };
 
   return {
@@ -187,11 +154,9 @@ export const useVoiceRecording = (
     sttError,
     partialTranscript,
     audioLevel, // Return single audio level instead of array
-    waveAnimations,
     startRecording,
     stopRecording,
     cancelRecording,
-    resetSoundWaves,
   };
 };
 

@@ -66,12 +66,8 @@ export const guidedJournalStyles = StyleSheet.create({
 
   promptContainer: {
     marginTop: spacing[8],
-    marginBottom: spacing[8],
-    padding: spacing[20],
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#2B475E',
+    marginBottom: spacing[12],
+    paddingHorizontal: spacing[4],
   },
 
   promptHeader: {
@@ -112,7 +108,7 @@ export const guidedJournalStyles = StyleSheet.create({
   inputContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 16,
-    marginBottom: spacing[20],
+    marginBottom: spacing[8],
     borderWidth: 1,
     borderColor: '#2B475E',
     marginHorizontal: spacing[4],
@@ -121,9 +117,10 @@ export const guidedJournalStyles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    minHeight: 100,
+    paddingVertical: spacing[14],
+    minHeight: 96,
   },
 
   textInput: {
@@ -159,49 +156,56 @@ export const guidedJournalStyles = StyleSheet.create({
   recordingInterfaceWithTimer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     flex: 1,
-    paddingHorizontal: spacing[12],
-    paddingVertical: spacing[8],
-    minHeight: 68,
+    paddingVertical: 0,
+    height: 96,
   },
-
-  cancelButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  recordingButtonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#6B7280',
-    marginRight: spacing[12],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    marginTop: 0,
+    height: '100%',
+    paddingVertical: 0,
+    flexShrink: 0,
+  },
+  waveContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: spacing[10],
+  },
+
+  recordingCancelButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(148, 163, 184, 0.9)',
+    zIndex: 30,
+    marginLeft: -spacing[8],
+    transform: [{ translateY: 12 }],
   },
 
   waveWithTimerInside: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'column',
-    width: 120,
-    height: 50,
+    height: '100%',
+    paddingHorizontal: spacing[8],
   },
 
   submitRecordingButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#065F46',
-    marginLeft: spacing[12],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: '#2B475E',
+    zIndex: 30,
+    marginRight: -spacing[8],
+    transform: [{ translateY: 12 }],
   },
 
   previousEntriesContainer: {
@@ -210,7 +214,7 @@ export const guidedJournalStyles = StyleSheet.create({
 
   previousEntriesTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 12,
+    fontSize: 14,
     color: '#2B475E',
     marginBottom: spacing[8],
     fontWeight: '600',
@@ -219,28 +223,26 @@ export const guidedJournalStyles = StyleSheet.create({
   },
 
   previousEntry: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
-    padding: spacing[12],
-    marginBottom: spacing[8],
-    borderWidth: 1,
-    borderColor: 'rgba(43, 71, 94, 0.8)',
+    borderRadius: 16,
+    paddingVertical: spacing[10],
+    paddingHorizontal: spacing[12],
+    marginBottom: spacing[10],
+    backgroundColor: 'rgba(41, 69, 98, 0.18)',
   },
 
   previousPrompt: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 12,
-    color: 'rgba(43, 71, 94, 0.8)',
-    marginBottom: spacing[6],
+    fontSize: 13.5,
+    color: '#2B475E',
+    marginBottom: spacing[4],
     fontWeight: '600',
   },
 
   previousResponse: {
     fontFamily: 'Ubuntu-Regular',
-    fontSize: 12,
-    lineHeight: 16,
-    color: 'rgba(43, 71, 94, 0.8)',
-    fontStyle: 'italic',
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#2B475E',
   },
 
   bottomBar: {
@@ -257,22 +259,18 @@ export const guidedJournalStyles = StyleSheet.create({
 
   compactNextButtonContainer: {
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    alignSelf: 'center',
   },
 
   compactNextButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
     paddingVertical: spacing[6],
     paddingHorizontal: spacing[12],
     borderRadius: 8,
     gap: spacing[3],
-    minWidth: 80,
   },
 
   compactNextButtonDisabled: {
@@ -281,16 +279,29 @@ export const guidedJournalStyles = StyleSheet.create({
 
   compactNextButtonText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 11,
+    fontSize: 13.5,
     color: '#FFFFFF',
     fontWeight: '600',
   },
 
   scrollableContinueButtonContainer: {
     alignItems: 'center',
-    paddingVertical: spacing[12],
-    paddingHorizontal: spacing[12],
-    marginTop: spacing[8],
+    paddingVertical: spacing[6],
+    paddingHorizontal: spacing[6],
+    marginTop: spacing[4],
+    marginBottom: spacing[4],
+  },
+
+  loadingTextContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  continueButtonIcon: {
+    width: 82,
+    height: 82,
+    marginTop: spacing[18],
   },
 
   // Legacy styles (keeping for compatibility)
@@ -329,7 +340,7 @@ export const guidedJournalStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // Save Modal Styles
+  // Save Modal Styles - Compact version matching app button styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -341,9 +352,9 @@ export const guidedJournalStyles = StyleSheet.create({
   saveModal: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: spacing[24],
+    padding: spacing[20],
     width: '100%',
-    maxWidth: 300,
+    maxWidth: 320,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -354,25 +365,31 @@ export const guidedJournalStyles = StyleSheet.create({
 
   saveModalTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
-    color: '#374151',
-    marginBottom: spacing[24],
+    color: '#2B475E',
+    marginBottom: spacing[20],
     textAlign: 'center',
   },
 
   saveModalButton: {
-    backgroundColor: '#065F46',
-    paddingVertical: spacing[12],
-    paddingHorizontal: spacing[24],
-    borderRadius: 12,
+    backgroundColor: '#36657D',
+    height: 48,
+    paddingHorizontal: spacing[20],
+    borderRadius: 16,
     width: '100%',
-    marginBottom: spacing[12],
+    marginBottom: spacing[10],
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
   dontSaveButton: {
-    backgroundColor: '#DC2626',
+    backgroundColor: '#d28686',
   },
 
   saveModalButtonText: {
@@ -389,7 +406,7 @@ export const guidedJournalStyles = StyleSheet.create({
   cancelButton: {
     paddingVertical: spacing[8],
     paddingHorizontal: spacing[16],
-    marginTop: spacing[8],
+    marginTop: spacing[6],
   },
 
   cancelButtonText: {

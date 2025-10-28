@@ -8,31 +8,51 @@ const { width, height } = Dimensions.get('window');
 export const personalValuesStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: '#EDF8F8',
   },
 
   safeArea: {
     flex: 1,
   },
 
+  backButton: {
+    position: 'absolute',
+    top: spacing[8], // 16px
+    left: spacing[8], // 16px - moved more to the left from spacing[16]
+    zIndex: 10,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  scrollView: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    paddingBottom: spacing[8],
+  },
+
   // Content Section
   contentContainer: {
-    flex: 1,
-    justifyContent: 'space-between', // Space content apart like Welcome screen
-    paddingHorizontal: spacing[24], // 24px
-    paddingVertical: spacing[24], // 24px - match Welcome screen
+    paddingHorizontal: spacing[16], // 16px - reduced from 24px
+    paddingVertical: spacing[16], // 16px - reduced from 24px
+    minHeight: '100%',
+    justifyContent: 'center',
   },
 
   // Header
   headerContainer: {
-    marginBottom: spacing[24], // 24px - optimized space for chips
-    marginTop: spacing[8], // 8px - move title even higher
+    paddingHorizontal: spacing[12], // 24px - reduced horizontal padding for headings
+    marginBottom: spacing[20], // 40px - standardized spacing to content
+    marginTop: spacing[8], // 16px - standardized top margin
   },
 
   headline: {
     fontSize: 24, // H1 size from design principles
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: colors.teal[800],
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 30,
     marginBottom: spacing[16], // 16px - reduced space below title
@@ -41,7 +61,7 @@ export const personalValuesStyles = StyleSheet.create({
   bodyText: {
     fontSize: 16, // Large body
     fontFamily: typography.fontFamily.ubuntu,
-    color: colors.gray[600],
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: spacing[16], // 16px
@@ -51,19 +71,18 @@ export const personalValuesStyles = StyleSheet.create({
   promptText: {
     fontSize: 18, // H3 size
     fontFamily: typography.fontFamily.ubuntuMedium,
-    color: colors.teal[700],
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 24,
   },
 
-  // Values Selection (removed ScrollView styles)
-
+  // Values Selection
   valuesContainer: {
-    alignItems: 'center', // Center the chips
-    justifyContent: 'center', // Center vertically in available space
-    paddingHorizontal: spacing[16], // 16px horizontal padding
-    paddingBottom: spacing[32], // 32px bottom padding to separate from button
-    gap: spacing[8], // 8px gap between chips - reduced spacing
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[16], // Same as Focus Areas
+    paddingBottom: spacing[16], // Same as Focus Areas
+    gap: spacing[4], // Reduced spacing between buttons
   },
 
   // Value Chips
@@ -71,43 +90,39 @@ export const personalValuesStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center', // Center the text
-    backgroundColor: '#F8F9FA',
-    borderWidth: 1.5,
-    borderColor: colors.gray[300],
-    borderRadius: 25, // Pill shape
+    backgroundColor: colors.white, // Completely white background
+    borderWidth: 0, // No border
+    borderRadius: 12, // Reduced from 24 to make corners less rounded
     paddingHorizontal: 20,
-    paddingVertical: 12, // Reduced vertical padding
+    paddingVertical: 12, // Same padding as Focus Areas
     width: width * 0.75, // Consistent width for all chips (75% of screen width)
-    minHeight: 44, // Slightly smaller consistent height
-    shadowColor: colors.gray[400],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    minHeight: 44, // Same height as Focus Areas
+    // Remove all shadows to prevent fade-in artifacts
   },
 
   selectedValueChip: {
-    backgroundColor: colors.teal[50],
-    borderColor: colors.teal[500],
-    borderWidth: 2,
-    shadowColor: colors.teal[300],
-    shadowOpacity: 0.2,
-    elevation: 4,
+    backgroundColor: '#437690', // Selected state color
+    borderWidth: 0, // Remove borders
+    shadowColor: colors.teal[500],
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
 
   valueChipText: {
     fontSize: 16, // Large body
-    fontFamily: typography.fontFamily.ubuntu,
+    fontFamily: typography.fontFamily.ubuntu, // Use Ubuntu regular for lighter font
     color: colors.gray[700],
     textAlign: 'center',
   },
 
   selectedValueChipText: {
-    color: colors.teal[800],
-    fontFamily: typography.fontFamily.ubuntuMedium,
+    color: '#FFFFFF', // Match notification screen button text color
+    fontFamily: typography.fontFamily.ubuntuBold, // Use Ubuntu Bold for more bold font
   },
 
   // Checkmark
@@ -115,7 +130,7 @@ export const personalValuesStyles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#437690', // Selected state color
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: spacing[8], // 8px
@@ -130,16 +145,18 @@ export const personalValuesStyles = StyleSheet.create({
   // Action Section
   actionContainer: {
     alignItems: 'center',
-    paddingHorizontal: spacing[24], // 24px - match other onboarding pages
-    paddingBottom: spacing[24], // 24px - match other onboarding pages
+    paddingBottom: 30, // Standardized across all personalization screens
+    marginTop: spacing[12], // 24px - standardized spacing from content to button
+    zIndex: 1000, // Absolute foreground
+    position: 'relative',
   },
 
   continueButton: {
     paddingHorizontal: 48, // Standard padding to match other onboarding buttons
     minWidth: 240, // Standard width to match other onboarding buttons
     height: 48,
-    backgroundColor: colors.teal[500],
-    borderRadius: 24, // Pill-shaped
+    backgroundColor: '#36657d', // Match notification screen button color
+    borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: colors.teal[500],
@@ -161,8 +178,8 @@ export const personalValuesStyles = StyleSheet.create({
 
   continueButtonText: {
     fontSize: 16,
-    fontFamily: typography.fontFamily.ubuntuMedium,
-    color: colors.white,
+    fontFamily: typography.fontFamily.ubuntuBold, // Match selection buttons bold font
+    color: '#FFFFFF', // Match notification screen button text color
     letterSpacing: 0.2,
   },
 

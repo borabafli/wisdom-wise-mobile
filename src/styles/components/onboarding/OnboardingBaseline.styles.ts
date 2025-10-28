@@ -6,6 +6,7 @@ const { width, height } = Dimensions.get('window');
 export const onboardingBaselineStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8', // Same as other onboarding screens
   },
 
   safeArea: {
@@ -33,7 +34,7 @@ export const onboardingBaselineStyles = StyleSheet.create({
   progressFill: {
     width: '86%', // 6/7 pages
     height: '100%',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Primary color
     borderRadius: 2,
   },
 
@@ -186,7 +187,7 @@ export const onboardingBaselineStyles = StyleSheet.create({
   continueButton: {
     width: '100%',
     height: 56,
-    borderRadius: 28,
+    borderRadius: 18, // Slightly less rounded
     shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
@@ -199,7 +200,7 @@ export const onboardingBaselineStyles = StyleSheet.create({
 
   continueButtonGradient: {
     flex: 1,
-    borderRadius: 28,
+    borderRadius: 18, // Slightly less rounded
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -482,11 +482,30 @@ async function handleChatCompletion(
     let nextStep: boolean | undefined;
 
     if (bypassJsonSchema) {
-      // For bypassed requests (like journaling), return the raw message content
-      console.log('🔧 [BYPASS MODE] Using raw message content for bypassed schema');
-      cleanedMessage = messageContent.trim();
-      suggestions = []; // No suggestions for non-therapy requests
-      nextAction = "none";
+      // For bypassed requests (like first message generation), try to parse JSON but don't fail if it's not valid
+      console.log('🔧 [BYPASS MODE] Attempting to parse JSON from bypassed schema response');
+      try {
+        // Try to extract JSON from response
+        let jsonString = messageContent;
+        const codeBlockMatch = messageContent.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+        if (codeBlockMatch) {
+          jsonString = codeBlockMatch[1].trim();
+        }
+
+        const jsonResponse = JSON.parse(jsonString);
+        console.log('✅ [BYPASS MODE] Successfully parsed JSON:', jsonResponse);
+
+        // For first message service, return the parsed JSON structure
+        cleanedMessage = jsonResponse.message || messageContent.trim();
+        suggestions = jsonResponse.chips || jsonResponse.suggestions || [];
+        nextAction = "none";
+      } catch (e) {
+        // If parsing fails, return raw content (for journaling prompts, etc.)
+        console.log('⚠️ [BYPASS MODE] JSON parsing failed, using raw content');
+        cleanedMessage = messageContent.trim();
+        suggestions = [];
+        nextAction = "none";
+      }
     } else {
       // For regular therapy requests, parse the JSON response
       try {

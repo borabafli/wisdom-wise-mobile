@@ -18,6 +18,8 @@ export const typography = {
     ubuntu: 'Ubuntu-Regular', // For quoted content and chat
     ubuntuMedium: 'Ubuntu-Medium', // For quoted content emphasis
     ubuntuBold: 'Ubuntu-Bold', // For quoted content emphasis
+    alanSans: 'AlanSans-VariableFont_wght', // For buttons and UI elements
+    alanSansSemiBold: 'AlanSans-SemiBold', // For personalization buttons
     system: 'System', // Fallback
   },
 

@@ -17,6 +17,20 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     image: require('../../assets/images/1.jpeg'),
     keywords: ['automatic thoughts', 'thought patterns', 'negative thoughts', 'cognitive', 'cbt'],
   },
+  'sorting-thoughts': {
+    id: 9,
+    type: 'sorting-thoughts',
+    name: t('exerciseLibrary.names.sortingThoughts'),
+    duration: '10 min',
+    description: t('exerciseLibrary.descriptions.sortingThoughts'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.sortingThoughts'),
+    category: t('exerciseLibrary.categories.cbt'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
+    icon: Filter,
+    color: ['#93C5FD', '#60A5FA'],
+    image: require('../../assets/images/9.jpeg'),
+    keywords: ['sorting thoughts', 'organize thoughts', 'clarity', 'overwhelmed', 'mental clutter', 'clear mind'],
+  },
   'breathing': {
     id: 2,
     type: 'breathing',
@@ -31,9 +45,37 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     image: require('../../assets/images/2.jpeg'),
     keywords: ['breathing', 'breath', '4-7-8'],
   },
+  'tell-your-story': {
+    id: 13,
+    type: 'tell-your-story',
+    name: t('exerciseLibrary.names.tellYourStory'),
+    duration: '15-25 min',
+    description: t('exerciseLibrary.descriptions.tellYourStory'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.tellYourStory'),
+    category: t('exerciseLibrary.categories.selfDiscovery'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
+    icon: FileText,
+    color: ['#FEF3C7', '#FDE68A'],
+    image: require('../../assets/images/16.png'),
+    keywords: ['story', 'narrative', 'reflection', 'journey', 'personal history', 'strengths', 'self-understanding', 'life story', 'identity'],
+  },
+  'vision-of-future': {
+    id: 14,
+    type: 'vision-of-future',
+    name: t('exerciseLibrary.names.visionOfFuture'),
+    duration: '20-30 min',
+    description: t('exerciseLibrary.descriptions.visionOfFuture'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.visionOfFuture'),
+    category: t('exerciseLibrary.categories.selfDiscovery'),
+    difficulty: t('exerciseLibrary.difficulties.intermediate'),
+    icon: Star,
+    color: ['#E0F2FE', '#7DD3FC'],
+    image: require('../../assets/images/18.png'),
+    keywords: ['vision', 'future', 'goals', 'dreams', 'inspiration', 'life direction', 'imagination', 'hope'],
+  },
   'box-breathing': {
     id: 10,
-    type: 'breathing',
+    type: 'box-breathing',
     name: t('exerciseLibrary.names.boxBreathing'),
     duration: '8 min',
     description: t('exerciseLibrary.descriptions.boxBreathing'),
@@ -47,7 +89,7 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
   },
   'triangle-breathing': {
     id: 11,
-    type: 'breathing',
+    type: 'triangle-breathing',
     name: t('exerciseLibrary.names.triangleBreathing'),
     duration: '6 min',
     description: t('exerciseLibrary.descriptions.triangleBreathing'),
@@ -61,7 +103,7 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
   },
   'coherent-breathing': {
     id: 12,
-    type: 'breathing',
+    type: 'coherent-breathing',
     name: t('exerciseLibrary.names.coherentBreathing'),
     duration: '10 min',
     description: t('exerciseLibrary.descriptions.coherentBreathing'),
@@ -72,20 +114,6 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     color: ['#FDE68A', '#FCD34D'],
     image: require('../../assets/images/12.jpeg'),
     keywords: ['coherent breathing', 'heart focused', 'emotional balance', 'coherence'],
-  },
-  'mindfulness': {
-    id: 3,
-    type: 'mindfulness',
-    name: t('exerciseLibrary.names.mindfulness'),
-    duration: '10 min',
-    description: t('exerciseLibrary.descriptions.mindfulness'),
-    shortDescription: t('exerciseLibrary.shortDescriptions.mindfulness'),
-    category: t('exerciseLibrary.categories.mindfulness'),
-    difficulty: t('exerciseLibrary.difficulties.beginner'),
-    icon: Eye,
-    color: ['#95B99C', '#B8C5A6'],
-    image: require('../../assets/images/3.jpeg'),
-    keywords: ['body scan', 'mindfulness', 'body awareness'],
   },
   'morning-mindfulness': {
     id: 4,
@@ -133,7 +161,7 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     id: 7,
     type: 'values-clarification',
     name: t('exerciseLibrary.names.valuesClarity'),
-    duration: '15 min',
+    duration: '12 min',
     description: t('exerciseLibrary.descriptions.valuesClarity'),
     shortDescription: t('exerciseLibrary.shortDescriptions.valuesClarity'),
     category: t('exerciseLibrary.categories.act'),
@@ -147,7 +175,7 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     id: 8,
     type: 'future-self-journaling',
     name: t('exerciseLibrary.names.futureSelfJournaling'),
-    duration: '20 min',
+    duration: '12 min',
     description: t('exerciseLibrary.descriptions.futureSelfJournaling'),
     shortDescription: t('exerciseLibrary.shortDescriptions.futureSelfJournaling'),
     category: t('exerciseLibrary.categories.selfDiscovery'),
@@ -157,25 +185,11 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     image: require('../../assets/images/8.jpeg'),
     keywords: ['future self', 'vision', 'future', 'goals', 'dreams', 'journaling', 'clarity'],
   },
-  'sorting-thoughts': {
-    id: 9,
-    type: 'sorting-thoughts',
-    name: t('exerciseLibrary.names.sortingThoughts'),
-    duration: '10 min',
-    description: t('exerciseLibrary.descriptions.sortingThoughts'),
-    shortDescription: t('exerciseLibrary.shortDescriptions.sortingThoughts'),
-    category: t('exerciseLibrary.categories.cbt'),
-    difficulty: t('exerciseLibrary.difficulties.beginner'),
-    icon: Filter,
-    color: ['#93C5FD', '#60A5FA'],
-    image: require('../../assets/images/9.jpeg'),
-    keywords: ['sorting thoughts', 'organize thoughts', 'clarity', 'overwhelmed', 'mental clutter', 'clear mind'],
-  },
   'goal-setting': {
     id: 12,
     type: 'goal-setting',
     name: t('exerciseLibrary.names.goalSetting'),
-    duration: '20 min',
+    duration: '8 min',
     description: t('exerciseLibrary.descriptions.goalSetting'),
     shortDescription: t('exerciseLibrary.shortDescriptions.goalSetting'),
     category: t('exerciseLibrary.categories.selfGrowth'),
@@ -185,33 +199,19 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     image: require('../../assets/images/10.jpeg'), // Reusing image for now
     keywords: ['goals', 'goal setting', 'therapy goals', 'values', 'motivation', 'purpose', 'direction', 'achievement', 'progress'],
   },
-  'tell-your-story': {
-    id: 13,
-    type: 'tell-your-story',
-    name: t('exerciseLibrary.names.tellYourStory'),
-    duration: '15-25 min',
-    description: t('exerciseLibrary.descriptions.tellYourStory'),
-    shortDescription: t('exerciseLibrary.shortDescriptions.tellYourStory'),
-    category: t('exerciseLibrary.categories.selfDiscovery'),
+  'mindfulness': {
+    id: 3,
+    type: 'mindfulness',
+    name: t('exerciseLibrary.names.mindfulness'),
+    duration: '10 min',
+    description: t('exerciseLibrary.descriptions.mindfulness'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.mindfulness'),
+    category: t('exerciseLibrary.categories.mindfulness'),
     difficulty: t('exerciseLibrary.difficulties.beginner'),
-    icon: FileText,
-    color: ['#FEF3C7', '#FDE68A'],
-    image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
-    keywords: ['story', 'narrative', 'reflection', 'journey', 'personal history', 'strengths', 'self-understanding', 'life story', 'identity'],
-  },
-  'vision-of-future': {
-    id: 14,
-    type: 'vision-of-future',
-    name: t('exerciseLibrary.names.visionOfFuture'),
-    duration: '20-30 min',
-    description: t('exerciseLibrary.descriptions.visionOfFuture'),
-    shortDescription: t('exerciseLibrary.shortDescriptions.visionOfFuture'),
-    category: t('exerciseLibrary.categories.selfDiscovery'),
-    difficulty: t('exerciseLibrary.difficulties.intermediate'),
-    icon: Star,
-    color: ['#E0F2FE', '#7DD3FC'],
-    image: require('../../assets/images/8.jpeg'), // Reusing appropriate image
-    keywords: ['vision', 'future', 'goals', 'dreams', 'inspiration', 'values', 'purpose', 'life direction', 'imagination', 'hope'],
+    icon: Eye,
+    color: ['#95B99C', '#B8C5A6'],
+    image: require('../../assets/images/3.jpeg'),
+    keywords: ['body scan', 'mindfulness', 'body awareness'],
   }
 });
 
@@ -484,38 +484,38 @@ export const getExerciseFlows = (t: (key: string) => string): Record<string, any
   'tell-your-story': {
     name: t('exerciseLibrary.names.tellYourStory'),
     color: 'yellow',
-    useAI: false, // This uses the custom StorytellingExercise component
-    isCustomComponent: true,
+    useAI: true, // Changed to AI-guided for conversational flow
+    isCustomComponent: false,
     steps: [
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step1.title'),
+        title: 'Set the Scene',
         stepNumber: 1,
-        description: t('exerciseLibrary.steps.tellYourStory.step1.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step1.instruction')
+        description: 'Start with who you are today.',
+        instruction: "You are Anu, a calm, supportive guide. Ask the user to describe who they are today in 3-5 short sentences (age range, roles, where they live, what matters right now). Keep tone warm and neutral. Ask exactly one open question. Then wait. Do not analyze yet. If user seems unsure, offer 3 quick prompts as chips: ['work/study', 'relationships', 'health/wellbeing']."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step2.title'),
+        title: 'Chapters & Turning Points',
         stepNumber: 2,
-        description: t('exerciseLibrary.steps.tellYourStory.step2.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step2.instruction')
+        description: '3-5 life chapters and key moments.',
+        instruction: "Invite the user to split their life into 3–5 simple chapters with a title and a key turning point for each (e.g., 'Moving cities', 'First big job', 'A loss', 'New start'). Ask for bullet points. One request at a time. Keep it short and pressure-free. If helpful, suggest a template: 'Chapter title – turning point – how it changed me (1 line)'."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step3.title'),
+        title: 'Meanings & Beliefs',
         stepNumber: 3,
-        description: t('exerciseLibrary.steps.tellYourStory.step3.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step3.instruction')
+        description: 'What beliefs grew from those moments?',
+        instruction: "Ask the user to pick 1–2 turning points that still affect them and write the belief that formed (helpful or unhelpful). Then ask for evidence for and against each belief (1–2 bullets each). Use CBT tone: curious, non-judgmental. One belief at a time. Offer optional chips: ['evidence for', 'evidence against', 'how it helped', 'how it limited me']."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step4.title'),
+        title: 'Reframe & Strengths',
         stepNumber: 4,
-        description: t('exerciseLibrary.steps.tellYourStory.step4.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step4.instruction')
+        description: 'Rewrite the belief and name strengths.',
+        instruction: "Guide a concise reframe for each chosen belief (1–2 sentences) using the user's own words and evidence. Then ask them to list 2–3 strengths shown in their story (e.g., persistence, kindness, courage, learning). Keep it practical and kind. If they struggle, offer a short menu of strengths to choose from."
       },
       {
-        title: t('exerciseLibrary.steps.tellYourStory.step5.title'),
+        title: 'Next Chapter',
         stepNumber: 5,
-        description: t('exerciseLibrary.steps.tellYourStory.step5.description'),
-        instruction: t('exerciseLibrary.steps.tellYourStory.step5.instruction')
+        description: 'Choose a small action and a chapter title.',
+        instruction: "Ask the user to name a 7-day, small, doable action that fits their reframe (must be specific, time-bound, <15 minutes). Then ask them to title their 'next chapter' in 3–5 words, hopeful and concrete. End with a 2-sentence summary: new belief, strength highlights, and the next action. Offer to save as a note and set a reminder."
       }
     ]
   },
@@ -556,7 +556,11 @@ export const getExerciseFlows = (t: (key: string) => string): Record<string, any
 export const exerciseFlows = getExerciseFlows((key: string) => key);
 
 // Unified data for rendering cards in the UI - now a function
-export const getExercisesArray = (t: (key: string) => string) => Object.values(getExerciseLibraryData(t));
+export const getExercisesArray = (t: (key: string) => string) =>
+  Object.entries(getExerciseLibraryData(t)).map(([slug, exercise]) => ({
+    ...exercise,
+    slug,
+  }));
 
 // Helper functions for accessing exercise data
 export function getExerciseByType(type: string, t: (key: string) => string) {
@@ -572,3 +576,4 @@ export const EXERCISE_KEYWORDS = Object.entries(exerciseLibraryData).reduce((acc
   acc[key] = value.keywords;
   return acc;
 }, {} as Record<string, string[]>);
+

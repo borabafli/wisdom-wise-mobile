@@ -113,16 +113,44 @@
     "goals": "Ziele",
     "memoryInsights": "Langzeit-Erkenntnisse",
     "longTermPatterns": "Langfristige Muster & Themen",
+    "deeperInsights": {
+      "title": "Tiefere Einsichten"
+    },
+    "deleteConfirm": {
+      "title": "Erkenntnis löschen?",
+      "message": "Möchten Sie diese Erkenntnis wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
     "motivational": {
       "fallbackMessage": "Deine Wellnessreise geht weiter",
       "startingToday": "ab heute"
+    },
+    "dailyCheckIn": {
+      "title": "Tägliches Check-in",
+      "subtitle": "Bleib am Ball!",
+      "dayStreak": "Tages-Serie",
+      "lastActivity": "Letzte Aktivität",
+      "today": "Heute",
+      "completeTask": "Tagesaufgabe abschließen",
+      "streakUpdated": "Serie aktualisiert! Weiter so"
     },
     "values": {
       "title": "Deine Werte",
       "subtitle": "Was dir wichtig ist",
       "overview": "Grundwerte",
       "pagination": "{{current}} von {{total}}",
-      "swipeToExplore": "Wischen zum Erkunden"
+      "swipeToExplore": "Wischen zum Erkunden",
+      "reflectionPrompt": "Denke darüber nach",
+      "prompts": {
+        "liveToday": "Wie hast du diesen Wert heute gelebt?",
+        "feltAligned": "Wann hast du dich kürzlich am meisten mit diesem Wert im Einklang gefühlt?",
+        "smallAction": "Was ist eine kleine Handlung, die du tun könntest, um diesen Wert zu ehren?",
+        "relationships": "Wie zeigt sich dieser Wert in deinen Beziehungen?",
+        "prioritizeMore": "Wie würde es aussehen, diesem Wert mehr Priorität zu geben?",
+        "bringToWork": "Wie könntest du mehr von diesem Wert in deine Arbeit bringen?",
+        "barriers": "Welche Barrieren hindern dich daran, diesen Wert voll zu leben?",
+        "evolved": "Wie hat sich dieser Wert für dich im Laufe der Zeit entwickelt?",
+        "idealDay": "Wie wäre dieser Wert an einem idealen Tag präsent?"
+      }
     },
     "sessionSummaries": {
       "title": "Sitzungszusammenfassungen",
@@ -226,7 +254,7 @@
     },
     "moodInsights": {
       "yourMood": "Deine Stimmung",
-      "trackEmotions": "Verfolge deine emotionale Reise",
+      "trackMoodJourney": "Verfolge deine emotionale Reise",
       "yourThoughts": "Deine Gedanken",
       "identifyPatterns": "Muster erkennen und umformen",
       "distortedThought": "Verzerrter Gedanke",
@@ -315,6 +343,7 @@
       "editProfile": "Profil bearbeiten",
       "chatHistory": "Chat-Verlauf",
       "voiceSettings": "Spracheinstellungen",
+      "restartOnboarding": "Einführung neu starten",
       "notifications": "Benachrichtigungen",
       "privacy": "Datenschutz & Sicherheit",
       "darkMode": "Dunkler Modus",
@@ -325,12 +354,18 @@
       "editProfile": "Informationen aktualisieren",
       "chatHistory": "Vergangene Gespräche anzeigen",
       "voiceSettings": "Sprachoptionen konfigurieren",
+      "restartOnboarding": "Einführung erneut ansehen",
       "notifications": "Benachrichtigungen verwalten",
       "privacy": "Daten kontrollieren",
       "darkMode": "Dunkles Theme umschalten",
       "help": "Hilfe erhalten",
       "signOut": "Konto verlassen",
       "default": "Zum Zugriff tippen"
+    },
+    "restartOnboarding": {
+      "title": "Einführung neu starten?",
+      "message": "Dies bringt Sie zurück zu den Einführungsbildschirmen. Ihre Daten werden nicht beeinträchtigt.",
+      "confirm": "Neu starten"
     },
     "version": "Version 1.0.0",
     "madeWith": "Mit 💙 für dein Wohlbefinden gemacht"
@@ -351,7 +386,7 @@
     "exerciseProgress": "Schritt {{current}} von {{total}} • {{title}}",
     "inProgress": "In Bearbeitung",
     "therapeuticExercise": "{{duration}} • Therapeutische Übung",
-    "loadingSpace": "Dein sanfter Raum wird geladen...",
+    "loadingSpace": "Dein sicherer Raum wird vorbereitet...",
     "safeSpace": "Dein sicherer Ort für Reflexion",
     "almostAtLimit": "Fast am Tageslimit! Noch {{remaining}} übrig.",
     "limitUsed": "{{percentage}}% des Tageslimits verwendet.",
@@ -409,6 +444,9 @@
   },
   "journal": {
     "title": "Geführtes Tagebuch",
+    "writeHint": "Text eingeben",
+    "summaryWellDone": "Gut gemacht!",
+    "summarySubheading": "Du hast deinen Gedanken heute eine Stimme gegeben.",
     "promptTitle": "Reflexionsfrage",
     "yourResponse": "Deine Antwort",
     "finish": "Beenden",
@@ -432,7 +470,22 @@
     "stepIndicator": "{{current}}/{{total}}",
     "typeOrSpeak": "Schreibe oder sprich deine Gedanken...",
     "transcribing": "Wird übersetzt...",
-    "generating": "...",
+    "generatingFallback": "Wird verarbeitet...",
+    "waitingPhrases": [
+      "🌿 Ruhig & authentisch",
+      "Ich denke darüber nach",
+      "Ich sammle meine Gedanken",
+      "Ich bringe das in Worte",
+      "Ich finde die passende Einsicht",
+      "Ich gönne mir eine achtsame Pause",
+      "Ich verarbeite, was du geteilt hast",
+      "Warm & weise",
+      "Ich destilliere ein wenig Weisheit",
+      "Ich forme deine Einsicht",
+      "Ich verwandle Gedanken in Klarheit",
+      "Ich schaue ein wenig tiefer",
+      "Mal sehen, welche Wahrheit auftaucht"
+    ],
     "continue": "Weiter",
     "previousReflections": "Deine vorherigen Reflexionen:",
     "pleaseWriteSomething": "Bitte schreibe etwas",
@@ -977,5 +1030,167 @@
       "stopButton": "Test stoppen",
       "text": "Hallo, ich bin dein sanfter Schildkröten-Begleiter. So wird meine Stimme mit diesen Einstellungen klingen."
     }
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Hey, ich bin Anu!",
+      "subtitle": "Dein Begleiter zu mehr Ruhe und Klarheit jeden Tag.",
+      "startButton": "Los geht's!"
+    },
+    "valueProp": {
+      "title": "Deine Reise zum Wohlbefinden beginnt hier",
+      "description": "Entdecke personalisierte Werkzeuge und sanfte Führung zur Unterstützung deiner psychischen Gesundheit.",
+      "continueButton": "Loslegen"
+    },
+    "personalValues": {
+      "headline": "Lass uns deine Erfahrung mit Anu personalisieren.",
+      "promptText": "Welche Werte sind dir am wichtigsten? Wähle die aus, die sich richtig anfühlen.",
+      "continueButton": "Weiter"
+    },
+    "focusAreas": {
+      "headline": "Worauf möchtest du dich konzentrieren?",
+      "promptText": "Wähle die Bereiche, in denen du Unterstützung möchtest. Du kannst diese später jederzeit ändern.",
+      "areas": {
+        "anxiety": "Angst",
+        "stress": "Stress",
+        "sleepIssues": "Schlafprobleme",
+        "lowMood": "Niedergeschlagenheit",
+        "focusProblems": "Konzentrationsprobleme",
+        "relationshipIssues": "Beziehungsprobleme",
+        "workPressure": "Arbeitsdruck",
+        "selfConfidence": "Selbstvertrauen"
+      },
+      "continueButton": "Weiter"
+    },
+    "ageGroup": {
+      "headline": "Hilf mir, dich besser zu verstehen",
+      "promptText": "Das hilft mir, meine Begleitung an deine Lebensphase anzupassen.",
+      "ranges": {
+        "18-25": "18-25",
+        "26-35": "26-35",
+        "36-45": "36-45",
+        "46-55": "46-55",
+        "56-65": "56-65",
+        "65+": "65+"
+      },
+      "continueButton": "Weiter"
+    },
+    "personalization": {
+      "headline": "Wie heißt du?",
+      "promptText": "Wähle, wie Anu dich ansprechen soll.",
+      "placeholder": "Dein bevorzugter Name",
+      "caption": "Du kannst das später in den Einstellungen ändern",
+      "continueButton": "Weiter",
+      "skipButton": "Vorerst überspringen"
+    },
+    "motivation": {
+      "title": "Erzähl mir mehr darüber, was dich hierhergebracht hat",
+      "subtitle": "Das hilft mir zu verstehen, wie ich dich am besten unterstützen kann",
+      "inputLabel": "Teile mit, was dir durch den Kopf geht",
+      "placeholder": "Ich fühle mich bei der Arbeit überfordert und...",
+      "characterCount": "{{count}}/200",
+      "chipsLabel": "Oder wähle aus diesen häufigen Erfahrungen:",
+      "chips": {
+        "stress": "Gestresst fühlen",
+        "overthinking": "Alles überdenken",
+        "relationships": "Beziehungsherausforderungen",
+        "burnout": "Arbeitserschöpfung",
+        "mood": "Niedergeschlagenheit",
+        "sleep": "Schlafprobleme",
+        "exploring": "Einfach entdecken"
+      },
+      "selectedChipsLabel": "Du hast geteilt:",
+      "loading": "Anu antwortet...",
+      "responseLabel": "Anus Antwort",
+      "continueButton": "Mit Anu teilen",
+      "continueAfterResponse": "Weiter",
+      "skipButton": "Vorerst überspringen"
+    },
+    "baseline": {
+      "title": "Lass uns einchecken",
+      "subtitle": "Das hilft mir, deinen Fortschritt über die Zeit zu verfolgen",
+      "moodLabel": "Wie ist deine Stimmung heute?",
+      "continueButton": "Weiter",
+      "skipButton": "Vorerst überspringen"
+    },
+    "final": {
+      "mainTitle": "Wir bereiten deinen persönlichen Weg vor...",
+      "subtitle": "Richte deine personalisierte Erfahrung mit evidenzbasierten Tools ein",
+      "features": {
+        "analyzing": {
+          "title": "Analysiere deine Präferenzen",
+          "description": "Verstehe deine einzigartigen Bedürfnisse"
+        },
+        "creating": {
+          "title": "Erstelle deinen Therapieplan",
+          "description": "Passe Übungen an deine Ziele an"
+        },
+        "preparing": {
+          "title": "Bereite dein Toolkit vor",
+          "description": "Richte personalisierte Ressourcen ein"
+        }
+      },
+      "continueButton": "WisdomWise betreten"
+    },
+    "notifications": {
+      "mainTitle": "Wohlbefinden wächst durch kleine, tägliche Schritte.",
+      "subtitle": "Sanfte Erinnerungen können dir helfen, gesunde Gewohnheiten aufzubauen und mit deiner Achtsamkeitspraxis verbunden zu bleiben.",
+      "loading": "Richte deine Erinnerungen ein...",
+      "reminders": {
+        "morning": {
+          "label": "Morgenreflexion",
+          "description": "Mit Absicht beginnen"
+        },
+        "afternoon": {
+          "label": "Mittags-Check-in",
+          "description": "Pause und atmen"
+        },
+        "evening": {
+          "label": "Abendentspannung",
+          "description": "Reflektieren und entspannen"
+        }
+      },
+      "timePickerTitle": "Zeit auswählen",
+      "enableButton": "Erinnerungen aktivieren",
+      "skipButton": "Vorerst überspringen",
+      "saveButton": "Speichern",
+      "cancelButton": "Abbrechen",
+      "permissionGuidance": {
+        "title": "Sanfte Erinnerungen aktivieren",
+        "message": "Anu kann dir sanfte Achtsamkeitserinnerungen senden, um deine psychische Gesundheitsreise zu unterstützen. Diese sind völlig optional und anpassbar.",
+        "setupLater": "Möchtest du Benachrichtigungen in den Einstellungen aktivieren? Du kannst das später jederzeit in deinem Profil einrichten.",
+        "steps": {
+          "ios": {
+            "step1": "1. Tippe unten auf \"Einstellungen öffnen\"",
+            "step2": "2. Schalte \"Mitteilungen erlauben\" ein",
+            "step3": "3. Wähle deinen bevorzugten Benachrichtigungsstil",
+            "step4": "4. Kehre zu WisdomWise zurück, wenn du fertig bist"
+          },
+          "android": {
+            "step1": "1. Tippe unten auf \"Einstellungen öffnen\"",
+            "step2": "2. Schalte \"Benachrichtigungen anzeigen\" ein",
+            "step3": "3. Wähle deine Benachrichtigungseinstellungen",
+            "step4": "4. Drücke zurück, um zu WisdomWise zurückzukehren"
+          }
+        },
+        "buttons": {
+          "skipForNow": "Vorerst überspringen",
+          "enableInSettings": "In Einstellungen aktivieren",
+          "openSettings": "Einstellungen öffnen",
+          "notNow": "Nicht jetzt"
+        }
+      }
+    },
+    "common": {
+      "continueButton": "Weiter",
+      "skipButton": "Überspringen",
+      "backButton": "Zurück",
+      "nextButton": "Weiter",
+      "doneButton": "Fertig",
+      "loading": "Wird geladen...",
+      "selectPlaceholder": "Option auswählen"
+    }
   }
 }
+
+

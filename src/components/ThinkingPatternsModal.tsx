@@ -11,7 +11,7 @@ import {
   ScrollView,
   ImageBackground,
 } from 'react-native';
-import { X, Brain, Lightbulb, TrendingUp } from 'lucide-react-native';
+import { X, Brain, Lightbulb, TrendingUp, Trash2 } from 'lucide-react-native';
 import { Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ValuesReflectButton } from './ReflectButton';
@@ -26,6 +26,7 @@ interface ThinkingPatternsModalProps {
   patterns: ThoughtPattern[];
   onPatternPress?: (pattern: ThoughtPattern) => void;
   onStartReflection?: (pattern: ThoughtPattern, prompt: string) => void;
+  onDelete?: (patternId: string) => void;
 }
 
 
@@ -254,12 +255,23 @@ const ThinkingPatternsModal: React.FC<ThinkingPatternsModalProps> = ({
               <Text style={styles.patternType}>
                 {primaryDistortion}
               </Text>
-              {/* Pattern-specific icon */}
-              <Image 
-                source={getPatternIcon(primaryDistortion)} 
-                style={styles.decorativeIcon} 
-                resizeMode="contain"
-              />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                {onDelete && (
+                  <TouchableOpacity
+                    onPress={() => onDelete(pattern.id)}
+                    style={{ padding: 4 }}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Trash2 size={16} color="#d97706" opacity={0.6} />
+                  </TouchableOpacity>
+                )}
+                {/* Pattern-specific icon */}
+                <Image
+                  source={getPatternIcon(primaryDistortion)}
+                  style={styles.decorativeIcon}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
 
             {/* 2. Pattern Description Section */}

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal, TextInput, Alert } from 'react-native';
 import { X, Target, Clock, Heart, BookOpen, Edit3, CheckCircle, TrendingUp, Calendar, Lightbulb } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { TherapyGoal, goalService, FOCUS_AREAS, TIMELINE_OPTIONS } from '../services/goalService';
-import { exerciseLibraryData } from '../data/exerciseLibrary';
+import { getExerciseLibraryData } from '../data/exerciseLibrary';
 import { memoryService, Summary } from '../services/memoryService';
 import { goalDetailsStyles as styles } from '../styles/components/GoalDetails.styles';
 
@@ -22,6 +23,7 @@ export const GoalDetailsModal: React.FC<GoalDetailsModalProps> = ({
   onGoalUpdated,
   onStartExercise
 }) => {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editedGoal, setEditedGoal] = useState<Partial<TherapyGoal>>({});
   const [recommendedExercises, setRecommendedExercises] = useState<any[]>([]);
@@ -44,7 +46,8 @@ export const GoalDetailsModal: React.FC<GoalDetailsModalProps> = ({
   const loadRecommendedExercises = () => {
     if (!goal) return;
 
-    // Get exercises linked to this goal's focus area
+    // Get exercises linked to this goal's focus area with translations
+    const exerciseLibraryData = getExerciseLibraryData(t);
     const linkedExerciseTypes = goal.linkedExercises || [];
     const exercises = linkedExerciseTypes
       .map(type => exerciseLibraryData[type])

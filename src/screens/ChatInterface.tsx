@@ -37,7 +37,6 @@ import { useExerciseFlow } from '../hooks';
 
 // Import services and utilities
 import { storageService, Message } from '../services/storageService';
-import { exerciseLibraryData } from '../data/exerciseLibrary';
 
 // Import styles
 import { chatInterfaceStyles as styles } from '../styles/components/ChatInterface.styles';
@@ -49,6 +48,7 @@ import { ChatInterfaceProps } from '../types';
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onBack,
   currentExercise,
+  initialMessage,
   onActionSelect,
   onExerciseClick
 }) => {
@@ -90,17 +90,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         }
       }
     };
-    
+
     setupNavigationBar();
-    
-    // Cleanup when component unmounts
-    return () => {
-      if (Platform.OS === 'android') {
-        // Reset to system default (usually matches app theme)
-        NavigationBar.setBackgroundColorAsync('transparent').catch(() => {});
-        NavigationBar.setButtonStyleAsync('dark').catch(() => {});
-      }
-    };
+
+    // Note: Cleanup is handled in handleBackFromChat for immediate color change
   }, []);
 
   // Basic state
@@ -114,7 +107,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Custom hooks
-  const chatSession = useChatSession(currentExercise);
+  const chatSession = useChatSession(currentExercise, t);
   const ttsControls = useTTSControls();
   const typewriterAnimation = useTypewriterAnimation(
     chatSession.setMessages,
@@ -177,7 +170,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     if (currentExercise) {
       console.log('Initializing chat with exercise:', currentExercise.type);
-      
+
       if (currentExercise.type === 'value_reflection') {
         console.log('Starting value reflection with context:', currentExercise.context);
         startValueReflection(
@@ -203,14 +196,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           chatSession.setSuggestions
         );
       }
-      
+
       setIsInitialized(true);
       return;
     }
-    
+
     chatSession.initializeChatSession();
     setIsInitialized(true);
   }, [currentExercise]);
+
+  // Handle initial message from notification
+  useEffect(() => {
+    if (initialMessage && isInitialized && chatSession.messages.length === 1) {
+      // Only send if chat is initialized and we're still at the welcome message
+      console.log('Sending initial message from notification:', initialMessage);
+      chatSession.sendMessage(initialMessage);
+    }
+  }, [initialMessage, isInitialized, chatSession.messages.length]);
 
   // Handle input text changes
   const handleInputTextChange = (text: string) => {
@@ -277,20 +279,32 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
     // Handle exercise card actions
-    // Handle exercise card actions
 const handleExerciseCardStart = (exerciseInfo: any) => {
   console.log("=== EXERCISE CARD CLICKED FROM CHAT ===", exerciseInfo);
 
-  // Clear the card
+  // Clear the card from the chat interface
   chatSession.setShowExerciseCard(null);
 
-  // ✅ Start exercise inline (keep chat messages)
-  startDynamicAIGuidedExercise(
-    exerciseInfo,
-    chatSession.setMessages,
-    chatSession.setIsTyping,
-    chatSession.setSuggestions
-  );
+  // Check if the exercise is a breathing exercise
+  const isBreathingExercise = exerciseInfo.category === t('exerciseLibrary.categories.breathing') || exerciseInfo.type.includes('breathing');
+  if (isBreathingExercise) {
+    // If it is, call the onExerciseClick handler passed in props.
+    // This handler, defined in useAppState.ts, will show the BreathingScreen.
+    if (onExerciseClick) {
+      onExerciseClick(exerciseInfo);
+    } else {
+      console.warn("onExerciseClick is not defined in ChatInterface props");
+    }
+  } else {
+    // For all other exercises, start the dynamic AI-guided exercise flow
+    // which happens within the chat interface.
+    startDynamicAIGuidedExercise(
+      exerciseInfo,
+      chatSession.setMessages,
+      chatSession.setIsTyping,
+      chatSession.setSuggestions
+    );
+  }
 };
 
 
@@ -367,7 +381,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         backgroundColor="#ffffff"
         translucent={false}
       />
-      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
+      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
       <View style={styles.backgroundImage}>
         <LinearGradient
           colors={['rgba(255, 255, 254, 0.9)', 'rgba(255, 255, 254, 1.0)']}
@@ -390,11 +404,10 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           </Animated.View>
         </View>
 
-        <KeyboardAvoidingView 
-          style={styles.keyboardView} 
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={0}
-          enabled={Platform.OS === 'ios'}
+
         >
           {/* Header */}
           <Animated.View style={[
@@ -460,7 +473,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
 
           {/* Messages Area */}
-          <ScrollView 
+          <ScrollView
             ref={scrollViewRef}
             style={styles.messagesArea}
             contentContainerStyle={styles.messagesContent}
@@ -468,9 +481,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="interactive"
-            automaticallyAdjustKeyboardInsets={false}
-            automaticallyAdjustContentInsets={false}
-            contentInsetAdjustmentBehavior="never"
           >
 
             
@@ -484,19 +494,19 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               />
             )}
 
-            {chatSession.isTyping && (
+            {(chatSession.isTyping || chatSession.isLoading) && (
               <View style={styles.typingContainer}>
                 <View style={styles.typingBubble}>
                   <View style={styles.typingContent}>
                     <View style={styles.typingAvatar}>
-                      <Image 
-                        source={require('../../assets/images/Teal watercolor single element/chat-background.png')}
+                      <Image
+                        source={require('../../assets/images/onboarding/chat-avatar-image.png')}
                         style={styles.typingTurtleAvatar}
                         contentFit="contain"
                       />
                     </View>
                     <View style={styles.typingTextContainer}>
-                      <AnimatedTypingDots isVisible={chatSession.isTyping} />
+                      <AnimatedTypingDots isVisible={chatSession.isTyping || chatSession.isLoading} />
                     </View>
                   </View>
                 </View>
@@ -567,18 +577,13 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               />
             )}
           </ScrollView>
-
+          <View>
 
           {/* Suggestion Chips */}
           <SuggestionChips
             suggestions={chatSession.suggestions}
             onSuggestionPress={(suggestion) => handleSend(suggestion)}
-            onSuggestExercise={() => {
-              if (onExerciseClick) {
-                const breathingExercise = exerciseLibraryData['breathing'];
-                onExerciseClick(breathingExercise);
-              }
-            }}
+            onSuggestExercise={() => chatSession.handleSuggestExercise()}
             showExerciseButton={
               chatSession.messages.filter(msg => msg.type === 'user').length >= 2 &&
               !chatSession.showExerciseCard &&
@@ -661,8 +666,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               // Restore text that was there before recording started
               setInputText(textBeforeVoiceRef.current);
             }}
+            simpleRecordingLayout={
+              // Use simple layout only for specific guided journal types
+              currentExercise?.type === 'gratitude' ||
+              currentExercise?.type === 'journaling' ||
+              currentExercise?.type === 'daily-reflection'
+            }
           />
-
+</View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaWrapper>
@@ -671,3 +682,5 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 };
 
 export default ChatInterface;
+
+

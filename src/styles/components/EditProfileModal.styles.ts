@@ -1,199 +1,174 @@
-/**
- * EditProfileModal Component Styles
- * Separated from component for better maintainability
- */
-
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { colors, typography, spacing, shadows } from '../tokens';
 
-const { width } = Dimensions.get('window');
-
 export const editProfileModalStyles = StyleSheet.create({
-  container: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: '#f0f9ff',
-  },
-  backgroundGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  
-  // Header
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing[20],
-    paddingVertical: spacing[16],
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(59, 130, 246, 0.1)',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-  },
-  headerTitle: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.text.primary,
-    fontFamily: typography.fontFamily.primary,
-  },
-  closeButton: {
-    padding: spacing[4],
-    borderRadius: 8,
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-  },
-
-  // Content
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing[20],
-    paddingTop: spacing[24],
-  },
-  
-  // Profile Icon
-  iconContainer: {
-    alignItems: 'center',
-    marginBottom: spacing[20],
-  },
-  iconGradient: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    backgroundColor: 'rgba(12, 30, 49, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.md,
+    padding: spacing[20],
   },
-
-  // Description
-  description: {
-    fontSize: typography.fontSize.base,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing[24],
-    lineHeight: 24,
-    fontFamily: typography.fontFamily.primary,
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
   },
-
-  // Form
-  form: {
+  keyboardAvoider: {
+    width: '100%',
+    maxWidth: 600,
     flex: 1,
   },
+  modalCard: {
+    borderRadius: 28,
+    overflow: 'hidden',
+    ...shadows.lg,
+  },
+  cardInner: {
+    paddingHorizontal: spacing[20],
+    paddingTop: spacing[20],
+    paddingBottom: spacing[16],
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing[12],
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[4],
+    flex: 1,
+  },
+  headerIconBadge: {
+    width: 56,
+    height: 56,
+    borderRadius: 20,
+    backgroundColor: 'rgba(43, 71, 94, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(43, 71, 94, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerIconImage: {
+    width: 40,
+    height: 40,
+  },
+  headerTextGroup: {
+    flex: 1,
+    gap: spacing[1],
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: typography.fontWeight.semibold,
+    color: '#2B475E',
+    fontFamily: typography.fontFamily.primary,
+    letterSpacing: 0.2,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: '#577084',
+    fontFamily: typography.fontFamily.primary,
+    letterSpacing: 0.2,
+  },
+  closeButton: {
+    padding: spacing[2],
+    borderRadius: 12,
+    backgroundColor: 'rgba(43, 71, 94, 0.08)',
+  },
+  description: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#3C5262',
+    fontFamily: typography.fontFamily.primary,
+    marginBottom: spacing[16],
+  },
+  formScroll: {
+    maxHeight: 280,
+  },
+  form: {
+    gap: spacing[12],
+    paddingBottom: spacing[8],
+  },
   inputGroup: {
-    marginBottom: spacing.therapy.lg,
+    gap: spacing[2],
   },
   inputLabel: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     color: colors.text.primary,
-    marginBottom: spacing.therapy.xs,
     fontFamily: typography.fontFamily.primary,
   },
   inputContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: 'rgba(43, 71, 94, 0.18)',
     ...shadows.sm,
   },
   inputError: {
     borderColor: '#ef4444',
-    borderWidth: 1.5,
   },
   textInput: {
     fontSize: typography.fontSize.base,
     color: colors.text.primary,
     paddingHorizontal: spacing[16],
-    paddingVertical: spacing[16],
+    paddingVertical: spacing[8],
     fontFamily: typography.fontFamily.primary,
-    minHeight: 48,
+    minHeight: 40,
   },
-
-  // Error Messages
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.therapy.xs,
+    gap: spacing[2],
   },
   errorText: {
     fontSize: typography.fontSize.sm,
     color: '#ef4444',
-    marginLeft: spacing.therapy.xs,
     fontFamily: typography.fontFamily.primary,
   },
   generalErrorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing[2],
     backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    paddingHorizontal: spacing.therapy.md,
-    paddingVertical: spacing.therapy.sm,
-    borderRadius: 8,
-    marginTop: spacing.therapy.md,
+    borderRadius: 12,
+    paddingVertical: spacing[12],
+    paddingHorizontal: spacing[12],
   },
   generalErrorText: {
     fontSize: typography.fontSize.sm,
     color: '#ef4444',
-    marginLeft: spacing.therapy.xs,
     fontFamily: typography.fontFamily.primary,
   },
-
-  // Actions
   actions: {
     flexDirection: 'row',
-    paddingVertical: spacing.therapy.lg,
-    paddingHorizontal: 0,
-    gap: spacing.therapy.md,
-    alignItems: 'stretch',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    gap: spacing[12],
+    marginTop: spacing[16],
   },
-  
-  // Cancel Button
   cancelButton: {
-    minWidth: 100,
-    maxWidth: 120,
-    borderRadius: 12,
-    overflow: 'hidden',
-    ...shadows.sm,
-  },
-  cancelButtonGradient: {
-    paddingVertical: spacing[16],
+    flex: 1,
+    height: 48,
     paddingHorizontal: spacing[20],
+    borderRadius: 16,
+    backgroundColor: 'rgba(43, 71, 94, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
-  },
-  cancelButtonText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.text.secondary,
-    fontFamily: typography.fontFamily.primary,
-  },
-
-  // Save Button
-  saveButton: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-    ...shadows.sm,
-  },
-  saveButtonDisabled: {
-    opacity: 0.6,
   },
   saveButtonGradient: {
-    paddingVertical: spacing[16],
+    height: 48,
     paddingHorizontal: spacing[20],
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
-    minHeight: 48,
+    gap: spacing[2],
+    borderRadius: 16,
   },
   saveButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: 'white',
-    marginLeft: spacing.therapy.xs,
+    color: colors.white,
     fontFamily: typography.fontFamily.primary,
   },
 });

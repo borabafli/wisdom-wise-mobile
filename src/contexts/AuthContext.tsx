@@ -32,90 +32,160 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Check for existing session on app start
   useEffect(() => {
     checkInitialSession();
-    setupAuthListener();
+    const cleanup = setupAuthListener();
+    return cleanup; // Properly cleanup subscription on unmount
   }, []);
 
   const checkInitialSession = async () => {
     try {
-      const session = await authService.getCurrentSession();
+      console.log('[AuthProvider] checkInitialSession: START');
+
+      let session = null;
+      try {
+        session = await authService.getCurrentSession();
+        console.log('[AuthProvider] getCurrentSession: SUCCESS', !!session);
+      } catch (sessionError) {
+        console.error('[AuthProvider] getCurrentSession: FAILED', sessionError);
+        setIsLoading(false);
+        return; // Exit early if we can't get session
+      }
+
       if (session?.user) {
+        console.log('[AuthProvider] User session found');
         setIsAuthenticated(true);
         setUser(session.user);
         setIsAnonymous(false);
-        
-        // Get display name with priority: onboarding > signup > fallback
-        const displayName = await storageService.getDisplayNameWithPriority(session.user);
-        const [firstName, ...lastNameParts] = displayName.split(' ');
-        const lastName = lastNameParts.join(' ');
-        
-        setProfile({
-          first_name: firstName || 'Friend',
-          last_name: lastName || '',
-          created_at: session.user.created_at
-        });
-      } else {
-        // Check if user was in anonymous mode
-        const anonymousMode = await authService.getAnonymousMode();
-        if (anonymousMode) {
-          setIsAuthenticated(true);
-          setIsAnonymous(true);
-          setUser(null);
-          
-          // For anonymous users, check if they have an onboarding name
-          const displayName = await storageService.getDisplayNameWithPriority();
+
+        try {
+          const displayName = await storageService.getDisplayNameWithPriority(session.user);
           const [firstName, ...lastNameParts] = displayName.split(' ');
           const lastName = lastNameParts.join(' ');
-          
-          setProfile({ 
-            first_name: firstName || 'Friend', 
-            last_name: lastName || '', 
-            created_at: new Date().toISOString() 
+
+          setProfile({
+            first_name: firstName || 'Friend',
+            last_name: lastName || '',
+            created_at: session.user.created_at
           });
+          console.log('[AuthProvider] Profile set successfully');
+        } catch (profileError) {
+          console.error('[AuthProvider] Error setting profile:', profileError);
+          // Set default profile if storage fails
+          setProfile({
+            first_name: 'Friend',
+            last_name: '',
+            created_at: session.user.created_at
+          });
+        }
+      } else {
+        console.log('[AuthProvider] No user session, checking anonymous mode');
+        try {
+          const anonymousMode = await authService.getAnonymousMode();
+          console.log('[AuthProvider] Anonymous mode:', anonymousMode);
+
+          if (anonymousMode) {
+            setIsAuthenticated(true);
+            setIsAnonymous(true);
+            setUser(null);
+
+            try {
+              const displayName = await storageService.getDisplayNameWithPriority();
+              const [firstName, ...lastNameParts] = displayName.split(' ');
+              const lastName = lastNameParts.join(' ');
+
+              setProfile({
+                first_name: firstName || 'Friend',
+                last_name: lastName || '',
+                created_at: new Date().toISOString()
+              });
+            } catch (displayError) {
+              console.error('[AuthProvider] Error getting display name:', displayError);
+              setProfile({
+                first_name: 'Friend',
+                last_name: '',
+                created_at: new Date().toISOString()
+              });
+            }
+          }
+        } catch (anonError) {
+          console.error('[AuthProvider] Error checking anonymous mode:', anonError);
         }
       }
     } catch (error) {
-      console.error('Error checking initial session');
+      console.error('[AuthProvider] checkInitialSession: FATAL ERROR', error);
     } finally {
+      console.log('[AuthProvider] checkInitialSession: COMPLETE, setting isLoading=false');
       setIsLoading(false);
     }
   };
 
   const setupAuthListener = () => {
-    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
-      
-      if (session?.user) {
-        setIsAuthenticated(true);
-        setUser(session.user);
-        setIsAnonymous(false);
-        
-        // Get display name with priority: onboarding > signup > fallback
-        const displayName = await storageService.getDisplayNameWithPriority(session.user);
-        const [firstName, ...lastNameParts] = displayName.split(' ');
-        const lastName = lastNameParts.join(' ');
-        
-        setProfile({
-          first_name: firstName || 'Friend',
-          last_name: lastName || '',
-          created_at: session.user.created_at
-        });
-      } else {
-        // Don't change authenticated status if in anonymous mode
-        const checkAnonymous = async () => {
-          const anonymousMode = await authService.getAnonymousMode();
-          if (!anonymousMode) {
-            setIsAuthenticated(false);
-            setUser(null);
-            setProfile(null);
-            setIsAnonymous(false);
-          }
-        };
-        checkAnonymous();
-      }
-      setIsLoading(false);
-    });
+    try {
+      console.log('[AuthProvider] setupAuthListener: START');
 
-    return () => subscription.unsubscribe();
+      const authStateResult = authService.onAuthStateChange(async (event, session) => {
+        try {
+          console.log('[AuthProvider] Auth state changed:', event);
+
+          if (session?.user) {
+            setIsAuthenticated(true);
+            setUser(session.user);
+            setIsAnonymous(false);
+
+            try {
+              const displayName = await storageService.getDisplayNameWithPriority(session.user);
+              const [firstName, ...lastNameParts] = displayName.split(' ');
+              const lastName = lastNameParts.join(' ');
+
+              setProfile({
+                first_name: firstName || 'Friend',
+                last_name: lastName || '',
+                created_at: session.user.created_at
+              });
+            } catch (profileError) {
+              console.error('[AuthProvider] Error in auth listener profile setup:', profileError);
+              setProfile({
+                first_name: 'Friend',
+                last_name: '',
+                created_at: session.user.created_at
+              });
+            }
+          } else {
+            try {
+              const anonymousMode = await authService.getAnonymousMode();
+              if (!anonymousMode) {
+                setIsAuthenticated(false);
+                setUser(null);
+                setProfile(null);
+                setIsAnonymous(false);
+              }
+            } catch (anonError) {
+              console.error('[AuthProvider] Error checking anonymous in listener:', anonError);
+            }
+          }
+          setIsLoading(false);
+        } catch (callbackError) {
+          console.error('[AuthProvider] Error in auth state callback:', callbackError);
+          setIsLoading(false);
+        }
+      });
+
+      console.log('[AuthProvider] Auth listener setup complete');
+
+      // Safely extract subscription
+      if (authStateResult?.data?.subscription) {
+        return () => {
+          console.log('[AuthProvider] Unsubscribing from auth listener');
+          authStateResult.data.subscription.unsubscribe();
+        };
+      } else {
+        console.warn('[AuthProvider] No subscription returned from onAuthStateChange');
+        return () => {};
+      }
+    } catch (error) {
+      console.error('[AuthProvider] setupAuthListener: FATAL ERROR', error);
+      setIsLoading(false);
+      return () => {};
+    }
   };
 
   const signIn = async (email: string, password: string) => {

@@ -1,20 +1,41 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../tokens/colors';
+import { typography } from '../../tokens/typography';
+import { spacing } from '../../tokens/spacing';
 
 const { width, height } = Dimensions.get('window');
 
 export const onboardingPersonalizationStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDF8F8', // Same as other onboarding screens
   },
 
   safeArea: {
     flex: 1,
-    paddingHorizontal: 24,
+  },
+
+  backButton: {
+    position: 'absolute',
+    top: spacing[8], // 16px
+    left: spacing[8], // 16px - moved more to the left from spacing[16]
+    zIndex: 10,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   keyboardContainer: {
     flex: 1,
+  },
+
+  scrollContainer: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    paddingBottom: spacing[8],
   },
 
   // Progress Indicator Styles
@@ -37,38 +58,59 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
   progressFill: {
     width: '30%', // 3/10
     height: '100%',
-    backgroundColor: colors.teal[500],
+    backgroundColor: '#36657d', // Match notification screen button color
     borderRadius: 2,
   },
 
   progressText: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Medium',
+    fontFamily: typography.fontFamily.ubuntuMedium,
     color: colors.teal[600],
   },
 
 
-  // Main Content Styles
+  // Content Section
   contentContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    zIndex: 1,
+    paddingHorizontal: spacing[16], // 16px - reduced from 24px
+    paddingVertical: spacing[16], // 16px - reduced from 24px
+    minHeight: '100%',
+    justifyContent: 'center',
   },
 
+  // Header
   headerContainer: {
-    alignItems: 'center',
-    marginTop: height * 0.02,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing[12], // 24px - reduced horizontal padding for headings
+    marginBottom: spacing[20], // 40px - standardized spacing to content
+    marginTop: spacing[16], // Move heading slightly lower (was 8px, now 16px)
   },
 
   headline: {
-    fontSize: 28,
-    fontFamily: 'BubblegumSans-Regular',
-    color: colors.teal[800],
+    fontSize: 24, // H1 size from design principles
+    fontFamily: typography.fontFamily.ubuntuBold,
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
-    letterSpacing: -0.5,
-    marginBottom: 32,
+    lineHeight: 30,
+    marginBottom: spacing[16], // 16px - reduced space below title
+  },
+
+  promptText: {
+    fontSize: 18, // H3 size
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    color: '#1F2937', // Match notification screen heading color
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+
+  // Image Container
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: spacing[16], // 32px spacing around image
+  },
+
+  turtleImage: {
+    width: 160,
+    height: 160,
   },
 
   // Anu Avatar and Speech Bubble
@@ -106,7 +148,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: colors.white,
+    backgroundColor: '#EDF8F8',
     borderRadius: 12,
     padding: 4,
     shadowColor: '#f43f5e',
@@ -120,7 +162,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
   },
 
   speechBubble: {
-    backgroundColor: colors.white,
+    backgroundColor: '#EDF8F8',
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -139,8 +181,8 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   speechText: {
     fontSize: 16,
-    fontFamily: 'Ubuntu-Medium',
-    color: colors.teal[700],
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
   },
 
@@ -161,88 +203,71 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   // Input Section Styles
   inputSection: {
-    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    marginBottom: 40,
+    paddingHorizontal: spacing[16],
+    marginVertical: spacing[16],
   },
 
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-
-  inputIcon: {
-    marginRight: 12,
-    marginTop: 2,
-  },
-
-  textInputWrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    borderWidth: 2,
-    shadowColor: colors.teal[500],
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowRadius: 12,
-    elevation: 4,
+    width: '92%', // Make input box wider (was 85%, now 92%)
+    marginBottom: spacing[8],
   },
 
   textInput: {
-    fontSize: 18,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[800],
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    borderWidth: 0, // Remove border
+    fontSize: 17,
+    fontFamily: typography.fontFamily.ubuntu,
+    color: '#1F2937',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 14,
     textAlign: 'center',
+    minHeight: 50, // Slightly bigger (was 44, now 50)
   },
 
   inputCaption: {
-    fontSize: 14,
-    fontFamily: 'Ubuntu-Regular',
-    color: colors.teal[500],
+    fontSize: 12, // Make text smaller (was 14, now 12)
+    fontFamily: typography.fontFamily.ubuntu,
+    color: '#6B7280', // Gray color like other screens
     textAlign: 'center',
-    fontStyle: 'italic',
-    marginLeft: 32, // Account for icon space
+    opacity: 0.8,
   },
 
-  // Action Button Styles
+  // Action Section
   actionContainer: {
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingBottom: 30, // Standardized across all personalization screens
+    marginTop: spacing[12], // 24px - standardized spacing from content to button
+    zIndex: 1000, // Absolute foreground
+    position: 'relative',
   },
 
   primaryButton: {
-    width: '100%',
-    height: 56,
-    borderRadius: 28,
-    marginBottom: 16,
-    shadowColor: colors.teal[500],
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 6,
+    paddingHorizontal: 48, // Standard padding to match other onboarding buttons
+    minWidth: 240, // Standard width to match other onboarding buttons
+    height: 48,
+    backgroundColor: '#36657d', // Match other screens
+    borderRadius: 18, // Slightly less rounded
+    marginBottom: spacing[8], // 8px
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Remove all shadows
   },
 
   buttonGradient: {
     flex: 1,
-    borderRadius: 28,
+    borderRadius: 18, // Match button border radius
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   primaryButtonText: {
-    fontSize: 18,
-    fontFamily: 'Ubuntu-Bold',
-    color: colors.white,
-    letterSpacing: 0.3,
+    fontSize: 16,
+    fontFamily: typography.fontFamily.ubuntuBold, // Match selection buttons bold font
+    color: '#FFFFFF', // Match notification screen button text color
+    letterSpacing: 0.2,
   },
 
   secondaryButton: {
@@ -252,10 +277,10 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
 
   secondaryButtonText: {
     fontSize: 16,
-    fontFamily: 'Ubuntu-Medium',
-    color: colors.teal[600],
+    fontFamily: typography.fontFamily.ubuntuBold,
+    color: '#6B7280', // Match other screens gray color
     textDecorationLine: 'underline',
-    textDecorationColor: colors.teal[400],
+    textDecorationColor: '#6B7280',
   },
 
   // Responsive adjustments

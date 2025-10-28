@@ -1,43 +1,90 @@
-import { useState, useCallback } from 'react';
-import { Exercise } from '../types';
+import { useState, useCallback, useEffect } from 'react';
+import { Platform } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
+import { Exercise, ButtonPosition } from '../types';
+import streakService from '../services/streakService';
+import { navigationBarConfigs } from '../hooks/useNavigationBarStyle';
+
+type TFunction = (key: string) => string;
 
 /**
  * Custom hook for managing app-level state
  */
-export const useAppState = () => {
+export const useAppState = (t: TFunction) => {
   const [showChat, setShowChat] = useState<boolean>(false);
   const [showBreathing, setShowBreathing] = useState<boolean>(false);
   const [showTherapyGoals, setShowTherapyGoals] = useState<boolean>(false);
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
+  const [breathingExercise, setBreathingExercise] = useState<Exercise | null>(null);
   const [chatWithActionPalette, setChatWithActionPalette] = useState<boolean>(false);
+  const [initialChatMessage, setInitialChatMessage] = useState<string | null>(null);
+  const [buttonPosition, setButtonPosition] = useState<ButtonPosition | null>(null);
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [hasCheckedInToday, setHasCheckedInToday] = useState<boolean>(false);
 
-  const handleStartSession = useCallback((exercise: Exercise | null = null) => {
+  const handleStartSession = useCallback(async (params: Exercise | ButtonPosition | null = null) => {
     console.log('=== START SESSION ===');
-    console.log('Exercise passed to session:', exercise);
-    setCurrentExercise(exercise);
+    console.log('Params passed to session:', params);
+
+    // Record check-in if not already done today
+    if (!hasCheckedInToday) {
+      const newStreak = await streakService.recordCheckIn();
+      setCurrentStreak(newStreak);
+      setHasCheckedInToday(true);
+    }
+
+    // Check if params is a ButtonPosition (has x, y, width, height)
+    if (params && 'x' in params && 'y' in params) {
+      setButtonPosition(params as ButtonPosition);
+      setCurrentExercise(null);
+    } else {
+      // It's an Exercise
+      setCurrentExercise(params as Exercise | null);
+      setButtonPosition(null);
+    }
+
     setShowChat(true);
-    console.log('Session state updated - should show chat with exercise:', exercise?.type);
-  }, []);
+    console.log('Session state updated - should show chat');
+  }, [hasCheckedInToday]);
 
   const handleNewSession = useCallback(() => {
     setShowChat(true);
     setChatWithActionPalette(true);
   }, []);
 
-  const handleBackFromChat = useCallback(() => {
+  const handleStartChatWithContext = useCallback((context: string) => {
+    console.log('=== START CHAT WITH CONTEXT ===');
+    console.log('Context:', context);
+    setInitialChatMessage(context);
+    setShowChat(true);
+  }, []);
+
+  const handleBackFromChat = useCallback(async () => {
     console.log('handleBackFromChat called - starting cleanup');
-    console.log('Current state - showChat:', showChat, 'chatWithActionPalette:', chatWithActionPalette, 'currentExercise:', currentExercise);
-    
+
+    // Immediately reset navigation bar color (before animation)
+    if (Platform.OS === 'android') {
+      try {
+        await NavigationBar.setBackgroundColorAsync(navigationBarConfigs.homeScreen.backgroundColor);
+        await NavigationBar.setButtonStyleAsync(navigationBarConfigs.homeScreen.style === 'light' ? 'dark' : 'light');
+      } catch (error) {
+        console.warn('Failed to reset navigation bar:', error);
+      }
+    }
+
     setShowChat(false);
     setChatWithActionPalette(false);
     setCurrentExercise(null);
-    
+    setInitialChatMessage(null);
+    setButtonPosition(null); // Clear button position
+
     console.log('handleBackFromChat completed - should return to main app');
-  }, [showChat, chatWithActionPalette, currentExercise]);
+  }, []);
 
   const handleBackFromBreathing = useCallback(() => {
     console.log('handleBackFromBreathing called');
     setShowBreathing(false);
+    setBreathingExercise(null);
     console.log('Returned to main app from breathing screen');
   }, []);
 
@@ -54,15 +101,11 @@ export const useAppState = () => {
   }, []);
 
   const handleExerciseClick = useCallback((exercise?: Exercise) => {
-    console.log('=== EXERCISE CLICK ===');
-    console.log('Exercise clicked:', exercise);
     if (exercise) {
-      console.log('Starting session with exercise:', exercise.type, exercise.name);
-      
       // Special handling for breathing exercises
-      if (exercise.type === 'breathing') {
+      if (exercise.category === t('exerciseLibrary.categories.breathing') || exercise.type.includes('breathing')) {
+        setBreathingExercise(exercise);
         setShowBreathing(true);
-        console.log('Opening dedicated breathing screen');
       } else {
         handleStartSession(exercise);
       }
@@ -167,12 +210,15 @@ export const useAppState = () => {
   }, [handleStartSession]);
 
   const handleActionSelect = useCallback((actionId: string) => {
+    const allExercises = getExercisesArray(t);
+
     switch (actionId) {
       case 'guided-session':
         handleStartSession();
         break;
       case 'guided-journaling':
-        handleStartSession({
+        const gratitudeExercise = allExercises.find(ex => ex.type === 'gratitude');
+        handleStartSession(gratitudeExercise || {
           type: 'gratitude',
           name: 'Guided Journaling',
           duration: '10 min',
@@ -180,7 +226,8 @@ export const useAppState = () => {
         });
         break;
       case 'suggested-exercises':
-        handleStartSession({
+        const mindfulnessExercise = allExercises.find(ex => ex.type === 'mindfulness');
+        handleStartSession(mindfulnessExercise || {
           type: 'mindfulness',
           name: 'Morning Mindfulness',
           duration: '8 min',
@@ -190,21 +237,26 @@ export const useAppState = () => {
       case 'breathing':
       case 'featured-breathing':
         console.log('Opening breathing screen from quick actions');
+        setBreathingExercise(null); // No specific exercise, will default to 4-7-8
         setShowBreathing(true);
         break;
       default:
         handleStartSession();
     }
-  }, [handleStartSession]);
+  }, [handleStartSession, t]);
 
   return {
     showChat,
     showBreathing,
     showTherapyGoals,
     currentExercise,
+    breathingExercise,
     chatWithActionPalette,
+    initialChatMessage,
+    buttonPosition,
     handleStartSession,
     handleNewSession,
+    handleStartChatWithContext,
     handleBackFromChat,
     handleBackFromBreathing,
     handleTherapyGoalsClick,

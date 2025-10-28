@@ -1,12 +1,8 @@
-// Polyfill for Node.js compatibility issue
-const os = require('os');
-if (!os.availableParallelism) {
-  os.availableParallelism = () => os.cpus().length;
-}
+const {
+  getSentryExpoConfig
+} = require("@sentry/react-native/metro");
 
-const { getDefaultConfig } = require('expo/metro-config');
-
-const config = getDefaultConfig(__dirname);
+const config = getSentryExpoConfig(__dirname);
 
 // Configure resolver with platform-specific extensions and alias handling
 config.resolver.platforms = ['web', 'native', 'ios', 'android'];

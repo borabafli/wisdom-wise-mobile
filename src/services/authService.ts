@@ -1,9 +1,15 @@
-import { supabase } from '../config/supabase';
+import { supabase, isSupabaseAvailable, supabaseInitError } from '../config/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 
 export class AuthService {
+  // Check if Supabase is available before operations
+  private checkSupabaseAvailable(): void {
+    if (!isSupabaseAvailable()) {
+      throw new Error(`Supabase not available: ${supabaseInitError || 'Unknown error'}`);
+    }
+  }
   // Helper to get the correct redirect URL for current environment
   private getRedirectUrl(path: string = '/auth/verify'): string {
     if (__DEV__) {
@@ -18,7 +24,8 @@ export class AuthService {
   // Sign up with email and password
   async signUp(email: string, password: string, firstName: string, lastName: string) {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      this.checkSupabaseAvailable();
+      const { data, error } = await supabase!.auth.signUp({
         email,
         password,
         options: {
@@ -44,7 +51,8 @@ export class AuthService {
   // Sign in with email and password
   async signIn(email: string, password: string) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      this.checkSupabaseAvailable();
+      const { data, error } = await supabase!.auth.signInWithPassword({
         email,
         password,
       });
@@ -198,7 +206,11 @@ export class AuthService {
   // Get current session
   async getCurrentSession() {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      if (!isSupabaseAvailable()) {
+        console.log('[AuthService] Supabase not available, returning null session');
+        return null;
+      }
+      const { data: { session }, error } = await supabase!.auth.getSession();
       
       if (error) {
         throw new Error(error.message);
@@ -267,7 +279,17 @@ export class AuthService {
 
   // Listen to auth changes
   onAuthStateChange(callback: (event: string, session: any) => void) {
-    return supabase.auth.onAuthStateChange(callback);
+    if (!isSupabaseAvailable()) {
+      console.warn('[AuthService] Supabase not available, returning no-op subscription');
+      return {
+        data: {
+          subscription: {
+            unsubscribe: () => console.log('[AuthService] No-op unsubscribe')
+          }
+        }
+      };
+    }
+    return supabase!.auth.onAuthStateChange(callback);
   }
 
   // Anonymous mode management

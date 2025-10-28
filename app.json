@@ -1,35 +1,19 @@
 {
   "expo": {
-    "name": "WisdomWise",
+    "name": "ZenMind",
     "slug": "wisdomwise",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "primaryColor": "#3b82f6",
     "description": "Your gentle companion for mindful wellness and mental health support",
-    "keywords": [
-      "wellness",
-      "mindfulness",
-      "mental health",
-      "meditation",
-      "therapy"
-    ],
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#e9eff1"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "statusBar": {
-        "style": "dark",
-        "backgroundColor": "#e9eff1"
-      },
       "bundleIdentifier": "com.wisdomwise.app",
       "infoPlist": {
         "NSSpeechRecognitionUsageDescription": "Allow WisdomWise to use speech recognition for converting your voice to text during therapy sessions.",
@@ -40,38 +24,33 @@
       }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#e9eff1"
-      },
-      "edgeToEdgeEnabled": false,
-      "statusBar": {
-        "backgroundColor": "#e9eff1",
-        "translucent": false
-      },
-      "androidNavigationBar": {
-        "visible": true,
-        "backgroundColor": "#e9eff1"
-      },
-      "androidStatusBar": {
-        "translucent": false
-      },
-      "softwareKeyboardLayoutMode": "pan",
-      "package": "com.wisdomwise.app",
-      "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.INTERNET",
-        "android.permission.WAKE_LOCK",
-        "android.permission.VIBRATE",
-        "android.permission.RECEIVE_BOOT_COMPLETED"
-      ]
-    },
+  "adaptiveIcon": {
+    "foregroundImage": "./assets/adaptive-icon.png",
+    "backgroundColor": "#EDF8F8"
+  },
+  "icon": "./assets/icon.png",
+  "notification": {
+    "icon": "./assets/notification-icon.png",
+    "color": "#3b82f6"
+  },
+  "windowSoftInputMode": "adjustResize",
+  "softwareKeyboardLayoutMode": "resize",
+  "package": "com.wisdomwise.app",
+  "permissions": [
+    "android.permission.RECORD_AUDIO",
+    "android.permission.CAMERA",
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.WRITE_EXTERNAL_STORAGE",
+    "android.permission.INTERNET",
+    "android.permission.WAKE_LOCK",
+    "android.permission.VIBRATE",
+    "android.permission.RECEIVE_BOOT_COMPLETED"
+  ]
+},
+
     "web": {
       "favicon": "./assets/favicon.png",
-      "name": "WisdomWise - Mindful Wellness"
+      "name": "ZenMind - Mindful Wellness"
     },
     "plugins": [
       [
@@ -84,17 +63,19 @@
             "./assets/fonts/OTF/ClashGrotesk-Medium.otf",
             "./assets/fonts/OTF/ClashGrotesk-Regular.otf",
             "./assets/fonts/OTF/ClashGrotesk-Semibold.otf",
-            "./assets/fonts/BubblegumSans-Regular.ttf"
+            "./assets/fonts/BubblegumSans-Regular.ttf",
+            "./assets/fonts/Alan_Sans/static/AlanSans-SemiBold.ttf",
+            "./assets/fonts/Alan_Sans/AlanSans-VariableFont_wght.ttf"
           ]
         }
       ],
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#e9eff1",
+          "backgroundColor": "#EDF8F8",
           "image": "./assets/splash-icon.png",
           "dark": {
-            "backgroundColor": "#e9eff1"
+            "backgroundColor": "#EDF8F8"
           }
         }
       ],
@@ -102,13 +83,35 @@
       "expo-sqlite",
       "expo-image-picker",
       "expo-notifications",
-      "@siteed/expo-audio-studio",
       "expo-navigation-bar",
       "react-native-audio-api",
       "expo-web-browser",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "useAndroidX": true,
+            "enableProguardInReleaseBuilds": false,
+            "enableJetifier": true,
+            "extraDependencies": [
+              "androidx.core:core:1.13.1"
+            ],
+            "packagingOptions": {
+              "pickFirst": [
+                "lib/armeabi-v7a/libc++_shared.so",
+                "lib/arm64-v8a/libc++_shared.so",
+                "lib/x86/libc++_shared.so",
+                "lib/x86_64/libc++_shared.so"
+              ]
+            }
+          }
+        }
+      ],
+      "./plugins/withAndroidManifestFix",
+      "./plugins/withForceExcludeSupport"
     ],
-    "scheme": "wisdomwise",
+    "scheme": "zenmind",
     "extra": {
       "eas": {
         "projectId": "bee70e2e-8050-4ef6-ac3b-1d699f00bb47"

@@ -1,11 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Message, storageService } from '../../services/storageService';
 import { contextService } from '../../services/contextService';
 import { apiService } from '../../services/apiService';
 import { rateLimitService } from '../../services/rateLimitService';
 import { ttsService } from '../../services/ttsService';
 import { useSessionManagement, ExerciseContext } from '../useSessionManagement';
-import { getExerciseFlow, exerciseLibraryData } from '../../data/exerciseLibrary';
+import { EXERCISE_KEYWORDS, getExerciseLibraryData, getExercisesArray } from '../../data/exerciseLibrary';
 import { memoryService } from '../../services/memoryService';
 
 interface ChatSessionState {
@@ -39,7 +39,8 @@ interface UseChatSessionReturn extends ChatSessionState {
 }
 
 export const useChatSession = (
-  currentExercise?: any
+  currentExercise?: any,
+  t: (key: string) => string = (key) => key
 ): UseChatSessionReturn => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -50,7 +51,12 @@ export const useChatSession = (
     percentage: 0,
     message: ''
   });
-  const [showExerciseCard, setShowExerciseCard] = useState<any>(null);
+  const [showExerciseCard, _setShowExerciseCard] = useState<any>(null);
+
+  const setShowExerciseCard = (exercise: any) => {
+    console.log('SHOW_EXERCISE_CARD_STATE:', JSON.stringify(exercise, null, 2));
+    _setShowExerciseCard(exercise);
+  };
   const [currentExerciseStep, setCurrentExerciseStep] = useState<number | null>(null);
   const [exerciseFlow, setExerciseFlow] = useState<any>(null);
 
@@ -68,11 +74,12 @@ export const useChatSession = (
         await handleStartExercise(currentExercise);
         return;
       } else {
-        console.log('Starting fresh chat session');
-        const initialMessages = await initializeSession();
-        
-        setMessages(initialMessages);
-        setSuggestions([]); // No initial suggestions - wait for AI
+        console.log('Starting fresh chat session with AI-powered first message');
+        const sessionData = await initializeSession();
+
+        setMessages(sessionData.messages);
+        setSuggestions(sessionData.suggestions); // AI-generated contextual chips
+        console.log('✅ Chat initialized with personalized greeting and', sessionData.suggestions.length, 'suggestion chips');
       }
     } catch (error) {
       console.error('Error initializing chat session:', error);
@@ -81,7 +88,7 @@ export const useChatSession = (
 
   const handleSuggestExercise = async () => {
     console.log('🎯 User requested exercise suggestion');
-    const suggestionText = "I need some help right now. Could you suggest a therapeutic exercise for me?";
+    const suggestionText = "I need some help right now. Could you suggest an exercise for me?";
     await handleSendMessage(suggestionText);
   };
 
@@ -124,7 +131,6 @@ export const useChatSession = (
 
       const recentMessages = await storageService.getLastMessages(20);
       
-      // Check if we're in exercise mode
       let context;
       if (exerciseFlow && currentExerciseStep) {
         console.log(`🎯 In exercise mode: Step ${currentExerciseStep}, using exercise context`);
@@ -133,7 +139,7 @@ export const useChatSession = (
           exerciseFlow,
           currentExerciseStep,
           [],
-          false // Not the first message in step
+          false
         );
       } else {
         console.log('🎯 In regular chat mode, using chat context');
@@ -145,7 +151,6 @@ export const useChatSession = (
       console.log('🔍 Exercise card debug - nextAction:', response.nextAction);
       console.log('🔍 Exercise card debug - exerciseData:', response.exerciseData);
       
-      // Log if AI is now providing nextAction field
       if (response.nextAction !== undefined) {
         console.log('✅ AI is now providing nextAction field:', response.nextAction);
       } else {
@@ -159,10 +164,8 @@ export const useChatSession = (
         const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
         setRateLimitStatus(newRateLimitStatus);
 
-        // Create appropriate message type based on context
         let aiResponse: Message;
         if (exerciseFlow && currentExerciseStep) {
-          // In exercise mode: create exercise-type message
           const currentStep = exerciseFlow.steps[currentExerciseStep - 1];
           aiResponse = {
             id: (Date.now() + Math.random()).toString(),
@@ -175,7 +178,6 @@ export const useChatSession = (
             isAIGuided: true
           };
         } else {
-          // Regular chat mode: create system message
           aiResponse = {
             id: (Date.now() + Math.random()).toString(),
             type: 'system',
@@ -188,9 +190,7 @@ export const useChatSession = (
         await storageService.addMessage(aiResponse);
         await ttsService.speakIfAutoPlay(response.message);
 
-        // Handle exercise step progression if in exercise mode
         if (exerciseFlow && currentExerciseStep) {
-          // Check if AI wants to advance to next step
           let shouldAdvanceStep = false;
           try {
             if (response.nextStep !== undefined) {
@@ -202,57 +202,100 @@ export const useChatSession = (
           }
 
           if (shouldAdvanceStep && currentExerciseStep < exerciseFlow.steps.length) {
-            // Advance to next step
             const newStepIndex = currentExerciseStep + 1;
             setCurrentExerciseStep(newStepIndex);
             console.log('✅ AI advanced to step:', newStepIndex);
           } else if (shouldAdvanceStep && currentExerciseStep >= exerciseFlow.steps.length) {
-            // Exercise completed
             console.log('🎉 AI completed exercise');
             setExerciseFlow(null);
             setCurrentExerciseStep(null);
           }
 
-          // Use AI-generated suggestions for exercises
           if (response.suggestions && response.suggestions.length > 0) {
             setSuggestions(response.suggestions);
           } else {
             setSuggestions([]);
           }
         } else {
-          // Regular chat suggestions
           if (response.suggestions && response.suggestions.length > 0) {
             console.log('Using AI-generated suggestions:', response.suggestions);
             setSuggestions(response.suggestions);
           } else {
             console.log('No AI suggestions provided, not showing any suggestions');
-            setSuggestions([]); // Only show suggestions when AI provides them
+            setSuggestions([]);
           }
         }
 
-        // Only show exercise cards if we're NOT already in an exercise
-        if (!exerciseFlow && !currentExerciseStep) {
-          console.log('🎯 Checking exercise card trigger...');
-          if (response.nextAction === 'showExerciseCard' && response.exerciseData) {
-          console.log('🎯 Exercise card should show! Type:', response.exerciseData.type);
-          // Get complete exercise data from library
-          const fullExerciseData = exerciseLibraryData[response.exerciseData.type];
-          console.log('🎯 Full exercise data found:', fullExerciseData);
-          if (fullExerciseData) {
-            console.log('🎯 Setting exercise card state...');
-            setShowExerciseCard(fullExerciseData);
+        if (response.nextAction === 'showExerciseCard') {
+          console.log('🎯 AI wants to show exercise card. Verifying exercise...');
+          const exercises = getExercisesArray(t);
+          const sortedExercises = [...exercises].sort((a, b) => b.name.length - a.name.length);
+          const aiMessage = response.message.toLowerCase();
+
+          let foundExercise = null;
+
+          if (response.exerciseData?.type) {
+            const exerciseFromAI = sortedExercises.find(ex => ex.type === response.exerciseData.type);
+            if (exerciseFromAI && aiMessage.includes(exerciseFromAI.name.toLowerCase())) {
+              console.log('✅ Found matching exercise in AI response using exerciseData:', exerciseFromAI.name);
+              foundExercise = exerciseFromAI;
+            } else {
+              console.warn('AI exerciseData.type does not match exercise name in message. Will search message text.');
+            }
+          }
+
+          if (!foundExercise) {
+            for (const exercise of sortedExercises) {
+              if (aiMessage.includes(exercise.name.toLowerCase())) {
+                console.log('🎯 Found exercise by name in message text:', exercise.name);
+                foundExercise = exercise;
+                break;
+              }
+            }
+          }
+
+          if (!foundExercise) {
+            console.log('Fallback: Searching for exercise keywords in AI message...');
+            const exerciseScores: { [type: string]: number } = {};
+
+            for (const [type, keywords] of Object.entries(EXERCISE_KEYWORDS)) {
+              for (const keyword of keywords) {
+                if (aiMessage.includes(keyword)) {
+                  exerciseScores[type] = (exerciseScores[type] || 0) + 1;
+                }
+              }
+            }
+
+            let bestMatch: { type: string; score: number } | null = null;
+            for (const type in exerciseScores) {
+              if (!bestMatch || exerciseScores[type] > bestMatch.score) {
+                bestMatch = { type, score: exerciseScores[type] };
+              }
+            }
+
+            if (bestMatch) {
+              console.log(`Found best keyword match: ${bestMatch.type} (score: ${bestMatch.score})`);
+              foundExercise = sortedExercises.find(ex => ex.type === bestMatch.type) || null;
+            }
+          }
+
+          if (foundExercise) {
+            setShowExerciseCard(foundExercise);
+          } else {
+            console.error("AI set nextAction to showExerciseCard, but no valid exercise could be determined.", {
+              message: response.message,
+              exerciseData: response.exerciseData
+            });
           }
         } else {
           console.log('🎯 No exercise card trigger. nextAction:', response.nextAction, 'exerciseData:', response.exerciseData);
           
-          // FALLBACK: Check if this might be a confirmation that AI missed
           const userText = text.toLowerCase();
           const confirmationWords = ['yes', 'sure', 'okay', 'ok', "let's try", "let's do", 'i want to', 'sounds good'];
           const isConfirmation = confirmationWords.some(word => userText.includes(word));
           
           if (isConfirmation) {
             console.log('🔍 FALLBACK: Detected potential exercise confirmation:', userText);
-            // Check recent messages for exercise suggestions
             const recentMessages = await storageService.getLastMessages(5);
             const hasRecentExerciseSuggestion = recentMessages.some(msg => 
               msg.type === 'system' && (
@@ -266,30 +309,48 @@ export const useChatSession = (
             
             if (hasRecentExerciseSuggestion) {
               console.log('🎯 FALLBACK: Found recent exercise suggestion, trying to match exercise type');
-              // Try to determine exercise type from AI response or recent messages
-              let exerciseType = 'breathing'; // Default fallback
-              
-              if (response.message?.toLowerCase().includes('breathing') || response.message?.toLowerCase().includes('breath')) {
-                exerciseType = 'breathing';
-              } else if (response.message?.toLowerCase().includes('body scan') || response.message?.toLowerCase().includes('body')) {
-                exerciseType = 'mindfulness';
-              } else if (response.message?.toLowerCase().includes('gratitude')) {
-                exerciseType = 'gratitude';
-              } else if (response.message?.toLowerCase().includes('thought') || response.message?.toLowerCase().includes('cognitive')) {
-                exerciseType = 'automatic-thoughts';
+              let exerciseType: string | null = null;
+
+              if (response.exerciseData?.type && EXERCISE_KEYWORDS[response.exerciseData.type]) {
+                exerciseType = response.exerciseData.type;
               }
-              
-              console.log('🎯 FALLBACK: Using exercise type:', exerciseType);
-              const fallbackExercise = exerciseLibraryData[exerciseType];
-              if (fallbackExercise) {
-                console.log('🎯 FALLBACK: Showing exercise card for:', fallbackExercise.name);
-                setShowExerciseCard(fallbackExercise);
+
+              if (!exerciseType) {
+                const sortedKeywords = Object.entries(EXERCISE_KEYWORDS).sort((a, b) => {
+                  const aMax = Math.max(...a[1].map(k => k.length));
+                  const bMax = Math.max(...b[1].map(k => k.length));
+                  return bMax - aMax;
+                });
+
+                for (const [type, keywords] of sortedKeywords) {
+                  if (keywords.some(keyword => response.message?.toLowerCase().includes(keyword))) {
+                    exerciseType = type;
+                    break;
+                  }
+                }
+              }
+
+              if (!exerciseType) {
+                for (const [type, keywords] of Object.entries(EXERCISE_KEYWORDS)) {
+                  if (keywords.some(keyword => recentMessages.some(msg => msg.content?.toLowerCase().includes(keyword)))) {
+                    exerciseType = type;
+                    break;
+                  }
+                }
+              }
+
+              if (exerciseType) {
+                console.log('🎯 FALLBACK: Using exercise type:', exerciseType);
+                const exerciseLibraryData = getExerciseLibraryData(t);
+                const fallbackExercise = exerciseLibraryData[exerciseType];
+                if (fallbackExercise) {
+                  console.log('🎯 FALLBACK: Showing exercise card for:', fallbackExercise.name);
+                  setShowExerciseCard(fallbackExercise);
+                }
               }
             }
           }
         }
-        } // Close the "only show exercise cards if we're NOT in exercise" block
-
       } else {
         const fallbackMessage: Message = {
           id: (Date.now() + Math.random()).toString(),

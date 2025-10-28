@@ -145,6 +145,11 @@ class ValuesService {
     return values.sort((a, b) => b.importance - a.importance);
   }
 
+  async getTopValues(limit: number = 3): Promise<UserValue[]> {
+    const values = await this.getAllValues();
+    return values.slice(0, limit); // Already sorted by importance in getAllValues
+  }
+
   async getValuesProgress(): Promise<ValuesProgress> {
     try {
       const values = await this.getAllValues();

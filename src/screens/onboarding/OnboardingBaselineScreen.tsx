@@ -88,6 +88,7 @@ const OnboardingBaselineScreen: React.FC<OnboardingBaselineScreenProps> = ({ onC
         exerciseName: 'Baseline Check-in',
         moodRating: moodRating,
         notes: 'Initial baseline mood from onboarding',
+        stage: 'baseline',
         timestamp: new Date().toISOString(),
       });
 

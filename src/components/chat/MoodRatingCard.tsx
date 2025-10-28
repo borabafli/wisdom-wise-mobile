@@ -49,6 +49,7 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
         moodRating,
         helpfulnessRating: finalHelpfulnessRating || helpfulnessRating,
         sessionId,
+        stage: 'post',
         timestamp: new Date().toISOString(),
       };
 
@@ -72,6 +73,7 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
         moodRating,
         helpfulnessRating: finalHelpfulnessRating || helpfulnessRating,
         sessionId,
+        stage: 'post',
         timestamp: new Date().toISOString(),
       };
       onComplete(rating);
@@ -94,7 +96,7 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
         end={{ x: 1, y: 1 }}
         style={styles.gradientBackground}
       />
-      <Text style={styles.title}>Before we start...</Text>
+      <Text style={styles.title}>Before we finish...</Text>
       
       {currentSlider === 'mood' && (
         <MoodSlider

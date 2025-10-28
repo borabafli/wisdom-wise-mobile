@@ -24,6 +24,10 @@ export interface UserProfile {
   challenges?: string[];
   goals?: string[];
   onboardingValues?: string[];
+  onboardingFocusAreas?: string[];
+  onboardingAgeGroup?: string;
+  valuesTimestamp?: string;
+  focusAreasTimestamp?: string;
   challengesTimestamp?: string;
   baselineMood?: number;
   baselineMoodTimestamp?: string;
@@ -59,7 +63,8 @@ const STORAGE_KEYS = {
   USER_SETTINGS: 'user_settings',
   USER_PROFILE: 'user_profile',
   THOUGHT_PATTERNS: 'thought_patterns',
-  INSIGHTS_HISTORY: 'insights_history'
+  INSIGHTS_HISTORY: 'insights_history',
+  FIRST_MESSAGE_ROUTING: 'first_message_routing'
 };
 
 class StorageService {
@@ -449,9 +454,11 @@ class StorageService {
   async getRecentThoughtPatterns(limit: number = 10): Promise<ThoughtPattern[]> {
     try {
       const patterns = await this.getThoughtPatterns();
-      return patterns
+      const recentPatterns = patterns
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         .slice(0, limit);
+      console.log('[StorageService] getRecentThoughtPatterns returning:', recentPatterns.length, recentPatterns);
+      return recentPatterns;
     } catch (error) {
       console.error('Error loading recent patterns:', error);
       return [];
@@ -477,12 +484,58 @@ class StorageService {
     }
   }
 
+  async deleteThoughtPattern(patternId: string): Promise<void> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      const updatedPatterns = patterns.filter(p => p.id !== patternId);
+      await AsyncStorage.setItem(STORAGE_KEYS.THOUGHT_PATTERNS, JSON.stringify(updatedPatterns));
+    } catch (error) {
+      console.error('Error deleting thought pattern:', error);
+      throw error;
+    }
+  }
+
+  async updateThoughtPattern(patternId: string, updates: Partial<ThoughtPattern>): Promise<void> {
+    try {
+      const patterns = await this.getThoughtPatterns();
+      const updatedPatterns = patterns.map(p =>
+        p.id === patternId ? { ...p, ...updates } : p
+      );
+      await AsyncStorage.setItem(STORAGE_KEYS.THOUGHT_PATTERNS, JSON.stringify(updatedPatterns));
+    } catch (error) {
+      console.error('Error updating thought pattern:', error);
+      throw error;
+    }
+  }
+
   async clearThoughtPatterns(): Promise<void> {
     try {
       await AsyncStorage.removeItem(STORAGE_KEYS.THOUGHT_PATTERNS);
     } catch (error) {
       console.error('Error clearing thought patterns:', error);
       throw error;
+    }
+  }
+
+  // First Message Routing Usage Tracking
+  async getFirstMessageRoutingUsage(): Promise<Record<string, number>> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.FIRST_MESSAGE_ROUTING);
+      return data ? JSON.parse(data) : {};
+    } catch (error) {
+      console.error('Error getting first message routing usage:', error);
+      return {};
+    }
+  }
+
+  async trackFirstMessageRouting(routingVariant: string): Promise<void> {
+    try {
+      const usage = await this.getFirstMessageRoutingUsage();
+      usage[routingVariant] = (usage[routingVariant] || 0) + 1;
+      await AsyncStorage.setItem(STORAGE_KEYS.FIRST_MESSAGE_ROUTING, JSON.stringify(usage));
+      console.log('📊 [ROUTING USAGE] Updated:', routingVariant, '→', usage[routingVariant]);
+    } catch (error) {
+      console.error('Error tracking first message routing:', error);
     }
   }
 

@@ -33,15 +33,13 @@ export const profileScreenStyles = StyleSheet.create({
   
   // Content Container - Positioned above background
   contentContainer: {
-    flex: 1,
-    position: 'relative',
-    zIndex: 1,
+    paddingBottom: spacing[32],
   },
   
   // Header Styles - Match Insights
   header: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[16],
+    paddingTop: spacing[8],
     paddingBottom: spacing[4],
   },
   headerContent: {
@@ -51,20 +49,21 @@ export const profileScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: spacing[2],
-    marginLeft: -spacing[16],
-    marginTop: -spacing[12],
+    paddingRight: spacing[8],
+    marginLeft: -spacing[8],
   },
   headerTurtleIcon: {
     width: 162,
     height: 162,
     marginRight: spacing[4],
     marginTop: -spacing[8],
+    flexShrink: 0,
   },
   titleAndSubtitleContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginLeft: -spacing[12],
-    marginTop: spacing[20],
+    marginTop: spacing[12],
+    flex: 1,
   },
   headerTitle: {
     fontSize: 32,
@@ -155,23 +154,6 @@ export const profileScreenStyles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 120,
   },
-  // Header Section - Consistent with HomeScreen
-  header: {
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing[32],
-    paddingBottom: spacing.layout.screenPadding,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#002d14', // Consistent with HomeScreen green theme
-    fontFamily: 'BubblegumSans-Regular',
-    textShadowColor: 'rgba(255, 255, 255, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-    textAlign: 'center',
-    letterSpacing: -0.5,
-  },
   userInfoSection: {
     paddingHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing[8],
@@ -191,22 +173,39 @@ export const profileScreenStyles = StyleSheet.create({
   },
   userInfoContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: spacing.components.cardGap,
   },
   avatarContainer: {
     flexShrink: 0,
   },
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: spacing.radius.lg,
+    width: 72,
+    height: 72,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.components.actionButton,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(43, 71, 94, 0.12)',
+    padding: spacing[4],
+    ...shadows.sm,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 18,
   },
   userDetails: {
     flex: 1,
+    paddingRight: spacing[4],
+  },
+  userEditButton: {
+    padding: spacing[3],
+    borderRadius: 16,
+    backgroundColor: 'rgba(43, 71, 94, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   userName: {
     fontSize: 20,
@@ -363,9 +362,6 @@ export const profileScreenStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: typography.fontWeight.semibold,
     letterSpacing: 0.3,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
     marginBottom: spacing[1],
   },
   menuSubtitle: {
@@ -388,10 +384,6 @@ export const profileScreenStyles = StyleSheet.create({
     gap: spacing.components.cardGap,
     paddingVertical: spacing[4],
   },
-  menuIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   menuIconBackground: {
     width: 48,
     height: 48,
@@ -399,23 +391,6 @@ export const profileScreenStyles = StyleSheet.create({
     backgroundColor: 'rgba(107, 114, 128, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  menuTitleContainer: {
-    flex: 1,
-  },
-  menuTitle: {
-    ...typography.textStyles.h4,
-    color: colors.text.primary,
-    marginBottom: spacing[1],
-  },
-  menuTitleDanger: {
-    color: '#ef4444',
-  },
-  menuSubtitle: {
-    ...typography.textStyles.body,
-    color: colors.text.secondary,
-    fontWeight: typography.fontWeight.medium,
-    fontSize: 14,
   },
   menuArrow: {
     alignItems: 'center',
@@ -484,3 +459,5 @@ export const profileScreenStyles = StyleSheet.create({
     color: colors.text.secondary,
   },
 });
+
+

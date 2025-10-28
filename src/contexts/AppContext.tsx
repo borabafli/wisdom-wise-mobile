@@ -1,14 +1,19 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { Exercise } from '../types';
+import { useLocalization } from './LocalizationContext';
+import { Exercise, ButtonPosition } from '../types';
 import { useAppState } from '../hooks';
 
 interface AppContextType {
   showChat: boolean;
   showBreathing: boolean;
   currentExercise: Exercise | null;
+  breathingExercise: Exercise | null;
   chatWithActionPalette: boolean;
-  handleStartSession: (exercise?: Exercise | null) => void;
+  initialChatMessage: string | null;
+  buttonPosition: ButtonPosition | null;
+  handleStartSession: (params?: Exercise | ButtonPosition | null) => void;
   handleNewSession: () => void;
+  handleStartChatWithContext: (context: string) => void;
   handleBackFromChat: () => void;
   handleBackFromBreathing: () => void;
   handleExerciseClick: (exercise?: Exercise) => void;
@@ -23,7 +28,8 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const appState = useAppState();
+  const { t } = useLocalization();
+  const appState = useAppState(t);
 
   return (
     <AppContext.Provider value={appState}>

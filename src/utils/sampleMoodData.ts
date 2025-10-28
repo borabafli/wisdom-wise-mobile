@@ -93,6 +93,7 @@ export const generateSampleMoodData = async (): Promise<boolean> => {
           helpfulnessRating,
           sessionId: `session-${dayOffset}-${session}`,
           notes: note,
+          stage: 'post',
           timestamp: currentDate.toISOString()
         });
       }

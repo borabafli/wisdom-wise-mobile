@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
 import { useAuth } from '../../contexts';
 import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
 import { GoogleIcon } from '../../components/GoogleIcon';
@@ -16,6 +18,10 @@ export const SignUpScreen: React.FC<{
   const [confirmPassword, setConfirmPassword] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const { signUp, signInWithGoogle, isLoading } = useAuth();
+
+  useEffect(() => {
+    NavigationBar.setBackgroundColorAsync('#EDF8F8');
+  }, []);
 
   const validateForm = () => {
     if (!firstName.trim()) {
@@ -86,25 +92,26 @@ export const SignUpScreen: React.FC<{
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* Background Decorative Elements */}
         <View style={styles.decorativeElement} />
         <View style={styles.decorativeElement2} />
         
-        {/* Background Bird Image */}
-        <Image 
-          source={require('../../../assets/images/Teal watercolor single element/bird-background1.png')}
-          style={styles.backgroundImage}
-          resizeMode="contain"
-        />
-
-        {/* Header */}
+        {/* Header with Turtle */}
         <View style={styles.headerContainerSignUp}>
+          <View style={styles.turtleContainer}>
+            <Image
+              source={require('../../../assets/images/onboarding/turtle-welcome-calm-smile.png')}
+              style={styles.turtleImage}
+              resizeMode="contain"
+            />
+          </View>
           <Text style={styles.title}>
-            Create Account
+            Welcome Back to WisdomWise
           </Text>
           <Text style={styles.subtitle}>
-            Join your mindfulness journey with WisdomWise
+            See your progress and insights over time.
           </Text>
         </View>
 
@@ -227,7 +234,7 @@ export const SignUpScreen: React.FC<{
             activeOpacity={0.8}
           >
             <Text style={styles.primaryButtonText}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </Text>
           </TouchableOpacity>
 
@@ -256,7 +263,7 @@ export const SignUpScreen: React.FC<{
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={onNavigateToSignIn} activeOpacity={0.7}>
             <Text style={styles.footerText}>
-              Already have an account? Sign In
+              New to WisdomWise? Create Account
             </Text>
           </TouchableOpacity>
         </View>

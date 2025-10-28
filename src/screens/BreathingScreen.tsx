@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Vibration, Platform, TextInput, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Vibration, Platform, TextInput, Modal, ImageBackground, ScrollView } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { ArrowLeft, Play, Pause, RotateCcw, Settings2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,12 +8,14 @@ import { StatusBar } from 'expo-status-bar';
 // import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
 import { colors, shadows, spacing } from '../styles/tokens';
+import { useNavigationBarStyle } from '../hooks/useNavigationBarStyle';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
 interface BreathingScreenProps {
   onBack: () => void;
+  exercise?: any;
 }
 
 interface BreathingPreset {
@@ -78,8 +80,36 @@ const BREATHING_PRESETS: BreathingPreset[] = [
 
 const STORAGE_KEY = 'breathing_last_preset';
 
-const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
-  const [selectedPreset, setSelectedPreset] = useState<BreathingPreset>(BREATHING_PRESETS[0]);
+const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) => {
+  // Set navigation bar color for Android
+  useNavigationBarStyle({
+    backgroundColor: '#2E605D',
+    style: 'dark'
+  });
+
+  // Map exercise ID to preset ID
+  const getPresetFromExercise = (exerciseData: any): BreathingPreset => {
+    if (!exerciseData) {
+      return BREATHING_PRESETS[0];
+    }
+
+    const presetMap: Record<string, string> = {
+      'breathing': '4-7-8',
+      'box-breathing': 'box',
+      'triangle-breathing': 'triangle',
+      'coherent-breathing': 'coherent',
+    };
+
+    const candidateKey =
+      (typeof exerciseData.slug === 'string' && exerciseData.slug) ||
+      (typeof exerciseData.id === 'string' ? exerciseData.id : undefined);
+
+    const presetId = (candidateKey && presetMap[candidateKey]) || '4-7-8';
+    const preset = BREATHING_PRESETS.find(p => p.id === presetId);
+    return preset || BREATHING_PRESETS[0];
+  };
+
+  const [selectedPreset, setSelectedPreset] = useState<BreathingPreset>(getPresetFromExercise(exercise));
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<'inhale' | 'hold' | 'exhale' | 'holdAfterExhale'>('inhale');
   const [cyclesCompleted, setCyclesCompleted] = useState(0);
@@ -390,6 +420,12 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
     ]).start();
   };
 
+  useEffect(() => {
+    const preset = getPresetFromExercise(exercise);
+    setSelectedPreset(preset);
+    handleReset();
+  }, [exercise]);
+
   const handlePresetChange = (preset: BreathingPreset) => {
     if (preset.id === 'custom') {
       setShowCustomModal(true);
@@ -457,19 +493,12 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent />
 
-      {/* Top Background Color */}
-      <View
-        style={[styles.topBackground, { backgroundColor: '#FFE7CF' }]}
-        pointerEvents="none"
-      />
-
-      {/* Ocean Background */}
-      <Image
-        source={require('../../assets/images/ocean.png')}
-        style={styles.oceanBackground}
-        contentFit="cover"
-      />
-
+      {/* Background */}
+      <ImageBackground
+        source={require('../../assets/images/breathing-screen.png')}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
       <View style={styles.contentContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -497,7 +526,11 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
 
         {/* Settings Panel */}
         {showSettings && (
-          <View style={styles.settingsPanel}>
+          <ScrollView
+            style={styles.settingsPanel}
+            contentContainerStyle={styles.settingsPanelContent}
+            showsVerticalScrollIndicator={false}
+          >
             <Text style={styles.settingsTitle}>Breathing Techniques</Text>
             {BREATHING_PRESETS.map((preset) => (
               <TouchableOpacity
@@ -524,9 +557,9 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
                 </View>
               </TouchableOpacity>
             ))}
-            
+
             <View style={styles.settingsDivider} />
-            
+
             <View style={styles.toggleSection}>
               <TouchableOpacity
                 style={styles.toggleOption}
@@ -538,7 +571,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
                   <View style={[styles.toggleThumb, soundEnabled && styles.toggleThumbActive]} />
                 </View>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={styles.toggleOption}
                 onPress={() => setHapticsEnabled(!hapticsEnabled)}
@@ -550,7 +583,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
                 </View>
               </TouchableOpacity>
             </View>
-          </View>
+          </ScrollView>
         )}
 
         {/* Breathing Circle */}
@@ -581,18 +614,16 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
 
         {/* Progress Info */}
         <View style={styles.progressInfo}>
-          <Text style={styles.progressText}>
-            Cycle {cyclesCompleted + 1} of {selectedPreset.cycles}
-          </Text>
-          <View style={styles.progressBar}>
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  width: `${((cyclesCompleted) / selectedPreset.cycles) * 100}%`,
-                },
-              ]}
-            />
+          <View style={styles.cycleIndicators}>
+            {Array.from({ length: selectedPreset.cycles }).map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.cycleIndicator,
+                  index < cyclesCompleted && styles.cycleIndicatorCompleted
+                ]}
+              />
+            ))}
           </View>
         </View>
 
@@ -612,7 +643,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#9ED0DD', '#7BC1CE']}
+              colors={['#C0E0E6', '#A9CFD6']}
               style={styles.playButtonGradient}
             >
               {isPlaying ? (
@@ -622,10 +653,9 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
               )}
             </LinearGradient>
           </TouchableOpacity>
-          
-          <View style={styles.secondaryButton} />
         </View>
       </View>
+      </ImageBackground>
 
       {/* Custom Settings Modal */}
       <Modal
@@ -761,7 +791,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#C6C0A8', // Android navigation bar color
+    backgroundColor: '#2E605D', // Android navigation bar color
   },
 
   // Top Background Color for Status Bar Area
@@ -822,8 +852,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.therapy.lg,
-    paddingTop: spacing.therapy.md,
-    paddingBottom: spacing.therapy.sm,
+    paddingTop: spacing.therapy.xl + 16,
+    paddingBottom: spacing.therapy.lg,
   },
   backButton: {
     width: 44,
@@ -864,8 +894,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.card,
     marginHorizontal: spacing.therapy.lg,
     borderRadius: 16,
-    padding: spacing.therapy.lg,
     marginBottom: spacing.therapy.md,
+    maxHeight: '75%',
+  },
+  settingsPanelContent: {
+    padding: spacing.therapy.lg,
+    paddingBottom: spacing.therapy.xl * 2,
   },
   settingsTitle: {
     fontSize: 18,
@@ -877,12 +911,10 @@ const styles = StyleSheet.create({
     padding: spacing.therapy.md,
     borderRadius: 12,
     marginBottom: spacing.therapy.sm,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   presetOptionSelected: {
-    backgroundColor: '#E0F2FE',
-    borderWidth: 2,
-    borderColor: '#3BB4F5',
+    backgroundColor: 'rgba(54, 101, 125, 0.4)',
   },
   presetName: {
     fontSize: 16,
@@ -891,7 +923,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   presetNameSelected: {
-    color: '#0EA5E9',
+    color: '#36657D',
   },
   presetDescription: {
     fontSize: 14,
@@ -931,7 +963,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   toggleActive: {
-    backgroundColor: '#3BB4F5',
+    backgroundColor: '#36657D',
   },
   toggleThumb: {
     width: 24,
@@ -953,6 +985,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 20,
   },
   breathingCircleContainer: {
     width: width * 0.7,
@@ -991,35 +1024,34 @@ const styles = StyleSheet.create({
   // Progress
   progressInfo: {
     alignItems: 'center',
-    paddingHorizontal: spacing.therapy.lg,
+    paddingHorizontal: spacing.therapy.xl * 2,
     marginBottom: spacing.therapy.xl,
   },
-  progressText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: colors.text.secondary,
-    marginBottom: spacing.therapy.sm,
-  },
-  progressBar: {
+  cycleIndicators: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
-    height: 8,
-    backgroundColor: colors.gray[200],
-    borderRadius: 4,
-    overflow: 'hidden',
+    gap: 8,
   },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#3BB4F5',
-    borderRadius: 4,
+  cycleIndicator: {
+    flex: 1,
+    height: 6,
+    backgroundColor: 'rgba(169, 207, 214, 0.25)',
+    borderRadius: 3,
+  },
+  cycleIndicatorCompleted: {
+    backgroundColor: '#8BBEC9',
   },
 
   // Controls
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: spacing.therapy.xl,
     paddingBottom: spacing.therapy.xl,
+    gap: 60,
   },
   secondaryButton: {
     width: 56,

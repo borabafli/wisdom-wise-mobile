@@ -197,6 +197,38 @@ class MemoryService {
     return insights.filter(insight => insight.category === category);
   }
 
+  async deleteInsight(insightId: string): Promise<void> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.INSIGHTS);
+      if (!data) return;
+
+      const insights: Insight[] = JSON.parse(data);
+      const updatedInsights = insights.filter(insight => insight.id !== insightId);
+      await AsyncStorage.setItem(STORAGE_KEYS.INSIGHTS, JSON.stringify(updatedInsights));
+      console.log('🗑️ Deleted insight:', insightId);
+    } catch (error) {
+      console.error('Error deleting insight:', error);
+      throw error;
+    }
+  }
+
+  async updateInsight(insightId: string, updates: Partial<Insight>): Promise<void> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.INSIGHTS);
+      if (!data) throw new Error('No insights found');
+
+      const insights: Insight[] = JSON.parse(data);
+      const updatedInsights = insights.map(insight =>
+        insight.id === insightId ? { ...insight, ...updates } : insight
+      );
+      await AsyncStorage.setItem(STORAGE_KEYS.INSIGHTS, JSON.stringify(updatedInsights));
+      console.log('✏️ Updated insight:', insightId);
+    } catch (error) {
+      console.error('Error updating insight:', error);
+      throw error;
+    }
+  }
+
   // SUMMARY MANAGEMENT
 
   async saveSummary(summary: Summary): Promise<void> {
@@ -224,6 +256,21 @@ class MemoryService {
     } catch (error) {
       console.error('Error loading summaries:', error);
       return [];
+    }
+  }
+
+  async deleteSummary(summaryId: string): Promise<void> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.SUMMARIES);
+      if (!data) return;
+
+      const summaries: Summary[] = JSON.parse(data);
+      const updatedSummaries = summaries.filter(summary => summary.id !== summaryId);
+      await AsyncStorage.setItem(STORAGE_KEYS.SUMMARIES, JSON.stringify(updatedSummaries));
+      console.log('🗑️ Deleted summary:', summaryId);
+    } catch (error) {
+      console.error('Error deleting summary:', error);
+      throw error;
     }
   }
 

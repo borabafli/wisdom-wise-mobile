@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground, FlatList, Dimensions, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
-import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react-native';
+import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight, Trash2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
@@ -19,6 +19,7 @@ interface MoodInsightsCardProps {
   currentPatternIndex?: number;
   onPatternSwipeLeft?: () => void;
   onPatternSwipeRight?: () => void;
+  onDeletePattern?: (patternId: string) => void;
 }
 
 interface DataAvailability {
@@ -33,21 +34,21 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
   displayPatterns = [],
   currentPatternIndex = 0,
   onPatternSwipeLeft,
-  onPatternSwipeRight
+  onPatternSwipeRight,
+  onDeletePattern
 }) => {
   const { t } = useTranslation();
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
 
   // Helper function to determine font size based on text length
   // Baseline: current balanced thought length (~80-120 chars) = 15px
-  const getDynamicFontSize = (text: string) => {
-    const length = text.length;
-    if (length <= 25) return 24;     // Very short text - even larger font
-    if (length <= 50) return 20;
-    if (length <= 80) return 17;     // Normal length - good readable size
-    if (length <= 120) return 16;    // Longer text - still readable
-    if (length <= 180) return 15;    // Long text - smaller but readable
-    return 14;                       // Very long text - minimum readable size
+  const getDynamicFontSize = (text: string, maxFontSize: number = 20, minFontSize: number = 12) => {
+    const baseLength = 90; // Length before scaling kicks in
+    const scalingFactor = 0.045; // Stronger scaling for longer passages
+
+    let fontSize = maxFontSize - Math.max(0, text.length - baseLength) * scalingFactor;
+
+    return Math.max(minFontSize, Math.min(maxFontSize, fontSize));
   };
 
   // Get pattern name and explanation using translation keys (same as InsightsDashboard)
@@ -101,7 +102,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         {/* Distorted Thought Container */}
         <View style={{
           marginHorizontal: 16,
-          marginBottom: 0,
+          marginBottom: 16,
           marginTop: 5,
           alignItems: 'center',
           justifyContent: 'center',
@@ -125,7 +126,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
 
           <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/distorted-thought-bubble-4.png')}
+            source={require('../../assets/images/distorted-new-4.png')}
             style={{
               width: Dimensions.get('window').width - 32,
               aspectRatio: 1.2,
@@ -133,25 +134,26 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               alignItems: 'center',
               alignSelf: 'center',
             }}
-            imageStyle={{ borderRadius: 8 }}
+            imageStyle={{ borderRadius: 8, opacity: 0.8 }}
             resizeMode="contain"
           >
 
             <View style={{
-              paddingHorizontal: 12,
-              paddingVertical: 20,
+              paddingHorizontal: 16,
+              paddingVertical: 14,
               justifyContent: 'center',
               alignItems: 'center',
               width: '78%',
               alignSelf: 'center',
-              marginTop: -25,
+              marginTop: -15,
+              marginLeft: 12, // Nudge text to the right
             }}>
               <Text style={{
                 fontSize: getDynamicFontSize(pattern.originalThought),
                 color: '#374151',
                 fontWeight: '500',
                 textAlign: 'center',
-                fontFamily: 'BubblegumSans-Regular',
+                fontFamily: 'Ubuntu-Medium',
                 lineHeight: getDynamicFontSize(pattern.originalThought) * 1.3,
               }}>
                 {pattern.originalThought}
@@ -162,15 +164,15 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             {/* Arrow Overlay - Much bigger floating in background */}
             <View style={{
               position: 'absolute',
-              bottom: -85,
-              left: '18%',
+              bottom: -105,
+              left: '12%',
               transform: [{ translateX: -75 }],
-              zIndex: -1,
+              zIndex: 1,
               pointerEvents: 'none',
               opacity: 0.6,
             }}>
               <Image
-                source={require('../../assets/new-design/Homescreen/Thinking Patterns/arrow-2.png')}
+                source={require('../../assets/images/arrow-red-green.png')}
                 style={{
                   width: 155,
                   height: 155,
@@ -219,7 +221,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 marginBottom: 6,
                 fontFamily: 'Ubuntu-Medium',
               }}>
-                {getPatternName(pattern.distortionTypes[0]) || t('insights.thinkingPatterns.thoughtPattern')}
+                {pattern.distortionTypes && pattern.distortionTypes.length > 0 ? getPatternName(pattern.distortionTypes[0]) : t('insights.thinkingPatterns.thoughtPattern')}
               </Text>
               <Text style={{
                 fontSize: 13,
@@ -227,7 +229,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 lineHeight: 18,
                 fontFamily: 'Ubuntu-Light',
               }}>
-                {getDistortionExplanation(pattern.distortionTypes[0])}
+                {pattern.distortionTypes && pattern.distortionTypes.length > 0 ? getDistortionExplanation(pattern.distortionTypes[0]) : ''}
               </Text>
             </View>
         </View>
@@ -243,7 +245,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         }}>
           {/* Balanced Thought Label - Above Picture */}
           <View style={{
-            marginBottom: 10,
+            marginBottom: 0,
             alignItems: 'center',
             width: '100%',
           }}>
@@ -259,21 +261,22 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
 
           <ImageBackground
-            source={require('../../assets/new-design/Homescreen/Thinking Patterns/balanced-thought.png')}
+            source={require('../../assets/images/balanced-new-4.png')}
             style={{
               width: Dimensions.get('window').width - 32,
               aspectRatio: 1.2,
               justifyContent: 'center',
               alignItems: 'center',
               alignSelf: 'center',
+              marginTop: -10, // Pull image up to reduce gap
             }}
-            imageStyle={{ borderRadius: 8 }}
+            imageStyle={{ borderRadius: 8, opacity: 0.8 }}
             resizeMode="contain"
           >
 
             <View style={{
-              paddingHorizontal: 12,
-              paddingVertical: 20,
+              paddingHorizontal: 16,
+              paddingVertical: 14,
               justifyContent: 'center',
               alignItems: 'center',
               width: '78%',
@@ -298,7 +301,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         {/* Reflect on This Button */}
         <View style={{
           marginHorizontal: 16,
-          marginTop: 8,
+          marginTop: -25,
           marginBottom: 20,
         }}>
           <View style={{
@@ -355,6 +358,40 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             </LinearGradient>
           </View>
         </View>
+
+        {/* Delete Button */}
+        {onDeletePattern && pattern.id && !pattern.id.startsWith('mock_') && (
+          <View style={{
+            marginHorizontal: 16,
+            marginTop: -8,
+            marginBottom: 20,
+            alignItems: 'center',
+          }}>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                onDeletePattern(pattern.id);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Trash2 size={16} color="#2B4A5C" opacity={0.6} style={{ marginRight: 6 }} />
+              <Text style={{
+                color: '#2B4A5C',
+                fontSize: 13,
+                fontWeight: '500',
+                opacity: 0.6,
+              }}>
+                Delete insight
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
@@ -431,12 +468,16 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         const currentAvg = currentWeekRatings.reduce((sum, r) => sum + r.rating, 0) / currentWeekRatings.length;
         const previousAvg = previousWeekRatings.reduce((sum, r) => sum + r.rating, 0) / previousWeekRatings.length;
 
-        if (currentAvg > previousAvg) {
+        // Add wiggle room: ±0.3 on 0-5 scale (6% tolerance)
+        const threshold = 0.3;
+        const difference = currentAvg - previousAvg;
+
+        if (difference > threshold) {
           setWeeklyTrend('improving');
-        } else if (currentAvg === previousAvg) {
-          setWeeklyTrend('steady');
-        } else {
+        } else if (difference < -threshold) {
           setWeeklyTrend('declining');
+        } else {
+          setWeeklyTrend('steady');
         }
       }
     } catch (error) {
@@ -845,7 +886,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   color: '#6B7280',
                   fontFamily: 'Ubuntu-Light',
                   marginTop: 2
-                }}>{t('insights.moodInsights.trackEmotions')}</Text>
+                }}>{t('insights.moodInsights.trackMoodJourney')}</Text>
               </View>
             </View>
 
@@ -886,6 +927,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 borderRadius: 12,
                 paddingHorizontal: 12,
                 paddingVertical: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
                 <Text style={{
                   color: '#FFFFFF',
@@ -1049,7 +1092,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             justifyContent: 'center',
             alignItems: 'center',
             gap: 24,
-            marginTop: 8,
+            marginTop: -5,
             marginBottom: 12,
           }}>
             <TouchableOpacity
