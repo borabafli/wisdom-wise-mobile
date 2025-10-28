@@ -229,7 +229,7 @@ export const notificationPermissionStyles = StyleSheet.create({
 
   bottomSection: {
     paddingBottom: 30, // Match other onboarding screens
-    paddingTop: spacing[24], // Increased from 4 (8px) to 24 (48px) for more space
+    paddingTop: spacing[8], // Standardize with other onboarding screens
     alignItems: 'center',
     zIndex: 10, // Bring button to foreground
     marginTop: 'auto', // Push buttons to bottom

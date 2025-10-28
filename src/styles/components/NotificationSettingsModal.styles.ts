@@ -335,4 +335,78 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '600',
   },
+
+  // Custom Input Modal (Android-compatible)
+  customInputOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing['5'],
+  },
+  customInputContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: spacing['4'],
+    padding: spacing['6'],
+    width: '100%',
+    maxWidth: 400,
+    ...shadows.medium,
+  },
+  customInputTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: spacing['2'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+    textAlign: 'center',
+  },
+  customInputDescription: {
+    ...typography.body.medium,
+    color: '#6B7280',
+    marginBottom: spacing['5'],
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  customInput: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: spacing['3'],
+    paddingHorizontal: spacing['4'],
+    paddingVertical: spacing['3'],
+    fontSize: 16,
+    color: '#1F2937',
+    marginBottom: spacing['5'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+  },
+  customInputActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    gap: spacing['3'],
+  },
+  customInputButton: {
+    flex: 1,
+    paddingVertical: spacing['3.5'],
+    borderRadius: spacing['3'],
+    alignItems: 'center',
+    backgroundColor: colors.gray[200],
+  },
+  customInputButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+  },
+  customInputAddButton: {
+    backgroundColor: '#5BA3B8',
+  },
+  customInputAddButtonText: {
+    color: '#ffffff',
+  },
+  customInputButtonDisabled: {
+    backgroundColor: colors.gray[300],
+    opacity: 0.5,
+  },
 });

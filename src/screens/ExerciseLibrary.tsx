@@ -405,7 +405,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                 key={filter}
                 label={filter}
                 selected={selectedBenefitFilter === filter}
-                onPress={() => setSelectedBenefitFilter(filter)}
+                onPress={() => setSelectedBenefitFilter(selectedBenefitFilter === filter ? 'All' : filter)}
                 filterType="benefits"
               />
             ))}
@@ -417,7 +417,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                 key={filter}
                 label={filter}
                 selected={selectedBenefitFilter === filter}
-                onPress={() => setSelectedBenefitFilter(filter)}
+                onPress={() => setSelectedBenefitFilter(selectedBenefitFilter === filter ? 'All' : filter)}
                 filterType="benefits"
               />
             ))}
@@ -455,7 +455,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                     key={filter}
                     label={filter}
                     selected={selectedTimeFilter === filter}
-                    onPress={() => setSelectedTimeFilter(filter)}
+                    onPress={() => setSelectedTimeFilter(selectedTimeFilter === filter ? 'All' : filter)}
                     filterType="duration"
                   />
                 ))}
@@ -471,7 +471,7 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
                     key={filter}
                     label={filter}
                     selected={selectedStyleFilter === filter}
-                    onPress={() => setSelectedStyleFilter(filter)}
+                    onPress={() => setSelectedStyleFilter(selectedStyleFilter === filter ? 'All' : filter)}
                     filterType="approach"
                   />
                 ))}

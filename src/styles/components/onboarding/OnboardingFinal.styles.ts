@@ -268,12 +268,12 @@ export const onboardingFinalStyles = StyleSheet.create({
   // Bottom fixed area for progress and button
   bottomFixedArea: {
     position: 'absolute',
-    bottom: -15, // Move button up (was -30, now -15)
+    bottom: 0, // Standardize placement to bottom
     left: 0,
     right: 0,
     alignItems: 'center',
     paddingHorizontal: spacing[12], // 24px
-    paddingBottom: 40, // Increase bottom padding for better positioning
+    paddingBottom: 30, // Standardize bottom padding with other screens
     paddingTop: spacing[8], // Add top padding for separation
     backgroundColor: 'transparent',
   },

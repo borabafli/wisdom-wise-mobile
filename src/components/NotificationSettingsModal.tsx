@@ -8,6 +8,7 @@ import {
   Alert,
   Image,
   Platform,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +35,8 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   const [selectedHour, setSelectedHour] = useState(8);
   const [selectedMinute, setSelectedMinute] = useState(0);
   const [selectedPeriod, setSelectedPeriod] = useState<'AM' | 'PM'>('AM');
+  const [showCustomReminderInput, setShowCustomReminderInput] = useState(false);
+  const [customReminderLabel, setCustomReminderLabel] = useState('');
 
   useEffect(() => {
     if (visible) {
@@ -161,33 +164,32 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   };
 
   const handleAddCustomReminder = () => {
-    Alert.prompt(
-      'Add Custom Reminder',
-      'Enter a label for your custom reminder',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Add',
-          onPress: async (label) => {
-            if (label && label.trim()) {
-              try {
-                await notificationService.addCustomReminder({
-                  time: '12:00',
-                  enabled: true,
-                  label: label.trim(),
-                  description: 'Custom mindful reminder',
-                });
-                await loadSettings();
-              } catch (error) {
-                console.error('Error adding custom reminder:', error);
-                Alert.alert('Error', 'Failed to add custom reminder.');
-              }
-            }
-          },
-        },
-      ],
-      'plain-text'
-    );
+    setCustomReminderLabel('');
+    setShowCustomReminderInput(true);
+  };
+
+  const handleConfirmCustomReminder = async () => {
+    if (customReminderLabel && customReminderLabel.trim()) {
+      try {
+        await notificationService.addCustomReminder({
+          time: '12:00',
+          enabled: true,
+          label: customReminderLabel.trim(),
+          description: 'Custom mindful reminder',
+        });
+        setShowCustomReminderInput(false);
+        setCustomReminderLabel('');
+        await loadSettings();
+      } catch (error) {
+        console.error('Error adding custom reminder:', error);
+        Alert.alert('Error', 'Failed to add custom reminder.');
+      }
+    }
+  };
+
+  const handleCancelCustomReminder = () => {
+    setShowCustomReminderInput(false);
+    setCustomReminderLabel('');
   };
 
   const handleDeleteReminder = (reminderId: string) => {
@@ -469,6 +471,61 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   >
                     <Text style={[styles.timePickerButtonText, styles.timePickerSaveButtonText]}>
                       Save
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
+
+        {/* Custom Reminder Input Modal */}
+        {showCustomReminderInput && (
+          <Modal transparent={true} visible={showCustomReminderInput} animationType="fade">
+            <View style={styles.customInputOverlay}>
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                activeOpacity={1}
+                onPress={handleCancelCustomReminder}
+              />
+              <View style={styles.customInputContainer}>
+                <Text style={styles.customInputTitle}>Add Custom Reminder</Text>
+                <Text style={styles.customInputDescription}>
+                  Enter a label for your custom reminder
+                </Text>
+
+                <TextInput
+                  style={styles.customInput}
+                  value={customReminderLabel}
+                  onChangeText={setCustomReminderLabel}
+                  placeholder="e.g., Before Bed, After Lunch"
+                  placeholderTextColor="#94a3b8"
+                  autoFocus={true}
+                  maxLength={30}
+                />
+
+                <View style={styles.customInputActions}>
+                  <TouchableOpacity
+                    style={styles.customInputButton}
+                    onPress={handleCancelCustomReminder}
+                  >
+                    <Text style={styles.customInputButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.customInputButton,
+                      styles.customInputAddButton,
+                      !customReminderLabel.trim() && styles.customInputButtonDisabled
+                    ]}
+                    onPress={handleConfirmCustomReminder}
+                    disabled={!customReminderLabel.trim()}
+                  >
+                    <Text style={[
+                      styles.customInputButtonText,
+                      styles.customInputAddButtonText
+                    ]}>
+                      Add
                     </Text>
                   </TouchableOpacity>
                 </View>
