@@ -128,11 +128,11 @@ const ProfileScreen: React.FC = () => {
 
   const handleLogin = () => {
     Alert.alert(
-      'Create Account',
-      'Sign up to save your progress and access all features!',
+      t('profile.alerts.createAccount.title'),
+      t('profile.alerts.createAccount.message'),
       [
-        { text: 'Maybe Later', style: 'cancel' },
-        { text: 'Sign Up', style: 'default', onPress: () => requestLogin() },
+        { text: t('profile.alerts.createAccount.cancel'), style: 'cancel' },
+        { text: t('profile.alerts.createAccount.confirm'), style: 'default', onPress: () => requestLogin() },
       ]
     );
   };
@@ -150,28 +150,28 @@ const ProfileScreen: React.FC = () => {
               guidance.title,
               guidance.message,
               [
-                { text: 'Not Now', style: 'cancel' },
-                { text: 'Open Settings', style: 'default', onPress: () => { notificationService.openSettings(); } }
+                { text: t('profile.alerts.notificationPermission.notNow'), style: 'cancel' },
+                { text: t('profile.alerts.notificationPermission.openSettings'), style: 'default', onPress: () => { notificationService.openSettings(); } }
               ]
             );
             return;
           } else if (canRequest) {
             const granted = await notificationService.requestPermissions();
             if (!granted) {
-              Alert.alert('Permission Required', 'Test notifications require notification permissions to be enabled.');
+              Alert.alert(t('profile.alerts.notificationPermission.title'), t('profile.alerts.notificationPermission.message'));
               return;
             }
           } else {
-            Alert.alert('Permission Required', 'Please enable notifications in your device settings to test notifications.');
+            Alert.alert(t('profile.alerts.notificationPermission.title'), t('profile.alerts.notificationPermission.messageSettings'));
             return;
           }
         }
 
         await notificationService.sendTestNotification();
-        Alert.alert('Test Notification Sent!', 'Check your notification panel to see if it appeared.');
+        Alert.alert(t('profile.alerts.testNotificationSent.title'), t('profile.alerts.testNotificationSent.message'));
       } catch (error) {
         console.error('Error sending test notification:', error);
-        Alert.alert('Error', 'Failed to send test notification. Please try again.');
+        Alert.alert(t('profile.alerts.testNotificationFailed.title'), t('profile.alerts.testNotificationFailed.message'));
       }
     };
     
@@ -209,16 +209,16 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: t('profile.menu.editProfile'), action: () => setShowEditProfile(true), subtitle: t('profile.menuSubtitles.editProfile') },
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: t('profile.menu.chatHistory'), action: () => setShowChatHistory(true), subtitle: t('profile.menuSubtitles.chatHistory') },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.voiceSettings'), action: () => setShowTTSSettings(true), subtitle: t('profile.menuSubtitles.voiceSettings') },
-    { iconImage: require('../../assets/images/New Icons/14.png'), label: 'Your Data & Privacy', action: () => setShowDataPrivacy(true), subtitle: 'How we protect and handle your information' },
+    { iconImage: require('../../assets/images/New Icons/14.png'), label: t('profile.menu.dataPrivacy'), action: () => setShowDataPrivacy(true), subtitle: t('profile.menuSubtitles.dataPrivacy') },
 
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
-    { iconImage: require('../../assets/images/New Icons/11.png'), label: 'Test Notification', action: handleTestNotification, subtitle: 'Send a test notification now' },
+    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.testNotification'), action: handleTestNotification, subtitle: t('profile.menuSubtitles.testNotification') },
     { iconImage: require('../../assets/images/New Icons/icon-14.png'), label: t('profile.menu.privacy'), action: () => setShowPrivacyPolicy(true), subtitle: t('profile.menuSubtitles.privacy') },
     { iconImage: require('../../assets/images/New Icons/icon-15.png'), label: t('profile.menu.darkMode'), toggle: true, action: () => console.log('Dark mode toggled'), subtitle: t('profile.menuSubtitles.darkMode') },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
     ...(isAnonymous
-      ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: 'Create Account', action: handleLogin, highlight: true, subtitle: 'Save your progress and access all features' }]
+      ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: t('profile.menu.createAccount'), action: handleLogin, highlight: true, subtitle: t('profile.menuSubtitles.createAccount') }]
       : [{ icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut, subtitle: t('profile.menuSubtitles.signOut') }]
     )
   ];

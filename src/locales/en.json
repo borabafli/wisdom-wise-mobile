@@ -126,6 +126,7 @@
     "patterns": "Patterns",
     "goals": "Goals",
     "memoryInsights": "Memory Insights",
+    "noMemoryInsights": "No Memory Insights Yet",
     "longTermPatterns": "Long-term patterns & themes",
     "deeperInsights": {
       "title": "Deeper Insights"
@@ -154,6 +155,8 @@
       "pagination": "{{current}} of {{total}}",
       "swipeToExplore": "Swipe to explore",
       "reflectionPrompt": "Reflect on this",
+      "deleteValue": "Delete value",
+      "deleteReflection": "Delete reflection",
       "prompts": {
         "liveToday": "How did you live this value today?",
         "feltAligned": "When did you feel most aligned with this value recently?",
@@ -226,6 +229,18 @@
       "trackMoodJourney": "Track your emotional journey",
       "yourThoughts": "Your Thoughts",
       "identifyPatterns": "Identify and reframe patterns",
+      "lastWeek": "Last Week",
+      "thisWeek": "This Week",
+      "noMoodData": "No mood data available",
+      "trackMoodPrompt": "Track your mood to see insights here",
+      "moodLabels": {
+        "great": "Great",
+        "positive": "Positive",
+        "okay": "Okay",
+        "challenging": "Challenging",
+        "difficult": "Difficult",
+        "noData": "No data"
+      },
       "weeklyTrend": {
         "improving": "↗ Improving",
         "steady": "↔ Steady",
@@ -379,6 +394,29 @@
       "title": "Restart Onboarding?",
       "message": "This will take you back to the introduction screens. Your data will not be affected.",
       "confirm": "Restart"
+    },
+    "alerts": {
+      "createAccount": {
+        "title": "Create Account",
+        "message": "Sign up to save your progress and access all features!",
+        "confirm": "Sign Up",
+        "cancel": "Maybe Later"
+      },
+      "notificationPermission": {
+        "title": "Permission Required",
+        "message": "Test notifications require notification permissions to be enabled.",
+        "messageSettings": "Please enable notifications in your device settings to test notifications.",
+        "openSettings": "Open Settings",
+        "notNow": "Not Now"
+      },
+      "testNotificationSent": {
+        "title": "Test Notification Sent!",
+        "message": "Check your notification panel to see if it appeared."
+      },
+      "testNotificationFailed": {
+        "title": "Error",
+        "message": "Failed to send test notification. Please try again."
+      }
     },
     "version": "Version 1.0.0",
     "madeWith": "Made with 💙 for your wellness"

@@ -112,6 +112,7 @@
     "patterns": "Muster",
     "goals": "Ziele",
     "memoryInsights": "Langzeit-Erkenntnisse",
+    "noMemoryInsights": "Noch keine Gedächtnis-Erkenntnisse",
     "longTermPatterns": "Langfristige Muster & Themen",
     "deeperInsights": {
       "title": "Tiefere Einsichten"
@@ -140,6 +141,8 @@
       "pagination": "{{current}} von {{total}}",
       "swipeToExplore": "Wischen zum Erkunden",
       "reflectionPrompt": "Denke darüber nach",
+      "deleteValue": "Wert löschen",
+      "deleteReflection": "Reflexion löschen",
       "prompts": {
         "liveToday": "Wie hast du diesen Wert heute gelebt?",
         "feltAligned": "Wann hast du dich kürzlich am meisten mit diesem Wert im Einklang gefühlt?",
@@ -262,6 +265,18 @@
       "moreBalanced": "Ausgewogener",
       "reflectOnThis": "Darüber nachdenken",
       "analyzingPatterns": "Analysiere deine Stimmungsmuster...",
+      "lastWeek": "Letzte Woche",
+      "thisWeek": "Diese Woche",
+      "noMoodData": "Keine Stimmungsdaten verfügbar",
+      "trackMoodPrompt": "Verfolge deine Stimmung, um hier Einsichten zu sehen",
+      "moodLabels": {
+        "great": "Großartig",
+        "positive": "Positiv",
+        "okay": "Okay",
+        "challenging": "Herausfordernd",
+        "difficult": "Schwierig",
+        "noData": "Keine Daten"
+      },
       "weeklyTrend": {
         "improving": "↗ Verbesserung",
         "steady": "↔ Stabil",
@@ -346,9 +361,13 @@
       "restartOnboarding": "Einführung neu starten",
       "notifications": "Benachrichtigungen",
       "privacy": "Datenschutz & Sicherheit",
+      "dataPrivacy": "Ihre Daten & Datenschutz",
       "darkMode": "Dunkler Modus",
       "help": "Hilfe & Support",
-      "signOut": "Abmelden"
+      "signOut": "Abmelden",
+      "language": "Sprache",
+      "testNotification": "Test-Benachrichtigung",
+      "createAccount": "Konto erstellen"
     },
     "menuSubtitles": {
       "editProfile": "Informationen aktualisieren",
@@ -357,15 +376,42 @@
       "restartOnboarding": "Einführung erneut ansehen",
       "notifications": "Benachrichtigungen verwalten",
       "privacy": "Daten kontrollieren",
+      "dataPrivacy": "Wie wir Ihre Daten schützen und verarbeiten",
       "darkMode": "Dunkles Theme umschalten",
       "help": "Hilfe erhalten",
       "signOut": "Konto verlassen",
+      "language": "App-Sprache ändern",
+      "testNotification": "Jetzt eine Test-Benachrichtigung senden",
+      "createAccount": "Fortschritt speichern und auf alle Funktionen zugreifen",
       "default": "Zum Zugriff tippen"
     },
     "restartOnboarding": {
       "title": "Einführung neu starten?",
       "message": "Dies bringt Sie zurück zu den Einführungsbildschirmen. Ihre Daten werden nicht beeinträchtigt.",
       "confirm": "Neu starten"
+    },
+    "alerts": {
+      "createAccount": {
+        "title": "Konto erstellen",
+        "message": "Registrieren Sie sich, um Ihren Fortschritt zu speichern und auf alle Funktionen zuzugreifen!",
+        "confirm": "Registrieren",
+        "cancel": "Vielleicht später"
+      },
+      "notificationPermission": {
+        "title": "Berechtigung erforderlich",
+        "message": "Test-Benachrichtigungen erfordern aktivierte Benachrichtigungsberechtigungen.",
+        "messageSettings": "Bitte aktivieren Sie Benachrichtigungen in Ihren Geräteeinstellungen, um Test-Benachrichtigungen zu sehen.",
+        "openSettings": "Einstellungen öffnen",
+        "notNow": "Jetzt nicht"
+      },
+      "testNotificationSent": {
+        "title": "Test-Benachrichtigung gesendet!",
+        "message": "Überprüfen Sie Ihr Benachrichtigungsfeld, um zu sehen, ob sie erschienen ist."
+      },
+      "testNotificationFailed": {
+        "title": "Fehler",
+        "message": "Test-Benachrichtigung konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
+      }
     },
     "version": "Version 1.0.0",
     "madeWith": "Mit 💙 für dein Wohlbefinden gemacht"

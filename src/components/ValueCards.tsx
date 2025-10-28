@@ -324,7 +324,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
               fontWeight: '500',
               opacity: 0.6,
             }}>
-              Delete value
+              {t('insights.values.deleteValue')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -668,7 +668,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
                         fontWeight: '500',
                         opacity: 0.6,
                       }}>
-                        Delete reflection
+                        {t('insights.values.deleteReflection')}
                       </Text>
                     </TouchableOpacity>
                   </View>

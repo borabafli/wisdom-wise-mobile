@@ -112,6 +112,7 @@
     "patterns": "Desenler",
     "goals": "Hedefler",
     "memoryInsights": "Uzun Vadeli Görüşler",
+    "noMemoryInsights": "Henüz Hafıza Görüşü Yok",
     "longTermPatterns": "Uzun vadeli desenler ve temalar",
     "deeperInsights": {
       "title": "Daha Derin Görüşler"
@@ -140,6 +141,8 @@
       "pagination": "{{current}} / {{total}}",
       "swipeToExplore": "Keşfetmek için kaydırın",
       "reflectionPrompt": "Bunu düşünün",
+      "deleteValue": "Değeri sil",
+      "deleteReflection": "Yansıtmayı sil",
       "prompts": {
         "liveToday": "Bugün bu değeri nasıl yaşadınız?",
         "feltAligned": "Son zamanlarda bu değerle en uyumlu ne zaman hissettiniz?",
@@ -262,6 +265,18 @@
       "moreBalanced": "Daha dengeli",
       "reflectOnThis": "Bunun üzerinde düşün",
       "analyzingPatterns": "Ruh hali kalıplarınız analiz ediliyor...",
+      "lastWeek": "Geçen Hafta",
+      "thisWeek": "Bu Hafta",
+      "noMoodData": "Ruh hali verisi yok",
+      "trackMoodPrompt": "Görüşleri görmek için ruh halinizi takip edin",
+      "moodLabels": {
+        "great": "Harika",
+        "positive": "Olumlu",
+        "okay": "İdare Eder",
+        "challenging": "Zorlu",
+        "difficult": "Zor",
+        "noData": "Veri yok"
+      },
       "weeklyTrend": {
         "improving": "↗ İyileşiyor",
         "steady": "↔ Sabit",
@@ -346,9 +361,13 @@
       "restartOnboarding": "Tanıtımı Yeniden Başlat",
       "notifications": "Bildirimler",
       "privacy": "Gizlilik ve Güvenlik",
+      "dataPrivacy": "Verileriniz ve Gizlilik",
       "darkMode": "Karanlık Mod",
       "help": "Yardım ve Destek",
-      "signOut": "Çıkış Yap"
+      "signOut": "Çıkış Yap",
+      "language": "Dil",
+      "testNotification": "Test Bildirimi",
+      "createAccount": "Hesap Oluştur"
     },
     "menuSubtitles": {
       "editProfile": "Bilgilerinizi güncelleyin",
@@ -357,15 +376,42 @@
       "restartOnboarding": "Tanıtımı tekrar görüntüleyin",
       "notifications": "Uyarıları yönetin",
       "privacy": "Verilerinizi kontrol edin",
+      "dataPrivacy": "Bilgilerinizi nasıl koruduğumuz ve işlediğimiz",
       "darkMode": "Karanlık temayı aç/kapat",
       "help": "Yardım alın",
       "signOut": "Hesabınızdan çıkın",
+      "language": "Uygulama dilini değiştirin",
+      "testNotification": "Şimdi bir test bildirimi gönderin",
+      "createAccount": "İlerlemenizi kaydedin ve tüm özelliklere erişin",
       "default": "Erişmek için dokunun"
     },
     "restartOnboarding": {
       "title": "Tanıtım Yeniden Başlatılsın mı?",
       "message": "Bu sizi tanıtım ekranlarına geri götürecektir. Verileriniz etkilenmeyecektir.",
       "confirm": "Yeniden Başlat"
+    },
+    "alerts": {
+      "createAccount": {
+        "title": "Hesap Oluştur",
+        "message": "İlerlemenizi kaydetmek ve tüm özelliklere erişmek için kaydolun!",
+        "confirm": "Kaydol",
+        "cancel": "Belki Sonra"
+      },
+      "notificationPermission": {
+        "title": "İzin Gerekli",
+        "message": "Test bildirimleri için bildirim izinlerinin etkinleştirilmesi gerekir.",
+        "messageSettings": "Test bildirimlerini görmek için lütfen cihaz ayarlarınızdan bildirimleri etkinleştirin.",
+        "openSettings": "Ayarları Aç",
+        "notNow": "Şimdi Değil"
+      },
+      "testNotificationSent": {
+        "title": "Test Bildirimi Gönderildi!",
+        "message": "Görünüp görünmediğini görmek için bildirim panelinizi kontrol edin."
+      },
+      "testNotificationFailed": {
+        "title": "Hata",
+        "message": "Test bildirimi gönderilemedi. Lütfen tekrar deneyin."
+      }
     },
     "version": "Sürüm 1.0.0",
     "madeWith": "İyilik haliniz için 💙 ile yapıldı"

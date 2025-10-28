@@ -112,6 +112,7 @@
     "patterns": "Schémas",
     "goals": "Objectifs",
     "memoryInsights": "Perspectives à long terme",
+    "noMemoryInsights": "Aucune Perspective Mémoire Encore",
     "longTermPatterns": "Schémas et thèmes à long terme",
     "deeperInsights": {
       "title": "Perspectives plus profondes"
@@ -140,6 +141,8 @@
       "pagination": "{{current}} sur {{total}}",
       "swipeToExplore": "Balayer pour explorer",
       "reflectionPrompt": "Réfléchissez à ceci",
+      "deleteValue": "Supprimer la valeur",
+      "deleteReflection": "Supprimer la réflexion",
       "prompts": {
         "liveToday": "Comment avez-vous vécu cette valeur aujourd'hui ?",
         "feltAligned": "Quand vous êtes-vous senti le plus aligné avec cette valeur récemment ?",
@@ -262,6 +265,18 @@
       "moreBalanced": "Plus équilibré",
       "reflectOnThis": "Réfléchir à cela",
       "analyzingPatterns": "Analyse de vos schémas d'humeur...",
+      "lastWeek": "Semaine Dernière",
+      "thisWeek": "Cette Semaine",
+      "noMoodData": "Aucune donnée d'humeur disponible",
+      "trackMoodPrompt": "Suivez votre humeur pour voir les perspectives ici",
+      "moodLabels": {
+        "great": "Excellent",
+        "positive": "Positif",
+        "okay": "Correct",
+        "challenging": "Difficile",
+        "difficult": "Très Difficile",
+        "noData": "Aucune donnée"
+      },
       "weeklyTrend": {
         "improving": "↗ Amélioration",
         "steady": "↔ Stable",
@@ -346,9 +361,13 @@
       "restartOnboarding": "Redémarrer l'introduction",
       "notifications": "Notifications",
       "privacy": "Confidentialité & Sécurité",
+      "dataPrivacy": "Vos Données & Confidentialité",
       "darkMode": "Mode sombre",
       "help": "Aide & Support",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "language": "Langue",
+      "testNotification": "Notification Test",
+      "createAccount": "Créer un Compte"
     },
     "menuSubtitles": {
       "editProfile": "Mettre à jour vos informations",
@@ -357,15 +376,42 @@
       "restartOnboarding": "Revoir l'introduction",
       "notifications": "Gérer les alertes",
       "privacy": "Contrôler vos données",
+      "dataPrivacy": "Comment nous protégeons et gérons vos informations",
       "darkMode": "Basculer le thème sombre",
       "help": "Obtenir de l'aide",
       "signOut": "Quitter votre compte",
+      "language": "Changer la langue de l'application",
+      "testNotification": "Envoyer une notification test maintenant",
+      "createAccount": "Sauvegarder votre progression et accéder à toutes les fonctionnalités",
       "default": "Appuyer pour accéder"
     },
     "restartOnboarding": {
       "title": "Redémarrer l'introduction?",
       "message": "Cela vous ramènera aux écrans d'introduction. Vos données ne seront pas affectées.",
       "confirm": "Redémarrer"
+    },
+    "alerts": {
+      "createAccount": {
+        "title": "Créer un Compte",
+        "message": "Inscrivez-vous pour sauvegarder votre progression et accéder à toutes les fonctionnalités!",
+        "confirm": "S'inscrire",
+        "cancel": "Peut-être plus tard"
+      },
+      "notificationPermission": {
+        "title": "Autorisation Requise",
+        "message": "Les notifications test nécessitent l'activation des autorisations de notification.",
+        "messageSettings": "Veuillez activer les notifications dans les paramètres de votre appareil pour voir les notifications test.",
+        "openSettings": "Ouvrir les Paramètres",
+        "notNow": "Pas Maintenant"
+      },
+      "testNotificationSent": {
+        "title": "Notification Test Envoyée!",
+        "message": "Vérifiez votre panneau de notifications pour voir si elle est apparue."
+      },
+      "testNotificationFailed": {
+        "title": "Erreur",
+        "message": "Échec de l'envoi de la notification test. Veuillez réessayer."
+      }
     },
     "version": "Version 1.0.0",
     "madeWith": "Fait avec 💙 pour votre bien-être"

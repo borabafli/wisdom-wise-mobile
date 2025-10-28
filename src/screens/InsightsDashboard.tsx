@@ -821,7 +821,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               ) : (
                 <View style={{ padding: 20, alignItems: 'center' }}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#374151', marginBottom: 16, textAlign: 'center' }}>
-                    No Memory Insights Yet
+                    {t('insights.noMemoryInsights')}
                   </Text>
                   <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 20 }}>
                     As you continue your sessions, long-term patterns and themes will be generated here in categories such as:

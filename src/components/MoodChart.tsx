@@ -4,6 +4,8 @@ import Svg, { Line, Circle, Path, Defs, LinearGradient, Stop, Filter, FeGaussian
 import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 import { moodRatingService, type MoodStats } from '../services/moodRatingService';
 import { moodChartStyles as styles } from '../styles/components/MoodChart.styles';
+import { useTranslation } from 'react-i18next';
+import { getCurrentLanguage } from '../services/i18nService';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -14,12 +16,13 @@ interface MoodChartProps {
   days?: number;
 }
 
-export const MoodChart: React.FC<MoodChartProps> = ({ 
-  height = 220, 
+export const MoodChart: React.FC<MoodChartProps> = ({
+  height = 220,
   showEmojis = false, // Clean design without emojis
   style,
   days = 14
 }) => {
+  const { t } = useTranslation();
   const [moodData, setMoodData] = useState<{ date: string; rating: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -107,8 +110,8 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   if (!moodData.length) {
     return (
       <View style={[styles.emptyContainer, { height }, style]}>
-        <Text style={styles.emptyTitle}>No mood data available</Text>
-        <Text style={styles.emptySubtitle}>Track your mood to see insights here</Text>
+        <Text style={styles.emptyTitle}>{t('insights.moodInsights.noMoodData')}</Text>
+        <Text style={styles.emptySubtitle}>{t('insights.moodInsights.trackMoodPrompt')}</Text>
       </View>
     );
   }
@@ -145,7 +148,8 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return moodData.map((item, index) => {
       if (labelIndices.includes(index)) {
         const date = new Date(item.date);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const locale = getCurrentLanguage();
+        return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
       }
       return '';
     });
@@ -369,6 +373,7 @@ interface WeeklyMoodProps {
 }
 
 export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
+  const { t } = useTranslation();
   const [weeklyData, setWeeklyData] = useState<{
     currentWeek: { rating: number; label: string };
     previousWeek: { rating: number; label: string };
@@ -411,12 +416,12 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
         : 0;
       
       const getRatingLabel = (rating: number) => {
-        if (rating >= 4.5) return 'Great';
-        if (rating >= 3.5) return 'Positive';
-        if (rating >= 2.5) return 'Okay';
-        if (rating >= 1.5) return 'Challenging';
-        if (rating > 0) return 'Difficult';
-        return 'No data';
+        if (rating >= 4.5) return t('insights.moodInsights.moodLabels.great');
+        if (rating >= 3.5) return t('insights.moodInsights.moodLabels.positive');
+        if (rating >= 2.5) return t('insights.moodInsights.moodLabels.okay');
+        if (rating >= 1.5) return t('insights.moodInsights.moodLabels.challenging');
+        if (rating > 0) return t('insights.moodInsights.moodLabels.difficult');
+        return t('insights.moodInsights.moodLabels.noData');
       };
       
       setWeeklyData({
@@ -500,7 +505,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
               elevation: 3
             }]}>
               <View style={styles.weekHeader}>
-                <Text style={styles.weekPeriod}>Last Week</Text>
+                <Text style={styles.weekPeriod}>{t('insights.moodInsights.lastWeek')}</Text>
                 <View style={styles.moodEmoji}>{getMoodImage(weeklyData.previousWeek.rating)}</View>
               </View>
               <Text style={[styles.moodLabel, { fontFamily: 'Ubuntu-Bold' }]}>{weeklyData.previousWeek.label}</Text>
@@ -525,7 +530,7 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
               elevation: 3
             }]}>
               <View style={styles.weekHeader}>
-                <Text style={styles.weekPeriod}>This Week</Text>
+                <Text style={styles.weekPeriod}>{t('insights.moodInsights.thisWeek')}</Text>
                 <View style={styles.moodEmoji}>{getMoodImage(weeklyData.currentWeek.rating)}</View>
               </View>
               <Text style={[styles.moodLabel, { fontFamily: 'Ubuntu-Bold' }]}>{weeklyData.currentWeek.label}</Text>
