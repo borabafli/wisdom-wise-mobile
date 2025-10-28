@@ -112,6 +112,7 @@
     "patterns": "Padrões",
     "goals": "Objetivos",
     "memoryInsights": "Perspectivas de Longo Prazo",
+    "noMemoryInsights": "Ainda Não Há Perspectivas de Memória",
     "longTermPatterns": "Padrões e temas de longo prazo",
     "deeperInsights": {
       "title": "Perspectivas Mais Profundas"
@@ -140,6 +141,8 @@
       "pagination": "{{current}} de {{total}}",
       "swipeToExplore": "Deslize para explorar",
       "reflectionPrompt": "Reflita sobre isso",
+      "deleteValue": "Excluir valor",
+      "deleteReflection": "Excluir reflexão",
       "prompts": {
         "liveToday": "Como você viveu esse valor hoje?",
         "feltAligned": "Quando você se sentiu mais alinhado com esse valor recentemente?",
@@ -262,6 +265,18 @@
       "moreBalanced": "Mais equilibrado",
       "reflectOnThis": "Refletir sobre isso",
       "analyzingPatterns": "Analisando seus padrões de humor...",
+      "lastWeek": "Semana Passada",
+      "thisWeek": "Esta Semana",
+      "noMoodData": "Nenhum dado de humor disponível",
+      "trackMoodPrompt": "Acompanhe seu humor para ver perspectivas aqui",
+      "moodLabels": {
+        "great": "Ótimo",
+        "positive": "Positivo",
+        "okay": "Ok",
+        "challenging": "Desafiador",
+        "difficult": "Difícil",
+        "noData": "Sem dados"
+      },
       "weeklyTrend": {
         "improving": "↗ Melhorando",
         "steady": "↔ Estável",
@@ -346,9 +361,13 @@
       "restartOnboarding": "Reiniciar Introdução",
       "notifications": "Notificações",
       "privacy": "Privacidade e Segurança",
+      "dataPrivacy": "Seus Dados e Privacidade",
       "darkMode": "Modo Escuro",
       "help": "Ajuda e Suporte",
-      "signOut": "Sair"
+      "signOut": "Sair",
+      "language": "Idioma",
+      "testNotification": "Notificação de Teste",
+      "createAccount": "Criar Conta"
     },
     "menuSubtitles": {
       "editProfile": "Atualize suas informações",
@@ -357,15 +376,42 @@
       "restartOnboarding": "Ver introdução novamente",
       "notifications": "Gerenciar alertas",
       "privacy": "Controle seus dados",
+      "dataPrivacy": "Como protegemos e gerenciamos suas informações",
       "darkMode": "Alternar tema escuro",
       "help": "Obter assistência",
       "signOut": "Sair da sua conta",
+      "language": "Alterar o idioma do aplicativo",
+      "testNotification": "Enviar uma notificação de teste agora",
+      "createAccount": "Salve seu progresso e acesse todos os recursos",
       "default": "Toque para acessar"
     },
     "restartOnboarding": {
       "title": "Reiniciar Introdução?",
       "message": "Isso levará você de volta às telas de introdução. Seus dados não serão afetados.",
       "confirm": "Reiniciar"
+    },
+    "alerts": {
+      "createAccount": {
+        "title": "Criar Conta",
+        "message": "Cadastre-se para salvar seu progresso e acessar todos os recursos!",
+        "confirm": "Cadastrar",
+        "cancel": "Talvez mais tarde"
+      },
+      "notificationPermission": {
+        "title": "Permissão Necessária",
+        "message": "Notificações de teste requerem permissões de notificação habilitadas.",
+        "messageSettings": "Por favor, habilite as notificações nas configurações do seu dispositivo para ver notificações de teste.",
+        "openSettings": "Abrir Configurações",
+        "notNow": "Agora Não"
+      },
+      "testNotificationSent": {
+        "title": "Notificação de Teste Enviada!",
+        "message": "Verifique seu painel de notificações para ver se ela apareceu."
+      },
+      "testNotificationFailed": {
+        "title": "Erro",
+        "message": "Falha ao enviar notificação de teste. Por favor, tente novamente."
+      }
     },
     "version": "Versão 1.0.0",
     "madeWith": "Feito com 💙 para seu bem-estar"

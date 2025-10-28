@@ -406,7 +406,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
         <KeyboardAvoidingView
           style={styles.keyboardView}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
         >
           {/* Header */}
@@ -577,7 +577,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               />
             )}
           </ScrollView>
-          <View>
 
           {/* Suggestion Chips */}
           <SuggestionChips
@@ -673,7 +672,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               currentExercise?.type === 'daily-reflection'
             }
           />
-</View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaWrapper>
