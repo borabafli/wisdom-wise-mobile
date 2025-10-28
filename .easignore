@@ -6,7 +6,19 @@ ios/
 .expo/
 .gradle/
 node_modules/.cache/
+dist/
+.backup-native/
+.playwright-mcp/
+
+# Android SDK tools (shouldn't be in project)
+platform-tools/
+platform-tools.zip
 
 # Development files
 .DS_Store
 *.log
+*.orig
+.git/
+
+# Temporary files
+temp_*
