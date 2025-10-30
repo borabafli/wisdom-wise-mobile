@@ -8,7 +8,6 @@ import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
 import ChatHistory from '../components/ChatHistory';
-import TTSSettings from '../components/TTSSettings';
 import EditProfileModal from '../components/EditProfileModal';
 import DataPrivacyScreen from './DataPrivacyScreen';
 import NotificationSettingsModal from '../components/NotificationSettingsModal';
@@ -34,7 +33,6 @@ const ProfileScreen: React.FC = () => {
   const [displayName, setDisplayName] = useState('Friend');
   const [hasCustomName, setHasCustomName] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(false);
-  const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showDataPrivacy, setShowDataPrivacy] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
@@ -216,14 +214,13 @@ const ProfileScreen: React.FC = () => {
   const menuItems = [
     { iconImage: require('../../assets/images/New Icons/icon-10.png'), label: t('profile.menu.editProfile'), action: () => setShowEditProfile(true), subtitle: t('profile.menuSubtitles.editProfile') },
     { iconImage: require('../../assets/images/New Icons/icon-11.png'), label: t('profile.menu.chatHistory'), action: () => setShowChatHistory(true), subtitle: t('profile.menuSubtitles.chatHistory') },
-    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.voiceSettings'), action: () => setShowTTSSettings(true), subtitle: t('profile.menuSubtitles.voiceSettings') },
     { iconImage: require('../../assets/images/New Icons/14.png'), label: t('profile.menu.dataPrivacy'), action: () => setShowDataPrivacy(true), subtitle: t('profile.menuSubtitles.dataPrivacy') },
 
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.testNotification'), action: handleTestNotification, subtitle: t('profile.menuSubtitles.testNotification') },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
-    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.featureRequest'), action: () => setShowFeatureRequest(true), subtitle: t('profile.menuSubtitles.featureRequest') },
+    { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.featureRequest'), action: () => setShowFeatureRequest(true), subtitle: t('profile.menuSubtitles.featureRequest') },
     ...(isAnonymous
       ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: t('profile.menu.createAccount'), action: handleLogin, highlight: true, subtitle: t('profile.menuSubtitles.createAccount') }]
       : [{ icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut, subtitle: t('profile.menuSubtitles.signOut') }]
@@ -474,7 +471,6 @@ const ProfileScreen: React.FC = () => {
       </ScrollView>
 
       <ChatHistory visible={showChatHistory} onClose={() => setShowChatHistory(false)} />
-      <TTSSettings visible={showTTSSettings} onClose={() => setShowTTSSettings(false)} />
       <EditProfileModal 
         visible={showEditProfile} 
         onClose={() => setShowEditProfile(false)} 

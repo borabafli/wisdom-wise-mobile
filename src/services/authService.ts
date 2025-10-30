@@ -17,8 +17,8 @@ export class AuthService {
       // This works for all developers without needing to change IPs
       return `exp://localhost:19000/--${path}`;
     }
-    // Production: use custom scheme
-    return `wisdomwise:${path}`;
+    // Production: use custom scheme (must match app.json scheme)
+    return `zenmind:${path}`;
   }
 
   // Sign up with email and password
@@ -74,8 +74,9 @@ export class AuthService {
       this.checkSupabaseAvailable();
 
       // Configure the redirect URL for your app scheme
+      // MUST match the scheme defined in app.json
       const redirectUrl = AuthSession.makeRedirectUri({
-        scheme: 'wisdomwise',
+        scheme: 'zenmind',
         path: '/auth/verify'
       });
 

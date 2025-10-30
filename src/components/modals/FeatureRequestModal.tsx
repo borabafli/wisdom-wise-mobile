@@ -12,11 +12,11 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Image,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Lightbulb } from 'lucide-react-native';
+import { ChevronLeft } from 'lucide-react-native';
 import { featureRequestService } from '../../services/featureRequestService';
 import { featureRequestModalStyles as styles } from '../../styles/components/FeatureRequestModal.styles';
 
@@ -232,7 +232,11 @@ const FeatureRequestModal: React.FC<FeatureRequestModalProps> = ({
                     {/* Icon Section */}
                     <View style={styles.iconContainer}>
                       <View style={styles.iconCircle}>
-                        <Lightbulb size={48} color="#36657d" strokeWidth={2} />
+                        <Image
+                          source={require('../../../assets/images/New Icons/icon-12.png')}
+                          style={styles.iconImage}
+                          contentFit="contain"
+                        />
                       </View>
                     </View>
 
@@ -280,12 +284,6 @@ const FeatureRequestModal: React.FC<FeatureRequestModalProps> = ({
                       </View>
                     </View>
 
-                    {/* Info Box */}
-                    <View style={styles.infoBox}>
-                      <Text style={styles.infoText}>
-                        {t('featureRequest.infoText')}
-                      </Text>
-                    </View>
                   </Animated.View>
                 </ScrollView>
 

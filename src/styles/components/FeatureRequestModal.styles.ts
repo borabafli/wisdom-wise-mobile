@@ -26,7 +26,7 @@ export const featureRequestModalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing['4'],
-    paddingTop: spacing['6'], // Increased from spacing['4'] to give more space from status bar
+    paddingTop: spacing['24'], // Additional padding to ensure back button is below status bar
     paddingBottom: spacing['3'],
   },
   backButton: {
@@ -70,6 +70,10 @@ export const featureRequestModalStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     ...shadows.md,
+  },
+  iconImage: {
+    width: 60,
+    height: 60,
   },
 
   // Title

@@ -113,7 +113,8 @@
         }
       ],
       "./plugins/withAndroidManifestFix",
-      "./plugins/withForceExcludeSupport"
+      "./plugins/withForceExcludeSupport",
+      "./plugins/withAndroidOAuthIntents"
     ],
     "scheme": "zenmind",
     "extra": {
