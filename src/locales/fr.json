@@ -498,6 +498,14 @@
       "keyInsights": "Idées Clés",
       "continueGoals": "Continuer les Objectifs",
       "saveGoals": "Sauvegarder les Objectifs"
+    },
+    "exitConfirmation": {
+      "title": "Sauvegarder votre session ?",
+      "message": "Votre conversation sera sauvegardée et vous pourrez la continuer plus tard.",
+      "exerciseTitle": "Terminer l'exercice plus tôt ?",
+      "exerciseMessage": "Votre progression sera sauvegardée, mais vous n'avez pas encore terminé toutes les étapes.",
+      "confirmButton": "Sauvegarder & Quitter",
+      "cancelButton": "Continuer la Discussion"
     }
   },
   "mood": {

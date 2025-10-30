@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -12,15 +12,16 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
 // Import new components and hooks
-import { 
-  MessageItem, 
-  AnimatedTypingCursor, 
+import {
+  MessageItem,
+  AnimatedTypingCursor,
   AnimatedTypingDots,
   TranscribingIndicator,
-  SuggestionChips, 
-  ChatInput, 
-  ExerciseCard 
+  SuggestionChips,
+  ChatInput,
+  ExerciseCard
 } from '../components/chat';
+import { ExitConfirmationDialog } from '../components/ExitConfirmationDialog';
 import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
@@ -204,6 +205,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     chatSession.initializeChatSession();
     setIsInitialized(true);
   }, [currentExercise]);
+
+  // Handle Android hardware back button
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // Trigger the same confirmation flow as the visual back button
+      const exerciseContext = {
+        exerciseMode,
+        exerciseType: exerciseData.currentExercise?.type,
+        isValueReflection,
+        isThinkingPatternReflection,
+        isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
+      };
+      chatSession.handleEndSession(onBack, exerciseContext);
+      return true; // Prevent default behavior
+    });
+
+    return () => backHandler.remove();
+  }, [exerciseMode, exerciseData.currentExercise, isValueReflection, isThinkingPatternReflection, showVisionSummary, chatSession, onBack]);
 
   // Handle initial message from notification
   useEffect(() => {
@@ -675,6 +696,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         </KeyboardAvoidingView>
       </View>
     </SafeAreaWrapper>
+
+    {/* Exit Confirmation Dialog */}
+    <ExitConfirmationDialog
+      visible={chatSession.showExitConfirmation}
+      onConfirmExit={chatSession.confirmExit}
+      onCancel={chatSession.cancelExit}
+      isExerciseSession={exerciseMode || !!currentExercise}
+    />
     </>
   );
 };

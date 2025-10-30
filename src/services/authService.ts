@@ -2,6 +2,7 @@ import { supabase, isSupabaseAvailable, supabaseInitError } from '../config/supa
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 
 // Required so Android custom tabs can hand the OAuth redirect back to the app.
 WebBrowser.maybeCompleteAuthSession();
@@ -76,12 +77,15 @@ export class AuthService {
     try {
       this.checkSupabaseAvailable();
 
-      // Configure the redirect URL for your app scheme
-      // MUST match the scheme defined in app.json
-      const redirectUrl = AuthSession.makeRedirectUri({
-        scheme: 'zenmind',
-        path: '/auth/verify'
-      });
+      const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+      // Configure the redirect URL for the current runtime (Expo Go vs standalone)
+      const redirectUrl = isExpoGo
+        ? AuthSession.getDefaultReturnUrl('auth/verify')
+        : AuthSession.makeRedirectUri({
+            scheme: 'zenmind',
+            path: 'auth/verify',
+          });
 
       console.log('OAuth redirect URL:', redirectUrl);
 

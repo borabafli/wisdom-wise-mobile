@@ -22,6 +22,9 @@ export interface ExerciseContext {
  */
 export const useSessionManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
+  const [pendingExitCallback, setPendingExitCallback] = useState<(() => void) | null>(null);
+  const [pendingExerciseContext, setPendingExerciseContext] = useState<ExerciseContext | undefined>(undefined);
 
   const initializeSession = useCallback(async (): Promise<{ messages: Message[], suggestions: string[] }> => {
     try {
@@ -76,19 +79,40 @@ export const useSessionManagement = () => {
   const handleEndSession = useCallback((onBack: () => void, messages: Message[], exerciseContext?: ExerciseContext) => {
     console.log('handleEndSession called, messages length:', messages.length);
     console.log('Exercise context:', exerciseContext);
-    
+
     // Check if we have any user messages (real conversation)
     const userMessages = messages.filter(msg => msg.type === 'user');
     console.log('User messages count:', userMessages.length);
-    
+
     if (userMessages.length > 0) {
-      console.log('Showing save dialog');
-      // For now, let's proceed as if user chose to save.
-      extractInsightsAndSaveSession(onBack, exerciseContext);
+      console.log('User has messages - showing exit confirmation dialog');
+      // Show confirmation dialog
+      setPendingExitCallback(() => onBack);
+      setPendingExerciseContext(exerciseContext);
+      setShowExitConfirmation(true);
     } else {
       console.log('No user messages, going back directly');
       onBack();
     }
+  }, []);
+
+  // User confirmed exit - proceed with save
+  const confirmExit = useCallback(() => {
+    console.log('User confirmed exit - proceeding with save');
+    setShowExitConfirmation(false);
+    if (pendingExitCallback) {
+      extractInsightsAndSaveSession(pendingExitCallback, pendingExerciseContext);
+      setPendingExitCallback(null);
+      setPendingExerciseContext(undefined);
+    }
+  }, [pendingExitCallback, pendingExerciseContext]);
+
+  // User cancelled exit - stay in chat
+  const cancelExit = useCallback(() => {
+    console.log('User cancelled exit - staying in chat');
+    setShowExitConfirmation(false);
+    setPendingExitCallback(null);
+    setPendingExerciseContext(undefined);
   }, []);
 
   // Extract insights and save session - BACKGROUND PROCESSING
@@ -286,7 +310,11 @@ export const useSessionManagement = () => {
     initializeSession,
     handleEndSession,
     extractInsightsAndSaveSession,
-    extractInsightsAndEnd
+    extractInsightsAndEnd,
+    // Exit confirmation state and handlers
+    showExitConfirmation,
+    confirmExit,
+    cancelExit,
   };
 };
 

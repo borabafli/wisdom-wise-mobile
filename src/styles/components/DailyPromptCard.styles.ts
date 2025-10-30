@@ -11,7 +11,7 @@ export const dailyPromptCardStyles = StyleSheet.create({
 
   cardBackground: {
     width: '100%',
-    height: 260, // Increased from 220 to 260 for more space
+    height: 260,
     borderRadius: 20,
     overflow: 'hidden',
   },

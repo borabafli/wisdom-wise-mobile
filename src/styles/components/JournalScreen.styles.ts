@@ -92,22 +92,22 @@ export const journalScreenStyles = StyleSheet.create({
 
   // Swipable Prompts Section
   promptsSection: {
-    paddingTop: spacing[12], // Reduced top padding
-    paddingBottom: spacing[8], // Reduced bottom padding
+    paddingTop: spacing[8], // Further reduced top padding
+    paddingBottom: spacing[4], // Further reduced bottom padding
   },
 
   sectionTitle: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: '#374151',
-    marginBottom: spacing[16],
+    marginBottom: spacing[12],
     paddingHorizontal: spacing[20],
   },
 
   swipableContainer: {
-    height: 300, // Further increased to ensure cards are fully visible
-    marginBottom: spacing[4], // Reduced margin bottom
+    height: 280,
+    marginBottom: spacing[2],
   },
 
   promptsScrollContent: {
@@ -123,8 +123,8 @@ export const journalScreenStyles = StyleSheet.create({
   },
 
   promptCard: {
-    width: '100%', // Full width within container
-    height: 260, // Match DailyPromptCard height
+    width: '100%',
+    height: 260,
     borderRadius: 20,
     overflow: 'hidden',
   },
@@ -215,8 +215,8 @@ export const journalScreenStyles = StyleSheet.create({
 
   // Entries Section
   entriesSection: {
-    marginTop: spacing[12], // Reduced top margin
-    marginBottom: spacing[8], // Reduced bottom margin
+    marginTop: spacing[8], // Further reduced top margin
+    marginBottom: spacing[4], // Further reduced bottom margin
   },
 
   entryCard: {
@@ -347,7 +347,7 @@ export const journalScreenStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing[48],
+    paddingVertical: spacing[24],
     paddingHorizontal: spacing[32],
   },
 

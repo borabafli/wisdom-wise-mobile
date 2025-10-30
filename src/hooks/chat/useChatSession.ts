@@ -60,7 +60,14 @@ export const useChatSession = (
   const [currentExerciseStep, setCurrentExerciseStep] = useState<number | null>(null);
   const [exerciseFlow, setExerciseFlow] = useState<any>(null);
 
-  const { isLoading, initializeSession, handleEndSession: sessionEndHandler } = useSessionManagement();
+  const {
+    isLoading,
+    initializeSession,
+    handleEndSession: sessionEndHandler,
+    showExitConfirmation,
+    confirmExit,
+    cancelExit,
+  } = useSessionManagement();
 
   const initializeChatSession = useCallback(async () => {
     try {
@@ -418,6 +425,10 @@ const handleConfirmExerciseTransition = async (exercise: any) => {
     handleExerciseSendMessage,
     handleStartExercise,
     handleConfirmExerciseTransition,
+    // Exit confirmation state and handlers
+    showExitConfirmation,
+    confirmExit,
+    cancelExit,
   };
 };
 

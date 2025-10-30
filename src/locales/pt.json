@@ -498,6 +498,14 @@
       "keyInsights": "Insights Chave",
       "continueGoals": "Continuar Objetivos",
       "saveGoals": "Salvar Objetivos"
+    },
+    "exitConfirmation": {
+      "title": "Salvar sua sessão?",
+      "message": "Sua conversa será salva e você poderá continuá-la mais tarde.",
+      "exerciseTitle": "Terminar o exercício mais cedo?",
+      "exerciseMessage": "Seu progresso será salvo, mas você ainda não completou todos os passos.",
+      "confirmButton": "Salvar e Sair",
+      "cancelButton": "Continuar Conversando"
     }
   },
   "mood": {

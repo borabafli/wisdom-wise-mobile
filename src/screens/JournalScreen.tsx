@@ -317,7 +317,7 @@ const JournalScreen: React.FC<JournalScreenProps> = ({ navigation }) => {
             {/* Swipable Prompt Cards */}
             {todayPrompts.length > 0 && (
               <View style={styles.promptsSection}>
-                <Text style={styles.sectionTitle}>{t('journal.writingPrompts')}</Text>
+                <Text style={styles.sectionTitle}>✍️ {t('journal.writingPrompts')}</Text>
                 <SwipablePromptCard
                   prompts={todayPrompts}
                   onPromptSelect={handlePromptSelect}

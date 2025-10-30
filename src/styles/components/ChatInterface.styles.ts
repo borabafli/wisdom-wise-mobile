@@ -627,16 +627,16 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 17, // Standard iOS/Android text size
-    fontFamily: 'Inter-Regular',
+    fontSize: 16, // Slightly reduced from 17px to match message size
+    fontFamily: 'Ubuntu-Regular', // Match the message font
     fontWeight: '400',
     color: '#000000', // Standard black text like WhatsApp/iMessage
     minHeight: 32, // Standard single-line height
-    maxHeight: 100, // Standard ~5 lines max like WhatsApp
+    maxHeight: 120, // Slightly expanded from 100 to ~6 lines
     paddingVertical: 0, // No extra vertical padding
     paddingHorizontal: 0, // No horizontal padding (card handles it)
     backgroundColor: 'transparent',
-    lineHeight: 22, // Standard line height for 17px text
+    lineHeight: 24, // Match message line height (24px)
     textAlignVertical: 'center',
     includeFontPadding: false,
   },

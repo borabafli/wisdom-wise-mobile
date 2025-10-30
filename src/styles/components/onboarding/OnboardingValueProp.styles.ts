@@ -22,8 +22,13 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   // Swipable Container - Only for text
   swipeContainer: {
-    height: height * 0.25, // Reduced height for text area
+    minHeight: height * 0.25, // Allow content to grow beyond base height
     marginTop: spacing[16], // 16px - closer to top
+  },
+
+  swipeContent: {
+    paddingBottom: spacing[12],
+    alignItems: 'center',
   },
 
   // Page Container - Only contains text
@@ -32,7 +37,8 @@ export const onboardingValuePropStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing[20], // 20px - reduced padding from edges
-    height: '100%',
+    paddingVertical: spacing[12],
+    minHeight: height * 0.25,
   },
 
   // Text Content Container

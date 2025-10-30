@@ -503,6 +503,14 @@
       "keyInsights": "Key Insights",
       "continueGoals": "Continue Goals",
       "saveGoals": "Save Goals"
+    },
+    "exitConfirmation": {
+      "title": "Save your session?",
+      "message": "Your conversation will be saved and you can continue it later.",
+      "exerciseTitle": "End exercise early?",
+      "exerciseMessage": "Your progress will be saved, but you haven't completed all steps yet.",
+      "confirmButton": "Save & Exit",
+      "cancelButton": "Keep Chatting"
     }
   },
   "mood": {

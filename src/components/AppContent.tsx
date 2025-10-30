@@ -336,6 +336,9 @@ export const AppContent: React.FC = () => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       // If any overlay screens are showing, handle back navigation
       if (showChat) {
+        // Note: ChatInterface now handles Android back button internally with confirmation dialog.
+        // This code path should not be reached because ChatInterface's handler returns true first.
+        // Keeping this as fallback in case ChatInterface doesn't handle it.
         handleBackFromChat();
         return true; // Prevent default behavior
       }

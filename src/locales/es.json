@@ -498,6 +498,14 @@
       "keyInsights": "Ideas Clave",
       "continueGoals": "Continuar Objetivos",
       "saveGoals": "Guardar Objetivos"
+    },
+    "exitConfirmation": {
+      "title": "¿Guardar tu sesión?",
+      "message": "Tu conversación será guardada y podrás continuarla más tarde.",
+      "exerciseTitle": "¿Terminar el ejercicio antes?",
+      "exerciseMessage": "Tu progreso se guardará, pero aún no has completado todos los pasos.",
+      "confirmButton": "Guardar y Salir",
+      "cancelButton": "Seguir Conversando"
     }
   },
   "mood": {

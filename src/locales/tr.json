@@ -498,6 +498,14 @@
       "keyInsights": "Ana Görüşler",
       "continueGoals": "Hedeflere Devam Et",
       "saveGoals": "Hedefleri Kaydet"
+    },
+    "exitConfirmation": {
+      "title": "Oturumunuzu kaydetmek ister misiniz?",
+      "message": "Görüşmeniz kaydedilecek ve daha sonra devam edebileceksiniz.",
+      "exerciseTitle": "Egzersizi erken bitirmek ister misiniz?",
+      "exerciseMessage": "İlerlemeniz kaydedilecek, ancak henüz tüm adımları tamamlamadınız.",
+      "confirmButton": "Kaydet & Çık",
+      "cancelButton": "Sohbete Devam Et"
     }
   },
   "mood": {

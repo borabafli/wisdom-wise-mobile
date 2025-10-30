@@ -228,7 +228,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 style={[
                   styles.textInput,
                   {
-                    maxHeight: 100,
+                    maxHeight: 130,
                   }
                 ]}
                 editable={true}

@@ -498,6 +498,14 @@
       "keyInsights": "Wichtige Erkenntnisse",
       "continueGoals": "Ziele fortsetzen",
       "saveGoals": "Ziele speichern"
+    },
+    "exitConfirmation": {
+      "title": "Sitzung speichern?",
+      "message": "Dein Gespräch wird gespeichert und du kannst es später fortsetzen.",
+      "exerciseTitle": "Übung vorzeitig beenden?",
+      "exerciseMessage": "Dein Fortschritt wird gespeichert, aber du hast noch nicht alle Schritte abgeschlossen.",
+      "confirmButton": "Speichern & Beenden",
+      "cancelButton": "Weiter chatten"
     }
   },
   "mood": {

@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Video, ResizeMode } from 'expo-av';
 import * as NavigationBar from 'expo-navigation-bar';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
+import { spacing } from '../../styles/tokens/spacing';
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,6 +49,7 @@ interface OnboardingValuePropScreenProps {
 }
 
 const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ onContinue }) => {
+  const insets = useSafeAreaInsets();
   const [currentPage, setCurrentPage] = useState(0);
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [showVideo, setShowVideo] = useState(false);
@@ -142,7 +144,16 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   return (
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView
+        edges={['left', 'right']}
+        style={[
+          styles.safeArea,
+          {
+            paddingTop: Math.max(insets.top, spacing[12]),
+            paddingBottom: Math.max(insets.bottom, spacing[8]),
+          },
+        ]}
+      >
         <Animated.View
           style={[
             styles.contentContainer,
@@ -161,6 +172,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             onScroll={handleScroll}
             scrollEventThrottle={16}
             style={styles.swipeContainer}
+            contentContainerStyle={styles.swipeContent}
           >
             {/* All Pages */}
             {onboardingPages.map((page) => renderPage(page))}
