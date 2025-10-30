@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Alert } from 'react-native';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { sttService } from '../../services/sttService';
 import { useDirectAudioLevels } from '../useDirectAudioLevels';
 
@@ -31,9 +32,19 @@ export const useVoiceRecording = (
   const lastAudioUpdateTime = useRef(0);
   const AUDIO_UPDATE_THROTTLE = 83; // ms - Match wave update rate for optimal performance
 
+  // Cleanup effect: ensure keep-awake is deactivated when component unmounts
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount - deactivate keep-awake if component unmounts during recording
+      deactivateKeepAwake('voice-recording').catch((error) => {
+        console.warn('⚠️ Failed to deactivate keep-awake on unmount:', error);
+      });
+    };
+  }, []);
+
   const startRecording = async () => {
     console.log('🎤 Starting recording...');
-    
+
     if (!sttService.isSupported()) {
       console.log('STT not supported, showing alert');
       Alert.alert(
@@ -52,7 +63,15 @@ export const useVoiceRecording = (
     console.log('Starting STT recording...');
     setSttError(null);
     setPartialTranscript('');
-    
+
+    // Activate keep-awake to prevent screen from turning off during recording
+    try {
+      await activateKeepAwakeAsync('voice-recording');
+      console.log('✅ Keep-awake activated for voice recording');
+    } catch (error) {
+      console.warn('⚠️ Failed to activate keep-awake:', error);
+    }
+
     const success = await sttService.startRecognition(
       // On result
       (result) => {
@@ -67,12 +86,19 @@ export const useVoiceRecording = (
         }
       },
       // On error
-      (error) => {
+      async (error) => {
         setSttError(error);
         setIsRecording(false);
         setIsListening(false);
         setIsTranscribing(false);
         setPartialTranscript('');
+        // Deactivate keep-awake on error
+        try {
+          await deactivateKeepAwake('voice-recording');
+          console.log('✅ Keep-awake deactivated after error');
+        } catch (err) {
+          console.warn('⚠️ Failed to deactivate keep-awake after error:', err);
+        }
         Alert.alert('Speech Recognition Error', error, [{ text: 'OK' }]);
       },
       // On end
@@ -121,6 +147,14 @@ export const useVoiceRecording = (
     // Always stop the service regardless of current state
     await sttService.stopRecognition();
 
+    // Deactivate keep-awake after stopping recording
+    try {
+      await deactivateKeepAwake('voice-recording');
+      console.log('✅ Keep-awake deactivated after stop recording');
+    } catch (error) {
+      console.warn('⚠️ Failed to deactivate keep-awake after stop:', error);
+    }
+
     console.log('✅ Recording stopped and state reset');
   };
 
@@ -136,6 +170,14 @@ export const useVoiceRecording = (
     setSttError(null);
     resetLevel(); // Reset direct audio level
     lastAudioUpdateTime.current = 0; // Reset throttle timer
+
+    // Deactivate keep-awake when cancelling
+    try {
+      await deactivateKeepAwake('voice-recording');
+      console.log('✅ Keep-awake deactivated after cancel');
+    } catch (error) {
+      console.warn('⚠️ Failed to deactivate keep-awake after cancel:', error);
+    }
 
     try {
       // Then cleanup the service

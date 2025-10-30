@@ -23,7 +23,11 @@
         "NSCameraUsageDescription": "Allow WisdomWise to use your camera for journaling photos and media entries.",
         "NSPhotoLibraryUsageDescription": "Allow WisdomWise to access your photo library to pick journaling images.",
         "NSUserTrackingUsageDescription": "This identifier will be used to personalize your experience and improve app features.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": [
+          "audio",
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -86,7 +90,12 @@
       "expo-secure-store",
       "expo-sqlite",
       "expo-image-picker",
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "enableBackgroundRemoteNotifications": true
+        }
+      ],
       "expo-navigation-bar",
       "react-native-audio-api",
       "expo-web-browser",

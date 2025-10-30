@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 
+// Required so Android custom tabs can hand the OAuth redirect back to the app.
+WebBrowser.maybeCompleteAuthSession();
+
 export class AuthService {
   // Check if Supabase is available before operations
   private checkSupabaseAvailable(): void {

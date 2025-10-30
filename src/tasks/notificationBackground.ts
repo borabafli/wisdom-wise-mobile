@@ -1,4 +1,5 @@
 import * as TaskManager from 'expo-task-manager';
+import * as Notifications from 'expo-notifications';
 
 import { notificationService } from '../services/notificationService';
 
@@ -60,10 +61,18 @@ export const registerBackgroundNotificationTask = async () => {
     }
 
     console.log('[NotificationBackground] Background task defined and ready for use');
-    // Note: With newer expo-task-manager, we don't need to explicitly register
-    // The task is automatically available once defined with TaskManager.defineTask
 
-    console.log('Background notification task registered.');
+    try {
+      await Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+      console.log('Background notification task registered with expo-notifications.');
+    } catch (notificationsError) {
+      const message = (notificationsError as Error).message || '';
+      if (message.includes('is already registered')) {
+        console.log('Background notification task already registered with expo-notifications.');
+      } else {
+        throw notificationsError;
+      }
+    }
   } catch (registrationError) {
     console.error('Failed to register background notification task:', registrationError);
   }
@@ -73,6 +82,11 @@ export const unregisterBackgroundNotificationTask = async () => {
   try {
     console.log('[NotificationBackground] Unregistering task');
     await TaskManager.unregisterTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+    try {
+      await Notifications.unregisterTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+    } catch (notificationsError) {
+      console.warn('Background notification task was not registered with expo-notifications:', notificationsError);
+    }
     console.log('Background notification task unregistered.');
   } catch (error) {
     console.error('Failed to unregister background notification task:', error);
