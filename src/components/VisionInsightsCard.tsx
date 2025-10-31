@@ -103,7 +103,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: '#87BAA3',
+                  backgroundColor: '#5BA3B8',
                   borderRadius: 12,
                   paddingVertical: 12,
                   paddingHorizontal: 16,
@@ -202,7 +202,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '#87BAA3',
+              backgroundColor: '#5BA3B8',
               borderRadius: 12,
               paddingVertical: 12,
               paddingHorizontal: 16,
@@ -223,7 +223,7 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#f8fafc',
-                borderColor: '#87BAA3',
+                borderColor: '#5BA3B8',
                 borderWidth: 1,
                 borderRadius: 10,
                 paddingVertical: 8,
@@ -232,8 +232,8 @@ export const VisionInsightsCard: React.FC<VisionInsightsCardProps> = ({
               }}
               activeOpacity={0.8}
             >
-              <Eye size={14} color="#87BAA3" />
-              <Text style={{ color: '#87BAA3', fontSize: 13, fontWeight: '500' }}>
+              <Eye size={14} color="#5BA3B8" />
+              <Text style={{ color: '#5BA3B8', fontSize: 13, fontWeight: '500' }}>
                 {t('insights.vision.view')} {visionStats.totalVisions} {visionStats.totalVisions > 1 ? t('insights.vision.visions') : t('insights.vision.vision')}
               </Text>
             </TouchableOpacity>

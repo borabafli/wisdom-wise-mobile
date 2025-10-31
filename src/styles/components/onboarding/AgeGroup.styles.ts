@@ -143,11 +143,11 @@ export const ageGroupStyles = StyleSheet.create({
     paddingHorizontal: 48, // Standard padding to match other onboarding buttons
     minWidth: 240, // Standard width to match other onboarding buttons
     height: 48,
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.teal[500],
+    shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
       height: 4,

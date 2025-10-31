@@ -151,12 +151,12 @@ export const onboardingFinalStyles = StyleSheet.create({
     paddingHorizontal: 40,
     minWidth: 240,
     height: 52,
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.components.onboardingButton,
-    shadowColor: '#36657d', // Keep custom color but use improved shadow properties
+    shadowColor: '#5BA3B8', // Consistent with button color
   },
 
   primaryButtonText: {
@@ -222,7 +222,7 @@ export const onboardingFinalStyles = StyleSheet.create({
 
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     borderRadius: 4,
   },
 
@@ -253,7 +253,7 @@ export const onboardingFinalStyles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: spacing[4], // 8px

@@ -236,7 +236,7 @@ export const notificationPermissionStyles = StyleSheet.create({
   },
 
   nextButton: {
-    backgroundColor: '#36657d', // Match other onboarding screens
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     paddingHorizontal: 32, // Standard button padding to match other screens
     height: 48, // Design principles height
     borderRadius: 18, // Match other onboarding screens

@@ -286,7 +286,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                     ) : (
                       <>
                         <Check size={18} color='white' />
-                        <Text style={styles.saveButtonText}>Save Changes</Text>
+                        <Text style={styles.saveButtonText}>Save</Text>
                       </>
                     )}
                   </LinearGradient>

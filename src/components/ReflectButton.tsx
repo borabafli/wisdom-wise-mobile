@@ -30,7 +30,7 @@ export const ReflectButton: React.FC<ReflectButtonProps> = ({
             flexDirection: 'row' as const,
             alignItems: 'center' as const,
             justifyContent: 'center' as const,
-            backgroundColor: '#698991',
+            backgroundColor: '#5BA3B8',
             borderRadius: 10,
             paddingVertical: 10,
             paddingHorizontal: 16,

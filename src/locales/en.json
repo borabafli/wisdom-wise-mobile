@@ -1122,7 +1122,7 @@
       "continueButton": "Get Started"
     },
     "personalValues": {
-      "headline": "Let's personalize your experience with Anu.",
+      "headline": "💖 Let's personalize your experience with Anu.",
       "promptText": "What values matter most to you? Choose the ones that feel right.",
       "continueButton": "Continue"
     },
@@ -1155,7 +1155,7 @@
       "continueButton": "Continue"
     },
     "personalization": {
-      "headline": "What's your name",
+      "headline": "✨ What's your name?",
       "promptText": "Choose how Anu should call you.",
       "placeholder": "Your preferred name",
       "caption": "You can always change this later in settings",
@@ -1163,7 +1163,7 @@
       "skipButton": "Skip for now"
     },
     "motivation": {
-      "title": "Tell me more about what brings you here",
+      "title": "💬 Tell me more about what brings you here",
       "subtitle": "This helps me understand how to best support you",
       "inputLabel": "Share what's on your mind",
       "placeholder": "I've been feeling overwhelmed at work and...",
@@ -1186,14 +1186,14 @@
       "skipButton": "Skip for now"
     },
     "baseline": {
-      "title": "Let's check in",
+      "title": "🌟 Let's check in",
       "subtitle": "This helps me track your progress over time",
       "moodLabel": "How's your mood today?",
       "continueButton": "Continue",
       "skipButton": "Skip for now"
     },
     "final": {
-      "mainTitle": "We're preparing your personal path forward...",
+      "mainTitle": "✨ We're preparing your personal path forward...",
       "subtitle": "Setting up your personalized experience with evidence-based tools",
       "features": {
         "analyzing": {

@@ -120,7 +120,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     paddingHorizontal: 32, // Standard button padding
     minWidth: 200, // Minimum width for button
     height: 48, // Design principles height
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',

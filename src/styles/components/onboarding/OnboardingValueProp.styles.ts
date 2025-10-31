@@ -141,7 +141,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   activePageIndicator: {
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     opacity: 1,
   },
 
@@ -161,7 +161,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
     paddingHorizontal: 48, // Larger padding for prominence
     minWidth: 240, // Wider button
     height: 48, // Design principles height
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',

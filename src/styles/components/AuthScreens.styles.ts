@@ -201,7 +201,7 @@ export const authScreenStyles = StyleSheet.create({
 
   // Primary Button
   primaryButton: {
-    backgroundColor: '#36657d', // Match onboarding button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Match onboarding button radius
     paddingVertical: spacing.therapy.md,
     paddingHorizontal: 32,

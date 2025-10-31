@@ -59,7 +59,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
   progressFill: {
     width: '30%', // 3/10
     height: '100%',
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     borderRadius: 2,
   },
 
@@ -250,7 +250,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
     paddingHorizontal: 48, // Standard padding to match other onboarding buttons
     minWidth: 240, // Standard width to match other onboarding buttons
     height: 48,
-    backgroundColor: '#36657d', // Match other screens
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     marginBottom: spacing[8], // 8px
     alignItems: 'center',
