@@ -306,6 +306,13 @@
         "fallback": {
           "title": "Verificando seus dados... ✨"
         }
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Experimente o Exercício de Pensamentos Automáticos",
+        "emptyStateDescription": "Converse com Anu sobre um pensamento específico que está te incomodando, e vamos ajudá-lo a identificar padrões de pensamento distorcidos e encontrar perspectivas equilibradas",
+        "seeExample": "Ver exemplo",
+        "startExercise": "Iniciar exercício",
+        "exampleModalInfo": "É assim que um padrão de pensamento se parece. Experimente o exercício de Pensamentos Automáticos para criar o seu!"
       }
     },
     "priorityExercises": {

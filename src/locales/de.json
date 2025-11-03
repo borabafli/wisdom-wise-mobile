@@ -306,6 +306,13 @@
         "fallback": {
           "title": "Überprüfe deine Daten... ✨"
         }
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Probieren Sie die Übung 'Automatische Gedanken' aus",
+        "emptyStateDescription": "Sprechen Sie mit Anu über einen bestimmten Gedanken, der Sie beschäftigt, und wir helfen Ihnen, verzerrte Denkmuster zu erkennen und ausgewogene Perspektiven zu finden",
+        "seeExample": "Beispiel ansehen",
+        "startExercise": "Übung starten",
+        "exampleModalInfo": "So sieht ein Denkmuster aus. Probieren Sie die Übung 'Automatische Gedanken' aus, um Ihr eigenes zu erstellen!"
       }
     },
     "priorityExercises": {

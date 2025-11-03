@@ -306,6 +306,13 @@
         "fallback": {
           "title": "Verileriniz kontrol ediliyor... ✨"
         }
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Otomatik Düşünceler Egzersizini Deneyin",
+        "emptyStateDescription": "Sizi rahatsız eden belirli bir düşünce hakkında Anu ile sohbet edin, çarpıtılmış düşünce kalıplarını belirlemenize ve dengeli bakış açıları bulmanıza yardımcı olalım",
+        "seeExample": "Örnek Görün",
+        "startExercise": "Egzersizi Başlat",
+        "exampleModalInfo": "Bir düşünce kalıbı böyle görünür. Kendinizinkini oluşturmak için Otomatik Düşünceler egzersizini deneyin!"
       }
     },
     "priorityExercises": {

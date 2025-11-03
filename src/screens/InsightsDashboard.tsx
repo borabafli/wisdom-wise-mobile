@@ -363,30 +363,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     );
   };
 
-  const mockPatterns = [
-    {
-      id: 'mock_1',
-      originalThought: t('insights.mockData.patterns.presentationThought') || 'I will mess up this presentation',
-      reframedThought: t('insights.mockData.patterns.presentationReframe') || 'I am prepared and will do my best',
-      distortionTypes: ['All-or-Nothing Thinking'],
-      confidence: 0.85,
-      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
-      timestamp: new Date().toISOString(),
-      context: t('insights.mockData.patterns.presentationContext') || 'Work presentation'
-    },
-    {
-      id: 'mock_2',
-      originalThought: t('insights.mockData.patterns.jobThought') || 'I will never find a job',
-      reframedThought: t('insights.mockData.patterns.jobReframe') || 'Finding the right opportunity takes time',
-      distortionTypes: ['Catastrophizing'],
-      confidence: 0.92,
-      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
-      timestamp: new Date().toISOString(),
-      context: t('insights.mockData.patterns.jobContext') || 'Job search'
-    }
-  ];
-
-  const displayPatterns = thinkingPatterns.length > 0 ? thinkingPatterns : mockPatterns;
+  // REMOVED: mockPatterns fallback - now showing empty state instead
+  // Users will see the empty state with "Show Example" button when no patterns exist
+  const displayPatterns = thinkingPatterns;
   console.log('[InsightsDashboard] Display patterns:', displayPatterns.length, displayPatterns);
 
   const handlePatternSwipeLeft = () => {

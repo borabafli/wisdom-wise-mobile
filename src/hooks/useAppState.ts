@@ -219,13 +219,26 @@ export const useAppState = (t: TFunction) => {
         // Handle exercise type clicks
         if (insight?.type) {
           console.log('Starting exercise from insight:', insight.type);
+
+          // Map of exercise types to their proper names
+          const exerciseNames: Record<string, string> = {
+            'automatic-thoughts': 'Automatic Thoughts',
+            'vision-of-future': 'Vision of the Future',
+            'sorting-thoughts': 'Sorting Thoughts',
+            'breathing': 'Breathing Exercise',
+            'values-clarification': 'Values Clarification',
+            'goal-setting': 'Therapy Goal-Setting',
+            'tell-your-story': 'Tell Your Story'
+          };
+
           // Create exercise object from the insight data
           const exerciseFromInsight = {
             type: insight.type,
-            name: insight.type === 'vision-of-future' ? 'Vision of the Future' : insight.name || 'Exercise',
+            name: exerciseNames[insight.type] || insight.name || 'Exercise',
             duration: '15-20 min',
             description: insight.description || 'Guided therapeutic exercise'
           };
+          console.log('Starting exercise with proper name:', exerciseFromInsight);
           handleStartSession(exerciseFromInsight);
         } else {
           console.log('Exercise insight missing type:', insight);
@@ -245,6 +258,11 @@ export const useAppState = (t: TFunction) => {
           description: 'Define your therapeutic goals for your healing journey'
         };
         handleStartSession(goalSettingExercise);
+        break;
+      case 'chat':
+        // Handle direct chat navigation from insights
+        console.log('Starting new chat session from insight');
+        handleNewSession();
         break;
       default:
         console.log('Unhandled insight type:', type);

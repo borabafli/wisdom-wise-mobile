@@ -306,6 +306,13 @@
         "fallback": {
           "title": "Vérification de vos données... ✨"
         }
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Essayez l'exercice des Pensées Automatiques",
+        "emptyStateDescription": "Discutez avec Anu d'une pensée spécifique qui vous dérange, et nous vous aiderons à identifier les schémas de pensée déformés et à trouver des perspectives équilibrées",
+        "seeExample": "Voir l'exemple",
+        "startExercise": "Commencer l'exercice",
+        "exampleModalInfo": "Voici à quoi ressemble un schéma de pensée. Essayez l'exercice des Pensées Automatiques pour créer le vôtre !"
       }
     },
     "priorityExercises": {

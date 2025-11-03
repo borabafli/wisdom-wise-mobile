@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground, FlatList, Dimensions, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, ImageBackground, FlatList, Dimensions, Animated, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
-import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight, Trash2 } from 'lucide-react-native';
+import { TrendingUp, Heart, Star, Clock, MessageCircle, BarChart3, ChevronLeft, ChevronRight, ArrowRight, Trash2, X, Lightbulb } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MoodChart, WeeklyMoodComparison } from './MoodChart';
 import { moodInsightsService, type MoodInsightsData } from '../services/moodInsightsService';
@@ -38,6 +38,19 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
 }) => {
   const { t } = useTranslation();
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
+  const [showExampleModal, setShowExampleModal] = useState(false);
+
+  // Example pattern data for demonstration
+  const examplePattern = {
+    id: 'example_pattern',
+    originalThought: "I completely messed up that presentation, I'm terrible at public speaking",
+    reframedThought: "The presentation had some rough spots, but I also had good moments. I'm learning and improving.",
+    distortionTypes: ['All-or-Nothing Thinking'],
+    confidence: 0.9,
+    timestamp: new Date().toISOString(),
+    context: 'Example',
+    extractedFrom: { sessionId: 'example', messageId: 'example' }
+  };
 
   // Helper function to determine font size based on text length
   // Baseline: current balanced thought length (~80-120 chars) = 15px
@@ -92,7 +105,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
   };
 
   // Render a pattern card for the given pattern data
-  const renderPatternCard = (pattern: any) => {
+  // isExample: if true, hides interactive buttons (Reflect, Delete)
+  const renderPatternCard = (pattern: any, isExample: boolean = false) => {
     if (!pattern) return null;
 
     return (
@@ -297,69 +311,71 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </ImageBackground>
         </View>
 
-        {/* Reflect on This Button */}
-        <View style={{
-          marginHorizontal: 16,
-          marginTop: -25,
-          marginBottom: 20,
-        }}>
+        {/* Reflect on This Button - Only show for real patterns, not examples */}
+        {!isExample && (
           <View style={{
-            borderRadius: 12,
-            padding: 2,
-            overflow: 'hidden',
+            marginHorizontal: 16,
+            marginTop: -25,
+            marginBottom: 20,
           }}>
-            <LinearGradient
-              colors={['#2B4A5C', '#5A7B8A']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{
-                borderRadius: 12,
-                padding: 2,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
-                  onInsightPress?.('thinking_pattern_reflection', {
-                    originalThought: pattern.originalThought,
-                    distortionType: pattern.distortionTypes[0] || 'Cognitive Distortion',
-                    reframedThought: pattern.reframedThought,
-                    prompt: prompt
-                  });
-                }}
+            <View style={{
+              borderRadius: 12,
+              padding: 2,
+              overflow: 'hidden',
+            }}>
+              <LinearGradient
+                colors={['#2B4A5C', '#5A7B8A']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
                 style={{
-                  backgroundColor: 'white',
-                  borderRadius: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingVertical: 12,
-                  paddingHorizontal: 20,
+                  borderRadius: 12,
+                  padding: 2,
                 }}
-                activeOpacity={0.8}
               >
-                <MessageCircle
-                  size={16}
-                  color="#2B4A5C"
-                  style={{ marginRight: 6 }}
-                />
-                <Text style={{
-                  color: '#2B4A5C',
-                  fontSize: 14,
-                  fontWeight: '500',
-                  fontFamily: 'Ubuntu-Medium',
-                  marginRight: 4,
-                }}>
-                  {t('insights.moodInsights.reflectOnThis')}
-                </Text>
-                <ArrowRight size={14} color="#2B4A5C" />
-              </TouchableOpacity>
-            </LinearGradient>
+                <TouchableOpacity
+                  onPress={() => {
+                    const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
+                    onInsightPress?.('thinking_pattern_reflection', {
+                      originalThought: pattern.originalThought,
+                      distortionType: pattern.distortionTypes[0] || 'Cognitive Distortion',
+                      reframedThought: pattern.reframedThought,
+                      prompt: prompt
+                    });
+                  }}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: 10,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingVertical: 12,
+                    paddingHorizontal: 20,
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <MessageCircle
+                    size={16}
+                    color="#2B4A5C"
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text style={{
+                    color: '#2B4A5C',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    fontFamily: 'Ubuntu-Medium',
+                    marginRight: 4,
+                  }}>
+                    {t('insights.moodInsights.reflectOnThis')}
+                  </Text>
+                  <ArrowRight size={14} color="#2B4A5C" />
+                </TouchableOpacity>
+              </LinearGradient>
+            </View>
           </View>
-        </View>
+        )}
 
-        {/* Delete Button */}
-        {onDeletePattern && pattern.id && !pattern.id.startsWith('mock_') && (
+        {/* Delete Button - Only show for real patterns, not examples */}
+        {!isExample && onDeletePattern && pattern.id && !pattern.id.startsWith('mock_') && (
           <View style={{
             marginHorizontal: 16,
             marginTop: -8,
@@ -1014,6 +1030,84 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
           </View>
         </View>
 
+        {/* Empty State with "Show Example" Button */}
+        {displayPatterns.length === 0 && (
+          <View style={{
+            marginHorizontal: 16,
+            marginBottom: 32,
+            alignItems: 'center',
+            paddingVertical: 24,
+            paddingHorizontal: 20,
+          }}>
+            <Lightbulb size={48} color="#5A88B5" style={{ marginBottom: 16 }} />
+            <Text style={{
+              fontSize: 16,
+              fontWeight: '600',
+              color: '#374151',
+              textAlign: 'center',
+              fontFamily: 'Ubuntu-Medium',
+              marginBottom: 8,
+            }}>
+              {t('moodInsights.thoughtPatterns.emptyStateTitle')}
+            </Text>
+            <Text style={{
+              fontSize: 14,
+              color: '#6B7280',
+              textAlign: 'center',
+              fontFamily: 'Ubuntu-Light',
+              lineHeight: 20,
+              marginBottom: 20,
+            }}>
+              {t('moodInsights.thoughtPatterns.emptyStateDescription')}
+            </Text>
+
+            {/* Buttons Row */}
+            <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+              <TouchableOpacity
+                onPress={() => setShowExampleModal(true)}
+                style={{
+                  backgroundColor: 'rgba(90, 136, 181, 0.1)',
+                  paddingHorizontal: 20,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: '#5A88B5',
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={{
+                  color: '#5A88B5',
+                  fontSize: 14,
+                  fontWeight: '600',
+                  fontFamily: 'Ubuntu-Medium',
+                }}>
+                  {t('moodInsights.thoughtPatterns.seeExample')}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => onInsightPress?.('exercise', { type: 'automatic-thoughts' })}
+                style={{
+                  backgroundColor: '#5A88B5',
+                  paddingHorizontal: 20,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: 14,
+                  fontWeight: '600',
+                  fontFamily: 'Ubuntu-Medium',
+                }}>
+                  {t('moodInsights.thoughtPatterns.startExercise')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {/* Modern FlatList Swipeable Cards with 3D Effect */}
         {displayPatterns.length > 0 && (
           <Animated.FlatList
@@ -1128,7 +1222,148 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         )}
       </View>
 
+      {/* Example Modal */}
+      <Modal
+        visible={showExampleModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowExampleModal(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 20,
+            marginHorizontal: 20,
+            maxHeight: '85%',
+            width: '90%',
+            overflow: 'hidden',
+          }}>
+            {/* Header with EXAMPLE Badge */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+              paddingTop: 20,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: '#E5E7EB',
+            }}>
+              <View style={{
+                backgroundColor: '#FEF3C7',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: '#F59E0B',
+              }}>
+                <Text style={{
+                  color: '#D97706',
+                  fontSize: 12,
+                  fontWeight: '700',
+                  fontFamily: 'Ubuntu-Medium',
+                  letterSpacing: 0.5,
+                }}>
+                  EXAMPLE
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setShowExampleModal(false)}
+                style={{ padding: 4 }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <X size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
 
+            {/* Scrollable Content */}
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              {/* Info Message */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 16,
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderLeftWidth: 4,
+                borderLeftColor: '#3B82F6',
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#1E40AF',
+                  fontFamily: 'Ubuntu-Medium',
+                  lineHeight: 18,
+                }}>
+                  {t('moodInsights.thoughtPatterns.exampleModalInfo')}
+                </Text>
+              </View>
+
+              {/* Example Pattern Card */}
+              <View style={{ marginTop: 8 }}>
+                {renderPatternCard(examplePattern, true)}
+              </View>
+
+              {/* Bottom Action Buttons */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 8,
+                gap: 12,
+              }}>
+                <LinearGradient
+                  colors={['#2B4A5C', '#5A7B8A']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{
+                    borderRadius: 12,
+                    padding: 2,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowExampleModal(false);
+                      onInsightPress?.('exercise', { type: 'automatic-thoughts' });
+                    }}
+                    style={{
+                      backgroundColor: 'white',
+                      borderRadius: 10,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingVertical: 14,
+                      paddingHorizontal: 20,
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <MessageCircle
+                      size={16}
+                      color="#2B4A5C"
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={{
+                      color: '#2B4A5C',
+                      fontSize: 15,
+                      fontWeight: '600',
+                      fontFamily: 'Ubuntu-Medium',
+                    }}>
+                      {t('moodInsights.thoughtPatterns.startExercise')}
+                    </Text>
+                    <ArrowRight size={16} color="#2B4A5C" style={{ marginLeft: 4 }} />
+                  </TouchableOpacity>
+                </LinearGradient>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
     </>
   );

@@ -261,6 +261,13 @@
         "niceProgress": "Nice progress with Anu! 💬",
         "keepBuilding": "Keep building your insights! ⭐",
         "checkingData": "Checking your data... ✨"
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Try the Automatic Thoughts Exercise",
+        "emptyStateDescription": "Chat with Anu about a specific thought that's bothering you, and we'll help you identify distorted thinking patterns and find balanced perspectives",
+        "seeExample": "See Example",
+        "startExercise": "Start Exercise",
+        "exampleModalInfo": "This is what a thinking pattern looks like. Try the Automatic Thoughts exercise to create your own!"
       }
     },
     "weeklyHighlights": {
