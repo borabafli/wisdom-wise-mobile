@@ -9,7 +9,6 @@ import { moodInsightsService, type MoodInsightsData } from '../services/moodInsi
 import { moodRatingService } from '../services/moodRatingService';
 import { memoryService } from '../services/memoryService';
 import { insightsDashboardStyles as styles } from '../styles/components/InsightsDashboard.styles';
-import { generateSampleMoodData } from '../utils/sampleMoodData';
 import { generateSampleValuesData } from '../utils/sampleValuesData';
 import { getShortConfidenceLabel } from '../utils/confidenceDisplay';
 
@@ -526,24 +525,9 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
       console.log('Data availability:', availability);
       setDataAvailability(availability);
 
-      // Auto-generate sample data if no data exists (for demo purposes)
-      if (!availability.hasSessionSummaries && !availability.hasMoodRatings) {
-        console.log('No data found, auto-generating sample data...');
-        const success = await generateSampleMoodData();
-        if (success) {
-          // Reload availability after generating sample data
-          const newAvailability = await checkDataAvailability();
-          setDataAvailability(newAvailability);
-
-          if (newAvailability.hasSessionSummaries || newAvailability.hasMoodRatings) {
-            const insightsData = await moodInsightsService.generateMoodInsights();
-            console.log('Generated insights from sample data:', insightsData);
-            if (insightsData.sessionsAnalyzed > 0) {
-              setInsights(insightsData);
-            }
-          }
-        }
-      } else {
+      // REMOVED AUTO-GENERATION: Don't auto-generate sample data anymore
+      // Users should see empty state if they have no data
+      if (availability.hasSessionSummaries || availability.hasMoodRatings) {
         // Only generate insights if we have actual data
         const insightsData = await moodInsightsService.generateMoodInsights();
         console.log('Generated insights:', insightsData);
@@ -625,32 +609,6 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               </Text>
             </TouchableOpacity>
           </View>
-
-          {/* Sample Data Button */}
-          <TouchableOpacity
-            onPress={async () => {
-              setLoading(true);
-              await generateSampleMoodData();
-              await loadInsights();
-              setLoading(false);
-            }}
-            style={{
-              marginTop: 16,
-              backgroundColor: '#A78BFA',
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 20,
-            }}
-            activeOpacity={0.8}
-          >
-            <Text style={{
-              color: 'white',
-              fontSize: 13,
-              fontWeight: '500',
-            }}>
-              {t('insights.moodInsights.emptyStates.noData.sampleButton')}
-            </Text>
-          </TouchableOpacity>
         </>
       );
     }
@@ -901,6 +859,46 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         <View style={{ padding: 16, backgroundColor: 'transparent' }}>
           {/* Weekly Mood Comparison with white boxes - moved up */}
           <WeeklyMoodComparison style={{ marginBottom: 12, marginTop: -8 }} />
+
+          {/* Empty state encouragement message - only show when no data */}
+          {(!dataAvailability.hasMoodRatings || dataAvailability.moodRatingCount === 0) && (
+            <View style={{
+              alignItems: 'center',
+              marginTop: 8,
+              marginBottom: 16,
+              paddingHorizontal: 16,
+            }}>
+              <View style={{
+                backgroundColor: 'rgba(90, 136, 181, 0.08)',
+                borderRadius: 16,
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: 'rgba(90, 136, 181, 0.15)',
+              }}>
+                <Text style={{
+                  fontSize: 14,
+                  color: '#5A88B5',
+                  textAlign: 'center',
+                  fontFamily: 'Ubuntu-Medium',
+                  lineHeight: 20,
+                  marginBottom: 4,
+                }}>
+                  {t('insights.moodInsights.emptyState.encouragement')}
+                </Text>
+                <Text style={{
+                  fontSize: 12,
+                  color: '#6B7280',
+                  textAlign: 'center',
+                  fontFamily: 'Ubuntu-Light',
+                  lineHeight: 18,
+                }}>
+                  {t('insights.moodInsights.emptyState.trackProgress')}
+                </Text>
+              </View>
+            </View>
+          )}
 
           {/* Centered weekly trend tag - moved below */}
           <View style={{ alignItems: 'center', marginBottom: 8 }}>

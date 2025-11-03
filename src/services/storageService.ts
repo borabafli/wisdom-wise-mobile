@@ -517,6 +517,27 @@ class StorageService {
     }
   }
 
+  /**
+   * Clear all thought patterns (alias for clearThoughtPatterns)
+   * Used by dataManagementService for bulk deletion
+   */
+  async clearAllThoughtPatterns(): Promise<void> {
+    return this.clearThoughtPatterns();
+  }
+
+  /**
+   * Clear all session insights
+   * Used by dataManagementService for bulk deletion
+   */
+  async clearAllSessionInsights(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.INSIGHTS_HISTORY);
+    } catch (error) {
+      console.error('Error clearing session insights:', error);
+      throw error;
+    }
+  }
+
   // First Message Routing Usage Tracking
   async getFirstMessageRoutingUsage(): Promise<Record<string, number>> {
     try {

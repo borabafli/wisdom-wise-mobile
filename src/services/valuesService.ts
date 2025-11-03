@@ -296,6 +296,28 @@ class ValuesService {
     }
   }
 
+  /**
+   * Delete all values (alias for clearAllValues)
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllValues(): Promise<void> {
+    return this.clearAllValues();
+  }
+
+  /**
+   * Delete all reflections
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllReflections(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.VALUE_REFLECTIONS);
+      console.log('All value reflections cleared');
+    } catch (error) {
+      console.error('Failed to clear value reflections:', error);
+      throw error;
+    }
+  }
+
   // Get values formatted for display in charts
   async getValuesForChart(): Promise<Array<{name: string; importance: number; description: string}>> {
     const values = await this.getValuesByImportance();

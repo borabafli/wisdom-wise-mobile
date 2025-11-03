@@ -113,3 +113,8 @@ export class CardHidingService {
     return this.getHiddenCards();
   }
 }
+
+// Export instance for compatibility with dataManagementService
+export const cardHidingService = {
+  clearAllHiddenCards: () => CardHidingService.clearAllHiddenCards()
+};

@@ -241,10 +241,15 @@
         "difficult": "Difficult",
         "noData": "No data"
       },
+      "noDataYet": "No mood data yet",
       "weeklyTrend": {
         "improving": "↗ Improving",
         "steady": "↔ Steady",
         "declining": "↘ Declining"
+      },
+      "emptyState": {
+        "encouragement": "Chat with Anu to see your mood patterns",
+        "trackProgress": "Your journey starts here"
       },
       "emptyStates": {
         "startJourney": "Start your wellness journey! ✨",
@@ -421,7 +426,22 @@
       }
     },
     "version": "Version 1.0.0",
-    "madeWith": "Made with 💙 for your wellness"
+    "madeWith": "Made with 💙 for your wellness",
+    "deleteData": {
+      "title": "Delete My Data",
+      "summaryMessage": "You're about to delete all your data:\n\n• {{sessions}} chat sessions\n• {{thoughts}} thought patterns\n• {{moods}} mood ratings\n• {{goals}} goals\n• {{values}} values\n\nTotal: {{total}} items\n\nThis action cannot be undone.",
+      "continue": "Continue",
+      "confirmTitle": "Are You Sure?",
+      "confirmMessage": "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone.",
+      "deleteButton": "Delete Everything",
+      "deleting": "Deleting Data",
+      "pleaseWait": "Please wait while we delete your data...",
+      "successTitle": "Data Deleted",
+      "successMessage": "Successfully deleted:\n\n• {{sessions}} chat sessions\n• {{thoughts}} thought patterns\n• {{moods}} mood ratings\n\nTotal: {{total}} items removed",
+      "partialSuccessTitle": "Partial Deletion",
+      "partialSuccessMessage": "Some data was deleted, but errors occurred:\n\n{{errors}}",
+      "errorMessage": "Failed to delete data. Please try again."
+    }
   },
   "featureRequest": {
     "title": "Request a Feature",
@@ -505,11 +525,11 @@
       "saveGoals": "Save Goals"
     },
     "exitConfirmation": {
-      "title": "Save your session?",
-      "message": "Your conversation will be saved and you can continue it later.",
-      "exerciseTitle": "End exercise early?",
-      "exerciseMessage": "Your progress will be saved, but you haven't completed all steps yet.",
-      "confirmButton": "Save & Exit",
+      "title": "End session with Anu?",
+      "message": "Once you exit, Anu will thoughtfully analyze your session to discover meaningful patterns and insights about your journey.",
+      "exerciseTitle": "End session with Anu?",
+      "exerciseMessage": "Anu will reflect on your progress and gather insights from what you've shared so far to support your growth.",
+      "confirmButton": "End Session",
       "cancelButton": "Keep Chatting"
     }
   },

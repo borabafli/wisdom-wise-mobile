@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Save, MessageCircle } from 'lucide-react-native';
+import { Sparkles, MessageCircle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { exitConfirmationDialogStyles as styles } from '../styles/components/ExitConfirmationDialog.styles';
 
@@ -127,7 +127,7 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
                         colors={['#E8F4F1', '#D4E8E4']}
                         style={styles.iconGradient}
                       >
-                        <Save size={28} color="#4A9B8E" strokeWidth={2.5} />
+                        <Sparkles size={28} color="#4A9B8E" strokeWidth={2.5} />
                       </LinearGradient>
                     </View>
 
@@ -159,7 +159,7 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                         >
-                          <Save size={18} color="#ffffff" strokeWidth={2.5} />
+                          <Sparkles size={18} color="#ffffff" strokeWidth={2.5} />
                           <Text style={styles.primaryButtonText}>
                             {t('chat.exitConfirmation.confirmButton')}
                           </Text>
@@ -200,7 +200,7 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
                       colors={['#E8F4F1', '#D4E8E4']}
                       style={styles.iconGradient}
                     >
-                      <Save size={28} color="#4A9B8E" strokeWidth={2.5} />
+                      <Sparkles size={28} color="#4A9B8E" strokeWidth={2.5} />
                     </LinearGradient>
                   </View>
 
@@ -232,7 +232,7 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                       >
-                        <Save size={18} color="#ffffff" strokeWidth={2.5} />
+                        <Sparkles size={18} color="#ffffff" strokeWidth={2.5} />
                         <Text style={styles.primaryButtonText}>
                           {t('chat.exitConfirmation.confirmButton')}
                         </Text>

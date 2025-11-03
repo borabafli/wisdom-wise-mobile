@@ -184,6 +184,14 @@ class ThinkingPatternsService {
   }
 
   /**
+   * Delete all reflections (alias for clearAllData)
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllReflections(): Promise<void> {
+    return this.clearAllData();
+  }
+
+  /**
    * Export all reflection data for backup
    */
   async exportData(): Promise<string> {

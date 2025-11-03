@@ -256,6 +256,14 @@ class GoalService {
     }
   }
 
+  /**
+   * Delete all goals (alias for clearAllGoals)
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllGoals(): Promise<void> {
+    return this.clearAllGoals();
+  }
+
   // Generate AI-friendly goal suggestions based on focus area
   getGoalSuggestions(focusArea: string): string[] {
     const suggestions: { [key: string]: string[] } = {

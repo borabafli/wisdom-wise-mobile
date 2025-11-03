@@ -22,6 +22,7 @@ import { profileScreenStyles as styles } from '../styles/components/ProfileScree
 import streakService from '../services/streakService';
 import { ExerciseCompletionService } from '../services/exerciseCompletionService';
 import { LEGAL_URLS } from '../constants/legal';
+import { dataManagementService } from '../services/dataManagementService';
 
 const ProfileScreen: React.FC = () => {
   const dataPrivacyPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
@@ -195,6 +196,97 @@ const ProfileScreen: React.FC = () => {
         },
       ]
     );
+  };
+
+  const handleDeleteAllData = async () => {
+    try {
+      // First, get data summary to show user what will be deleted
+      const summary = await dataManagementService.getDataSummary();
+
+      // Show first confirmation with data summary
+      Alert.alert(
+        t('profile.deleteData.title'),
+        t('profile.deleteData.summaryMessage', {
+          sessions: summary.chatSessions,
+          thoughts: summary.thoughtPatterns,
+          moods: summary.moodRatings,
+          goals: summary.goals,
+          values: summary.values,
+          total: summary.totalItems
+        }),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('profile.deleteData.continue'),
+            style: 'destructive',
+            onPress: () => {
+              // Show second confirmation (are you sure?)
+              Alert.alert(
+                t('profile.deleteData.confirmTitle'),
+                t('profile.deleteData.confirmMessage'),
+                [
+                  { text: t('common.cancel'), style: 'cancel' },
+                  {
+                    text: t('profile.deleteData.deleteButton'),
+                    style: 'destructive',
+                    onPress: async () => {
+                      try {
+                        // Show loading state
+                        Alert.alert(
+                          t('profile.deleteData.deleting'),
+                          t('profile.deleteData.pleaseWait')
+                        );
+
+                        // Perform deletion
+                        const result = await dataManagementService.deleteAllUserData();
+
+                        // Dismiss loading alert and show result
+                        if (result.success) {
+                          Alert.alert(
+                            t('profile.deleteData.successTitle'),
+                            t('profile.deleteData.successMessage', {
+                              sessions: result.deletedItems.chatSessions,
+                              thoughts: result.deletedItems.thoughtPatterns,
+                              moods: result.deletedItems.moodRatings,
+                              total: Object.values(result.deletedItems).reduce((sum, val) => sum + val, 0)
+                            }),
+                            [
+                              {
+                                text: t('common.ok'),
+                                onPress: () => {
+                                  // Refresh the profile screen to show updated stats
+                                  setRefreshTrigger(prev => prev + 1);
+                                }
+                              }
+                            ]
+                          );
+                        } else {
+                          Alert.alert(
+                            t('profile.deleteData.partialSuccessTitle'),
+                            t('profile.deleteData.partialSuccessMessage', {
+                              errors: result.errors.join(', ')
+                            })
+                          );
+                        }
+                      } catch (error) {
+                        console.error('Error deleting data:', error);
+                        Alert.alert(
+                          t('common.error'),
+                          t('profile.deleteData.errorMessage')
+                        );
+                      }
+                    },
+                  },
+                ]
+              );
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Error preparing data deletion:', error);
+      Alert.alert(t('common.error'), t('errors.genericError'));
+    }
   };
 
   const handleOpenPrivacyPolicy = () => {

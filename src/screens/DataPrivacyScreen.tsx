@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Linking, Alert } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { ArrowLeft, Lock, Eye, Database, Download, Trash2, ExternalLink } from 'lucide-react-native';
@@ -7,12 +7,17 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { dataPrivacyStyles as styles } from '../styles/components/DataPrivacyScreen.styles';
 import { LEGAL_URLS, CONTACT_INFO } from '../constants/legal';
+import { dataManagementService } from '../services/dataManagementService';
+import { useTranslation } from 'react-i18next';
 
 interface DataPrivacyScreenProps {
   onBack: () => void;
 }
 
 const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
+  const { t } = useTranslation();
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleOpenPrivacyPolicy = async () => {
     try {
       await Linking.openURL(LEGAL_URLS.PRIVACY_POLICY);
@@ -28,6 +33,96 @@ const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
     } catch (error) {
       console.error('Error opening email:', error);
       Alert.alert('Error', 'Unable to open email client.');
+    }
+  };
+
+  const handleDeleteAllData = async () => {
+    try {
+      // First, get data summary to show user what will be deleted
+      const summary = await dataManagementService.getDataSummary();
+
+      // Show first confirmation with data summary
+      Alert.alert(
+        t('profile.deleteData.title'),
+        t('profile.deleteData.summaryMessage', {
+          sessions: summary.chatSessions,
+          thoughts: summary.thoughtPatterns,
+          moods: summary.moodRatings,
+          goals: summary.goals,
+          values: summary.values,
+          total: summary.totalItems
+        }),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('profile.deleteData.continue'),
+            style: 'destructive',
+            onPress: () => {
+              // Show second confirmation (are you sure?)
+              Alert.alert(
+                t('profile.deleteData.confirmTitle'),
+                t('profile.deleteData.confirmMessage'),
+                [
+                  { text: t('common.cancel'), style: 'cancel' },
+                  {
+                    text: t('profile.deleteData.deleteButton'),
+                    style: 'destructive',
+                    onPress: async () => {
+                      try {
+                        setIsDeleting(true);
+
+                        // Perform deletion
+                        const result = await dataManagementService.deleteAllUserData();
+
+                        setIsDeleting(false);
+
+                        // Show result
+                        if (result.success) {
+                          Alert.alert(
+                            t('profile.deleteData.successTitle'),
+                            t('profile.deleteData.successMessage', {
+                              sessions: result.deletedItems.chatSessions,
+                              thoughts: result.deletedItems.thoughtPatterns,
+                              moods: result.deletedItems.moodRatings,
+                              total: Object.values(result.deletedItems).reduce((sum, val) => sum + val, 0)
+                            }),
+                            [
+                              {
+                                text: t('common.ok'),
+                                onPress: () => {
+                                  // Close the privacy screen
+                                  onBack();
+                                }
+                              }
+                            ]
+                          );
+                        } else {
+                          Alert.alert(
+                            t('profile.deleteData.partialSuccessTitle'),
+                            t('profile.deleteData.partialSuccessMessage', {
+                              errors: result.errors.join(', ')
+                            })
+                          );
+                        }
+                      } catch (error) {
+                        setIsDeleting(false);
+                        console.error('Error deleting data:', error);
+                        Alert.alert(
+                          t('common.error'),
+                          t('profile.deleteData.errorMessage')
+                        );
+                      }
+                    },
+                  },
+                ]
+              );
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Error preparing data deletion:', error);
+      Alert.alert(t('common.error'), t('errors.genericError'));
     }
   };
 
@@ -131,15 +226,22 @@ const DataPrivacyScreen: React.FC<DataPrivacyScreenProps> = ({ onBack }) => {
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionButton} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              activeOpacity={0.8}
+              onPress={handleDeleteAllData}
+              disabled={isDeleting}
+            >
               <LinearGradient
                 colors={['rgba(254, 202, 202, 0.3)', 'rgba(252, 165, 165, 0.2)']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={styles.actionButtonGradient}
+                style={[styles.actionButtonGradient, isDeleting && { opacity: 0.5 }]}
               >
                 <Trash2 size={20} color="#ef4444" />
-                <Text style={[styles.actionButtonText, { color: '#ef4444' }]}>Delete My Data</Text>
+                <Text style={[styles.actionButtonText, { color: '#ef4444' }]}>
+                  {isDeleting ? 'Deleting...' : 'Delete My Data'}
+                </Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>

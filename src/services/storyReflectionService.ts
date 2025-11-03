@@ -114,6 +114,16 @@ Keep the tone warm, professional, and therapeutic. Avoid being overly clinical o
       encouragement: "Remember that every story has value, including yours. The themes you've explored and the experiences you've shared are all part of what makes your journey unique and meaningful. Keep being gentle with yourself as you continue to grow. 🐢💚"
     };
   }
+
+  /**
+   * Delete all reflections (stub method - no persistent storage)
+   * Story reflections are generated on-demand and not stored persistently
+   * This method exists for compatibility with dataManagementService
+   */
+  async deleteAllReflections(): Promise<void> {
+    // No-op: Story reflections are not stored, they're generated on-demand
+    console.log('Story reflections are not stored persistently - nothing to delete');
+  }
 }
 
 export const storyReflectionService = new StoryReflectionService();

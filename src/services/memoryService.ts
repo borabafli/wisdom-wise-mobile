@@ -695,13 +695,37 @@ class MemoryService {
         STORAGE_KEYS.SUMMARIES,
         STORAGE_KEYS.EXTRACTION_METADATA
       ]);
-      
+
       this.extractionMetadata = {
         lastExtraction: '',
         messageCount: 0
       };
     } catch (error) {
       console.error('Error clearing all memories:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Clear all insights (used by dataManagementService)
+   */
+  async clearAllInsights(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.INSIGHTS);
+    } catch (error) {
+      console.error('Error clearing insights:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Clear all summaries (used by dataManagementService)
+   */
+  async clearAllSummaries(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.SUMMARIES);
+    } catch (error) {
+      console.error('Error clearing summaries:', error);
       throw error;
     }
   }

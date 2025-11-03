@@ -96,31 +96,140 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   const containerPadding = 40; // Increased container padding for better spacing
   const chartWidth = screenWidth - containerPadding; // Use remaining space after padding
   const chartHeight = height - 20; // Reduced to minimize top space
-  
+
   // Padding with space for smiley Y-axis
   const paddingLeft = 60; // Increased space for new emoji images with more padding
   const paddingRight = 20; // Adequate padding
   const paddingTop = 20; // Reduced top padding
   const paddingBottom = 30; // Space for date labels
-  
+
   const graphWidth = Math.max(200, chartWidth - paddingLeft - paddingRight);
   const graphHeight = Math.max(120, chartHeight - paddingTop - paddingBottom);
-  
+
+  // Define constants needed for both empty and data states
+  const minValue = 1;
+  const maxValue = 5;
+  const valueRange = maxValue - minValue;
+
+  // Smiley Y-axis positions (5 smileys for mood scale 1-5)
+  const smileyPositions = [
+    {
+      mood: 5,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-5.png'),
+      y: paddingTop + graphHeight - ((5 - minValue) / valueRange) * graphHeight
+    },
+    {
+      mood: 4,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-4.png'),
+      y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight
+    },
+    {
+      mood: 3,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-3.png'),
+      y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight
+    },
+    {
+      mood: 2,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-2.png'),
+      y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight
+    },
+    {
+      mood: 1,
+      image: require('../../assets/new-design/Insights/Emojis/emoji-1.png'),
+      y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight
+    }
+  ];
 
   if (!moodData.length) {
+    // Show empty chart structure with emojis and grid, no data points
     return (
-      <View style={[styles.emptyContainer, { height }, style]}>
-        <Text style={styles.emptyTitle}>{t('insights.moodInsights.noMoodData')}</Text>
-        <Text style={styles.emptySubtitle}>{t('insights.moodInsights.trackMoodPrompt')}</Text>
+      <View style={[styles.chartContainer, {
+        height,
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'visible',
+        padding: 0
+      }, style]}>
+        <View style={{
+          width: chartWidth,
+          height: chartHeight,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Svg width="100%" height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{marginLeft: 0}}>
+            {/* Grid lines for mood levels 1-5 */}
+            {[1, 2, 3, 4, 5].map((moodLevel) => {
+              const y = paddingTop + graphHeight - ((moodLevel - minValue) / valueRange) * graphHeight;
+              return (
+                <Line
+                  key={`grid-${moodLevel}`}
+                  x1={paddingLeft}
+                  y1={y}
+                  x2={paddingLeft + graphWidth}
+                  y2={y}
+                  stroke="#D1D5DB"
+                  strokeWidth={0.5}
+                  opacity={0.3}
+                />
+              );
+            })}
+          </Svg>
+
+          {/* Smiley Y-axis indicators */}
+          <View style={{
+            position: 'absolute',
+            left: 5,
+            top: 0,
+            bottom: paddingBottom,
+            width: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 8,
+          }}>
+            {smileyPositions.map((smiley, index) => (
+              <Image
+                key={`smiley-${index}`}
+                source={smiley.image}
+                style={{
+                  position: 'absolute',
+                  top: smiley.y - 10,
+                  left: 15,
+                  width: 20,
+                  height: 20,
+                  opacity: 0.4,
+                  borderRadius: 10,
+                }}
+                resizeMode="contain"
+              />
+            ))}
+          </View>
+
+          {/* Empty state message overlaying the chart */}
+          <View style={{
+            position: 'absolute',
+            left: paddingLeft,
+            right: paddingRight,
+            top: paddingTop + (graphHeight / 2) - 30,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <Text style={{
+              fontSize: 13,
+              color: '#9CA3AF',
+              textAlign: 'center',
+              fontFamily: 'Ubuntu-Light',
+              fontStyle: 'italic',
+            }}>
+              {t('insights.moodInsights.noDataYet')}
+            </Text>
+          </View>
+        </View>
       </View>
     );
   }
 
-  // Calculate chart coordinates (mood scale 1-5)
-  const minValue = 1;
-  const maxValue = 5;
-  const valueRange = maxValue - minValue;
-  
+  // Calculate chart coordinates (mood scale 1-5 already defined above)
   const xStep = moodData.length > 1 ? graphWidth / (moodData.length - 1) : 0;
   
   // Generate path for mood line with bounds checking
@@ -191,35 +300,8 @@ export const MoodChart: React.FC<MoodChartProps> = ({
     return `${linePath} L${lastPoint.x},${paddingTop + graphHeight} L${firstPoint.x},${paddingTop + graphHeight} Z`;
   };
 
-  // Smiley Y-axis positions (5 smileys for mood scale 1-5) - Using custom emoji images
-  const smileyPositions = [
-    {
-      mood: 5,
-      image: require('../../assets/new-design/Insights/Emojis/emoji-5.png'), // Best
-      y: paddingTop + graphHeight - ((5 - minValue) / valueRange) * graphHeight
-    },
-    {
-      mood: 4,
-      image: require('../../assets/new-design/Insights/Emojis/emoji-4.png'),
-      y: paddingTop + graphHeight - ((4 - minValue) / valueRange) * graphHeight
-    },
-    {
-      mood: 3,
-      image: require('../../assets/new-design/Insights/Emojis/emoji-3.png'), // Neutral
-      y: paddingTop + graphHeight - ((3 - minValue) / valueRange) * graphHeight
-    },
-    {
-      mood: 2,
-      image: require('../../assets/new-design/Insights/Emojis/emoji-2.png'),
-      y: paddingTop + graphHeight - ((2 - minValue) / valueRange) * graphHeight
-    },
-    {
-      mood: 1,
-      image: require('../../assets/new-design/Insights/Emojis/emoji-1.png'), // Lowest
-      y: paddingTop + graphHeight - ((1 - minValue) / valueRange) * graphHeight
-    }
-  ];
-  
+  // Smiley positions already defined above - they're used for both empty and data states
+
   return (
     <View style={[styles.chartContainer, { 
       height, 
@@ -450,12 +532,86 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
     );
   }
 
-  // Don't show empty state for weekly comparison - always show the bars with emojis
-  if (!weeklyData) {
-    // Only show empty state if data couldn't be loaded at all
+  // Show empty structure if no data
+  if (!weeklyData || (weeklyData.currentWeek.rating === 0 && weeklyData.previousWeek.rating === 0)) {
     return (
-      <View style={[styles.emptyContainer, { height: 120 }, style]}>
-        <Text style={styles.emptyTitle}>Loading weekly data...</Text>
+      <View style={[{ paddingHorizontal: 0 }, style]}>
+        <View style={{ paddingHorizontal: 0 }}>
+          {/* Progress visualization - Side by side layout with empty bars */}
+          <View style={styles.progressVisualization}>
+            <View style={styles.weeksRow}>
+              {/* Previous week - empty state */}
+              <View style={[styles.weekSection, {
+                backgroundColor: '#FFFFFF',
+                borderRadius: 12,
+                padding: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3
+              }]}>
+                <View style={styles.weekHeader}>
+                  <Text style={styles.weekPeriod}>{t('insights.moodInsights.lastWeek')}</Text>
+                  <View style={styles.moodEmoji}>
+                    <Image
+                      source={require('../../assets/new-design/Insights/Emojis/emoji-3.png')}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        marginTop: 4,
+                        opacity: 0.3
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+                <Text style={[styles.moodLabel, { fontFamily: 'Ubuntu-Bold', color: '#D1D5DB' }]}>
+                  {t('insights.moodInsights.moodLabels.noData')}
+                </Text>
+                <View style={styles.progressBar}>
+                  <View style={[styles.progressFill, styles.previousWeekFill, { width: '0%', opacity: 0.3 }]} />
+                </View>
+              </View>
+
+              {/* Current week - empty state */}
+              <View style={[styles.weekSection, {
+                backgroundColor: '#FFFFFF',
+                borderRadius: 12,
+                padding: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3
+              }]}>
+                <View style={styles.weekHeader}>
+                  <Text style={styles.weekPeriod}>{t('insights.moodInsights.thisWeek')}</Text>
+                  <View style={styles.moodEmoji}>
+                    <Image
+                      source={require('../../assets/new-design/Insights/Emojis/emoji-3.png')}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        marginTop: 4,
+                        opacity: 0.3
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+                <Text style={[styles.moodLabel, { fontFamily: 'Ubuntu-Bold', color: '#D1D5DB' }]}>
+                  {t('insights.moodInsights.moodLabels.noData')}
+                </Text>
+                <View style={styles.progressBar}>
+                  <View style={[styles.progressFill, styles.currentWeekFill, { width: '0%', opacity: 0.3 }]} />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
     );
   }

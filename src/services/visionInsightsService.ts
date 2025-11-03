@@ -86,13 +86,21 @@ class VisionInsightsService {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEY);
       if (!data) return [];
-      
+
       const insights: VisionInsight[] = JSON.parse(data);
       return insights.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } catch (error) {
       console.error('Error loading vision insights:', error);
       return [];
     }
+  }
+
+  /**
+   * Get all vision insights (alias for getVisionInsights)
+   * Used by dataManagementService for bulk deletion
+   */
+  async getAllVisionInsights(): Promise<VisionInsight[]> {
+    return this.getVisionInsights();
   }
 
   async getLatestVisionInsight(): Promise<VisionInsight | null> {
@@ -347,6 +355,14 @@ class VisionInsightsService {
       console.error('Error clearing vision insights:', error);
       throw error;
     }
+  }
+
+  /**
+   * Delete all vision insights (alias for clearVisionInsights)
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllVisionInsights(): Promise<void> {
+    return this.clearVisionInsights();
   }
 }
 
