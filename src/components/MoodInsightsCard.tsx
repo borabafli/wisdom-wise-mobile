@@ -1048,7 +1048,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               fontFamily: 'Ubuntu-Medium',
               marginBottom: 8,
             }}>
-              {t('moodInsights.thoughtPatterns.emptyStateTitle')}
+              {t('insights.moodInsights.thoughtPatterns.emptyStateTitle')}
             </Text>
             <Text style={{
               fontSize: 14,
@@ -1058,7 +1058,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               lineHeight: 20,
               marginBottom: 20,
             }}>
-              {t('moodInsights.thoughtPatterns.emptyStateDescription')}
+              {t('insights.moodInsights.thoughtPatterns.emptyStateDescription')}
             </Text>
 
             {/* Buttons Row */}
@@ -1081,7 +1081,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   fontWeight: '600',
                   fontFamily: 'Ubuntu-Medium',
                 }}>
-                  {t('moodInsights.thoughtPatterns.seeExample')}
+                  {t('insights.moodInsights.thoughtPatterns.seeExample')}
                 </Text>
               </TouchableOpacity>
 
@@ -1101,7 +1101,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   fontWeight: '600',
                   fontFamily: 'Ubuntu-Medium',
                 }}>
-                  {t('moodInsights.thoughtPatterns.startExercise')}
+                  {t('insights.moodInsights.thoughtPatterns.startExercise')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1303,7 +1303,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   fontFamily: 'Ubuntu-Medium',
                   lineHeight: 18,
                 }}>
-                  {t('moodInsights.thoughtPatterns.exampleModalInfo')}
+                  {t('insights.moodInsights.thoughtPatterns.exampleModalInfo')}
                 </Text>
               </View>
 
@@ -1354,7 +1354,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                       fontWeight: '600',
                       fontFamily: 'Ubuntu-Medium',
                     }}>
-                      {t('moodInsights.thoughtPatterns.startExercise')}
+                      {t('insights.moodInsights.thoughtPatterns.startExercise')}
                     </Text>
                     <ArrowRight size={16} color="#2B4A5C" style={{ marginLeft: 4 }} />
                   </TouchableOpacity>
