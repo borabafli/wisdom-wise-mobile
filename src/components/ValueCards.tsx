@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList, Dimensions, Modal } from 'react-native';
 import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar, Trash2, X } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -88,13 +88,12 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
   const [showReflectionsModal, setShowReflectionsModal] = useState(false);
   const [showExampleModal, setShowExampleModal] = useState(false);
 
-  useEffect(() => {
-    loadValues();
-  }, []);
-
-  const loadValues = async () => {
+  const loadValues = useCallback(async (options: { skipLoadingState?: boolean } = {}) => {
+    const { skipLoadingState = false } = options;
     try {
-      setLoading(true);
+      if (!skipLoadingState) {
+        setLoading(true);
+      }
       let userValues = await valuesService.getValuesByImportance();
 
       // REMOVED: Auto-generation of sample data
@@ -124,9 +123,23 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
     } catch (error) {
       console.error('Error loading values:', error);
     } finally {
-      setLoading(false);
+      if (!skipLoadingState) {
+        setLoading(false);
+      }
     }
-  };
+  }, [maxValues, t]);
+
+  useEffect(() => {
+    loadValues();
+  }, [loadValues]);
+
+  useEffect(() => {
+    const unsubscribe = valuesService.subscribe(() => {
+      loadValues({ skipLoadingState: true });
+    });
+
+    return unsubscribe;
+  }, [loadValues]);
 
   const renderImportanceStars = (importance: number) => {
     return (

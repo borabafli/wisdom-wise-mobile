@@ -29,6 +29,7 @@ class FeatureRequestService {
 
   /**
    * Validate feature request text
+   * Note: This also validates help messages (prefixed with _help_)
    */
   private validateFeatureText(text: string): { valid: boolean; error?: string } {
     if (!text || text.trim().length === 0) {
@@ -37,7 +38,11 @@ class FeatureRequestService {
 
     const trimmedText = text.trim();
 
-    if (trimmedText.length < 10) {
+    // For help messages (prefixed with _help_), validate the actual message content
+    const isHelpMessage = trimmedText.startsWith('_help_');
+    const contentToValidate = isHelpMessage ? trimmedText.substring(6).trim() : trimmedText;
+
+    if (contentToValidate.length < 10) {
       return { valid: false, error: 'Please write at least 10 characters' };
     }
 

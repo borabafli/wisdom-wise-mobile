@@ -115,7 +115,18 @@
     "noMemoryInsights": "Ainda Não Há Perspectivas de Memória",
     "longTermPatterns": "Padrões e temas de longo prazo",
     "deeperInsights": {
-      "title": "Perspectivas Mais Profundas"
+      "title": "Perspectivas Mais Profundas",
+      "emptyState": {
+        "description": "À medida que você continua suas sessões, padrões e temas de longo prazo serão gerados aqui em categorias como:",
+        "seeExample": "Ver exemplo",
+        "startSession": "Iniciar sessão"
+      },
+      "exampleModal": {
+        "title": "Exemplos de perspectivas mais profundas",
+        "badge": "EXEMPLO",
+        "description": "À medida que você interage com Anu através de sessões de chat, esses padrões e temas de longo prazo serão automaticamente identificados e organizados para você.",
+        "action": "Iniciar sessão com Anu"
+      }
     },
     "deleteConfirm": {
       "title": "Excluir insight?",
@@ -143,6 +154,27 @@
       "reflectionPrompt": "Reflita sobre isso",
       "deleteValue": "Excluir valor",
       "deleteReflection": "Excluir reflexão",
+      "loading": "Carregando seus valores...",
+      "discover": "Descubra seus valores fundamentais",
+      "completeExercise": "Complete o exercício de exploração de valores para identificar o que realmente importa para você",
+      "startExercise": "Começar exercício",
+      "generateSample": "Gerar exemplo",
+      "reflections": "Reflexões",
+      "viewReflectionSingle": "Ver reflexão",
+      "viewReflections": "Ver {{count}} reflexões",
+      "prompt": "Pergunta",
+      "keyInsights": "Principais insights",
+      "emptyState": {
+        "title": "Descubra seus valores fundamentais",
+        "description": "Complete o exercício de exploração de valores para identificar o que realmente importa para você",
+        "seeExample": "Ver exemplo",
+        "startExercise": "Começar exercício"
+      },
+      "exampleModal": {
+        "badge": "EXEMPLO",
+        "infoMessage": "Este é um exemplo do que você verá após completar o exercício de exploração de valores. Seus valores pessoais serão identificados e exibidos aqui.",
+        "startButton": "Começar exercício de valores"
+      },
       "prompts": {
         "liveToday": "Como você viveu esse valor hoje?",
         "feltAligned": "Quando você se sentiu mais alinhado com esse valor recentemente?",
@@ -193,7 +225,8 @@
       "completedSessions": "Você completou",
       "guidedSessions": "sessões guiadas!",
       "nextUp": "Próximo:",
-      "recentAchievements": "Conquistas Recentes"
+      "recentAchievements": "Conquistas Recentes",
+      "recentHighlights": "Destaques Recentes"
     },
     "actions": {
       "reflectOnStrengths": "Refletir sobre Forças",
@@ -204,7 +237,8 @@
     "prompts": {
       "visionReflection": "Vejo que você criou uma bela visão do seu eu futuro. Você descreveu seu eu futuro como incorporando qualidades como: {{qualities}}. Sua visão foi: \"{{description}}\"\n\nEu adoraria explorar essa visão com você. Que aspectos desse eu futuro parecem mais inspiradores para você agora? E que pequeno passo você poderia dar hoje para incorporar um pouco mais dessas qualidades?",
       "strengthReflection": "Notei nas suas perspectivas de longo prazo que você tem algumas forças e padrões positivos. Vamos reservar um momento para refletir sobre essas forças: \"{{content}}\"\n\nO que você acha que torna essas forças particularmente significativas para você? Como você poderia se apoiar mais nessas forças em sua vida diária?",
-      "emotionReflection": "Vejo que você tem algumas perspectivas emocionais profundas de nossas conversas: \"{{content}}\"\n\nÀs vezes é valioso passar tempo com nossas emoções e entender o que elas estão nos dizendo. Que emoções surgem em você quando lê essa perspectiva? O que essas emoções podem estar tentando comunicar a você?"
+      "emotionReflection": "Vejo que você tem algumas perspectivas emocionais profundas de nossas conversas: \"{{content}}\"\n\nÀs vezes é valioso passar tempo com nossas emoções e entender o que elas estão nos dizendo. Que emoções surgem em você quando lê essa perspectiva? O que essas emoções podem estar tentando comunicar a você?",
+      "deeperInsightReflection": "Notei um padrão importante surgindo de nossas conversas sobre {{category}}:\n\n\"{{content}}\"\n\nEsta é uma perspectiva significativa sobre você. Eu adoraria explorar isso mais com você. O que ressoa com você sobre esse padrão? Como ele aparece em sua vida diária e o que você gostaria de entender mais profundamente sobre isso?"
     },
     "thinkingPatterns": {
       "allOrNothing": "Pensamento Tudo ou Nada",
@@ -307,6 +341,12 @@
           "title": "Verificando seus dados... ✨"
         }
       },
+      "exampleModal": {
+        "badge": "EXEMPLO",
+        "title": "Exemplo de rastreamento de humor",
+        "description": "Este exemplo mostra como o rastreamento de humor ajuda a identificar padrões ao longo do tempo. Note os altos e baixos durante a semana e como seu humor melhora no final.",
+        "action": "Entendido, começar rastreamento"
+      },
       "thoughtPatterns": {
         "emptyStateTitle": "Experimente o Exercício de Pensamentos Automáticos",
         "emptyStateDescription": "Converse com Anu sobre um pensamento específico que está te incomodando, e vamos ajudá-lo a identificar padrões de pensamento distorcidos e encontrar perspectivas equilibradas",
@@ -355,7 +395,9 @@
       "streak": "Sequência de Dias",
       "insights": "Padrões de Pensamento",
       "exercises": "Exercícios Completados",
-      "daysStreak": "7 dias"
+      "daysStreak": "7 dias",
+      "days": "{{count}} dia",
+      "days_plural": "{{count}} dias"
     },
     "fallbackName": "Amigo",
     "welcomeMessage": "Bem-vindo ao WisdomWise",
@@ -373,7 +415,6 @@
       "help": "Ajuda e Suporte",
       "signOut": "Sair",
       "language": "Idioma",
-      "testNotification": "Notificação de Teste",
       "createAccount": "Criar Conta",
       "featureRequest": "Solicitar Recurso"
     },
@@ -389,7 +430,6 @@
       "help": "Obter assistência",
       "signOut": "Sair da sua conta",
       "language": "Alterar o idioma do aplicativo",
-      "testNotification": "Enviar uma notificação de teste agora",
       "createAccount": "Salve seu progresso e acesse todos os recursos",
       "featureRequest": "Compartilhe suas ideias conosco",
       "default": "Toque para acessar"
@@ -412,14 +452,6 @@
         "messageSettings": "Por favor, habilite as notificações nas configurações do seu dispositivo para ver notificações de teste.",
         "openSettings": "Abrir Configurações",
         "notNow": "Agora Não"
-      },
-      "testNotificationSent": {
-        "title": "Notificação de Teste Enviada!",
-        "message": "Verifique seu painel de notificações para ver se ela apareceu."
-      },
-      "testNotificationFailed": {
-        "title": "Erro",
-        "message": "Falha ao enviar notificação de teste. Por favor, tente novamente."
       }
     },
     "version": "Versão 1.0.0",
@@ -441,6 +473,23 @@
     "infoText": "Seu feedback nos ajuda a melhorar o WisdomWise. Revisamos todas as solicitações de recursos e priorizamos com base nas necessidades dos usuários.",
     "discardTitle": "Descartar Solicitação?",
     "discardMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartar sua solicitação de recurso?",
+    "discard": "Descartar"
+  },
+  "helpSupport": {
+    "title": "Ajuda e Suporte",
+    "description": "Precisa de ajuda ou tem perguntas? Compartilhe suas preocupações, reporte problemas ou solicite suporte. Estamos aqui para ajudar!",
+    "placeholder": "Descreva seu problema ou pergunta...",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "characterCount": "{{count}}/500 caracteres",
+    "successTitle": "Mensagem Recebida!",
+    "successMessage": "Sua solicitação de suporte foi enviada. Entraremos em contato em breve!",
+    "errorTitle": "Falha no Envio",
+    "errorMessage": "Não foi possível enviar sua solicitação. Por favor, tente novamente mais tarde.",
+    "tooShort": "Por favor, escreva pelo menos 10 caracteres",
+    "tooLong": "Por favor, mantenha sua mensagem abaixo de 500 caracteres",
+    "discardTitle": "Descartar Mensagem?",
+    "discardMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartar sua mensagem?",
     "discard": "Descartar"
   },
   "chat": {

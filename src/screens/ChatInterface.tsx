@@ -407,10 +407,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     <>
       <StatusBar
         barStyle={statusBarStyle}
-        backgroundColor="#ffffff"
+        backgroundColor="#FFFFFE"
         translucent={false}
       />
-      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
+      <SafeAreaWrapper
+        style={styles.container}
+        edges={['top', 'left', 'right']}
+        backgroundColor="#FFFFFE"
+      >
       <View style={styles.backgroundImage}>
         <LinearGradient
           colors={['rgba(255, 255, 254, 0.9)', 'rgba(255, 255, 254, 1.0)']}

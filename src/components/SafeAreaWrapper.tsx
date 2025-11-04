@@ -69,6 +69,25 @@ export const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
     );
   }
 
+  // On iOS, we need to wrap in a View with the background color first
+  // to ensure the rounded corners (safe areas) match the content background
+  if (Platform.OS === 'ios') {
+    return (
+      <>
+        <StatusBar
+          barStyle={statusBarStyle}
+          backgroundColor={backgroundColor}
+          translucent={false}
+        />
+        <View style={{ flex: 1, backgroundColor }}>
+          <SafeAreaView style={containerStyle}>
+            {children}
+          </SafeAreaView>
+        </View>
+      </>
+    );
+  }
+
   return (
     <>
       <StatusBar

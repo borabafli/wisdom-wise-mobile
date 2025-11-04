@@ -114,7 +114,27 @@
     "stepNumber": "Step {{number}}",
     "stepsCount": "{{count}} step",
     "stepsCount_other": "{{count}} steps",
-    "steps": "Steps"
+    "steps": "Steps",
+    "filters": {
+      "all": "All",
+      "durations": {
+        "1-5": "1-5 min",
+        "5-15": "5-15 min",
+        "15-30": "15-30 min",
+        "30+": "30+ min"
+      },
+      "benefits": {
+        "anxiety": "Anxiety",
+        "depressionMood": "Depression / Mood",
+        "selfDiscovery": "Self-Discovery",
+        "mentalClarity": "Mental Clarity",
+        "stressRelief": "Stress Relief",
+        "focus": "Focus",
+        "emotionalBalance": "Emotional Balance",
+        "breathing": "Breathing",
+        "withoutBreathing": "Without Breathing"
+      }
+    }
   },
   "insights": {
     "title": "Insights",
@@ -203,7 +223,35 @@
     },
     "sessionSummaries": {
       "title": "Session Summaries",
-      "subtitle": "Sessions analyzed"
+      "subtitle": "Review your conversations",
+      "analyzedCount": "{{count}} sessions analyzed",
+      "filters": {
+        "all": "All ({{count}})",
+        "sessions": "Sessions ({{count}})",
+        "themes": "Themes ({{count}})"
+      },
+      "infoCard": {
+        "title": "How your summaries work",
+        "body": "Hi {{name}}, every time you end and save a conversation (except Vision of the Future exercises) Anu distills the final 30 messages into a short recap. Only that summary, its date, and message count stay on your device and you can delete it whenever you like.",
+        "meta": {
+          "timing": "Generated right after you finish a saved conversation",
+          "storage": "Stored privately on this device",
+          "consolidated": "Themes appear after 10 summaries"
+        },
+        "highlight": "Ten summaries unlock a Therapeutic Themes overview."
+      },
+      "badges": {
+        "session": "Session",
+        "consolidated": "Consolidated"
+      },
+      "sessionTitle": "Session {{number}}",
+      "themesTitle": "Therapeutic Themes",
+      "consolidatedInfo": "Based on {{count}} sessions",
+      "emptyState": {
+        "title": "No Session Summaries Yet",
+        "description": "Finish a saved conversation with Anu and your personalized recap will appear here."
+      },
+      "loading": "Loading summaries..."
     },
     "therapyGoals": {
       "title": "Therapy Goals",
@@ -251,7 +299,8 @@
     "prompts": {
       "visionReflection": "I see that you've created a beautiful vision of your future self. You described your future self as embodying qualities like: {{qualities}}. Your vision was: \"{{description}}\"\n\nI'd love to explore this vision with you. What aspects of this future self feel most inspiring to you right now? And what small step could you take today to embody a little more of these qualities?",
       "strengthReflection": "I noticed from your memory insights that you have some strengths and positive patterns. Let's take a moment to reflect on these strengths: \"{{content}}\"\n\nWhat do you think makes these strengths particularly meaningful to you? How might you lean into these strengths more in your daily life?",
-      "emotionReflection": "I see that you have some deep emotional insights from our conversations: \"{{content}}\"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?"
+      "emotionReflection": "I see that you have some deep emotional insights from our conversations: \"{{content}}\"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?",
+      "deeperInsightReflection": "I've noticed an important pattern emerging from our conversations about {{category}}:\n\n\"{{content}}\"\n\nThis is a meaningful insight about you. I'd love to explore this further with you. What resonates with you about this pattern? How does it show up in your daily life, and what would you like to understand more deeply about it?"
     },
     "moodInsights": {
       "distortedThought": "Distorted Thought",
@@ -423,7 +472,6 @@
       "help": "Help & Support",
       "signOut": "Sign Out",
       "language": "Language",
-      "testNotification": "Test Notification",
       "createAccount": "Create Account",
       "featureRequest": "Request Feature"
     },
@@ -439,7 +487,6 @@
       "help": "Get assistance",
       "signOut": "Leave your account",
       "language": "Change the app language",
-      "testNotification": "Send a test notification now",
       "createAccount": "Save your progress and access all features",
       "featureRequest": "Share your ideas with us",
       "default": "Tap to access"
@@ -462,14 +509,6 @@
         "messageSettings": "Please enable notifications in your device settings to test notifications.",
         "openSettings": "Open Settings",
         "notNow": "Not Now"
-      },
-      "testNotificationSent": {
-        "title": "Test Notification Sent!",
-        "message": "Check your notification panel to see if it appeared."
-      },
-      "testNotificationFailed": {
-        "title": "Error",
-        "message": "Failed to send test notification. Please try again."
       }
     },
     "version": "Version 1.0.0",
@@ -506,6 +545,23 @@
     "infoText": "Your feedback helps us improve WisdomWise. We review all feature requests and prioritize based on user needs.",
     "discardTitle": "Discard Request?",
     "discardMessage": "You have unsaved changes. Are you sure you want to discard your feature request?",
+    "discard": "Discard"
+  },
+  "helpSupport": {
+    "title": "Help & Support",
+    "description": "Need help or have questions? Share your concerns, report issues, or request support. We're here to help!",
+    "placeholder": "Describe your issue or question...",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "characterCount": "{{count}}/500 characters",
+    "successTitle": "Message Received!",
+    "successMessage": "Your support request has been submitted. We'll get back to you soon!",
+    "errorTitle": "Submission Failed",
+    "errorMessage": "Unable to submit your request. Please try again later.",
+    "tooShort": "Please write at least 10 characters",
+    "tooLong": "Please keep your message under 500 characters",
+    "discardTitle": "Discard Message?",
+    "discardMessage": "You have unsaved changes. Are you sure you want to discard your message?",
     "discard": "Discard"
   },
   "chat": {

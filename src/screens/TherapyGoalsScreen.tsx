@@ -12,13 +12,11 @@ import { therapyGoalsScreenStyles as styles } from '../styles/components/Therapy
 
 interface TherapyGoalsScreenProps {
   onBack: () => void;
-  onNavigateToExercises: () => void;
   onStartGoalSetting: () => void;
 }
 
 const TherapyGoalsScreen: React.FC<TherapyGoalsScreenProps> = ({
   onBack,
-  onNavigateToExercises,
   onStartGoalSetting,
 }) => {
   const [activeGoals, setActiveGoals] = useState<TherapyGoal[]>([]);
@@ -163,14 +161,6 @@ const TherapyGoalsScreen: React.FC<TherapyGoalsScreenProps> = ({
       >
         <Target size={20} color="#FFFFFF" />
         <Text style={styles.primaryButtonText}>Set Your First Goal</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={onNavigateToExercises}
-        style={styles.secondaryButton}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.secondaryButtonText}>Browse Exercises</Text>
       </TouchableOpacity>
     </View>
   );

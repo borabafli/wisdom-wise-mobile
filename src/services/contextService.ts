@@ -18,7 +18,7 @@ class ContextService {
   /**
    * Direct API call for summary generation that bypasses therapeutic response JSON schema
    */
-  async generateSummaryWithDirectAPI(action: string, messages: any[]) {
+  async generateSummaryWithDirectAPI(action: string, messages: any[], sessionId?: string) {
   try {
     // All insight-related actions handled by one endpoint
     const INSIGHT_ACTIONS = [
@@ -132,6 +132,7 @@ Your purpose is to be an empathetic, collaborative guide who helps the user expl
 - At the beginning of a session, start with a gentle, open check-in.
 - Invite the user to share how they’re feeling today, what is on their mind, without pressure.
 - You can reference when relevant previous sessions with questions, you can when relevant connect to previous goals, themes, triggers, or past insights (e.g., “Last time you mentioned…”).
+- Do not echo or paraphrase the user's previous message. Skip responses that start with "I understand that...", "I hear that...", "That makes sense that...", "It is common that...", or any other formulaic validation. Instead, jump directly into deeper exploration with a meaningful question or reflection that moves the conversation forward.
 - Keep the tone warm and collaborative, offering space for the user to set the focus of today’s conversation.
 - Reference these potentially when suggesting or guiding toward exercises:  
   - “This connects to your goal of feeling calmer in social settings.”  
@@ -295,7 +296,7 @@ Final check: Output must be a single valid JSON object, nothing else.`
     - **Every message should include a clear question or instruction to guide the user:**  
       - Ask specific, open-ended questions that help them explore the step's goal
       - Don't just comment on what they said - ALWAYS include a question or next direction
-      - Mirror and validate their response, THEN ask what comes next
+      - Do not echo or paraphrase the user's previous message. Do not start your response with "I understand that...", "I hear that...", "That makes sense that...", "It is a very common that...", or any other formulaic validation. Instead, jump directly into deeper exploration with a meaningful question or reflection that moves the conversation forward.
       - Make the questions personally relevant to what they've shared
     
     **CRITICAL: Every response must either ask a question or give a clear instruction for what to do next. Never just comment without giving direction.**  

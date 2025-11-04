@@ -115,7 +115,18 @@
     "noMemoryInsights": "Noch keine Gedächtnis-Erkenntnisse",
     "longTermPatterns": "Langfristige Muster & Themen",
     "deeperInsights": {
-      "title": "Tiefere Einsichten"
+      "title": "Tiefere Einsichten",
+      "emptyState": {
+        "description": "Wenn Sie Ihre Sitzungen fortsetzen, werden hier langfristige Muster und Themen in Kategorien wie diesen generiert:",
+        "seeExample": "Beispiel ansehen",
+        "startSession": "Sitzung starten"
+      },
+      "exampleModal": {
+        "title": "Beispiele für tiefere Einsichten",
+        "badge": "BEISPIEL",
+        "description": "Während Sie mit Anu durch Chat-Sitzungen interagieren, werden diese langfristigen Muster und Themen automatisch für Sie identifiziert und organisiert.",
+        "action": "Sitzung mit Anu starten"
+      }
     },
     "deleteConfirm": {
       "title": "Erkenntnis löschen?",
@@ -143,6 +154,27 @@
       "reflectionPrompt": "Denke darüber nach",
       "deleteValue": "Wert löschen",
       "deleteReflection": "Reflexion löschen",
+      "loading": "Lade deine Werte...",
+      "discover": "Entdecke deine Grundwerte",
+      "completeExercise": "Absolviere die Werte-Erkundungsübung, um herauszufinden, was dir wirklich wichtig ist",
+      "startExercise": "Übung starten",
+      "generateSample": "Beispiel generieren",
+      "reflections": "Reflexionen",
+      "viewReflectionSingle": "Reflexion ansehen",
+      "viewReflections": "{{count}} Reflexionen ansehen",
+      "prompt": "Aufforderung",
+      "keyInsights": "Wichtige Erkenntnisse",
+      "emptyState": {
+        "title": "Entdecke deine Grundwerte",
+        "description": "Absolviere die Werte-Erkundungsübung, um herauszufinden, was dir wirklich wichtig ist",
+        "seeExample": "Beispiel ansehen",
+        "startExercise": "Übung starten"
+      },
+      "exampleModal": {
+        "badge": "BEISPIEL",
+        "infoMessage": "Dies ist ein Beispiel dafür, was du nach Abschluss der Werte-Erkundungsübung sehen wirst. Deine persönlichen Werte werden hier identifiziert und angezeigt.",
+        "startButton": "Werte-Übung starten"
+      },
       "prompts": {
         "liveToday": "Wie hast du diesen Wert heute gelebt?",
         "feltAligned": "Wann hast du dich kürzlich am meisten mit diesem Wert im Einklang gefühlt?",
@@ -193,7 +225,8 @@
       "completedSessions": "Du hast abgeschlossen",
       "guidedSessions": "geführte Sitzungen!",
       "nextUp": "Als nächstes:",
-      "recentAchievements": "Kürzliche Erfolge"
+      "recentAchievements": "Kürzliche Erfolge",
+      "recentHighlights": "Neueste Highlights"
     },
     "actions": {
       "reflectOnStrengths": "Über Stärken reflektieren",
@@ -204,7 +237,8 @@
     "prompts": {
       "visionReflection": "Ich sehe, dass du eine wunderbare Vision deines zukünftigen Selbst geschaffen hast. Du hast dein zukünftiges Selbst als verkörpernd beschrieben mit Eigenschaften wie: {{qualities}}. Deine Vision war: \"{{description}}\"\n\nIch würde gerne diese Vision mit dir erkunden. Welche Aspekte dieses zukünftigen Selbst fühlen sich für dich gerade am inspirierendsten an? Und welchen kleinen Schritt könntest du heute machen, um ein wenig mehr von diesen Eigenschaften zu verkörpern?",
       "strengthReflection": "Mir ist aus deinen Langzeit-Erkenntnissen aufgefallen, dass du einige Stärken und positive Muster hast. Lass uns einen Moment nehmen, um über diese Stärken zu reflektieren: \"{{content}}\"\n\nWas denkst du, macht diese Stärken besonders bedeutungsvoll für dich? Wie könntest du dich mehr auf diese Stärken in deinem täglichen Leben stützen?",
-      "emotionReflection": "Ich sehe, dass du einige tiefe emotionale Einsichten aus unseren Gesprächen hast: \"{{content}}\"\n\nManchmal ist es wertvoll, Zeit mit unseren Emotionen zu verbringen und zu verstehen, was sie uns sagen. Welche Emotionen kommen in dir auf, wenn du diese Einsicht liest? Was könnten diese Emotionen versuchen, dir zu kommunizieren?"
+      "emotionReflection": "Ich sehe, dass du einige tiefe emotionale Einsichten aus unseren Gesprächen hast: \"{{content}}\"\n\nManchmal ist es wertvoll, Zeit mit unseren Emotionen zu verbringen und zu verstehen, was sie uns sagen. Welche Emotionen kommen in dir auf, wenn du diese Einsicht liest? Was könnten diese Emotionen versuchen, dir zu kommunizieren?",
+      "deeperInsightReflection": "Mir ist ein wichtiges Muster in unseren Gesprächen über {{category}} aufgefallen:\n\n\"{{content}}\"\n\nDas ist eine bedeutungsvolle Einsicht über dich. Ich würde das gerne tiefer mit dir erkunden. Was resoniert mit dir an diesem Muster? Wie zeigt es sich in deinem täglichen Leben und was möchtest du tiefer darüber verstehen?"
     },
     "thinkingPatterns": {
       "allOrNothing": "Schwarz-Weiß-Denken",
@@ -307,6 +341,12 @@
           "title": "Überprüfe deine Daten... ✨"
         }
       },
+      "exampleModal": {
+        "badge": "BEISPIEL",
+        "title": "Stimmungsverfolgung Beispiel",
+        "description": "Dieses Beispiel zeigt, wie die Stimmungsverfolgung hilft, Muster im Laufe der Zeit zu erkennen. Beachte die Höhen und Tiefen während der Woche und wie sich deine Stimmung zum Ende hin verbessert.",
+        "action": "Verstanden, Tracking starten"
+      },
       "thoughtPatterns": {
         "emptyStateTitle": "Probieren Sie die Übung 'Automatische Gedanken' aus",
         "emptyStateDescription": "Sprechen Sie mit Anu über einen bestimmten Gedanken, der Sie beschäftigt, und wir helfen Ihnen, verzerrte Denkmuster zu erkennen und ausgewogene Perspektiven zu finden",
@@ -355,7 +395,9 @@
       "streak": "Tages-Serie",
       "insights": "Denkmuster",
       "exercises": "Abgeschlossene Übungen",
-      "daysStreak": "7 Tage"
+      "daysStreak": "7 Tage",
+      "days": "{{count}} Tag",
+      "days_plural": "{{count}} Tage"
     },
     "fallbackName": "Freund",
     "welcomeMessage": "Willkommen bei WisdomWise",
@@ -373,7 +415,6 @@
       "help": "Hilfe & Support",
       "signOut": "Abmelden",
       "language": "Sprache",
-      "testNotification": "Test-Benachrichtigung",
       "createAccount": "Konto erstellen",
       "featureRequest": "Funktion anfordern"
     },
@@ -389,7 +430,6 @@
       "help": "Hilfe erhalten",
       "signOut": "Konto verlassen",
       "language": "App-Sprache ändern",
-      "testNotification": "Jetzt eine Test-Benachrichtigung senden",
       "createAccount": "Fortschritt speichern und auf alle Funktionen zugreifen",
       "featureRequest": "Teilen Sie uns Ihre Ideen mit",
       "default": "Zum Zugriff tippen"
@@ -412,14 +452,6 @@
         "messageSettings": "Bitte aktivieren Sie Benachrichtigungen in Ihren Geräteeinstellungen, um Test-Benachrichtigungen zu sehen.",
         "openSettings": "Einstellungen öffnen",
         "notNow": "Jetzt nicht"
-      },
-      "testNotificationSent": {
-        "title": "Test-Benachrichtigung gesendet!",
-        "message": "Überprüfen Sie Ihr Benachrichtigungsfeld, um zu sehen, ob sie erschienen ist."
-      },
-      "testNotificationFailed": {
-        "title": "Fehler",
-        "message": "Test-Benachrichtigung konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
       }
     },
     "version": "Version 1.0.0",
@@ -441,6 +473,23 @@
     "infoText": "Ihr Feedback hilft uns, WisdomWise zu verbessern. Wir prüfen alle Funktionsanfragen und priorisieren sie basierend auf Benutzerbedürfnissen.",
     "discardTitle": "Anfrage verwerfen?",
     "discardMessage": "Sie haben nicht gespeicherte Änderungen. Möchten Sie Ihre Funktionsanfrage wirklich verwerfen?",
+    "discard": "Verwerfen"
+  },
+  "helpSupport": {
+    "title": "Hilfe & Support",
+    "description": "Brauchen Sie Hilfe oder haben Sie Fragen? Teilen Sie uns Ihre Anliegen mit, melden Sie Probleme oder fordern Sie Unterstützung an. Wir sind für Sie da!",
+    "placeholder": "Beschreiben Sie Ihr Problem oder Ihre Frage...",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "characterCount": "{{count}}/500 Zeichen",
+    "successTitle": "Nachricht erhalten!",
+    "successMessage": "Ihre Support-Anfrage wurde eingereicht. Wir werden uns bald bei Ihnen melden!",
+    "errorTitle": "Übermittlung fehlgeschlagen",
+    "errorMessage": "Ihre Anfrage konnte nicht übermittelt werden. Bitte versuchen Sie es später erneut.",
+    "tooShort": "Bitte schreiben Sie mindestens 10 Zeichen",
+    "tooLong": "Bitte halten Sie Ihre Nachricht unter 500 Zeichen",
+    "discardTitle": "Nachricht verwerfen?",
+    "discardMessage": "Sie haben nicht gespeicherte Änderungen. Möchten Sie Ihre Nachricht wirklich verwerfen?",
     "discard": "Verwerfen"
   },
   "chat": {

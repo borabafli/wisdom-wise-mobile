@@ -14,6 +14,7 @@ import NotificationSettingsModal from '../components/NotificationSettingsModal';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
 import FeatureRequestModal from '../components/modals/FeatureRequestModal';
+import HelpSupportModal from '../components/modals/HelpSupportModal';
 import { useAuth } from '../contexts';
 import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
@@ -39,6 +40,7 @@ const ProfileScreen: React.FC = () => {
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [showFeatureRequest, setShowFeatureRequest] = useState(false);
+  const [showHelpSupport, setShowHelpSupport] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [sessionsCount, setSessionsCount] = useState<number>(0);
@@ -137,46 +139,6 @@ const ProfileScreen: React.FC = () => {
     );
   };
 
-  const handleTestNotification = () => {
-    const testNotification = async () => {
-      try {
-        const { canRequest, shouldGoToSettings } = await notificationService.canRequestPermissions();
-        const hasPermission = await notificationService.getPermissionStatus();
-
-        if (hasPermission !== 'granted') {
-          if (shouldGoToSettings) {
-            const guidance = notificationService.getDeniedGuidance();
-            Alert.alert(
-              guidance.title,
-              guidance.message,
-              [
-                { text: t('profile.alerts.notificationPermission.notNow'), style: 'cancel' },
-                { text: t('profile.alerts.notificationPermission.openSettings'), style: 'default', onPress: () => { notificationService.openSettings(); } }
-              ]
-            );
-            return;
-          } else if (canRequest) {
-            const granted = await notificationService.requestPermissions();
-            if (!granted) {
-              Alert.alert(t('profile.alerts.notificationPermission.title'), t('profile.alerts.notificationPermission.message'));
-              return;
-            }
-          } else {
-            Alert.alert(t('profile.alerts.notificationPermission.title'), t('profile.alerts.notificationPermission.messageSettings'));
-            return;
-          }
-        }
-
-        await notificationService.sendTestNotification();
-        Alert.alert(t('profile.alerts.testNotificationSent.title'), t('profile.alerts.testNotificationSent.message'));
-      } catch (error) {
-        console.error('Error sending test notification:', error);
-        Alert.alert(t('profile.alerts.testNotificationFailed.title'), t('profile.alerts.testNotificationFailed.message'));
-      }
-    };
-    
-    testNotification();
-  };
 
   const handleRestartOnboarding = () => {
     Alert.alert(
@@ -310,8 +272,7 @@ const ProfileScreen: React.FC = () => {
 
     { iconImage: require('../../assets/images/New Icons/13.png'), label: t('profile.menu.restartOnboarding'), action: handleRestartOnboarding, subtitle: t('profile.menuSubtitles.restartOnboarding') },
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
-    { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.testNotification'), action: handleTestNotification, subtitle: t('profile.menuSubtitles.testNotification') },
-    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => console.log('Help tapped'), subtitle: t('profile.menuSubtitles.help') },
+    { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => setShowHelpSupport(true), subtitle: t('profile.menuSubtitles.help') },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.featureRequest'), action: () => setShowFeatureRequest(true), subtitle: t('profile.menuSubtitles.featureRequest') },
     ...(isAnonymous
       ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: t('profile.menu.createAccount'), action: handleLogin, highlight: true, subtitle: t('profile.menuSubtitles.createAccount') }]
@@ -574,6 +535,7 @@ const ProfileScreen: React.FC = () => {
       <NotificationSettingsModal visible={showNotificationSettings} onClose={() => setShowNotificationSettings(false)} />
       <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       <FeatureRequestModal visible={showFeatureRequest} onClose={() => setShowFeatureRequest(false)} />
+      <HelpSupportModal visible={showHelpSupport} onClose={() => setShowHelpSupport(false)} />
     </SafeAreaWrapper>
   );
 };

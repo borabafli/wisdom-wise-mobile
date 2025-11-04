@@ -115,7 +115,18 @@
     "noMemoryInsights": "Henüz Hafıza Görüşü Yok",
     "longTermPatterns": "Uzun vadeli desenler ve temalar",
     "deeperInsights": {
-      "title": "Daha Derin Görüşler"
+      "title": "Daha Derin Görüşler",
+      "emptyState": {
+        "description": "Oturumlarınıza devam ettikçe, burada aşağıdaki gibi kategorilerde uzun vadeli desenler ve temalar oluşturulacaktır:",
+        "seeExample": "Örnek görün",
+        "startSession": "Oturuma başla"
+      },
+      "exampleModal": {
+        "title": "Daha derin görüşler örnekleri",
+        "badge": "ÖRNEK",
+        "description": "Anu ile sohbet oturumları aracılığıyla etkileşime girdikçe, bu uzun vadeli desenler ve temalar sizin için otomatik olarak tanımlanacak ve organize edilecektir.",
+        "action": "Anu ile oturuma başla"
+      }
     },
     "deleteConfirm": {
       "title": "İçgörüyü sil?",
@@ -143,6 +154,27 @@
       "reflectionPrompt": "Bunu düşünün",
       "deleteValue": "Değeri sil",
       "deleteReflection": "Yansıtmayı sil",
+      "loading": "Değerleriniz yükleniyor...",
+      "discover": "Temel Değerlerinizi Keşfedin",
+      "completeExercise": "Size gerçekten neyin önemli olduğunu belirlemek için Değer Keşfi egzersizini tamamlayın",
+      "startExercise": "Egzersize Başla",
+      "generateSample": "Örnek Oluştur",
+      "reflections": "Yansıtmalar",
+      "viewReflectionSingle": "Yansıtmayı Görüntüle",
+      "viewReflections": "{{count}} Yansıtmayı Görüntüle",
+      "prompt": "Soru",
+      "keyInsights": "Ana Görüşler",
+      "emptyState": {
+        "title": "Temel Değerlerinizi Keşfedin",
+        "description": "Size gerçekten neyin önemli olduğunu belirlemek için Değer Keşfi egzersizini tamamlayın",
+        "seeExample": "Örnek Görün",
+        "startExercise": "Egzersize Başla"
+      },
+      "exampleModal": {
+        "badge": "ÖRNEK",
+        "infoMessage": "Bu, Değer Keşfi egzersizini tamamladıktan sonra göreceğiniz şeyin bir örneğidir. Kişisel değerleriniz burada tanımlanacak ve görüntülenecektir.",
+        "startButton": "Değer Egzersizine Başla"
+      },
       "prompts": {
         "liveToday": "Bugün bu değeri nasıl yaşadınız?",
         "feltAligned": "Son zamanlarda bu değerle en uyumlu ne zaman hissettiniz?",
@@ -193,7 +225,8 @@
       "completedSessions": "Tamamladınız",
       "guidedSessions": "rehberli seanslar!",
       "nextUp": "Sırada:",
-      "recentAchievements": "Son Başarılar"
+      "recentAchievements": "Son Başarılar",
+      "recentHighlights": "Son Önemli Noktalar"
     },
     "actions": {
       "reflectOnStrengths": "Güçlü Yanları Düşünün",
@@ -204,7 +237,8 @@
     "prompts": {
       "visionReflection": "Gelecekteki benliğinizin güzel bir vizyonunu yarattığınızı görüyorum. Gelecekteki benliğinizi şu niteliklerle cisimleştirdiğinizi anlattınız: {{qualities}}. Vizyonunuz şuydu: \"{{description}}\"\n\nBu vizyonu sizinle keşfetmeyi çok isterim. Bu gelecek benliğin hangi yönleri şu anda size en ilham verici geliyor? Ve bugün bu nitelikleri biraz daha cisimleştirmek için hangi küçük adımı atabilirsiniz?",
       "strengthReflection": "Uzun vadeli görüşlerinizden bazı güçlü yanlarınız ve olumlu desenleriniz olduğunu fark ettim. Bu güçlü yanlar üzerinde düşünmek için bir dakika ayıralım: \"{{content}}\"\n\nSizce bu güçlü yanları sizin için özellikle anlamlı kılan nedir? Bu güçlü yanlarınıza günlük yaşamınızda nasıl daha fazla yaslanabilirsiniz?",
-      "emotionReflection": "Konuşmalarımızdan bazı derin duygusal görüşleriniz olduğunu görüyorum: \"{{content}}\"\n\nBazen duygularımızla zaman geçirmek ve bize ne söylediklerini anlamak değerlidir. Bu görüşü okuduğunuzda hangi duygular sizde ortaya çıkıyor? Bu duygular size ne iletmeye çalışıyor olabilir?"
+      "emotionReflection": "Konuşmalarımızdan bazı derin duygusal görüşleriniz olduğunu görüyorum: \"{{content}}\"\n\nBazen duygularımızla zaman geçirmek ve bize ne söylediklerini anlamak değerlidir. Bu görüşü okuduğunuzda hangi duygular sizde ortaya çıkıyor? Bu duygular size ne iletmeye çalışıyor olabilir?",
+      "deeperInsightReflection": "{{category}} hakkındaki konuşmalarımızdan önemli bir desen ortaya çıktığını fark ettim:\n\n\"{{content}}\"\n\nBu, sizin hakkınızda anlamlı bir görüş. Bunu sizinle daha derinlemesine keşfetmek isterim. Bu desen sizde neye karşılık geliyor? Günlük yaşamınızda nasıl ortaya çıkıyor ve bu konuda daha derinlemesine ne anlamak istersiniz?"
     },
     "thinkingPatterns": {
       "allOrNothing": "Hep ya da Hiç Düşüncesi",
@@ -307,6 +341,12 @@
           "title": "Verileriniz kontrol ediliyor... ✨"
         }
       },
+      "exampleModal": {
+        "badge": "ÖRNEK",
+        "title": "Ruh Hali Takip Örneği",
+        "description": "Bu örnek, ruh hali takibinin zaman içinde kalıpları belirlemeye nasıl yardımcı olduğunu gösterir. Hafta boyunca inişlere ve çıkışlara ve sonuna doğru ruh halinizin nasıl iyileştiğine dikkat edin.",
+        "action": "Anladım, Takibe Başla"
+      },
       "thoughtPatterns": {
         "emptyStateTitle": "Otomatik Düşünceler Egzersizini Deneyin",
         "emptyStateDescription": "Sizi rahatsız eden belirli bir düşünce hakkında Anu ile sohbet edin, çarpıtılmış düşünce kalıplarını belirlemenize ve dengeli bakış açıları bulmanıza yardımcı olalım",
@@ -355,7 +395,9 @@
       "streak": "Gün Serisi",
       "insights": "Düşünce Kalıpları",
       "exercises": "Tamamlanan Egzersizler",
-      "daysStreak": "7 gün"
+      "daysStreak": "7 gün",
+      "days": "{{count}} gün",
+      "days_plural": "{{count}} gün"
     },
     "fallbackName": "Arkadaş",
     "welcomeMessage": "WisdomWise'a hoş geldiniz",
@@ -373,7 +415,6 @@
       "help": "Yardım ve Destek",
       "signOut": "Çıkış Yap",
       "language": "Dil",
-      "testNotification": "Test Bildirimi",
       "createAccount": "Hesap Oluştur",
       "featureRequest": "Özellik İsteği"
     },
@@ -389,7 +430,6 @@
       "help": "Yardım alın",
       "signOut": "Hesabınızdan çıkın",
       "language": "Uygulama dilini değiştirin",
-      "testNotification": "Şimdi bir test bildirimi gönderin",
       "createAccount": "İlerlemenizi kaydedin ve tüm özelliklere erişin",
       "featureRequest": "Fikirlerinizi bizimle paylaşın",
       "default": "Erişmek için dokunun"
@@ -412,14 +452,6 @@
         "messageSettings": "Test bildirimlerini görmek için lütfen cihaz ayarlarınızdan bildirimleri etkinleştirin.",
         "openSettings": "Ayarları Aç",
         "notNow": "Şimdi Değil"
-      },
-      "testNotificationSent": {
-        "title": "Test Bildirimi Gönderildi!",
-        "message": "Görünüp görünmediğini görmek için bildirim panelinizi kontrol edin."
-      },
-      "testNotificationFailed": {
-        "title": "Hata",
-        "message": "Test bildirimi gönderilemedi. Lütfen tekrar deneyin."
       }
     },
     "version": "Sürüm 1.0.0",
@@ -443,6 +475,23 @@
     "discardMessage": "Kaydedilmemiş değişiklikleriniz var. Özellik isteğinizi iptal etmek istediğinizden emin misiniz?",
     "discard": "İptal Et"
   },
+  "helpSupport": {
+    "title": "Yardım ve Destek",
+    "description": "Yardıma mı ihtiyacınız var veya sorularınız mı var? Endişelerinizi paylaşın, sorunları bildirin veya destek isteyin. Size yardımcı olmak için buradayız!",
+    "placeholder": "Sorununuzu veya sorunuzu açıklayın...",
+    "submit": "Gönder",
+    "cancel": "İptal",
+    "characterCount": "{{count}}/500 karakter",
+    "successTitle": "Mesaj Alındı!",
+    "successMessage": "Destek talebiniz gönderildi. Yakında sizinle iletişime geçeceğiz!",
+    "errorTitle": "Gönderim Başarısız",
+    "errorMessage": "İsteğiniz gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+    "tooShort": "Lütfen en az 10 karakter yazın",
+    "tooLong": "Lütfen mesajınızı 500 karakterin altında tutun",
+    "discardTitle": "Mesajı İptal Et?",
+    "discardMessage": "Kaydedilmemiş değişiklikleriniz var. Mesajınızı iptal etmek istediğinizden emin misiniz?",
+    "discard": "İptal Et"
+  },
   "chat": {
     "title": "Anu ile Sohbet",
     "subtitle": "Yapay zeka iyilik hali yardımcınız",
@@ -455,15 +504,15 @@
     "thinking": "Düşünüyor...",
     "speakResponse": "Cevabı Söyle",
     "exercise": "Egzersiz",
-    "reflectionSpace": "💭 Yansıtma Alanı",
+    "reflectionSpace": "💭 Dışa vurum alanı",
     "exerciseProgress": "Adım {{current}}/{{total}} • {{title}}",
     "inProgress": "Devam Ediyor",
     "therapeuticExercise": "{{duration}} • Terapotik Egzersiz",
     "loadingSpace": "Güvenli alanınız hazırlanıyor...",
-    "safeSpace": "Yansıtma için güvenli alanınız",
+    "safeSpace": "Dışa vurum için güvenli alanınız",
     "almostAtLimit": "Günlük limite yaklaştınız! {{remaining}} kaldı.",
     "limitUsed": "Günlük limitin %{{percentage}}'i kullanıldı.",
-    "endReflection": "Yansıtmayı Bitir",
+    "endReflection": "Bitir",
     "typeOrSpeak": "Yazın veya konuşun...",
     "composeMessage": "Mesaj Oluştur",
     "suggestExercise": "Egzersiz öner",

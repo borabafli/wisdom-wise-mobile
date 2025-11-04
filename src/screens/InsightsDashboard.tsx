@@ -785,19 +785,16 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                                 <View style={styles.memoryActionButtons}>
                                   <ValuesReflectButton
                                     onPress={() => {
-                                      const prompt = t('insights.prompts.strengthReflection').replace('{{content}}', insight.content);
-                                      onInsightClick('strength_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
+                                      const prompt = t('insights.prompts.deeperInsightReflection')
+                                        .replace('{{category}}', categoryName)
+                                        .replace('{{content}}', insight.content);
+                                      onInsightClick('deeper_insight_reflection', { 
+                                        insightContent: insight.content, 
+                                        category: categoryName, 
+                                        prompt: prompt 
+                                      });
                                     }}
-                                    text={t('insights.actions.reflectOnStrengths')}
-                                    style={{ marginBottom: 8 }}
-                                  />
-
-                                  <ValuesReflectButton
-                                    onPress={() => {
-                                      const prompt = t('insights.prompts.emotionReflection').replace('{{content}}', insight.content);
-                                      onInsightClick('emotion_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
-                                    }}
-                                    text={t('insights.actions.spendTimeWithEmotions')}
+                                    text={t('insights.actions.reflectOnThis')}
                                   />
                                 </View>
                               </>

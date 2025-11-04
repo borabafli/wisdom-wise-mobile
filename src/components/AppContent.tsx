@@ -408,11 +408,7 @@ export const AppContent: React.FC = () => {
         <StatusBar style="dark" backgroundColor="#e9eff1" />
         <TherapyGoalsScreen
           onBack={handleBackFromTherapyGoals}
-          onNavigateToExercises={handleNavigateToExercises}
-          onStartGoalSetting={() => {
-            // TODO: Add goal setting navigation when that feature is implemented
-            console.log('Goal setting requested');
-          }}
+          onStartGoalSetting={() => handleActionSelect('goal-setting')}
         />
       </>
     );

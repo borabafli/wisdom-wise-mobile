@@ -215,6 +215,25 @@ export const useAppState = (t: TFunction) => {
           handleStartSession(patternReflectionExercise);
         }
         break;
+      case 'deeper_insight_reflection':
+        if (insight?.insightContent && insight?.prompt) {
+          // Create a reflection exercise for deeper insights
+          const deeperInsightReflectionExercise = {
+            type: 'thinking_pattern_reflection', // Reuse thinking pattern reflection flow
+            name: 'Deeper Insight Reflection',
+            duration: '10-15 min',
+            description: 'Reflect on long-term patterns and insights',
+            context: {
+              originalThought: insight.insightContent,
+              distortionType: insight.category || 'Pattern',
+              reframedThought: '', // Not needed for deeper insights
+              prompt: insight.prompt
+            }
+          };
+          console.log('Starting deeper insight reflection with exercise:', deeperInsightReflectionExercise);
+          handleStartSession(deeperInsightReflectionExercise);
+        }
+        break;
       case 'exercise':
         // Handle exercise type clicks
         if (insight?.type) {
@@ -300,6 +319,24 @@ export const useAppState = (t: TFunction) => {
         console.log('Opening breathing screen from quick actions');
         setBreathingExercise(null); // No specific exercise, will default to 4-7-8
         setShowBreathing(true);
+        break;
+      case 'goal-setting':
+        // Handle therapy goal setting button click
+        console.log('Starting therapy goal setting exercise');
+        
+        // Close the Therapy Goals screen first
+        setShowTherapyGoals(false);
+        
+        // 🎯 Track first action - therapy goal setting started
+        firstActionTracker.trackFirstAction('therapy_goal_setting_started');
+        
+        const goalSettingExercise = {
+          type: 'goal-setting',
+          name: 'Therapy Goal-Setting',
+          duration: '20 min',
+          description: 'Define your therapeutic goals for your healing journey'
+        };
+        handleStartSession(goalSettingExercise);
         break;
       default:
         handleStartSession();
