@@ -212,6 +212,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       // Trigger the same confirmation flow as the visual back button
+      console.log('🔍 [BACK BUTTON DEBUG] Creating exercise context:');
+      console.log('  - exerciseMode:', exerciseMode);
+      console.log('  - exerciseData.currentExercise:', exerciseData.currentExercise);
+      console.log('  - exerciseData.currentExercise?.type:', exerciseData.currentExercise?.type);
+      console.log('  - isValueReflection:', isValueReflection);
+      console.log('  - isThinkingPatternReflection:', isThinkingPatternReflection);
+
       const exerciseContext = {
         exerciseMode,
         exerciseType: exerciseData.currentExercise?.type,
@@ -219,6 +226,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         isThinkingPatternReflection,
         isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
       };
+      console.log('🔍 [BACK BUTTON DEBUG] Final exerciseContext:', JSON.stringify(exerciseContext, null, 2));
       chatSession.handleEndSession(onBack, exerciseContext);
       return true; // Prevent default behavior
     });
@@ -437,8 +445,16 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           ]}>
             <View style={styles.headerContent}>
               <View style={styles.headerLeft}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => {
+                    console.log('🔍 [VISUAL BACK BUTTON DEBUG] Creating exercise context:');
+                    console.log('  - exerciseMode:', exerciseMode);
+                    console.log('  - exerciseData:', exerciseData);
+                    console.log('  - exerciseData.currentExercise:', exerciseData.currentExercise);
+                    console.log('  - exerciseData.currentExercise?.type:', exerciseData.currentExercise?.type);
+                    console.log('  - isValueReflection:', isValueReflection);
+                    console.log('  - isThinkingPatternReflection:', isThinkingPatternReflection);
+
                     const exerciseContext = {
                       exerciseMode,
                       exerciseType: exerciseData.currentExercise?.type,
@@ -446,6 +462,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                       isThinkingPatternReflection,
                       isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
                     };
+                    console.log('🔍 [VISUAL BACK BUTTON DEBUG] Final exerciseContext:', JSON.stringify(exerciseContext, null, 2));
                     chatSession.handleEndSession(onBack, exerciseContext);
                   }}
                   style={styles.backButton}

@@ -418,7 +418,7 @@ const styles = {
     lineHeight: 20,
   },
   addButton: {
-    backgroundColor: '#fbbf24',
+    backgroundColor: '#5A88B5',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 20,
@@ -433,11 +433,11 @@ const styles = {
     marginTop: 12,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+    backgroundColor: 'rgba(90, 136, 181, 0.1)',
     alignItems: 'center' as const,
   },
   viewAllText: {
-    color: '#d97706',
+    color: '#5A88B5',
     fontSize: 14,
     fontWeight: '600' as const,
   },

@@ -25,9 +25,9 @@ interface ThoughtPattern {
 
 interface ExtractInsightsRequest {
   messages: Message[];
-  sessionId: string;
+  sessionId?: string; // Optional - required for extract_patterns, optional for others
   userId?: string;
-  action: 'extract_patterns' | 'extract_insights' | 'generate_summary' | 'consolidate_summaries' | 'extract_vision_insights' | 'generate_vision_summary';
+  action: 'extract_patterns' | 'extract_insights' | 'generate_summary' | 'consolidate_summaries' | 'extract_vision_insights' | 'generate_vision_summary' | 'extract_values';
   summaries?: string[]; // For consolidation
 }
 
@@ -38,6 +38,7 @@ interface ExtractInsightsResponse {
   summary?: string;
   consolidated_summary?: string;
   visionInsights?: any;
+  values?: any[]; // Extracted values from values-clarification exercise
   message?: string; // For contextService compatibility
   error?: string;
   processingTime?: number;
@@ -248,6 +249,55 @@ Return only a JSON object with this structure:
 
 **Only include domains that were meaningfully discussed. If a domain wasn't explored, omit it from lifeDomains.**`;
 
+const VALUES_EXTRACTION_PROMPT = `You are analyzing a Values Clarification exercise conversation to extract the user's core values. The user has completed an exercise exploring what truly matters to them in life.
+
+**EXTRACT THE FOLLOWING:**
+
+For each clearly identified value, extract:
+1. **Value Name**: A clear, concise name for the value (e.g., "Connection", "Freedom", "Growth", "Health", "Creativity", "Achievement")
+2. **User Description**: The user's own words describing what this value means to them personally and why it's important (2-4 sentences, direct quotes preferred)
+3. **Importance**: How important this value is to the user on a 1-5 scale:
+   - 5: Absolutely essential, core to their identity, mentioned as "most important" or "everything"
+   - 4: Very important, clearly significant, mentioned with strong emotion or emphasis
+   - 3: Important but not central, mentioned as "matters" or "care about"
+   - 2: Somewhat important, mentioned briefly without much emphasis
+   - 1: Acknowledged but not deeply important
+4. **Tags**: 3-5 related keywords that connect to this value (e.g., ["family", "connection", "relationships", "love"])
+
+**EXTRACTION CRITERIA:**
+- Only extract values that are clearly and explicitly discussed in depth
+- The user must have shared personal meaning, not just mentioned the word
+- Look for values that came up multiple times or were explored emotionally
+- Prefer the user's own language and descriptions - avoid generic therapy language
+- Each value should have substantial personal context (not just "I value health")
+- Confidence threshold: only extract if you're 80%+ confident this is a genuine core value
+
+**COMMON CORE VALUES (for reference, not exhaustive):**
+Family, Friendship, Connection, Love, Growth, Learning, Creativity, Adventure, Stability, Security, Health, Wellness, Freedom, Independence, Achievement, Success, Authenticity, Compassion, Kindness, Justice, Peace, Beauty, Wisdom, Courage, Integrity, Spirituality, Service, Excellence, Balance, Fun, Humor
+
+**RESPONSE FORMAT:**
+Return only a JSON object with this structure:
+{
+  "values": [
+    {
+      "name": "Connection",
+      "userDescription": "Being close to my family and friends gives me strength. I feel most alive when I'm sharing meaningful moments with people I care about. Deep relationships are what make life worth living for me.",
+      "importance": 5,
+      "tags": ["family", "friendship", "relationships", "love", "belonging"],
+      "confidence": 0.95
+    },
+    {
+      "name": "Growth",
+      "userDescription": "I love learning new things and becoming a better version of myself. Every challenge is an opportunity to grow stronger and develop new skills.",
+      "importance": 4,
+      "tags": ["learning", "development", "improvement", "progress", "self-improvement"],
+      "confidence": 0.88
+    }
+  ]
+}
+
+**QUALITY OVER QUANTITY**: Better to extract 2-4 deeply meaningful values than 10 superficial ones. If the conversation didn't deeply explore values, return fewer values or an empty array.`;
+
 Deno.serve(async (req: Request) => {
   const startTime = performance.now();
   
@@ -317,6 +367,15 @@ Deno.serve(async (req: Request) => {
     switch (action) {
       case 'extract_patterns':
         // Original thought pattern extraction
+        if (!sessionId) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'sessionId is required for extract_patterns action'
+          }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
         const patterns = await extractThoughtPatterns(OPENROUTER_API_KEY, messages, sessionId);
         response = {
           success: true,
@@ -443,6 +502,43 @@ Deno.serve(async (req: Request) => {
             processingTime: Math.round(performance.now() - startTime)
           };
         }
+        break;
+
+      case 'extract_values':
+        // Extract values from values-clarification exercise
+        const extractedValues = await extractValuesFromConversation(OPENROUTER_API_KEY, messages);
+
+        // Validate extracted values
+        const validatedValues = extractedValues.filter(value => {
+          // Check minimum confidence (0.80)
+          if (value.confidence < 0.80) {
+            console.warn(`Skipping value - confidence too low: ${value.confidence}`);
+            return false;
+          }
+
+          // Check that name and description exist
+          if (!value.name || !value.userDescription) {
+            console.warn(`Skipping value - missing required fields`);
+            return false;
+          }
+
+          // Check minimum description length (meaningful context)
+          const wordCount = value.userDescription?.split(/\s+/).length || 0;
+          if (wordCount < 15) {
+            console.warn(`Skipping value - description too short: ${wordCount} words`);
+            return false;
+          }
+
+          return true;
+        });
+
+        console.log(`Values extraction: ${validatedValues.length} of ${extractedValues.length} values passed validation`);
+
+        response = {
+          success: true,
+          values: validatedValues,
+          processingTime: Math.round(performance.now() - startTime)
+        };
         break;
 
       default:
@@ -1002,5 +1098,106 @@ async function extractVisionInsights(apiKey: string, messages: Message[]): Promi
   } catch (error) {
     console.error('Error extracting vision insights:', error);
     return null;
+  }
+}
+
+async function extractValuesFromConversation(apiKey: string, messages: Message[]): Promise<any[]> {
+  try {
+    // Get relevant messages for values extraction
+    const relevantMessages = messages
+      .filter(msg => (msg.type === 'user' || msg.type === 'system') && (msg.text || msg.content))
+      .slice(-30)
+      .map(msg => {
+        const content = msg.text || msg.content || '';
+        const speaker = msg.type === 'user' ? 'User' : 'Therapist';
+        return `${speaker}: ${content}`;
+      })
+      .join('\n\n');
+
+    if (!relevantMessages.trim()) {
+      return [];
+    }
+
+    // Check if this actually contains values-related content
+    const valuesKeywords = [
+      'values',
+      'what matters',
+      'important to me',
+      'core value',
+      'deeply care',
+      'meaningful',
+      'priority',
+      'what I value'
+    ];
+
+    const relevantText = relevantMessages.toLowerCase();
+    const hasValuesContent = valuesKeywords.some(keyword => relevantText.includes(keyword));
+
+    if (!hasValuesContent) {
+      console.log('No values-related keywords found in conversation');
+      return [];
+    }
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://wisdomwise.app',
+        'X-Title': 'WisdomWise',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-3.5-sonnet',
+        messages: [
+          {
+            role: 'system',
+            content: VALUES_EXTRACTION_PROMPT
+          },
+          {
+            role: 'user',
+            content: `Analyze this Values Clarification exercise conversation and extract the user's core values:\n\n${relevantMessages}`
+          }
+        ],
+        max_tokens: 2000,
+        temperature: 0.3,
+        stream: false
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`LLM API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const result = data.choices?.[0]?.message?.content;
+
+    if (!result) {
+      return [];
+    }
+
+    // Parse JSON response
+    try {
+      const jsonMatch = result.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        return [];
+      }
+
+      const parsed = JSON.parse(jsonMatch[0]);
+
+      // Validate that we have meaningful values
+      if (!parsed.values || !Array.isArray(parsed.values) || parsed.values.length === 0) {
+        return [];
+      }
+
+      console.log(`Extracted ${parsed.values.length} values from conversation`);
+      return parsed.values;
+    } catch (parseError) {
+      console.error('JSON parse error for values extraction:', parseError);
+      return [];
+    }
+
+  } catch (error) {
+    console.error('Error extracting values from conversation:', error);
+    return [];
   }
 }

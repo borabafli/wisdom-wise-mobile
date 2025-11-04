@@ -39,6 +39,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
   const { t } = useTranslation();
   const [insights, setInsights] = useState<MoodInsightsData | null>(null);
   const [showExampleModal, setShowExampleModal] = useState(false);
+  const [showMoodExampleModal, setShowMoodExampleModal] = useState(false);
 
   // Example pattern data for demonstration
   const examplePattern = {
@@ -318,59 +319,43 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             marginTop: -25,
             marginBottom: 20,
           }}>
-            <View style={{
-              borderRadius: 12,
-              padding: 2,
-              overflow: 'hidden',
-            }}>
-              <LinearGradient
-                colors={['#2B4A5C', '#5A7B8A']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{
-                  borderRadius: 12,
-                  padding: 2,
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
-                    onInsightPress?.('thinking_pattern_reflection', {
-                      originalThought: pattern.originalThought,
-                      distortionType: pattern.distortionTypes[0] || 'Cognitive Distortion',
-                      reframedThought: pattern.reframedThought,
-                      prompt: prompt
-                    });
-                  }}
-                  style={{
-                    backgroundColor: 'white',
-                    borderRadius: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingVertical: 12,
-                    paddingHorizontal: 20,
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <MessageCircle
-                    size={16}
-                    color="#2B4A5C"
-                    style={{ marginRight: 6 }}
-                  />
-                  <Text style={{
-                    color: '#2B4A5C',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    fontFamily: 'Ubuntu-Medium',
-                    marginRight: 4,
-                  }}>
-                    {t('insights.moodInsights.reflectOnThis')}
-                  </Text>
-                  <ArrowRight size={14} color="#2B4A5C" />
-                </TouchableOpacity>
-              </LinearGradient>
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                const prompt = `I noticed that your thought "${pattern.originalThought}" might show a pattern of ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortion'}. Sometimes when we experience ${pattern.distortionTypes[0]?.toLowerCase() || 'cognitive distortions'}, it can make situations feel more challenging than they might actually be. Would you like to explore this specific thought pattern with me?`;
+                onInsightPress?.('thinking_pattern_reflection', {
+                  originalThought: pattern.originalThought,
+                  distortionType: pattern.distortionTypes[0] || 'Cognitive Distortion',
+                  reframedThought: pattern.reframedThought,
+                  prompt: prompt
+                });
+              }}
+              style={{
+                backgroundColor: '#5A88B5',
+                borderRadius: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+              }}
+              activeOpacity={0.8}
+            >
+              <MessageCircle
+                size={16}
+                color="#FFFFFF"
+                style={{ marginRight: 6 }}
+              />
+              <Text style={{
+                color: '#FFFFFF',
+                fontSize: 14,
+                fontWeight: '500',
+                fontFamily: 'Ubuntu-Medium',
+                marginRight: 4,
+              }}>
+                {t('insights.moodInsights.reflectOnThis')}
+              </Text>
+              <ArrowRight size={14} color="#FFFFFF" />
+            </TouchableOpacity>
           </View>
         )}
 
@@ -480,8 +465,8 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
       });
 
       if (currentWeekRatings.length > 0 && previousWeekRatings.length > 0) {
-        const currentAvg = currentWeekRatings.reduce((sum, r) => sum + r.rating, 0) / currentWeekRatings.length;
-        const previousAvg = previousWeekRatings.reduce((sum, r) => sum + r.rating, 0) / previousWeekRatings.length;
+        const currentAvg = currentWeekRatings.reduce((sum, r) => sum + r.moodRating, 0) / currentWeekRatings.length;
+        const previousAvg = previousWeekRatings.reduce((sum, r) => sum + r.moodRating, 0) / previousWeekRatings.length;
 
         // Add wiggle room: ±0.3 on 0-5 scale (6% tolerance)
         const threshold = 0.3;
@@ -801,6 +786,9 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
     }
   };
 
+  // Check if there's mood data to display
+  const hasMoodData = dataAvailability.hasMoodRatings && dataAvailability.moodRatingCount > 0;
+
   return (
     <>
       {/* White Container around entire Your Mood section */}
@@ -811,9 +799,9 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         marginBottom: 20,
         overflow: 'hidden'
       }}>
-        {/* Mood Chart section without background */}
+        {/* Mood Chart section */}
         <View style={{
-          minHeight: 320,
+          minHeight: hasMoodData ? 320 : 'auto',
           justifyContent: 'flex-start',
           backgroundColor: 'transparent',
           position: 'relative'
@@ -837,7 +825,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
             <View style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginBottom: 32,
+              marginBottom: hasMoodData ? 32 : 20,
               marginLeft: 24,
               marginTop: 16,
               gap: 12
@@ -864,20 +852,27 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               </View>
             </View>
 
-            {/* Main Mood Chart */}
-            <View style={{ marginTop: -8 }}>
-              <MoodChart days={14} height={200} />
-            </View>
+            {/* Main Mood Chart - Only show if there's data */}
+            {hasMoodData && (
+              <View style={{ marginTop: -8 }}>
+                <MoodChart days={14} height={200} />
+              </View>
+            )}
           </View>
         </View>
 
-        {/* Weekly Progress Section - Inside white container */}
-        <View style={{ padding: 16, backgroundColor: 'transparent' }}>
-          {/* Weekly Mood Comparison with white boxes - moved up */}
-          <WeeklyMoodComparison style={{ marginBottom: 12, marginTop: -8 }} />
-
-          {/* Empty state encouragement message - only show when no data */}
-          {(!dataAvailability.hasMoodRatings || dataAvailability.moodRatingCount === 0) && (
+        {/* Weekly Progress Section or Empty State */}
+        {hasMoodData ? (
+          <View style={{ padding: 16, backgroundColor: 'transparent' }}>
+            {/* Weekly Mood Comparison with white boxes - moved up */}
+            <WeeklyMoodComparison style={{ marginBottom: 12, marginTop: -8 }} />
+          </View>
+        ) : (
+          /* Empty state with See Example and Start Tracking buttons */
+          <View style={{
+            padding: 20,
+            paddingTop: 0,
+          }}>
             <View style={{
               alignItems: 'center',
               marginTop: 8,
@@ -892,6 +887,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                 alignItems: 'center',
                 borderWidth: 1,
                 borderColor: 'rgba(90, 136, 181, 0.15)',
+                width: '100%',
               }}>
                 <Text style={{
                   fontSize: 14,
@@ -909,15 +905,74 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                   textAlign: 'center',
                   fontFamily: 'Ubuntu-Light',
                   lineHeight: 18,
+                  marginBottom: 16,
                 }}>
                   {t('insights.moodInsights.emptyState.trackProgress')}
                 </Text>
+
+                {/* Action buttons */}
+                <View style={{
+                  flexDirection: 'row',
+                  gap: 12,
+                  justifyContent: 'center',
+                  width: '100%',
+                }}>
+                  {/* See Example Button */}
+                  <TouchableOpacity
+                    onPress={() => setShowMoodExampleModal(true)}
+                    style={{
+                      flex: 1,
+                      borderWidth: 1.5,
+                      borderColor: '#5A88B5',
+                      borderRadius: 12,
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      alignItems: 'center',
+                      backgroundColor: 'transparent',
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{
+                      color: '#5A88B5',
+                      fontSize: 13,
+                      fontWeight: '600',
+                      fontFamily: 'Ubuntu-Medium',
+                    }}>
+                      {t('insights.moodInsights.emptyState.seeExample')}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Start Tracking Button */}
+                  <TouchableOpacity
+                    onPress={() => onInsightPress?.('mood_tracking_start')}
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#5A88B5',
+                      borderRadius: 12,
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      alignItems: 'center',
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={{
+                      color: '#FFFFFF',
+                      fontSize: 13,
+                      fontWeight: '600',
+                      fontFamily: 'Ubuntu-Medium',
+                    }}>
+                      {t('insights.moodInsights.emptyState.startTracking')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          )}
+          </View>
+        )}
 
-          {/* Centered weekly trend tag - moved below */}
-          <View style={{ alignItems: 'center', marginBottom: 8 }}>
+        {/* Show weekly trend tag only if there's data */}
+        {hasMoodData && (
+          <View style={{ alignItems: 'center', marginBottom: 8, paddingHorizontal: 16 }}>
             {weeklyTrend === 'improving' && (
               <View style={{
                 backgroundColor: '#5A88B5',
@@ -972,7 +1027,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
               </View>
             )}
           </View>
-        </View>
+        )}
       </View>
 
       {/* White Container around Your Thought Patterns section */}
@@ -1359,6 +1414,158 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
                     <ArrowRight size={16} color="#2B4A5C" style={{ marginLeft: 4 }} />
                   </TouchableOpacity>
                 </LinearGradient>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Mood Example Modal */}
+      <Modal
+        visible={showMoodExampleModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowMoodExampleModal(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 20,
+            marginHorizontal: 20,
+            maxHeight: '85%',
+            width: '90%',
+            overflow: 'hidden',
+          }}>
+            {/* Header with EXAMPLE Badge */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+              paddingTop: 20,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: '#E5E7EB',
+            }}>
+              <View style={{
+                backgroundColor: '#FEF3C7',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: '#F59E0B',
+              }}>
+                <Text style={{
+                  color: '#D97706',
+                  fontSize: 12,
+                  fontWeight: '700',
+                  fontFamily: 'Ubuntu-Medium',
+                  letterSpacing: 0.5,
+                }}>
+                  {t('insights.moodInsights.exampleModal.badge')}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setShowMoodExampleModal(false)}
+                style={{ padding: 4 }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <X size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Scrollable Content */}
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              {/* Info Message */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 16,
+                backgroundColor: 'rgba(90, 136, 181, 0.1)',
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderLeftWidth: 4,
+                borderLeftColor: '#5A88B5',
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#2B4A5C',
+                  fontFamily: 'Ubuntu-Medium',
+                  lineHeight: 18,
+                }}>
+                  {t('insights.moodInsights.exampleModal.description')}
+                </Text>
+              </View>
+
+              {/* Example Mood Chart */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 20,
+              }}>
+                <Text style={{
+                  fontSize: 18,
+                  fontWeight: '600',
+                  color: '#1F2937',
+                  fontFamily: 'Ubuntu-Medium',
+                  marginBottom: 16,
+                }}>
+                  {t('insights.moodInsights.exampleModal.title')}
+                </Text>
+                <MoodChart days={14} height={200} isExample={true} />
+              </View>
+
+              {/* Example Weekly Comparison */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 20,
+              }}>
+                <WeeklyMoodComparison isExample={true} />
+              </View>
+
+              {/* Bottom Action Button */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 24,
+              }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowMoodExampleModal(false);
+                    onInsightPress?.('mood_tracking_start');
+                  }}
+                  style={{
+                    backgroundColor: '#5A88B5',
+                    borderRadius: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingVertical: 14,
+                    paddingHorizontal: 20,
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <MessageCircle
+                    size={16}
+                    color="#FFFFFF"
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={{
+                    color: '#FFFFFF',
+                    fontSize: 15,
+                    fontWeight: '600',
+                    fontFamily: 'Ubuntu-Medium',
+                  }}>
+                    {t('insights.moodInsights.exampleModal.action')}
+                  </Text>
+                  <ArrowRight size={16} color="#FFFFFF" style={{ marginLeft: 4 }} />
+                </TouchableOpacity>
               </View>
             </ScrollView>
           </View>

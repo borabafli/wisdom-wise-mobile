@@ -129,7 +129,18 @@
     "noMemoryInsights": "No Memory Insights Yet",
     "longTermPatterns": "Long-term patterns & themes",
     "deeperInsights": {
-      "title": "Deeper Insights"
+      "title": "Deeper Insights",
+      "emptyState": {
+        "description": "As you continue your sessions, long-term patterns and themes will be generated here in categories such as:",
+        "seeExample": "See Example",
+        "startSession": "Start Session"
+      },
+      "exampleModal": {
+        "title": "Deeper Insights Examples",
+        "badge": "EXAMPLE",
+        "description": "As you interact with Anu through chat sessions, these long-term patterns and themes will be automatically identified and organized for you.",
+        "action": "Start Session with Anu"
+      }
     },
     "deleteConfirm": {
       "title": "Delete Insight?",
@@ -157,6 +168,27 @@
       "reflectionPrompt": "Reflect on this",
       "deleteValue": "Delete value",
       "deleteReflection": "Delete reflection",
+      "loading": "Loading your values...",
+      "discover": "Discover Your Core Values",
+      "completeExercise": "Complete the Values Exploration exercise to identify what truly matters to you",
+      "startExercise": "Start Exercise",
+      "generateSample": "Generate Sample",
+      "reflections": "Reflections",
+      "viewReflectionSingle": "View Reflection",
+      "viewReflections": "View {{count}} Reflections",
+      "prompt": "Prompt",
+      "keyInsights": "Key Insights",
+      "emptyState": {
+        "title": "Discover Your Core Values",
+        "description": "Complete the Values Exploration exercise to identify what truly matters to you",
+        "seeExample": "See Example",
+        "startExercise": "Start Exercise"
+      },
+      "exampleModal": {
+        "badge": "EXAMPLE",
+        "infoMessage": "This is an example of what you'll see after completing the Values Exploration exercise. Your personal values will be identified and displayed here.",
+        "startButton": "Start Values Exercise"
+      },
       "prompts": {
         "liveToday": "How did you live this value today?",
         "feltAligned": "When did you feel most aligned with this value recently?",
@@ -249,7 +281,15 @@
       },
       "emptyState": {
         "encouragement": "Chat with Anu to see your mood patterns",
-        "trackProgress": "Your journey starts here"
+        "trackProgress": "Your journey starts here",
+        "seeExample": "See Example",
+        "startTracking": "Start Tracking"
+      },
+      "exampleModal": {
+        "badge": "EXAMPLE",
+        "title": "Mood Tracking Example",
+        "description": "This example shows how mood tracking helps identify patterns over time. Notice the ups and downs throughout the week and how your mood improves toward the end.",
+        "action": "Got It, Start Tracking"
       },
       "emptyStates": {
         "startJourney": "Start your wellness journey! ✨",
@@ -359,10 +399,10 @@
     "memberSince": "Member since",
     "anonymousGuest": "Anonymous Guest",
     "stats": {
-      "sessions": "Sessions",
-      "streak": "Streak",
-      "insights": "Insights",
-      "exercises": "Exercises",
+      "sessions": "Conversations",
+      "streak": "Day Streak",
+      "insights": "Thought Patterns",
+      "exercises": "Exercises Completed",
       "daysStreak": "7 days",
       "days": "{{count}} day",
       "days_plural": "{{count}} days"
@@ -497,6 +537,11 @@
       "title": "How are you feeling right now?",
       "subtitle": "Rate your current mood",
       "saved": "Saved!"
+    },
+    "moodRatingCard": {
+      "title": "Before we finish...",
+      "howDoYouFeelNow": "How do you feel right now?",
+      "howHelpfulWasThis": "How helpful was this?"
     },
     "visionSummary": {
       "title": "Vision Summary",

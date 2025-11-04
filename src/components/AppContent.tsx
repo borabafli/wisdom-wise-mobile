@@ -262,6 +262,18 @@ export const AppContent: React.FC = () => {
     navigateToTab('Insights');
   }, [navigateToTab]);
 
+  // Wrap handleInsightClick to handle navigation cases
+  const wrappedHandleInsightClick = useCallback((type: string, insight?: any) => {
+    // Handle mood tracking start - navigate to Exercises tab
+    if (type === 'mood_tracking_start') {
+      navigateToTab('Exercises');
+      return;
+    }
+    
+    // For all other cases, use the original handler
+    handleInsightClick(type, insight);
+  }, [handleInsightClick, navigateToTab]);
+
   // Simple scale + fade animation when chat opens/closes
   useEffect(() => {
     if (showChat && !isChatVisible) {
@@ -432,7 +444,7 @@ export const AppContent: React.FC = () => {
                     {...props}
                     onStartSession={handleStartSession}
                     onExerciseClick={handleExerciseClick}
-                    onInsightClick={handleInsightClick}
+                    onInsightClick={wrappedHandleInsightClick}
                     onNavigateToExercises={handleNavigateToExercises}
                     onNavigateToInsights={handleNavigateToInsights}
                     onActionSelect={handleActionSelect}
@@ -470,7 +482,7 @@ export const AppContent: React.FC = () => {
                 <TabSlideView>
                   <InsightsDashboard
                     {...props}
-                    onInsightClick={handleInsightClick}
+                    onInsightClick={wrappedHandleInsightClick}
                     onTherapyGoalsClick={handleTherapyGoalsClick}
                     onExerciseClick={handleExerciseClick}
                   />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { MoodSlider } from './MoodSlider';
 import { moodRatingService, MoodRating } from '../../services/moodRatingService';
 import { moodRatingCardStyles as styles } from '../../styles/components/MoodRatingCard.styles';
@@ -20,6 +21,7 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
   onComplete,
   onSkip
 }) => {
+  const { t } = useTranslation();
   const [moodRating, setMoodRating] = useState<number>(2.5);
   const [helpfulnessRating, setHelpfulnessRating] = useState<number>(2.5);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,31 +106,37 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
         end={{ x: 1, y: 1 }}
         style={styles.gradientBackground}
       />
-      <Text style={styles.title}>Before we finish...</Text>
-      
+      <Text style={styles.title}>{t('chat.moodRatingCard.title')}</Text>
+
       {currentSlider === 'mood' && (
-        <MoodSlider
-          title=""
-          subtitle=""
-          initialValue={moodRating}
-          type="mood"
-          onRatingChange={setMoodRating}
-          onComplete={handleMoodComplete}
-          onSkip={onSkip ? handleSkip : undefined}
-        />
+        <View style={styles.questionSection}>
+          <Text style={styles.questionText}>{t('chat.moodRatingCard.howDoYouFeelNow')}</Text>
+          <MoodSlider
+            title=""
+            subtitle=""
+            initialValue={moodRating}
+            type="mood"
+            onRatingChange={setMoodRating}
+            onComplete={handleMoodComplete}
+            onSkip={onSkip ? handleSkip : undefined}
+          />
+        </View>
       )}
-      
+
       {currentSlider === 'helpfulness' && (
-        <MoodSlider
-          title=""
-          subtitle=""
-          initialValue={helpfulnessRating}
-          type="helpfulness"
-          variant="test"
-          onRatingChange={setHelpfulnessRating}
-          onComplete={handleHelpfulnessComplete}
-          onSkip={onSkip ? handleSkip : undefined}
-        />
+        <View style={styles.questionSection}>
+          <Text style={styles.questionText}>{t('chat.moodRatingCard.howHelpfulWasThis')}</Text>
+          <MoodSlider
+            title=""
+            subtitle=""
+            initialValue={helpfulnessRating}
+            type="helpfulness"
+            variant="test"
+            onRatingChange={setHelpfulnessRating}
+            onComplete={handleHelpfulnessComplete}
+            onSkip={onSkip ? handleSkip : undefined}
+          />
+        </View>
       )}
     </View>
   );

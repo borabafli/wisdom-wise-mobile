@@ -297,7 +297,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     marginBottom: spacing[8],
   },
   completeDailyTaskButton: {
-    backgroundColor: '#5BA3B8',
+    backgroundColor: '#5A88B5',
     borderRadius: 18,
     paddingVertical: 16,
     paddingHorizontal: 32,
@@ -306,7 +306,7 @@ export const insightsDashboardStyles = StyleSheet.create({
     height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#5BA3B8',
+    shadowColor: '#5A88B5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,

@@ -351,10 +351,10 @@
     "memberSince": "Bu tarihten beri üye",
     "anonymousGuest": "Anonim Ziyaretçi",
     "stats": {
-      "sessions": "Seanslar",
-      "streak": "Seri",
-      "insights": "Görüşler",
-      "exercises": "Egzersizler",
+      "sessions": "Konuşmalar",
+      "streak": "Gün Serisi",
+      "insights": "Düşünce Kalıpları",
+      "exercises": "Tamamlanan Egzersizler",
       "daysStreak": "7 gün"
     },
     "fallbackName": "Arkadaş",

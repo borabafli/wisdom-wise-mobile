@@ -28,12 +28,25 @@ export const moodRatingCardStyles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: spacing[6],
-    marginHorizontal: spacing[2], // Use more horizontal space
+    marginBottom: spacing[8],
+    marginHorizontal: spacing[2],
     paddingHorizontal: spacing[4],
     lineHeight: 24,
   },
-  
+
+  questionSection: {
+    marginBottom: spacing[6],
+  },
+
+  questionText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: colors.text.primary,
+    textAlign: 'center',
+    marginBottom: spacing[4],
+    lineHeight: 22,
+  },
+
   subtitle: {
     fontSize: 14,
     fontWeight: '400',

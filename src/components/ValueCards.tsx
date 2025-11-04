@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList, Dimensions, Modal } from 'react-native';
-import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar, Trash2 } from 'lucide-react-native';
+import { Star, MessageCircle, Heart, ArrowRight, BarChart3, ChevronLeft, ChevronRight, Eye, Calendar, Trash2, X } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { ValuesReflectButton } from './ReflectButton';
 import Svg, { Rect, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { valuesService, type UserValue, type ValueReflectionSummary } from '../services/valuesService';
-import { generateSampleValuesData } from '../utils/sampleValuesData';
 
 interface ValueCardsProps {
   onStartReflection?: (valueId: string, prompt: string, valueName: string, valueDescription: string) => void;
+  onStartExercise?: () => void;
   showBarChart?: boolean;
   maxValues?: number;
   onDelete?: (reflectionId: string) => void;
@@ -35,8 +35,45 @@ const REFLECTION_PROMPT_KEYS: Array<{key: string, category: 'daily' | 'alignment
 
 const { width: screenWidth } = Dimensions.get('window');
 
+// Example data for the preview modal
+const EXAMPLE_VALUES: Array<Omit<UserValue, 'id' | 'createdDate' | 'updatedDate'> & { id: string }> = [
+  {
+    id: 'example-1',
+    name: 'Connection',
+    userDescription: 'Being close to my family and friends gives me strength. I feel most alive when I\'m sharing meaningful moments with people I care about.',
+    importance: 5,
+    sourceSessionId: 'example',
+    tags: ['family', 'friendship', 'relationships', 'love']
+  },
+  {
+    id: 'example-2',
+    name: 'Freedom',
+    userDescription: 'Having the ability to make my own choices and live life on my terms is incredibly important. I value independence and flexibility.',
+    importance: 4,
+    sourceSessionId: 'example',
+    tags: ['independence', 'choice', 'autonomy', 'flexibility']
+  },
+  {
+    id: 'example-3',
+    name: 'Health',
+    userDescription: 'Taking care of my body and mind is essential for everything else I want to do. When I feel physically strong, I feel mentally resilient.',
+    importance: 4,
+    sourceSessionId: 'example',
+    tags: ['fitness', 'wellness', 'energy', 'vitality']
+  },
+  {
+    id: 'example-4',
+    name: 'Creativity',
+    userDescription: 'Expressing myself through art, writing, and creative projects brings me deep joy. It\'s how I process my emotions and share my unique perspective.',
+    importance: 4,
+    sourceSessionId: 'example',
+    tags: ['art', 'expression', 'originality', 'imagination']
+  }
+];
+
 export const ValueCards: React.FC<ValueCardsProps> = ({
   onStartReflection,
+  onStartExercise,
   showBarChart = true,
   maxValues = 6,
   onDelete,
@@ -49,6 +86,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
   const [currentValueIndex, setCurrentValueIndex] = useState(0);
   const [reflections, setReflections] = useState<Map<string, ValueReflectionSummary[]>>(new Map());
   const [showReflectionsModal, setShowReflectionsModal] = useState(false);
+  const [showExampleModal, setShowExampleModal] = useState(false);
 
   useEffect(() => {
     loadValues();
@@ -58,18 +96,10 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
     try {
       setLoading(true);
       let userValues = await valuesService.getValuesByImportance();
-      
-      // Auto-generate sample data if no values exist (for demo purposes)
-      if (userValues.length === 0) {
-        console.log('No values found, auto-generating sample data...');
-        const success = await generateSampleValuesData();
-        if (success) {
-          // Reload values after generating sample data
-          userValues = await valuesService.getValuesByImportance();
-          console.log('Sample values generated and loaded:', userValues.length);
-        }
-      }
-      
+
+      // REMOVED: Auto-generation of sample data
+      // Users should see empty state if they have no values
+
       const limitedValues = userValues.slice(0, maxValues);
       setValues(limitedValues);
       
@@ -358,87 +388,364 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
 
   if (values.length === 0) {
     return (
-      <View style={{
-        backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 160
-      }}>
-        <Heart size={48} color="#698991" />
-        <Text style={{
-          fontSize: 18,
-          fontWeight: '600',
-          color: '#374151',
-          marginTop: 12,
-          textAlign: 'center'
+      <>
+        <View style={{
+          backgroundColor: 'white',
+          borderRadius: 16,
+          padding: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 180
         }}>
-          {t('insights.values.discover')}
-        </Text>
-        <Text style={{
-          fontSize: 14,
-          color: '#6B7280',
-          marginTop: 8,
-          textAlign: 'center',
-          lineHeight: 20
-        }}>
-          {t('insights.values.completeExercise')}
-        </Text>
-        <View style={{ flexDirection: 'row', gap: 12 }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#698991',
-              borderRadius: 12,
-              paddingVertical: 12,
-              paddingHorizontal: 20,
-              marginTop: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-              flex: 1
-            }}
-            activeOpacity={0.8}
-          >
-            <MessageCircle size={16} color="white" />
-            <Text style={{
-              color: 'white',
-              fontSize: 14,
-              fontWeight: '500',
-              marginLeft: 6
-            }}>
-              {t('insights.values.startExercise')}
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={async () => {
-              setLoading(true);
-              await generateSampleValuesData();
-              await loadValues();
-              setLoading(false);
-            }}
-            style={{
-              backgroundColor: '#A78BFA',
-              borderRadius: 12,
-              paddingVertical: 12,
-              paddingHorizontal: 20,
-              marginTop: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-              flex: 1
-            }}
-            activeOpacity={0.8}
-          >
-            <Text style={{
-              color: 'white',
-              fontSize: 14,
-              fontWeight: '500'
-            }}>
-              {t('insights.values.generateSample')}
-            </Text>
-          </TouchableOpacity>
+          <Heart size={48} color="#698991" />
+          <Text style={{
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#374151',
+            marginTop: 12,
+            textAlign: 'center'
+          }}>
+            {t('insights.values.emptyState.title') || 'Discover Your Core Values'}
+          </Text>
+          <Text style={{
+            fontSize: 14,
+            color: '#6B7280',
+            marginTop: 8,
+            textAlign: 'center',
+            lineHeight: 20,
+            paddingHorizontal: 10
+          }}>
+            {t('insights.values.emptyState.description') || 'Complete the Values Exploration exercise to identify what truly matters to you'}
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: 20 }}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('See Example clicked, setting modal to true');
+                setShowExampleModal(true);
+              }}
+              style={{
+                backgroundColor: 'transparent',
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderWidth: 1.5,
+                borderColor: '#5A88B5',
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={{
+                color: '#5A88B5',
+                fontSize: 14,
+                fontWeight: '600'
+              }}>
+                {t('insights.values.emptyState.seeExample') || 'See Example'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                console.log('Start Exercise clicked');
+                onStartExercise?.();
+              }}
+              style={{
+                backgroundColor: '#5A88B5',
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              activeOpacity={0.8}
+            >
+              <MessageCircle size={16} color="white" />
+              <Text style={{
+                color: 'white',
+                fontSize: 14,
+                fontWeight: '600',
+                marginLeft: 6
+              }}>
+                {t('insights.values.emptyState.startExercise') || 'Start Exercise'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+
+        {/* Example Modal - Must be included in empty state return */}
+        <Modal
+          visible={showExampleModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowExampleModal(false)}
+        >
+          <View style={{
+            flex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            <View style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: 20,
+              marginHorizontal: 20,
+              maxHeight: '85%',
+              width: '90%',
+              overflow: 'hidden',
+            }}>
+              {/* Header with EXAMPLE Badge */}
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: 20,
+                paddingTop: 20,
+                paddingBottom: 12,
+                borderBottomWidth: 1,
+                borderBottomColor: '#E5E7EB',
+              }}>
+                <View style={{
+                  backgroundColor: '#FEF3C7',
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: '#F59E0B',
+                }}>
+                  <Text style={{
+                    color: '#D97706',
+                    fontSize: 12,
+                    fontWeight: '700',
+                    letterSpacing: 0.5,
+                  }}>
+                    {t('insights.values.exampleModal.badge') || 'EXAMPLE'}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setShowExampleModal(false)}
+                  style={{ padding: 4 }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <X size={24} color="#6B7280" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Scrollable Content */}
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
+              >
+                {/* Info Message */}
+                <View style={{
+                  marginHorizontal: 20,
+                  marginTop: 16,
+                  backgroundColor: '#EFF6FF',
+                  borderRadius: 12,
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderLeftWidth: 4,
+                  borderLeftColor: '#3B82F6',
+                }}>
+                  <Text style={{
+                    fontSize: 13,
+                    color: '#1E40AF',
+                    lineHeight: 18,
+                  }}>
+                    {t('insights.values.exampleModal.infoMessage') || 'This is an example of what you\'ll see after completing the Values Exploration exercise. Your personal values will be identified and displayed here.'}
+                  </Text>
+                </View>
+
+                {/* Example Bar Chart */}
+                <View style={{
+                  backgroundColor: 'white',
+                  borderRadius: 16,
+                  padding: 20,
+                  marginHorizontal: 20,
+                  marginTop: 16,
+                  marginBottom: 16,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 3,
+                }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                    <BarChart3 size={24} color="#698991" />
+                    <Text style={{
+                      fontSize: 18,
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginLeft: 8
+                    }}>
+                      {t('insights.values.overview') || 'Core Values'}
+                    </Text>
+                  </View>
+
+                  {EXAMPLE_VALUES.map((value, index) => {
+                    const maxBarWidth = 200;
+                    const barWidth = Math.max(20, (value.importance / 5) * maxBarWidth);
+                    return (
+                      <View key={value.id} style={{ marginBottom: 12 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151' }}>
+                            {value.name}
+                          </Text>
+                          <Text style={{ fontSize: 12, color: '#6B7280' }}>
+                            {value.importance}/5
+                          </Text>
+                        </View>
+                        <View style={{
+                          height: 8,
+                          backgroundColor: '#F3F4F6',
+                          borderRadius: 4,
+                          overflow: 'hidden',
+                          width: maxBarWidth
+                        }}>
+                          <Svg width={barWidth} height={8}>
+                            <Defs>
+                              <LinearGradient id={`exampleValueGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                                <Stop offset="0%" stopColor="#698991" stopOpacity="1" />
+                                <Stop offset="100%" stopColor="#8BA3A8" stopOpacity="1" />
+                              </LinearGradient>
+                            </Defs>
+                            <Rect
+                              x={0}
+                              y={0}
+                              width={barWidth}
+                              height={8}
+                              fill={`url(#exampleValueGradient${index})`}
+                              rx={4}
+                            />
+                          </Svg>
+                        </View>
+                      </View>
+                    );
+                  })}
+                </View>
+
+                {/* Example Value Cards (show 2) */}
+                {EXAMPLE_VALUES.slice(0, 2).map((value) => (
+                  <View key={value.id} style={{
+                    backgroundColor: 'white',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginHorizontal: 20,
+                    marginBottom: 12,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                    elevation: 3,
+                    borderLeftWidth: 4,
+                    borderLeftColor: '#698991',
+                  }}>
+                    {/* Header with value name and stars */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                      <View style={{ flex: 1, marginRight: 12 }}>
+                        <Text style={{
+                          fontSize: 18,
+                          fontWeight: '600',
+                          color: '#374151',
+                          marginBottom: 4
+                        }}>
+                          🏷️ {value.name}
+                        </Text>
+                        <View style={{ flexDirection: 'row', gap: 2 }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              size={14}
+                              color={star <= value.importance ? '#698991' : '#E5E7EB'}
+                              fill={star <= value.importance ? '#698991' : 'transparent'}
+                            />
+                          ))}
+                        </View>
+                      </View>
+                    </View>
+
+                    {/* User's own words */}
+                    <View style={{
+                      backgroundColor: '#F8FAFC',
+                      borderRadius: 12,
+                      padding: 12,
+                      marginBottom: 12,
+                      borderLeftWidth: 3,
+                      borderLeftColor: '#698991'
+                    }}>
+                      <Text style={{
+                        fontSize: 14,
+                        color: '#475569',
+                        fontStyle: 'italic',
+                        lineHeight: 20
+                      }}>
+                        "{value.userDescription}"
+                      </Text>
+                    </View>
+
+                    {/* Reflection prompt */}
+                    <View style={{
+                      backgroundColor: '#EFF6FF',
+                      borderRadius: 12,
+                      padding: 12,
+                    }}>
+                      <Text style={{
+                        fontSize: 13,
+                        color: '#1E40AF',
+                        marginBottom: 8,
+                        fontWeight: '500'
+                      }}>
+                        💭 {t('insights.values.reflectionPrompt') || 'Reflection Prompt'}
+                      </Text>
+                      <Text style={{
+                        fontSize: 14,
+                        color: '#374151',
+                        lineHeight: 20
+                      }}>
+                        {t('insights.values.prompts.liveToday') || 'How did you live this value today?'}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+
+                {/* Bottom Action Button */}
+                <View style={{
+                  marginHorizontal: 20,
+                  marginTop: 8,
+                }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowExampleModal(false);
+                      onStartExercise?.();
+                    }}
+                    style={{
+                      backgroundColor: '#5A88B5',
+                      borderRadius: 12,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingVertical: 14,
+                      paddingHorizontal: 20,
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <MessageCircle
+                      size={16}
+                      color="#FFFFFF"
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={{
+                      color: '#FFFFFF',
+                      fontSize: 15,
+                      fontWeight: '600',
+                    }}>
+                      {t('insights.values.exampleModal.startButton') || 'Start Values Exercise'}
+                    </Text>
+                    <ArrowRight size={16} color="#FFFFFF" style={{ marginLeft: 4 }} />
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
+      </>
     );
   }
 
@@ -551,7 +858,7 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
             <TouchableOpacity
               onPress={() => setShowReflectionsModal(false)}
               style={{
-                backgroundColor: '#698991',
+                backgroundColor: '#5A88B5',
                 paddingHorizontal: 12,
                 paddingVertical: 6,
                 borderRadius: 8,
@@ -676,6 +983,282 @@ export const ValueCards: React.FC<ValueCardsProps> = ({
               </View>
             ))}
           </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Example Modal */}
+      <Modal
+        visible={showExampleModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowExampleModal(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 20,
+            marginHorizontal: 20,
+            maxHeight: '85%',
+            width: '90%',
+            overflow: 'hidden',
+          }}>
+            {/* Header with EXAMPLE Badge */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+              paddingTop: 20,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: '#E5E7EB',
+            }}>
+              <View style={{
+                backgroundColor: '#FEF3C7',
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: '#F59E0B',
+              }}>
+                <Text style={{
+                  color: '#D97706',
+                  fontSize: 12,
+                  fontWeight: '700',
+                  letterSpacing: 0.5,
+                }}>
+                  {t('insights.values.exampleModal.badge') || 'EXAMPLE'}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setShowExampleModal(false)}
+                style={{ padding: 4 }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <X size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Scrollable Content */}
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              {/* Info Message */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 16,
+                backgroundColor: '#EFF6FF',
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderLeftWidth: 4,
+                borderLeftColor: '#3B82F6',
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#1E40AF',
+                  lineHeight: 18,
+                }}>
+                  {t('insights.values.exampleModal.infoMessage') || 'This is an example of what you\'ll see after completing the Values Exploration exercise. Your personal values will be identified and displayed here.'}
+                </Text>
+              </View>
+
+              {/* Example Bar Chart */}
+              <View style={{
+                backgroundColor: 'white',
+                borderRadius: 16,
+                padding: 20,
+                marginHorizontal: 20,
+                marginTop: 16,
+                marginBottom: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 3,
+              }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                  <BarChart3 size={24} color="#698991" />
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '600',
+                    color: '#374151',
+                    marginLeft: 8
+                  }}>
+                    {t('insights.values.overview') || 'Core Values'}
+                  </Text>
+                </View>
+
+                {EXAMPLE_VALUES.map((value, index) => {
+                  const maxBarWidth = 200;
+                  const barWidth = Math.max(20, (value.importance / 5) * maxBarWidth);
+                  return (
+                    <View key={value.id} style={{ marginBottom: 12 }}>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151' }}>
+                          {value.name}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: '#6B7280' }}>
+                          {value.importance}/5
+                        </Text>
+                      </View>
+                      <View style={{
+                        height: 8,
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 4,
+                        overflow: 'hidden',
+                        width: maxBarWidth
+                      }}>
+                        <Svg width={barWidth} height={8}>
+                          <Defs>
+                            <LinearGradient id={`exampleValueGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                              <Stop offset="0%" stopColor="#698991" stopOpacity="1" />
+                              <Stop offset="100%" stopColor="#8BA3A8" stopOpacity="1" />
+                            </LinearGradient>
+                          </Defs>
+                          <Rect
+                            x={0}
+                            y={0}
+                            width={barWidth}
+                            height={8}
+                            fill={`url(#exampleValueGradient${index})`}
+                            rx={4}
+                          />
+                        </Svg>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+
+              {/* Example Value Cards (show 2) */}
+              {EXAMPLE_VALUES.slice(0, 2).map((value) => (
+                <View key={value.id} style={{
+                  backgroundColor: 'white',
+                  borderRadius: 16,
+                  padding: 16,
+                  marginHorizontal: 20,
+                  marginBottom: 12,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 3,
+                  borderLeftWidth: 4,
+                  borderLeftColor: '#698991',
+                }}>
+                  {/* Header with value name and stars */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                    <View style={{ flex: 1, marginRight: 12 }}>
+                      <Text style={{
+                        fontSize: 18,
+                        fontWeight: '600',
+                        color: '#374151',
+                        marginBottom: 4
+                      }}>
+                        🏷️ {value.name}
+                      </Text>
+                      <View style={{ flexDirection: 'row', gap: 2 }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            size={14}
+                            color={star <= value.importance ? '#698991' : '#E5E7EB'}
+                            fill={star <= value.importance ? '#698991' : 'transparent'}
+                          />
+                        ))}
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* User's own words */}
+                  <View style={{
+                    backgroundColor: '#F8FAFC',
+                    borderRadius: 12,
+                    padding: 12,
+                    marginBottom: 12,
+                    borderLeftWidth: 3,
+                    borderLeftColor: '#698991'
+                  }}>
+                    <Text style={{
+                      fontSize: 14,
+                      color: '#475569',
+                      fontStyle: 'italic',
+                      lineHeight: 20
+                    }}>
+                      "{value.userDescription}"
+                    </Text>
+                  </View>
+
+                  {/* Reflection prompt */}
+                  <View style={{
+                    backgroundColor: '#EFF6FF',
+                    borderRadius: 12,
+                    padding: 12,
+                  }}>
+                    <Text style={{
+                      fontSize: 13,
+                      color: '#1E40AF',
+                      marginBottom: 8,
+                      fontWeight: '500'
+                    }}>
+                      💭 {t('insights.values.reflectionPrompt') || 'Reflection Prompt'}
+                    </Text>
+                    <Text style={{
+                      fontSize: 14,
+                      color: '#374151',
+                      lineHeight: 20
+                    }}>
+                      {t('insights.values.prompts.liveToday') || 'How did you live this value today?'}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+
+              {/* Bottom Action Button */}
+              <View style={{
+                marginHorizontal: 20,
+                marginTop: 8,
+              }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowExampleModal(false);
+                    onStartExercise?.();
+                  }}
+                  style={{
+                    backgroundColor: '#5A88B5',
+                    borderRadius: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingVertical: 14,
+                    paddingHorizontal: 20,
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <MessageCircle
+                    size={16}
+                    color="#FFFFFF"
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={{
+                    color: '#FFFFFF',
+                    fontSize: 15,
+                    fontWeight: '600',
+                  }}>
+                    {t('insights.values.exampleModal.startButton') || 'Start Values Exercise'}
+                  </Text>
+                  <ArrowRight size={16} color="#FFFFFF" style={{ marginLeft: 4 }} />
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
         </View>
       </Modal>
     </View>

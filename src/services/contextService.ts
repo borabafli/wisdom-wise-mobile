@@ -28,12 +28,31 @@ class ContextService {
       'consolidate_summaries',
       'generate_value_reflection_summary',
       'generate_thinking_pattern_reflection_summary',
-      'generate_vision_summary'
+      'generate_vision_summary',
+      'extract_values'
     ];
 
     const endpoint = INSIGHT_ACTIONS.includes(action)
       ? `${API_CONFIG.SUPABASE_URL}/functions/v1/extract-insights`
       : `${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`;
+
+    const requestBody: any = {
+      action,
+      messages: messages.map(msg => ({
+        role: msg.role,
+        content: typeof msg.content === 'string'
+          ? msg.content
+          : JSON.stringify(msg.content)
+      })),
+      model: 'google/gemini-2.5-flash',
+      maxTokens: 500,
+      temperature: 0.3
+    };
+
+    // Add sessionId if provided (required for extract-insights endpoint)
+    if (sessionId) {
+      requestBody.sessionId = sessionId;
+    }
 
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -41,18 +60,7 @@ class ContextService {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`
       },
-      body: JSON.stringify({
-        action,
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: typeof msg.content === 'string'
-            ? msg.content
-            : JSON.stringify(msg.content)
-        })),
-        model: 'google/gemini-2.5-flash',
-        maxTokens: 500,
-        temperature: 0.3
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
@@ -62,11 +70,18 @@ class ContextService {
 
     const data = await response.json();
 
-    if (data.success && data.message) {
-      return { success: true, message: data.message };
-    } else {
-      return { success: false, error: data.error || 'Invalid response format from API' };
+    // Handle different response formats based on action
+    if (data.success) {
+      if (action === 'extract_values' && data.values) {
+        return { success: true, values: data.values };
+      } else if (action === 'extract_patterns' && data.patterns) {
+        return { success: true, patterns: data.patterns };
+      } else if (data.message) {
+        return { success: true, message: data.message };
+      }
     }
+
+    return { success: false, error: data.error || 'Invalid response format from API' };
   } catch (error) {
     console.error('Summary generation API call failed:', error);
     return {
@@ -177,28 +192,17 @@ Final check: Output must be a single valid JSON object, nothing else.`
     const personalizedPrompt = this.config.systemPrompt.replace('{USER_NAME}', await storageService.getFirstName().catch(() => 'friend')).replace('{EXERCISE_LIST}', exerciseList);
         
     // Get memory context for long-term continuity
-    console.log('🧠 [DEBUG] Getting memory context...');
     const memoryContext = await memoryService.getMemoryContext();
-    console.log('🧠 [DEBUG] Memory context retrieved:', {
-      insightCount: memoryContext.insights.length,
-      summaryCount: memoryContext.summaries.length,
-      hasConsolidated: !!memoryContext.consolidatedSummary
-    });
 
     // Get active goals for therapy direction
-    console.log('🎯 [DEBUG] Getting active goals...');
     const activeGoals = await goalService.getActiveGoals();
-    console.log('🎯 [DEBUG] Active goals retrieved:', activeGoals.length);
     
     const memoryContextString = memoryService.formatMemoryForContext(memoryContext);
     const goalContextString = this.formatGoalsForContext(activeGoals);
     
-    console.log('🧠 [DEBUG] Memory context string length:', memoryContextString.length);
-    console.log('🎯 [DEBUG] Goal context string length:', goalContextString.length);
     
     // Combine system prompt with memory and goal context
     const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString;
-    console.log('🧠 [DEBUG] Enhanced prompt length:', enhancedPrompt.length);
     
     const context = [{
       role: 'system',
@@ -211,7 +215,6 @@ Final check: Output must be a single valid JSON object, nothing else.`
       content: msg.text || msg.content || ''
     })));
 
-    console.log('📋 [CONTEXT] Complete context being sent to AI:', JSON.stringify(context, null, 2));
     return context;
   }
 
@@ -324,7 +327,6 @@ Final check: Output must be a single valid JSON object, nothing else.`
     }));
     context.push(...recentConvo);
 
-    console.log('📋 [EXERCISE CONTEXT] Complete exercise context being sent to AI:', JSON.stringify(context, null, 2));
     return context;
   }
 

@@ -77,8 +77,9 @@ export const useSessionManagement = () => {
   }, []);
 
   const handleEndSession = useCallback((onBack: () => void, messages: Message[], exerciseContext?: ExerciseContext) => {
-    console.log('handleEndSession called, messages length:', messages.length);
-    console.log('Exercise context:', exerciseContext);
+    console.log('🔍 [SESSION MANAGEMENT DEBUG] handleEndSession called');
+    console.log('  - messages length:', messages.length);
+    console.log('  - exerciseContext:', JSON.stringify(exerciseContext, null, 2));
 
     // Check if we have any user messages (real conversation)
     const userMessages = messages.filter(msg => msg.type === 'user');
@@ -149,6 +150,43 @@ export const useSessionManagement = () => {
               }
             } else {
               console.log(`⏭️ Skipping CBT thought pattern extraction - not Automatic Thoughts exercise`);
+            }
+
+            // Extract and save values after Values Clarification exercise
+            const isValuesExercise = exerciseContext?.exerciseType === 'values-clarification';
+            if (isValuesExercise) {
+              console.log('💎 Values Clarification exercise completed - extracting core values');
+              try {
+                const valuesResult = await contextService.generateSummaryWithDirectAPI(
+                  'extract_values',
+                  lastSession.messages.map(msg => ({
+                    role: msg.type === 'user' ? 'user' : 'assistant',
+                    content: msg.content || msg.text || ''
+                  })),
+                  lastSession.id  // Pass sessionId for extract-insights endpoint
+                );
+
+                if (valuesResult.success && valuesResult.values && valuesResult.values.length > 0) {
+                  // Save each extracted value using valuesService
+                  const { valuesService } = await import('../services/valuesService');
+
+                  for (const extractedValue of valuesResult.values) {
+                    await valuesService.saveValue({
+                      name: extractedValue.name,
+                      userDescription: extractedValue.userDescription,
+                      importance: extractedValue.importance,
+                      tags: extractedValue.tags || [],
+                      sourceSessionId: lastSession.id
+                    });
+                  }
+
+                  console.log(`✅ Background: Extracted and saved ${valuesResult.values.length} core values`);
+                } else {
+                  console.log(`ℹ️ No clear values found in this session`);
+                }
+              } catch (error) {
+                console.error('Error extracting values:', error);
+              }
             }
 
             // Exercise-specific insight extraction based on context
@@ -250,6 +288,43 @@ export const useSessionManagement = () => {
               console.log(`✅ Background: Extracted ${patterns.length} CBT thought patterns (conversation not saved)`);
             } else {
               console.log(`ℹ️ No clear thought patterns with distortions found (conversation not saved)`);
+            }
+          }
+
+          // Extract and save values after Values Clarification exercise
+          const isValuesExercise = exerciseContext?.exerciseType === 'values-clarification';
+          if (isValuesExercise) {
+            console.log('💎 Values Clarification exercise completed - extracting core values (conversation not saved)');
+            try {
+              const valuesResult = await contextService.generateSummaryWithDirectAPI(
+                'extract_values',
+                currentMessages.map(msg => ({
+                  role: msg.type === 'user' ? 'user' : 'assistant',
+                  content: msg.content || msg.text || ''
+                })),
+                'unsaved_session_' + Date.now()  // Pass temporary sessionId for extract-insights endpoint
+              );
+
+              if (valuesResult.success && valuesResult.values && valuesResult.values.length > 0) {
+                // Save each extracted value using valuesService
+                const { valuesService } = await import('../services/valuesService');
+
+                for (const extractedValue of valuesResult.values) {
+                  await valuesService.saveValue({
+                    name: extractedValue.name,
+                    userDescription: extractedValue.userDescription,
+                    importance: extractedValue.importance,
+                    tags: extractedValue.tags || [],
+                    sourceSessionId: 'unsaved_session'
+                  });
+                }
+
+                console.log(`✅ Background: Extracted and saved ${valuesResult.values.length} core values (conversation not saved)`);
+              } else {
+                console.log(`ℹ️ No clear values found in this session (conversation not saved)`);
+              }
+            } catch (error) {
+              console.error('Error extracting values:', error);
             }
           } else {
             console.log(`⏭️ Skipping CBT thought pattern extraction - not Automatic Thoughts exercise (conversation not saved)`);

@@ -351,10 +351,10 @@
     "memberSince": "Dabei seit",
     "anonymousGuest": "Anonymer Gast",
     "stats": {
-      "sessions": "Sitzungen",
-      "streak": "Serie",
-      "insights": "Einsichten",
-      "exercises": "Übungen",
+      "sessions": "Unterhaltungen",
+      "streak": "Tages-Serie",
+      "insights": "Denkmuster",
+      "exercises": "Abgeschlossene Übungen",
       "daysStreak": "7 Tage"
     },
     "fallbackName": "Freund",

@@ -9,26 +9,52 @@ import { getCurrentLanguage } from '../services/i18nService';
 
 const { width: screenWidth } = Dimensions.get('window');
 
+// Example mood data for demonstration purposes
+const EXAMPLE_MOOD_DATA = [
+  { date: '2025-01-20', rating: 3 },
+  { date: '2025-01-21', rating: 3 },
+  { date: '2025-01-22', rating: 4 },
+  { date: '2025-01-23', rating: 4 },
+  { date: '2025-01-24', rating: 5 },
+  { date: '2025-01-25', rating: 4 },
+  { date: '2025-01-26', rating: 5 },
+  { date: '2025-01-27', rating: 3 },
+  { date: '2025-01-28', rating: 2 },
+  { date: '2025-01-29', rating: 3 },
+  { date: '2025-01-30', rating: 3 },
+  { date: '2025-01-31', rating: 4 },
+  { date: '2025-02-01', rating: 4 },
+  { date: '2025-02-02', rating: 4 },
+];
+
 interface MoodChartProps {
   height?: number;
   showEmojis?: boolean;
   style?: any;
   days?: number;
+  isExample?: boolean;
 }
 
 export const MoodChart: React.FC<MoodChartProps> = ({
   height = 220,
   showEmojis = false, // Clean design without emojis
   style,
-  days = 14
+  days = 14,
+  isExample = false
 }) => {
   const { t } = useTranslation();
   const [moodData, setMoodData] = useState<{ date: string; rating: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadMoodData();
-  }, [days]);
+    if (isExample) {
+      // Use example data immediately
+      setMoodData(EXAMPLE_MOOD_DATA);
+      setLoading(false);
+    } else {
+      loadMoodData();
+    }
+  }, [days, isExample]);
 
   const generateDateSequence = (days: number) => {
     const today = new Date();
@@ -449,12 +475,19 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   );
 };
 
+// Example weekly data for demonstration
+const EXAMPLE_WEEKLY_DATA = {
+  currentWeek: { rating: 3.8, label: 'Positive' },
+  previousWeek: { rating: 3.2, label: 'Okay' }
+};
+
 // Weekly mood comparison bars
 interface WeeklyMoodProps {
   style?: any;
+  isExample?: boolean;
 }
 
-export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
+export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style, isExample = false }) => {
   const { t } = useTranslation();
   const [weeklyData, setWeeklyData] = useState<{
     currentWeek: { rating: number; label: string };
@@ -463,8 +496,23 @@ export const WeeklyMoodComparison: React.FC<WeeklyMoodProps> = ({ style }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadWeeklyData();
-  }, []);
+    if (isExample) {
+      // Use example data with translated labels
+      setWeeklyData({
+        currentWeek: {
+          rating: EXAMPLE_WEEKLY_DATA.currentWeek.rating,
+          label: t('insights.moodInsights.moodLabels.positive')
+        },
+        previousWeek: {
+          rating: EXAMPLE_WEEKLY_DATA.previousWeek.rating,
+          label: t('insights.moodInsights.moodLabels.okay')
+        }
+      });
+      setLoading(false);
+    } else {
+      loadWeeklyData();
+    }
+  }, [isExample, t]);
 
   const loadWeeklyData = async () => {
     try {

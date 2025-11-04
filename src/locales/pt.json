@@ -351,10 +351,10 @@
     "memberSince": "Membro desde",
     "anonymousGuest": "Convidado Anônimo",
     "stats": {
-      "sessions": "Sessões",
-      "streak": "Sequência",
-      "insights": "Perspectivas",
-      "exercises": "Exercícios",
+      "sessions": "Conversas",
+      "streak": "Sequência de Dias",
+      "insights": "Padrões de Pensamento",
+      "exercises": "Exercícios Completados",
       "daysStreak": "7 dias"
     },
     "fallbackName": "Amigo",
