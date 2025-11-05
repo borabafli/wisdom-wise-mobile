@@ -8,6 +8,7 @@ import OnboardingPersonalizationScreen from '../screens/onboarding/OnboardingPer
 import FocusAreasScreen from '../screens/onboarding/FocusAreasScreen';
 import OnboardingFinalScreen from '../screens/onboarding/OnboardingFinalScreen';
 import NotificationPermissionScreen from '../screens/onboarding/NotificationPermissionScreen';
+import OnboardingPaywallScreen from '../screens/OnboardingPaywallScreen';
 import { OnboardingService } from '../services/onboardingService';
 import { storageService } from '../services/storageService';
 
@@ -22,7 +23,7 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
 
   // Helper to get step name
   const getStepName = (step: number) => {
-    const steps = ['welcome', 'value_prop', 'personal_values', 'focus_areas', 'age_group', 'personalization', 'final', 'notifications'];
+    const steps = ['welcome', 'value_prop', 'personal_values', 'focus_areas', 'age_group', 'personalization', 'final', 'notifications', 'paywall'];
     return steps[step - 1] || 'unknown';
   };
 
@@ -123,12 +124,34 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     setCurrentStep(prev => Math.max(1, prev - 1));
   };
 
-  const handleCompleteOnboarding = async (notificationsEnabled?: boolean) => {
-    posthog?.capture('onboarding_completed', {
+  const handleContinueFromNotifications = async (notificationsEnabled?: boolean) => {
+    posthog?.capture('onboarding_step_completed', {
       step: 'notifications',
       stepNumber: 8,
-      notificationsEnabled: notificationsEnabled || false,
-      totalSteps: 8
+      notificationsEnabled: notificationsEnabled || false
+    });
+    setCurrentStep(9); // Go to paywall screen
+  };
+
+  const handleCompletePaywall = async () => {
+    posthog?.capture('onboarding_completed', {
+      step: 'paywall',
+      stepNumber: 9,
+      totalSteps: 9,
+      purchasedPremium: true
+    });
+    // Complete onboarding
+    await OnboardingService.completeOnboarding();
+    onComplete();
+  };
+
+  const handleSkipPaywall = async () => {
+    posthog?.capture('onboarding_completed', {
+      step: 'paywall',
+      stepNumber: 9,
+      totalSteps: 9,
+      purchasedPremium: false,
+      skipped: true
     });
     // Complete onboarding
     await OnboardingService.completeOnboarding();
@@ -194,11 +217,19 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     case 8:
       return (
         <NotificationPermissionScreen
-          onContinue={handleCompleteOnboarding}
+          onContinue={handleContinueFromNotifications}
           onBack={currentStep > 1 ? handleBack : undefined}
         />
       );
-    
+
+    case 9:
+      return (
+        <OnboardingPaywallScreen
+          onComplete={handleCompletePaywall}
+          onSkip={handleSkipPaywall}
+        />
+      );
+
     default:
       return <OnboardingWelcomeScreen onContinue={handleContinueFromWelcome} />;
   }

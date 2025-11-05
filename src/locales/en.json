@@ -1247,25 +1247,54 @@
     "valueProp": {
       "title": "Your Journey to Wellbeing Starts Here",
       "description": "Discover personalized tools and gentle guidance to support your mental health journey.",
-      "continueButton": "Get Started"
+      "continueButton": "Get Started",
+      "pages": {
+        "page1": {
+          "title": "Think Clearly, Feel Better",
+          "description": "Spot unhelpful thoughts and gently reframe them with science-backed CBT techniques."
+        },
+        "page2": {
+          "title": "Understand Yourself Better",
+          "description": "See meaningful patterns in your thoughts and feelings so you know where to focus your growth."
+        },
+        "page3": {
+          "title": "Guided Growth, Always Ready",
+          "description": "Anu knows your next best step and recommends exercises designed just for you."
+        },
+        "page4": {
+          "title": "Progress You Can See",
+          "description": "Track your journey with saved exercises, insights, and milestones in one calm place."
+        }
+      },
+      "letsBegin": "Let's begin"
     },
     "personalValues": {
-      "headline": "💖 Let's personalize your experience with Anu.",
+      "headline": "Let's personalize your experience with Anu.",
       "promptText": "What values matter most to you? Choose the ones that feel right.",
-      "continueButton": "Continue"
+      "continueButton": "Continue",
+      "values": {
+        "healthVitality": "Health & Vitality",
+        "closeRelationships": "Close Relationships",
+        "growthLearning": "Growth & Learning",
+        "peaceBalance": "Peace & Balance",
+        "freedomIndependence": "Freedom & Independence",
+        "purposeMeaning": "Purpose & Meaning",
+        "creativityPlay": "Creativity & Play",
+        "achievementProgress": "Achievement & Progress"
+      }
     },
     "focusAreas": {
       "headline": "What would you like to focus on?",
       "promptText": "Select the areas where you'd like support. You can always change these later.",
       "areas": {
-        "anxiety": "Anxiety",
-        "stress": "Stress",
-        "sleepIssues": "Sleep Issues",
-        "lowMood": "Low Mood",
-        "focusProblems": "Focus Problems",
-        "relationshipIssues": "Relationship Issues",
-        "workPressure": "Work Pressure",
-        "selfConfidence": "Self-Confidence"
+        "feelCalmer": "Feel calmer",
+        "handleStress": "Handle stress better",
+        "sleepBetter": "Sleep better",
+        "brighterMood": "Lift my mood",
+        "focusDrive": "Boost focus & drive",
+        "confidenceSelfWorth": "Grow confidence & self-worth",
+        "relationshipsCommunication": "Improve relationships & communication",
+        "somethingElse": "Something else"
       },
       "continueButton": "Continue"
     },
@@ -1348,7 +1377,7 @@
           "label": "Morning Reflection",
           "description": "Start with intention"
         },
-        "afternoon": {
+        "daytime": {
           "label": "Midday Check-in",
           "description": "Pause and breathe"
         },
@@ -1359,6 +1388,7 @@
       },
       "timePickerTitle": "Select Time",
       "enableButton": "Enable Reminders",
+      "continueButton": "Continue",
       "skipButton": "Skip for Now",
       "saveButton": "Save",
       "cancelButton": "Cancel",
@@ -1396,6 +1426,68 @@
       "doneButton": "Done",
       "loading": "Loading...",
       "selectPlaceholder": "Select an option"
+    }
+  },
+  "paywall": {
+    "title": "Begin Your Healing Journey",
+    "subtitle": "Start with a 3-day free trial",
+    "loading": "Loading subscription options...",
+    "processing": "Processing your purchase...",
+    "features_title": "What You'll Unlock",
+    "best_value": "Best Value",
+    "plan": {
+      "monthly": "Monthly",
+      "annual": "Annual"
+    },
+    "period": {
+      "month": "month",
+      "year": "year"
+    },
+    "per_period": "per {{period}}",
+    "trial_days": "{{days}}-day free trial",
+    "save_percent": "Save {{percent}}%",
+    "monthly_equivalent": "Only {{price}}/month",
+    "features": {
+      "unlimited_conversations": "Unlimited AI conversations",
+      "unlimited_voice": "Unlimited voice journaling",
+      "full_exercises": "Full CBT exercise library",
+      "advanced_insights": "Advanced insights & patterns",
+      "unlimited_journaling": "Unlimited guided journaling",
+      "full_history": "Full chat history"
+    },
+    "cta_primary": "Start 3-Day Free Trial",
+    "cta_secondary": "Continue with Free",
+    "legal": "Cancel anytime. Subscription renews automatically after trial.",
+    "limit_reached": {
+      "title": "You've reached your daily limit",
+      "subtitle": "Upgrade to continue your journey without limits",
+      "messages": "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access.",
+      "voice": "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access.",
+      "exercises": "You've completed your daily exercise. Upgrade for unlimited exercises.",
+      "journal_prompts": "You've used your daily journal prompt. Upgrade for unlimited prompts.",
+      "cta": "Unlock Premium",
+      "dismiss": "Not Now",
+      "reset_info": "Your free limit resets tomorrow"
+    },
+    "feature_locked": {
+      "title": "Premium Feature",
+      "exercise": "This exercise is available in premium. Upgrade to access the full library.",
+      "insights": "Advanced insights are available in premium. Upgrade to unlock deeper analysis.",
+      "history": "Full chat history is available in premium. Upgrade to access all your past conversations.",
+      "cta": "Upgrade to Premium"
+    },
+    "subscription_management": {
+      "title": "Subscription",
+      "current_plan": "Current Plan",
+      "free_plan": "Free Plan",
+      "premium_plan": "Premium Plan",
+      "trial_active": "Trial Active",
+      "expires_on": "Renews on {{date}}",
+      "expired_on": "Expired on {{date}}",
+      "manage": "Manage Subscription",
+      "upgrade": "Upgrade to Premium",
+      "restore": "Restore Purchases",
+      "restoring": "Restoring..."
     }
   }
 }

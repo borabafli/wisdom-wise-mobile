@@ -1212,25 +1212,54 @@
     "valueProp": {
       "title": "Deine Reise zum Wohlbefinden beginnt hier",
       "description": "Entdecke personalisierte Werkzeuge und sanfte Führung zur Unterstützung deiner psychischen Gesundheit.",
-      "continueButton": "Loslegen"
+      "continueButton": "Loslegen",
+      "pages": {
+        "page1": {
+          "title": "Klarer denken, besser fühlen",
+          "description": "Erkenne unhilfreiche Gedanken und formuliere sie mit wissenschaftlich fundierten CBT-Techniken neu."
+        },
+        "page2": {
+          "title": "Dich selbst besser verstehen",
+          "description": "Entdecke bedeutungsvolle Muster in deinen Gedanken und Gefühlen, um zu wissen, worauf du deinen Fokus legen kannst."
+        },
+        "page3": {
+          "title": "Geführtes Wachstum, jederzeit bereit",
+          "description": "Anu kennt deinen nächsten besten Schritt und empfiehlt Übungen, die nur für dich gestaltet sind."
+        },
+        "page4": {
+          "title": "Fortschritte, die du sehen kannst",
+          "description": "Verfolge deinen Weg mit gespeicherten Übungen, Einsichten und Meilensteinen an einem ruhigen Ort."
+        }
+      },
+      "letsBegin": "Lass uns beginnen"
     },
     "personalValues": {
       "headline": "Lass uns deine Erfahrung mit Anu personalisieren.",
       "promptText": "Welche Werte sind dir am wichtigsten? Wähle die aus, die sich richtig anfühlen.",
-      "continueButton": "Weiter"
+      "continueButton": "Weiter",
+      "values": {
+        "healthVitality": "Gesundheit & Vitalität",
+        "closeRelationships": "Enge Beziehungen",
+        "growthLearning": "Wachstum & Lernen",
+        "peaceBalance": "Frieden & Balance",
+        "freedomIndependence": "Freiheit & Unabhängigkeit",
+        "purposeMeaning": "Sinn & Bedeutung",
+        "creativityPlay": "Kreativität & Spiel",
+        "achievementProgress": "Erfolg & Fortschritt"
+      }
     },
     "focusAreas": {
       "headline": "Worauf möchtest du dich konzentrieren?",
       "promptText": "Wähle die Bereiche, in denen du Unterstützung möchtest. Du kannst diese später jederzeit ändern.",
       "areas": {
-        "anxiety": "Angst",
-        "stress": "Stress",
-        "sleepIssues": "Schlafprobleme",
-        "lowMood": "Niedergeschlagenheit",
-        "focusProblems": "Konzentrationsprobleme",
-        "relationshipIssues": "Beziehungsprobleme",
-        "workPressure": "Arbeitsdruck",
-        "selfConfidence": "Selbstvertrauen"
+        "feelCalmer": "Ruhiger fühlen",
+        "handleStress": "Stress besser bewältigen",
+        "sleepBetter": "Besser schlafen",
+        "brighterMood": "Meine Stimmung aufhellen",
+        "focusDrive": "Fokus & Antrieb stärken",
+        "confidenceSelfWorth": "Selbstvertrauen & Selbstwert stärken",
+        "relationshipsCommunication": "Beziehungen & Kommunikation verbessern",
+        "somethingElse": "Etwas anderes"
       },
       "continueButton": "Weiter"
     },
@@ -1313,7 +1342,7 @@
           "label": "Morgenreflexion",
           "description": "Mit Absicht beginnen"
         },
-        "afternoon": {
+        "daytime": {
           "label": "Mittags-Check-in",
           "description": "Pause und atmen"
         },
@@ -1324,6 +1353,7 @@
       },
       "timePickerTitle": "Zeit auswählen",
       "enableButton": "Erinnerungen aktivieren",
+      "continueButton": "Weiter",
       "skipButton": "Vorerst überspringen",
       "saveButton": "Speichern",
       "cancelButton": "Abbrechen",

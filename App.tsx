@@ -14,6 +14,7 @@ import { PostHogProvider } from 'posthog-react-native';
 // Components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { AppProvider, AuthProvider, LocalizationProvider } from './src/contexts';
+import { SubscriptionProvider } from './src/contexts/SubscriptionContext';
 import { AppContent } from './src/components/AppContent';
 import { NotificationPrompt } from './src/components/NotificationPrompt';
 
@@ -115,10 +116,12 @@ export default function App() {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <LocalizationProvider>
               <AuthProvider>
-                <AppProvider>
-                  <AppContent />
-                  <NotificationPrompt />
-                </AppProvider>
+                <SubscriptionProvider>
+                  <AppProvider>
+                    <AppContent />
+                    <NotificationPrompt />
+                  </AppProvider>
+                </SubscriptionProvider>
               </AuthProvider>
             </LocalizationProvider>
           </GestureHandlerRootView>

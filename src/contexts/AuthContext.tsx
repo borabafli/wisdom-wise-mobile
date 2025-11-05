@@ -3,6 +3,7 @@ import { usePostHog } from 'posthog-react-native';
 import { authService } from '../services/authService';
 import { storageService } from '../services/storageService';
 import { firstActionTracker } from '../services/firstActionTracker';
+import { subscriptionService } from '../services/subscriptionService';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -126,6 +127,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('[AuthProvider] checkInitialSession: FATAL ERROR', error);
     } finally {
+      // Initialize RevenueCat with user ID (if authenticated)
+      try {
+        console.log('[AuthProvider] Initializing RevenueCat...');
+        // Use actual user ID or let RevenueCat generate anonymous ID (don't pass 'anonymous' string - it's blocked)
+        const userId = user?.id;
+        await subscriptionService.initialize(userId);
+        console.log('[AuthProvider] RevenueCat initialized successfully');
+      } catch (rcError) {
+        console.error('[AuthProvider] RevenueCat initialization failed:', rcError);
+        // Non-blocking - app continues even if RevenueCat fails
+      }
+
       console.log('[AuthProvider] checkInitialSession: COMPLETE, setting isLoading=false');
       setIsLoading(false);
     }

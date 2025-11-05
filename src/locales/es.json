@@ -1119,25 +1119,54 @@
     "valueProp": {
       "title": "Tu Viaje hacia el Bienestar Comienza Aquí",
       "description": "Descubre herramientas personalizadas y orientación gentil para apoyar tu jornada de salud mental.",
-      "continueButton": "Comenzar"
+      "continueButton": "Comenzar",
+      "pages": {
+        "page1": {
+          "title": "Piensa con claridad, siéntete mejor",
+          "description": "Identifica los pensamientos poco útiles y replantalos con técnicas de TCC respaldadas por la ciencia."
+        },
+        "page2": {
+          "title": "Compréndete mejor",
+          "description": "Descubre patrones significativos en tus pensamientos y emociones para saber dónde enfocar tu crecimiento."
+        },
+        "page3": {
+          "title": "Crecimiento guiado, siempre listo",
+          "description": "Anu conoce tu siguiente mejor paso y sugiere ejercicios diseñados solo para ti."
+        },
+        "page4": {
+          "title": "Progreso que puedes ver",
+          "description": "Sigue tu viaje con ejercicios guardados, insights y hitos en un espacio tranquilo."
+        }
+      },
+      "letsBegin": "Comencemos"
     },
     "personalValues": {
       "headline": "Personalicemos tu experiencia con Anu.",
       "promptText": "¿Qué valores son más importantes para ti? Elige los que se sientan correctos.",
-      "continueButton": "Continuar"
+      "continueButton": "Continuar",
+      "values": {
+        "healthVitality": "Salud y vitalidad",
+        "closeRelationships": "Relaciones cercanas",
+        "growthLearning": "Crecimiento y aprendizaje",
+        "peaceBalance": "Paz y equilibrio",
+        "freedomIndependence": "Libertad e independencia",
+        "purposeMeaning": "Propósito y significado",
+        "creativityPlay": "Creatividad y juego",
+        "achievementProgress": "Logro y progreso"
+      }
     },
     "focusAreas": {
       "headline": "¿En qué te gustaría enfocarte?",
       "promptText": "Selecciona las áreas donde te gustaría recibir apoyo. Siempre puedes cambiarlas después.",
       "areas": {
-        "anxiety": "Ansiedad",
-        "stress": "Estrés",
-        "sleepIssues": "Problemas de Sueño",
-        "lowMood": "Estado de Ánimo Bajo",
-        "focusProblems": "Problemas de Concentración",
-        "relationshipIssues": "Problemas de Relaciones",
-        "workPressure": "Presión Laboral",
-        "selfConfidence": "Autoconfianza"
+        "feelCalmer": "Sentirme más tranquilo",
+        "handleStress": "Manejar mejor el estrés",
+        "sleepBetter": "Dormir mejor",
+        "brighterMood": "Elevar mi estado de ánimo",
+        "focusDrive": "Impulsar enfoque y motivación",
+        "confidenceSelfWorth": "Fortalecer confianza y autoestima",
+        "relationshipsCommunication": "Mejorar relaciones y comunicación",
+        "somethingElse": "Algo más"
       },
       "continueButton": "Continuar"
     },
@@ -1220,7 +1249,7 @@
           "label": "Reflexión Matutina",
           "description": "Comienza con intención"
         },
-        "afternoon": {
+        "daytime": {
           "label": "Check-in de Mediodía",
           "description": "Pausa y respira"
         },
@@ -1231,6 +1260,7 @@
       },
       "timePickerTitle": "Seleccionar Hora",
       "enableButton": "Habilitar Recordatorios",
+      "continueButton": "Continuar",
       "skipButton": "Omitir por Ahora",
       "saveButton": "Guardar",
       "cancelButton": "Cancelar",

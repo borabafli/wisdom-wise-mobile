@@ -1152,25 +1152,54 @@
     "valueProp": {
       "title": "Votre parcours vers le bien-être commence ici",
       "description": "Découvrez des outils personnalisés et un accompagnement bienveillant pour soutenir votre parcours de santé mentale.",
-      "continueButton": "Commencer"
+      "continueButton": "Commencer",
+      "pages": {
+        "page1": {
+          "title": "Penser plus clairement, se sentir mieux",
+          "description": "Identifiez les pensées peu aidantes et reformulez-les grâce à des techniques de TCC appuyées par la science."
+        },
+        "page2": {
+          "title": "Mieux vous comprendre",
+          "description": "Repérez des schémas significatifs dans vos pensées et émotions pour savoir où concentrer votre progression."
+        },
+        "page3": {
+          "title": "Une progression guidée, toujours prête",
+          "description": "Anu connaît votre prochaine meilleure étape et recommande des exercices conçus pour vous."
+        },
+        "page4": {
+          "title": "Un progrès visible",
+          "description": "Suivez votre parcours avec des exercices, insights et jalons enregistrés dans un espace apaisant."
+        }
+      },
+      "letsBegin": "Commençons"
     },
     "personalValues": {
       "headline": "Personnalisons votre expérience avec Anu.",
       "promptText": "Quelles valeurs comptent le plus pour vous ? Choisissez celles qui vous semblent justes.",
-      "continueButton": "Continuer"
+      "continueButton": "Continuer",
+      "values": {
+        "healthVitality": "Santé et vitalité",
+        "closeRelationships": "Relations proches",
+        "growthLearning": "Croissance et apprentissage",
+        "peaceBalance": "Paix et équilibre",
+        "freedomIndependence": "Liberté et indépendance",
+        "purposeMeaning": "Sens et objectif",
+        "creativityPlay": "Créativité et jeu",
+        "achievementProgress": "Accomplissement et progression"
+      }
     },
     "focusAreas": {
       "headline": "Sur quoi aimeriez-vous vous concentrer ?",
       "promptText": "Sélectionnez les domaines où vous souhaitez du soutien. Vous pourrez toujours les modifier plus tard.",
       "areas": {
-        "anxiety": "Anxiété",
-        "stress": "Stress",
-        "sleepIssues": "Problèmes de sommeil",
-        "lowMood": "Humeur maussade",
-        "focusProblems": "Problèmes de concentration",
-        "relationshipIssues": "Problèmes relationnels",
-        "workPressure": "Pression au travail",
-        "selfConfidence": "Confiance en soi"
+        "feelCalmer": "Me sentir plus calme",
+        "handleStress": "Mieux gérer le stress",
+        "sleepBetter": "Mieux dormir",
+        "brighterMood": "Éclaircir mon humeur",
+        "focusDrive": "Booster concentration et motivation",
+        "confidenceSelfWorth": "Renforcer confiance et estime de soi",
+        "relationshipsCommunication": "Améliorer relations et communication",
+        "somethingElse": "Autre chose"
       },
       "continueButton": "Continuer"
     },
@@ -1253,7 +1282,7 @@
           "label": "Réflexion matinale",
           "description": "Commencer avec intention"
         },
-        "afternoon": {
+        "daytime": {
           "label": "Point de mi-journée",
           "description": "Pause et respiration"
         },
@@ -1264,6 +1293,7 @@
       },
       "timePickerTitle": "Sélectionner l'heure",
       "enableButton": "Activer les rappels",
+      "continueButton": "Continuer",
       "skipButton": "Passer pour l'instant",
       "saveButton": "Sauvegarder",
       "cancelButton": "Annuler",
