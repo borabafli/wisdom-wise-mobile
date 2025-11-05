@@ -100,7 +100,27 @@
     "stepNumber": "Schritt {{number}}",
     "stepsCount": "{{count}} Schritt",
     "stepsCount_other": "{{count}} Schritte",
-    "steps": "Schritte"
+    "steps": "Schritte",
+    "filters": {
+      "all": "Alle",
+      "durations": {
+        "1-5": "1-5 Min",
+        "5-15": "5-15 Min",
+        "15-30": "15-30 Min",
+        "30+": "30+ Min"
+      },
+      "benefits": {
+        "anxiety": "Angst",
+        "depressionMood": "Depression / Stimmung",
+        "selfDiscovery": "Selbstentdeckung",
+        "mentalClarity": "Mentale Klarheit",
+        "stressRelief": "Stressabbau",
+        "focus": "Fokus",
+        "emotionalBalance": "Emotionale Balance",
+        "breathing": "Atmung",
+        "withoutBreathing": "Ohne Atmung"
+      }
+    }
   },
   "insights": {
     "title": "Einsichten",
@@ -979,6 +999,28 @@
           "title": "Verbindung zur Gegenwart",
           "description": "Wie können diese Stärken Ihnen in Ihrem aktuellen Leben helfen?",
           "instruction": "Leiten Sie den Benutzer an, seine identifizierten Stärken mit seiner gegenwärtigen Situation zu verbinden. Bitten Sie ihn zu überlegen, wie diese gleichen Eigenschaften ihn bei aktuellen Herausforderungen oder Zielen unterstützen können. Ermutigen Sie eine spezifische Art, wie er diese Stärken voranbringen kann."
+        }
+      },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Verstehen Sie, warum Vision wichtig ist",
+          "description": "Eine klare Vision gibt Richtung und Motivation.",
+          "instruction": "Erklären Sie dem Benutzer, dass das Vorstellen ihrer Zukunft wie das Setzen eines Kompasses ist. Es hilft, Entscheidungen zu leiten, stärkt die Motivation und hilft uns zu wissen, wohin wir gehen und wie wir als Person sein wollen. Ermutigen Sie sie, diese Übung mit Offenheit anzugehen und sich nicht zurückzuhalten. Dies ist eine ideale Vision. Sie können eine reflektierende Frage stellen oder eine schnelle Skala/Überprüfung anbieten, wie klar ihre Vision im Moment ist."
+        },
+        "step2": {
+          "title": "Stellen Sie sich Ihr zukünftiges Leben vor",
+          "description": "Stellen Sie sich Ihr Leben in ein paar Jahren in seinen wichtigen Bereichen vor.",
+          "instruction": "Führen Sie den Benutzer dazu, sich vorzustellen, wie das Leben aussieht, wenn sich die Dinge richtig anfühlen. Fordern Sie ihn auf, wichtige Bereiche durchzugehen: Beziehungen (Familie, Freunde, Partner), Arbeit oder Studium, Gesundheit und Wohlbefinden, Persönliches Wachstum und Lernen, Lebensstil und tägliche Routinen. Ermutigen Sie ihn zu beschreiben, wie jeder dieser Bereiche in seiner Zukunftsvision aussieht."
+        },
+        "step3": {
+          "title": "Bemerken Sie, was wichtig ist",
+          "description": "Reflektieren Sie über die Werte und Prioritäten in Ihrer Vision.",
+          "instruction": "Bitten Sie den Benutzer, die Hauptwerte zu identifizieren, die durch seine Vision scheinen – zum Beispiel Verbindung, Gleichgewicht, Freiheit, Freundlichkeit, Wachstum. Ermutigen Sie ihn, ein oder zwei zu benennen, die sich im Moment am zentralsten anfühlen."
+        },
+        "step4": {
+          "title": "Verbinden Sie sich mit Ihrer Vision",
+          "description": "Stellen Sie es sich vollständig vor und verknüpfen Sie es mit Ihrem heutigen Leben.",
+          "instruction": "Ermutigen Sie den Benutzer, innezuhalten und sich wirklich vorzustellen, in dieser Zukunft zu sein – wie fühlt es sich an, welche Emotionen kommen auf? Bitten Sie ihn dann, eine kleine Art zu beschreiben, wie er heute mit dieser Vision verbunden bleiben kann, sei es durch eine Handlung, eine Erinnerung oder einfach das Gefühl im Kopf zu behalten."
         }
       },
       "morningMindfulness": {

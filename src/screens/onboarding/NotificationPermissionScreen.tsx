@@ -14,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, BookOpen, Sun, Coffee, Moon, Plus } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { notificationPermissionStyles as styles } from '../../styles/components/onboarding/NotificationPermission.styles';
 import { notificationService, JournalReminderTime } from '../../services/notificationService';
 import WheelTimePicker from '../../components/WheelTimePicker';
@@ -27,6 +28,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
   onContinue,
   onBack
 }) => {
+  const { t } = useTranslation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [reminderTimes, setReminderTimes] = useState<JournalReminderTime[]>([]);
@@ -42,22 +44,22 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
       id: 'morning',
       time: '08:00',
       enabled: true,
-      label: 'Morning',
-      description: 'Start your day grounded'
+      label: t('onboarding.notifications.reminders.morning.label'),
+      description: t('onboarding.notifications.reminders.morning.description')
     },
     {
       id: 'daytime',
       time: '14:00',
       enabled: false,
-      label: 'Daytime',
-      description: 'Take a mindful break'
+      label: t('onboarding.notifications.reminders.daytime.label'),
+      description: t('onboarding.notifications.reminders.daytime.description')
     },
     {
       id: 'evening',
       time: '20:00',
       enabled: true,
-      label: 'Evening',
-      description: 'Reflect and unwind'
+      label: t('onboarding.notifications.reminders.evening.label'),
+      description: t('onboarding.notifications.reminders.evening.description')
     }
   ];
 
@@ -242,7 +244,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
         <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Setting up your reminders...</Text>
+            <Text style={styles.loadingText}>{t('onboarding.notifications.loading')}</Text>
           </View>
         </SafeAreaView>
       </View>
@@ -275,9 +277,9 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
         >
           {/* Header */}
           <View style={styles.headerContainer}>
-            <Text style={styles.mainTitle}>Wellbeing grows with small, daily steps.</Text>
+            <Text style={styles.mainTitle}>{t('onboarding.notifications.mainTitle')}</Text>
             <Text style={styles.subtitle}>
-              Pick the times that work best for your daily wellbeing practice.
+              {t('onboarding.notifications.subtitle')}
             </Text>
           </View>
 
@@ -347,7 +349,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
               onPress={handleContinue}
               activeOpacity={0.8}
             >
-              <Text style={styles.nextButtonText}>Continue</Text>
+              <Text style={styles.nextButtonText}>{t('onboarding.notifications.continueButton')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -355,7 +357,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
               onPress={() => onContinue()}
               activeOpacity={0.8}
             >
-              <Text style={styles.skipButtonText}>Skip</Text>
+              <Text style={styles.skipButtonText}>{t('onboarding.notifications.skipButton')}</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -373,7 +375,7 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
                 {/* Handle bar */}
                 <View style={styles.bottomSheetHandle} />
 
-                <Text style={styles.bottomSheetTitle}>Select Time</Text>
+                <Text style={styles.bottomSheetTitle}>{t('onboarding.notifications.timePickerTitle')}</Text>
 
                 <WheelTimePicker
                   selectedHour={selectedHour}
@@ -389,14 +391,14 @@ const NotificationPermissionScreen: React.FC<NotificationPermissionScreenProps> 
                     style={styles.bottomSheetSaveButton}
                     onPress={handleTimeConfirm}
                   >
-                    <Text style={styles.bottomSheetSaveText}>Save</Text>
+                    <Text style={styles.bottomSheetSaveText}>{t('onboarding.notifications.saveButton')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={styles.bottomSheetCancelButton}
                     onPress={handleTimePickerClose}
                   >
-                    <Text style={styles.bottomSheetCancelText}>Cancel</Text>
+                    <Text style={styles.bottomSheetCancelText}>{t('onboarding.notifications.cancelButton')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

@@ -69,13 +69,17 @@ const detectLanguage = async (): Promise<string> => {
       console.warn('Localization not available:', localizationError);
     }
 
-    // Check if device language is supported
-    if (LANGUAGE_CODES.includes(deviceLanguage)) {
-      return deviceLanguage;
+    // Determine the language we will use (device language if supported, otherwise English)
+    const resolvedLanguage = LANGUAGE_CODES.includes(deviceLanguage) ? deviceLanguage : 'en';
+
+    // Persist the resolved language so we don't override user choice on subsequent launches
+    try {
+      await saveLanguagePreference(resolvedLanguage);
+    } catch (persistError) {
+      console.warn('Failed to persist initial language preference:', persistError);
     }
 
-    // Fallback to English if device language is not supported
-    return 'en';
+    return resolvedLanguage;
   } catch (error) {
     console.error('Error detecting language:', error);
     return 'en'; // Fallback to English

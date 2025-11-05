@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Settings, Leaf, Target, ChevronLeft } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { onboardingFinalStyles as styles } from '../../styles/components/onboarding/OnboardingFinal.styles';
 
 const { height } = Dimensions.get('window');
@@ -22,6 +23,7 @@ interface OnboardingFinalScreenProps {
 }
 
 const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplete, onBack }) => {
+  const { t } = useTranslation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -142,19 +144,19 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
   const features = [
     {
       icon: Settings,
-      title: "Preparing personalized exercises & reflections",
+      title: t('onboarding.final.features.analyzing.title'),
       description: "",
       hasCheckmark: false,
     },
     {
       icon: Leaf,
-      title: "Designing your personal plan",
+      title: t('onboarding.final.features.creating.title'),
       description: "",
       hasArrow: false,
     },
     {
       icon: Target,
-      title: "Getting your first activity ready",
+      title: t('onboarding.final.features.preparing.title'),
       description: "",
       hasArrow: false,
     },
@@ -187,9 +189,9 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
         >
           {/* Header */}
           <View style={styles.headerContainer}>
-            <Text style={styles.mainTitle}>We're preparing your personal path forward...</Text>
+            <Text style={styles.mainTitle}>{t('onboarding.final.mainTitle')}</Text>
             <Text style={styles.subtitle}>
-              Your plan is being tailored to help you thrive.
+              {t('onboarding.final.subtitle')}
             </Text>
           </View>
 
@@ -312,7 +314,7 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
                 disabled={!isButtonEnabled}
               >
                 <Text style={[styles.primaryButtonText, !isButtonEnabled && styles.disabledButtonText]}>
-                  Start Your Journey
+                  {t('onboarding.final.continueButton')}
                 </Text>
               </TouchableOpacity>
             </View>

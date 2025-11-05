@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
@@ -17,6 +17,7 @@ import ExerciseSummaryCard from '../components/ExerciseSummaryCard';
 import { useExercisePreview } from '../hooks/useExercisePreview';
 
 const { width, height } = Dimensions.get('window');
+const ALL_FILTER_KEY = 'all';
 
 interface ExerciseLibraryProps {
   onExerciseClick: (exercise: any) => void;
@@ -25,9 +26,9 @@ interface ExerciseLibraryProps {
 const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) => {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
-  const [selectedTimeFilter, setSelectedTimeFilter] = useState('All');
-  const [selectedBenefitFilter, setSelectedBenefitFilter] = useState('All');
-  const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState<string>(ALL_FILTER_KEY);
+  const [selectedBenefitFilter, setSelectedBenefitFilter] = useState<string>(ALL_FILTER_KEY);
+  const [selectedStyleFilter, setSelectedStyleFilter] = useState<string>(ALL_FILTER_KEY);
   const [showFilters, setShowFilters] = useState(false);
   const [hiddenCardIds, setHiddenCardIds] = useState<string[]>([]);
 
@@ -69,31 +70,74 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   // Use unified exercises from exerciseLibrary.ts
   const exercises = getExercisesArray(t);
 
-  // Helper function to extract benefit from exercise description or category
-  const getBenefitFromExercise = (exercise: any) => {
-    const description = exercise.description.toLowerCase();
-    const name = exercise.name.toLowerCase();
-    
-    if (description.includes('anxiety') || description.includes('anxious')) return 'Anxiety';
-    if (description.includes('depression') || description.includes('mood') || description.includes('happiness')) return 'Mood';
-    if (description.includes('discover') || description.includes('explore') || description.includes('journey') || description.includes('story') || name.includes('story')) return 'Self-Discovery';
-    if (description.includes('clarity') || description.includes('clear') || description.includes('organize') || description.includes('clutter')) return 'Mental Clarity';
-    if (description.includes('stress') || description.includes('tension') || description.includes('calm') || description.includes('relax')) return 'Stress Relief';
-    if (description.includes('focus') || description.includes('concentration') || description.includes('attention')) return 'Focus';
-    if (description.includes('balance') || description.includes('compassion') || description.includes('kindness') || description.includes('emotional')) return 'Emotional Balance';
-    
-    // Category-based mapping
-    if (exercise.category.toLowerCase() === 'breathing') return 'Stress Relief';
-    if (exercise.category.toLowerCase() === 'cbt') return 'Mental Clarity';
-    if (exercise.category.toLowerCase() === 'mindfulness') return 'Focus';
-    if (exercise.category.toLowerCase() === 'self-care') return 'Emotional Balance';
-    if (exercise.category.toLowerCase() === 'act') return 'Self-Discovery';
-    if (exercise.category.toLowerCase() === 'self-discovery') return 'Self-Discovery';
-    if (exercise.category.toLowerCase() === 'self-growth') return 'Self-Discovery';
-    
-    // Default fallback
-    return 'Focus';
-  };
+  const categoryTranslations = useMemo(() => ({
+    cbt: t('exerciseLibrary.categories.cbt'),
+    breathing: t('exerciseLibrary.categories.breathing'),
+    mindfulness: t('exerciseLibrary.categories.mindfulness'),
+    selfCare: t('exerciseLibrary.categories.selfCare'),
+    act: t('exerciseLibrary.categories.act'),
+    selfDiscovery: t('exerciseLibrary.categories.selfDiscovery'),
+    selfGrowth: t('exerciseLibrary.categories.selfGrowth'),
+  }), [t]);
+
+  const categoryLabelToKey = useMemo(() => {
+    const map: Record<string, string> = {};
+    Object.entries(categoryTranslations).forEach(([key, label]) => {
+      map[label] = key;
+    });
+    return map;
+  }, [categoryTranslations]);
+
+  const getCategoryKey = useCallback((categoryLabel: string) => {
+    if (!categoryLabel) {
+      return '';
+    }
+    return categoryLabelToKey[categoryLabel] ?? categoryLabel;
+  }, [categoryLabelToKey]);
+
+  const getBenefitKeyFromExercise = useCallback((exercise: any) => {
+    const name = typeof exercise.name === 'string' ? exercise.name.toLowerCase() : '';
+    const description = typeof exercise.description === 'string' ? exercise.description.toLowerCase() : '';
+    const keywords = Array.isArray(exercise.keywords)
+      ? exercise.keywords
+          .map((keyword: string) => (typeof keyword === 'string' ? keyword.toLowerCase() : ''))
+          .filter(Boolean)
+      : [];
+
+    const matches = (...terms: string[]) =>
+      terms.some((term) =>
+        !!term && (
+          name.includes(term) ||
+          description.includes(term) ||
+          keywords.some((keyword) => keyword.includes(term))
+        )
+      );
+
+    if (matches('anxiety', 'anxious', 'panic')) return 'anxiety';
+    if (matches('depression', 'mood', 'happiness')) return 'depressionMood';
+    if (matches('discover', 'explore', 'journey', 'story', 'value', 'identity', 'future', 'vision')) return 'selfDiscovery';
+    if (matches('clarity', 'organize', 'clear', 'clutter', 'structure', 'thought')) return 'mentalClarity';
+    if (matches('stress', 'tension', 'calm', 'relax', 'relief', 'breath')) return 'stressRelief';
+    if (matches('focus', 'concentration', 'attention', 'mindful')) return 'focus';
+    if (matches('balance', 'compassion', 'kindness', 'emotional', 'care')) return 'emotionalBalance';
+
+    const categoryKey = getCategoryKey(exercise.category);
+    if (categoryKey === 'breathing') return 'stressRelief';
+    if (categoryKey === 'cbt') return 'mentalClarity';
+    if (categoryKey === 'mindfulness') return 'focus';
+    if (categoryKey === 'selfCare') return 'emotionalBalance';
+    if (categoryKey === 'act' || categoryKey === 'selfDiscovery' || categoryKey === 'selfGrowth') return 'selfDiscovery';
+
+    return 'focus';
+  }, [getCategoryKey]);
+
+  const getBenefitLabel = useCallback(
+    (benefitKey: string) => {
+      const label = t(`exercises.filters.benefits.${benefitKey}`);
+      return label.includes('exercises.filters') ? benefitKey : label;
+    },
+    [t]
+  );
 
   // Helper function to get duration in minutes
   const getDurationInMinutes = (duration: string) => {
@@ -101,52 +145,108 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
     return match ? Number.parseInt(match[1], 10) : 0;
   };
 
-  // Filter options - time filters remain static
-  const timeFilters = ['All', '1-5 min', '5-15 min', '15-30 min', '30+ min'];
+  // Filter options - time filters use translations
+  const timeFilters = useMemo(() => ([
+    { key: ALL_FILTER_KEY, label: t('exercises.filters.all') },
+    { key: '1-5', label: t('exercises.filters.durations.1-5') },
+    { key: '5-15', label: t('exercises.filters.durations.5-15') },
+    { key: '15-30', label: t('exercises.filters.durations.15-30') },
+    { key: '30+', label: t('exercises.filters.durations.30+') },
+  ]), [t]);
   
   // Dynamically generate style filters from available exercises
   const styleFilters = useMemo(() => {
     const categories = new Set<string>();
     for (const exercise of exercises) {
       if (exercise.category) {
-        categories.add(exercise.category);
+        const categoryKey = getCategoryKey(exercise.category);
+        categories.add(categoryKey);
       }
     }
-    return ['All', ...Array.from(categories).sort((a, b) => a.localeCompare(b))];
-  }, [exercises]);
+
+    const sortedCategoryKeys = Array.from(categories).sort((a, b) => {
+      const labelA = categoryTranslations[a] ?? a;
+      const labelB = categoryTranslations[b] ?? b;
+      return labelA.localeCompare(labelB);
+    });
+
+    return [
+      { key: ALL_FILTER_KEY, label: t('exercises.filters.all') },
+      ...sortedCategoryKeys.map((key) => ({
+        key,
+        label: categoryTranslations[key] ?? key,
+      })),
+    ];
+  }, [exercises, t, categoryTranslations, getCategoryKey]);
 
   // Dynamically generate benefit filters from available exercises
   const benefitFilters = useMemo(() => {
-    const benefits = new Set<string>();
+    const benefitKeys = new Set<string>();
     for (const exercise of exercises) {
-      const benefit = getBenefitFromExercise(exercise);
-      if (benefit) {
-        benefits.add(benefit);
+      const benefitKey = getBenefitKeyFromExercise(exercise);
+      if (benefitKey) {
+        benefitKeys.add(benefitKey);
       }
     }
-    // Add special filters
-    const hasBreathing = exercises.some(ex => ex.category.toLowerCase().includes('breathing'));
+
+    const sortedBenefitKeys = Array.from(benefitKeys).sort((a, b) => {
+      const labelA = getBenefitLabel(a);
+      const labelB = getBenefitLabel(b);
+      return labelA.localeCompare(labelB);
+    });
+
+    const filters: Array<{ key: string; label: string; group: 'primary' | 'breathing' }> = [
+      { key: ALL_FILTER_KEY, label: t('exercises.filters.all'), group: 'primary' },
+      ...sortedBenefitKeys.map((key) => ({
+        key,
+        label: getBenefitLabel(key),
+        group: 'primary',
+      })),
+    ];
+
+    const hasBreathing = exercises.some((exercise) => getCategoryKey(exercise.category) === 'breathing');
     if (hasBreathing) {
-      benefits.add('Breathing');
-      benefits.add('Without Breathing');
+      filters.push(
+        {
+          key: 'breathing',
+          label: getBenefitLabel('breathing'),
+          group: 'breathing',
+        },
+        {
+          key: 'withoutBreathing',
+          label: getBenefitLabel('withoutBreathing'),
+          group: 'breathing',
+        }
+      );
     }
-    return ['All', ...Array.from(benefits).sort((a, b) => a.localeCompare(b))];
-  }, [exercises]);
+
+    return filters;
+  }, [exercises, t, getBenefitKeyFromExercise, getCategoryKey, getBenefitLabel]);
+
+  const primaryBenefitFilters = useMemo(
+    () => benefitFilters.filter((filter) => filter.group === 'primary'),
+    [benefitFilters]
+  );
+
+  const breathingBenefitFilters = useMemo(
+    () => benefitFilters.filter((filter) => filter.group === 'breathing'),
+    [benefitFilters]
+  );
 
   // Count active filters
   const activeFiltersCount = useMemo(() => {
     let count = 0;
-    if (selectedTimeFilter !== 'All') count++;
-    if (selectedBenefitFilter !== 'All') count++;
-    if (selectedStyleFilter !== 'All') count++;
+    if (selectedTimeFilter !== ALL_FILTER_KEY) count++;
+    if (selectedBenefitFilter !== ALL_FILTER_KEY) count++;
+    if (selectedStyleFilter !== ALL_FILTER_KEY) count++;
     return count;
   }, [selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter]);
 
   // Clear all filters
   const clearAllFilters = () => {
-    setSelectedTimeFilter('All');
-    setSelectedBenefitFilter('All');
-    setSelectedStyleFilter('All');
+    setSelectedTimeFilter(ALL_FILTER_KEY);
+    setSelectedBenefitFilter(ALL_FILTER_KEY);
+    setSelectedStyleFilter(ALL_FILTER_KEY);
   };
 
   // Handle card hiding
@@ -158,62 +258,66 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
 
   // Filter exercises based on all criteria
   const filteredExercises = useMemo(() => {
-    let filtered = exercises;
+    let filtered = exercises.filter((exercise) => !hiddenCardIds.includes(exercise.id));
 
-    // Filter out hidden cards first
-    filtered = filtered.filter(exercise => !hiddenCardIds.includes(exercise.id));
-
-    // Search filter
     if (searchText) {
-      filtered = filtered.filter(exercise =>
-        exercise.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        exercise.description.toLowerCase().includes(searchText.toLowerCase()) ||
-        exercise.category.toLowerCase().includes(searchText.toLowerCase())
-      );
+      const loweredSearch = searchText.toLowerCase();
+      filtered = filtered.filter((exercise) => {
+        const name = typeof exercise.name === 'string' ? exercise.name.toLowerCase() : '';
+        const description = typeof exercise.description === 'string' ? exercise.description.toLowerCase() : '';
+        const category = typeof exercise.category === 'string' ? exercise.category.toLowerCase() : '';
+        return (
+          name.includes(loweredSearch) ||
+          description.includes(loweredSearch) ||
+          category.includes(loweredSearch)
+        );
+      });
     }
 
-    // Time filter
-    if (selectedTimeFilter !== 'All') {
-      filtered = filtered.filter(exercise => {
+    if (selectedTimeFilter !== ALL_FILTER_KEY) {
+      filtered = filtered.filter((exercise) => {
         const duration = getDurationInMinutes(exercise.duration);
-        switch (selectedTimeFilter) {
-          case '1-5 min': return duration >= 1 && duration <= 5;
-          case '5-15 min': return duration > 5 && duration <= 15;
-          case '15-30 min': return duration > 15 && duration <= 30;
-          case '30+ min': return duration > 30;
-          default: return true;
-        }
+        if (selectedTimeFilter === '1-5') return duration >= 1 && duration <= 5;
+        if (selectedTimeFilter === '5-15') return duration > 5 && duration <= 15;
+        if (selectedTimeFilter === '15-30') return duration > 15 && duration <= 30;
+        if (selectedTimeFilter === '30+') return duration > 30;
+        return true;
       });
     }
 
-    // Benefit filter (based on category and keywords)
-    if (selectedBenefitFilter !== 'All') {
-      filtered = filtered.filter(exercise => {
-        const benefit = selectedBenefitFilter.toLowerCase();
-        if (benefit === 'breathing') {
-          return exercise.category.toLowerCase().includes('breathing');
+    if (selectedBenefitFilter !== ALL_FILTER_KEY) {
+      filtered = filtered.filter((exercise) => {
+        const categoryKey = getCategoryKey(exercise.category);
+        if (selectedBenefitFilter === 'breathing') {
+          return categoryKey === 'breathing';
         }
-        if (benefit === 'without breathing') {
-          return !exercise.category.toLowerCase().includes('breathing');
+        if (selectedBenefitFilter === 'withoutBreathing') {
+          return categoryKey !== 'breathing';
         }
-        return exercise.category.toLowerCase().includes(benefit) ||
-               exercise.description.toLowerCase().includes(benefit) ||
-               exercise.name.toLowerCase().includes(benefit);
+
+        const benefitKey = getBenefitKeyFromExercise(exercise);
+        return selectedBenefitFilter === benefitKey;
       });
     }
 
-    // Style filter
-    if (selectedStyleFilter !== 'All') {
-      filtered = filtered.filter(exercise => {
-        if (selectedStyleFilter === 'Without Breathing') {
-          return !exercise.category.toLowerCase().includes('breathing');
-        }
-        return exercise.category.toLowerCase().includes(selectedStyleFilter.toLowerCase());
+    if (selectedStyleFilter !== ALL_FILTER_KEY) {
+      filtered = filtered.filter((exercise) => {
+        const categoryKey = getCategoryKey(exercise.category);
+        return categoryKey === selectedStyleFilter;
       });
     }
 
     return filtered;
-  }, [searchText, selectedTimeFilter, selectedBenefitFilter, selectedStyleFilter, hiddenCardIds]);
+  }, [
+    exercises,
+    hiddenCardIds,
+    searchText,
+    selectedTimeFilter,
+    selectedBenefitFilter,
+    selectedStyleFilter,
+    getCategoryKey,
+    getBenefitKeyFromExercise,
+  ]);
 
 
   const FilterChip = ({ label, selected, onPress, filterType }: {
@@ -224,7 +328,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   }) => {
     // Get background color based on filter type
     const getBackgroundColor = () => {
-      if (label === 'Breathing' || label === 'Without Breathing') {
+      // Check for translated breathing filters
+      if (label === t('exercises.filters.benefits.breathing') || label === t('exercises.filters.benefits.withoutBreathing')) {
         return '#A9CDC3'; // A lighter, more subtle shade for these specific filters
       }
       switch (filterType) {
@@ -257,7 +362,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
   };
 
   const ExerciseCard = ({ exercise, index }: { exercise: any; index: number }) => {
-    const benefit = getBenefitFromExercise(exercise);
+    const benefitKey = getBenefitKeyFromExercise(exercise);
+    const resolvedBenefit = getBenefitLabel(benefitKey);
     
     // Choose button image based on benefit name length
     const getButtonImage = (benefitName: string, cardIndex: number) => {
@@ -274,14 +380,14 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
       }
     };
     
-    const buttonImage = getButtonImage(benefit, index);
-    const isLargeButton = benefit.length > 8;
+    const buttonImage = getButtonImage(resolvedBenefit, index);
+    const isLargeButton = resolvedBenefit.length > 8;
     
     return (
       <SlidableExerciseCard
         exercise={exercise}
         index={index}
-        benefit={benefit}
+        benefit={resolvedBenefit}
         isLargeButton={isLargeButton}
         buttonImage={buttonImage}
         onExerciseClick={handleExerciseClickWithPreview}
@@ -400,24 +506,24 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
           marginBottom: spacing[8],
         }}>
           <View style={exerciseLibraryStyles.filterRowCompact}>
-            {benefitFilters.filter(f => f !== 'Breathing' && f !== 'Without Breathing').map((filter) => (
+            {primaryBenefitFilters.map((filter) => (
               <FilterChip
-                key={filter}
-                label={filter}
-                selected={selectedBenefitFilter === filter}
-                onPress={() => setSelectedBenefitFilter(selectedBenefitFilter === filter ? 'All' : filter)}
+                key={filter.key}
+                label={filter.label}
+                selected={selectedBenefitFilter === filter.key}
+                onPress={() => setSelectedBenefitFilter(selectedBenefitFilter === filter.key ? ALL_FILTER_KEY : filter.key)}
                 filterType="benefits"
               />
             ))}
           </View>
           <View style={{ borderTopWidth: 1, borderColor: '#E0E0E0', width: '80%', alignSelf: 'center', paddingTop: spacing[1], marginTop: 0 }} />
           <View style={[exerciseLibraryStyles.filterRowCompact, { marginTop: spacing[4] }]}>
-            {benefitFilters.filter(f => f === 'Breathing' || f === 'Without Breathing').map((filter) => (
+            {breathingBenefitFilters.map((filter) => (
               <FilterChip
-                key={filter}
-                label={filter}
-                selected={selectedBenefitFilter === filter}
-                onPress={() => setSelectedBenefitFilter(selectedBenefitFilter === filter ? 'All' : filter)}
+                key={filter.key}
+                label={filter.label}
+                selected={selectedBenefitFilter === filter.key}
+                onPress={() => setSelectedBenefitFilter(selectedBenefitFilter === filter.key ? ALL_FILTER_KEY : filter.key)}
                 filterType="benefits"
               />
             ))}
@@ -452,10 +558,10 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               <View style={exerciseLibraryStyles.filterRowCompact}>
                 {timeFilters.map((filter) => (
                   <FilterChip
-                    key={filter}
-                    label={filter}
-                    selected={selectedTimeFilter === filter}
-                    onPress={() => setSelectedTimeFilter(selectedTimeFilter === filter ? 'All' : filter)}
+                    key={filter.key}
+                    label={filter.label}
+                    selected={selectedTimeFilter === filter.key}
+                    onPress={() => setSelectedTimeFilter(selectedTimeFilter === filter.key ? ALL_FILTER_KEY : filter.key)}
                     filterType="duration"
                   />
                 ))}
@@ -468,10 +574,10 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onExerciseClick }) =>
               <View style={exerciseLibraryStyles.filterRowCompact}>
                 {styleFilters.map((filter) => (
                   <FilterChip
-                    key={filter}
-                    label={filter}
-                    selected={selectedStyleFilter === filter}
-                    onPress={() => setSelectedStyleFilter(selectedStyleFilter === filter ? 'All' : filter)}
+                    key={filter.key}
+                    label={filter.label}
+                    selected={selectedStyleFilter === filter.key}
+                    onPress={() => setSelectedStyleFilter(selectedStyleFilter === filter.key ? ALL_FILTER_KEY : filter.key)}
                     filterType="approach"
                   />
                 ))}

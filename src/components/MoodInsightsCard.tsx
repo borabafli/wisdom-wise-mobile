@@ -1035,7 +1035,7 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
         backgroundColor: '#FFFFFF',
         borderRadius: 20,
         marginHorizontal: 0,
-        marginTop: 48,
+        marginTop: 0,
         marginBottom: 20,
         overflow: 'hidden',
         position: 'relative'

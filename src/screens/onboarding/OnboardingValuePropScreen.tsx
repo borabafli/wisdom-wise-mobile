@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Video, ResizeMode } from 'expo-av';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
 import { spacing } from '../../styles/tokens/spacing';
 
@@ -17,38 +18,12 @@ interface OnboardingPage {
   isMainPage?: boolean;
 }
 
-const onboardingPages: OnboardingPage[] = [
-  {
-    id: 1,
-    icon: require('../../../assets/images/onboarding/calm-icon-1.png'),
-    title: 'Think Clearer, Feel Better',
-    description: 'Learn to spot unhelpful thoughts and reframe them with science-backed CBT techniques',
-  },
-  {
-    id: 2,
-    icon: require('../../../assets/images/onboarding/understand-icon-2.png'),
-    title: 'Understand yourself better',
-    description: 'Discover patterns in your thoughts and feelings. Insights help you understand yourself—and how to grow.',
-  },
-  {
-    id: 3,
-    icon: require('../../../assets/images/onboarding/guided-icon-4.png'),
-    title: 'Guided Growth, Made Simple',
-    description: 'Anu always knows the next step and suggests exercises designed just for you.',
-  },
-  {
-    id: 4,
-    icon: require('../../../assets/images/onboarding/growth-icon-3.png'),
-    title: 'Your Progress, Made Visible',
-    description: 'See your journey unfold with saved exercises, insights, and milestones.',
-  },
-];
-
 interface OnboardingValuePropScreenProps {
   onContinue: () => void;
 }
 
 const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ onContinue }) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [currentPage, setCurrentPage] = useState(0);
   const [overlayVisible, setOverlayVisible] = useState(true);
@@ -58,6 +33,33 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   const slideAnim = useRef(new Animated.Value(30)).current;
   const overlayFadeAnim = useRef(new Animated.Value(1)).current;
   const buttonFadeAnim = useRef(new Animated.Value(0)).current;
+
+  const onboardingPages: OnboardingPage[] = [
+    {
+      id: 1,
+      icon: require('../../../assets/images/onboarding/calm-icon-1.png'),
+      title: t('onboarding.valueProp.pages.page1.title'),
+      description: t('onboarding.valueProp.pages.page1.description'),
+    },
+    {
+      id: 2,
+      icon: require('../../../assets/images/onboarding/understand-icon-2.png'),
+      title: t('onboarding.valueProp.pages.page2.title'),
+      description: t('onboarding.valueProp.pages.page2.description'),
+    },
+    {
+      id: 3,
+      icon: require('../../../assets/images/onboarding/guided-icon-4.png'),
+      title: t('onboarding.valueProp.pages.page3.title'),
+      description: t('onboarding.valueProp.pages.page3.description'),
+    },
+    {
+      id: 4,
+      icon: require('../../../assets/images/onboarding/growth-icon-3.png'),
+      title: t('onboarding.valueProp.pages.page4.title'),
+      description: t('onboarding.valueProp.pages.page4.description'),
+    },
+  ];
 
   useEffect(() => {
     // Set Android navigation bar color to match background
@@ -236,7 +238,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
               activeOpacity={0.8}
             >
               <Text style={styles.primaryButtonText}>
-                {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
+                {currentPage === onboardingPages.length - 1 ? t('onboarding.valueProp.letsBegin') : t('onboarding.common.continueButton')}
               </Text>
             </TouchableOpacity>
           </Animated.View>

@@ -129,6 +129,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     showPreExerciseMoodSlider,
     isValueReflection,
     isThinkingPatternReflection,
+    isVisionReflection,
     showValueReflectionSummary,
     valueReflectionSummary,
     showThinkingPatternSummary,
@@ -151,6 +152,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     endThinkingPatternReflection,
     saveThinkingPatternSummary,
     cancelThinkingPatternSummary,
+    startVisionReflection,
+    handleVisionReflectionResponse,
+    endVisionReflection,
     saveVisionSummary,
     cancelVisionSummary,
     saveTherapyGoalSummary,
@@ -183,6 +187,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       } else if (currentExercise.type === 'thinking_pattern_reflection') {
         console.log('Starting thinking pattern reflection with context:', currentExercise.context);
         startThinkingPatternReflection(
+          currentExercise.context,
+          chatSession.setMessages,
+          chatSession.setIsTyping,
+          chatSession.setSuggestions
+        );
+      } else if (currentExercise.type === 'vision_reflection') {
+        console.log('Starting vision reflection with context:', currentExercise.context);
+        startVisionReflection(
           currentExercise.context,
           chatSession.setMessages,
           chatSession.setIsTyping,
@@ -270,6 +282,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     if (isThinkingPatternReflection) {
       await handleThinkingPatternReflectionResponse(
+        text,
+        chatSession.setMessages,
+        chatSession.setIsTyping,
+        chatSession.setSuggestions
+      );
+      return;
+    }
+
+    if (isVisionReflection) {
+      await handleVisionReflectionResponse(
         text,
         chatSession.setMessages,
         chatSession.setIsTyping,

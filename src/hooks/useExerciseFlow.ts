@@ -19,6 +19,7 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
   const [showMoodRating, setShowMoodRating] = useState(false);
   const [isValueReflection, setIsValueReflection] = useState(false);
   const [isThinkingPatternReflection, setIsThinkingPatternReflection] = useState(false);
+  const [isVisionReflection, setIsVisionReflection] = useState(false);
   const [showValueReflectionSummary, setShowValueReflectionSummary] = useState(false);
   const [valueReflectionSummary, setValueReflectionSummary] = useState<{summary: string; keyInsights: string[]} | null>(null);
   const [showThinkingPatternSummary, setShowThinkingPatternSummary] = useState(false);
@@ -595,6 +596,172 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
     // Don't reset isThinkingPatternReflection - user can continue the conversation
   }, []);
 
+  const startVisionReflection = useCallback(async (
+    visionContext: any,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void
+  ) => {
+    try {
+      console.log('Starting vision reflection with context:', visionContext);
+
+      setIsVisionReflection(true);
+      setExerciseData({ visionContext });
+
+      // Initialize reflection tracking
+      setReflectionMessageCount(0);
+      setReflectionStartTime(Date.now());
+      setCanEndReflection(false);
+
+      // Get the AI's opening message for the vision reflection
+      const context = await contextService.assembleVisionReflectionContext(visionContext);
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(context);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          text: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true,
+          context: { type: 'vision_reflection', vision: visionContext.fullDescription }
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+        await storageService.addMessage(aiMessage);
+
+        if (response.suggestions) {
+          setSuggestions(response.suggestions);
+        }
+
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error starting vision reflection:', error);
+      setIsVisionReflection(false);
+      return false;
+    }
+  }, []);
+
+  const handleVisionReflectionResponse = useCallback(async (
+    userText: string,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void
+  ) => {
+    try {
+      // Check if user wants to end the reflection
+      const userTextLower = userText.toLowerCase();
+      if (userTextLower.includes('end here and create a summary') ||
+          userTextLower.includes('finish the reflection') ||
+          userTextLower.includes('create a summary now')) {
+        // End the reflection and show summary
+        await endVisionReflection(setMessages, setIsTyping, setSuggestions);
+        return;
+      }
+
+      const userMessage: Message = {
+        id: (Date.now() + Math.random()).toString(),
+        type: 'user',
+        text: userText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages(prev => [...prev, userMessage]);
+      await storageService.addMessage(userMessage);
+
+      // Update reflection tracking
+      const newMessageCount = reflectionMessageCount + 1;
+      setReflectionMessageCount(newMessageCount);
+
+      // Enable end button after 3 meaningful exchanges or 2 minutes
+      const timeElapsed = reflectionStartTime ? (Date.now() - reflectionStartTime) / 1000 : 0;
+      if (newMessageCount >= 3 || timeElapsed >= 120) {
+        setCanEndReflection(true);
+      }
+
+      const recentMessages = await storageService.getLastMessages(10);
+
+      // For vision reflection, we need to maintain the vision context throughout the conversation
+      const visionContext = exerciseData.visionContext;
+      const context = await contextService.assembleVisionReflectionContext(visionContext);
+
+      // Add the recent conversation messages to the context
+      const conversationMessages = recentMessages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      }));
+
+      context.push(...conversationMessages);
+
+      setIsTyping(true);
+      const response = await apiService.getChatCompletionWithContext(context);
+      setIsTyping(false);
+
+      if (response.success && response.message) {
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          text: response.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAIGuided: true,
+          context: { type: 'vision_reflection', vision: exerciseData.visionContext?.fullDescription }
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+        await storageService.addMessage(aiMessage);
+
+        if (response.suggestions) {
+          setSuggestions(response.suggestions);
+        }
+
+        // Check if this is a summary offer from the AI
+        const messageText = response.message.toLowerCase();
+        if (messageText.includes('summarize') && messageText.includes('insights') && messageText.includes('vision')) {
+          // Add special suggestions for ending the reflection
+          const endReflectionSuggestion = "Yes, let's end here and create a summary";
+          const continueReflectionSuggestion = "I'd like to explore this a bit more";
+          setSuggestions([endReflectionSuggestion, continueReflectionSuggestion, ...(response.suggestions?.slice(0, 2) || [])]);
+        }
+      }
+    } catch (error) {
+      console.error('Error handling vision reflection response:', error);
+    }
+  }, [exerciseData, reflectionMessageCount, reflectionStartTime]);
+
+  const endVisionReflection = useCallback(async (
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setIsTyping: (isTyping: boolean) => void,
+    setSuggestions: (suggestions: string[]) => void
+  ) => {
+    try {
+      console.log('Ending vision reflection and generating summary...');
+
+      // Get recent messages for summary generation
+      const recentMessages = await storageService.getLastMessages(15);
+      const visionContext = exerciseData.visionContext;
+
+      // Generate the reflection summary
+      setIsTyping(true);
+      const summary = await contextService.generateVisionReflectionSummary(recentMessages, visionContext);
+      setIsTyping(false);
+
+      // Store the summary for display
+      setVisionSummary(summary);
+      setShowVisionSummary(true);
+      setSuggestions([]);
+
+    } catch (error) {
+      console.error('Error ending vision reflection:', error);
+      setIsTyping(false);
+    }
+  }, [exerciseData]);
+
   const saveVisionSummary = useCallback(async () => {
     try {
       if (!visionSummary) return;
@@ -830,6 +997,7 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
     showPreExerciseMoodSlider,
     isValueReflection,
     isThinkingPatternReflection,
+    isVisionReflection,
     showValueReflectionSummary,
     valueReflectionSummary,
     showThinkingPatternSummary,
@@ -852,6 +1020,9 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
     endThinkingPatternReflection,
     saveThinkingPatternSummary,
     cancelThinkingPatternSummary,
+    startVisionReflection,
+    handleVisionReflectionResponse,
+    endVisionReflection,
     saveVisionSummary,
     cancelVisionSummary,
     saveTherapyGoalSummary,

@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { ageGroupStyles as styles } from '../../styles/components/onboarding/AgeGroup.styles';
 
 interface AgeGroup {
@@ -27,6 +28,7 @@ interface AgeGroupScreenProps {
 }
 
 const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) => {
+  const { t } = useTranslation();
   const [selectedAge, setSelectedAge] = useState<string>('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -118,9 +120,9 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
           >
             {/* Header Text */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>Help me to understand you better</Text>
+              <Text style={styles.headline}>{t('onboarding.ageGroup.headline')}</Text>
               <Text style={styles.promptText}>
-                What's your age?
+                {t('onboarding.ageGroup.promptText')}
               </Text>
             </View>
 
@@ -147,7 +149,7 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
               styles.continueButtonText,
               !selectedAge && styles.disabledButtonText
             ]}>
-              Continue
+              {t('onboarding.common.continueButton')}
             </Text>
           </TouchableOpacity>
         </View>

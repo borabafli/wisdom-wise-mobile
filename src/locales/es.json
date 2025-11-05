@@ -100,7 +100,27 @@
     "stepNumber": "Paso {{number}}",
     "stepsCount": "{{count}} paso",
     "stepsCount_other": "{{count}} pasos",
-    "steps": "Pasos"
+    "steps": "Pasos",
+    "filters": {
+      "all": "Todos",
+      "durations": {
+        "1-5": "1-5 min",
+        "5-15": "5-15 min",
+        "15-30": "15-30 min",
+        "30+": "30+ min"
+      },
+      "benefits": {
+        "anxiety": "Ansiedad",
+        "depressionMood": "Depresión / Estado de Ánimo",
+        "selfDiscovery": "Autodescubrimiento",
+        "mentalClarity": "Claridad Mental",
+        "stressRelief": "Alivio del Estrés",
+        "focus": "Concentración",
+        "emotionalBalance": "Equilibrio Emocional",
+        "breathing": "Respiración",
+        "withoutBreathing": "Sin Respiración"
+      }
+    }
   },
   "insights": {
     "title": "Perspectivas",
@@ -913,6 +933,28 @@
           "title": "Conecta con el presente",
           "description": "¿Cómo pueden estas fortalezas ayudarte en tu vida actual?",
           "instruction": "Guía al usuario para conectar sus fortalezas identificadas con su situación actual. Pídele que considere cómo estas mismas cualidades pueden apoyarlo con desafíos o metas actuales. Anima una forma específica de usar estas fortalezas para avanzar."
+        }
+      },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Entiende por qué la visión es importante",
+          "description": "Una visión clara da dirección y motivación.",
+          "instruction": "Explica al usuario que imaginar su futuro es como establecer una brújula. Ayuda a guiar las elecciones, fortalece la motivación y nos ayuda a saber a dónde ir y cómo queremos ser como persona. Anímalo a abordar este ejercicio con apertura y sin contenerse. Esta es una visión ideal. Puedes hacer una pregunta reflexiva u ofrecer una escala/verificación rápida de cuán clara es su visión en este momento."
+        },
+        "step2": {
+          "title": "Imagina tu vida futura",
+          "description": "Imagina tu vida dentro de unos años en sus áreas importantes.",
+          "instruction": "Guía al usuario para imaginar cómo se ve la vida cuando las cosas se sienten bien. Pídele que repase áreas clave: Relaciones (familia, amigos, pareja), Trabajo o estudios, Salud y bienestar, Crecimiento personal y aprendizaje, Estilo de vida y rutinas diarias. Anímalo a describir cómo se ve cada uno de estos en su visión futura."
+        },
+        "step3": {
+          "title": "Nota qué es importante",
+          "description": "Reflexiona sobre los valores y prioridades en tu visión.",
+          "instruction": "Pide al usuario que identifique los valores principales que brillan en su visión — por ejemplo, conexión, equilibrio, libertad, amabilidad, crecimiento. Anímalo a nombrar uno o dos que se sientan más centrales en este momento."
+        },
+        "step4": {
+          "title": "Conéctate con tu visión",
+          "description": "Imagínala completamente y vincúlala con tu vida hoy.",
+          "instruction": "Anima al usuario a hacer una pausa y realmente imaginar estar en este futuro — ¿cómo se siente, qué emociones surgen? Luego pídele que describa una pequeña forma en que puede mantenerse conectado a esta visión hoy, ya sea a través de una acción, un recordatorio o simplemente manteniendo el sentimiento en mente."
         }
       },
       "morningMindfulness": {

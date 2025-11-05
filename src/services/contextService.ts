@@ -498,7 +498,7 @@ The JSON object must have:
   try {
     if (typeof response.message === "string") {
       let jsonString = response.message.trim();
-      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+      const jsonMatch = jsonString.match(/{[\s\S]*}/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
       }
@@ -599,7 +599,7 @@ The JSON object must have:
 
     if (typeof response.message === "string") {
       let jsonString = response.message.trim();
-      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+      const jsonMatch = jsonString.match(/{[\s\S]*}/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
       }
@@ -703,6 +703,69 @@ ${patternContext.prompt}
     ];
   }
 
+  async assembleVisionReflectionContext(
+    visionContext: {
+      visionInsight: any;
+      prompt: string;
+      coreQualities: string[];
+      fullDescription: string;
+    }
+  ): Promise<any[]> {
+    const firstName = await storageService.getFirstName().catch(() => 'Friend');
+
+    const systemPrompt = `(v1-vision) You are **Anu**, a compassionate therapist specializing in helping clients explore their future vision and personal growth.
+
+**Current Context:**
+You're helping ${firstName} reflect on the vision they created for their future self.
+
+**Their Vision:**
+- **Core qualities they aspire to:** ${visionContext.coreQualities.join(', ')}
+- **Full vision description:** "${visionContext.fullDescription}"
+
+**Reflection Prompt:**
+${visionContext.prompt}
+
+---
+
+**SESSION APPROACH:**
+- Start warmly by acknowledging the vision they've created and its significance
+- Use the reflection prompt as your opening invitation to explore
+- Help them connect with what inspired this vision - what makes it meaningful to them
+- Explore the gap between where they are now and where they want to be
+- Guide them to identify concrete, achievable first steps toward embodying these qualities
+- Ask questions that help them make their vision tangible and actionable
+- Be encouraging and help them see this vision as achievable, not overwhelming
+
+**CONVERSATION GOALS:**
+- Help them clarify what truly matters in their vision
+- Identify specific qualities or aspects that resonate most deeply
+- Explore barriers or challenges they might face
+- Discover small, concrete actions they can take today or this week
+- Build their confidence that this vision is achievable through gradual steps
+- Connect the vision to their daily life and choices
+
+**FORMAT RULES:**
+- Output MUST be a single valid JSON object (no markdown, no extra text)
+- Fields:
+  • **message**: Your therapeutic response (warm, inspiring, uses **bold** for emphasis)
+  • **suggestions**: 2-4 natural, client-style responses they might give
+  • **nextAction**: 'none' (no exercise cards for vision reflections)
+  • **exerciseData**: null
+
+**CONVERSATION STYLE:**
+- Warm and hopeful - help them see their vision as achievable
+- Use their name (${firstName}) occasionally when natural
+- Ask one meaningful question at a time
+- Validate their vision while helping them make it practical
+- Focus on small, concrete steps rather than overwhelming changes
+- Keep the tone encouraging and forward-looking
+- After 4-5 exchanges, offer to help them summarize their insights with: "We've explored your vision together. Would you like me to help you summarize the key insights and action steps from our reflection?"`;
+
+    return [
+      { role: 'system', content: systemPrompt }
+    ];
+  }
+
   async generateVisionSummary(messages: any[]): Promise<{ summary: string; keyInsights: string[] }> {
     const firstName = await storageService.getFirstName().catch(() => 'Friend');
     
@@ -744,7 +807,7 @@ The JSON object must have:
   try {
     if (typeof response.message === "string") {
       let jsonString = response.message.trim();
-      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+      const jsonMatch = jsonString.match(/{[\s\S]*}/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
       }
@@ -773,6 +836,103 @@ The JSON object must have:
       };
     }
   }
+
+  async generateVisionReflectionSummary(
+    messages: any[],
+    visionContext: {
+      visionInsight: any;
+      prompt: string;
+      coreQualities: string[];
+      fullDescription: string;
+    }
+  ): Promise<{ summary: string; keyInsights: string[] }> {
+    const firstName = await storageService.getFirstName().catch(() => 'Friend');
+
+    const summaryPrompt = `You are helping ${firstName} summarize their reflection on the vision they created for their future self.
+
+**Vision Context:**
+- Core qualities: ${visionContext.coreQualities.join(', ')}
+- Vision description: "${visionContext.fullDescription}"
+- Reflection prompt: ${visionContext.prompt}
+
+**Your Task:**
+Review the conversation carefully and create a meaningful summary based on what ${firstName} actually shared during their reflection.
+
+**CRITICAL: You must respond with ONLY a valid JSON object. No other text, no explanations, no markdown. Just pure JSON.**
+
+The JSON object must have:
+- "summary": A personal, specific 2-3 sentence summary of their main realizations and discoveries from this vision reflection
+- "keyInsights": An array of 2-4 specific insights they discovered (NOT generic advice)
+
+**JSON Format Example:**
+{
+  "summary": "Through this reflection, I realized that my vision of becoming more confident and self-assured is deeply connected to learning to trust my own judgment. I recognized that I've been holding myself back by seeking constant external validation rather than believing in my own capabilities.",
+  "keyInsights": [
+    "I want to start trusting my own decisions more, especially in work situations where I currently second-guess myself",
+    "A concrete first step is to share my ideas in team meetings before asking for others' opinions",
+    "I realized that my fear of being wrong has been preventing me from taking meaningful action toward my goals",
+    "Embodying these qualities means being okay with making mistakes as part of the learning process"
+  ]
+}
+
+**Critical Requirements:**
+- Use ${firstName}'s actual words, examples, and specific situations they mentioned
+- Capture concrete realizations they had about their vision and how to work toward it
+- Include specific actions, first steps, or commitments they identified
+- Reference actual barriers, challenges, or insights they discovered
+- Avoid generic statements like "this helped clarify" or "reflection revealed"
+- Make each insight a specific, personal statement that ${firstName} could recognize as their own discovery
+
+**Examples of good vs bad insights:**
+❌ Bad: "This reflection helped me understand my vision better"
+✅ Good: "I realized that my fear of being wrong has been preventing me from taking meaningful action toward my goals"
+
+❌ Bad: "I learned about what matters to me"
+✅ Good: "A concrete first step is to share my ideas in team meetings before asking for others' opinions"`;
+
+    const context = [
+      { role: 'system', content: summaryPrompt },
+      ...messages.slice(-10) // Last 10 messages to avoid token limits
+    ];
+
+    try {
+      const response = await this.generateSummaryWithDirectAPI('generate_vision_reflection_summary', context);
+      if (response.success) {
+        try {
+          if (typeof response.message === "string") {
+            let jsonString = response.message.trim();
+            const jsonMatch = jsonString.match(/\{[\\s\\S]*\}/);
+            if (jsonMatch) {
+              jsonString = jsonMatch[0];
+            }
+            return JSON.parse(jsonString);
+          } else {
+            return response.message;
+          }
+        } catch (parseError) {
+          console.error("Vision reflection JSON parse error:", parseError);
+          console.error("Raw response:", response.message);
+          // Fall through to fallback
+        }
+      }
+
+      // Fallback summary - warm and personal when AI fails
+      return {
+        summary: `You spent meaningful time exploring your vision of ${visionContext.coreQualities.join(' and ')}. This kind of reflection helps you see more clearly what steps you can take to move toward the future you envision.`,
+        keyInsights: [
+          `You identified ${visionContext.coreQualities[0]} as an important quality you want to embody`,
+          `You explored concrete ways to start embodying these qualities in your daily life`,
+          `This reflection gave you a clearer picture of the gap between where you are and where you want to be`
+        ]
+      };
+    } catch (error) {
+      console.error('Error generating vision reflection summary:', error);
+      return {
+        summary: `You took time to think deeply about your future vision and what it means to you. This kind of personal reflection is valuable for understanding yourself better.`,
+        keyInsights: ["This reflection helped you explore your aspirations and identify actionable steps forward"]
+      };
+    }
+  }
   async generateTherapyGoalSummary(messages: any[]): Promise<{ summary: string; keyInsights: string[] }> {
     const firstName = await storageService.getFirstName().catch(() => 'Friend');
 
@@ -823,7 +983,7 @@ The JSON object must have:
           // Handle different response formats
           if (typeof response.message === 'string') {
             // Try to extract JSON from the string if it contains extra text
-            const jsonMatch = response.message.match(/\{[\s\S]*\}/);
+            const jsonMatch = response.message.match(/{[\s\S]*}/);
             const jsonString = jsonMatch ? jsonMatch[0] : response.message;
             parsed = JSON.parse(jsonString);
           } else if (typeof response.message === 'object') {

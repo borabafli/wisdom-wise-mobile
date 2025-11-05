@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { personalValuesStyles as styles } from '../../styles/components/onboarding/PersonalValues.styles';
 
 interface PersonalValue {
@@ -11,26 +12,27 @@ interface PersonalValue {
   name: string;
 }
 
-const personalValues: PersonalValue[] = [
-  { id: '1', name: 'Health & Vitality' },
-  { id: '2', name: 'Close Relationships' },
-  { id: '3', name: 'Growth & Learning' },
-  { id: '4', name: 'Peace & Balance' },
-  { id: '5', name: 'Freedom & Independence' },
-  { id: '6', name: 'Purpose & Meaning' },
-  { id: '7', name: 'Creativity & Play' },
-  { id: '8', name: 'Achievement & Progress' },
-];
-
 interface PersonalValuesScreenProps {
   onContinue: (selectedValues: string[]) => void;
   onBack?: () => void;
 }
 
 const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue, onBack }) => {
+  const { t } = useTranslation();
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+
+  const personalValues: PersonalValue[] = [
+    { id: '1', name: t('onboarding.personalValues.values.healthVitality') },
+    { id: '2', name: t('onboarding.personalValues.values.closeRelationships') },
+    { id: '3', name: t('onboarding.personalValues.values.growthLearning') },
+    { id: '4', name: t('onboarding.personalValues.values.peaceBalance') },
+    { id: '5', name: t('onboarding.personalValues.values.freedomIndependence') },
+    { id: '6', name: t('onboarding.personalValues.values.purposeMeaning') },
+    { id: '7', name: t('onboarding.personalValues.values.creativityPlay') },
+    { id: '8', name: t('onboarding.personalValues.values.achievementProgress') },
+  ];
 
   useEffect(() => {
     // Set Android navigation bar color to match background
@@ -127,9 +129,9 @@ const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue,
           >
             {/* Header Text */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>What matters most to you?</Text>
+              <Text style={styles.headline}>{t('onboarding.personalValues.headline')}</Text>
               <Text style={styles.promptText}>
-                This helps tailor your plan.
+                {t('onboarding.personalValues.promptText')}
               </Text>
             </View>
 
@@ -149,7 +151,7 @@ const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue,
             activeOpacity={0.8}
           >
             <Text style={styles.continueButtonText}>
-              Continue
+              {t('onboarding.common.continueButton')}
             </Text>
           </TouchableOpacity>
         </View>
