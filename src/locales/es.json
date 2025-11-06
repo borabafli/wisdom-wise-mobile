@@ -422,6 +422,17 @@
     "fallbackName": "Amigo",
     "welcomeMessage": "Bienvenido a WisdomWise",
     "premiumMember": "Miembro Premium",
+    "planStatus": {
+      "premium": "✨ Miembro Premium",
+      "free": "🆓 Plan Gratis",
+      "guest": "Invitado • Plan Gratis"
+    },
+    "freePlanCard": {
+      "title": "Accede a todas las herramientas de autodescubrimiento y ejercicios guiados",
+      "subtitle": "Mejora a Mind Wise Premium para superar tu límite diario de mensajes y desbloquear toda la biblioteca.",
+      "cta": "Suscribirse",
+      "tag": "Nivel Gratis"
+    },
     "yourProgress": "Tu Progreso",
     "menu": {
       "editProfile": "Editar Perfil",
@@ -532,6 +543,7 @@
     "safeSpace": "Tu espacio seguro para la reflexión",
     "almostAtLimit": "¡Casi en el límite diario! Quedan {{remaining}}.",
     "limitUsed": "{{percentage}}% del límite diario usado.",
+    "limitReachedBanner": "Límite diario alcanzado. Los mensajes se reinician a medianoche.",
     "endReflection": "Terminar reflexión",
     "typeOrSpeak": "Escribe o habla...",
     "composeMessage": "Redactar mensaje",

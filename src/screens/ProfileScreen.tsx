@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal, Platform, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { Settings, LogOut, ArrowRight } from 'lucide-react-native';
+import { Settings, LogOut, ArrowRight, Lock } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
@@ -15,6 +15,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
 import FeatureRequestModal from '../components/modals/FeatureRequestModal';
 import HelpSupportModal from '../components/modals/HelpSupportModal';
+import { PaywallModal } from '../components/PaywallModal';
 import { useAuth } from '../contexts';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { storageService } from '../services/storageService';
@@ -46,6 +47,7 @@ const ProfileScreen: React.FC = () => {
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [showFeatureRequest, setShowFeatureRequest] = useState(false);
   const [showHelpSupport, setShowHelpSupport] = useState(false);
+  const [showPaywallModal, setShowPaywallModal] = useState(false);
   const [showDevMenu, setShowDevMenu] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -120,18 +122,15 @@ const ProfileScreen: React.FC = () => {
   };
 
   const getPremiumBadgeText = () => {
-    // Check premium status FIRST (works for both anonymous and authenticated)
     if (subscriptionTier === 'premium' || isPremium) {
-      return '✨ Premium Member';
+      return t('profile.planStatus.premium');
     }
 
-    // Only hide badge if anonymous AND free tier
     if (isAnonymous) {
-      return ''; // Anonymous free users don't see badge
+      return t('profile.planStatus.guest');
     }
 
-    // Authenticated free users see free plan badge
-    return '🆓 Free Plan';
+    return t('profile.planStatus.free');
   };
 
   const handleSignOut = () => {
@@ -284,6 +283,8 @@ const ProfileScreen: React.FC = () => {
     });
   };
 
+  const isFreeTierUser = !isPremium && subscriptionTier !== 'premium';
+
   const stats = [
     { label: t('profile.stats.sessions'), value: sessionsCount.toString(), iconImage: require('../../assets/images/New Icons/icon-6.png') },
     { label: t('profile.stats.streak'), value: t('profile.stats.days', { count: currentStreak }), iconImage: require('../../assets/images/New Icons/icon-7.png') },
@@ -342,6 +343,31 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.contentContainer}>
+          {isFreeTierUser && (
+            <View style={styles.planCardContainer}>
+              <LinearGradient
+                colors={['#f1fbf7', '#d8efe6']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.planCardGradient}
+              >
+                <View style={styles.planCardHeader}>
+                  <Text style={styles.planCardTag}>{t('profile.freePlanCard.tag')}</Text>
+                  <Lock size={18} color="#1F4F4C" />
+                </View>
+                <Text style={styles.planCardTitle}>{t('profile.freePlanCard.title')}</Text>
+                <Text style={styles.planCardSubtitle}>{t('profile.freePlanCard.subtitle')}</Text>
+                <TouchableOpacity
+                  style={styles.planCardButton}
+                  activeOpacity={0.85}
+                  onPress={() => setShowPaywallModal(true)}
+                >
+                  <Text style={styles.planCardButtonText}>{t('profile.freePlanCard.cta')}</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            </View>
+          )}
+
           {/* User Info */}
           <View style={styles.userInfoSection}>
             <TouchableOpacity
@@ -566,6 +592,11 @@ const ProfileScreen: React.FC = () => {
       <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       <FeatureRequestModal visible={showFeatureRequest} onClose={() => setShowFeatureRequest(false)} />
       <HelpSupportModal visible={showHelpSupport} onClose={() => setShowHelpSupport(false)} />
+      <PaywallModal
+        visible={showPaywallModal}
+        onClose={() => setShowPaywallModal(false)}
+        trigger="profile_upgrade"
+      />
 
       {/* Developer Tools Modal (only in __DEV__) */}
       {__DEV__ && (

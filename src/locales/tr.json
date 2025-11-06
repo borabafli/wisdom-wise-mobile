@@ -422,6 +422,17 @@
     "fallbackName": "Arkadaş",
     "welcomeMessage": "WisdomWise'a hoş geldiniz",
     "premiumMember": "Premium Üye",
+    "planStatus": {
+      "premium": "✨ Premium Üye",
+      "free": "🆓 Ücretsiz Plan",
+      "guest": "Misafir • Ücretsiz Plan"
+    },
+    "freePlanCard": {
+      "title": "Tüm öz keşif araçlarına ve rehberli egzersizlere erişin",
+      "subtitle": "Günlük mesaj limitinizi aşmak ve tüm kütüphaneyi açmak için Mind Wise Premium'a geçin.",
+      "cta": "Abone Ol",
+      "tag": "Ücretsiz Katman"
+    },
     "yourProgress": "Ilerlemeniz",
     "menu": {
       "editProfile": "Profili Düzenle",
@@ -532,6 +543,7 @@
     "safeSpace": "Dışa vurum için güvenli alanınız",
     "almostAtLimit": "Günlük limite yaklaştınız! {{remaining}} kaldı.",
     "limitUsed": "Günlük limitin %{{percentage}}'i kullanıldı.",
+    "limitReachedBanner": "Günlük limit doldu. Mesajların gece yarısı sıfırlanacak.",
     "endReflection": "Bitir",
     "typeOrSpeak": "Yazın veya konuşun...",
     "composeMessage": "Mesaj Oluştur",

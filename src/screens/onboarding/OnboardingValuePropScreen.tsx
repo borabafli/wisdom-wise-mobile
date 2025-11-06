@@ -37,7 +37,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   // Responsive style selection based on screen height
   const isSmallScreen = height <= 700;
   const isXSmallScreen = height <= 600;
-  const topPadding = Math.max(insets.top + spacing[6], spacing[20]);
+  const topPadding = Math.max(insets.top + spacing[18], spacing[24]);
   const bottomPadding = Math.max(insets.bottom, spacing[8]);
 
   const onboardingPages: OnboardingPage[] = [

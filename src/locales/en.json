@@ -459,6 +459,17 @@
     "fallbackName": "Friend",
     "welcomeMessage": "Welcome to WisdomWise",
     "premiumMember": "Premium Member",
+    "planStatus": {
+      "premium": "✨ Premium Member",
+      "free": "🆓 Free Plan",
+      "guest": "Guest • Free Plan"
+    },
+    "freePlanCard": {
+      "title": "Access all self-discovery tools and guided exercises",
+      "subtitle": "Upgrade to Mind Wise Premium to continue beyond your daily message limit and unlock the full library of guidance.",
+      "cta": "Subscribe",
+      "tag": "Free Tier"
+    },
     "yourProgress": "Your Progress",
     "menu": {
       "editProfile": "Edit Profile",
@@ -582,8 +593,9 @@
     "therapeuticExercise": "{{duration}} • Therapeutic Exercise",
     "loadingSpace": "Preparing your safe space...",
     "safeSpace": "Your safe space for reflection",
-    "almostAtLimit": "Almost at daily limit! {{remaining}} left.",
+    "almostAtLimit": "Almost at your daily limit. {{remaining}} left today.",
     "limitUsed": "{{percentage}}% of daily limit used.",
+    "limitReachedBanner": "Daily limit reached. Messages reset at midnight.",
     "endReflection": "End Reflection",
     "typeOrSpeak": "Type or speak...",
     "composeMessage": "Compose Message",

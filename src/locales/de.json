@@ -422,6 +422,17 @@
     "fallbackName": "Freund",
     "welcomeMessage": "Willkommen bei WisdomWise",
     "premiumMember": "Premium-Mitglied",
+    "planStatus": {
+      "premium": "✨ Premium-Mitglied",
+      "free": "🆓 Kostenloser Plan",
+      "guest": "Gast • Kostenloser Plan"
+    },
+    "freePlanCard": {
+      "title": "Greife auf alle Selbstentdeckungstools und angeleitete Übungen zu",
+      "subtitle": "Steige auf Mind Wise Premium um, um über dein tägliches Nachrichtenlimit hinauszugehen und die vollständige Bibliothek zu nutzen.",
+      "cta": "Abonnieren",
+      "tag": "Kostenlose Stufe"
+    },
     "yourProgress": "Dein Fortschritt",
     "menu": {
       "editProfile": "Profil bearbeiten",
@@ -532,6 +543,7 @@
     "safeSpace": "Dein sicherer Ort für Reflexion",
     "almostAtLimit": "Fast am Tageslimit! Noch {{remaining}} übrig.",
     "limitUsed": "{{percentage}}% des Tageslimits verwendet.",
+    "limitReachedBanner": "Tageslimit erreicht. Nachrichten werden um Mitternacht zurückgesetzt.",
     "endReflection": "Reflexion beenden",
     "typeOrSpeak": "Schreiben oder sprechen...",
     "composeMessage": "Nachricht verfassen",

@@ -101,6 +101,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Basic state
   const [inputText, setInputText] = useState('');
   const [showPaywallModal, setShowPaywallModal] = useState(false);
+  const hasShownLimitPaywallRef = useRef(false);
   const textBeforeVoiceRef = useRef(''); // Store text that was typed before voice recording
 
   // Animation refs
@@ -405,6 +406,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       else stopExerciseAnimations();
     }, [exerciseMode, exerciseData]);
 
+    useEffect(() => {
+      const totalMessages = chatSession.rateLimitStatus?.total ?? 0;
+      const usedMessages = chatSession.rateLimitStatus?.used ?? 0;
+
+      if (totalMessages > 0 && usedMessages >= totalMessages && !hasShownLimitPaywallRef.current) {
+        hasShownLimitPaywallRef.current = true;
+        setShowPaywallModal(true);
+      }
+
+      if (totalMessages > 0 && usedMessages < totalMessages) {
+        hasShownLimitPaywallRef.current = false;
+      }
+    }, [chatSession.rateLimitStatus]);
+
     // Animate end reflection button
     useEffect(() => {
       if (canEndReflection) {
@@ -421,6 +436,18 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
     const normalGradient = ['rgba(255, 255, 254, 0.9)', '#FFFFFE']; // Even closer to white
     const exerciseGradient = ['rgba(255, 255, 254, 0.9)', '#FFFFFE']; // Same subtle gradient for exercises
+
+    const rateLimitTotal = chatSession.rateLimitStatus?.total ?? 0;
+    const rateLimitUsed = chatSession.rateLimitStatus?.used ?? 0;
+    const remainingMessages = Math.max(0, rateLimitTotal - rateLimitUsed);
+    const rateLimitPercentage = chatSession.rateLimitStatus?.percentage ?? 0;
+    const showRateLimitWarning = !currentExercise && typeof chatSession.rateLimitStatus?.percentage === 'number' && chatSession.rateLimitStatus.percentage >= 80;
+    const hasReachedLimit = rateLimitTotal > 0 && remainingMessages === 0;
+    const limitBannerText = hasReachedLimit
+      ? t('chat.limitReachedBanner')
+      : rateLimitPercentage >= 90
+        ? t('chat.almostAtLimit', { remaining: remainingMessages })
+        : t('chat.limitUsed', { percentage: rateLimitPercentage });
 
     const renderMessage = (message: Message) => (
       <MessageItem
@@ -534,14 +561,10 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                             : t('chat.safeSpace')}
                     </Text>
                     
-                    {!currentExercise && typeof chatSession.rateLimitStatus?.percentage === 'number' && chatSession.rateLimitStatus.percentage >= 80 && (
+                    {showRateLimitWarning && (
                       <View style={styles.warningContainer}>
-                        <AlertCircle size={14} color="#f59e0b" />
-                        <Text style={styles.warningText}>
-                          {chatSession.rateLimitStatus.percentage >= 90 
-                            ? t('chat.almostAtLimit', { remaining: Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0)) })
-                            : t('chat.limitUsed', { percentage: chatSession.rateLimitStatus.percentage })}
-                        </Text>
+                        <AlertCircle size={14} color="#2C5F6F" />
+                        <Text style={styles.warningText}>{limitBannerText}</Text>
                       </View>
                     )}
                   </View>

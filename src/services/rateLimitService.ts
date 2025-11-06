@@ -87,7 +87,7 @@ class RateLimitService {
       return `${rateLimit.requestsRemaining} messages remaining today`;
     }
 
-    return `You've reached your daily limit of ${rateLimit.dailyRequestLimit} messages. Your messages will reset tomorrow at midnight. 🌙\n\nTake this as a gentle reminder to pause and reflect on our conversations today. 🌿`;
+    return `You've reached your daily limit of ${rateLimit.dailyRequestLimit} messages. Your messages will reset tomorrow at midnight. 🌙\n\nTake this as an opportunity to pause and reflect on our conversations today. 🌿`;
   }
 
   // Get rate limit status for UI display

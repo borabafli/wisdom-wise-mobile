@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   ScrollView,
-} from 'react';
+} from 'react-native';
 import { X } from 'lucide-react-native';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { PricingCard } from './paywall/PricingCard';

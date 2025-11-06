@@ -23,7 +23,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Swipable Container - Only for text
   swipeContainer: {
     minHeight: height * 0.25, // Allow content to grow beyond base height
-    marginTop: spacing[16], // 32px - Comfortable distance from top after safe area padding
+    marginTop: spacing[24], // 48px - Comfortable distance from top after safe area padding
   },
 
   swipeContent: {
@@ -82,10 +82,10 @@ export const onboardingValuePropStyles = StyleSheet.create({
   staticAnuContainer: {
     alignItems: 'center', // Center the image
     justifyContent: 'center',
-    height: height * 0.35, // Fixed height instead of flex to control space
-    paddingTop: 0,
-    paddingBottom: spacing[16], // Reduced spacing
-    marginTop: -spacing[16], // Move container up slightly
+    height: height * 0.33, // Slightly reduced to free up space for text
+    paddingTop: spacing[4],
+    paddingBottom: spacing[18],
+    marginTop: spacing[18],
   },
 
   videoContainer: {
@@ -182,7 +182,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Responsive adjustments for smaller screens (applied conditionally)
   swipeContainerSmall: {
     height: height * 0.22,
-    marginTop: spacing[12], // 24px - Reduced but still comfortable for smaller screens
+    marginTop: spacing[18], // 36px - Reduced but still comfortable for smaller screens
   },
 
   pageContainerSmall: {
@@ -190,7 +190,9 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   staticAnuContainerSmall: {
-    height: height * 0.3, // Reduced for smaller screens
+    height: height * 0.28, // Reduced for smaller screens to free space
+    marginTop: spacing[12],
+    paddingBottom: spacing[16],
   },
 
   pageTitleSmall: {
@@ -215,7 +217,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Very small screens (applied conditionally)
   swipeContainerXSmall: {
     height: height * 0.2,
-    marginTop: spacing[10], // 20px - Balanced for very small screens
+    marginTop: spacing[14], // 28px - Balanced for very small screens
   },
 
   pageContainerXSmall: {
@@ -223,7 +225,9 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   staticAnuContainerXSmall: {
-    height: height * 0.25, // Further reduced for very small screens
+    height: height * 0.23, // Further reduced for very small screens
+    marginTop: spacing[8],
+    paddingBottom: spacing[14],
   },
 
   pageTitleXSmall: {
