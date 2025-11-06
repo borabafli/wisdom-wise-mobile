@@ -34,6 +34,12 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   const overlayFadeAnim = useRef(new Animated.Value(1)).current;
   const buttonFadeAnim = useRef(new Animated.Value(0)).current;
 
+  // Responsive style selection based on screen height
+  const isSmallScreen = height <= 700;
+  const isXSmallScreen = height <= 600;
+  const topPadding = Math.max(insets.top + spacing[6], spacing[20]);
+  const bottomPadding = Math.max(insets.bottom, spacing[8]);
+
   const onboardingPages: OnboardingPage[] = [
     {
       id: 1,
@@ -124,10 +130,18 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
 
 
   const renderPage = (page: OnboardingPage) => (
-    <View key={page.id} style={styles.pageContainer}>
+    <View key={page.id} style={[
+      styles.pageContainer,
+      isXSmallScreen && styles.pageContainerXSmall,
+      isSmallScreen && !isXSmallScreen && styles.pageContainerSmall,
+    ]}>
       {/* Text Content with Icon */}
       <View style={styles.textContent}>
-        <Text style={styles.pageTitle}>
+        <Text style={[
+          styles.pageTitle,
+          isXSmallScreen && styles.pageTitleXSmall,
+          isSmallScreen && !isXSmallScreen && styles.pageTitleSmall,
+        ]}>
           {page.title}
         </Text>
         {/* Icon between heading and subtext */}
@@ -136,7 +150,11 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
           style={styles.pageIcon}
           resizeMode="contain"
         />
-        <Text style={styles.pageDescription}>
+        <Text style={[
+          styles.pageDescription,
+          isXSmallScreen && styles.pageDescriptionXSmall,
+          isSmallScreen && !isXSmallScreen && styles.pageDescriptionSmall,
+        ]}>
           {page.description}
         </Text>
       </View>
@@ -147,13 +165,13 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView
-        edges={['left', 'right']}
+        edges={['top', 'left', 'right', 'bottom']}
         style={[
           styles.safeArea,
           {
-            paddingTop: Math.max(insets.top, spacing[12]),
-            paddingBottom: Math.max(insets.bottom, spacing[8]),
-          },
+            paddingTop: topPadding,
+            paddingBottom: bottomPadding,
+          }
         ]}
       >
         <Animated.View
@@ -173,7 +191,11 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             showsHorizontalScrollIndicator={false}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            style={styles.swipeContainer}
+            style={[
+              styles.swipeContainer,
+              isXSmallScreen && styles.swipeContainerXSmall,
+              isSmallScreen && !isXSmallScreen && styles.swipeContainerSmall,
+            ]}
             contentContainerStyle={styles.swipeContent}
           >
             {/* All Pages */}
@@ -194,7 +216,11 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
           </View>
 
           {/* Static Anu Video - With overlay */}
-          <View style={styles.staticAnuContainer}>
+          <View style={[
+            styles.staticAnuContainer,
+            isXSmallScreen && styles.staticAnuContainerXSmall,
+            isSmallScreen && !isXSmallScreen && styles.staticAnuContainerSmall,
+          ]}>
             <View style={styles.videoContainer}>
               {/* Static overlay that only animates when fading out */}
               {overlayVisible && (
@@ -211,7 +237,11 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
               {showVideo && (
                 <Video
                   source={require('../../../assets/images/onboarding/videos/meditating-turtle.mp4')}
-                  style={styles.staticAnuImage}
+                  style={[
+                    styles.staticAnuImage,
+                    isXSmallScreen && styles.staticAnuImageXSmall,
+                    isSmallScreen && !isXSmallScreen && styles.staticAnuImageSmall,
+                  ]}
                   resizeMode={ResizeMode.CONTAIN}
                   shouldPlay={true}
                   isLooping={true}

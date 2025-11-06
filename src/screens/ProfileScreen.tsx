@@ -26,6 +26,7 @@ import streakService from '../services/streakService';
 import { ExerciseCompletionService } from '../services/exerciseCompletionService';
 import { LEGAL_URLS } from '../constants/legal';
 import { dataManagementService } from '../services/dataManagementService';
+import { subscriptionTestUtils, printSubscriptionDebug } from '../utils/subscriptionTestUtils';
 
 const ProfileScreen: React.FC = () => {
   const dataPrivacyPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
@@ -45,6 +46,7 @@ const ProfileScreen: React.FC = () => {
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [showFeatureRequest, setShowFeatureRequest] = useState(false);
   const [showHelpSupport, setShowHelpSupport] = useState(false);
+  const [showDevMenu, setShowDevMenu] = useState(false);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [sessionsCount, setSessionsCount] = useState<number>(0);
@@ -64,6 +66,14 @@ const ProfileScreen: React.FC = () => {
         // Get subscription tier
         const tier = await entitlementService.getSubscriptionTier();
         setSubscriptionTier(tier);
+
+        // Debug logging (only in development)
+        if (__DEV__) {
+          console.log('[Profile] Subscription tier:', tier);
+          console.log('[Profile] isPremium from context:', isPremium);
+          console.log('[Profile] isAnonymous:', isAnonymous);
+          console.log('[Profile] subscriptionStatus:', subscriptionStatus);
+        }
 
         // Get streak
         const streak = await streakService.getStreak();
@@ -110,13 +120,18 @@ const ProfileScreen: React.FC = () => {
   };
 
   const getPremiumBadgeText = () => {
-    if (isAnonymous) {
-      return ''; // Keep empty for anonymous users
-    }
+    // Check premium status FIRST (works for both anonymous and authenticated)
     if (subscriptionTier === 'premium' || isPremium) {
       return '✨ Premium Member';
     }
-    return '🆓 Free Plan'; // Free tier badge
+
+    // Only hide badge if anonymous AND free tier
+    if (isAnonymous) {
+      return ''; // Anonymous free users don't see badge
+    }
+
+    // Authenticated free users see free plan badge
+    return '🆓 Free Plan';
   };
 
   const handleSignOut = () => {
@@ -285,6 +300,10 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/11.png'), label: t('profile.menu.notifications'), action: () => setShowNotificationSettings(true), subtitle: t('profile.menuSubtitles.notifications') },
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => setShowHelpSupport(true), subtitle: t('profile.menuSubtitles.help') },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.featureRequest'), action: () => setShowFeatureRequest(true), subtitle: t('profile.menuSubtitles.featureRequest') },
+    ...(__DEV__
+      ? [{ iconImage: require('../../assets/images/New Icons/icon-16.png'), label: '🧪 Developer Tools', action: () => setShowDevMenu(true), subtitle: 'Testing utilities (DEV only)' }]
+      : []
+    ),
     ...(isAnonymous
       ? [{ iconImage: require('../../assets/images/New Icons/16.png'), label: t('profile.menu.createAccount'), action: handleLogin, highlight: true, subtitle: t('profile.menuSubtitles.createAccount') }]
       : [{ icon: LogOut, label: t('profile.menu.signOut'), danger: true, action: handleSignOut, subtitle: t('profile.menuSubtitles.signOut') }]
@@ -547,6 +566,195 @@ const ProfileScreen: React.FC = () => {
       <LanguageSelectorModal visible={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       <FeatureRequestModal visible={showFeatureRequest} onClose={() => setShowFeatureRequest(false)} />
       <HelpSupportModal visible={showHelpSupport} onClose={() => setShowHelpSupport(false)} />
+
+      {/* Developer Tools Modal (only in __DEV__) */}
+      {__DEV__ && (
+        <Modal
+          visible={showDevMenu}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={() => setShowDevMenu(false)}
+        >
+          <SafeAreaWrapper style={{ flex: 1, backgroundColor: '#F8F5FF' }}>
+            <View style={{ flex: 1, padding: 20 }}>
+              {/* Header */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
+                <Text style={{ fontSize: 28, fontWeight: '700', color: '#2D2644', flex: 1 }}>
+                  🧪 Developer Tools
+                </Text>
+                <TouchableOpacity onPress={() => setShowDevMenu(false)}>
+                  <Text style={{ fontSize: 16, color: '#8B7FD9', fontWeight: '600' }}>Close</Text>
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {/* Subscription Testing */}
+                <View style={{ marginBottom: 32 }}>
+                  <Text style={{ fontSize: 18, fontWeight: '600', color: '#2D2644', marginBottom: 16 }}>
+                    Subscription Testing
+                  </Text>
+
+                  <TouchableOpacity
+                    style={{ backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}
+                    onPress={async () => {
+                      try {
+                        await subscriptionTestUtils.resetToFreeTier();
+                        Alert.alert(
+                          'Reset Complete',
+                          'Subscription reset to free tier. Force quit and relaunch the app to see changes.',
+                          [{ text: 'OK' }]
+                        );
+                      } catch (error: any) {
+                        Alert.alert('Error', error.message);
+                      }
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#8B7FD9', marginBottom: 4 }}>
+                      Reset to Free Tier
+                    </Text>
+                    <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
+                      Clear RevenueCat purchases and reset to free plan
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{ backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}
+                    onPress={async () => {
+                      try {
+                        await printSubscriptionDebug();
+                        const info = await subscriptionTestUtils.getDebugInfo();
+                        Alert.alert(
+                          'Debug Info',
+                          `Tier: ${info.subscriptionStatus.tier}\n` +
+                          `Premium: ${info.subscriptionStatus.isPremium ? 'Yes' : 'No'}\n` +
+                          `Messages: ${info.dailyUsage.messages}/${info.featureLimits.MESSAGES_PER_DAY}\n` +
+                          `Check console for full details`,
+                          [{ text: 'OK' }]
+                        );
+                      } catch (error: any) {
+                        Alert.alert('Error', error.message);
+                      }
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#6EC1B8', marginBottom: 4 }}>
+                      Show Debug Info
+                    </Text>
+                    <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
+                      Print subscription status and usage to console
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Usage Testing */}
+                <View style={{ marginBottom: 32 }}>
+                  <Text style={{ fontSize: 18, fontWeight: '600', color: '#2D2644', marginBottom: 16 }}>
+                    Usage Testing
+                  </Text>
+
+                  <TouchableOpacity
+                    style={{ backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}
+                    onPress={async () => {
+                      try {
+                        await subscriptionTestUtils.forceResetDailyUsage();
+                        Alert.alert(
+                          'Usage Reset',
+                          'Daily usage counters reset to 0. You can now test hitting the daily limits.',
+                          [{ text: 'OK' }]
+                        );
+                      } catch (error: any) {
+                        Alert.alert('Error', error.message);
+                      }
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFB800', marginBottom: 4 }}>
+                      Reset Daily Usage
+                    </Text>
+                    <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
+                      Reset message, voice, and exercise counters
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{ backgroundColor: '#FFFFFF', padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}
+                    onPress={async () => {
+                      try {
+                        const result = await subscriptionTestUtils.checkMessageLimit();
+                        Alert.alert(
+                          'Message Limit Check',
+                          `Can send: ${result.hasAccess ? 'Yes ✅' : 'No ❌'}\n` +
+                          `Current: ${result.currentCount}/${result.limit}\n` +
+                          `Tier: ${result.tier}\n` +
+                          (result.reason ? `Reason: ${result.reason}` : ''),
+                          [{ text: 'OK' }]
+                        );
+                      } catch (error: any) {
+                        Alert.alert('Error', error.message);
+                      }
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#9B7FD9', marginBottom: 4 }}>
+                      Check Message Limit
+                    </Text>
+                    <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
+                      Test if user can send messages
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Danger Zone */}
+                <View style={{ marginBottom: 32 }}>
+                  <Text style={{ fontSize: 18, fontWeight: '600', color: '#D9534F', marginBottom: 16 }}>
+                    ⚠️ Danger Zone
+                  </Text>
+
+                  <TouchableOpacity
+                    style={{ backgroundColor: '#FFF5F5', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#FFE0E0' }}
+                    onPress={() => {
+                      Alert.alert(
+                        '⚠️ Clear All Data?',
+                        'This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.\n\nAre you sure?',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Clear All Data',
+                            style: 'destructive',
+                            onPress: async () => {
+                              try {
+                                await subscriptionTestUtils.clearAllStorage();
+                                Alert.alert(
+                                  'All Data Cleared',
+                                  'Force quit and relaunch the app.',
+                                  [{ text: 'OK' }]
+                                );
+                              } catch (error: any) {
+                                Alert.alert('Error', error.message);
+                              }
+                            }
+                          }
+                        ]
+                      );
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#D9534F', marginBottom: 4 }}>
+                      Clear All Storage
+                    </Text>
+                    <Text style={{ fontSize: 14, color: '#8B6B6B' }}>
+                      Delete all app data (DESTRUCTIVE)
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Info */}
+                <View style={{ backgroundColor: '#F0EEFF', padding: 16, borderRadius: 12, marginBottom: 20 }}>
+                  <Text style={{ fontSize: 14, color: '#6B6B8A', lineHeight: 20 }}>
+                    💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects.
+                  </Text>
+                </View>
+              </ScrollView>
+            </View>
+          </SafeAreaWrapper>
+        </Modal>
+      )}
     </SafeAreaWrapper>
   );
 };

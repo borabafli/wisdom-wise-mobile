@@ -23,7 +23,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Swipable Container - Only for text
   swipeContainer: {
     minHeight: height * 0.25, // Allow content to grow beyond base height
-    marginTop: spacing[16], // 16px - closer to top
+    marginTop: spacing[16], // 32px - Comfortable distance from top after safe area padding
   },
 
   swipeContent: {
@@ -34,18 +34,19 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Page Container - Only contains text
   pageContainer: {
     width: width,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Align to top instead of center
     alignItems: 'center',
     paddingHorizontal: spacing[20], // 20px - reduced padding from edges
-    paddingVertical: spacing[12],
+    paddingTop: spacing[8], // Small top padding to ensure visibility
+    paddingBottom: spacing[12],
     minHeight: height * 0.25,
   },
 
   // Text Content Container
   textContent: {
     alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
+    justifyContent: 'flex-start', // Align content to top
+    width: '100%',
   },
 
   pageTitle: {
@@ -53,10 +54,11 @@ export const onboardingValuePropStyles = StyleSheet.create({
     fontFamily: typography.fontFamily.ubuntuBold,
     color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
-    lineHeight: 34,
+    lineHeight: 36, // Increased line height to prevent cutoff
     letterSpacing: -0.5,
     marginBottom: spacing[16], // 16px
     paddingHorizontal: spacing[16], // 16px - reduced padding
+    paddingTop: spacing[4], // Small top padding to ensure first line is fully visible
   },
 
   pageIcon: {
@@ -177,59 +179,69 @@ export const onboardingValuePropStyles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
-  // Responsive adjustments for smaller screens
-  '@media (max-height: 700)': {
-    swipeContainer: {
-      height: height * 0.22,
-    },
-
-    staticAnuContainer: {
-      height: height * 0.3, // Reduced for smaller screens
-    },
-
-    pageTitle: {
-      fontSize: 24,
-      lineHeight: 30,
-    },
-
-    pageDescription: {
-      fontSize: 16, // Increased from 15 to 16
-      lineHeight: 24, // Increased from 22 to 24
-    },
-
-    staticAnuImage: {
-      width: Math.min(width * 0.5, 220), // Reduced proportionally
-      height: Math.min(width * 0.5, 220), // Reduced proportionally
-      maxWidth: 220,
-      maxHeight: 220,
-    },
+  // Responsive adjustments for smaller screens (applied conditionally)
+  swipeContainerSmall: {
+    height: height * 0.22,
+    marginTop: spacing[12], // 24px - Reduced but still comfortable for smaller screens
   },
 
-  // Very small screens
-  '@media (max-height: 600)': {
-    swipeContainer: {
-      height: height * 0.2,
-    },
+  pageContainerSmall: {
+    paddingTop: spacing[6], // Reduce top padding on smaller screens
+  },
 
-    staticAnuContainer: {
-      height: height * 0.25, // Further reduced for very small screens
-    },
+  staticAnuContainerSmall: {
+    height: height * 0.3, // Reduced for smaller screens
+  },
 
-    pageTitle: {
-      fontSize: 22,
-      lineHeight: 28,
-    },
+  pageTitleSmall: {
+    fontSize: 24,
+    lineHeight: 32, // Ensure adequate line height
+    marginBottom: spacing[12], // Reduce bottom margin slightly
+    paddingTop: spacing[2], // Minimal top padding
+  },
 
-    pageDescription: {
-      fontSize: 15, // Increased from 14 to 15
-      lineHeight: 22, // Increased from 20 to 22
-    },
+  pageDescriptionSmall: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
 
-    staticAnuImage: {
-      width: Math.min(width * 0.45, 180), // Reduced proportionally
-      height: Math.min(width * 0.45, 180), // Reduced proportionally
-      maxWidth: 180,
-      maxHeight: 180,
-    },
+  staticAnuImageSmall: {
+    width: Math.min(width * 0.5, 220), // Reduced proportionally
+    height: Math.min(width * 0.5, 220), // Reduced proportionally
+    maxWidth: 220,
+    maxHeight: 220,
+  },
+
+  // Very small screens (applied conditionally)
+  swipeContainerXSmall: {
+    height: height * 0.2,
+    marginTop: spacing[10], // 20px - Balanced for very small screens
+  },
+
+  pageContainerXSmall: {
+    paddingTop: spacing[4], // Minimal top padding for very small screens
+  },
+
+  staticAnuContainerXSmall: {
+    height: height * 0.25, // Further reduced for very small screens
+  },
+
+  pageTitleXSmall: {
+    fontSize: 22,
+    lineHeight: 30, // Ensure adequate line height
+    marginBottom: spacing[8], // Reduce bottom margin for very small screens
+    paddingTop: spacing[2], // Minimal top padding
+  },
+
+  pageDescriptionXSmall: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+
+  staticAnuImageXSmall: {
+    width: Math.min(width * 0.45, 180), // Reduced proportionally
+    height: Math.min(width * 0.45, 180), // Reduced proportionally
+    maxWidth: 180,
+    maxHeight: 180,
   },
 });

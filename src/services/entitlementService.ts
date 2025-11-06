@@ -65,6 +65,12 @@ class EntitlementService {
       const lastResetDateStr = await AsyncStorage.getItem(USAGE_STORAGE_KEYS.LAST_RESET_DATE);
       const today = new Date().toDateString();
 
+      // Debug logging (only in development)
+      if (__DEV__) {
+        console.log('[Entitlement] Last reset date:', lastResetDateStr);
+        console.log('[Entitlement] Today:', today);
+      }
+
       if (lastResetDateStr !== today) {
         // Reset all daily counters
         await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES, '0');
@@ -73,7 +79,7 @@ class EntitlementService {
         await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_JOURNAL_PROMPTS, '0');
         await AsyncStorage.setItem(USAGE_STORAGE_KEYS.LAST_RESET_DATE, today);
 
-        console.log('[EntitlementService] Daily usage reset');
+        console.log('[EntitlementService] ✅ Daily usage reset');
       }
     } catch (error) {
       console.error('[EntitlementService] Failed to reset daily usage:', error);
@@ -127,9 +133,20 @@ class EntitlementService {
     const tier = await this.getSubscriptionTier();
     const limits = await this.getFeatureLimits();
 
+    // Debug logging (only in development)
+    if (__DEV__) {
+      console.log('[Entitlement] Checking message limit...');
+      console.log('[Entitlement] Subscription tier:', tier);
+    }
+
     // Premium users have soft cap, not hard limit for messages
     if (tier === 'premium') {
       const dailyMessages = await this.getDailyMessageCount();
+
+      if (__DEV__) {
+        console.log('[Entitlement] Premium user - Daily messages:', dailyMessages, '/', limits.MESSAGES_PER_DAY);
+        console.log('[Entitlement] ✅ Access granted (premium, no hard limit)');
+      }
 
       // Soft warning at limit, but still allow
       if (dailyMessages >= limits.MESSAGES_PER_DAY) {
@@ -145,13 +162,25 @@ class EntitlementService {
     // Free tier: check hard limit
     const dailyMessages = await this.getDailyMessageCount();
 
+    if (__DEV__) {
+      console.log('[Entitlement] Free tier - Daily messages:', dailyMessages, '/', limits.MESSAGES_PER_DAY);
+    }
+
     if (dailyMessages >= limits.MESSAGES_PER_DAY) {
+      if (__DEV__) {
+        console.log('[Entitlement] ❌ Access denied - limit reached');
+      }
+
       return {
         hasAccess: false,
         reason: 'limit_reached',
         suggestedAction: 'upgrade',
         resetsAt: this.getTomorrowDate(),
       };
+    }
+
+    if (__DEV__) {
+      console.log('[Entitlement] ✅ Access granted');
     }
 
     return {
@@ -165,7 +194,13 @@ class EntitlementService {
    */
   async incrementMessageCount(): Promise<void> {
     const current = await this.getDailyMessageCount();
-    await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES, String(current + 1));
+    const newCount = current + 1;
+    await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES, String(newCount));
+
+    // Debug logging (only in development)
+    if (__DEV__) {
+      console.log('[Entitlement] Message count incremented:', newCount);
+    }
   }
 
   /**

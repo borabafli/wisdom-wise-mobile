@@ -161,6 +161,11 @@ export const useChatSession = (
         const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
         setRateLimitStatus(newRateLimitStatus);
 
+        // Debug logging (only in development)
+        if (__DEV__) {
+          console.log('[useChatSession] Message recorded, new rate limit status:', newRateLimitStatus);
+        }
+
         let aiResponse: Message;
         if (exerciseFlow && currentExerciseStep) {
           const currentStep = exerciseFlow.steps[currentExerciseStep - 1];
