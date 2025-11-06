@@ -3,6 +3,7 @@ import { Message, storageService } from '../../services/storageService';
 import { contextService } from '../../services/contextService';
 import { apiService } from '../../services/apiService';
 import { rateLimitService } from '../../services/rateLimitService';
+import { entitlementService } from '../../services/entitlementService';
 import { ttsService } from '../../services/ttsService';
 import { useSessionManagement, ExerciseContext } from '../useSessionManagement';
 import { EXERCISE_KEYWORDS, getExerciseLibraryData, getExercisesArray } from '../../data/exerciseLibrary';
@@ -156,6 +157,7 @@ export const useChatSession = (
 
       if (response.success && response.message) {
         await rateLimitService.recordRequest();
+        await entitlementService.incrementMessageCount();
         const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
         setRateLimitStatus(newRateLimitStatus);
 

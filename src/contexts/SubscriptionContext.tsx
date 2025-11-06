@@ -66,9 +66,19 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
     try {
       setIsLoading(true);
 
-      // Check if already initialized
+      // Wait for subscription service to be ready (with timeout)
+      const maxWaitTime = 5000; // 5 seconds max
+      const checkInterval = 100; // Check every 100ms
+      let waited = 0;
+
+      while (!subscriptionService.isReady() && waited < maxWaitTime) {
+        console.log('[SubscriptionContext] Service not ready, waiting...', waited, 'ms');
+        await new Promise(resolve => setTimeout(resolve, checkInterval));
+        waited += checkInterval;
+      }
+
       if (!subscriptionService.isReady()) {
-        console.log('[SubscriptionContext] Service not ready yet, waiting for initialization');
+        console.error('[SubscriptionContext] Service failed to initialize within timeout');
         return;
       }
 

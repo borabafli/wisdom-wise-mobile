@@ -22,6 +22,7 @@ import {
   ExerciseCard
 } from '../components/chat';
 import { ExitConfirmationDialog } from '../components/ExitConfirmationDialog';
+import { PaywallModal } from '../components/PaywallModal';
 import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
@@ -99,8 +100,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Basic state
   const [inputText, setInputText] = useState('');
+  const [showPaywallModal, setShowPaywallModal] = useState(false);
   const textBeforeVoiceRef = useRef(''); // Store text that was typed before voice recording
-  
+
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
   const headerAnimation = useRef(new Animated.Value(0)).current;
@@ -268,6 +270,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Handle sending messages
   const handleSend = async (text = inputText) => {
     if (!text.trim()) return;
+
+    // Determine if this is a check-in/reflection session (no exercise, started from home)
+    const isReflectionSession = !currentExercise && chatSession.messages.length > 0;
+
+    // Check rate limit before sending (only for normal standalone chat, not reflections/exercises/check-ins)
+    if (!isValueReflection && !isThinkingPatternReflection && !isVisionReflection && !exerciseMode && !isReflectionSession) {
+      const rateLimit = await import('../services/rateLimitService').then(m => m.rateLimitService.canMakeRequest());
+      if (rateLimit.isLimitReached) {
+        setShowPaywallModal(true);
+        return;
+      }
+    }
+
     setInputText('');
 
     if (isValueReflection) {
@@ -739,6 +754,13 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         </KeyboardAvoidingView>
       </View>
     </SafeAreaWrapper>
+
+    {/* Paywall Modal - Shown when rate limit is reached */}
+    <PaywallModal
+      visible={showPaywallModal}
+      onClose={() => setShowPaywallModal(false)}
+      trigger="message_limit"
+    />
 
     {/* Exit Confirmation Dialog */}
     <ExitConfirmationDialog

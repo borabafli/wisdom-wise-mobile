@@ -16,8 +16,10 @@ import { LanguageSelectorModal } from '../components/LanguageSelectorModal';
 import FeatureRequestModal from '../components/modals/FeatureRequestModal';
 import HelpSupportModal from '../components/modals/HelpSupportModal';
 import { useAuth } from '../contexts';
+import { useSubscription } from '../contexts/SubscriptionContext';
 import { storageService } from '../services/storageService';
 import { notificationService } from '../services/notificationService';
+import { entitlementService } from '../services/entitlementService';
 import { useOnboardingControl } from '../hooks/useOnboardingControl';
 import { profileScreenStyles as styles } from '../styles/components/ProfileScreen.styles';
 import streakService from '../services/streakService';
@@ -29,10 +31,12 @@ const ProfileScreen: React.FC = () => {
   const dataPrivacyPresentationStyle = Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen';
   const { t } = useTranslation();
   const { user, profile, isAnonymous, signOut, requestLogin } = useAuth();
+  const { isPremium, subscriptionStatus } = useSubscription();
   const { restartOnboarding } = useOnboardingControl();
   const { statusBarStyle } = useNavigationBarStyle(navigationBarConfigs.profileScreen);
 
   const [displayName, setDisplayName] = useState('Friend');
+  const [subscriptionTier, setSubscriptionTier] = useState<'free' | 'premium'>('free');
   const [hasCustomName, setHasCustomName] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
@@ -56,6 +60,10 @@ const ProfileScreen: React.FC = () => {
         // Check if user has set a custom name
         const localProfile = await storageService.getUserProfile();
         setHasCustomName(!!localProfile?.firstName && localProfile.firstName.trim() !== '');
+
+        // Get subscription tier
+        const tier = await entitlementService.getSubscriptionTier();
+        setSubscriptionTier(tier);
 
         // Get streak
         const streak = await streakService.getStreak();
@@ -82,7 +90,7 @@ const ProfileScreen: React.FC = () => {
       }
     };
     updateDisplayNameAndStats();
-  }, [user, profile, refreshTrigger]);
+  }, [user, profile, refreshTrigger, isPremium]);
 
   const handleProfileUpdated = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -105,7 +113,10 @@ const ProfileScreen: React.FC = () => {
     if (isAnonymous) {
       return ''; // Keep empty for anonymous users
     }
-    return t('profile.premiumMember');
+    if (subscriptionTier === 'premium' || isPremium) {
+      return '✨ Premium Member';
+    }
+    return '🆓 Free Plan'; // Free tier badge
   };
 
   const handleSignOut = () => {
