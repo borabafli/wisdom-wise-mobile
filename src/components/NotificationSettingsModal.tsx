@@ -69,9 +69,9 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
           guidance.title,
           guidance.message,
           [
-            { text: 'Not Now', style: 'cancel' },
+            { text: t('onboarding.notifications.permissionGuidance.buttons.notNow'), style: 'cancel' },
             {
-              text: 'Open Settings',
+              text: t('onboarding.notifications.permissionGuidance.buttons.openSettings'),
               onPress: () => notificationService.openSettings(),
             },
           ]
@@ -84,12 +84,18 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
         if (granted) {
           setHasPermission(true);
           await notificationService.scheduleReminders();
-          Alert.alert('Notifications Enabled', 'You\'ll now receive mindful reminders.');
+          Alert.alert(
+            t('onboarding.notifications.settings.notificationsEnabled'),
+            t('onboarding.notifications.settings.willReceiveReminders')
+          );
         }
       }
     } catch (error) {
       console.error('Error enabling notifications:', error);
-      Alert.alert('Error', 'Failed to enable notifications. Please try again.');
+      Alert.alert(
+        t('onboarding.notifications.settings.error'),
+        t('onboarding.notifications.settings.failedToEnable')
+      );
     }
   };
 
@@ -182,7 +188,10 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
         await loadSettings();
       } catch (error) {
         console.error('Error adding custom reminder:', error);
-        Alert.alert('Error', 'Failed to add custom reminder.');
+        Alert.alert(
+          t('onboarding.notifications.settings.error'),
+          t('onboarding.notifications.settings.failedToAdd')
+        );
       }
     }
   };
@@ -201,12 +210,12 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     }
 
     Alert.alert(
-      'Delete Reminder',
-      'Are you sure you want to delete this reminder?',
+      t('onboarding.notifications.settings.deleteReminder'),
+      t('onboarding.notifications.settings.deleteReminderConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('onboarding.notifications.settings.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -214,7 +223,10 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
               await loadSettings();
             } catch (error) {
               console.error('Error deleting reminder:', error);
-              Alert.alert('Error', 'Failed to delete reminder.');
+              Alert.alert(
+                t('onboarding.notifications.settings.error'),
+                t('onboarding.notifications.settings.failedToDelete')
+              );
             }
           },
         },
@@ -229,20 +241,23 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
       if (hasPermission) {
         await notificationService.scheduleReminders();
         Alert.alert(
-          'Settings Saved',
-          'Your notification preferences have been updated.',
-          [{ text: 'OK', onPress: onClose }]
+          t('onboarding.notifications.settings.settingsSaved'),
+          t('onboarding.notifications.settings.preferencesUpdated'),
+          [{ text: t('common.ok'), onPress: onClose }]
         );
       } else {
         Alert.alert(
-          'Settings Saved',
-          'Enable notifications to receive reminders.',
-          [{ text: 'OK', onPress: onClose }]
+          t('onboarding.notifications.settings.settingsSaved'),
+          t('onboarding.notifications.settings.enableToReceive'),
+          [{ text: t('common.ok'), onPress: onClose }]
         );
       }
     } catch (error) {
       console.error('Error saving notification settings:', error);
-      Alert.alert('Error', 'Failed to save settings. Please try again.');
+      Alert.alert(
+        t('onboarding.notifications.settings.error'),
+        t('onboarding.notifications.settings.failedToSave')
+      );
     }
   };
 
@@ -296,7 +311,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     return (
       <Modal visible={visible} animationType="slide" presentationStyle="fullScreen">
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading settings...</Text>
+          <Text style={styles.loadingText}>{t('onboarding.notifications.settings.loadingSettings')}</Text>
         </View>
       </Modal>
     );
@@ -310,26 +325,29 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
           <TouchableOpacity onPress={onClose} style={styles.backButton}>
             <ChevronLeft size={24} color="#0f766e" />
           </TouchableOpacity>
-          <Text style={styles.title}>Notification Settings</Text>
+          <Text style={styles.title}>{t('onboarding.notifications.settings.title')}</Text>
           <View style={styles.headerPlaceholder} />
         </View>
 
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
+          bounces={true}
+          keyboardShouldPersistTaps="handled"
         >
           {/* Permission Banner */}
           {!hasPermission && (
             <View style={styles.permissionBanner}>
               <Text style={styles.permissionText}>
-                Enable notifications to receive mindful reminders
+                {t('onboarding.notifications.settings.enableNotifications')}
               </Text>
               <TouchableOpacity
                 style={styles.enableButton}
                 onPress={handleEnableNotifications}
               >
-                <Text style={styles.enableButtonText}>Enable</Text>
+                <Text style={styles.enableButtonText}>{t('onboarding.notifications.settings.enable')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -346,10 +364,10 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
           {/* Section Header */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Daily Reminders</Text>
+              <Text style={styles.sectionTitle}>{t('onboarding.notifications.settings.dailyReminders')}</Text>
             </View>
             <Text style={styles.sectionDescription}>
-              Pick the times that work best for your daily wellbeing practice.
+              {t('onboarding.notifications.settings.dailyRemindersDescription')}
             </Text>
 
             {/* Reminder Cards */}
@@ -410,8 +428,8 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   <Plus size={18} color="#FFFFFF" strokeWidth={2} />
                 </View>
                 <View style={styles.addContent}>
-                  <Text style={styles.addLabel}>Add Custom Reminder</Text>
-                  <Text style={styles.addDescription}>Create your own reminder time</Text>
+                  <Text style={styles.addLabel}>{t('onboarding.notifications.settings.addCustomReminder')}</Text>
+                  <Text style={styles.addDescription}>{t('onboarding.notifications.settings.createCustomReminder')}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -420,7 +438,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
           {/* Info Section */}
           <View style={styles.infoSection}>
             <Text style={styles.infoText}>
-              You can customize these reminders anytime. Long press custom reminders to delete them. Notifications help maintain consistency in your mindfulness practice.
+              {t('onboarding.notifications.settings.infoText')}
             </Text>
           </View>
         </ScrollView>
@@ -432,7 +450,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
             onPress={handleSave}
             activeOpacity={0.8}
           >
-            <Text style={styles.saveButtonText}>Save Changes</Text>
+            <Text style={styles.saveButtonText}>{t('onboarding.notifications.settings.saveChanges')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -446,7 +464,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                 onPress={handleTimePickerClose}
               />
               <View style={styles.timePickerContainer}>
-                <Text style={styles.timePickerTitle}>Select Time</Text>
+                <Text style={styles.timePickerTitle}>{t('onboarding.notifications.timePickerTitle')}</Text>
 
                 <WheelTimePicker
                   selectedHour={selectedHour}
@@ -462,7 +480,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                     style={styles.timePickerButton}
                     onPress={handleTimePickerClose}
                   >
-                    <Text style={styles.timePickerButtonText}>Cancel</Text>
+                    <Text style={styles.timePickerButtonText}>{t('onboarding.notifications.cancelButton')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -470,7 +488,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                     onPress={handleTimeConfirm}
                   >
                     <Text style={[styles.timePickerButtonText, styles.timePickerSaveButtonText]}>
-                      Save
+                      {t('onboarding.notifications.saveButton')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -489,16 +507,16 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                 onPress={handleCancelCustomReminder}
               />
               <View style={styles.customInputContainer}>
-                <Text style={styles.customInputTitle}>Add Custom Reminder</Text>
+                <Text style={styles.customInputTitle}>{t('onboarding.notifications.settings.addCustomReminder')}</Text>
                 <Text style={styles.customInputDescription}>
-                  Enter a label for your custom reminder
+                  {t('onboarding.notifications.settings.customReminderLabel')}
                 </Text>
 
                 <TextInput
                   style={styles.customInput}
                   value={customReminderLabel}
                   onChangeText={setCustomReminderLabel}
-                  placeholder="e.g., Before Bed, After Lunch"
+                  placeholder={t('onboarding.notifications.settings.customReminderPlaceholder')}
                   placeholderTextColor="#94a3b8"
                   autoFocus={true}
                   maxLength={30}
@@ -509,7 +527,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                     style={styles.customInputButton}
                     onPress={handleCancelCustomReminder}
                   >
-                    <Text style={styles.customInputButtonText}>Cancel</Text>
+                    <Text style={styles.customInputButtonText}>{t('onboarding.notifications.cancelButton')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -525,7 +543,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                       styles.customInputButtonText,
                       styles.customInputAddButtonText
                     ]}>
-                      Add
+                      {t('onboarding.notifications.settings.add')}
                     </Text>
                   </TouchableOpacity>
                 </View>

@@ -420,7 +420,7 @@
       "days_plural": "{{count}} gün"
     },
     "fallbackName": "Arkadaş",
-    "welcomeMessage": "WisdomWise'a hoş geldiniz",
+    "welcomeMessage": "ZenMind'a hoş geldiniz",
     "premiumMember": "Premium Üye",
     "planStatus": {
       "premium": "✨ Premium Üye",
@@ -490,7 +490,7 @@
   },
   "featureRequest": {
     "title": "Özellik İsteği",
-    "description": "Fikirlerinizi duymak isteriz! WisdomWise'da görmek istediğiniz özellikleri veya iyileştirmeleri paylaşın.",
+    "description": "Fikirlerinizi duymak isteriz! ZenMind'da görmek istediğiniz özellikleri veya iyileştirmeleri paylaşın.",
     "placeholder": "Özellik fikrinizi bizimle paylaşın...",
     "submit": "Gönder",
     "cancel": "İptal",
@@ -501,7 +501,7 @@
     "errorMessage": "İsteğiniz gönderilemedi. Lütfen daha sonra tekrar deneyin.",
     "tooShort": "Lütfen en az 10 karakter yazın",
     "tooLong": "Lütfen isteğinizi 500 karakterin altında tutun",
-    "infoText": "Geri bildiriminiz WisdomWise'ı geliştirmemize yardımcı olur. Tüm özellik isteklerini inceler ve kullanıcı ihtiyaçlarına göre önceliklendiririz.",
+    "infoText": "Geri bildiriminiz ZenMind'ı geliştirmemize yardımcı olur. Tüm özellik isteklerini inceler ve kullanıcı ihtiyaçlarına göre önceliklendiririz.",
     "discardTitle": "İsteği İptal Et?",
     "discardMessage": "Kaydedilmemiş değişiklikleriniz var. Özellik isteğinizi iptal etmek istediğinizden emin misiniz?",
     "discard": "İptal Et"
@@ -589,11 +589,12 @@
     },
     "exitConfirmation": {
       "title": "Oturumunuzu kaydetmek ister misiniz?",
-      "message": "Görüşmeniz kaydedilecek ve daha sonra devam edebileceksiniz.",
+      "message": "Konuşmanız cihazınızda gizli olarak kaydedilecektir.",
       "exerciseTitle": "Egzersizi erken bitirmek ister misiniz?",
-      "exerciseMessage": "İlerlemeniz kaydedilecek, ancak henüz tüm adımları tamamlamadınız.",
+      "exerciseMessage": "İlerlemeniz kaydedilecek ve istediğiniz zaman devam edebileceksiniz.",
       "confirmButton": "Kaydet & Çık",
-      "cancelButton": "Sohbete Devam Et"
+      "cancelButton": "Sohbete Devam Et",
+      "allowInsightsLabel": "Anu'nun büyümenizi desteklemek için bu oturum üzerinde düşünmesine izin ver"
     }
   },
   "mood": {
@@ -667,6 +668,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Hesabınızı Oluşturun",
+      "subtitle": "Anu ile bilinçli sağlık yolculuğunuza başlayın",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "firstNamePlaceholder": "Adınız",
+      "lastNamePlaceholder": "Soyadınız",
+      "email": "E-posta",
+      "emailPlaceholder": "E-posta adresinizi girin",
+      "password": "Şifre",
+      "passwordPlaceholder": "Bir şifre oluşturun",
+      "confirmPassword": "Şifreyi Onayla",
+      "confirmPasswordPlaceholder": "Şifrenizi onaylayın",
+      "passwordStrength": "Şifre gücü: {{strength}}",
+      "passwordStrengthWeak": "Zayıf",
+      "passwordStrengthMedium": "Orta",
+      "passwordStrengthStrong": "Güçlü",
+      "privacyAccept": "Kabul ediyorum",
+      "privacyPolicy": "Gizlilik Politikası",
+      "and": "ve",
+      "termsOfService": "Hizmet Koşulları",
+      "createAccountButton": "Hesap Oluştur",
+      "creatingAccount": "Hesap Oluşturuluyor...",
+      "orDivider": "veya",
+      "googleButton": "Google ile Devam Et",
+      "alreadyHaveAccount": "Zaten hesabınız var mı? Giriş yapın",
+      "failedToOpenPrivacy": "Gizlilik politikası açılamadı. Lütfen daha sonra tekrar deneyin.",
+      "failedToOpenTerms": "Hizmet koşulları açılamadı. Lütfen daha sonra tekrar deneyin."
+    },
+    "signIn": {
+      "title": "WisdomWise'a Tekrar Hoş Geldiniz",
+      "subtitle": "Bilinçli sağlık yolculuğunuza devam edin",
+      "email": "E-posta",
+      "emailPlaceholder": "E-posta adresinizi girin",
+      "password": "Şifre",
+      "passwordPlaceholder": "Şifrenizi girin",
+      "forgotPassword": "Şifremi unuttum",
+      "signInButton": "Giriş Yap",
+      "signingIn": "Giriş Yapılıyor...",
+      "orDivider": "veya",
+      "googleButton": "Google ile Devam Et",
+      "noAccount": "Hesabınız yok mu? Kaydolun"
+    },
+    "verification": {
+      "title": "E-postanızı Kontrol Edin",
+      "subtitle": "Doğrulama bağlantısını gönderdik",
+      "instructions": "Lütfen gelen kutunuzu kontrol edin ve hesabınızı etkinleştirmek için doğrulama bağlantısına tıklayın.",
+      "subInstructions": "Bağlantının süresi 24 saat içinde dolacak. Bulamıyor musunuz? Spam klasörünüzü kontrol edin.",
+      "resendButton": "Doğrulama E-postasını Tekrar Gönder",
+      "resending": "Gönderiliyor...",
+      "checkStatusButton": "Doğruladım, Devam Et",
+      "checking": "Kontrol Ediliyor...",
+      "backToSignIn": "Girişe Dön"
     }
   },
   "errors": {
@@ -1298,13 +1355,13 @@
             "step1": "1. Aşağıdaki \"Ayarları Aç\" butonuna dokunun",
             "step2": "2. \"Bildirimlere İzin Ver\" seçeneğini açın",
             "step3": "3. Tercih ettiğiniz bildirim stilini seçin",
-            "step4": "4. İşiniz bittiğinde WisdomWise'a geri dönün"
+            "step4": "4. İşiniz bittiğinde ZenMind'a geri dönün"
           },
           "android": {
             "step1": "1. Aşağıdaki \"Ayarları Aç\" butonuna dokunun",
             "step2": "2. \"Bildirimleri göster\" seçeneğini açın",
             "step3": "3. Bildirim tercihlerinizi seçin",
-            "step4": "4. WisdomWise'a dönmek için geri tuşuna basın"
+            "step4": "4. ZenMind'a dönmek için geri tuşuna basın"
           }
         },
         "buttons": {
@@ -1313,6 +1370,34 @@
           "openSettings": "Ayarları Aç",
           "notNow": "Şimdi Değil"
         }
+      },
+      "settings": {
+        "title": "Bildirim Ayarları",
+        "loadingSettings": "Ayarlar yükleniyor...",
+        "enableNotifications": "Bilinçli hatırlatıcılar almak için bildirimleri etkinleştirin",
+        "enable": "Etkinleştir",
+        "dailyReminders": "Günlük Hatırlatıcılar",
+        "dailyRemindersDescription": "Günlük iyilik hali pratiğiniz için en uygun zamanları seçin.",
+        "addCustomReminder": "Özel Hatırlatıcı Ekle",
+        "createCustomReminder": "Kendi hatırlatıcı zamanınızı oluşturun",
+        "infoText": "Bu hatırlatıcıları istediğiniz zaman özelleştirebilirsiniz. Özel hatırlatıcıları silmek için uzun basın. Bildirimler bilinçlilik pratiğinizde tutarlılığı korumanıza yardımcı olur.",
+        "saveChanges": "Değişiklikleri Kaydet",
+        "settingsSaved": "Ayarlar Kaydedildi",
+        "preferencesUpdated": "Bildirim tercihleriniz güncellendi.",
+        "enableToReceive": "Hatırlatıcılar almak için bildirimleri etkinleştirin.",
+        "failedToSave": "Ayarlar kaydedilemedi. Lütfen tekrar deneyin.",
+        "notificationsEnabled": "Bildirimler Etkinleştirildi",
+        "willReceiveReminders": "Artık bilinçli hatırlatıcılar alacaksınız.",
+        "failedToEnable": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
+        "error": "Hata",
+        "deleteReminder": "Hatırlatıcıyı Sil",
+        "deleteReminderConfirm": "Bu hatırlatıcıyı silmek istediğinizden emin misiniz?",
+        "delete": "Sil",
+        "failedToAdd": "Özel hatırlatıcı eklenemedi.",
+        "failedToDelete": "Hatırlatıcı silinemedi.",
+        "customReminderLabel": "Özel hatırlatıcınız için bir etiket girin",
+        "customReminderPlaceholder": "örn. Yatmadan Önce, Öğle Yemeğinden Sonra",
+        "add": "Ekle"
       }
     },
     "common": {

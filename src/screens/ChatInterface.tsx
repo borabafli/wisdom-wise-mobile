@@ -102,6 +102,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [inputText, setInputText] = useState('');
   const [showPaywallModal, setShowPaywallModal] = useState(false);
   const hasShownLimitPaywallRef = useRef(false);
+  const prevLimitReachedRef = useRef(false);
+  const prevUsedCountRef = useRef<number | null>(null);
   const textBeforeVoiceRef = useRef(''); // Store text that was typed before voice recording
 
   // Animation refs
@@ -409,16 +411,30 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     useEffect(() => {
       const totalMessages = chatSession.rateLimitStatus?.total ?? 0;
       const usedMessages = chatSession.rateLimitStatus?.used ?? 0;
+      const isLimitReached = totalMessages > 0 && usedMessages >= totalMessages;
+      const isInExercise = !!currentExercise || exerciseMode;
+      const previousUsed = prevUsedCountRef.current;
+      const hasNewUsage = previousUsed !== null && usedMessages > previousUsed;
+      const isFirstCheck = previousUsed === null;
 
-      if (totalMessages > 0 && usedMessages >= totalMessages && !hasShownLimitPaywallRef.current) {
+      prevUsedCountRef.current = usedMessages;
+
+      if (isInExercise) {
+        prevLimitReachedRef.current = isLimitReached;
+        return;
+      }
+
+      if (isLimitReached && !hasShownLimitPaywallRef.current && (isFirstCheck || hasNewUsage)) {
         hasShownLimitPaywallRef.current = true;
         setShowPaywallModal(true);
       }
 
-      if (totalMessages > 0 && usedMessages < totalMessages) {
+      if (!isLimitReached) {
         hasShownLimitPaywallRef.current = false;
       }
-    }, [chatSession.rateLimitStatus]);
+
+      prevLimitReachedRef.current = isLimitReached;
+    }, [chatSession.rateLimitStatus, currentExercise, exerciseMode]);
 
     // Animate end reflection button
     useEffect(() => {

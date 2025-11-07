@@ -8,11 +8,12 @@ import {
   Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Video, ResizeMode } from 'expo-av';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useTranslation } from 'react-i18next';
 import { onboardingWelcomeStyles as styles } from '../../styles/components/onboarding/OnboardingWelcome.styles';
+import { spacing } from '../../styles/tokens/spacing';
 
 const { height } = Dimensions.get('window');
 
@@ -22,6 +23,7 @@ interface OnboardingWelcomeScreenProps {
 
 const OnboardingWelcomeScreen: React.FC<OnboardingWelcomeScreenProps> = ({ onContinue }) => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const textFadeAnim = useRef(new Animated.Value(0)).current;
@@ -97,12 +99,16 @@ const OnboardingWelcomeScreen: React.FC<OnboardingWelcomeScreenProps> = ({ onCon
     ]).start();
   }, []);
 
+  // Ensure proper top and bottom padding accounting for safe areas
+  const topPadding = Math.max(insets.top + spacing[12], spacing[16]);
+  const bottomPadding = Math.max(insets.bottom + spacing[16], spacing[24]);
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={styles.safeArea}>
         {/* Main Content */}
-        <View style={styles.contentContainer}>
+        <View style={[styles.contentContainer, { paddingTop: topPadding, paddingBottom: bottomPadding }]}>
           {/* Anu Video - Full Screen - Always visible, with floating animation */}
           <Animated.View
             style={[

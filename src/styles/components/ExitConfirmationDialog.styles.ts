@@ -68,7 +68,28 @@ export const exitConfirmationDialogStyles = StyleSheet.create({
     color: '#6B7280', // Soft Gray from design guide
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: spacing.layout.sectionGap,
+    marginBottom: spacing.components.cardGap,
+  },
+
+  // Toggle Container
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    marginBottom: spacing.components.cardGap,
+    backgroundColor: '#F9FAFB', // Very light gray background
+    borderRadius: 12,
+  },
+
+  toggleLabel: {
+    ...typography.textStyles.body,
+    fontSize: 14,
+    color: '#4B5563', // Darker gray for better readability
+    flex: 1,
+    marginRight: spacing.sm,
   },
 
   // Button Container

@@ -420,7 +420,7 @@
       "days_plural": "{{count}} jours"
     },
     "fallbackName": "Ami",
-    "welcomeMessage": "Bienvenue à WisdomWise",
+    "welcomeMessage": "Bienvenue à ZenMind",
     "premiumMember": "Membre Premium",
     "planStatus": {
       "premium": "✨ Membre Premium",
@@ -490,7 +490,7 @@
   },
   "featureRequest": {
     "title": "Demander une Fonctionnalité",
-    "description": "Nous aimerions entendre vos idées ! Partagez les fonctionnalités ou améliorations que vous aimeriez voir dans WisdomWise.",
+    "description": "Nous aimerions entendre vos idées ! Partagez les fonctionnalités ou améliorations que vous aimeriez voir dans ZenMind.",
     "placeholder": "Partagez votre idée de fonctionnalité avec nous...",
     "submit": "Soumettre",
     "cancel": "Annuler",
@@ -501,7 +501,7 @@
     "errorMessage": "Impossible de soumettre votre demande. Veuillez réessayer plus tard.",
     "tooShort": "Veuillez écrire au moins 10 caractères",
     "tooLong": "Veuillez garder votre demande sous 500 caractères",
-    "infoText": "Vos commentaires nous aident à améliorer WisdomWise. Nous examinons toutes les demandes de fonctionnalités et priorisons en fonction des besoins des utilisateurs.",
+    "infoText": "Vos commentaires nous aident à améliorer ZenMind. Nous examinons toutes les demandes de fonctionnalités et priorisons en fonction des besoins des utilisateurs.",
     "discardTitle": "Abandonner la demande ?",
     "discardMessage": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir abandonner votre demande de fonctionnalité ?",
     "discard": "Abandonner"
@@ -589,11 +589,12 @@
     },
     "exitConfirmation": {
       "title": "Sauvegarder votre session ?",
-      "message": "Votre conversation sera sauvegardée et vous pourrez la continuer plus tard.",
+      "message": "Votre conversation sera sauvegardée en privé sur votre appareil.",
       "exerciseTitle": "Terminer l'exercice plus tôt ?",
-      "exerciseMessage": "Votre progression sera sauvegardée, mais vous n'avez pas encore terminé toutes les étapes.",
+      "exerciseMessage": "Votre progression sera sauvegardée et vous pourrez continuer à tout moment.",
       "confirmButton": "Sauvegarder & Quitter",
-      "cancelButton": "Continuer la Discussion"
+      "cancelButton": "Continuer la Discussion",
+      "allowInsightsLabel": "Laisser Anu réfléchir sur cette session pour soutenir votre croissance"
     }
   },
   "mood": {
@@ -688,6 +689,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Créez votre compte",
+      "subtitle": "Commencez votre voyage de bien-être conscient avec Anu",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "firstNamePlaceholder": "Prénom",
+      "lastNamePlaceholder": "Nom",
+      "email": "E-mail",
+      "emailPlaceholder": "Entrez votre e-mail",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Créez un mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "passwordStrength": "Force du mot de passe : {{strength}}",
+      "passwordStrengthWeak": "Faible",
+      "passwordStrengthMedium": "Moyen",
+      "passwordStrengthStrong": "Fort",
+      "privacyAccept": "J'accepte la",
+      "privacyPolicy": "Politique de confidentialité",
+      "and": "et",
+      "termsOfService": "Conditions d'utilisation",
+      "createAccountButton": "Créer un compte",
+      "creatingAccount": "Création du compte...",
+      "orDivider": "ou",
+      "googleButton": "Continuer avec Google",
+      "alreadyHaveAccount": "Vous avez déjà un compte ? Se connecter",
+      "failedToOpenPrivacy": "Impossible d'ouvrir la politique de confidentialité. Veuillez réessayer plus tard.",
+      "failedToOpenTerms": "Impossible d'ouvrir les conditions d'utilisation. Veuillez réessayer plus tard."
+    },
+    "signIn": {
+      "title": "Bienvenue sur WisdomWise",
+      "subtitle": "Continuez votre voyage de bien-être conscient",
+      "email": "E-mail",
+      "emailPlaceholder": "Entrez votre e-mail",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "signInButton": "Se connecter",
+      "signingIn": "Connexion en cours...",
+      "orDivider": "ou",
+      "googleButton": "Continuer avec Google",
+      "noAccount": "Pas de compte ? S'inscrire"
+    },
+    "verification": {
+      "title": "Vérifiez votre e-mail",
+      "subtitle": "Nous avons envoyé un lien de vérification à",
+      "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien de vérification pour activer votre compte.",
+      "subInstructions": "Le lien expirera dans 24 heures. Vous ne le trouvez pas ? Vérifiez votre dossier spam.",
+      "resendButton": "Renvoyer l'e-mail de vérification",
+      "resending": "Envoi en cours...",
+      "checkStatusButton": "J'ai vérifié, continuer",
+      "checking": "Vérification en cours...",
+      "backToSignIn": "Retour à la connexion"
     }
   },
   "errors": {
@@ -1283,7 +1340,7 @@
           "description": "Configuration des ressources personnalisées"
         }
       },
-      "continueButton": "Entrer dans WisdomWise"
+      "continueButton": "Entrer dans ZenMind"
     },
     "notifications": {
       "mainTitle": "Le bien-être grandit par de petits pas quotidiens.",
@@ -1318,13 +1375,13 @@
             "step1": "1. Appuyez sur \"Ouvrir les paramètres\" ci-dessous",
             "step2": "2. Activez \"Autoriser les notifications\"",
             "step3": "3. Choisissez votre style de notification préféré",
-            "step4": "4. Revenez à WisdomWise une fois terminé"
+            "step4": "4. Revenez à ZenMind une fois terminé"
           },
           "android": {
             "step1": "1. Appuyez sur \"Ouvrir les paramètres\" ci-dessous",
             "step2": "2. Activez \"Afficher les notifications\"",
             "step3": "3. Choisissez vos préférences de notification",
-            "step4": "4. Appuyez sur retour pour revenir à WisdomWise"
+            "step4": "4. Appuyez sur retour pour revenir à ZenMind"
           }
         },
         "buttons": {
@@ -1333,6 +1390,34 @@
           "openSettings": "Ouvrir les paramètres",
           "notNow": "Pas maintenant"
         }
+      },
+      "settings": {
+        "title": "Paramètres de notification",
+        "loadingSettings": "Chargement des paramètres...",
+        "enableNotifications": "Activer les notifications pour recevoir des rappels de pleine conscience",
+        "enable": "Activer",
+        "dailyReminders": "Rappels quotidiens",
+        "dailyRemindersDescription": "Choisissez les heures qui conviennent le mieux à votre pratique quotidienne de bien-être.",
+        "addCustomReminder": "Ajouter un rappel personnalisé",
+        "createCustomReminder": "Créez votre propre heure de rappel",
+        "infoText": "Vous pouvez personnaliser ces rappels à tout moment. Appuyez longuement sur les rappels personnalisés pour les supprimer. Les notifications aident à maintenir la cohérence dans votre pratique de pleine conscience.",
+        "saveChanges": "Enregistrer les modifications",
+        "settingsSaved": "Paramètres enregistrés",
+        "preferencesUpdated": "Vos préférences de notification ont été mises à jour.",
+        "enableToReceive": "Activer les notifications pour recevoir des rappels.",
+        "failedToSave": "Échec de l'enregistrement des paramètres. Veuillez réessayer.",
+        "notificationsEnabled": "Notifications activées",
+        "willReceiveReminders": "Vous recevrez maintenant des rappels de pleine conscience.",
+        "failedToEnable": "Échec de l'activation des notifications. Veuillez réessayer.",
+        "error": "Erreur",
+        "deleteReminder": "Supprimer le rappel",
+        "deleteReminderConfirm": "Êtes-vous sûr de vouloir supprimer ce rappel ?",
+        "delete": "Supprimer",
+        "failedToAdd": "Échec de l'ajout du rappel personnalisé.",
+        "failedToDelete": "Échec de la suppression du rappel.",
+        "customReminderLabel": "Entrez une étiquette pour votre rappel personnalisé",
+        "customReminderPlaceholder": "par ex. Avant de se coucher, Après le déjeuner",
+        "add": "Ajouter"
       }
     },
     "common": {

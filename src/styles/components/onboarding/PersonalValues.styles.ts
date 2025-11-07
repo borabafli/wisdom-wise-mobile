@@ -33,6 +33,7 @@ export const personalValuesStyles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1, // Makes content container expand to fill space - required for marginTop: 'auto' to work
     paddingBottom: spacing[32], // Increased from 8 to 32 (64px) for better spacing
+    minHeight: '100%', // Ensure content takes full height so button is always visible
   },
 
   // Content Section
@@ -75,6 +76,7 @@ export const personalValuesStyles = StyleSheet.create({
     color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 24,
+    fontStyle: 'italic', // Italic font as requested
   },
 
   // Values Selection

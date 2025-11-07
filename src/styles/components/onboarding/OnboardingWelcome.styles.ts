@@ -21,7 +21,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: spacing.large, // 24px
+    // paddingVertical removed - handled dynamically in component for safe area
   },
 
   // Anu Image Container - Takes most of the screen
@@ -109,8 +109,8 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingHorizontal: spacing.large,
-    paddingBottom: 30,
-    marginTop: -spacing[16], // Restored to reasonable negative margin
+    paddingBottom: 0, // Bottom padding handled by contentContainer paddingBottom
+    marginTop: spacing[8], // Positive margin for separation
     zIndex: 1000, // Absolute foreground
     position: 'relative',
   },

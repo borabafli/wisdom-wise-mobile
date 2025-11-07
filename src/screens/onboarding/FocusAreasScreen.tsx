@@ -22,8 +22,6 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
-  const buttonFadeAnim = useRef(new Animated.Value(0)).current;
-  const buttonSlideAnim = useRef(new Animated.Value(30)).current;
 
   const focusAreas: FocusArea[] = [
     { id: '1', name: t('onboarding.focusAreas.areas.feelCalmer') },
@@ -53,22 +51,7 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
         useNativeDriver: true,
       }),
     ]).start();
-
-    // Button appears later with delay
-    setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(buttonFadeAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(buttonSlideAnim, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, 1400); // Increased delay to make button appear later (was immediate)
+    // Button is visible immediately - no animation delay
   }, []);
 
   const handleAreaToggle = (areaId: string) => {
@@ -161,16 +144,8 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
           </Animated.View>
         </ScrollView>
 
-        {/* Fixed Footer Button (animated) */}
-        <Animated.View
-          style={[
-            styles.actionContainer,
-            {
-              opacity: buttonFadeAnim,
-              transform: [{ translateY: buttonSlideAnim }],
-            }
-          ]}
-        >
+        {/* Fixed Footer Button - Visible immediately */}
+        <View style={styles.actionContainer}>
           <TouchableOpacity
             style={styles.continueButton}
             onPress={handleContinue}
@@ -180,7 +155,7 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
               {t('onboarding.common.continueButton')}
             </Text>
           </TouchableOpacity>
-        </Animated.View>
+        </View>
         </View>
       </SafeAreaView>
     </View>

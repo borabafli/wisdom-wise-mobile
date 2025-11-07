@@ -100,6 +100,7 @@ export const onboardingPersonalizationStyles = StyleSheet.create({
     color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 24,
+    fontStyle: 'italic', // Italic font as requested
   },
 
   // Image Container

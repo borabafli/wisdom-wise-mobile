@@ -40,8 +40,8 @@ export const onboardingFinalStyles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
     paddingHorizontal: spacing[12], // 24px - reduced horizontal padding for headings
-    marginBottom: spacing[24], // Increase space below header to move subtext lower
-    marginTop: spacing[64], // Move header down more like other screens
+    marginBottom: spacing[20], // Reduced from 24px to move content up
+    marginTop: spacing[40], // Reduced from 64px to move header up
   },
 
   mainTitle: {
@@ -51,7 +51,7 @@ export const onboardingFinalStyles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: -0.5,
     lineHeight: 32, // Tighter line height
-    marginBottom: spacing[8], // Increase space below title to move subtext lower (was 4px, now 8px)
+    marginBottom: spacing[6], // Reduced from 8px to move content up
   },
 
   subtitle: {
@@ -67,28 +67,29 @@ export const onboardingFinalStyles = StyleSheet.create({
   // Features Section
   featuresContainer: {
     flex: 1,
-    paddingHorizontal: spacing[8],
+    paddingHorizontal: spacing[4], // Reduced from spacing[8] to allow wider boxes
     justifyContent: 'flex-start',
-    paddingTop: spacing[6], // Move cards slightly lower (was spacing[4], now spacing[6])
-    marginTop: -spacing[2], // Less negative margin to move cards lower (was -spacing[4], now -spacing[2])
+    paddingTop: spacing[2], // Reduced from spacing[6] to move features up
+    marginTop: -spacing[4], // Increased negative margin to move features up (was -spacing[2])
+    marginBottom: -spacing[8], // Negative margin to reduce gap before turtle
   },
 
   featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing[3],
-    paddingVertical: 16,
+    paddingVertical: 20, // Increased from 16 to make boxes thicker/taller
     paddingHorizontal: spacing[4],
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    width: '86%',
+    width: '86%', // Restored to original width
     alignSelf: 'center',
   },
 
   featureIconContainer: {
-    width: 28, // Even smaller icon container
-    height: 28,
-    borderRadius: 14,
+    width: 36, // Increased from 28 to make icons bigger
+    height: 36, // Increased from 28 to make icons bigger
+    borderRadius: 18, // Increased to match new size
     backgroundColor: '#e6eff5', // Light blue-gray background
     justifyContent: 'center',
     alignItems: 'center',
@@ -97,7 +98,7 @@ export const onboardingFinalStyles = StyleSheet.create({
 
   featureTitle: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 15, // Increased from 13 to make text bigger
     fontFamily: typography.fontFamily.ubuntu,
     color: '#1F2937',
     textAlign: 'left',
@@ -143,8 +144,9 @@ export const onboardingFinalStyles = StyleSheet.create({
   actionContainer: {
     alignItems: 'center',
     width: '100%',
-    zIndex: 1000, // Absolute foreground
+    zIndex: 1004, // Higher than turtle to ensure button is clickable
     position: 'relative',
+    elevation: 11, // Android elevation higher than turtle
   },
 
   primaryButton: {
@@ -157,6 +159,8 @@ export const onboardingFinalStyles = StyleSheet.create({
     justifyContent: 'center',
     ...shadows.components.onboardingButton,
     shadowColor: '#5BA3B8', // Consistent with button color
+    zIndex: 1005, // Ensure button is on top
+    elevation: 12, // Android elevation
   },
 
   primaryButtonText: {
@@ -169,8 +173,10 @@ export const onboardingFinalStyles = StyleSheet.create({
   // Bottom section container
   bottomSection: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end', // Changed from 'center' to 'flex-end' to position turtle lower
     alignItems: 'center',
+    paddingBottom: spacing[20], // Increased from spacing[16] to move turtle slightly up
+    zIndex: 1002, // Higher than button to ensure turtle stays in front
   },
 
   // Loading boxes container for main screen
@@ -193,9 +199,10 @@ export const onboardingFinalStyles = StyleSheet.create({
   // Main Screen Turtle and Progress
   mainTurtleContainer: {
     alignItems: 'center',
-    marginBottom: spacing[6], // Positive margin for spacing
-    marginTop: -spacing[8], // Move turtle up further (was spacing[4], now -spacing[8])
-    zIndex: 10,
+    marginBottom: spacing[2], // Reduced from spacing[4] to bring turtle closer to button
+    marginTop: 0, // Removed negative margin since bottomSection handles positioning
+    zIndex: 1003, // Even higher z-index to ensure turtle stays in front of button
+    elevation: 10, // Android elevation to ensure it's on top
   },
 
   mainTurtleImage: {
@@ -203,6 +210,8 @@ export const onboardingFinalStyles = StyleSheet.create({
     height: Math.min(width * 0.35, 150),
     maxWidth: 150,
     maxHeight: 150,
+    zIndex: 1003, // Ensure image itself has high z-index
+    elevation: 10, // Android elevation
   },
 
   mainProgressContainer: {
@@ -276,6 +285,8 @@ export const onboardingFinalStyles = StyleSheet.create({
     paddingBottom: 30, // Standardize bottom padding with other screens
     paddingTop: spacing[8], // Add top padding for separation
     backgroundColor: 'transparent',
+    zIndex: 1004, // Higher than turtle to ensure button area is clickable
+    elevation: 11, // Android elevation
   },
 
 });

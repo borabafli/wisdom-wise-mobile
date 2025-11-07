@@ -3,20 +3,19 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, Link
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
 import { GoogleIcon } from '../../components/GoogleIcon';
 import { LEGAL_URLS } from '../../constants/legal';
 
-export const SignUpScreen: React.FC<{ 
+export const SignUpScreen: React.FC<{
   onNavigateToSignIn: () => void;
   onNavigateToVerification: (email: string) => void;
 }> = ({ onNavigateToSignIn, onNavigateToVerification }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const { signUp, signInWithGoogle, isLoading } = useAuth();
 
@@ -25,32 +24,20 @@ export const SignUpScreen: React.FC<{
   }, []);
 
   const validateForm = () => {
-    if (!firstName.trim()) {
-      Alert.alert('Error', 'Please enter your first name');
-      return false;
-    }
-    if (!lastName.trim()) {
-      Alert.alert('Error', 'Please enter your last name');
-      return false;
-    }
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
+      Alert.alert(t('common.error'), t('errors.enterEmail'));
       return false;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      Alert.alert(t('common.error'), t('errors.enterValidEmail'));
       return false;
     }
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
-      return false;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert(t('common.error'), t('errors.passwordTooShort'));
       return false;
     }
     if (!privacyAccepted) {
-      Alert.alert('Error', 'Please accept the privacy policy to continue');
+      Alert.alert(t('common.error'), t('errors.acceptPrivacyPolicy'));
       return false;
     }
     return true;
@@ -60,26 +47,27 @@ export const SignUpScreen: React.FC<{
     if (!validateForm()) return;
 
     try {
-      await signUp(email, password, firstName, lastName);
+      // Pass empty strings for firstName and lastName since we're not collecting them
+      await signUp(email, password, '', '');
       // Navigate to verification screen after successful signup
       onNavigateToVerification(email);
     } catch (error: any) {
-      Alert.alert('Sign Up Failed', error.message || 'Please try again');
+      Alert.alert(t('errors.signUpFailed'), error.message || t('errors.genericError'));
     }
   };
 
   const getPasswordStrength = () => {
     if (password.length === 0) return '';
-    if (password.length < 6) return 'Weak';
-    if (password.length < 10) return 'Medium';
-    return 'Strong';
+    if (password.length < 6) return t('auth.signUp.passwordStrengthWeak');
+    if (password.length < 10) return t('auth.signUp.passwordStrengthMedium');
+    return t('auth.signUp.passwordStrengthStrong');
   };
 
   const getPasswordColor = () => {
     const strength = getPasswordStrength();
-    if (strength === 'Weak') return 'text-red-500';
-    if (strength === 'Medium') return 'text-yellow-500';
-    if (strength === 'Strong') return 'text-green-500';
+    if (strength === t('auth.signUp.passwordStrengthWeak')) return 'text-red-500';
+    if (strength === t('auth.signUp.passwordStrengthMedium')) return 'text-yellow-500';
+    if (strength === t('auth.signUp.passwordStrengthStrong')) return 'text-green-500';
     return '';
   };
 
@@ -87,7 +75,7 @@ export const SignUpScreen: React.FC<{
     try {
       await signInWithGoogle();
     } catch (error: any) {
-      Alert.alert('Google Sign In Failed', error.message || 'Please try again');
+      Alert.alert(t('errors.googleSignInFailed'), error.message || t('errors.genericError'));
     }
   };
 
@@ -97,18 +85,24 @@ export const SignUpScreen: React.FC<{
       if (canOpen) {
         await Linking.openURL(LEGAL_URLS.PRIVACY_POLICY);
       } else {
-        Alert.alert('Error', 'Unable to open privacy policy. Please try again later.');
+        Alert.alert(t('common.error'), t('auth.signUp.failedToOpenPrivacy'));
       }
     } catch (error) {
       console.error('Error opening privacy policy:', error);
-      Alert.alert('Error', 'Failed to open privacy policy.');
+      Alert.alert(t('common.error'), t('auth.signUp.failedToOpenPrivacy'));
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
-      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={true}
+        alwaysBounceVertical={true}
+      >
         {/* Background Decorative Elements */}
         <View style={styles.decorativeElement} />
         <View style={styles.decorativeElement2} />
@@ -123,49 +117,21 @@ export const SignUpScreen: React.FC<{
             />
           </View>
           <Text style={styles.title}>
-            Create Your Account
+            {t('auth.signUp.title')}
           </Text>
           <Text style={styles.subtitle}>
-            Start your mindful wellness journey with Anu
+            {t('auth.signUp.subtitle')}
           </Text>
         </View>
 
         {/* Form */}
         <View style={styles.formContainer}>
-          {/* Name Fields */}
-          <View style={styles.nameFieldsRow}>
-            <View style={styles.nameFieldContainer}>
-              <Text style={styles.inputLabel}>First Name</Text>
-              <TextInput
-                style={styles.textInput}
-                placeholder="First name"
-                placeholderTextColor={styles.inputLabel.color}
-                value={firstName}
-                onChangeText={setFirstName}
-                autoCapitalize="words"
-                autoCorrect={false}
-              />
-            </View>
-            <View style={styles.nameFieldContainer}>
-              <Text style={styles.inputLabel}>Last Name</Text>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Last name"
-                placeholderTextColor={styles.inputLabel.color}
-                value={lastName}
-                onChangeText={setLastName}
-                autoCapitalize="words"
-                autoCorrect={false}
-              />
-            </View>
-          </View>
-
           {/* Email */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <Text style={styles.inputLabel}>{t('auth.signUp.email')}</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Enter your email"
+              placeholder={t('auth.signUp.emailPlaceholder')}
               placeholderTextColor={styles.inputLabel.color}
               value={email}
               onChangeText={setEmail}
@@ -177,10 +143,10 @@ export const SignUpScreen: React.FC<{
 
           {/* Password */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Password</Text>
+            <Text style={styles.inputLabel}>{t('auth.signUp.password')}</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Create a password"
+              placeholder={t('auth.signUp.passwordPlaceholder')}
               placeholderTextColor={styles.inputLabel.color}
               value={password}
               onChangeText={setPassword}
@@ -192,30 +158,14 @@ export const SignUpScreen: React.FC<{
             {password.length > 0 && (
               <View style={styles.passwordStrengthContainer}>
                 <Text style={[
-                  getPasswordStrength() === 'Weak' && styles.passwordStrengthWeak,
-                  getPasswordStrength() === 'Medium' && styles.passwordStrengthMedium,
-                  getPasswordStrength() === 'Strong' && styles.passwordStrengthStrong,
+                  getPasswordStrength() === t('auth.signUp.passwordStrengthWeak') && styles.passwordStrengthWeak,
+                  getPasswordStrength() === t('auth.signUp.passwordStrengthMedium') && styles.passwordStrengthMedium,
+                  getPasswordStrength() === t('auth.signUp.passwordStrengthStrong') && styles.passwordStrengthStrong,
                 ]}>
-                  Password strength: {getPasswordStrength()}
+                  {t('auth.signUp.passwordStrength', { strength: getPasswordStrength() })}
                 </Text>
               </View>
             )}
-          </View>
-
-          {/* Confirm Password */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Confirm Password</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Confirm your password"
-              placeholderTextColor={styles.inputLabel.color}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              autoComplete="off"
-              textContentType="none"
-              passwordRules=""
-            />
           </View>
 
           {/* Privacy Policy Checkbox */}
@@ -234,18 +184,18 @@ export const SignUpScreen: React.FC<{
                 )}
               </View>
               <Text style={styles.checkboxText}>
-                I accept the{' '}
-                <Text 
+                {t('auth.signUp.privacyAccept')}{' '}
+                <Text
                   style={styles.privacyPolicyLink}
                   onPress={(e) => {
                     e.stopPropagation();
                     handleOpenPrivacyPolicy();
                   }}
                 >
-                  Privacy Policy
+                  {t('auth.signUp.privacyPolicy')}
                 </Text>
-                {' '}and{' '}
-                <Text 
+                {' '}{t('auth.signUp.and')}{' '}
+                <Text
                   style={styles.privacyPolicyLink}
                   onPress={async (e) => {
                     e.stopPropagation();
@@ -253,10 +203,11 @@ export const SignUpScreen: React.FC<{
                       await Linking.openURL(LEGAL_URLS.TERMS_OF_SERVICE);
                     } catch (error) {
                       console.error('Error opening terms:', error);
+                      Alert.alert(t('common.error'), t('auth.signUp.failedToOpenTerms'));
                     }
                   }}
                 >
-                  Terms of Service
+                  {t('auth.signUp.termsOfService')}
                 </Text>
               </Text>
             </TouchableOpacity>
@@ -273,14 +224,14 @@ export const SignUpScreen: React.FC<{
             activeOpacity={0.8}
           >
             <Text style={styles.primaryButtonText}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? t('auth.signUp.creatingAccount') : t('auth.signUp.createAccountButton')}
             </Text>
           </TouchableOpacity>
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
             <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>or</Text>
+            <Text style={styles.dividerText}>{t('auth.signUp.orDivider')}</Text>
             <View style={styles.dividerLine} />
           </View>
 
@@ -293,7 +244,7 @@ export const SignUpScreen: React.FC<{
           >
             <GoogleIcon size={20} />
             <Text style={styles.googleButtonText}>
-              Continue with Google
+              {t('auth.signUp.googleButton')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -302,7 +253,7 @@ export const SignUpScreen: React.FC<{
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={onNavigateToSignIn} activeOpacity={0.7}>
             <Text style={styles.footerText}>
-              Already have an account? Sign in
+              {t('auth.signUp.alreadyHaveAccount')}
             </Text>
           </TouchableOpacity>
         </View>

@@ -420,7 +420,7 @@
       "days_plural": "{{count}} días"
     },
     "fallbackName": "Amigo",
-    "welcomeMessage": "Bienvenido a WisdomWise",
+    "welcomeMessage": "Bienvenido a ZenMind",
     "premiumMember": "Miembro Premium",
     "planStatus": {
       "premium": "✨ Miembro Premium",
@@ -490,7 +490,7 @@
   },
   "featureRequest": {
     "title": "Solicitar una Función",
-    "description": "¡Nos encantaría escuchar tus ideas! Comparte las funciones o mejoras que te gustaría ver en WisdomWise.",
+    "description": "¡Nos encantaría escuchar tus ideas! Comparte las funciones o mejoras que te gustaría ver en ZenMind.",
     "placeholder": "Comparte tu idea de función con nosotros...",
     "submit": "Enviar",
     "cancel": "Cancelar",
@@ -501,7 +501,7 @@
     "errorMessage": "No se pudo enviar tu solicitud. Por favor, inténtalo de nuevo más tarde.",
     "tooShort": "Por favor, escribe al menos 10 caracteres",
     "tooLong": "Por favor, mantén tu solicitud por debajo de 500 caracteres",
-    "infoText": "Tus comentarios nos ayudan a mejorar WisdomWise. Revisamos todas las solicitudes de funciones y priorizamos según las necesidades de los usuarios.",
+    "infoText": "Tus comentarios nos ayudan a mejorar ZenMind. Revisamos todas las solicitudes de funciones y priorizamos según las necesidades de los usuarios.",
     "discardTitle": "¿Descartar Solicitud?",
     "discardMessage": "Tienes cambios sin guardar. ¿Estás seguro de que quieres descartar tu solicitud de función?",
     "discard": "Descartar"
@@ -589,11 +589,12 @@
     },
     "exitConfirmation": {
       "title": "¿Guardar tu sesión?",
-      "message": "Tu conversación será guardada y podrás continuarla más tarde.",
+      "message": "Tu conversación se guardará de forma privada en tu dispositivo.",
       "exerciseTitle": "¿Terminar el ejercicio antes?",
-      "exerciseMessage": "Tu progreso se guardará, pero aún no has completado todos los pasos.",
+      "exerciseMessage": "Tu progreso se guardará y podrás continuar en cualquier momento.",
       "confirmButton": "Guardar y Salir",
-      "cancelButton": "Seguir Conversando"
+      "cancelButton": "Seguir Conversando",
+      "allowInsightsLabel": "Permitir que Anu reflexione sobre esta sesión para apoyar tu crecimiento"
     }
   },
   "mood": {
@@ -655,6 +656,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Comienza tu viaje de bienestar consciente con Anu",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "firstNamePlaceholder": "Nombre",
+      "lastNamePlaceholder": "Apellido",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Crea una contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "passwordStrength": "Fuerza de la contraseña: {{strength}}",
+      "passwordStrengthWeak": "Débil",
+      "passwordStrengthMedium": "Media",
+      "passwordStrengthStrong": "Fuerte",
+      "privacyAccept": "Acepto la",
+      "privacyPolicy": "Política de privacidad",
+      "and": "y",
+      "termsOfService": "Términos de servicio",
+      "createAccountButton": "Crear cuenta",
+      "creatingAccount": "Creando cuenta...",
+      "orDivider": "o",
+      "googleButton": "Continuar con Google",
+      "alreadyHaveAccount": "¿Ya tienes cuenta? Iniciar sesión",
+      "failedToOpenPrivacy": "No se pudo abrir la política de privacidad. Inténtalo más tarde.",
+      "failedToOpenTerms": "No se pudieron abrir los términos de servicio. Inténtalo más tarde."
+    },
+    "signIn": {
+      "title": "Bienvenido de nuevo a WisdomWise",
+      "subtitle": "Continúa tu viaje de bienestar consciente",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "signInButton": "Iniciar sesión",
+      "signingIn": "Iniciando sesión...",
+      "orDivider": "o",
+      "googleButton": "Continuar con Google",
+      "noAccount": "¿No tienes cuenta? Regístrate"
+    },
+    "verification": {
+      "title": "Verifica tu correo electrónico",
+      "subtitle": "Hemos enviado un enlace de verificación a",
+      "instructions": "Por favor, revisa tu bandeja de entrada y haz clic en el enlace de verificación para activar tu cuenta.",
+      "subInstructions": "El enlace expirará en 24 horas. ¿No lo encuentras? Revisa tu carpeta de spam.",
+      "resendButton": "Reenviar correo de verificación",
+      "resending": "Enviando...",
+      "checkStatusButton": "Ya verifiqué, continuar",
+      "checking": "Verificando...",
+      "backToSignIn": "Volver a iniciar sesión"
     }
   },
   "errors": {
@@ -1250,7 +1307,7 @@
           "description": "Configurando recursos personalizados"
         }
       },
-      "continueButton": "Entrar a WisdomWise"
+      "continueButton": "Entrar a ZenMind"
     },
     "notifications": {
       "mainTitle": "El bienestar crece con pequeños pasos diarios.",
@@ -1285,13 +1342,13 @@
             "step1": "1. Toca \"Abrir Configuración\" abajo",
             "step2": "2. Activa \"Permitir Notificaciones\"",
             "step3": "3. Elige tu estilo de notificación preferido",
-            "step4": "4. Regresa a WisdomWise cuando termines"
+            "step4": "4. Regresa a ZenMind cuando termines"
           },
           "android": {
             "step1": "1. Toca \"Abrir Configuración\" abajo",
             "step2": "2. Activa \"Mostrar notificaciones\"",
             "step3": "3. Elige tus preferencias de notificación",
-            "step4": "4. Presiona atrás para regresar a WisdomWise"
+            "step4": "4. Presiona atrás para regresar a ZenMind"
           }
         },
         "buttons": {
@@ -1300,6 +1357,34 @@
           "openSettings": "Abrir Configuración",
           "notNow": "Ahora No"
         }
+      },
+      "settings": {
+        "title": "Configuración de Notificaciones",
+        "loadingSettings": "Cargando configuración...",
+        "enableNotifications": "Habilitar notificaciones para recibir recordatorios conscientes",
+        "enable": "Habilitar",
+        "dailyReminders": "Recordatorios Diarios",
+        "dailyRemindersDescription": "Elige los horarios que funcionen mejor para tu práctica diaria de bienestar.",
+        "addCustomReminder": "Agregar Recordatorio Personalizado",
+        "createCustomReminder": "Crea tu propio horario de recordatorio",
+        "infoText": "Puedes personalizar estos recordatorios en cualquier momento. Mantén presionado los recordatorios personalizados para eliminarlos. Las notificaciones ayudan a mantener la consistencia en tu práctica de atención plena.",
+        "saveChanges": "Guardar Cambios",
+        "settingsSaved": "Configuración Guardada",
+        "preferencesUpdated": "Tus preferencias de notificación han sido actualizadas.",
+        "enableToReceive": "Habilitar notificaciones para recibir recordatorios.",
+        "failedToSave": "No se pudieron guardar la configuración. Por favor intenta de nuevo.",
+        "notificationsEnabled": "Notificaciones Habilitadas",
+        "willReceiveReminders": "Ahora recibirás recordatorios conscientes.",
+        "failedToEnable": "No se pudieron habilitar las notificaciones. Por favor intenta de nuevo.",
+        "error": "Error",
+        "deleteReminder": "Eliminar Recordatorio",
+        "deleteReminderConfirm": "¿Estás seguro de que quieres eliminar este recordatorio?",
+        "delete": "Eliminar",
+        "failedToAdd": "No se pudo agregar el recordatorio personalizado.",
+        "failedToDelete": "No se pudo eliminar el recordatorio.",
+        "customReminderLabel": "Ingresa una etiqueta para tu recordatorio personalizado",
+        "customReminderPlaceholder": "ej. Antes de Dormir, Después del Almuerzo",
+        "add": "Agregar"
       }
     },
     "common": {

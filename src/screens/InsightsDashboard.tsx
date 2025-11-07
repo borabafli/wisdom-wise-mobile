@@ -521,7 +521,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           {/* Motivational Card - Daily Check-in */}
           <View style={styles.motivationalCard}>
             <LinearGradient
-              colors={['#FDFEFF', '#F9FCFA', '#F5FAF7']}
+              colors={['#FDFEFF', '#F5F9FF', '#EFF6FF']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.motivationalGradient}

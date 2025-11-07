@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,16 +7,17 @@ import {
   Animated,
   TouchableWithoutFeedback,
   Platform,
+  Switch,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Sparkles, MessageCircle } from 'lucide-react-native';
+import { Sparkles, MessageCircle, Square, CheckSquare } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { exitConfirmationDialogStyles as styles } from '../styles/components/ExitConfirmationDialog.styles';
 
 interface ExitConfirmationDialogProps {
   visible: boolean;
-  onConfirmExit: () => void;
+  onConfirmExit: (skipInsights: boolean) => void;
   onCancel: () => void;
   isExerciseSession?: boolean;
 }
@@ -30,9 +31,12 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
   const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+  const [allowInsights, setAllowInsights] = useState(true); // Default ON (opt-out)
 
   useEffect(() => {
     if (visible) {
+      // Reset toggle to ON when dialog opens
+      setAllowInsights(true);
       // Animate in
       Animated.parallel([
         Animated.spring(scaleAnim, {
@@ -77,7 +81,7 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
         useNativeDriver: true,
       }),
     ]).start(() => {
-      onConfirmExit();
+      onConfirmExit(!allowInsights); // Pass skipInsights (inverse of allowInsights)
     });
   };
 
@@ -144,6 +148,20 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
                         ? t('chat.exitConfirmation.exerciseMessage')
                         : t('chat.exitConfirmation.message')}
                     </Text>
+
+                    {/* Toggle: Allow Insights */}
+                    <View style={styles.toggleContainer}>
+                      <Text style={styles.toggleLabel}>
+                        {t('chat.exitConfirmation.allowInsightsLabel')}
+                      </Text>
+                      <Switch
+                        value={allowInsights}
+                        onValueChange={setAllowInsights}
+                        trackColor={{ false: '#D1D5DB', true: '#9CD3C9' }}
+                        thumbColor={allowInsights ? '#4A9B8E' : '#F3F4F6'}
+                        ios_backgroundColor="#D1D5DB"
+                      />
+                    </View>
 
                     {/* Buttons */}
                     <View style={styles.buttonContainer}>
@@ -217,6 +235,20 @@ export const ExitConfirmationDialog: React.FC<ExitConfirmationDialogProps> = ({
                       ? t('chat.exitConfirmation.exerciseMessage')
                       : t('chat.exitConfirmation.message')}
                   </Text>
+
+                  {/* Toggle: Allow Insights */}
+                  <View style={styles.toggleContainer}>
+                    <Text style={styles.toggleLabel}>
+                      {t('chat.exitConfirmation.allowInsightsLabel')}
+                    </Text>
+                    <Switch
+                      value={allowInsights}
+                      onValueChange={setAllowInsights}
+                      trackColor={{ false: '#D1D5DB', true: '#9CD3C9' }}
+                      thumbColor={allowInsights ? '#4A9B8E' : '#F3F4F6'}
+                      ios_backgroundColor="#D1D5DB"
+                    />
+                  </View>
 
                   {/* Buttons */}
                   <View style={styles.buttonContainer}>

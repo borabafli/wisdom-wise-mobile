@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Settings, Leaf, Target, ChevronLeft } from 'lucide-react-native';
+import { Settings, Leaf, Target } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useTranslation } from 'react-i18next';
 import { onboardingFinalStyles as styles } from '../../styles/components/onboarding/OnboardingFinal.styles';
@@ -167,17 +167,6 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        {/* Back Button */}
-        {onBack && (
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={onBack}
-            activeOpacity={0.7}
-          >
-            <ChevronLeft size={24} color="#36657d" />
-          </TouchableOpacity>
-        )}
-
         <Animated.View
           style={[
             styles.contentContainer,
@@ -240,7 +229,7 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
                       }}
                     >
                       <IconComponent
-                        size={24}
+                        size={28}
                         color="#36657d"
                         strokeWidth={2}
                       />
@@ -292,9 +281,9 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
 
 
           {/* Bottom section with turtle */}
-          <View style={styles.bottomSection}>
+          <View style={styles.bottomSection} pointerEvents="box-none">
             {/* Turtle Image */}
-            <View style={styles.mainTurtleContainer}>
+            <View style={styles.mainTurtleContainer} pointerEvents="none">
               <Image
                 source={require('../../../assets/images/onboarding/turtle-welcome-calm-sitting.png')}
                 style={styles.mainTurtleImage}
@@ -304,9 +293,9 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
           </View>
 
           {/* Bottom area with button only */}
-          <View style={styles.bottomFixedArea}>
+          <View style={styles.bottomFixedArea} pointerEvents="box-none">
             {/* Action Button */}
-            <View style={styles.actionContainer}>
+            <View style={styles.actionContainer} pointerEvents="auto">
               <TouchableOpacity
                 style={[styles.primaryButton, !isButtonEnabled && styles.disabledButton]}
                 onPress={isButtonEnabled ? handleContinue : undefined}

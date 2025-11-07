@@ -37,8 +37,9 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   // Responsive style selection based on screen height
   const isSmallScreen = height <= 700;
   const isXSmallScreen = height <= 600;
-  const topPadding = Math.max(insets.top + spacing[18], spacing[24]);
-  const bottomPadding = Math.max(insets.bottom, spacing[8]);
+  // Ensure proper top padding accounting for safe area and status bar
+  const topPadding = Math.max(insets.top + spacing[12], spacing[16]);
+  // Bottom padding is handled by actionContainer (paddingBottom: 30) to match other screens
 
   const onboardingPages: OnboardingPage[] = [
     {
@@ -166,13 +167,7 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView
         edges={['top', 'left', 'right', 'bottom']}
-        style={[
-          styles.safeArea,
-          {
-            paddingTop: topPadding,
-            paddingBottom: bottomPadding,
-          }
-        ]}
+        style={styles.safeArea}
       >
         <Animated.View
           style={[
@@ -180,85 +175,91 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
             {
               opacity: fadeAnim,
               transform: [{ translateY: slideAnim }],
+              paddingTop: topPadding,
+              // Bottom padding handled by actionContainer to match other onboarding screens
             }
           ]}
         >
-          {/* Swipable Text Content */}
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            style={[
-              styles.swipeContainer,
-              isXSmallScreen && styles.swipeContainerXSmall,
-              isSmallScreen && !isXSmallScreen && styles.swipeContainerSmall,
-            ]}
-            contentContainerStyle={styles.swipeContent}
-          >
-            {/* All Pages */}
-            {onboardingPages.map((page) => renderPage(page))}
-          </ScrollView>
+          {/* Top Content Container - Can shrink if needed */}
+          <View style={styles.topContentContainer}>
+            {/* Swipable Text Content */}
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              style={[
+                styles.swipeContainer,
+                isXSmallScreen && styles.swipeContainerXSmall,
+                isSmallScreen && !isXSmallScreen && styles.swipeContainerSmall,
+              ]}
+              contentContainerStyle={styles.swipeContent}
+            >
+              {/* All Pages */}
+              {onboardingPages.map((page) => renderPage(page))}
+            </ScrollView>
 
-          {/* Page Indicators - Above video */}
-          <View style={styles.pageIndicators}>
-            {onboardingPages.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.pageIndicator,
-                  currentPage === index && styles.activePageIndicator
-                ]}
-              />
-            ))}
-          </View>
-
-          {/* Static Anu Video - With overlay */}
-          <View style={[
-            styles.staticAnuContainer,
-            isXSmallScreen && styles.staticAnuContainerXSmall,
-            isSmallScreen && !isXSmallScreen && styles.staticAnuContainerSmall,
-          ]}>
-            <View style={styles.videoContainer}>
-              {/* Static overlay that only animates when fading out */}
-              {overlayVisible && (
-                <Animated.View
+            {/* Page Indicators - Above video */}
+            <View style={styles.pageIndicators}>
+              {onboardingPages.map((_, index) => (
+                <View
+                  key={index}
                   style={[
-                    styles.backgroundOverlay,
-                    {
-                      opacity: overlayFadeAnim,
-                    }
+                    styles.pageIndicator,
+                    currentPage === index && styles.activePageIndicator
                   ]}
                 />
-              )}
-              {/* Video - only render after 0.5s delay */}
-              {showVideo && (
-                <Video
-                  source={require('../../../assets/images/onboarding/videos/meditating-turtle.mp4')}
-                  style={[
-                    styles.staticAnuImage,
-                    isXSmallScreen && styles.staticAnuImageXSmall,
-                    isSmallScreen && !isXSmallScreen && styles.staticAnuImageSmall,
-                  ]}
-                  resizeMode={ResizeMode.CONTAIN}
-                  shouldPlay={true}
-                  isLooping={true}
-                  isMuted={true}
-                  useNativeControls={false}
-                  onLoad={handleVideoLoad}
-                />
-              )}
+              ))}
+            </View>
+
+            {/* Static Anu Video - With overlay */}
+            <View style={[
+              styles.staticAnuContainer,
+              isXSmallScreen && styles.staticAnuContainerXSmall,
+              isSmallScreen && !isXSmallScreen && styles.staticAnuContainerSmall,
+            ]}>
+              <View style={styles.videoContainer}>
+                {/* Static overlay that only animates when fading out */}
+                {overlayVisible && (
+                  <Animated.View
+                    style={[
+                      styles.backgroundOverlay,
+                      {
+                        opacity: overlayFadeAnim,
+                      }
+                    ]}
+                  />
+                )}
+                {/* Video - only render after 0.5s delay */}
+                {showVideo && (
+                  <Video
+                    source={require('../../../assets/images/onboarding/videos/meditating-turtle.mp4')}
+                    style={[
+                      styles.staticAnuImage,
+                      isXSmallScreen && styles.staticAnuImageXSmall,
+                      isSmallScreen && !isXSmallScreen && styles.staticAnuImageSmall,
+                    ]}
+                    resizeMode={ResizeMode.CONTAIN}
+                    shouldPlay={true}
+                    isLooping={true}
+                    isMuted={true}
+                    useNativeControls={false}
+                    onLoad={handleVideoLoad}
+                  />
+                )}
+              </View>
             </View>
           </View>
 
-          {/* Action Button - INSIDE animated container for consistency */}
+          {/* Action Button - Pushed to bottom with marginTop: auto */}
           <Animated.View
             style={[
               styles.actionContainer,
               {
                 opacity: buttonFadeAnim,
+                marginTop: 'auto', // Push button to bottom
               }
             ]}
           >

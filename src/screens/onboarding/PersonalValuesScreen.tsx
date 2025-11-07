@@ -143,7 +143,7 @@ const PersonalValuesScreen: React.FC<PersonalValuesScreenProps> = ({ onContinue,
           </Animated.View>
         </ScrollView>
 
-        {/* Fixed Footer Button */}
+        {/* Fixed Footer Button - Visible immediately */}
         <View style={styles.actionContainer}>
           <TouchableOpacity
             style={styles.continueButton}

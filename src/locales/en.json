@@ -18,18 +18,45 @@
     "saving": "Saving..."
   },
   "alerts": {
+    "signOut": {
+      "title": "Sign Out",
+      "message": "Are you sure you want to sign out?"
+    },
     "deleteSession": {
       "title": "Delete Session",
-      "message": "Are you sure you want to delete this conversation? This cannot be undone.",
-      "delete": "Delete"
+      "message": "Are you sure you want to delete this session?"
     },
     "clearAllHistory": {
       "title": "Clear All History",
       "message": "Are you sure you want to delete all saved conversations? This cannot be undone.",
       "clearAll": "Clear All"
     },
+    "clearHistory": {
+      "title": "Clear All History",
+      "message": "Are you sure you want to clear all your chat history? This action cannot be undone."
+    },
     "deleteSessionError": "Failed to delete session. Please try again.",
-    "clearHistoryError": "Failed to clear history. Please try again."
+    "clearHistoryError": "Failed to clear history. Please try again.",
+    "resetProgress": {
+      "title": "Reset Progress",
+      "message": "This will reset all your progress. This action cannot be undone."
+    },
+    "promptsGenerated": {
+      "title": "Prompts Generated!",
+      "message": "Generated {{count}} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the \"Writing Prompts\" section."
+    },
+    "goalStatus": {
+      "title": "Goal Status Updated",
+      "message": "Goal marked as {{status}}!"
+    },
+    "progressSaved": {
+      "title": "Great!",
+      "message": "Your progress has been recorded."
+    },
+    "checkIn": {
+      "title": "Check-in Complete",
+      "message": "Thank you for sharing your progress!"
+    }
   },
   "navigation": {
     "home": "Home",
@@ -457,7 +484,7 @@
       "days_plural": "{{count}} days"
     },
     "fallbackName": "Friend",
-    "welcomeMessage": "Welcome to WisdomWise",
+    "welcomeMessage": "Welcome to ZenMind",
     "premiumMember": "Premium Member",
     "planStatus": {
       "premium": "✨ Premium Member",
@@ -542,7 +569,7 @@
   },
   "featureRequest": {
     "title": "Request a Feature",
-    "description": "We'd love to hear your ideas! Share what features or improvements you'd like to see in WisdomWise.",
+    "description": "We'd love to hear your ideas! Share what features or improvements you'd like to see in ZenMind.",
     "placeholder": "Share your feature idea with us...",
     "submit": "Submit",
     "cancel": "Cancel",
@@ -553,7 +580,7 @@
     "errorMessage": "Unable to submit your request. Please try again later.",
     "tooShort": "Please write at least 10 characters",
     "tooLong": "Please keep your request under 500 characters",
-    "infoText": "Your feedback helps us improve WisdomWise. We review all feature requests and prioritize based on user needs.",
+    "infoText": "Your feedback helps us improve ZenMind. We review all feature requests and prioritize based on user needs.",
     "discardTitle": "Discard Request?",
     "discardMessage": "You have unsaved changes. Are you sure you want to discard your feature request?",
     "discard": "Discard"
@@ -646,11 +673,12 @@
     },
     "exitConfirmation": {
       "title": "End session with Anu?",
-      "message": "Once you exit, Anu will thoughtfully analyze your session to discover meaningful patterns and insights about your journey.",
+      "message": "Your conversation will be saved privately on your device.",
       "exerciseTitle": "End session with Anu?",
-      "exerciseMessage": "Anu will reflect on your progress and gather insights from what you've shared so far to support your growth.",
+      "exerciseMessage": "Your progress will be saved and you can continue anytime.",
       "confirmButton": "End Session",
-      "cancelButton": "Keep Chatting"
+      "cancelButton": "Keep Chatting",
+      "allowInsightsLabel": "Let Anu reflect on this session to support your growth"
     }
   },
   "mood": {
@@ -745,6 +773,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Create Your Account",
+      "subtitle": "Start your mindful wellness journey with Anu",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "firstNamePlaceholder": "First name",
+      "lastNamePlaceholder": "Last name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "passwordStrength": "Password strength: {{strength}}",
+      "passwordStrengthWeak": "Weak",
+      "passwordStrengthMedium": "Medium",
+      "passwordStrengthStrong": "Strong",
+      "privacyAccept": "I accept the",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "termsOfService": "Terms of Service",
+      "createAccountButton": "Create Account",
+      "creatingAccount": "Creating Account...",
+      "orDivider": "or",
+      "googleButton": "Continue with Google",
+      "alreadyHaveAccount": "Already have an account? Sign in",
+      "failedToOpenPrivacy": "Unable to open privacy policy. Please try again later.",
+      "failedToOpenTerms": "Unable to open terms of service. Please try again later."
+    },
+    "signIn": {
+      "title": "Welcome Back to WisdomWise",
+      "subtitle": "Continue your mindful wellness journey",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "signInButton": "Sign In",
+      "signingIn": "Signing In...",
+      "orDivider": "or",
+      "googleButton": "Continue with Google",
+      "noAccount": "Don't have an account? Sign up"
+    },
+    "verification": {
+      "title": "Check Your Email",
+      "subtitle": "We sent a verification link to",
+      "instructions": "Please check your inbox and click the verification link to activate your account.",
+      "subInstructions": "The link will expire in 24 hours. Can't find it? Check your spam folder.",
+      "resendButton": "Resend Verification Email",
+      "resending": "Sending...",
+      "checkStatusButton": "I've Verified, Continue",
+      "checking": "Checking...",
+      "backToSignIn": "Back to Sign In"
     }
   },
   "errors": {
@@ -1168,40 +1252,6 @@
       "description": "Browse all exercises"
     }
   },
-  "alerts": {
-    "signOut": {
-      "title": "Sign Out",
-      "message": "Are you sure you want to sign out?"
-    },
-    "deleteSession": {
-      "title": "Delete Session",
-      "message": "Are you sure you want to delete this session?"
-    },
-    "resetProgress": {
-      "title": "Reset Progress",
-      "message": "This will reset all your progress. This action cannot be undone."
-    },
-    "promptsGenerated": {
-      "title": "Prompts Generated!",
-      "message": "Generated {{count}} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the \"Writing Prompts\" section."
-    },
-    "clearHistory": {
-      "title": "Clear All History",
-      "message": "Are you sure you want to clear all your chat history? This action cannot be undone."
-    },
-    "goalStatus": {
-      "title": "Goal Status Updated",
-      "message": "Goal marked as {{status}}!"
-    },
-    "progressSaved": {
-      "title": "Great!",
-      "message": "Your progress has been recorded."
-    },
-    "checkIn": {
-      "title": "Check-In Complete",
-      "message": "Thank you for sharing your progress!"
-    }
-  },
   "visionDetails": {
     "title": "Vision of Myself",
     "visionsCreated": "{{count}} vision{{plural}} created",
@@ -1281,8 +1331,8 @@
       "letsBegin": "Let's begin"
     },
     "personalValues": {
-      "headline": "Let's personalize your experience with Anu.",
-      "promptText": "What values matter most to you? Choose the ones that feel right.",
+      "headline": "Personalize your experience.",
+      "promptText": "Choose the right one",
       "continueButton": "Continue",
       "values": {
         "healthVitality": "Health & Vitality",
@@ -1324,8 +1374,8 @@
       "continueButton": "Continue"
     },
     "personalization": {
-      "headline": "✨ What's your name?",
-      "promptText": "Choose how Anu should call you.",
+      "headline": "Personalize your experience.",
+      "promptText": "Choose the right one",
       "placeholder": "Your preferred name",
       "caption": "You can always change this later in settings",
       "continueButton": "Continue",
@@ -1378,7 +1428,7 @@
           "description": "Setting up personalized resources"
         }
       },
-      "continueButton": "Enter WisdomWise"
+      "continueButton": "Enter ZenMind"
     },
     "notifications": {
       "mainTitle": "Wellbeing grows with small, daily steps.",
@@ -1413,13 +1463,13 @@
             "step1": "1. Tap \"Open Settings\" below",
             "step2": "2. Toggle on \"Allow Notifications\"",
             "step3": "3. Choose your preferred notification style",
-            "step4": "4. Return to WisdomWise when done"
+            "step4": "4. Return to ZenMind when done"
           },
           "android": {
             "step1": "1. Tap \"Open Settings\" below",
             "step2": "2. Turn on \"Show notifications\"",
             "step3": "3. Choose your notification preferences",
-            "step4": "4. Press back to return to WisdomWise"
+            "step4": "4. Press back to return to ZenMind"
           }
         },
         "buttons": {
@@ -1428,6 +1478,34 @@
           "openSettings": "Open Settings",
           "notNow": "Not Now"
         }
+      },
+      "settings": {
+        "title": "Notification Settings",
+        "loadingSettings": "Loading settings...",
+        "enableNotifications": "Enable notifications to receive mindful reminders",
+        "enable": "Enable",
+        "dailyReminders": "Daily Reminders",
+        "dailyRemindersDescription": "Pick the times that work best for your daily wellbeing practice.",
+        "addCustomReminder": "Add Custom Reminder",
+        "createCustomReminder": "Create your own reminder time",
+        "infoText": "You can customize these reminders anytime. Long press custom reminders to delete them. Notifications help maintain consistency in your mindfulness practice.",
+        "saveChanges": "Save Changes",
+        "settingsSaved": "Settings Saved",
+        "preferencesUpdated": "Your notification preferences have been updated.",
+        "enableToReceive": "Enable notifications to receive reminders.",
+        "failedToSave": "Failed to save settings. Please try again.",
+        "notificationsEnabled": "Notifications Enabled",
+        "willReceiveReminders": "You'll now receive mindful reminders.",
+        "failedToEnable": "Failed to enable notifications. Please try again.",
+        "error": "Error",
+        "deleteReminder": "Delete Reminder",
+        "deleteReminderConfirm": "Are you sure you want to delete this reminder?",
+        "delete": "Delete",
+        "failedToAdd": "Failed to add custom reminder.",
+        "failedToDelete": "Failed to delete reminder.",
+        "customReminderLabel": "Enter a label for your custom reminder",
+        "customReminderPlaceholder": "e.g., Before Bed, After Lunch",
+        "add": "Add"
       }
     },
     "common": {

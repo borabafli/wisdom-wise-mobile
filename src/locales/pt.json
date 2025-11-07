@@ -420,7 +420,7 @@
       "days_plural": "{{count}} dias"
     },
     "fallbackName": "Amigo",
-    "welcomeMessage": "Bem-vindo ao WisdomWise",
+    "welcomeMessage": "Bem-vindo ao ZenMind",
     "premiumMember": "Membro Premium",
     "planStatus": {
       "premium": "✨ Membro Premium",
@@ -490,7 +490,7 @@
   },
   "featureRequest": {
     "title": "Solicitar um Recurso",
-    "description": "Adoraríamos ouvir suas ideias! Compartilhe os recursos ou melhorias que você gostaria de ver no WisdomWise.",
+    "description": "Adoraríamos ouvir suas ideias! Compartilhe os recursos ou melhorias que você gostaria de ver no ZenMind.",
     "placeholder": "Compartilhe sua ideia de recurso conosco...",
     "submit": "Enviar",
     "cancel": "Cancelar",
@@ -501,7 +501,7 @@
     "errorMessage": "Não foi possível enviar sua solicitação. Por favor, tente novamente mais tarde.",
     "tooShort": "Por favor, escreva pelo menos 10 caracteres",
     "tooLong": "Por favor, mantenha sua solicitação abaixo de 500 caracteres",
-    "infoText": "Seu feedback nos ajuda a melhorar o WisdomWise. Revisamos todas as solicitações de recursos e priorizamos com base nas necessidades dos usuários.",
+    "infoText": "Seu feedback nos ajuda a melhorar o ZenMind. Revisamos todas as solicitações de recursos e priorizamos com base nas necessidades dos usuários.",
     "discardTitle": "Descartar Solicitação?",
     "discardMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartar sua solicitação de recurso?",
     "discard": "Descartar"
@@ -589,11 +589,12 @@
     },
     "exitConfirmation": {
       "title": "Salvar sua sessão?",
-      "message": "Sua conversa será salva e você poderá continuá-la mais tarde.",
+      "message": "Sua conversa será salva de forma privada no seu dispositivo.",
       "exerciseTitle": "Terminar o exercício mais cedo?",
-      "exerciseMessage": "Seu progresso será salvo, mas você ainda não completou todos os passos.",
+      "exerciseMessage": "Seu progresso será salvo e você pode continuar a qualquer momento.",
       "confirmButton": "Salvar e Sair",
-      "cancelButton": "Continuar Conversando"
+      "cancelButton": "Continuar Conversando",
+      "allowInsightsLabel": "Permitir que Anu reflita sobre esta sessão para apoiar seu crescimento"
     }
   },
   "mood": {
@@ -655,6 +656,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Crie sua conta",
+      "subtitle": "Inicie sua jornada de bem-estar consciente com Anu",
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "firstNamePlaceholder": "Nome",
+      "lastNamePlaceholder": "Sobrenome",
+      "email": "E-mail",
+      "emailPlaceholder": "Digite seu e-mail",
+      "password": "Senha",
+      "passwordPlaceholder": "Crie uma senha",
+      "confirmPassword": "Confirmar senha",
+      "confirmPasswordPlaceholder": "Confirme sua senha",
+      "passwordStrength": "Força da senha: {{strength}}",
+      "passwordStrengthWeak": "Fraca",
+      "passwordStrengthMedium": "Média",
+      "passwordStrengthStrong": "Forte",
+      "privacyAccept": "Aceito a",
+      "privacyPolicy": "Política de Privacidade",
+      "and": "e",
+      "termsOfService": "Termos de Serviço",
+      "createAccountButton": "Criar conta",
+      "creatingAccount": "Criando conta...",
+      "orDivider": "ou",
+      "googleButton": "Continuar com Google",
+      "alreadyHaveAccount": "Já tem uma conta? Entrar",
+      "failedToOpenPrivacy": "Não foi possível abrir a política de privacidade. Tente novamente mais tarde.",
+      "failedToOpenTerms": "Não foi possível abrir os termos de serviço. Tente novamente mais tarde."
+    },
+    "signIn": {
+      "title": "Bem-vindo de volta ao WisdomWise",
+      "subtitle": "Continue sua jornada de bem-estar consciente",
+      "email": "E-mail",
+      "emailPlaceholder": "Digite seu e-mail",
+      "password": "Senha",
+      "passwordPlaceholder": "Digite sua senha",
+      "forgotPassword": "Esqueceu a senha?",
+      "signInButton": "Entrar",
+      "signingIn": "Entrando...",
+      "orDivider": "ou",
+      "googleButton": "Continuar com Google",
+      "noAccount": "Não tem conta? Cadastre-se"
+    },
+    "verification": {
+      "title": "Verifique seu e-mail",
+      "subtitle": "Enviamos um link de verificação para",
+      "instructions": "Por favor, verifique sua caixa de entrada e clique no link de verificação para ativar sua conta.",
+      "subInstructions": "O link expirará em 24 horas. Não encontrou? Verifique sua pasta de spam.",
+      "resendButton": "Reenviar e-mail de verificação",
+      "resending": "Enviando...",
+      "checkStatusButton": "Já verifiquei, continuar",
+      "checking": "Verificando...",
+      "backToSignIn": "Voltar para entrar"
     }
   },
   "errors": {
@@ -1250,7 +1307,7 @@
           "description": "Configurando recursos personalizados"
         }
       },
-      "continueButton": "Entrar no WisdomWise"
+      "continueButton": "Entrar no ZenMind"
     },
     "notifications": {
       "mainTitle": "O bem-estar cresce com pequenos passos diários.",
@@ -1285,13 +1342,13 @@
             "step1": "1. Toque em \"Abrir Configurações\" abaixo",
             "step2": "2. Ative \"Permitir Notificações\"",
             "step3": "3. Escolha seu estilo de notificação preferido",
-            "step4": "4. Retorne ao WisdomWise quando terminar"
+            "step4": "4. Retorne ao ZenMind quando terminar"
           },
           "android": {
             "step1": "1. Toque em \"Abrir Configurações\" abaixo",
             "step2": "2. Ative \"Mostrar notificações\"",
             "step3": "3. Escolha suas preferências de notificação",
-            "step4": "4. Pressione voltar para retornar ao WisdomWise"
+            "step4": "4. Pressione voltar para retornar ao ZenMind"
           }
         },
         "buttons": {
@@ -1300,6 +1357,34 @@
           "openSettings": "Abrir Configurações",
           "notNow": "Agora Não"
         }
+      },
+      "settings": {
+        "title": "Configurações de Notificação",
+        "loadingSettings": "Carregando configurações...",
+        "enableNotifications": "Ativar notificações para receber lembretes conscientes",
+        "enable": "Ativar",
+        "dailyReminders": "Lembretes Diários",
+        "dailyRemindersDescription": "Escolha os horários que funcionam melhor para sua prática diária de bem-estar.",
+        "addCustomReminder": "Adicionar Lembrete Personalizado",
+        "createCustomReminder": "Crie seu próprio horário de lembrete",
+        "infoText": "Você pode personalizar esses lembretes a qualquer momento. Pressione e segure os lembretes personalizados para excluí-los. As notificações ajudam a manter a consistência em sua prática de atenção plena.",
+        "saveChanges": "Salvar Alterações",
+        "settingsSaved": "Configurações Salvas",
+        "preferencesUpdated": "Suas preferências de notificação foram atualizadas.",
+        "enableToReceive": "Ativar notificações para receber lembretes.",
+        "failedToSave": "Falha ao salvar as configurações. Por favor, tente novamente.",
+        "notificationsEnabled": "Notificações Ativadas",
+        "willReceiveReminders": "Agora você receberá lembretes conscientes.",
+        "failedToEnable": "Falha ao ativar as notificações. Por favor, tente novamente.",
+        "error": "Erro",
+        "deleteReminder": "Excluir Lembrete",
+        "deleteReminderConfirm": "Tem certeza de que deseja excluir este lembrete?",
+        "delete": "Excluir",
+        "failedToAdd": "Falha ao adicionar lembrete personalizado.",
+        "failedToDelete": "Falha ao excluir lembrete.",
+        "customReminderLabel": "Digite um rótulo para seu lembrete personalizado",
+        "customReminderPlaceholder": "ex. Antes de Dormir, Depois do Almoço",
+        "add": "Adicionar"
       }
     },
     "common": {

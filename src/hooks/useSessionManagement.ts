@@ -98,11 +98,11 @@ export const useSessionManagement = () => {
   }, []);
 
   // User confirmed exit - proceed with save
-  const confirmExit = useCallback(() => {
-    console.log('User confirmed exit - proceeding with save');
+  const confirmExit = useCallback((skipInsights: boolean = false) => {
+    console.log('User confirmed exit - proceeding with save', { skipInsights });
     setShowExitConfirmation(false);
     if (pendingExitCallback) {
-      extractInsightsAndSaveSession(pendingExitCallback, pendingExerciseContext);
+      extractInsightsAndSaveSession(pendingExitCallback, pendingExerciseContext, skipInsights);
       setPendingExitCallback(null);
       setPendingExerciseContext(undefined);
     }
@@ -117,25 +117,30 @@ export const useSessionManagement = () => {
   }, []);
 
   // Extract insights and save session - BACKGROUND PROCESSING
-  const extractInsightsAndSaveSession = useCallback(async (onBack: () => void, exerciseContext?: ExerciseContext) => {
+  const extractInsightsAndSaveSession = useCallback(async (onBack: () => void, exerciseContext?: ExerciseContext, skipInsightExtraction: boolean = false) => {
     try {
-      console.log('Starting background session save and insight extraction...');
-      
+      console.log('Starting background session save and insight extraction...', { skipInsightExtraction });
+
       // IMMEDIATELY return to main app - don't block the user!
       onBack();
-      
+
       // Continue processing in background
       await storageService.saveToHistory();
       await storageService.clearCurrentSession();
       console.log('Session saved to history and cleared');
-      
+
       // Process insights and memory in background (slow AI operations)
       setTimeout(async () => {
         try {
           const currentSession = await storageService.getChatHistory();
           const lastSession = currentSession[0]; // Most recent session
-          
+
           if (lastSession && lastSession.messages) {
+            // ⏭️ SKIP ALL INSIGHT EXTRACTION IF USER OPTED OUT
+            if (skipInsightExtraction) {
+              console.log('⏭️ Skipping all insight extraction as per user request');
+              return; // Exit early, skip everything below
+            }
             // Check if this was the Automatic Thoughts exercise
             const isAutomaticThoughtsExercise = exerciseContext?.exerciseType === 'automatic-thoughts';
 

@@ -15,8 +15,13 @@ export const authScreenStyles = StyleSheet.create({
 
   scrollContainer: {
     flex: 1,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.therapy.sm,
+    paddingBottom: spacing.therapy.xl, // Extra padding at bottom for keyboard
   },
 
   container: {
@@ -226,7 +231,7 @@ export const authScreenStyles = StyleSheet.create({
   // Google Sign-In Button
   googleButton: {
     backgroundColor: colors.white,
-    borderRadius: 50,
+    borderRadius: 18, // Match primary button border radius for consistency
     paddingVertical: spacing.therapy.md, // Reduced padding
     paddingHorizontal: spacing.therapy.lg,
     marginTop: spacing.therapy.sm, // Reduced margin

@@ -33,6 +33,7 @@ export const focusAreasStyles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1, // Makes content container expand to fill space - required for marginTop: 'auto' to work
     paddingBottom: spacing[32], // Increased from 8 to 32 (64px) for better spacing
+    minHeight: '100%', // Ensure content takes full height so button is always visible
   },
 
   // Content Section
@@ -138,6 +139,7 @@ export const focusAreasStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 6,
+    marginBottom: spacing[8], // 8px - matches other onboarding screens
   },
 
   continueButtonText: {

@@ -18,12 +18,21 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Main Content Layout
   contentContainer: {
     flex: 1,
+    // Use column layout to stack elements vertically
+    flexDirection: 'column',
+  },
+
+  // Top Content Container - Wraps scrollable content, indicators, and video
+  topContentContainer: {
+    flex: 1, // Take available space
+    flexShrink: 1, // Allow shrinking on smaller screens
   },
 
   // Swipable Container - Only for text
   swipeContainer: {
+    flexShrink: 0, // Don't shrink the text container
     minHeight: height * 0.25, // Allow content to grow beyond base height
-    marginTop: spacing[24], // 48px - Comfortable distance from top after safe area padding
+    marginTop: spacing[8], // Reduced margin since paddingTop is handled in component
   },
 
   swipeContent: {
@@ -37,7 +46,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
     justifyContent: 'flex-start', // Align to top instead of center
     alignItems: 'center',
     paddingHorizontal: spacing[20], // 20px - reduced padding from edges
-    paddingTop: spacing[8], // Small top padding to ensure visibility
+    paddingTop: spacing[4], // Minimal top padding
     paddingBottom: spacing[12],
     minHeight: height * 0.25,
   },
@@ -58,7 +67,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
     letterSpacing: -0.5,
     marginBottom: spacing[16], // 16px
     paddingHorizontal: spacing[16], // 16px - reduced padding
-    paddingTop: spacing[4], // Small top padding to ensure first line is fully visible
+    paddingTop: 0, // Removed padding since it's handled by container
   },
 
   pageIcon: {
@@ -82,6 +91,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   staticAnuContainer: {
     alignItems: 'center', // Center the image
     justifyContent: 'center',
+    flexShrink: 1, // Allow shrinking if needed
     height: height * 0.33, // Slightly reduced to free up space for text
     paddingTop: spacing[4],
     paddingBottom: spacing[18],
@@ -132,6 +142,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
     gap: spacing[8], // 8px
     position: 'relative',
     zIndex: 10, // Ensure dots appear above video
+    flexShrink: 0, // Don't shrink indicators
   },
 
   pageIndicator: {
@@ -150,9 +161,8 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Action Button Container - consistent with other onboarding screens
   actionContainer: {
     alignItems: 'center',
-    paddingHorizontal: spacing[24], // 24px
-    paddingBottom: 30, // Match other onboarding pages exactly
-    paddingTop: spacing[8], // Add top padding for separation
+    paddingBottom: 30, // Standardized across all personalization screens
+    paddingTop: spacing[8], // 16px top padding - matches other onboarding screens
     backgroundColor: 'transparent',
     zIndex: 1000, // Absolute foreground
     position: 'relative', // Changed from absolute to relative for consistency
@@ -160,21 +170,26 @@ export const onboardingValuePropStyles = StyleSheet.create({
 
   // Primary Button - Following design principles
   primaryButton: {
-    paddingHorizontal: 48, // Larger padding for prominence
-    minWidth: 240, // Wider button
+    paddingHorizontal: 48, // Standard padding to match other onboarding buttons
+    minWidth: 240, // Standard width to match other onboarding buttons
     height: 48, // Design principles height
     backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    // No shadow to avoid white bar during animation
-    zIndex: 1001, // Even higher z-index for button
-    position: 'relative',
+    shadowColor: '#5BA3B8',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
 
   primaryButtonText: {
     fontSize: 16, // Button text size from design principles
-    fontFamily: typography.fontFamily.ubuntuMedium,
+    fontFamily: typography.fontFamily.ubuntuBold, // Match selection buttons bold font
     color: '#FFFFFF', // Match notification screen button text color
     letterSpacing: 0.2,
   },
@@ -182,7 +197,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Responsive adjustments for smaller screens (applied conditionally)
   swipeContainerSmall: {
     height: height * 0.22,
-    marginTop: spacing[18], // 36px - Reduced but still comfortable for smaller screens
+    marginTop: spacing[4], // Reduced margin since paddingTop is handled in component
   },
 
   pageContainerSmall: {
@@ -217,7 +232,7 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Very small screens (applied conditionally)
   swipeContainerXSmall: {
     height: height * 0.2,
-    marginTop: spacing[14], // 28px - Balanced for very small screens
+    marginTop: spacing[2], // Reduced margin since paddingTop is handled in component
   },
 
   pageContainerXSmall: {
