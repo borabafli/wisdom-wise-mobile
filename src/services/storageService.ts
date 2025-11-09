@@ -64,7 +64,9 @@ const STORAGE_KEYS = {
   USER_PROFILE: 'user_profile',
   THOUGHT_PATTERNS: 'thought_patterns',
   INSIGHTS_HISTORY: 'insights_history',
-  FIRST_MESSAGE_ROUTING: 'first_message_routing'
+  FIRST_MESSAGE_ROUTING: 'first_message_routing',
+  RECENT_ROUTING_HISTORY: 'recent_routing_history',
+  LAST_NEUTRAL_STYLES: 'last_neutral_styles' // Track last 3 neutral styles used
 };
 
 class StorageService {
@@ -551,12 +553,53 @@ class StorageService {
 
   async trackFirstMessageRouting(routingVariant: string): Promise<void> {
     try {
+      // Update usage count
       const usage = await this.getFirstMessageRoutingUsage();
       usage[routingVariant] = (usage[routingVariant] || 0) + 1;
       await AsyncStorage.setItem(STORAGE_KEYS.FIRST_MESSAGE_ROUTING, JSON.stringify(usage));
       console.log('📊 [ROUTING USAGE] Updated:', routingVariant, '→', usage[routingVariant]);
+
+      // Update recent history (last 5 variants)
+      const history = await this.getRecentRoutingHistory();
+      history.unshift(routingVariant); // Add to front
+      const trimmedHistory = history.slice(0, 5); // Keep only last 5
+      await AsyncStorage.setItem(STORAGE_KEYS.RECENT_ROUTING_HISTORY, JSON.stringify(trimmedHistory));
+      console.log('📜 [ROUTING HISTORY] Updated:', trimmedHistory);
     } catch (error) {
       console.error('Error tracking first message routing:', error);
+    }
+  }
+
+  async getRecentRoutingHistory(): Promise<string[]> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.RECENT_ROUTING_HISTORY);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error getting recent routing history:', error);
+      return [];
+    }
+  }
+
+  // Neutral style tracking to prevent AI repetition
+  async getLastNeutralStyles(): Promise<string[]> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.LAST_NEUTRAL_STYLES);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error getting last neutral styles:', error);
+      return [];
+    }
+  }
+
+  async trackNeutralStyle(styleKeyword: string): Promise<void> {
+    try {
+      const styles = await this.getLastNeutralStyles();
+      styles.unshift(styleKeyword); // Add to front
+      const trimmed = styles.slice(0, 3); // Keep last 3
+      await AsyncStorage.setItem(STORAGE_KEYS.LAST_NEUTRAL_STYLES, JSON.stringify(trimmed));
+      console.log('🎨 [NEUTRAL STYLE] Tracked:', trimmed);
+    } catch (error) {
+      console.error('Error tracking neutral style:', error);
     }
   }
 
