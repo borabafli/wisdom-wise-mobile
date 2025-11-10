@@ -91,24 +91,22 @@ export const sessionSummariesStyles = StyleSheet.create({
 
   infoMetaRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+    justifyContent: 'space-between',
+    gap: 12,
   },
 
   infoMetaPill: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 14,
-    backgroundColor: 'rgba(91, 163, 184, 0.12)',
   },
 
   infoMetaText: {
     fontSize: 12,
     fontWeight: '500',
     color: '#1E3A5F',
+    flexShrink: 1,
   },
 
   infoFooter: {
@@ -147,6 +145,7 @@ export const sessionSummariesStyles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#E1E8ED',
     shadowColor: '#5BA3B8',
@@ -154,6 +153,7 @@ export const sessionSummariesStyles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 1,
+    minHeight: 36,
   },
 
   filterButtonActive: {
@@ -168,6 +168,8 @@ export const sessionSummariesStyles = StyleSheet.create({
     fontSize: 13, // --text-sm (slightly smaller)
     fontWeight: '500', // --font-medium
     color: '#64748B', // --text-gray
+    textAlign: 'center',
+    numberOfLines: 1,
   },
 
   filterTextActive: {

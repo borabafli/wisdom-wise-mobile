@@ -112,9 +112,9 @@ export const editProfileModalStyles = StyleSheet.create({
     fontSize: 14,
     color: colors.text.primary,
     paddingHorizontal: spacing[12],
-    paddingVertical: spacing[8],
+    paddingVertical: spacing[3],
     fontFamily: typography.fontFamily.primary,
-    minHeight: 36,
+    height: 44,
   },
   errorContainer: {
     flexDirection: 'row',
@@ -185,5 +185,7 @@ export const editProfileModalStyles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.white,
     fontFamily: typography.fontFamily.primary,
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
 });

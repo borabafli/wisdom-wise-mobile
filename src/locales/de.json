@@ -209,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Sitzungszusammenfassungen",
-      "subtitle": "Sitzungen analysiert"
+      "subtitle": "Überprüfe deine Gespräche",
+      "analyzedCount": "{{count}} Sitzungen analysiert",
+      "filters": {
+        "all": "Alle ({{count}})",
+        "sessions": "Sitzungen ({{count}})",
+        "themes": "Muster ({{count}})"
+      },
+      "infoCard": {
+        "title": "So funktionieren deine Zusammenfassungen",
+        "body": "Hallo {{name}}, wenn du ein Gespräch speicherst (außer Vision-Übungen), erstellt Anu eine Zusammenfassung der letzten 30 Nachrichten. Nur die Zusammenfassung, das Datum und die Nachrichtenanzahl bleiben auf deinem Gerät—jederzeit löschbar.",
+        "meta": {
+          "timing": "Nach dem Speichern erstellt",
+          "storage": "Privat gespeichert",
+          "consolidated": "Muster nach 10+"
+        },
+        "highlight": "Zehn Zusammenfassungen schalten eine Musterübersicht frei."
+      },
+      "badges": {
+        "session": "Sitzung",
+        "consolidated": "Konsolidiert"
+      },
+      "sessionTitle": "Sitzung {{number}}",
+      "themesTitle": "Musterübersicht",
+      "consolidatedInfo": "Basierend auf {{count}} Sitzungen",
+      "emptyState": {
+        "title": "Noch keine Zusammenfassungen",
+        "description": "Beende ein gespeichertes Gespräch mit Anu und deine personalisierte Zusammenfassung erscheint hier."
+      },
+      "loading": "Lade Zusammenfassungen..."
     },
     "therapyGoals": {
       "title": "Therapieziele",

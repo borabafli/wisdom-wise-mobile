@@ -209,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Résumés de Séances",
-      "subtitle": "Séances analysées"
+      "subtitle": "Consultez vos conversations",
+      "analyzedCount": "{{count}} séances analysées",
+      "filters": {
+        "all": "Toutes ({{count}})",
+        "sessions": "Séances ({{count}})",
+        "themes": "Motifs ({{count}})"
+      },
+      "infoCard": {
+        "title": "Comment fonctionnent vos résumés",
+        "body": "Bonjour {{name}}, lorsque vous sauvegardez une conversation (sauf exercices de Vision), Anu crée un résumé des 30 derniers messages. Seul le résumé, la date et le nombre de messages restent sur votre appareil—supprimez à tout moment.",
+        "meta": {
+          "timing": "Créé après sauvegarde",
+          "storage": "Stocké en privé",
+          "consolidated": "Motifs après 10+"
+        },
+        "highlight": "Dix résumés débloquent une Vue des Motifs."
+      },
+      "badges": {
+        "session": "Séance",
+        "consolidated": "Consolidé"
+      },
+      "sessionTitle": "Séance {{number}}",
+      "themesTitle": "Vue des Motifs",
+      "consolidatedInfo": "Basé sur {{count}} séances",
+      "emptyState": {
+        "title": "Pas Encore de Résumés",
+        "description": "Terminez une conversation sauvegardée avec Anu et votre résumé personnalisé apparaîtra ici."
+      },
+      "loading": "Chargement des résumés..."
     },
     "therapyGoals": {
       "title": "Objectifs Thérapeutiques",

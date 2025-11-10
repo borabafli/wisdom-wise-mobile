@@ -66,9 +66,11 @@ export const helpSupportModalStyles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: colors.teal[50],
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.teal[200],
     ...shadows.md,
   },
   iconImage: {
@@ -80,7 +82,7 @@ export const helpSupportModalStyles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: '#1F2937',
+    color: colors.text.primary,
     textAlign: 'center',
     lineHeight: 34,
     marginBottom: spacing['4'],
@@ -90,7 +92,7 @@ export const helpSupportModalStyles = StyleSheet.create({
   description: {
     fontSize: 16,
     fontFamily: typography.fontFamily.ubuntu,
-    color: '#4B5563',
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: spacing['8'],
@@ -102,21 +104,21 @@ export const helpSupportModalStyles = StyleSheet.create({
     marginBottom: spacing['6'],
   },
   inputContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: 'rgba(54, 101, 125, 0.15)',
+    backgroundColor: colors.teal[50],
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.teal[200],
     overflow: 'hidden',
-    ...shadows.sm,
   },
   textInput: {
     fontSize: 16,
     fontFamily: typography.fontFamily.ubuntu,
-    color: '#1F2937',
-    padding: spacing['5'],
+    color: colors.text.primary,
+    padding: spacing['6'],
     minHeight: 140,
     maxHeight: 200,
     textAlignVertical: 'top',
+    backgroundColor: 'transparent',
   },
 
   // Input Footer
@@ -127,7 +129,7 @@ export const helpSupportModalStyles = StyleSheet.create({
   characterCount: {
     fontSize: 13,
     fontFamily: typography.fontFamily.ubuntu,
-    color: '#6B7280',
+    color: colors.text.tertiary,
     textAlign: 'right',
   },
   characterCountError: {
@@ -167,19 +169,20 @@ export const helpSupportModalStyles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Primary Button (matching onboarding style)
+  // Primary Button (matching design system)
   primaryButton: {
     width: '100%',
     maxWidth: 280,
     height: 50,
-    backgroundColor: '#36657d',
-    borderRadius: 18,
+    backgroundColor: colors.teal[600],
+    borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing['3'],
+    ...shadows.md,
   },
   primaryButtonDisabled: {
-    backgroundColor: '#94a3b8',
+    backgroundColor: colors.text.disabled,
     opacity: 0.6,
   },
   primaryButtonText: {
@@ -189,7 +192,7 @@ export const helpSupportModalStyles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
-  // Secondary Button (matching onboarding style)
+  // Secondary Button (matching design system)
   secondaryButton: {
     paddingVertical: spacing['3'],
     paddingHorizontal: spacing['6'],
@@ -197,9 +200,9 @@ export const helpSupportModalStyles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: 16,
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: '#6B7280',
+    color: colors.teal[600],
     textDecorationLine: 'underline',
-    textDecorationColor: '#6B7280',
+    textDecorationColor: colors.teal[600],
   },
 
   // Success Screen
@@ -210,12 +213,14 @@ export const helpSupportModalStyles = StyleSheet.create({
     paddingHorizontal: spacing['8'],
   },
   successContent: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: colors.teal[50],
     borderRadius: 24,
     padding: spacing['8'],
     alignItems: 'center',
     width: '100%',
     maxWidth: 320,
+    borderWidth: 2,
+    borderColor: colors.teal[200],
     ...shadows.lg,
   },
   successIconContainer: {
@@ -228,14 +233,14 @@ export const helpSupportModalStyles = StyleSheet.create({
   successTitle: {
     fontSize: 26,
     fontFamily: typography.fontFamily.ubuntuBold,
-    color: '#1F2937',
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: spacing['3'],
   },
   successMessage: {
     fontSize: 16,
     fontFamily: typography.fontFamily.ubuntu,
-    color: '#4B5563',
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 24,
   },

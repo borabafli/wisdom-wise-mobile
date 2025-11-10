@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { storageService, UserProfile } from '../services/storageService';
+import { profileSyncService } from '../services/profileSyncService';
+import { useAuth } from '../contexts';
 
 interface UseUserProfileReturn {
   profile: UserProfile | null;
@@ -12,6 +14,7 @@ interface UseUserProfileReturn {
 }
 
 export const useUserProfile = (): UseUserProfileReturn => {
+  const { user, isAnonymous } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [displayName, setDisplayName] = useState<string>('Friend');
   const [firstName, setFirstName] = useState<string>('Friend');
@@ -58,18 +61,13 @@ export const useUserProfile = (): UseUserProfileReturn => {
         setError('First name cannot be empty');
         return false;
       }
-      
-      if (updates.lastName !== undefined && updates.lastName.length < 1) {
-        setError('Last name cannot be empty');
-        return false;
-      }
 
       // Check for reasonable length limits
       if (updates.firstName && updates.firstName.length > 50) {
         setError('First name must be 50 characters or less');
         return false;
       }
-      
+
       if (updates.lastName && updates.lastName.length > 50) {
         setError('Last name must be 50 characters or less');
         return false;
@@ -81,24 +79,36 @@ export const useUserProfile = (): UseUserProfileReturn => {
         setError('First name can only contain letters, spaces, hyphens, and apostrophes');
         return false;
       }
-      
-      if (updates.lastName && !namePattern.test(updates.lastName)) {
+
+      // Only validate lastName pattern if it's not empty (lastName is optional now)
+      if (updates.lastName && updates.lastName.length > 0 && !namePattern.test(updates.lastName)) {
         setError('Last name can only contain letters, spaces, hyphens, and apostrophes');
         return false;
       }
 
       const updatedProfile = await storageService.updateUserProfile(updates);
-      
+
+      // 🔄 Sync to Supabase for authenticated users
+      if (!isAnonymous && user?.id) {
+        console.log('[useUserProfile] Syncing profile to Supabase...');
+        const synced = await profileSyncService.syncToSupabase(user.id, updatedProfile);
+        if (synced) {
+          console.log('[useUserProfile] Profile synced to Supabase successfully');
+        } else {
+          console.warn('[useUserProfile] Failed to sync profile to Supabase (continuing anyway)');
+        }
+      }
+
       // Refresh all profile-related state
       const [newDisplayName, newFirstName] = await Promise.all([
         storageService.getDisplayName(),
         storageService.getFirstName()
       ]);
-      
+
       setProfile(updatedProfile);
       setDisplayName(newDisplayName);
       setFirstName(newFirstName);
-      
+
       return true;
     } catch (err) {
       console.error('Error updating user profile:', err);
@@ -107,7 +117,7 @@ export const useUserProfile = (): UseUserProfileReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isAnonymous, user]);
 
   // Refresh profile data
   const refreshProfile = useCallback(async () => {

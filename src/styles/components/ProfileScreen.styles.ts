@@ -332,12 +332,12 @@ export const profileScreenStyles = StyleSheet.create({
   statCard: {
     flex: 1,
     backgroundColor: 'transparent',
-    minHeight: 100,
+    height: 100,
   },
   statCardGradient: {
     padding: spacing[12],
     borderRadius: 20,
-    minHeight: 100,
+    height: 100,
     shadowColor: 'rgba(0, 0, 0, 0.15)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
@@ -345,6 +345,7 @@ export const profileScreenStyles = StyleSheet.create({
     elevation: 8,
   },
   statCardContent: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
@@ -384,6 +385,7 @@ export const profileScreenStyles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.8,
     letterSpacing: 0.1,
+    flexWrap: 'nowrap',
   },
   // Menu Section - HomeScreen Style
   menuSection: {
@@ -438,6 +440,7 @@ export const profileScreenStyles = StyleSheet.create({
     fontWeight: '400',
     opacity: 0.8,
     letterSpacing: 0.1,
+    flexWrap: 'nowrap',
   },
   menuActions: {
     alignItems: 'center',

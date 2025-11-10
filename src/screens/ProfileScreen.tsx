@@ -89,9 +89,9 @@ const ProfileScreen: React.FC = () => {
         const patterns = await storageService.getThoughtPatterns();
         setInsightsCount(patterns.length);
 
-        // Get completed exercises count
-        const completedExercises = await ExerciseCompletionService.getAllCompletedExercisesInfo();
-        setExercisesCount(completedExercises.length);
+        // Get completed exercises count (all-time unique exercises)
+        const allTimeCount = await ExerciseCompletionService.getAllTimeCompletedCount();
+        setExercisesCount(allTimeCount);
       } catch (error) {
         console.error('Error updating display name or stats:', error);
         const fallbackName = profile
@@ -441,8 +441,8 @@ const ProfileScreen: React.FC = () => {
                           />
                         </View>
                         <View style={styles.statInfo}>
-                          <Text style={styles.statValue}>{stat.value}</Text>
-                          <Text style={styles.statLabel}>{stat.label}</Text>
+                          <Text style={styles.statValue} numberOfLines={1}>{stat.value}</Text>
+                          <Text style={styles.statLabel} numberOfLines={1}>{stat.label}</Text>
                         </View>
                       </View>
                     </LinearGradient>
@@ -471,8 +471,8 @@ const ProfileScreen: React.FC = () => {
                           />
                         </View>
                         <View style={styles.statInfo}>
-                          <Text style={styles.statValue}>{stat.value}</Text>
-                          <Text style={styles.statLabel}>{stat.label}</Text>
+                          <Text style={styles.statValue} numberOfLines={1}>{stat.value}</Text>
+                          <Text style={styles.statLabel} numberOfLines={1}>{stat.label}</Text>
                         </View>
                       </View>
                     </LinearGradient>
@@ -529,7 +529,7 @@ const ProfileScreen: React.FC = () => {
                           ]}>
                             {item.label}
                           </Text>
-                          <Text style={styles.menuSubtitle}>
+                          <Text style={styles.menuSubtitle} numberOfLines={2}>
                             {item.subtitle || t('profile.menuSubtitles.default')}
                           </Text>
                         </View>

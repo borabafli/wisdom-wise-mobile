@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PostHog } from 'posthog-react-native';
 
 const COMPLETED_EXERCISES_KEY = 'completed_exercises';
+const ALL_TIME_COMPLETED_EXERCISES_KEY = 'all_time_completed_exercises';
 
 // Store PostHog instance for tracking
 let posthogInstance: PostHog | null = null;
@@ -70,6 +71,9 @@ export class ExerciseCompletionService {
       filteredExercises.push(newCompletion);
       await this.saveCompletedExercises(filteredExercises);
 
+      // Track all-time unique completions
+      await this.addToAllTimeCompleted(exerciseId);
+
       // 🎯 Track exercise completion in PostHog
       posthogInstance?.capture('exercise_completed', {
         exerciseId,
@@ -81,6 +85,32 @@ export class ExerciseCompletionService {
       console.log('[Analytics] Exercise completed tracked:', exerciseId);
     } catch (error) {
       console.error('Error marking exercise as completed:', error);
+    }
+  }
+
+  private static async addToAllTimeCompleted(exerciseId: string): Promise<void> {
+    try {
+      const allTimeJson = await AsyncStorage.getItem(ALL_TIME_COMPLETED_EXERCISES_KEY);
+      const allTimeSet: Set<string> = allTimeJson ? new Set(JSON.parse(allTimeJson)) : new Set();
+
+      allTimeSet.add(exerciseId);
+
+      await AsyncStorage.setItem(ALL_TIME_COMPLETED_EXERCISES_KEY, JSON.stringify(Array.from(allTimeSet)));
+    } catch (error) {
+      console.error('Error adding to all-time completed:', error);
+    }
+  }
+
+  static async getAllTimeCompletedCount(): Promise<number> {
+    try {
+      const allTimeJson = await AsyncStorage.getItem(ALL_TIME_COMPLETED_EXERCISES_KEY);
+      if (!allTimeJson) return 0;
+
+      const allTimeArray: string[] = JSON.parse(allTimeJson);
+      return allTimeArray.length;
+    } catch (error) {
+      console.error('Error getting all-time completed count:', error);
+      return 0;
     }
   }
 

@@ -209,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Resúmenes de Sesiones",
-      "subtitle": "Sesiones analizadas"
+      "subtitle": "Revisa tus conversaciones",
+      "analyzedCount": "{{count}} sesiones analizadas",
+      "filters": {
+        "all": "Todas ({{count}})",
+        "sessions": "Sesiones ({{count}})",
+        "themes": "Patrones ({{count}})"
+      },
+      "infoCard": {
+        "title": "Cómo funcionan tus resúmenes",
+        "body": "Hola {{name}}, cuando guardas una conversación (excepto ejercicios de Visión), Anu crea un resumen de los últimos 30 mensajes. Solo el resumen, la fecha y el número de mensajes permanecen en tu dispositivo—elimínalos cuando quieras.",
+        "meta": {
+          "timing": "Creado después de guardar",
+          "storage": "Almacenado privadamente",
+          "consolidated": "Patrones después de 10+"
+        },
+        "highlight": "Diez resúmenes desbloquean una Vista de Patrones."
+      },
+      "badges": {
+        "session": "Sesión",
+        "consolidated": "Consolidado"
+      },
+      "sessionTitle": "Sesión {{number}}",
+      "themesTitle": "Vista de Patrones",
+      "consolidatedInfo": "Basado en {{count}} sesiones",
+      "emptyState": {
+        "title": "Aún No Hay Resúmenes",
+        "description": "Termina una conversación guardada con Anu y tu resumen personalizado aparecerá aquí."
+      },
+      "loading": "Cargando resúmenes..."
     },
     "therapyGoals": {
       "title": "Objetivos de Terapia",

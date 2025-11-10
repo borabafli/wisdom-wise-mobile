@@ -26,9 +26,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
   const { profile: userProfile, updateProfile, error } = useUserProfile();
   const { profile: authProfile, isAnonymous } = useAuth();
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<{ firstName?: string; lastName?: string }>({});
+  const [validationErrors, setValidationErrors] = useState<{ firstName?: string }>({});
   const [hasChanges, setHasChanges] = useState(false);
 
   const currentProfile = isAnonymous ? userProfile : authProfile;
@@ -36,12 +35,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
   useEffect(() => {
     if (visible && currentProfile) {
       setFirstName(currentProfile.firstName || currentProfile.first_name || '');
-      setLastName(currentProfile.lastName || currentProfile.last_name || '');
       setValidationErrors({});
       setHasChanges(false);
     } else if (visible && !currentProfile) {
       setFirstName(isAnonymous ? 'Friend' : '');
-      setLastName('');
       setValidationErrors({});
       setHasChanges(false);
     }
@@ -49,29 +46,21 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
 
   useEffect(() => {
     const currentFirstName = currentProfile?.firstName || currentProfile?.first_name || '';
-    const currentLastName = currentProfile?.lastName || currentProfile?.last_name || '';
-    const changed = firstName !== currentFirstName || lastName !== currentLastName;
+    const changed = firstName !== currentFirstName;
     setHasChanges(changed);
-  }, [firstName, lastName, currentProfile]);
+  }, [firstName, currentProfile]);
 
-  const validateField = (field: 'firstName' | 'lastName', value: string) => {
-    const nextErrors = { ...validationErrors };
-
-    // Last name is optional, so only validate if not empty
-    if (field === 'lastName' && value.length === 0) {
-      delete nextErrors[field];
-      setValidationErrors(nextErrors);
-      return;
-    }
+  const validateField = (value: string) => {
+    const nextErrors: { firstName?: string } = {};
 
     if (value.length > 0 && value.length <= 50 && /^[a-zA-Z\s\-']+$/.test(value)) {
-      delete nextErrors[field];
+      // Valid
     } else if (value.length < 1) {
-      nextErrors[field] = `${field === 'firstName' ? 'First' : 'Last'} name is required`;
+      nextErrors.firstName = 'First name is required';
     } else if (value.length > 50) {
-      nextErrors[field] = `${field === 'firstName' ? 'First' : 'Last'} name must be 50 characters or less`;
+      nextErrors.firstName = 'First name must be 50 characters or less';
     } else {
-      nextErrors[field] = 'Only letters, spaces, hyphens, and apostrophes are allowed';
+      nextErrors.firstName = 'Only letters, spaces, hyphens, and apostrophes are allowed';
     }
 
     setValidationErrors(nextErrors);
@@ -79,12 +68,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
 
   const handleFirstNameChange = (value: string) => {
     setFirstName(value);
-    validateField('firstName', value);
-  };
-
-  const handleLastNameChange = (value: string) => {
-    setLastName(value);
-    validateField('lastName', value);
+    validateField(value);
   };
 
   const canSave = () =>
@@ -100,11 +84,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
 
     try {
       const trimmedFirstName = firstName.trim();
-      const trimmedLastName = lastName.trim();
-      
+
       const success = await updateProfile({
         firstName: trimmedFirstName,
-        lastName: trimmedLastName || '' // Empty string if no last name provided
+        lastName: '' // Always empty since we removed last name field
       });
 
       if (success) {
@@ -112,10 +95,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
         if (onProfileUpdated) {
           onProfileUpdated();
         }
-        const displayName = trimmedLastName ? `${trimmedFirstName} ${trimmedLastName}` : trimmedFirstName;
         Alert.alert(
           'Profile Updated',
-          `Your profile has been updated successfully! Anu will now address you as ${displayName}.`,
+          `Your profile has been updated successfully! Anu will now address you as ${trimmedFirstName}.`,
           [{ text: 'Great!', onPress: onClose }]
         );
       } else {
@@ -211,43 +193,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                       placeholderTextColor='#94a3b8'
                       autoCapitalize='words'
                       autoCorrect={false}
-                      returnKeyType='next'
+                      returnKeyType='done'
                       maxLength={50}
+                      onSubmitEditing={canSave() ? handleSave : undefined}
                     />
                   </View>
                   {validationErrors.firstName && (
                     <View style={styles.errorContainer}>
                       <AlertCircle size={14} color='#ef4444' />
                       <Text style={styles.errorText}>{validationErrors.firstName}</Text>
-                    </View>
-                  )}
-                </View>
-
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Last Name (Optional)</Text>
-                  <View
-                    style={[
-                      styles.inputContainer,
-                      validationErrors.lastName && styles.inputError
-                    ]}
-                  >
-                    <TextInput
-                      style={styles.textInput}
-                      value={lastName}
-                      onChangeText={handleLastNameChange}
-                      placeholder='Enter your last name (optional)'
-                      placeholderTextColor='#94a3b8'
-                      autoCapitalize='words'
-                      autoCorrect={false}
-                      returnKeyType='done'
-                      maxLength={50}
-                      onSubmitEditing={canSave() ? handleSave : undefined}
-                    />
-                  </View>
-                  {validationErrors.lastName && (
-                    <View style={styles.errorContainer}>
-                      <AlertCircle size={14} color='#ef4444' />
-                      <Text style={styles.errorText}>{validationErrors.lastName}</Text>
                     </View>
                   )}
                 </View>

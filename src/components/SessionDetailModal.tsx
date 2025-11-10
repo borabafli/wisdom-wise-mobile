@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView, Modal, Dimensions, Platform }
 import { SafeAreaWrapper } from './SafeAreaWrapper';
 import { X, MessageCircle, Clock, Calendar } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
 import { sessionDetailModalStyles as styles } from '../styles/components/SessionDetailModal.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -24,15 +23,11 @@ const cleanMarkdownText = (text: string): string => {
 
 // Read-only message component for viewing saved conversations
 const ReadOnlyMessage: React.FC<{ message: any }> = ({ message }) => {
-  const [fontsLoaded] = useFonts({
-    Caveat_400Regular,
-  });
-
   if (message.type === 'user') {
     return (
       <View style={styles.userMessageContainer}>
         <View style={styles.userMessageBubble}>
-          <Text style={[styles.userMessageText, fontsLoaded && { fontFamily: 'Caveat_400Regular' }]}>
+          <Text style={styles.userMessageText}>
             {message.text || message.content}
           </Text>
           <Text style={styles.messageTimestamp}>{message.timestamp}</Text>
@@ -50,7 +45,7 @@ const ReadOnlyMessage: React.FC<{ message: any }> = ({ message }) => {
             colors={['#F8FCFC', '#E8F4F1']}
             style={styles.aiMessageBubble}
           >
-            <Text style={[styles.aiMessageText, fontsLoaded && { fontFamily: 'Caveat_400Regular' }]}>
+            <Text style={styles.aiMessageText}>
               {cleanedText}
             </Text>
             <Text style={styles.messageTimestamp}>{message.timestamp}</Text>
@@ -69,11 +64,11 @@ const ReadOnlyMessage: React.FC<{ message: any }> = ({ message }) => {
           style={styles.exerciseMessageBubble}
         >
           {message.title && (
-            <Text style={[styles.exerciseTitle, fontsLoaded && { fontFamily: 'Caveat_400Regular' }]}>
+            <Text style={styles.exerciseTitle}>
               {message.title}
             </Text>
           )}
-          <Text style={[styles.exerciseText, fontsLoaded && { fontFamily: 'Caveat_400Regular' }]}>
+          <Text style={styles.exerciseText}>
             {cleanedText}
           </Text>
           <Text style={styles.messageTimestamp}>{message.timestamp}</Text>
@@ -106,14 +101,6 @@ interface SessionDetailModalProps {
 
 const SessionDetailModal: React.FC<SessionDetailModalProps> = ({ visible, onClose, session }) => {
   const scrollViewRef = useRef<ScrollView>(null);
-
-  useEffect(() => {
-    if (visible && scrollViewRef.current) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-      }, 100);
-    }
-  }, [visible]);
 
   if (!session) return null;
 

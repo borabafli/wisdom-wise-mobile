@@ -172,27 +172,36 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
         onPress={() => setFilter('all')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
+        <Text
+          style={[styles.filterText, filter === 'all' && styles.filterTextActive]}
+          numberOfLines={1}
+        >
           {t('insights.sessionSummaries.filters.all', { count: summaries.length })}
         </Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity
         style={[styles.filterButton, filter === 'session' && styles.filterButtonActive]}
         onPress={() => setFilter('session')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.filterText, filter === 'session' && styles.filterTextActive]}>
+        <Text
+          style={[styles.filterText, filter === 'session' && styles.filterTextActive]}
+          numberOfLines={1}
+        >
           {t('insights.sessionSummaries.filters.sessions', { count: sessionSummariesCount })}
         </Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity
         style={[styles.filterButton, filter === 'consolidated' && styles.filterButtonActive]}
         onPress={() => setFilter('consolidated')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.filterText, filter === 'consolidated' && styles.filterTextActive]}>
+        <Text
+          style={[styles.filterText, filter === 'consolidated' && styles.filterTextActive]}
+          numberOfLines={1}
+        >
           {t('insights.sessionSummaries.filters.themes', { count: consolidatedSummariesCount })}
         </Text>
       </TouchableOpacity>

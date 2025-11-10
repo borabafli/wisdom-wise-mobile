@@ -132,6 +132,29 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     marginTop: spacing['2'],
   },
 
+  // Swipeable Container
+  swipeableContainer: {
+    position: 'relative',
+    marginHorizontal: spacing['1'],
+  },
+  deleteBackground: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 80,
+    backgroundColor: '#ef4444',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    width: 80,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   // Individual Reminder Card
   reminderCard: {
     flexDirection: 'row',
@@ -140,7 +163,6 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     borderRadius: 10,
     padding: spacing['4'],
     minHeight: 80,
-    marginHorizontal: spacing['1'],
     ...shadows.components.card,
   },
   reminderIconContainer: {
@@ -265,9 +287,9 @@ export const notificationSettingsModalStyles = StyleSheet.create({
 
   // Footer
   footer: {
-    padding: spacing['14'],
-    paddingTop: spacing['14'],
-    paddingBottom: spacing['18'],
+    paddingHorizontal: spacing['5'],
+    paddingTop: spacing['5'],
+    paddingBottom: spacing['8'],
     backgroundColor: '#EDF8F8',
     borderTopWidth: 1,
     borderTopColor: '#D1D5DB',
@@ -275,13 +297,16 @@ export const notificationSettingsModalStyles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#5BA3B8',
     paddingVertical: spacing['4'],
+    marginHorizontal: spacing['2'],
     borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 52,
     ...shadows.small,
   },
   saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
     color: '#ffffff',
     fontFamily: typography.fontFamily.alanSansSemiBold,
   },
@@ -292,12 +317,16 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: spacing['5'],
   },
   timePickerContainer: {
     backgroundColor: '#ffffff',
-    borderRadius: spacing['4'],
-    padding: spacing['5'],
-    width: '85%',
+    borderRadius: spacing['5'],
+    padding: spacing['6'],
+    paddingTop: spacing['6'],
+    paddingBottom: spacing['6'],
+    width: '100%',
+    maxWidth: 380,
     alignItems: 'center',
     ...shadows.medium,
   },
@@ -317,14 +346,18 @@ export const notificationSettingsModalStyles = StyleSheet.create({
   },
   timePickerButton: {
     flex: 1,
-    paddingVertical: spacing['3'],
+    paddingVertical: spacing['4'],
+    paddingHorizontal: spacing['8'],
     borderRadius: spacing['3'],
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.gray[200],
+    minWidth: 120,
+    minHeight: 48,
   },
   timePickerButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.text.secondary,
     fontFamily: typography.fontFamily.alanSansSemiBold,
   },
@@ -388,10 +421,14 @@ export const notificationSettingsModalStyles = StyleSheet.create({
   },
   customInputButton: {
     flex: 1,
-    paddingVertical: spacing['3.5'],
+    paddingVertical: spacing['4'],
+    paddingHorizontal: spacing['8'],
     borderRadius: spacing['3'],
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.gray[200],
+    minWidth: 120,
+    minHeight: 48,
   },
   customInputButtonText: {
     fontSize: 15,

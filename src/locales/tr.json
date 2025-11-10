@@ -209,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Seans Özetleri",
-      "subtitle": "Analiz edilen seanslar"
+      "subtitle": "Konuşmalarınızı inceleyin",
+      "analyzedCount": "{{count}} seans analiz edildi",
+      "filters": {
+        "all": "Tümü ({{count}})",
+        "sessions": "Seanslar ({{count}})",
+        "themes": "Desenler ({{count}})"
+      },
+      "infoCard": {
+        "title": "Özetleriniz nasıl çalışır",
+        "body": "Merhaba {{name}}, bir konuşma kaydettiğinizde (Vizyon egzersizleri hariç), Anu son 30 mesajdan bir özet oluşturur. Sadece özet, tarih ve mesaj sayısı cihazınızda kalır—istediğiniz zaman silebilirsiniz.",
+        "meta": {
+          "timing": "Kaydettikten sonra oluşturulur",
+          "storage": "Gizli olarak saklanır",
+          "consolidated": "10+ sonra desenler"
+        },
+        "highlight": "On özet bir Desen Görünümünün kilidini açar."
+      },
+      "badges": {
+        "session": "Seans",
+        "consolidated": "Birleştirilmiş"
+      },
+      "sessionTitle": "Seans {{number}}",
+      "themesTitle": "Desen Görünümü",
+      "consolidatedInfo": "{{count}} seansa dayalı",
+      "emptyState": {
+        "title": "Henüz Özet Yok",
+        "description": "Anu ile kaydedilmiş bir konuşmayı bitirin ve kişiselleştirilmiş özetiniz burada görünecek."
+      },
+      "loading": "Özetler yükleniyor..."
     },
     "therapyGoals": {
       "title": "Terapi Hedefleri",

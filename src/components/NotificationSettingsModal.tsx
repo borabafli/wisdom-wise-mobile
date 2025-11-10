@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,12 @@ import {
   Image,
   Platform,
   TextInput,
+  Animated,
+  PanResponder,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Bell, Sun, Coffee, Moon, Plus } from 'lucide-react-native';
+import { ChevronLeft, Bell, Sun, Coffee, Moon, Plus, Trash2 } from 'lucide-react-native';
 import { notificationService, JournalReminderTime } from '../services/notificationService';
 import { notificationSettingsModalStyles as styles } from '../styles/components/NotificationSettingsModal.styles';
 import WheelTimePicker from './WheelTimePicker';
@@ -201,7 +203,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     setCustomReminderLabel('');
   };
 
-  const handleDeleteReminder = (reminderId: string) => {
+  const handleDeleteReminder = async (reminderId: string) => {
     // Only allow deletion of custom reminders (not the default 3)
     const isCustom = !['morning', 'daytime', 'afternoon', 'evening'].includes(reminderId);
 
@@ -209,29 +211,16 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
       return; // Don't allow deletion of default reminders
     }
 
-    Alert.alert(
-      t('onboarding.notifications.settings.deleteReminder'),
-      t('onboarding.notifications.settings.deleteReminderConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('onboarding.notifications.settings.delete'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await notificationService.removeReminder(reminderId);
-              await loadSettings();
-            } catch (error) {
-              console.error('Error deleting reminder:', error);
-              Alert.alert(
-                t('onboarding.notifications.settings.error'),
-                t('onboarding.notifications.settings.failedToDelete')
-              );
-            }
-          },
-        },
-      ]
-    );
+    try {
+      await notificationService.removeReminder(reminderId);
+      await loadSettings();
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
+      Alert.alert(
+        t('onboarding.notifications.settings.error'),
+        t('onboarding.notifications.settings.failedToDelete')
+      );
+    }
   };
 
   const handleSave = async () => {
@@ -280,6 +269,126 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
     const period = hours >= 12 ? 'PM' : 'AM';
     const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
     return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
+  // Swipeable Reminder Card Component
+  const SwipeableReminderCard = ({
+    reminder,
+    onDelete,
+    onTimePress,
+    onToggle,
+    isCustom,
+  }: {
+    reminder: JournalReminderTime;
+    onDelete: () => void;
+    onTimePress: () => void;
+    onToggle: (enabled: boolean) => void;
+    isCustom: boolean;
+  }) => {
+    const translateX = useRef(new Animated.Value(0)).current;
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const panResponder = useRef(
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => isCustom,
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          return isCustom && Math.abs(gestureState.dx) > 5;
+        },
+        onPanResponderMove: (_, gestureState) => {
+          if (gestureState.dx < 0) {
+            translateX.setValue(Math.max(gestureState.dx, -80));
+          }
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (gestureState.dx < -60) {
+            Animated.timing(translateX, {
+              toValue: -80,
+              duration: 200,
+              useNativeDriver: true,
+            }).start();
+          } else {
+            Animated.spring(translateX, {
+              toValue: 0,
+              useNativeDriver: true,
+            }).start();
+          }
+        },
+      })
+    ).current;
+
+    const handleDeletePress = () => {
+      setIsDeleting(true);
+      Animated.timing(translateX, {
+        toValue: -400,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        onDelete();
+      });
+    };
+
+    const IconComponent = getIconForReminder(reminder.id);
+    const timeFormatted = formatTimeDisplay(reminder.time);
+
+    return (
+      <View style={styles.swipeableContainer}>
+        {/* Delete button background */}
+        <View style={styles.deleteBackground}>
+          <TouchableOpacity
+            onPress={handleDeletePress}
+            style={styles.deleteButton}
+            activeOpacity={0.8}
+          >
+            <Trash2 size={20} color="#ffffff" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Swipeable card */}
+        <Animated.View
+          style={[
+            { transform: [{ translateX }] },
+          ]}
+          {...(isCustom ? panResponder.panHandlers : {})}
+        >
+          <TouchableOpacity
+            style={styles.reminderCard}
+            activeOpacity={0.95}
+            onLongPress={isCustom ? handleDeletePress : undefined}
+          >
+            <View style={styles.reminderIconContainer}>
+              <IconComponent
+                size={18}
+                color="#FFFFFF"
+                strokeWidth={2}
+              />
+            </View>
+
+            <View style={styles.reminderContent}>
+              <Text style={styles.reminderLabel}>
+                {reminder.label}
+              </Text>
+              <TouchableOpacity
+                style={styles.timeRow}
+                onPress={onTimePress}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.timeDisplay}>
+                  {timeFormatted}
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.reminderDescription}>
+                {reminder.description}
+              </Text>
+            </View>
+
+            <CustomToggle
+              value={reminder.enabled}
+              onValueChange={onToggle}
+            />
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
   };
 
   // Custom Toggle Component
@@ -373,48 +482,17 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
             {/* Reminder Cards */}
             <View style={styles.remindersContainer}>
               {reminderTimes.map((reminder) => {
-                const IconComponent = getIconForReminder(reminder.id);
-                const timeFormatted = formatTimeDisplay(reminder.time);
                 const isCustom = !['morning', 'daytime', 'afternoon', 'evening'].includes(reminder.id);
 
                 return (
-                  <TouchableOpacity
+                  <SwipeableReminderCard
                     key={reminder.id}
-                    style={styles.reminderCard}
-                    activeOpacity={0.95}
-                    onLongPress={isCustom ? () => handleDeleteReminder(reminder.id) : undefined}
-                  >
-                    <View style={styles.reminderIconContainer}>
-                      <IconComponent
-                        size={18}
-                        color="#FFFFFF"
-                        strokeWidth={2}
-                      />
-                    </View>
-
-                    <View style={styles.reminderContent}>
-                      <Text style={styles.reminderLabel}>
-                        {reminder.label}
-                      </Text>
-                      <TouchableOpacity
-                        style={styles.timeRow}
-                        onPress={() => handleTimePress(reminder.id, reminder.time)}
-                        activeOpacity={0.7}
-                      >
-                        <Text style={styles.timeDisplay}>
-                          {timeFormatted}
-                        </Text>
-                      </TouchableOpacity>
-                      <Text style={styles.reminderDescription}>
-                        {reminder.description}
-                      </Text>
-                    </View>
-
-                    <CustomToggle
-                      value={reminder.enabled}
-                      onValueChange={(enabled) => handleToggleReminder(reminder.id, enabled)}
-                    />
-                  </TouchableOpacity>
+                    reminder={reminder}
+                    isCustom={isCustom}
+                    onDelete={() => handleDeleteReminder(reminder.id)}
+                    onTimePress={() => handleTimePress(reminder.id, reminder.time)}
+                    onToggle={(enabled) => handleToggleReminder(reminder.id, enabled)}
+                  />
                 );
               })}
 

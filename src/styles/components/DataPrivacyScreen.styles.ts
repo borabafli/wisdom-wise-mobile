@@ -76,6 +76,7 @@ export const dataPrivacyStyles = StyleSheet.create({
   },
 
   scrollContent: {
+    paddingTop: spacing[4],
     paddingBottom: spacing[32],
   },
 

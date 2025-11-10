@@ -209,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Resumos de Sessões",
-      "subtitle": "Sessões analisadas"
+      "subtitle": "Revise suas conversas",
+      "analyzedCount": "{{count}} sessões analisadas",
+      "filters": {
+        "all": "Todas ({{count}})",
+        "sessions": "Sessões ({{count}})",
+        "themes": "Padrões ({{count}})"
+      },
+      "infoCard": {
+        "title": "Como funcionam seus resumos",
+        "body": "Olá {{name}}, quando você salva uma conversa (exceto exercícios de Visão), Anu cria um resumo das últimas 30 mensagens. Apenas o resumo, a data e a contagem de mensagens permanecem no seu dispositivo—exclua a qualquer momento.",
+        "meta": {
+          "timing": "Criado após salvar",
+          "storage": "Armazenado privadamente",
+          "consolidated": "Padrões após 10+"
+        },
+        "highlight": "Dez resumos desbloqueiam uma Visão de Padrões."
+      },
+      "badges": {
+        "session": "Sessão",
+        "consolidated": "Consolidado"
+      },
+      "sessionTitle": "Sessão {{number}}",
+      "themesTitle": "Visão de Padrões",
+      "consolidatedInfo": "Baseado em {{count}} sessões",
+      "emptyState": {
+        "title": "Ainda Sem Resumos",
+        "description": "Termine uma conversa salva com Anu e seu resumo personalizado aparecerá aqui."
+      },
+      "loading": "Carregando resumos..."
     },
     "therapyGoals": {
       "title": "Objetivos Terapêuticos",

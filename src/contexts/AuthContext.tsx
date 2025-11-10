@@ -4,6 +4,7 @@ import { authService } from '../services/authService';
 import { storageService } from '../services/storageService';
 import { firstActionTracker } from '../services/firstActionTracker';
 import { subscriptionService } from '../services/subscriptionService';
+import { profileSyncService } from '../services/profileSyncService';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -61,6 +62,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAnonymous(false);
 
         try {
+          // 🔄 Load profile from Supabase for authenticated users
+          console.log('[AuthProvider] Loading profile from Supabase...');
+          const supabaseProfile = await profileSyncService.loadFromSupabase(session.user.id);
+
+          // Get display name with priority (Supabase profile > auth metadata > email)
           const displayName = await storageService.getDisplayNameWithPriority(session.user);
           const [firstName, ...lastNameParts] = displayName.split(' ');
           const lastName = lastNameParts.join(' ');
@@ -80,9 +86,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             accountCreatedAt: session.user.created_at || new Date().toISOString(),
           });
 
-          console.log('[AuthProvider] Profile set successfully');
+          console.log('[AuthProvider] Profile loaded and set successfully');
         } catch (profileError) {
-          console.error('[AuthProvider] Error setting profile:', profileError);
+          console.error('[AuthProvider] Error loading profile:', profileError);
           // Set default profile if storage fails
           setProfile({
             first_name: 'Friend',

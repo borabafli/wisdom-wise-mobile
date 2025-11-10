@@ -255,24 +255,24 @@
       "filters": {
         "all": "All ({{count}})",
         "sessions": "Sessions ({{count}})",
-        "themes": "Themes ({{count}})"
+        "themes": "Patterns ({{count}})"
       },
       "infoCard": {
         "title": "How your summaries work",
-        "body": "Hi {{name}}, every time you end and save a conversation (except Vision of the Future exercises) Anu distills the final 30 messages into a short recap. Only that summary, its date, and message count stay on your device and you can delete it whenever you like.",
+        "body": "Hi {{name}}, when you save a conversation (except Vision exercises), Anu creates a recap from the last 30 messages. Only the summary, date, and message count remain on your device—delete anytime.",
         "meta": {
-          "timing": "Generated right after you finish a saved conversation",
-          "storage": "Stored privately on this device",
-          "consolidated": "Themes appear after 10 summaries"
+          "timing": "Created after saving",
+          "storage": "Stored privately",
+          "consolidated": "Patterns after 10+"
         },
-        "highlight": "Ten summaries unlock a Therapeutic Themes overview."
+        "highlight": "Ten summaries unlock a Pattern Overview."
       },
       "badges": {
         "session": "Session",
         "consolidated": "Consolidated"
       },
       "sessionTitle": "Session {{number}}",
-      "themesTitle": "Therapeutic Themes",
+      "themesTitle": "Pattern Overview",
       "consolidatedInfo": "Based on {{count}} sessions",
       "emptyState": {
         "title": "No Session Summaries Yet",
