@@ -22,6 +22,7 @@ import { useExercisePreview } from '../hooks/useExercisePreview';
 import DailyPromptCard from '../components/DailyPromptCard';
 import JournalPromptService from '../services/journalPromptService';
 import streakService from '../services/streakService';
+import ReanimatedAnimated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick, onInsightClick, onNavigateToExercises, onNavigateToInsights, navigation, onActionSelect }) => {
   const { t } = useTranslation();
@@ -35,6 +36,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
   // Animation for button shrink on press
   const buttonScale = useRef(new Animated.Value(1)).current;
+
+  // Gentle floating animation for turtle
+  const turtleFloatY = useSharedValue(0);
+
+  // Start the floating animation on mount
+  useEffect(() => {
+    turtleFloatY.value = withRepeat(
+      withTiming(-8, {
+        duration: 3000,
+        easing: Easing.inOut(Easing.ease),
+      }),
+      -1,
+      true
+    );
+  }, []);
+
+  const turtleAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: turtleFloatY.value }],
+    };
+  });
 
   // Exercise progress state - in real app, this would come from storage/API
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress>({});
@@ -204,11 +226,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
 
           {/* Turtle Hero Image - positioned after text */}
           <View style={styles.turtleHeroContainer}>
-            <Image
-              source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-7.png')}
-              style={styles.turtleHeroImage}
-              contentFit="contain"
-            />
+            <ReanimatedAnimated.View style={turtleAnimatedStyle}>
+              <Image
+                source={require('../../assets/new-design/Turtle Hero Section/turtle-hero-7.png')}
+                style={styles.turtleHeroImage}
+                contentFit="contain"
+              />
+            </ReanimatedAnimated.View>
           </View>
 
           {/* Start Check-In Button */}
@@ -247,7 +271,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession, onExerciseClick
                 imageStyle={{ borderRadius: 10 }}
                 resizeMode="cover"
               >
-              <Text style={styles.checkInButtonText}>{t('home.checkInNow')}</Text>
+              <Text style={styles.checkInButtonText} numberOfLines={1} adjustsFontSizeToFit>{t('home.checkInNow')}</Text>
               <View style={styles.checkInButtonIcons}>
                 <View style={styles.iconCircle}>
                   <MessageCircle size={18} color="#7d9db6" />

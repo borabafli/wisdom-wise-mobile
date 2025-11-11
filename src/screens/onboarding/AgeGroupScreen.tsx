@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { ageGroupStyles as styles } from '../../styles/components/onboarding/AgeGroup.styles';
 
 interface AgeGroup {
@@ -27,6 +28,7 @@ interface AgeGroupScreenProps {
 }
 
 const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) => {
+  const { t } = useTranslation();
   const [selectedAge, setSelectedAge] = useState<string>('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -88,12 +90,13 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
           {/* Back Button */}
           {onBack && (
             <TouchableOpacity
@@ -117,9 +120,9 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
           >
             {/* Header Text */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>Help me to understand you better</Text>
+              <Text style={styles.headline}>{t('onboarding.ageGroup.headline')}</Text>
               <Text style={styles.promptText}>
-                What's your age?
+                {t('onboarding.ageGroup.promptText')}
               </Text>
             </View>
 
@@ -128,27 +131,29 @@ const AgeGroupScreen: React.FC<AgeGroupScreenProps> = ({ onContinue, onBack }) =
               {ageGroups.map(renderAgeChip)}
             </View>
 
-            {/* Continue Button */}
-            <View style={styles.actionContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.continueButton,
-                  !selectedAge && styles.disabledButton
-                ]}
-                onPress={handleContinue}
-                activeOpacity={selectedAge ? 0.8 : 1}
-                disabled={!selectedAge}
-              >
-                <Text style={[
-                  styles.continueButtonText,
-                  !selectedAge && styles.disabledButtonText
-                ]}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
-            </View>
           </Animated.View>
         </ScrollView>
+
+        {/* Fixed Footer Button */}
+        <View style={styles.actionContainer}>
+          <TouchableOpacity
+            style={[
+              styles.continueButton,
+              !selectedAge && styles.disabledButton
+            ]}
+            onPress={handleContinue}
+            activeOpacity={selectedAge ? 0.8 : 1}
+            disabled={!selectedAge}
+          >
+            <Text style={[
+              styles.continueButtonText,
+              !selectedAge && styles.disabledButtonText
+            ]}>
+              {t('onboarding.common.continueButton')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        </View>
       </SafeAreaView>
     </View>
   );

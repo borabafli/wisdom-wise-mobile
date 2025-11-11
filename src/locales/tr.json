@@ -35,12 +35,12 @@
     "recentSessions": "Son Seanslar",
     "welcomeBack": "Tekrar hoş geldiniz",
     "moodCheck": "Bugün nasıl hissediyorsunuz?",
-    "checkInNow": "Şimdi Check-In Yap",
+    "checkInNow": "Anu Ile Sohbet Et",
     "type": "Yaz",
     "talk": "Konuş",
     "yourNextSteps": "Sonraki Adımlarınız",
     "seeAll": "Hepsini gör",
-    "dailyReflection": "Günlük Yansıtma",
+    "dailyReflection": "Günlük",
     "generateTest": "Test Oluştur",
     "browseExercises": "Egzersizlere\nGöz At",
     "viewInsights": "Görüşleri\nGörüntüle",
@@ -62,7 +62,7 @@
   },
   "exercises": {
     "title": "Egzersizler",
-    "subtitle": "Rehberli iyilik hali uygulamaları",
+    "subtitle": "Rehberli bilimsel egzersizler",
     "categories": "Kategoriler",
     "duration": "Süre",
     "difficulty": "Zorluk",
@@ -100,7 +100,27 @@
     "stepNumber": "Adım {{number}}",
     "stepsCount": "{{count}} adım",
     "stepsCount_other": "{{count}} adım",
-    "steps": "Adımlar"
+    "steps": "Adımlar",
+    "filters": {
+      "all": "Tümü",
+      "durations": {
+        "1-5": "1-5 dk",
+        "5-15": "5-15 dk",
+        "15-30": "15-30 dk",
+        "30+": "30+ dk"
+      },
+      "benefits": {
+        "anxiety": "Kaygı",
+        "depressionMood": "Depresyon / Ruh Hali",
+        "selfDiscovery": "Öz Keşif",
+        "mentalClarity": "Zihinsel Berraklık",
+        "stressRelief": "Stres Giderme",
+        "focus": "Odaklanma",
+        "emotionalBalance": "Duygusal Denge",
+        "breathing": "Nefes Alma",
+        "withoutBreathing": "Nefes Almadan"
+      }
+    }
   },
   "insights": {
     "title": "Görüşler",
@@ -112,9 +132,21 @@
     "patterns": "Desenler",
     "goals": "Hedefler",
     "memoryInsights": "Uzun Vadeli Görüşler",
+    "noMemoryInsights": "Henüz Hafıza Görüşü Yok",
     "longTermPatterns": "Uzun vadeli desenler ve temalar",
     "deeperInsights": {
-      "title": "Daha Derin Görüşler"
+      "title": "Daha Derin Görüşler",
+      "emptyState": {
+        "description": "Oturumlarınıza devam ettikçe, burada aşağıdaki gibi kategorilerde uzun vadeli desenler ve temalar oluşturulacaktır:",
+        "seeExample": "Örnek",
+        "startSession": "Oturuma başla"
+      },
+      "exampleModal": {
+        "title": "Daha derin görüşler örnekleri",
+        "badge": "ÖRNEK",
+        "description": "Anu ile sohbet oturumları aracılığıyla etkileşime girdikçe, bu uzun vadeli desenler ve temalar sizin için otomatik olarak tanımlanacak ve organize edilecektir.",
+        "action": "Anu ile oturuma başla"
+      }
     },
     "deleteConfirm": {
       "title": "İçgörüyü sil?",
@@ -140,6 +172,29 @@
       "pagination": "{{current}} / {{total}}",
       "swipeToExplore": "Keşfetmek için kaydırın",
       "reflectionPrompt": "Bunu düşünün",
+      "deleteValue": "Değeri sil",
+      "deleteReflection": "Yansıtmayı sil",
+      "loading": "Değerleriniz yükleniyor...",
+      "discover": "Temel Değerlerinizi Keşfedin",
+      "completeExercise": "Size gerçekten neyin önemli olduğunu belirlemek için Değer Keşfi egzersizini tamamlayın",
+      "startExercise": "Egzersize Başla",
+      "generateSample": "Örnek Oluştur",
+      "reflections": "Yansıtmalar",
+      "viewReflectionSingle": "Yansıtmayı Görüntüle",
+      "viewReflections": "{{count}} Yansıtmayı Görüntüle",
+      "prompt": "Soru",
+      "keyInsights": "Ana Görüşler",
+      "emptyState": {
+        "title": "Temel Değerlerinizi Keşfedin",
+        "description": "Size gerçekten neyin önemli olduğunu belirlemek için Değer Keşfi egzersizini tamamlayın",
+        "seeExample": "Örnek",
+        "startExercise": "Egzersize Başla"
+      },
+      "exampleModal": {
+        "badge": "ÖRNEK",
+        "infoMessage": "Bu, Değer Keşfi egzersizini tamamladıktan sonra göreceğiniz şeyin bir örneğidir. Kişisel değerleriniz burada tanımlanacak ve görüntülenecektir.",
+        "startButton": "Değer Egzersizine Başla"
+      },
       "prompts": {
         "liveToday": "Bugün bu değeri nasıl yaşadınız?",
         "feltAligned": "Son zamanlarda bu değerle en uyumlu ne zaman hissettiniz?",
@@ -154,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Seans Özetleri",
-      "subtitle": "Analiz edilen seanslar"
+      "subtitle": "Konuşmalarınızı inceleyin",
+      "analyzedCount": "{{count}} seans analiz edildi",
+      "filters": {
+        "all": "Tümü ({{count}})",
+        "sessions": "Seanslar ({{count}})",
+        "themes": "Desenler ({{count}})"
+      },
+      "infoCard": {
+        "title": "Özetleriniz nasıl çalışır",
+        "body": "Merhaba {{name}}, bir konuşma kaydettiğinizde (Vizyon egzersizleri hariç), Anu son 30 mesajdan bir özet oluşturur. Sadece özet, tarih ve mesaj sayısı cihazınızda kalır—istediğiniz zaman silebilirsiniz.",
+        "meta": {
+          "timing": "Kaydettikten sonra oluşturulur",
+          "storage": "Gizli olarak saklanır",
+          "consolidated": "10+ sonra desenler"
+        },
+        "highlight": "On özet bir Desen Görünümünün kilidini açar."
+      },
+      "badges": {
+        "session": "Seans",
+        "consolidated": "Birleştirilmiş"
+      },
+      "sessionTitle": "Seans {{number}}",
+      "themesTitle": "Desen Görünümü",
+      "consolidatedInfo": "{{count}} seansa dayalı",
+      "emptyState": {
+        "title": "Henüz Özet Yok",
+        "description": "Anu ile kaydedilmiş bir konuşmayı bitirin ve kişiselleştirilmiş özetiniz burada görünecek."
+      },
+      "loading": "Özetler yükleniyor..."
     },
     "therapyGoals": {
       "title": "Terapi Hedefleri",
@@ -190,7 +273,8 @@
       "completedSessions": "Tamamladınız",
       "guidedSessions": "rehberli seanslar!",
       "nextUp": "Sırada:",
-      "recentAchievements": "Son Başarılar"
+      "recentAchievements": "Son Başarılar",
+      "recentHighlights": "Son Önemli Noktalar"
     },
     "actions": {
       "reflectOnStrengths": "Güçlü Yanları Düşünün",
@@ -201,7 +285,8 @@
     "prompts": {
       "visionReflection": "Gelecekteki benliğinizin güzel bir vizyonunu yarattığınızı görüyorum. Gelecekteki benliğinizi şu niteliklerle cisimleştirdiğinizi anlattınız: {{qualities}}. Vizyonunuz şuydu: \"{{description}}\"\n\nBu vizyonu sizinle keşfetmeyi çok isterim. Bu gelecek benliğin hangi yönleri şu anda size en ilham verici geliyor? Ve bugün bu nitelikleri biraz daha cisimleştirmek için hangi küçük adımı atabilirsiniz?",
       "strengthReflection": "Uzun vadeli görüşlerinizden bazı güçlü yanlarınız ve olumlu desenleriniz olduğunu fark ettim. Bu güçlü yanlar üzerinde düşünmek için bir dakika ayıralım: \"{{content}}\"\n\nSizce bu güçlü yanları sizin için özellikle anlamlı kılan nedir? Bu güçlü yanlarınıza günlük yaşamınızda nasıl daha fazla yaslanabilirsiniz?",
-      "emotionReflection": "Konuşmalarımızdan bazı derin duygusal görüşleriniz olduğunu görüyorum: \"{{content}}\"\n\nBazen duygularımızla zaman geçirmek ve bize ne söylediklerini anlamak değerlidir. Bu görüşü okuduğunuzda hangi duygular sizde ortaya çıkıyor? Bu duygular size ne iletmeye çalışıyor olabilir?"
+      "emotionReflection": "Konuşmalarımızdan bazı derin duygusal görüşleriniz olduğunu görüyorum: \"{{content}}\"\n\nBazen duygularımızla zaman geçirmek ve bize ne söylediklerini anlamak değerlidir. Bu görüşü okuduğunuzda hangi duygular sizde ortaya çıkıyor? Bu duygular size ne iletmeye çalışıyor olabilir?",
+      "deeperInsightReflection": "{{category}} hakkındaki konuşmalarımızdan önemli bir desen ortaya çıktığını fark ettim:\n\n\"{{content}}\"\n\nBu, sizin hakkınızda anlamlı bir görüş. Bunu sizinle daha derinlemesine keşfetmek isterim. Bu desen sizde neye karşılık geliyor? Günlük yaşamınızda nasıl ortaya çıkıyor ve bu konuda daha derinlemesine ne anlamak istersiniz?"
     },
     "thinkingPatterns": {
       "allOrNothing": "Hep ya da Hiç Düşüncesi",
@@ -262,6 +347,18 @@
       "moreBalanced": "Daha dengeli",
       "reflectOnThis": "Bunun üzerinde düşün",
       "analyzingPatterns": "Ruh hali kalıplarınız analiz ediliyor...",
+      "lastWeek": "Geçen Hafta",
+      "thisWeek": "Bu Hafta",
+      "noMoodData": "Ruh hali verisi yok",
+      "trackMoodPrompt": "Görüşleri görmek için ruh halinizi takip edin",
+      "moodLabels": {
+        "great": "Harika",
+        "positive": "Olumlu",
+        "okay": "İdare Eder",
+        "challenging": "Zorlu",
+        "difficult": "Zor",
+        "noData": "Veri yok"
+      },
       "weeklyTrend": {
         "improving": "↗ İyileşiyor",
         "steady": "↔ Sabit",
@@ -291,6 +388,19 @@
         "fallback": {
           "title": "Verileriniz kontrol ediliyor... ✨"
         }
+      },
+      "exampleModal": {
+        "badge": "ÖRNEK",
+        "title": "Ruh Hali Takip Örneği",
+        "description": "Bu örnek, ruh hali takibinin zaman içinde kalıpları belirlemeye nasıl yardımcı olduğunu gösterir. Hafta boyunca inişlere ve çıkışlara ve sonuna doğru ruh halinizin nasıl iyileştiğine dikkat edin.",
+        "action": "Anladım, Takibe Başla"
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Otomatik Düşünceler Egzersizini Deneyin",
+        "emptyStateDescription": "Sizi rahatsız eden belirli bir düşünce hakkında Anu ile sohbet edin, çarpıtılmış düşünce kalıplarını belirlemenize ve dengeli bakış açıları bulmanıza yardımcı olalım",
+        "seeExample": "Örnek",
+        "startExercise": "Egzersizi Başlat",
+        "exampleModalInfo": "Bir düşünce kalıbı böyle görünür. Kendinizinkini oluşturmak için Otomatik Düşünceler egzersizini deneyin!"
       }
     },
     "priorityExercises": {
@@ -329,15 +439,28 @@
     "memberSince": "Bu tarihten beri üye",
     "anonymousGuest": "Anonim Ziyaretçi",
     "stats": {
-      "sessions": "Seanslar",
-      "streak": "Seri",
-      "insights": "Görüşler",
-      "exercises": "Egzersizler",
-      "daysStreak": "7 gün"
+      "sessions": "Konuşmalar",
+      "streak": "Gün Serisi",
+      "insights": "Düşünce Kalıpları",
+      "exercises": "Tamamlanan Egzersizler",
+      "daysStreak": "7 gün",
+      "days": "{{count}} gün",
+      "days_plural": "{{count}} gün"
     },
     "fallbackName": "Arkadaş",
-    "welcomeMessage": "WisdomWise'a hoş geldiniz",
+    "welcomeMessage": "ZenMind'a hoş geldiniz",
     "premiumMember": "Premium Üye",
+    "planStatus": {
+      "premium": "✨ Premium Üye",
+      "free": "🆓 Ücretsiz Plan",
+      "guest": "Misafir • Ücretsiz Plan"
+    },
+    "freePlanCard": {
+      "title": "Tüm öz keşif araçlarına ve rehberli egzersizlere erişin",
+      "subtitle": "Günlük mesaj limitinizi aşmak ve tüm kütüphaneyi açmak için Mind Wise Premium'a geçin.",
+      "cta": "Abone Ol",
+      "tag": "Ücretsiz Katman"
+    },
     "yourProgress": "Ilerlemeniz",
     "menu": {
       "editProfile": "Profili Düzenle",
@@ -346,9 +469,13 @@
       "restartOnboarding": "Tanıtımı Yeniden Başlat",
       "notifications": "Bildirimler",
       "privacy": "Gizlilik ve Güvenlik",
+      "dataPrivacy": "Verileriniz ve Gizlilik",
       "darkMode": "Karanlık Mod",
       "help": "Yardım ve Destek",
-      "signOut": "Çıkış Yap"
+      "signOut": "Çıkış Yap",
+      "language": "Dil",
+      "createAccount": "Hesap Oluştur",
+      "featureRequest": "Özellik İsteği"
     },
     "menuSubtitles": {
       "editProfile": "Bilgilerinizi güncelleyin",
@@ -357,9 +484,13 @@
       "restartOnboarding": "Tanıtımı tekrar görüntüleyin",
       "notifications": "Uyarıları yönetin",
       "privacy": "Verilerinizi kontrol edin",
+      "dataPrivacy": "Bilgilerinizi nasıl koruduğumuz ve işlediğimiz",
       "darkMode": "Karanlık temayı aç/kapat",
       "help": "Yardım alın",
       "signOut": "Hesabınızdan çıkın",
+      "language": "Uygulama dilini değiştirin",
+      "createAccount": "İlerlemenizi kaydedin ve tüm özelliklere erişin",
+      "featureRequest": "Fikirlerinizi bizimle paylaşın",
       "default": "Erişmek için dokunun"
     },
     "restartOnboarding": {
@@ -367,8 +498,58 @@
       "message": "Bu sizi tanıtım ekranlarına geri götürecektir. Verileriniz etkilenmeyecektir.",
       "confirm": "Yeniden Başlat"
     },
+    "alerts": {
+      "createAccount": {
+        "title": "Hesap Oluştur",
+        "message": "İlerlemenizi kaydetmek ve tüm özelliklere erişmek için kaydolun!",
+        "confirm": "Kaydol",
+        "cancel": "Belki Sonra"
+      },
+      "notificationPermission": {
+        "title": "İzin Gerekli",
+        "message": "Test bildirimleri için bildirim izinlerinin etkinleştirilmesi gerekir.",
+        "messageSettings": "Test bildirimlerini görmek için lütfen cihaz ayarlarınızdan bildirimleri etkinleştirin.",
+        "openSettings": "Ayarları Aç",
+        "notNow": "Şimdi Değil"
+      }
+    },
     "version": "Sürüm 1.0.0",
     "madeWith": "İyilik haliniz için 💙 ile yapıldı"
+  },
+  "featureRequest": {
+    "title": "Özellik İsteği",
+    "description": "Fikirlerinizi duymak isteriz! ZenMind'da görmek istediğiniz özellikleri veya iyileştirmeleri paylaşın.",
+    "placeholder": "Özellik fikrinizi bizimle paylaşın...",
+    "submit": "Gönder",
+    "cancel": "İptal",
+    "characterCount": "{{count}}/500 karakter",
+    "successTitle": "Teşekkürler!",
+    "successMessage": "Özellik isteğiniz gönderildi. Geri bildiriminiz için teşekkür ederiz!",
+    "errorTitle": "Gönderim Başarısız",
+    "errorMessage": "İsteğiniz gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+    "tooShort": "Lütfen en az 10 karakter yazın",
+    "tooLong": "Lütfen isteğinizi 500 karakterin altında tutun",
+    "infoText": "Geri bildiriminiz ZenMind'ı geliştirmemize yardımcı olur. Tüm özellik isteklerini inceler ve kullanıcı ihtiyaçlarına göre önceliklendiririz.",
+    "discardTitle": "İsteği İptal Et?",
+    "discardMessage": "Kaydedilmemiş değişiklikleriniz var. Özellik isteğinizi iptal etmek istediğinizden emin misiniz?",
+    "discard": "İptal Et"
+  },
+  "helpSupport": {
+    "title": "Yardım ve Destek",
+    "description": "Yardıma mı ihtiyacınız var veya sorularınız mı var? Endişelerinizi paylaşın, sorunları bildirin veya destek isteyin. Size yardımcı olmak için buradayız!",
+    "placeholder": "Sorununuzu veya sorunuzu açıklayın...",
+    "submit": "Gönder",
+    "cancel": "İptal",
+    "characterCount": "{{count}}/500 karakter",
+    "successTitle": "Mesaj Alındı!",
+    "successMessage": "Destek talebiniz gönderildi. Yakında sizinle iletişime geçeceğiz!",
+    "errorTitle": "Gönderim Başarısız",
+    "errorMessage": "İsteğiniz gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+    "tooShort": "Lütfen en az 10 karakter yazın",
+    "tooLong": "Lütfen mesajınızı 500 karakterin altında tutun",
+    "discardTitle": "Mesajı İptal Et?",
+    "discardMessage": "Kaydedilmemiş değişiklikleriniz var. Mesajınızı iptal etmek istediğinizden emin misiniz?",
+    "discard": "İptal Et"
   },
   "chat": {
     "title": "Anu ile Sohbet",
@@ -382,15 +563,16 @@
     "thinking": "Düşünüyor...",
     "speakResponse": "Cevabı Söyle",
     "exercise": "Egzersiz",
-    "reflectionSpace": "💭 Yansıtma Alanı",
+    "reflectionSpace": "💭 Dışa vurum alanı",
     "exerciseProgress": "Adım {{current}}/{{total}} • {{title}}",
     "inProgress": "Devam Ediyor",
     "therapeuticExercise": "{{duration}} • Terapotik Egzersiz",
     "loadingSpace": "Güvenli alanınız hazırlanıyor...",
-    "safeSpace": "Yansıtma için güvenli alanınız",
+    "safeSpace": "Dışa vurum için güvenli alanınız",
     "almostAtLimit": "Günlük limite yaklaştınız! {{remaining}} kaldı.",
     "limitUsed": "Günlük limitin %{{percentage}}'i kullanıldı.",
-    "endReflection": "Yansıtmayı Bitir",
+    "limitReachedBanner": "Günlük limit doldu. Mesajların gece yarısı sıfırlanacak.",
+    "endReflection": "Bitir",
     "typeOrSpeak": "Yazın veya konuşun...",
     "composeMessage": "Mesaj Oluştur",
     "suggestExercise": "Egzersiz öner",
@@ -432,6 +614,15 @@
       "keyInsights": "Ana Görüşler",
       "continueGoals": "Hedeflere Devam Et",
       "saveGoals": "Hedefleri Kaydet"
+    },
+    "exitConfirmation": {
+      "title": "Oturumunuzu kaydetmek ister misiniz?",
+      "message": "Konuşmanız cihazınızda gizli olarak kaydedilecektir.",
+      "exerciseTitle": "Egzersizi erken bitirmek ister misiniz?",
+      "exerciseMessage": "İlerlemeniz kaydedilecek ve istediğiniz zaman devam edebileceksiniz.",
+      "confirmButton": "Kaydet & Çık",
+      "cancelButton": "Sohbete Devam Et",
+      "allowInsightsLabel": "Anu'nun büyümenizi desteklemek için bu oturum üzerinde düşünmesine izin ver"
     }
   },
   "mood": {
@@ -445,6 +636,18 @@
   "journal": {
     "title": "Rehberli Günlük",
     "writeHint": "Metin gir",
+    "stepIndicator": "{{current}}/{{total}}",
+    "typeOrSpeak": "Düşüncelerinizi yazın veya söyleyin...",
+    "transcribing": "Yazıya dökülüyor...",
+    "continue": "Devam Et",
+    "previousReflections": "Önceki Yansıtmalar",
+    "saveModalTitle": "Oturumunuz kaydedilsin mi?",
+    "save": "Kaydet",
+    "dontSaveButton": "Kaydetme",
+    "pleaseWriteSomething": "Lütfen bir şeyler yazın",
+    "entryCannotBeEmpty": "Giriş boş olamaz",
+    "failedNextQuestion": "Sonraki soru oluşturulamadı",
+    "failedToSaveDraft": "Taslak kaydedilemedi",
     "summaryWellDone": "Harika iş çıkardın!",
     "summarySubheading": "Bugün düşüncelerine bir ses verdin.",
     "promptTitle": "Yansıtma Sorusu",
@@ -493,6 +696,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Hesabınızı Oluşturun",
+      "subtitle": "Anu ile bilinçli sağlık yolculuğunuza başlayın",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "firstNamePlaceholder": "Adınız",
+      "lastNamePlaceholder": "Soyadınız",
+      "email": "E-posta",
+      "emailPlaceholder": "E-posta adresinizi girin",
+      "password": "Şifre",
+      "passwordPlaceholder": "Bir şifre oluşturun",
+      "confirmPassword": "Şifreyi Onayla",
+      "confirmPasswordPlaceholder": "Şifrenizi onaylayın",
+      "passwordStrength": "Şifre gücü: {{strength}}",
+      "passwordStrengthWeak": "Zayıf",
+      "passwordStrengthMedium": "Orta",
+      "passwordStrengthStrong": "Güçlü",
+      "privacyAccept": "Kabul ediyorum",
+      "privacyPolicy": "Gizlilik Politikası",
+      "and": "ve",
+      "termsOfService": "Hizmet Koşulları",
+      "createAccountButton": "Hesap Oluştur",
+      "creatingAccount": "Hesap Oluşturuluyor...",
+      "orDivider": "veya",
+      "googleButton": "Google ile Devam Et",
+      "alreadyHaveAccount": "Zaten hesabınız var mı? Giriş yapın",
+      "failedToOpenPrivacy": "Gizlilik politikası açılamadı. Lütfen daha sonra tekrar deneyin.",
+      "failedToOpenTerms": "Hizmet koşulları açılamadı. Lütfen daha sonra tekrar deneyin."
+    },
+    "signIn": {
+      "title": "WisdomWise'a Tekrar Hoş Geldiniz",
+      "subtitle": "Bilinçli sağlık yolculuğunuza devam edin",
+      "email": "E-posta",
+      "emailPlaceholder": "E-posta adresinizi girin",
+      "password": "Şifre",
+      "passwordPlaceholder": "Şifrenizi girin",
+      "forgotPassword": "Şifremi unuttum",
+      "signInButton": "Giriş Yap",
+      "signingIn": "Giriş Yapılıyor...",
+      "orDivider": "veya",
+      "googleButton": "Google ile Devam Et",
+      "noAccount": "Hesabınız yok mu? Kaydolun"
+    },
+    "verification": {
+      "title": "E-postanızı Kontrol Edin",
+      "subtitle": "Doğrulama bağlantısını gönderdik",
+      "instructions": "Lütfen gelen kutunuzu kontrol edin ve hesabınızı etkinleştirmek için doğrulama bağlantısına tıklayın.",
+      "subInstructions": "Bağlantının süresi 24 saat içinde dolacak. Bulamıyor musunuz? Spam klasörünüzü kontrol edin.",
+      "resendButton": "Doğrulama E-postasını Tekrar Gönder",
+      "resending": "Gönderiliyor...",
+      "checkStatusButton": "Doğruladım, Devam Et",
+      "checking": "Kontrol Ediliyor...",
+      "backToSignIn": "Girişe Dön"
     }
   },
   "errors": {
@@ -785,6 +1044,28 @@
           "instruction": "Kullanıcıyı belirlediği güçlü yanları mevcut durumuyla bağlantıya yönlendirin. Aynı niteliklerin mevcut zorluklarda veya hedeflerde nasıl destek olabileceğini düşünmesini isteyin. Bu güçlü yanları ileriye taşımak için belirli bir yolu teşvik edin."
         }
       },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Vizyonun neden önemli olduğunu anlayın",
+          "description": "Net bir vizyon yön ve motivasyon sağlar.",
+          "instruction": "Kullanıcıya geleceklerini hayal etmenin bir pusula belirlemek gibi olduğunu açıklayın. Seçimlere rehberlik eder, motivasyonu güçlendirir ve nereye gideceğimizi ve nasıl bir insan olmak istediğimizi bilmemize yardımcı olur. Bu egzersize açıklıkla yaklaşmalarını ve kendilerini tutmamalarını teşvik edin. Bu ideal bir vizyondur. Yansıtıcı bir soru sorabilir veya şu anda vizyonlarının ne kadar net olduğuna dair hızlı bir ölçek/kontrol sunabilirsiniz."
+        },
+        "step2": {
+          "title": "Gelecekteki hayatınızı hayal edin",
+          "description": "Birkaç yıl sonrasını önemli alanlarında hayal edin.",
+          "instruction": "Kullanıcıya işler doğru hissettiğinde hayatın nasıl göründüğünü hayal etmesi için rehberlik edin. Ana alanları gözden geçirmelerini isteyin: İlişkiler (aile, arkadaşlar, partner), İş veya eğitim, Sağlık ve refah, Kişisel gelişim ve öğrenme, Yaşam tarzı ve günlük rutinler. Her birinin gelecek vizyonlarında nasıl göründüğünü açıklamalarını teşvik edin."
+        },
+        "step3": {
+          "title": "Neyin önemli olduğunu fark edin",
+          "description": "Vizyonunuzdaki değerler ve öncelikler üzerine düşünün.",
+          "instruction": "Kullanıcıdan vizyonlarında parlayan ana değerleri belirlemesini isteyin — örneğin, bağlantı, denge, özgürlük, nezaket, büyüme. Şu anda en merkezi hissettiren bir veya ikisini adlandırmalarını teşvik edin."
+        },
+        "step4": {
+          "title": "Vizyonunuzla bağlantı kurun",
+          "description": "Tam olarak hayal edin ve bugünkü hayatınıza bağlayın.",
+          "instruction": "Kullanıcıyı duraklamaya ve bu gelecekte gerçekten olmayı hayal etmeye teşvik edin — nasıl hissettiriyor, hangi duygular ortaya çıkıyor? Sonra bu vizyonla bugün bağlantıda kalabilecekleri küçük bir yolu tarif etmelerini isteyin, bir eylem, bir hatırlatıcı veya sadece hissi aklında tutmak olsun."
+        }
+      },
       "morningMindfulness": {
         "step1": {
           "title": "Uyanışınızı fark edin",
@@ -941,37 +1222,66 @@
   "onboarding": {
     "welcome": {
       "greeting": "Merhaba, ben Anu!",
-      "subtitle": "Her gün daha fazla sakinlik ve berraklığa ulaşmanız için rehberiniz.",
+      "subtitle": "Her gün daha fazla farkındalık ve berraklığa ulaşmanız için rehberiniz.",
       "startButton": "Hadi başlayalım!"
     },
     "valueProp": {
       "title": "İyilik Hali Yolculuğunuz Burada Başlıyor",
       "description": "Ruh sağlığı yolculuğunuzu desteklemek için kişiselleştirilmiş araçlar ve nazik rehberlik keşfedin.",
-      "continueButton": "Başlayın"
+      "continueButton": "Başlayalım",
+      "pages": {
+        "page1": {
+          "title": "Daha Net Düşünün, Daha İyi Hissedin",
+          "description": "Yararsız düşünceleri tespit etmeyi ve bilim destekli BDT teknikleriyle yeniden çerçevelemeyi öğrenin"
+        },
+        "page2": {
+          "title": "Kendinizi daha iyi anlayın",
+          "description": "Düşünce ve duygularınızdaki kalıpları keşfedin. Görüşler, kendinizi anlamanıza ve nasıl büyüyeceğinize yardımcı olur."
+        },
+        "page3": {
+          "title": "Rehberli büyüme artık daha kolay",
+          "description": "Anu her zaman bir sonraki adımı bilir ve sadece sizin için tasarlanmış egzersizler önerir."
+        },
+        "page4": {
+          "title": "İlerlemeniz artık gözünüzün önünde",
+          "description": "Kaydedilmiş egzersizler, görüşler ve kilometre taşlarıyla yolculuğunuzun nasıl geliştiğini görün."
+        }
+      },
+      "letsBegin": "Hadi başlayalım"
     },
     "personalValues": {
-      "headline": "Anu ile deneyiminizi kişiselleştirelim.",
-      "promptText": "Size en çok hangi değerler önemli? Doğru hissettiren değerleri seçin.",
-      "continueButton": "Devam Et"
+      "headline": "Sizin için en önemli olan nedir?",
+      "promptText": "Bu, planınızı özelleştirmenize yardımcı olur.",
+      "continueButton": "Devam Et",
+      "values": {
+        "healthVitality": "Sağlık ve Canlılık",
+        "closeRelationships": "Yakın İlişkiler",
+        "growthLearning": "Büyüme ve Öğrenme",
+        "peaceBalance": "Huzur ve Denge",
+        "freedomIndependence": "Özgürlük ve Bağımsızlık",
+        "purposeMeaning": "Amaç ve Anlam",
+        "creativityPlay": "Yaratıcılık ve Oyun",
+        "achievementProgress": "Başarı ve İlerleme"
+      }
     },
     "focusAreas": {
-      "headline": "Neye odaklanmak istersiniz?",
-      "promptText": "Destek almak istediğiniz alanları seçin. Bunları daha sonra her zaman değiştirebilirsiniz.",
+      "headline": "Şu anda neye odaklanmak istersiniz?",
+      "promptText": "Birkaçını seçin. Bunu istediğiniz zaman değiştirebilirsiniz.",
       "areas": {
-        "anxiety": "Kaygı",
-        "stress": "Stres",
-        "sleepIssues": "Uyku Sorunları",
-        "lowMood": "Kötü Ruh Hali",
-        "focusProblems": "Odaklanma Sorunları",
-        "relationshipIssues": "İlişki Sorunları",
-        "workPressure": "İş Baskısı",
-        "selfConfidence": "Özgüven"
+        "feelCalmer": "Daha Sakin Hissetmek (kaygıyı azaltmak)",
+        "handleStress": "Stresle Başa Çıkmak",
+        "sleepBetter": "Daha İyi Uyumak",
+        "brighterMood": "Daha Parlak Ruh Hali",
+        "focusDrive": "Odaklanma ve Motivasyon",
+        "confidenceSelfWorth": "Özgüven ve Öz Değer",
+        "relationshipsCommunication": "İlişkiler ve İletişim",
+        "somethingElse": "Başka bir şey..."
       },
       "continueButton": "Devam Et"
     },
     "ageGroup": {
-      "headline": "Sizi daha iyi anlamamı sağlayın",
-      "promptText": "Bu, rehberliğimi yaşam aşamanıza göre uyarlamama yardımcı olur.",
+      "headline": "Sizi daha iyi anlayabilmem için",
+      "promptText": "Yaşınızı paylaşır mısınız?",
       "ranges": {
         "18-25": "18-25",
         "26-35": "26-35",
@@ -983,7 +1293,7 @@
       "continueButton": "Devam Et"
     },
     "personalization": {
-      "headline": "Adınız nedir",
+      "headline": "Adınız nedir?",
       "promptText": "Anu'nun size nasıl hitap etmesini istediğinizi seçin.",
       "placeholder": "Tercih ettiğiniz isim",
       "caption": "Bunu daha sonra ayarlarda her zaman değiştirebilirsiniz",
@@ -994,7 +1304,7 @@
       "title": "Sizi buraya getiren şey hakkında bana daha fazla anlatın",
       "subtitle": "Bu, size en iyi şekilde nasıl destek olacağımı anlamamı sağlar",
       "inputLabel": "Aklınızdan geçenleri paylaşın",
-      "placeholder": "İşte kendimi bunalmış hissediyorum ve...",
+      "placeholder": "Şu sıralar kendimi bunalmış hissediyorum ve...",
       "characterCount": "{{count}}/200",
       "chipsLabel": "Veya bu yaygın deneyimlerden birini seçin:",
       "chips": {
@@ -1022,44 +1332,46 @@
     },
     "final": {
       "mainTitle": "Kişisel ilerleme yolunuzu hazırlıyoruz...",
-      "subtitle": "Kanıta dayalı araçlarla kişiselleştirilmiş deneyiminizi kuruyoruz",
+      "subtitle": "Planınız sizi geliştirmenize yardımcı olmak için özelleştiriliyor.",
       "features": {
         "analyzing": {
-          "title": "Tercihlerinizi analiz ediyoruz",
-          "description": "Benzersiz ihtiyaçlarınızı anlıyoruz"
+          "title": "Kişiselleştirilmiş egzersizler ve yansıtmalar hazırlanıyor",
+          "description": ""
         },
         "creating": {
-          "title": "Terapi planınızı oluşturuyoruz",
-          "description": "Egzersizleri hedeflerinize göre uyarlıyoruz"
+          "title": "Kişisel planınız tasarlanıyor",
+          "description": ""
         },
         "preparing": {
-          "title": "Araç setinizi hazırlıyoruz",
-          "description": "Kişiselleştirilmiş kaynakları ayarlıyoruz"
+          "title": "İlk aktiviteniz hazırlanıyor",
+          "description": ""
         }
       },
-      "continueButton": "WisdomWise'a Gir"
+      "continueButton": "Yolculuğunuza Başlayın"
     },
     "notifications": {
       "mainTitle": "İyilik hali küçük, günlük adımlarla büyür.",
-      "subtitle": "Nazik hatırlatmalar sağlıklı alışkanlıklar geliştirmenize ve farkındalık pratiğinizle bağlantınızı korumanıza yardımcı olabilir.",
+      "subtitle": "Günlük iyilik hali pratiğiniz için en uygun zamanları seçin.",
       "loading": "Hatırlatıcılarınız kuruluyor...",
       "reminders": {
         "morning": {
-          "label": "Sabah Yansıtması",
-          "description": "Niyetle başlayın"
+          "label": "Sabah",
+          "description": "Gününüze topraklanmış başlayın"
         },
-        "afternoon": {
-          "label": "Öğlen Kontrolü",
-          "description": "Durun ve nefes alın"
+        "daytime": {
+          "label": "Gündüz",
+          "description": "Bilinçli bir mola verin"
         },
         "evening": {
-          "label": "Akşam Rahatlama",
-          "description": "Yansıtın ve rahatın"
+          "label": "Akşam",
+          "description": "Yansıtın ve rahatlayın"
         }
       },
+      "selectTime": "Zamanı Seçin",
+      "continueButton": "Devam Et",
+      "skipButton": "Geç",
       "timePickerTitle": "Zamanı Seçin",
       "enableButton": "Hatırlatıcıları Etkinleştir",
-      "skipButton": "Şimdilik Geç",
       "saveButton": "Kaydet",
       "cancelButton": "İptal",
       "permissionGuidance": {
@@ -1071,13 +1383,13 @@
             "step1": "1. Aşağıdaki \"Ayarları Aç\" butonuna dokunun",
             "step2": "2. \"Bildirimlere İzin Ver\" seçeneğini açın",
             "step3": "3. Tercih ettiğiniz bildirim stilini seçin",
-            "step4": "4. İşiniz bittiğinde WisdomWise'a geri dönün"
+            "step4": "4. İşiniz bittiğinde ZenMind'a geri dönün"
           },
           "android": {
             "step1": "1. Aşağıdaki \"Ayarları Aç\" butonuna dokunun",
             "step2": "2. \"Bildirimleri göster\" seçeneğini açın",
             "step3": "3. Bildirim tercihlerinizi seçin",
-            "step4": "4. WisdomWise'a dönmek için geri tuşuna basın"
+            "step4": "4. ZenMind'a dönmek için geri tuşuna basın"
           }
         },
         "buttons": {
@@ -1086,6 +1398,34 @@
           "openSettings": "Ayarları Aç",
           "notNow": "Şimdi Değil"
         }
+      },
+      "settings": {
+        "title": "Bildirim Ayarları",
+        "loadingSettings": "Ayarlar yükleniyor...",
+        "enableNotifications": "Bilinçli hatırlatıcılar almak için bildirimleri etkinleştirin",
+        "enable": "Etkinleştir",
+        "dailyReminders": "Günlük Hatırlatıcılar",
+        "dailyRemindersDescription": "Günlük iyilik hali pratiğiniz için en uygun zamanları seçin.",
+        "addCustomReminder": "Özel Hatırlatıcı Ekle",
+        "createCustomReminder": "Kendi hatırlatıcı zamanınızı oluşturun",
+        "infoText": "Bu hatırlatıcıları istediğiniz zaman özelleştirebilirsiniz. Özel hatırlatıcıları silmek için uzun basın. Bildirimler bilinçlilik pratiğinizde tutarlılığı korumanıza yardımcı olur.",
+        "saveChanges": "Değişiklikleri Kaydet",
+        "settingsSaved": "Ayarlar Kaydedildi",
+        "preferencesUpdated": "Bildirim tercihleriniz güncellendi.",
+        "enableToReceive": "Hatırlatıcılar almak için bildirimleri etkinleştirin.",
+        "failedToSave": "Ayarlar kaydedilemedi. Lütfen tekrar deneyin.",
+        "notificationsEnabled": "Bildirimler Etkinleştirildi",
+        "willReceiveReminders": "Artık bilinçli hatırlatıcılar alacaksınız.",
+        "failedToEnable": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
+        "error": "Hata",
+        "deleteReminder": "Hatırlatıcıyı Sil",
+        "deleteReminderConfirm": "Bu hatırlatıcıyı silmek istediğinizden emin misiniz?",
+        "delete": "Sil",
+        "failedToAdd": "Özel hatırlatıcı eklenemedi.",
+        "failedToDelete": "Hatırlatıcı silinemedi.",
+        "customReminderLabel": "Özel hatırlatıcınız için bir etiket girin",
+        "customReminderPlaceholder": "örn. Yatmadan Önce, Öğle Yemeğinden Sonra",
+        "add": "Ekle"
       }
     },
     "common": {

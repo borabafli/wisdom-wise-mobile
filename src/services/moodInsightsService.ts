@@ -1,5 +1,4 @@
 import { memoryService } from './memoryService';
-import { ApiError, handleApiError } from '../utils/apiErrorHandler';
 
 export interface MoodInsight {
   id: string;
@@ -75,7 +74,8 @@ class MoodInsightsService {
   private async generateInsightsWithAI(sessionData: any[]): Promise<MoodInsight[]> {
     try {
       if (!this.baseUrl || !this.apiKey) {
-        throw new ApiError('Configuration error', 500, 'MISSING_CONFIG');
+        console.log('🧠 [MOOD INSIGHTS] Missing Supabase config, using fallback insights');
+        return this.generateRuleBasedInsights(sessionData);
       }
 
       const response = await fetch(`${this.baseUrl}/functions/v1/generate-mood-insights`, {
@@ -93,20 +93,15 @@ class MoodInsightsService {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new ApiError(
-          errorData?.message || 'Failed to generate insights',
-          response.status,
-          errorData?.code || 'INSIGHTS_ERROR'
-        );
+        console.log(`🧠 [MOOD INSIGHTS] Edge function not available (${response.status}), using fallback insights`);
+        return this.generateRuleBasedInsights(sessionData);
       }
 
       const result = await response.json();
       return result.insights || [];
     } catch (error) {
-      console.error('AI insights generation error:', error);
-      
-      // Fallback to rule-based insights
+      // Silently fall back - this is expected when edge function doesn't exist yet
+      console.log('🧠 [MOOD INSIGHTS] Using fallback rule-based insights');
       return this.generateRuleBasedInsights(sessionData);
     }
   }

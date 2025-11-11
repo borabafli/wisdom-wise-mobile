@@ -62,10 +62,10 @@ class FirstMessageService {
       await storageService.trackFirstMessageRouting(routingHint);
 
       // 4. Build specialized system prompt
-      const systemPrompt = this.buildFirstMessagePrompt(context, routingHint);
+      const systemPrompt = await this.buildFirstMessagePrompt(context, routingHint);
 
       // 5. Call AI with compact context
-      const response = await this.callAIForFirstMessage(systemPrompt);
+      const response = await this.callAIForFirstMessage(systemPrompt, routingHint);
       console.log('✅ [FIRST MESSAGE] Generated:', response);
 
       return response;
@@ -129,30 +129,61 @@ class FirstMessageService {
     const routingUsage = await storageService.getFirstMessageRoutingUsage();
     console.log('📊 [ROUTING USAGE] Current counts:', routingUsage);
 
-    // Helper function to apply usage-based decay
+    // Get recent routing history for short-term repetition prevention
+    const recentHistory = await storageService.getRecentRoutingHistory();
+    console.log('📜 [ROUTING HISTORY] Recent variants:', recentHistory);
+
+    // Helper function to apply usage-based decay with differentiated rates
     const applyUsageDecay = (baseWeight: number, variantName: RoutingVariant): number => {
       const usageCount = routingUsage[variantName] || 0;
-      // Decay: reduce weight by 20% for each use, with minimum of 5%
-      const decayFactor = Math.max(0.05, 1 - (usageCount * 0.2));
+      // Differentiated decay: onboarding decays faster (30%) vs others (20%)
+      const isOnboarding = variantName === 'onboarding_reference';
+      const decayRate = isOnboarding ? 0.3 : 0.2;
+      const minDecay = isOnboarding ? 0.03 : 0.05;
+      const decayFactor = Math.max(minDecay, 1 - (usageCount * decayRate));
       const adjustedWeight = baseWeight * decayFactor;
-      console.log(`📊 [${variantName}] Base: ${baseWeight}, Usage: ${usageCount}, Decay: ${decayFactor.toFixed(2)}, Final: ${adjustedWeight.toFixed(1)}`);
+      console.log(`📊 [${variantName}] Base: ${baseWeight}, Usage: ${usageCount}, Rate: ${decayRate}, Decay: ${decayFactor.toFixed(2)}, Final: ${adjustedWeight.toFixed(1)}`);
       return adjustedWeight;
+    };
+
+    // Helper function to apply short-term repetition penalty
+    const applyRepetitionPenalty = (weight: number, variantName: RoutingVariant): number => {
+      const last3 = recentHistory.slice(0, 3);
+      const last5 = recentHistory.slice(0, 5);
+
+      const countInLast3 = last3.filter(v => v === variantName).length;
+      const countInLast5 = last5.filter(v => v === variantName).length;
+
+      let penalty = 1;
+      if (countInLast3 >= 2) {
+        penalty = 0.5; // 50% penalty if used 2+ times in last 3 sessions
+        console.log(`⚠️ [${variantName}] Short-term penalty: used ${countInLast3}x in last 3 sessions (50% penalty)`);
+      } else if (countInLast5 >= 3) {
+        penalty = 0.3; // 70% penalty if used 3+ times in last 5 sessions
+        console.log(`⚠️ [${variantName}] Medium-term penalty: used ${countInLast5}x in last 5 sessions (70% penalty)`);
+      }
+
+      return weight * penalty;
     };
 
     // Build weighted options based on available context
     const options: Array<{ variant: RoutingVariant; weight: number }> = [];
 
-    // Always include neutral opens with high base weight for variety (but still decay)
+    // Always include neutral opens with HIGHER base weight for variety
+    let neutralWeight = applyUsageDecay(50, 'neutral_open'); // Increased from 20 → 50
+    neutralWeight = applyRepetitionPenalty(neutralWeight, 'neutral_open');
     options.push({
       variant: 'neutral_open',
-      weight: applyUsageDecay(20, 'neutral_open')
+      weight: neutralWeight
     });
 
     // Recent reframe (< 72h) - high priority but with usage decay
     if (context.recentReflections.length > 0 && hoursSince < 72) {
+      let reframeWeight = applyUsageDecay(60, 'reframe_followup'); // Increased from 55 → 60
+      reframeWeight = applyRepetitionPenalty(reframeWeight, 'reframe_followup');
       options.push({
         variant: 'reframe_followup',
-        weight: applyUsageDecay(55, 'reframe_followup')
+        weight: reframeWeight
       });
     }
 
@@ -161,45 +192,53 @@ class FirstMessageService {
       insight => insight.category === 'automatic_thoughts'
     );
     if (hasThoughtPatterns && hoursSince < 168) {
+      let thoughtWeight = applyUsageDecay(25, 'thought_pattern_followup'); // Increased from 20 → 25
+      thoughtWeight = applyRepetitionPenalty(thoughtWeight, 'thought_pattern_followup');
       options.push({
         variant: 'thought_pattern_followup',
-        weight: applyUsageDecay(20, 'thought_pattern_followup')
+        weight: thoughtWeight
       });
     }
 
     // Values check - medium priority, decays over time AND usage
     if (context.topValues.length > 0) {
-      const baseValueWeight = hoursSince < 168 ? 20 : 10;
+      const baseValueWeight = hoursSince < 168 ? 25 : 15; // Increased from 20/10 → 25/15
+      let valueWeight = applyUsageDecay(baseValueWeight, 'values_check');
+      valueWeight = applyRepetitionPenalty(valueWeight, 'values_check');
       options.push({
         variant: 'values_check',
-        weight: applyUsageDecay(baseValueWeight, 'values_check')
+        weight: valueWeight
       });
     }
 
-    // Active goals - lower weight with usage decay
+    // Active goals - reduced weight with usage decay
     if (context.goals.length > 0) {
+      let goalWeight = applyUsageDecay(30, 'goal_check'); // Reduced from 45 → 30
+      goalWeight = applyRepetitionPenalty(goalWeight, 'goal_check');
       options.push({
         variant: 'goal_check',
-        weight: applyUsageDecay(45, 'goal_check')
+        weight: goalWeight
       });
     }
 
-    // Onboarding reference - starts high, decays with time AND usage
+    // Onboarding reference - REDUCED initial weight, faster decay with time AND usage
     if (context.onboarding.focusAreas && context.onboarding.focusAreas.length > 0) {
-      // Higher initial weight, but decays based on time
-      let baseOnboardingWeight = 70; // Increased from 30 to 40 for higher likelihood
+      // Lower initial weight, faster time-based decay
+      let baseOnboardingWeight = 40; // Reduced from 70 → 40
 
-      // Time-based decay (gentler decay)
+      // Time-based decay (more aggressive)
       if (hoursSince > 336) { // After 2 weeks
-        baseOnboardingWeight = 50; // Increased from 15 to 20
+        baseOnboardingWeight = 25; // Reduced from 50 → 25
       }
       if (hoursSince > 672) { // After 4 weeks
-        baseOnboardingWeight = 28; // Increased from 8 to 12
+        baseOnboardingWeight = 15; // Reduced from 28 → 15
       }
 
+      let onboardingWeight = applyUsageDecay(baseOnboardingWeight, 'onboarding_reference');
+      onboardingWeight = applyRepetitionPenalty(onboardingWeight, 'onboarding_reference');
       options.push({
         variant: 'onboarding_reference',
-        weight: applyUsageDecay(baseOnboardingWeight, 'onboarding_reference')
+        weight: onboardingWeight
       });
     }
 
@@ -223,8 +262,9 @@ class FirstMessageService {
   /**
    * Build the system prompt for AI first message generation
    */
-  private buildFirstMessagePrompt(context: FirstMessageContext, routingHint: RoutingVariant): string {
+  private async buildFirstMessagePrompt(context: FirstMessageContext, routingHint: RoutingVariant): Promise<string> {
     const languageInstruction = getLanguageInstruction();
+    const guidelines = await this.getRoutingGuidelines(routingHint, context);
 
     return `You are Anu, a compassionate therapist starting a new session with ${context.firstName}.
 
@@ -238,7 +278,7 @@ ${languageInstruction}
 ${this.formatContextForPrompt(context, routingHint)}
 
 **Guidelines Based on Routing:**
-${this.getRoutingGuidelines(routingHint, context)}
+${guidelines}
 
 **Response Format (JSON only, no other text):**
 {
@@ -270,6 +310,30 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
    */
   private formatContextForPrompt(context: FirstMessageContext, routingHint: RoutingVariant): string {
     let formatted = '';
+
+    // CONTEXT FILTERING: For neutral_open, provide minimal context to prevent AI drift back to onboarding
+    if (routingHint === 'neutral_open') {
+      // Only show high-level context summary
+      const hasContext = context.memory.insights.length > 0 ||
+                        context.goals.length > 0 ||
+                        context.topValues.length > 0 ||
+                        (context.onboarding.focusAreas && context.onboarding.focusAreas.length > 0);
+
+      if (hasContext) {
+        formatted = `**Context Note:** User has established history with therapy work, but today is a fresh start. Don't reference specific past topics unless they bring them up.\n`;
+      } else {
+        formatted = `(No prior session data - this appears to be their first real conversation with you)\n`;
+      }
+
+      // Last session timing is always useful
+      if (context.lastSession) {
+        formatted += `**Last Session:** ${this.getDaysAgo(context.lastSession.date)}\n`;
+      }
+
+      return formatted;
+    }
+
+    // FULL CONTEXT: For all other routing variants, provide detailed context
 
     // Recent reframe (highest priority if present)
     if (context.recentReflections.length > 0) {
@@ -334,7 +398,13 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
   /**
    * Get routing-specific guidelines for the AI
    */
-  private getRoutingGuidelines(routingHint: RoutingVariant, context: FirstMessageContext): string {
+  private async getRoutingGuidelines(routingHint: RoutingVariant, context: FirstMessageContext): Promise<string> {
+    // Get last used neutral styles to enforce variety
+    const lastNeutralStyles = await storageService.getLastNeutralStyles();
+    const avoidStyles = lastNeutralStyles.length > 0
+      ? `\n**AVOID these recently used styles:** ${lastNeutralStyles.join(', ')}`
+      : '';
+
     const guidelines: Record<RoutingVariant, string> = {
       reframe_followup: `**Reframe Followup Focus:**
 - Gently reference their recent work on that distorted thought
@@ -360,34 +430,54 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
 - Chips: I lived it / I wanted to / New topic / Plan an action`,
 
       goal_check: `**Goal Check Focus:**
-- Gently reference their active goal
-- Ask about progress, a highlight, or a challenge
+- Reference their active goal INDIRECTLY 70% of the time
+- Indirect examples (prefer these):
+  • Instead of "How is your sleep going?" → "What's been supporting your wellbeing this week?"
+  • Instead of "Progress on your anxiety goal?" → "What felt different for you lately?"
+  • Instead of "How's the stress management?" → "How have you been taking care of yourself?"
+- Direct examples (use 30% of the time):
+  • "Any progress on [goal]?"
+  • "How did [goal] feel this week?"
 - Use casual greetings: Hi, Hey, or Hello (not "Welcome")
-- Don't make it feel like homework—keep it supportive, and be the guide we all need in life
-- Chips: Highlight / Challenge / Show progress / Talk about something else`,
+- Don't make it feel like homework—keep it supportive, be the guide we all need in life
+- Chips: A highlight · A challenge · Something else · Guide me`,
 
       onboarding_reference: `**Onboarding Reference:**
-- Gently make it about something from their initial setup and help them work towards it (focus area, challenge, motivation)
-- Always has ask an important first question to help them work towards it
-- Important: Ask a question that helps the user and guide the conversation.
+- Reference their initial focus area/challenge INDIRECTLY 70% of the time
+- Indirect examples (prefer these):
+  • Instead of "How's your sleep been?" → "What's been different in your daily rhythm lately?"
+  • Instead of "Still dealing with anxiety?" → "What's been on your mind most this week?"
+  • Instead of "Working on your relationships?" → "How have your connections been feeling?"
+  • "What's been most important to you lately?"
+  • "What's been taking up space in your thoughts?"
+- Direct examples (use 30% of the time):
+  • "You mentioned wanting to work on [focus area]. How's that feeling?"
+  • "You shared that [challenge] was important. What's present with that?"
 - IMPORTANT: Use "you mentioned" or "you shared" language, NOT "we talked about" since this is from onboarding
+- Always ask a meaningful first question that guides toward growth
 - Keep it open—they may want to talk about something completely different, use a second separate paragraph to ask about it.
-- Chips: That topic / Something else / Guide me / Quick exercise`,
+- Chips: That topic · Something else · Guide me · Quick exercise`,
 
       neutral_open: `**Neutral Open Focus:**
 - Simple, warm, welcoming - no specific agenda
 - ALWAYS use their name (${context.firstName}) in neutral opens - it adds warmth
 - Ask what would help most right now
 - Offer gentle guidance as an option
-- Vary the style each time for freshness
-- Example variations:
+- Vary the style each time for maximum freshness${avoidStyles}
+- Example variations (pick ONE randomly that hasn't been used recently):
   • Simple opener: "Hey ${context.firstName}. Do you have something specific on your mind, or should I guide a short check-in?" → Chips: Something specific · Guide me · Mood 1–5 · Gratitude
   • Clarity first: "Hi ${context.firstName}. What would help most right now—space to talk, help organizing thoughts, or an exercise?" → Chips: Talk · Organize · 2-min reset · Quick plan
   • Present moment: "Hey ${context.firstName}. How are you feeling right now?" → Chips: Good · Mixed · Struggling · Not sure
   • Open invitation: "Hi ${context.firstName}. What's on your mind today?" → Chips: Something specific · Just talk · Quick check-in · Suggest something
   • Energy check: "Hey ${context.firstName}. What does your energy feel like today?" → Chips: Low · Anxious · Restless · Pretty good
+  • Curiosity spark: "Hey ${context.firstName}. What's been sitting with you lately?" → Chips: A thought · A feeling · A situation · Not sure yet
+  • Gentle invitation: "Hi ${context.firstName}. I'm here when you're ready to share." → Chips: Ready now · Need a moment · Quick exercise · Guide me
+  • Reflective opening: "Hey ${context.firstName}. What would be helpful to explore together today?" → Chips: Talk it through · Organize thoughts · Try an exercise · Not sure
+  • Need-based: "Hi ${context.firstName}. What brought you here right now?" → Chips: Need to talk · Feeling stuck · Quick reset · Just checking in
+- CRITICAL: Identify which style you're using by its keyword (e.g., "sitting", "helpful", "feeling", "mind", "energy", "ready", "brought") and include it in your response metadata
 - IMPORTANT: Pick one style randomly, don't combine multiple approaches
-- Keep chips varied and action-oriented`
+- Keep chips varied and action-oriented
+- These varied openings prevent the "what is present for you today" repetition problem`
     };
 
     return guidelines[routingHint];
@@ -396,7 +486,7 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
   /**
    * Call AI service to generate first message
    */
-  private async callAIForFirstMessage(systemPrompt: string): Promise<FirstMessageResponse> {
+  private async callAIForFirstMessage(systemPrompt: string, routingHint: RoutingVariant): Promise<FirstMessageResponse> {
     try {
       const response = await fetch(`${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`, {
         method: 'POST',
@@ -427,6 +517,11 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
       // With bypassJsonSchema, the edge function now parses the JSON for us
       // The response format is: { success: true, message: "greeting", suggestions: ["chip1", ...] }
       if (data.success && data.message && Array.isArray(data.suggestions)) {
+        // Track neutral style if this was a neutral_open routing
+        if (routingHint === 'neutral_open') {
+          this.detectAndTrackNeutralStyle(data.message);
+        }
+
         return {
           message: data.message,
           chips: data.suggestions.slice(0, 4)
@@ -441,6 +536,11 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
         if (jsonMatch) {
           parsed = JSON.parse(jsonMatch[0]);
           if (parsed.message && Array.isArray(parsed.chips)) {
+            // Track neutral style if this was a neutral_open routing
+            if (routingHint === 'neutral_open') {
+              this.detectAndTrackNeutralStyle(parsed.message);
+            }
+
             return {
               message: parsed.message,
               chips: parsed.chips.slice(0, 4)
@@ -454,6 +554,36 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
       console.error('Error calling AI for first message:', error);
       throw error;
     }
+  }
+
+  /**
+   * Detect which neutral style was used and track it
+   */
+  private async detectAndTrackNeutralStyle(message: string): Promise<void> {
+    const lowerMessage = message.toLowerCase();
+
+    // Map keywords to style names
+    const styleKeywords = [
+      { keyword: 'sitting with you', style: 'sitting' },
+      { keyword: 'helpful to explore', style: 'helpful' },
+      { keyword: 'feeling right now', style: 'feeling' },
+      { keyword: 'on your mind', style: 'mind' },
+      { keyword: 'energy feel', style: 'energy' },
+      { keyword: 'ready to share', style: 'ready' },
+      { keyword: 'brought you here', style: 'brought' },
+      { keyword: 'something specific', style: 'specific' },
+      { keyword: 'would help most', style: 'clarity' }
+    ];
+
+    for (const { keyword, style } of styleKeywords) {
+      if (lowerMessage.includes(keyword)) {
+        await storageService.trackNeutralStyle(style);
+        console.log(`🎨 [NEUTRAL STYLE] Detected and tracked: "${style}" (found "${keyword}")`);
+        return;
+      }
+    }
+
+    console.log('🎨 [NEUTRAL STYLE] No specific style detected in message');
   }
 
   /**

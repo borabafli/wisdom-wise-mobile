@@ -31,15 +31,17 @@ export const personalValuesStyles = StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: spacing[8],
+    flexGrow: 1, // Makes content container expand to fill space - required for marginTop: 'auto' to work
+    paddingBottom: spacing[32], // Increased from 8 to 32 (64px) for better spacing
+    minHeight: '100%', // Ensure content takes full height so button is always visible
   },
 
   // Content Section
   contentContainer: {
+    flex: 1, // Changed from minHeight: '100%' for natural flow
     paddingHorizontal: spacing[16], // 16px - reduced from 24px
     paddingVertical: spacing[16], // 16px - reduced from 24px
-    minHeight: '100%',
-    justifyContent: 'center',
+    // Removed justifyContent: 'center' to prevent content jumping
   },
 
   // Header
@@ -74,6 +76,7 @@ export const personalValuesStyles = StyleSheet.create({
     color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
     lineHeight: 24,
+    fontStyle: 'italic', // Italic font as requested
   },
 
   // Values Selection
@@ -146,7 +149,8 @@ export const personalValuesStyles = StyleSheet.create({
   actionContainer: {
     alignItems: 'center',
     paddingBottom: 30, // Standardized across all personalization screens
-    marginTop: spacing[12], // 24px - standardized spacing from content to button
+    paddingTop: spacing[8], // 16px top padding
+    marginTop: 'auto', // Pushes button to bottom for consistent positioning across all screens
     zIndex: 1000, // Absolute foreground
     position: 'relative',
   },
@@ -155,11 +159,11 @@ export const personalValuesStyles = StyleSheet.create({
     paddingHorizontal: 48, // Standard padding to match other onboarding buttons
     minWidth: 240, // Standard width to match other onboarding buttons
     height: 48,
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.teal[500],
+    shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
       height: 4,

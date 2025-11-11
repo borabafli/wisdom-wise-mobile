@@ -91,9 +91,9 @@ export const notificationPermissionStyles = StyleSheet.create({
 
   remindersContainer: {
     gap: spacing[2], // Even more reduced gap between cards (was 4, now 2)
-    paddingBottom: spacing[0], // Further reduced to make more room for buttons
+    paddingBottom: spacing[4], // Add some padding at bottom
     paddingTop: spacing[5], // Slightly increased to move cards down a bit
-    marginBottom: spacing[0], // Add margin to create space before buttons
+    marginBottom: spacing[2], // Minimal margin before buttons
     zIndex: 1, // Ensure cards appear above image
     position: 'relative',
   },
@@ -228,44 +228,39 @@ export const notificationPermissionStyles = StyleSheet.create({
   },
 
   bottomSection: {
-    paddingBottom: spacing[0],
-    paddingTop: spacing[4],
+    paddingBottom: 30, // Match other onboarding screens
+    paddingTop: spacing[8], // Standardize with other onboarding screens
     alignItems: 'center',
     zIndex: 10, // Bring button to foreground
+    marginTop: 'auto', // Push buttons to bottom
   },
 
   nextButton: {
-    backgroundColor: '#5BA3B8', // Changed to brand blue color
-    paddingVertical: spacing[6], // Reduced from 10
-    paddingHorizontal: spacing[20], // Reduced from 32
-    borderRadius: 20, // Reduced from 24
-    minWidth: 80, // Reduced from 100
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
+    paddingHorizontal: 32, // Standard button padding to match other screens
+    height: 48, // Design principles height
+    borderRadius: 18, // Match other onboarding screens
+    minWidth: 200, // Match other onboarding screens
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.md,
-    shadowColor: '#5BA3B8', // Changed shadow to match button color
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25, // Increased shadow opacity
-    shadowRadius: 8,
-    elevation: 4,
+    // No shadow to match other onboarding screens
   },
 
   nextButtonText: {
     ...typography.body.md,
     fontWeight: '600',
-    color: '#FFFFFF', // Changed to white text for blue button
-    fontSize: 14, // Increased from 12
+    color: '#FFFFFF',
+    fontSize: 16, // Match other onboarding screens
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    letterSpacing: 0.2,
   },
 
   skipButton: {
     backgroundColor: 'transparent',
     paddingVertical: spacing[4], // Smaller padding for secondary action
     paddingHorizontal: spacing[16],
-    borderRadius: 20,
-    minWidth: 80,
+    borderRadius: 18, // Match other onboarding screens
+    minWidth: 200, // Match continue button width
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: spacing[3], // Small gap between buttons
@@ -275,7 +270,9 @@ export const notificationPermissionStyles = StyleSheet.create({
     ...typography.body.md,
     fontWeight: '500',
     color: '#6B7280', // Subtle gray for secondary action
-    fontSize: 14,
+    fontSize: 16, // Match continue button text size
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    letterSpacing: 0.2,
   },
 
   // Modal styles

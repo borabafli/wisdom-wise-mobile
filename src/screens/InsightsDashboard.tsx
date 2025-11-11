@@ -1,9 +1,10 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated, Alert, ImageBackground, Dimensions } from 'react-native';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Animated, Alert, ImageBackground, Dimensions, Modal } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
-import { CheckCircle2, ArrowRight, Plus, Trash2 } from 'lucide-react-native';
+import { CheckCircle2, ArrowRight, Plus, Trash2, X, Lightbulb, MessageCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigationBarStyle, navigationBarConfigs } from '../hooks/useNavigationBarStyle';
@@ -60,7 +61,6 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   const [sessionSummariesVisible, setSessionSummariesVisible] = useState(false);
   const [visionDetailsVisible, setVisionDetailsVisible] = useState(false);
   const [expandedMemoryInsights, setExpandedMemoryInsights] = useState<Set<string>>(new Set());
-  const [memoryInsightsSectionExpanded, setMemoryInsightsSectionExpanded] = useState(false);
   const [currentPatternIndex, setCurrentPatternIndex] = useState(0);
   const [motivationalCard, setMotivationalCard] = useState<{
     message: MotivationalMessage;
@@ -71,12 +71,16 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   const [nextExercise, setNextExercise] = useState<any>(null);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [weeklyHighlights, setWeeklyHighlights] = useState<MoodInsight[]>([]);
+  const [showDeeperInsightsExampleModal, setShowDeeperInsightsExampleModal] = useState(false);
 
 
 
-  useEffect(() => {
-    loadInsightData();
-  }, []);
+  // Load data when screen comes into focus (fixes real-time updates issue)
+  useFocusEffect(
+    useCallback(() => {
+      loadInsightData();
+    }, [])
+  );
 
 
 
@@ -363,30 +367,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     );
   };
 
-  const mockPatterns = [
-    {
-      id: 'mock_1',
-      originalThought: t('insights.mockData.patterns.presentationThought') || 'I will mess up this presentation',
-      reframedThought: t('insights.mockData.patterns.presentationReframe') || 'I am prepared and will do my best',
-      distortionTypes: ['All-or-Nothing Thinking'],
-      confidence: 0.85,
-      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
-      timestamp: new Date().toISOString(),
-      context: t('insights.mockData.patterns.presentationContext') || 'Work presentation'
-    },
-    {
-      id: 'mock_2',
-      originalThought: t('insights.mockData.patterns.jobThought') || 'I will never find a job',
-      reframedThought: t('insights.mockData.patterns.jobReframe') || 'Finding the right opportunity takes time',
-      distortionTypes: ['Catastrophizing'],
-      confidence: 0.92,
-      extractedFrom: { messageId: 'mock', sessionId: 'mock' },
-      timestamp: new Date().toISOString(),
-      context: t('insights.mockData.patterns.jobContext') || 'Job search'
-    }
-  ];
-
-  const displayPatterns = thinkingPatterns.length > 0 ? thinkingPatterns : mockPatterns;
+  // REMOVED: mockPatterns fallback - now showing empty state instead
+  // Users will see the empty state with "Show Example" button when no patterns exist
+  const displayPatterns = thinkingPatterns;
   console.log('[InsightsDashboard] Display patterns:', displayPatterns.length, displayPatterns);
 
   const handlePatternSwipeLeft = () => {
@@ -475,6 +458,37 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
     'Life Context'
   ];
 
+  // Example deeper insights data for the modal
+  const exampleDeeperInsights: Insight[] = [
+    {
+      id: 'example_1',
+      content: 'You frequently express worry about not being good enough, particularly in work situations. This pattern appears across multiple conversations where you discuss feeling inadequate despite positive feedback from others.',
+      category: 'Automatic Thoughts',
+      confidence: 0.85,
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week ago
+      sourceType: 'conversation',
+      userId: 'example'
+    },
+    {
+      id: 'example_2',
+      content: 'There\'s a recurring theme of seeking validation from others before making decisions. You often mention feeling uncertain and needing reassurance, which may stem from a deeper fear of making mistakes.',
+      category: 'Emotional Patterns',
+      confidence: 0.78,
+      date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
+      sourceType: 'conversation',
+      userId: 'example'
+    },
+    {
+      id: 'example_3',
+      content: 'You\'ve shown remarkable resilience when facing setbacks. When discussing challenges, you naturally shift toward problem-solving and growth-oriented thinking, demonstrating a core strength in adaptability.',
+      category: 'Personal Strengths',
+      confidence: 0.92,
+      date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 2 weeks ago
+      sourceType: 'conversation',
+      userId: 'example'
+    }
+  ];
+
   return (
     <SafeAreaWrapper style={styles.container}>
       <StatusBar style={statusBarStyle} backgroundColor="transparent" translucent />
@@ -507,7 +521,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           {/* Motivational Card - Daily Check-in */}
           <View style={styles.motivationalCard}>
             <LinearGradient
-              colors={['#FDFEFF', '#F9FCFA', '#F5FAF7']}
+              colors={['#FDFEFF', '#F5F9FF', '#EFF6FF']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.motivationalGradient}
@@ -707,6 +721,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
               onStartReflection={(valueId, prompt, valueName, valueDescription) => {
                 onInsightClick('value_reflection', { valueId, prompt, valueName, valueDescription });
               }}
+              onStartExercise={() => {
+                onInsightClick('exercise', { type: 'values-clarification' });
+              }}
               showBarChart={true}
               maxValues={4}
               onDelete={handleDeleteValueReflection}
@@ -726,29 +743,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
             onStartExercise={() => onInsightClick('exercise', { type: 'vision-of-future' })}
           />
 
-          {/* Session Summaries */}
+          {/* Memory Insights Section (moved above Session Summaries) */}
           <View style={styles.patternsCard}>
-            <TouchableOpacity style={styles.patternsHeader} onPress={() => setSessionSummariesVisible(true)} activeOpacity={0.7}>
-              <View style={styles.patternsIcon}>
-                <Image source={require('../../assets/images/New Icons/icon-10.png')} style={{ width: 60, height: 60 }} contentFit="contain" />
-              </View>
-              <View style={styles.patternsTitleContainer}>
-                <Text style={styles.patternsTitle}>{t('insights.sessionSummaries.title') || 'Session Summaries'}</Text>
-                <Text style={styles.patternsSubtitle}>{t('insights.sessionSummaries.subtitle') || 'Review your conversations'}</Text>
-              </View>
-              <View style={styles.patternArrow}>
-                <ArrowRight size={16} color="#1e40af" />
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Memory Insights Section */}
-          <View style={styles.patternsCard}>
-            <TouchableOpacity
-              style={styles.patternsHeader}
-              onPress={() => setMemoryInsightsSectionExpanded(!memoryInsightsSectionExpanded)}
-              activeOpacity={0.7}
-            >
+            <View style={styles.patternsHeader}>
               <View style={styles.patternsIcon}>
                 <Image source={require('../../assets/images/New Icons/icon-7.png')} style={{ width: 60, height: 60 }} contentFit="contain" />
               </View>
@@ -756,13 +753,9 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                 <Text style={styles.patternsTitle}>{t('insights.deeperInsights.title') || 'Deeper Insights'}</Text>
                 <Text style={styles.patternsSubtitle}>{t('insights.longTermPatterns') || 'Long-term patterns'}</Text>
               </View>
-              <View style={styles.patternArrow}>
-                <ArrowRight size={16} color="#d97706" style={memoryInsightsSectionExpanded ? { transform: [{ rotate: '90deg' }] } : {}} />
-              </View>
-            </TouchableOpacity>
+            </View>
 
-            {memoryInsightsSectionExpanded && (
-              memoryInsights.length > 0 ? (
+            {memoryInsights.length > 0 ? (
                 <View style={styles.patternsContainer}>
                   {memoryInsights.map((insight) => {
                     const isExpanded = expandedMemoryInsights.has(insight.id);
@@ -780,7 +773,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             {!isExpanded && <Text style={styles.insightPreview}>{previewText}</Text>}
 
                             <Text style={[styles.patternDescription, { marginTop: isExpanded ? 0 : 8 }]}>
-                              {getShortConfidenceLabel(insight.confidence, 'insight')} â€¢ {new Date(insight.date).toLocaleDateString()}
+                              {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
                             </Text>
 
                             {isExpanded && (
@@ -792,50 +785,108 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                                 <View style={styles.memoryActionButtons}>
                                   <ValuesReflectButton
                                     onPress={() => {
-                                      const prompt = t('insights.prompts.strengthReflection').replace('{{content}}', insight.content);
-                                      onInsightClick('strength_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
+                                      const prompt = t('insights.prompts.deeperInsightReflection')
+                                        .replace('{{category}}', categoryName)
+                                        .replace('{{content}}', insight.content);
+                                      onInsightClick('deeper_insight_reflection', { 
+                                        insightContent: insight.content, 
+                                        category: categoryName, 
+                                        prompt: prompt 
+                                      });
                                     }}
-                                    text={t('insights.actions.reflectOnStrengths')}
-                                    style={{ marginBottom: 8 }}
-                                  />
-
-                                  <ValuesReflectButton
-                                    onPress={() => {
-                                      const prompt = t('insights.prompts.emotionReflection').replace('{{content}}', insight.content);
-                                      onInsightClick('emotion_reflection', { insightContent: insight.content, category: insight.category, prompt: prompt });
-                                    }}
-                                    text={t('insights.actions.spendTimeWithEmotions')}
+                                    text={t('insights.actions.reflectOnThis')}
                                   />
                                 </View>
                               </>
                             )}
                           </View>
                           <View style={styles.patternArrow}>
-                            <ArrowRight size={16} color="#d97706" style={isExpanded ? { transform: [{ rotate: '90deg' }] } : {}} />
+                            <ArrowRight size={16} color="#1e40af" style={isExpanded ? { transform: [{ rotate: '90deg' }] } : {}} />
                           </View>
                         </View>
                       </TouchableOpacity>
                     );
                   })}
                 </View>
-              ) : (
-                <View style={{ padding: 20, alignItems: 'center' }}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#374151', marginBottom: 16, textAlign: 'center' }}>
-                    No Memory Insights Yet
-                  </Text>
-                  <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 20 }}>
-                    As you continue your sessions, long-term patterns and themes will be generated here in categories such as:
-                  </Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
-                    {memoryInsightCategories.map(category => (
-                      <View key={category} style={styles.distortionTag}>
-                        <Text style={styles.distortionTagText}>{category}</Text>
-                      </View>
-                    ))}
-                  </View>
+            ) : (
+              <View style={{ padding: 20, alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 20, paddingHorizontal: 10 }}>
+                  {t('insights.deeperInsights.emptyState.description') || 'As you continue your sessions, long-term patterns and themes will be generated here in categories such as:'}
+                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 24 }}>
+                  {memoryInsightCategories.map(category => (
+                    <View key={category} style={styles.distortionTag}>
+                      <Text style={styles.distortionTagText}>{category}</Text>
+                    </View>
+                  ))}
                 </View>
-              )
+
+                {/* Action buttons */}
+                <View style={{ flexDirection: 'row', gap: 12, width: '100%', maxWidth: 400, paddingHorizontal: 10 }}>
+                  {/* See Example Button */}
+                  <TouchableOpacity
+                    onPress={() => setShowDeeperInsightsExampleModal(true)}
+                    style={{
+                      flex: 1,
+                      borderWidth: 1.5,
+                      borderColor: '#5A88B5',
+                      borderRadius: 12,
+                      paddingVertical: 12,
+                      paddingHorizontal: 16,
+                      alignItems: 'center',
+                      backgroundColor: 'transparent',
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{
+                      color: '#5A88B5',
+                      fontSize: 14,
+                      fontWeight: '600',
+                    }}>
+                      {t('insights.deeperInsights.emptyState.seeExample') || 'See Example'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Start Session Button */}
+                  <TouchableOpacity
+                    onPress={() => onInsightClick('chat')}
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#5A88B5',
+                      borderRadius: 12,
+                      paddingVertical: 12,
+                      paddingHorizontal: 16,
+                      alignItems: 'center',
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={{
+                      color: '#FFFFFF',
+                      fontSize: 14,
+                      fontWeight: '600',
+                    }}>
+                      {t('insights.deeperInsights.emptyState.startSession') || 'Start Session'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             )}
+          </View>
+
+          {/* Session Summaries (moved below Deeper Insights) */}
+          <View style={styles.patternsCard}>
+            <TouchableOpacity style={styles.patternsHeader} onPress={() => setSessionSummariesVisible(true)} activeOpacity={0.7}>
+              <View style={styles.patternsIcon}>
+                <Image source={require('../../assets/images/New Icons/icon-10.png')} style={{ width: 60, height: 60 }} contentFit="contain" />
+              </View>
+              <View style={styles.patternsTitleContainer}>
+                <Text style={styles.patternsTitle}>{t('insights.sessionSummaries.title') || 'Session Summaries'}</Text>
+                <Text style={styles.patternsSubtitle}>{t('insights.sessionSummaries.subtitle') || 'Review your conversations'}</Text>
+              </View>
+              <View style={styles.patternArrow}>
+                <ArrowRight size={16} color="#1e40af" />
+              </View>
+            </TouchableOpacity>
           </View>
 
           {/* Therapy Goals */}
@@ -881,7 +932,7 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
                             <View style={[styles.goalProgressFill, { width: `${goal.progress}%` }]} />
                           </View>
                           <Text style={styles.patternDescription}>
-                            {goal.progress}% {t('insights.therapyGoals.complete') || 'complete'} â€¢ {goal.timeline || ''}
+                            {goal.progress}% {t('insights.therapyGoals.complete') || 'complete'} • {goal.timeline || ''}
                           </Text>
                         </View>
                       </View>
@@ -1039,6 +1090,190 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
           onInsightClick('vision_reflection', { visionInsight, prompt });
         }}
       />
+
+      {/* Deeper Insights Example Modal */}
+      <Modal
+        visible={showDeeperInsightsExampleModal}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowDeeperInsightsExampleModal(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 20,
+            marginHorizontal: 20,
+            maxHeight: '85%',
+            width: '90%',
+            maxWidth: 600,
+          }}>
+            {/* Header */}
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: 20,
+              borderBottomWidth: 1,
+              borderBottomColor: '#E5E7EB',
+            }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View style={{
+                  backgroundColor: '#EFF6FF',
+                  padding: 8,
+                  borderRadius: 10,
+                }}>
+                  <Lightbulb size={24} color="#5A88B5" />
+                </View>
+                <View>
+                  <Text style={{
+                    fontSize: 20,
+                    fontWeight: '700',
+                    color: '#1F2937',
+                  }}>
+                    {t('insights.deeperInsights.exampleModal.title') || 'Deeper Insights Examples'}
+                  </Text>
+                  <View style={{
+                    backgroundColor: '#FEF3C7',
+                    paddingHorizontal: 12,
+                    paddingVertical: 4,
+                    borderRadius: 12,
+                    marginTop: 4,
+                  }}>
+                    <Text style={{
+                      fontSize: 12,
+                      fontWeight: '600',
+                      color: '#d97706',
+                    }}>
+                      {t('insights.deeperInsights.exampleModal.badge') || 'EXAMPLE'}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => setShowDeeperInsightsExampleModal(false)}
+                style={{
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: '#F3F4F6',
+                }}
+              >
+                <X size={20} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Scrollable Content */}
+            <ScrollView style={{ maxHeight: '70%' }}>
+              <View style={{ padding: 20 }}>
+                {/* Description */}
+                <View style={{
+                  backgroundColor: '#EFF6FF',
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 20,
+                }}>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#374151',
+                    lineHeight: 20,
+                  }}>
+                    {t('insights.deeperInsights.exampleModal.description') || 'As you interact with Anu through chat sessions, these long-term patterns and themes will be automatically identified and organized for you.'}
+                  </Text>
+                </View>
+
+                {/* Example Insights */}
+                {exampleDeeperInsights.map((insight, index) => {
+                  const categoryName = getCategoryDisplayName(insight.category);
+                  return (
+                    <View key={insight.id} style={{
+                      backgroundColor: '#F9FAFB',
+                      borderRadius: 12,
+                      padding: 16,
+                      marginBottom: 16,
+                      borderLeftWidth: 4,
+                      borderLeftColor: '#5A88B5',
+                    }}>
+                      {/* Category Badge */}
+                      <View style={{
+                        backgroundColor: '#EFF6FF',
+                        paddingHorizontal: 10,
+                        paddingVertical: 6,
+                        borderRadius: 8,
+                        alignSelf: 'flex-start',
+                        marginBottom: 12,
+                      }}>
+                        <Text style={{
+                          fontSize: 12,
+                          fontWeight: '600',
+                          color: '#5A88B5',
+                        }}>
+                          {categoryName}
+                        </Text>
+                      </View>
+
+                      {/* Insight Content */}
+                      <Text style={{
+                        fontSize: 14,
+                        color: '#374151',
+                        lineHeight: 22,
+                        marginBottom: 12,
+                      }}>
+                        {insight.content}
+                      </Text>
+
+                      {/* Metadata */}
+                      <Text style={{
+                        fontSize: 12,
+                        color: '#9CA3AF',
+                      }}>
+                        {getShortConfidenceLabel(insight.confidence, 'insight')} • {new Date(insight.date).toLocaleDateString()}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+
+            {/* Bottom Action */}
+            <View style={{
+              padding: 20,
+              borderTopWidth: 1,
+              borderTopColor: '#E5E7EB',
+            }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowDeeperInsightsExampleModal(false);
+                  onInsightClick('chat');
+                }}
+                style={{
+                  backgroundColor: '#5A88B5',
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  paddingHorizontal: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                }}
+                activeOpacity={0.8}
+              >
+                <MessageCircle size={20} color="#FFFFFF" />
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: 16,
+                  fontWeight: '600',
+                }}>
+                  {t('insights.deeperInsights.exampleModal.action') || 'Start Session with Anu'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaWrapper>
   );
 };

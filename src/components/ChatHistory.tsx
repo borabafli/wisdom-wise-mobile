@@ -158,9 +158,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ visible, onClose, onOpenSessi
           ) : sessions.length === 0 ? (
             <View style={styles.emptyContainer}>
               <MessageCircle size={48} color="#6BB3A5" />
-              <Text style={styles.emptyTitle}>No Saved Conversations</Text>
+              <Text style={styles.emptyTitle}>No Conversations Yet</Text>
               <Text style={styles.emptySubtitle}>
-                Your conversation history will appear here after you save sessions
+                Start chatting with Anu and your conversations will automatically be saved here
               </Text>
             </View>
           ) : (

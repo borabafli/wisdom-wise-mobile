@@ -18,18 +18,45 @@
     "saving": "Saving..."
   },
   "alerts": {
+    "signOut": {
+      "title": "Sign Out",
+      "message": "Are you sure you want to sign out?"
+    },
     "deleteSession": {
       "title": "Delete Session",
-      "message": "Are you sure you want to delete this conversation? This cannot be undone.",
-      "delete": "Delete"
+      "message": "Are you sure you want to delete this session?"
     },
     "clearAllHistory": {
       "title": "Clear All History",
       "message": "Are you sure you want to delete all saved conversations? This cannot be undone.",
       "clearAll": "Clear All"
     },
+    "clearHistory": {
+      "title": "Clear All History",
+      "message": "Are you sure you want to clear all your chat history? This action cannot be undone."
+    },
     "deleteSessionError": "Failed to delete session. Please try again.",
-    "clearHistoryError": "Failed to clear history. Please try again."
+    "clearHistoryError": "Failed to clear history. Please try again.",
+    "resetProgress": {
+      "title": "Reset Progress",
+      "message": "This will reset all your progress. This action cannot be undone."
+    },
+    "promptsGenerated": {
+      "title": "Prompts Generated!",
+      "message": "Generated {{count}} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the \"Writing Prompts\" section."
+    },
+    "goalStatus": {
+      "title": "Goal Status Updated",
+      "message": "Goal marked as {{status}}!"
+    },
+    "progressSaved": {
+      "title": "Great!",
+      "message": "Your progress has been recorded."
+    },
+    "checkIn": {
+      "title": "Check-in Complete",
+      "message": "Thank you for sharing your progress!"
+    }
   },
   "navigation": {
     "home": "Home",
@@ -114,7 +141,27 @@
     "stepNumber": "Step {{number}}",
     "stepsCount": "{{count}} step",
     "stepsCount_other": "{{count}} steps",
-    "steps": "Steps"
+    "steps": "Steps",
+    "filters": {
+      "all": "All",
+      "durations": {
+        "1-5": "1-5 min",
+        "5-15": "5-15 min",
+        "15-30": "15-30 min",
+        "30+": "30+ min"
+      },
+      "benefits": {
+        "anxiety": "Anxiety",
+        "depressionMood": "Depression / Mood",
+        "selfDiscovery": "Self-Discovery",
+        "mentalClarity": "Mental Clarity",
+        "stressRelief": "Stress Relief",
+        "focus": "Focus",
+        "emotionalBalance": "Emotional Balance",
+        "breathing": "Breathing",
+        "withoutBreathing": "Without Breathing"
+      }
+    }
   },
   "insights": {
     "title": "Insights",
@@ -126,9 +173,21 @@
     "patterns": "Patterns",
     "goals": "Goals",
     "memoryInsights": "Memory Insights",
+    "noMemoryInsights": "No Memory Insights Yet",
     "longTermPatterns": "Long-term patterns & themes",
     "deeperInsights": {
-      "title": "Deeper Insights"
+      "title": "Deeper Insights",
+      "emptyState": {
+        "description": "As you continue your sessions, long-term patterns and themes will be generated here in categories such as:",
+        "seeExample": "See Example",
+        "startSession": "Start Session"
+      },
+      "exampleModal": {
+        "title": "Deeper Insights Examples",
+        "badge": "EXAMPLE",
+        "description": "As you interact with Anu through chat sessions, these long-term patterns and themes will be automatically identified and organized for you.",
+        "action": "Start Session with Anu"
+      }
     },
     "deleteConfirm": {
       "title": "Delete Insight?",
@@ -154,6 +213,29 @@
       "pagination": "{{current}} of {{total}}",
       "swipeToExplore": "Swipe to explore",
       "reflectionPrompt": "Reflect on this",
+      "deleteValue": "Delete value",
+      "deleteReflection": "Delete reflection",
+      "loading": "Loading your values...",
+      "discover": "Discover Your Core Values",
+      "completeExercise": "Complete the Values Exploration exercise to identify what truly matters to you",
+      "startExercise": "Start Exercise",
+      "generateSample": "Generate Sample",
+      "reflections": "Reflections",
+      "viewReflectionSingle": "View Reflection",
+      "viewReflections": "View {{count}} Reflections",
+      "prompt": "Prompt",
+      "keyInsights": "Key Insights",
+      "emptyState": {
+        "title": "Discover Your Core Values",
+        "description": "Complete the Values Exploration exercise to identify what truly matters to you",
+        "seeExample": "See Example",
+        "startExercise": "Start Exercise"
+      },
+      "exampleModal": {
+        "badge": "EXAMPLE",
+        "infoMessage": "This is an example of what you'll see after completing the Values Exploration exercise. Your personal values will be identified and displayed here.",
+        "startButton": "Start Values Exercise"
+      },
       "prompts": {
         "liveToday": "How did you live this value today?",
         "feltAligned": "When did you feel most aligned with this value recently?",
@@ -168,7 +250,35 @@
     },
     "sessionSummaries": {
       "title": "Session Summaries",
-      "subtitle": "Sessions analyzed"
+      "subtitle": "Review your conversations",
+      "analyzedCount": "{{count}} sessions analyzed",
+      "filters": {
+        "all": "All ({{count}})",
+        "sessions": "Sessions ({{count}})",
+        "themes": "Patterns ({{count}})"
+      },
+      "infoCard": {
+        "title": "How your summaries work",
+        "body": "Hi {{name}}, when you save a conversation (except Vision exercises), Anu creates a recap from the last 30 messages. Only the summary, date, and message count remain on your device—delete anytime.",
+        "meta": {
+          "timing": "Created after saving",
+          "storage": "Stored privately",
+          "consolidated": "Patterns after 10+"
+        },
+        "highlight": "Ten summaries unlock a Pattern Overview."
+      },
+      "badges": {
+        "session": "Session",
+        "consolidated": "Consolidated"
+      },
+      "sessionTitle": "Session {{number}}",
+      "themesTitle": "Pattern Overview",
+      "consolidatedInfo": "Based on {{count}} sessions",
+      "emptyState": {
+        "title": "No Session Summaries Yet",
+        "description": "Finish a saved conversation with Anu and your personalized recap will appear here."
+      },
+      "loading": "Loading summaries..."
     },
     "therapyGoals": {
       "title": "Therapy Goals",
@@ -216,7 +326,8 @@
     "prompts": {
       "visionReflection": "I see that you've created a beautiful vision of your future self. You described your future self as embodying qualities like: {{qualities}}. Your vision was: \"{{description}}\"\n\nI'd love to explore this vision with you. What aspects of this future self feel most inspiring to you right now? And what small step could you take today to embody a little more of these qualities?",
       "strengthReflection": "I noticed from your memory insights that you have some strengths and positive patterns. Let's take a moment to reflect on these strengths: \"{{content}}\"\n\nWhat do you think makes these strengths particularly meaningful to you? How might you lean into these strengths more in your daily life?",
-      "emotionReflection": "I see that you have some deep emotional insights from our conversations: \"{{content}}\"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?"
+      "emotionReflection": "I see that you have some deep emotional insights from our conversations: \"{{content}}\"\n\nSometimes it's valuable to spend time with our emotions and understand what they're telling us. What emotions come up for you when you read this insight? What might these emotions be trying to communicate to you?",
+      "deeperInsightReflection": "I've noticed an important pattern emerging from our conversations about {{category}}:\n\n\"{{content}}\"\n\nThis is a meaningful insight about you. I'd love to explore this further with you. What resonates with you about this pattern? How does it show up in your daily life, and what would you like to understand more deeply about it?"
     },
     "moodInsights": {
       "distortedThought": "Distorted Thought",
@@ -226,10 +337,35 @@
       "trackMoodJourney": "Track your emotional journey",
       "yourThoughts": "Your Thoughts",
       "identifyPatterns": "Identify and reframe patterns",
+      "lastWeek": "Last Week",
+      "thisWeek": "This Week",
+      "noMoodData": "No mood data available",
+      "trackMoodPrompt": "Track your mood to see insights here",
+      "moodLabels": {
+        "great": "Great",
+        "positive": "Positive",
+        "okay": "Okay",
+        "challenging": "Challenging",
+        "difficult": "Difficult",
+        "noData": "No data"
+      },
+      "noDataYet": "No mood data yet",
       "weeklyTrend": {
         "improving": "↗ Improving",
         "steady": "↔ Steady",
         "declining": "↘ Declining"
+      },
+      "emptyState": {
+        "encouragement": "Chat with Anu to see your mood patterns",
+        "trackProgress": "Your journey starts here",
+        "seeExample": "See Example",
+        "startTracking": "Start Tracking"
+      },
+      "exampleModal": {
+        "badge": "EXAMPLE",
+        "title": "Mood Tracking Example",
+        "description": "This example shows how mood tracking helps identify patterns over time. Notice the ups and downs throughout the week and how your mood improves toward the end.",
+        "action": "Got It, Start Tracking"
       },
       "emptyStates": {
         "startJourney": "Start your wellness journey! ✨",
@@ -241,6 +377,13 @@
         "niceProgress": "Nice progress with Anu! 💬",
         "keepBuilding": "Keep building your insights! ⭐",
         "checkingData": "Checking your data... ✨"
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Try the Automatic Thoughts Exercise",
+        "emptyStateDescription": "Chat with Anu about a specific thought that's bothering you, and we'll help you identify distorted thinking patterns and find balanced perspectives",
+        "seeExample": "See Example",
+        "startExercise": "Start Exercise",
+        "exampleModalInfo": "This is what a thinking pattern looks like. Try the Automatic Thoughts exercise to create your own!"
       }
     },
     "weeklyHighlights": {
@@ -332,17 +475,28 @@
     "memberSince": "Member since",
     "anonymousGuest": "Anonymous Guest",
     "stats": {
-      "sessions": "Sessions",
-      "streak": "Streak",
-      "insights": "Insights",
-      "exercises": "Exercises",
+      "sessions": "Conversations",
+      "streak": "Day Streak",
+      "insights": "Thought Patterns",
+      "exercises": "Exercises Completed",
       "daysStreak": "7 days",
       "days": "{{count}} day",
       "days_plural": "{{count}} days"
     },
     "fallbackName": "Friend",
-    "welcomeMessage": "Welcome to WisdomWise",
+    "welcomeMessage": "Welcome to ZenMind",
     "premiumMember": "Premium Member",
+    "planStatus": {
+      "premium": "✨ Premium Member",
+      "free": "🆓 Free Plan",
+      "guest": "Guest • Free Plan"
+    },
+    "freePlanCard": {
+      "title": "Access all self-discovery tools and guided exercises",
+      "subtitle": "Upgrade to Mind Wise Premium to continue beyond your daily message limit and unlock the full library of guidance.",
+      "cta": "Subscribe",
+      "tag": "Free Tier"
+    },
     "yourProgress": "Your Progress",
     "menu": {
       "editProfile": "Edit Profile",
@@ -351,10 +505,13 @@
       "restartOnboarding": "Restart Onboarding",
       "notifications": "Notifications",
       "privacy": "Privacy & Security",
+      "dataPrivacy": "Your Data & Privacy",
       "darkMode": "Dark Mode",
       "help": "Help & Support",
       "signOut": "Sign Out",
-      "language": "Language"
+      "language": "Language",
+      "createAccount": "Create Account",
+      "featureRequest": "Request Feature"
     },
     "menuSubtitles": {
       "editProfile": "Update your information",
@@ -363,10 +520,13 @@
       "restartOnboarding": "View intro again",
       "notifications": "Manage alerts",
       "privacy": "Control your data",
+      "dataPrivacy": "How we protect and handle your information",
       "darkMode": "Toggle dark theme",
       "help": "Get assistance",
       "signOut": "Leave your account",
       "language": "Change the app language",
+      "createAccount": "Save your progress and access all features",
+      "featureRequest": "Share your ideas with us",
       "default": "Tap to access"
     },
     "restartOnboarding": {
@@ -374,8 +534,73 @@
       "message": "This will take you back to the introduction screens. Your data will not be affected.",
       "confirm": "Restart"
     },
+    "alerts": {
+      "createAccount": {
+        "title": "Create Account",
+        "message": "Sign up to save your progress and access all features!",
+        "confirm": "Sign Up",
+        "cancel": "Maybe Later"
+      },
+      "notificationPermission": {
+        "title": "Permission Required",
+        "message": "Test notifications require notification permissions to be enabled.",
+        "messageSettings": "Please enable notifications in your device settings to test notifications.",
+        "openSettings": "Open Settings",
+        "notNow": "Not Now"
+      }
+    },
     "version": "Version 1.0.0",
-    "madeWith": "Made with 💙 for your wellness"
+    "madeWith": "Made with 💙 for your wellness",
+    "deleteData": {
+      "title": "Delete My Data",
+      "summaryMessage": "You're about to delete all your data:\n\n• {{sessions}} chat sessions\n• {{thoughts}} thought patterns\n• {{moods}} mood ratings\n• {{goals}} goals\n• {{values}} values\n\nTotal: {{total}} items\n\nThis action cannot be undone.",
+      "continue": "Continue",
+      "confirmTitle": "Are You Sure?",
+      "confirmMessage": "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone.",
+      "deleteButton": "Delete Everything",
+      "deleting": "Deleting Data",
+      "pleaseWait": "Please wait while we delete your data...",
+      "successTitle": "Data Deleted",
+      "successMessage": "Successfully deleted:\n\n• {{sessions}} chat sessions\n• {{thoughts}} thought patterns\n• {{moods}} mood ratings\n\nTotal: {{total}} items removed",
+      "partialSuccessTitle": "Partial Deletion",
+      "partialSuccessMessage": "Some data was deleted, but errors occurred:\n\n{{errors}}",
+      "errorMessage": "Failed to delete data. Please try again."
+    }
+  },
+  "featureRequest": {
+    "title": "Request a Feature",
+    "description": "We'd love to hear your ideas! Share what features or improvements you'd like to see in ZenMind.",
+    "placeholder": "Share your feature idea with us...",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "characterCount": "{{count}}/500 characters",
+    "successTitle": "Thank You!",
+    "successMessage": "Your feature request has been submitted. We appreciate your feedback!",
+    "errorTitle": "Submission Failed",
+    "errorMessage": "Unable to submit your request. Please try again later.",
+    "tooShort": "Please write at least 10 characters",
+    "tooLong": "Please keep your request under 500 characters",
+    "infoText": "Your feedback helps us improve ZenMind. We review all feature requests and prioritize based on user needs.",
+    "discardTitle": "Discard Request?",
+    "discardMessage": "You have unsaved changes. Are you sure you want to discard your feature request?",
+    "discard": "Discard"
+  },
+  "helpSupport": {
+    "title": "Help & Support",
+    "description": "Need help or have questions? Share your concerns, report issues, or request support. We're here to help!",
+    "placeholder": "Describe your issue or question...",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "characterCount": "{{count}}/500 characters",
+    "successTitle": "Message Received!",
+    "successMessage": "Your support request has been submitted. We'll get back to you soon!",
+    "errorTitle": "Submission Failed",
+    "errorMessage": "Unable to submit your request. Please try again later.",
+    "tooShort": "Please write at least 10 characters",
+    "tooLong": "Please keep your message under 500 characters",
+    "discardTitle": "Discard Message?",
+    "discardMessage": "You have unsaved changes. Are you sure you want to discard your message?",
+    "discard": "Discard"
   },
   "chat": {
     "title": "Chat with Anu",
@@ -395,8 +620,9 @@
     "therapeuticExercise": "{{duration}} • Therapeutic Exercise",
     "loadingSpace": "Preparing your safe space...",
     "safeSpace": "Your safe space for reflection",
-    "almostAtLimit": "Almost at daily limit! {{remaining}} left.",
+    "almostAtLimit": "Almost at your daily limit. {{remaining}} left today.",
     "limitUsed": "{{percentage}}% of daily limit used.",
+    "limitReachedBanner": "Daily limit reached. Messages reset at midnight.",
     "endReflection": "End Reflection",
     "typeOrSpeak": "Type or speak...",
     "composeMessage": "Compose Message",
@@ -406,6 +632,11 @@
       "title": "How are you feeling right now?",
       "subtitle": "Rate your current mood",
       "saved": "Saved!"
+    },
+    "moodRatingCard": {
+      "title": "Before we finish...",
+      "howDoYouFeelNow": "How do you feel right now?",
+      "howHelpfulWasThis": "How helpful was this?"
     },
     "visionSummary": {
       "title": "Vision Summary",
@@ -439,6 +670,15 @@
       "keyInsights": "Key Insights",
       "continueGoals": "Continue Goals",
       "saveGoals": "Save Goals"
+    },
+    "exitConfirmation": {
+      "title": "End session with Anu?",
+      "message": "Your conversation will be saved privately on your device.",
+      "exerciseTitle": "End session with Anu?",
+      "exerciseMessage": "Your progress will be saved and you can continue anytime.",
+      "confirmButton": "End Session",
+      "cancelButton": "Keep Chatting",
+      "allowInsightsLabel": "Let Anu reflect on this session to support your growth"
     }
   },
   "mood": {
@@ -495,17 +735,17 @@
     ],
     "continue": "Continue",
     "previousReflections": "Your Previous Reflections:",
+    "saveModalTitle": "Save your session?",
+    "save": "Save",
+    "dontSaveButton": "Don't Save",
     "pleaseWriteSomething": "Please write something",
     "entryCannotBeEmpty": "Your journal entry cannot be empty.",
     "failedNextQuestion": "Failed to generate next question. Please try again.",
+    "failedToSaveDraft": "Failed to save draft.",
     "journalSaved": "Journal Saved",
     "entrySavedPolished": "Your entry has been saved and polished!",
     "entrySaved": "Your journal entry has been saved!",
     "failedToSave": "Failed to save your journal entry. Please try again.",
-    "failedToSaveDraft": "Failed to save your draft. Please try again.",
-    "saveModalTitle": "Save Session?",
-    "save": "Save",
-    "dontSaveButton": "Don't Save",
     "failedToLoad": "Failed to load journal data. Please try again.",
     "failedToDelete": "Failed to delete entry. Please try again."
   },
@@ -533,6 +773,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Create Your Account",
+      "subtitle": "Start your mindful wellness journey with Anu",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "firstNamePlaceholder": "First name",
+      "lastNamePlaceholder": "Last name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "passwordStrength": "Password strength: {{strength}}",
+      "passwordStrengthWeak": "Weak",
+      "passwordStrengthMedium": "Medium",
+      "passwordStrengthStrong": "Strong",
+      "privacyAccept": "I accept the",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "termsOfService": "Terms of Service",
+      "createAccountButton": "Create Account",
+      "creatingAccount": "Creating Account...",
+      "orDivider": "or",
+      "googleButton": "Continue with Google",
+      "alreadyHaveAccount": "Already have an account? Sign in",
+      "failedToOpenPrivacy": "Unable to open privacy policy. Please try again later.",
+      "failedToOpenTerms": "Unable to open terms of service. Please try again later."
+    },
+    "signIn": {
+      "title": "Welcome Back to WisdomWise",
+      "subtitle": "Continue your mindful wellness journey",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "signInButton": "Sign In",
+      "signingIn": "Signing In...",
+      "orDivider": "or",
+      "googleButton": "Continue with Google",
+      "noAccount": "Don't have an account? Sign up"
+    },
+    "verification": {
+      "title": "Check Your Email",
+      "subtitle": "We sent a verification link to",
+      "instructions": "Please check your inbox and click the verification link to activate your account.",
+      "subInstructions": "The link will expire in 24 hours. Can't find it? Check your spam folder.",
+      "resendButton": "Resend Verification Email",
+      "resending": "Sending...",
+      "checkStatusButton": "I've Verified, Continue",
+      "checking": "Checking...",
+      "backToSignIn": "Back to Sign In"
     }
   },
   "errors": {
@@ -956,40 +1252,6 @@
       "description": "Browse all exercises"
     }
   },
-  "alerts": {
-    "signOut": {
-      "title": "Sign Out",
-      "message": "Are you sure you want to sign out?"
-    },
-    "deleteSession": {
-      "title": "Delete Session",
-      "message": "Are you sure you want to delete this session?"
-    },
-    "resetProgress": {
-      "title": "Reset Progress",
-      "message": "This will reset all your progress. This action cannot be undone."
-    },
-    "promptsGenerated": {
-      "title": "Prompts Generated!",
-      "message": "Generated {{count}} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the \"Writing Prompts\" section."
-    },
-    "clearHistory": {
-      "title": "Clear All History",
-      "message": "Are you sure you want to clear all your chat history? This action cannot be undone."
-    },
-    "goalStatus": {
-      "title": "Goal Status Updated",
-      "message": "Goal marked as {{status}}!"
-    },
-    "progressSaved": {
-      "title": "Great!",
-      "message": "Your progress has been recorded."
-    },
-    "checkIn": {
-      "title": "Check-In Complete",
-      "message": "Thank you for sharing your progress!"
-    }
-  },
   "visionDetails": {
     "title": "Vision of Myself",
     "visionsCreated": "{{count}} vision{{plural}} created",
@@ -1047,25 +1309,54 @@
     "valueProp": {
       "title": "Your Journey to Wellbeing Starts Here",
       "description": "Discover personalized tools and gentle guidance to support your mental health journey.",
-      "continueButton": "Get Started"
+      "continueButton": "Get Started",
+      "pages": {
+        "page1": {
+          "title": "Think Clearly, Feel Better",
+          "description": "Spot unhelpful thoughts and gently reframe them with science-backed CBT techniques."
+        },
+        "page2": {
+          "title": "Understand Yourself Better",
+          "description": "See meaningful patterns in your thoughts and feelings so you know where to focus your growth."
+        },
+        "page3": {
+          "title": "Guided Growth, Always Ready",
+          "description": "Anu knows your next best step and recommends exercises designed just for you."
+        },
+        "page4": {
+          "title": "Progress You Can See",
+          "description": "Track your journey with saved exercises, insights, and milestones in one calm place."
+        }
+      },
+      "letsBegin": "Let's begin"
     },
     "personalValues": {
-      "headline": "Let's personalize your experience with Anu.",
-      "promptText": "What values matter most to you? Choose the ones that feel right.",
-      "continueButton": "Continue"
+      "headline": "Personalize your experience.",
+      "promptText": "Choose the right one",
+      "continueButton": "Continue",
+      "values": {
+        "healthVitality": "Health & Vitality",
+        "closeRelationships": "Close Relationships",
+        "growthLearning": "Growth & Learning",
+        "peaceBalance": "Peace & Balance",
+        "freedomIndependence": "Freedom & Independence",
+        "purposeMeaning": "Purpose & Meaning",
+        "creativityPlay": "Creativity & Play",
+        "achievementProgress": "Achievement & Progress"
+      }
     },
     "focusAreas": {
       "headline": "What would you like to focus on?",
       "promptText": "Select the areas where you'd like support. You can always change these later.",
       "areas": {
-        "anxiety": "Anxiety",
-        "stress": "Stress",
-        "sleepIssues": "Sleep Issues",
-        "lowMood": "Low Mood",
-        "focusProblems": "Focus Problems",
-        "relationshipIssues": "Relationship Issues",
-        "workPressure": "Work Pressure",
-        "selfConfidence": "Self-Confidence"
+        "feelCalmer": "Feel calmer",
+        "handleStress": "Handle stress better",
+        "sleepBetter": "Sleep better",
+        "brighterMood": "Lift my mood",
+        "focusDrive": "Boost focus & drive",
+        "confidenceSelfWorth": "Grow confidence & self-worth",
+        "relationshipsCommunication": "Improve relationships & communication",
+        "somethingElse": "Something else"
       },
       "continueButton": "Continue"
     },
@@ -1083,15 +1374,15 @@
       "continueButton": "Continue"
     },
     "personalization": {
-      "headline": "What's your name",
-      "promptText": "Choose how Anu should call you.",
+      "headline": "Personalize your experience.",
+      "promptText": "Choose the right one",
       "placeholder": "Your preferred name",
       "caption": "You can always change this later in settings",
       "continueButton": "Continue",
       "skipButton": "Skip for now"
     },
     "motivation": {
-      "title": "Tell me more about what brings you here",
+      "title": "💬 Tell me more about what brings you here",
       "subtitle": "This helps me understand how to best support you",
       "inputLabel": "Share what's on your mind",
       "placeholder": "I've been feeling overwhelmed at work and...",
@@ -1114,14 +1405,14 @@
       "skipButton": "Skip for now"
     },
     "baseline": {
-      "title": "Let's check in",
+      "title": "🌟 Let's check in",
       "subtitle": "This helps me track your progress over time",
       "moodLabel": "How's your mood today?",
       "continueButton": "Continue",
       "skipButton": "Skip for now"
     },
     "final": {
-      "mainTitle": "We're preparing your personal path forward...",
+      "mainTitle": "✨ We're preparing your personal path forward...",
       "subtitle": "Setting up your personalized experience with evidence-based tools",
       "features": {
         "analyzing": {
@@ -1137,7 +1428,7 @@
           "description": "Setting up personalized resources"
         }
       },
-      "continueButton": "Enter WisdomWise"
+      "continueButton": "Enter ZenMind"
     },
     "notifications": {
       "mainTitle": "Wellbeing grows with small, daily steps.",
@@ -1148,7 +1439,7 @@
           "label": "Morning Reflection",
           "description": "Start with intention"
         },
-        "afternoon": {
+        "daytime": {
           "label": "Midday Check-in",
           "description": "Pause and breathe"
         },
@@ -1159,6 +1450,7 @@
       },
       "timePickerTitle": "Select Time",
       "enableButton": "Enable Reminders",
+      "continueButton": "Continue",
       "skipButton": "Skip for Now",
       "saveButton": "Save",
       "cancelButton": "Cancel",
@@ -1171,13 +1463,13 @@
             "step1": "1. Tap \"Open Settings\" below",
             "step2": "2. Toggle on \"Allow Notifications\"",
             "step3": "3. Choose your preferred notification style",
-            "step4": "4. Return to WisdomWise when done"
+            "step4": "4. Return to ZenMind when done"
           },
           "android": {
             "step1": "1. Tap \"Open Settings\" below",
             "step2": "2. Turn on \"Show notifications\"",
             "step3": "3. Choose your notification preferences",
-            "step4": "4. Press back to return to WisdomWise"
+            "step4": "4. Press back to return to ZenMind"
           }
         },
         "buttons": {
@@ -1186,6 +1478,34 @@
           "openSettings": "Open Settings",
           "notNow": "Not Now"
         }
+      },
+      "settings": {
+        "title": "Notification Settings",
+        "loadingSettings": "Loading settings...",
+        "enableNotifications": "Enable notifications to receive mindful reminders",
+        "enable": "Enable",
+        "dailyReminders": "Daily Reminders",
+        "dailyRemindersDescription": "Pick the times that work best for your daily wellbeing practice.",
+        "addCustomReminder": "Add Custom Reminder",
+        "createCustomReminder": "Create your own reminder time",
+        "infoText": "You can customize these reminders anytime. Long press custom reminders to delete them. Notifications help maintain consistency in your mindfulness practice.",
+        "saveChanges": "Save Changes",
+        "settingsSaved": "Settings Saved",
+        "preferencesUpdated": "Your notification preferences have been updated.",
+        "enableToReceive": "Enable notifications to receive reminders.",
+        "failedToSave": "Failed to save settings. Please try again.",
+        "notificationsEnabled": "Notifications Enabled",
+        "willReceiveReminders": "You'll now receive mindful reminders.",
+        "failedToEnable": "Failed to enable notifications. Please try again.",
+        "error": "Error",
+        "deleteReminder": "Delete Reminder",
+        "deleteReminderConfirm": "Are you sure you want to delete this reminder?",
+        "delete": "Delete",
+        "failedToAdd": "Failed to add custom reminder.",
+        "failedToDelete": "Failed to delete reminder.",
+        "customReminderLabel": "Enter a label for your custom reminder",
+        "customReminderPlaceholder": "e.g., Before Bed, After Lunch",
+        "add": "Add"
       }
     },
     "common": {
@@ -1196,6 +1516,68 @@
       "doneButton": "Done",
       "loading": "Loading...",
       "selectPlaceholder": "Select an option"
+    }
+  },
+  "paywall": {
+    "title": "Begin Your Healing Journey",
+    "subtitle": "Start with a 3-day free trial",
+    "loading": "Loading subscription options...",
+    "processing": "Processing your purchase...",
+    "features_title": "What You'll Unlock",
+    "best_value": "Best Value",
+    "plan": {
+      "monthly": "Monthly",
+      "annual": "Annual"
+    },
+    "period": {
+      "month": "month",
+      "year": "year"
+    },
+    "per_period": "per {{period}}",
+    "trial_days": "{{days}}-day free trial",
+    "save_percent": "Save {{percent}}%",
+    "monthly_equivalent": "Only {{price}}/month",
+    "features": {
+      "unlimited_conversations": "Unlimited AI conversations",
+      "unlimited_voice": "Unlimited voice journaling",
+      "full_exercises": "Full CBT exercise library",
+      "advanced_insights": "Advanced insights & patterns",
+      "unlimited_journaling": "Unlimited guided journaling",
+      "full_history": "Full chat history"
+    },
+    "cta_primary": "Start 3-Day Free Trial",
+    "cta_secondary": "Continue with Free",
+    "legal": "Cancel anytime. Subscription renews automatically after trial.",
+    "limit_reached": {
+      "title": "You've reached your daily limit",
+      "subtitle": "Upgrade to continue your journey without limits",
+      "messages": "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access.",
+      "voice": "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access.",
+      "exercises": "You've completed your daily exercise. Upgrade for unlimited exercises.",
+      "journal_prompts": "You've used your daily journal prompt. Upgrade for unlimited prompts.",
+      "cta": "Unlock Premium",
+      "dismiss": "Not Now",
+      "reset_info": "Your free limit resets tomorrow"
+    },
+    "feature_locked": {
+      "title": "Premium Feature",
+      "exercise": "This exercise is available in premium. Upgrade to access the full library.",
+      "insights": "Advanced insights are available in premium. Upgrade to unlock deeper analysis.",
+      "history": "Full chat history is available in premium. Upgrade to access all your past conversations.",
+      "cta": "Upgrade to Premium"
+    },
+    "subscription_management": {
+      "title": "Subscription",
+      "current_plan": "Current Plan",
+      "free_plan": "Free Plan",
+      "premium_plan": "Premium Plan",
+      "trial_active": "Trial Active",
+      "expires_on": "Renews on {{date}}",
+      "expired_on": "Expired on {{date}}",
+      "manage": "Manage Subscription",
+      "upgrade": "Upgrade to Premium",
+      "restore": "Restore Purchases",
+      "restoring": "Restoring..."
     }
   }
 }

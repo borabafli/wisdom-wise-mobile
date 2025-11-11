@@ -152,7 +152,75 @@ export const profileScreenStyles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 40, // Reduced from 120 to remove excessive bottom space
+  },
+  planCardContainer: {
+    paddingHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing[8],
+  },
+  planCardGradient: {
+    borderRadius: spacing.radius.xl,
+    padding: spacing[12],
+    shadowColor: 'rgba(31, 79, 76, 0.15)',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(31, 79, 76, 0.12)',
+  },
+  planCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing[4],
+  },
+  planCardTag: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
+    color: '#1F4F4C',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    backgroundColor: 'rgba(31, 79, 76, 0.12)',
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1],
+    borderRadius: spacing.radius.pill,
+  },
+  planCardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
+    color: '#145458',
+    letterSpacing: 0.2,
+    marginBottom: spacing[2],
+  },
+  planCardSubtitle: {
+    fontSize: 14,
+    fontWeight: '400',
+    fontFamily: 'Inter-Regular',
+    color: '#335F66',
+    lineHeight: 20,
+    marginBottom: spacing[6],
+  },
+  planCardButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#145458',
+    paddingHorizontal: spacing[10],
+    paddingVertical: spacing[3],
+    borderRadius: spacing.radius.pill,
+    shadowColor: 'rgba(20, 84, 88, 0.25)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  planCardButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
   },
   userInfoSection: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -264,12 +332,12 @@ export const profileScreenStyles = StyleSheet.create({
   statCard: {
     flex: 1,
     backgroundColor: 'transparent',
-    minHeight: 100,
+    height: 100,
   },
   statCardGradient: {
     padding: spacing[12],
     borderRadius: 20,
-    minHeight: 100,
+    height: 100,
     shadowColor: 'rgba(0, 0, 0, 0.15)',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
@@ -277,6 +345,7 @@ export const profileScreenStyles = StyleSheet.create({
     elevation: 8,
   },
   statCardContent: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
@@ -316,6 +385,7 @@ export const profileScreenStyles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.8,
     letterSpacing: 0.1,
+    flexWrap: 'nowrap',
   },
   // Menu Section - HomeScreen Style
   menuSection: {
@@ -370,6 +440,7 @@ export const profileScreenStyles = StyleSheet.create({
     fontWeight: '400',
     opacity: 0.8,
     letterSpacing: 0.1,
+    flexWrap: 'nowrap',
   },
   menuActions: {
     alignItems: 'center',
@@ -448,6 +519,17 @@ export const profileScreenStyles = StyleSheet.create({
     paddingHorizontal: spacing.layout.screenPadding,
     paddingTop: spacing[8],
     alignItems: 'center',
+  },
+  legalLink: {
+    marginBottom: spacing[4],
+    paddingVertical: spacing[2],
+  },
+  legalLinkText: {
+    fontSize: 13,
+    color: '#36657d',
+    fontWeight: '500',
+    textDecorationLine: 'underline',
+    textDecorationColor: '#36657d',
   },
   versionText: {
     ...typography.textStyles.caption,

@@ -53,6 +53,80 @@ export const sessionSummariesStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  infoContainer: {
+    marginHorizontal: 24,
+    marginTop: -20,
+    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(53, 122, 138, 0.12)',
+    shadowColor: '#357A8A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 4,
+    gap: 14,
+  },
+
+  infoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E3A5F',
+  },
+
+  infoDescription: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#0F172A',
+  },
+
+  infoMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+
+  infoMetaPill: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+
+  infoMetaText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#1E3A5F',
+    flexShrink: 1,
+  },
+
+  infoFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(194, 65, 12, 0.08)',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+
+  infoFooterText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#9A3412',
+    letterSpacing: 0.2,
+  },
+
   // Filter bar
   filterBar: {
     flexDirection: 'row',
@@ -71,6 +145,7 @@ export const sessionSummariesStyles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#E1E8ED',
     shadowColor: '#5BA3B8',
@@ -78,6 +153,7 @@ export const sessionSummariesStyles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 1,
+    minHeight: 36,
   },
 
   filterButtonActive: {
@@ -92,6 +168,8 @@ export const sessionSummariesStyles = StyleSheet.create({
     fontSize: 13, // --text-sm (slightly smaller)
     fontWeight: '500', // --font-medium
     color: '#64748B', // --text-gray
+    textAlign: 'center',
+    numberOfLines: 1,
   },
 
   filterTextActive: {
@@ -235,6 +313,7 @@ export const sessionSummariesStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 12,
   },
 
   loadingText: {

@@ -3,11 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-nat
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { authScreenStyles as styles } from '../../styles/components/AuthScreens.styles';
 import { GoogleIcon } from '../../components/GoogleIcon';
 
 export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onNavigateToSignUp }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn, signInWithGoogle, skipAuth, isLoading } = useAuth();
@@ -18,14 +20,14 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.error'), t('errors.fillAllFields'));
       return;
     }
 
     try {
       await signIn(email, password);
     } catch (error: any) {
-      Alert.alert('Sign In Failed', error.message || 'Please try again');
+      Alert.alert(t('errors.signInFailed'), error.message || t('errors.genericError'));
     }
   };
 
@@ -33,7 +35,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
     try {
       await signInWithGoogle();
     } catch (error: any) {
-      Alert.alert('Google Sign In Failed', error.message || 'Please try again');
+      Alert.alert(t('errors.googleSignInFailed'), error.message || t('errors.genericError'));
     }
   };
 
@@ -59,20 +61,20 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
             />
           </View>
           <Text style={styles.title}>
-            Create Your Account
+            {t('auth.signIn.title')}
           </Text>
           <Text style={styles.subtitle}>
-            Start your mindful wellness journey with Anu
+            {t('auth.signIn.subtitle')}
           </Text>
         </View>
 
         {/* Form */}
         <View style={styles.formContainer}>
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <Text style={styles.inputLabel}>{t('auth.signIn.email')}</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Enter your email"
+              placeholder={t('auth.signIn.emailPlaceholder')}
               placeholderTextColor={styles.inputLabel.color}
               value={email}
               onChangeText={setEmail}
@@ -83,10 +85,10 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Password</Text>
+            <Text style={styles.inputLabel}>{t('auth.signIn.password')}</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Enter your password"
+              placeholder={t('auth.signIn.passwordPlaceholder')}
               placeholderTextColor={styles.inputLabel.color}
               value={password}
               onChangeText={setPassword}
@@ -107,14 +109,14 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
             activeOpacity={0.8}
           >
             <Text style={styles.primaryButtonText}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? t('auth.signIn.signingIn') : t('auth.signIn.signInButton')}
             </Text>
           </TouchableOpacity>
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
             <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>or</Text>
+            <Text style={styles.dividerText}>{t('auth.signIn.orDivider')}</Text>
             <View style={styles.dividerLine} />
           </View>
 
@@ -127,7 +129,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
           >
             <GoogleIcon size={20} />
             <Text style={styles.googleButtonText}>
-              Continue with Google
+              {t('auth.signIn.googleButton')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -136,7 +138,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={onNavigateToSignUp} activeOpacity={0.7}>
             <Text style={styles.footerText}>
-              Already have an account? Sign in
+              {t('auth.signIn.noAccount')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -145,7 +147,7 @@ export const SignInScreen: React.FC<{ onNavigateToSignUp: () => void }> = ({ onN
             style={styles.skipButton}
           >
             <Text style={styles.skipButtonText}>
-              Skip for now
+              {t('common.skip')}
             </Text>
           </TouchableOpacity>
         </View>

@@ -34,7 +34,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   progressFill: {
     width: '20%', // 2/10
     height: '100%',
-    backgroundColor: '#36657d', // Primary color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     borderRadius: 2,
   },
 
@@ -162,7 +162,7 @@ export const onboardingPrivacyStyles = StyleSheet.create({
   },
 
   checkboxChecked: {
-    backgroundColor: '#36657d', // Primary color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     borderColor: colors.teal[500],
   },
 

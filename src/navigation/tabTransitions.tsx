@@ -27,9 +27,20 @@ interface TabSlideViewProps {
   children: React.ReactNode;
 }
 
+// Safe hook wrapper that gracefully handles navigation not being ready
+function useSafeIsFocused(): boolean {
+  try {
+    return useIsFocused();
+  } catch (error) {
+    // Navigation not ready yet, default to focused state
+    console.log('[TabSlideView] Navigation not ready, defaulting to focused');
+    return true;
+  }
+}
+
 export const TabSlideView: React.FC<TabSlideViewProps> = ({ children }) => {
   const direction = useTabTransitionDirection();
-  const isFocused = useIsFocused();
+  const isFocused = useSafeIsFocused();
   const { width } = useWindowDimensions();
 
   const translateX = React.useRef(new Animated.Value(0)).current;

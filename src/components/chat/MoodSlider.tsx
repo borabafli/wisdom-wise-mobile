@@ -107,12 +107,6 @@ export const MoodSlider: React.FC<MoodSliderProps> = ({
 
   return (
     <>
-      {(title || variant === 'test') && (
-        <Text style={styles.promptText}>
-{variant === 'test' ? 'How helpful was this?' : displayTitle ? 'I feel...' : null}
-        </Text>
-      )}
-      
       {/* Main emoji display with animations */}
       {selectedRating && (
         <View style={styles.mainEmojiContainer}>

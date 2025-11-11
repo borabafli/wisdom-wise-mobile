@@ -2,54 +2,72 @@ import { StyleSheet } from 'react-native';
 import { colors, spacing, typography, shadows } from '../tokens';
 
 export const notificationSettingsModalStyles = StyleSheet.create({
-  modalOverlay: {
+  // Loading State
+  loadingContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    flex: 1, // Reverted to flex: 1
-    ...shadows.large,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: spacing['5'],
-    paddingTop: spacing['5'],
-    paddingBottom: spacing['4'],
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-  },
-  headerTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing['3'],
-  },
-  title: {
-    ...typography.heading.h3,
-    color: colors.text.primary,
-  },
-  closeButton: {
-    padding: spacing['2'],
-  },
-  scrollView: {
-    flex: 1,
-    // Removed temporary debugging background
+    backgroundColor: '#EDF8F8',
   },
   loadingText: {
     ...typography.body.medium,
-    color: colors.text.secondary,
+    color: colors.teal[600],
     textAlign: 'center',
-    paddingVertical: spacing['8'],
   },
+
+  // Main Container
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#EDF8F8',
+    paddingTop: spacing['28'],
+  },
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing['4'],
+    paddingVertical: spacing['4'],
+    paddingTop: spacing['5'],
+    backgroundColor: '#EDF8F8',
+    borderBottomWidth: 0,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    ...typography.heading.h3,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1F2937',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: spacing['2'],
+  },
+  headerPlaceholder: {
+    width: 44,
+    height: 44,
+  },
+
+  // ScrollView
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: spacing['8'],
+  },
+
+  // Permission Banner
   permissionBanner: {
     backgroundColor: '#fef3c7',
     padding: spacing['4'],
-    margin: spacing['4'],
+    marginHorizontal: spacing['5'],
+    marginTop: spacing['4'],
+    marginBottom: spacing['2'],
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -60,6 +78,7 @@ export const notificationSettingsModalStyles = StyleSheet.create({
     ...typography.body.small,
     color: '#92400e',
     flex: 1,
+    fontSize: 13,
   },
   enableButton: {
     backgroundColor: '#0f766e',
@@ -70,126 +89,361 @@ export const notificationSettingsModalStyles = StyleSheet.create({
   enableButtonText: {
     ...typography.body.smallBold,
     color: '#ffffff',
+    fontSize: 13,
   },
+
+  // Preview Image
+  previewImageContainer: {
+    alignItems: 'center',
+    marginTop: spacing['5'],
+    marginBottom: spacing['4'],
+    paddingHorizontal: spacing['6'],
+  },
+  previewImage: {
+    width: 300,
+    height: 150,
+  },
+
+  // Section
   section: {
     paddingHorizontal: spacing['5'],
-    paddingVertical: spacing['4'],
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    paddingTop: spacing['3'],
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing['2'],
-    marginBottom: spacing['3'],
+    marginBottom: spacing['2'],
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.text.primary,
+    color: '#1F2937',
+    fontFamily: typography.fontFamily.alanSansSemiBold,
   },
   sectionDescription: {
-    ...typography.body.small,
-    color: colors.text.secondary,
-    marginBottom: spacing['3'],
+    ...typography.body.medium,
+    color: '#6B7280',
+    marginBottom: spacing['4'],
+    fontSize: 14,
+    lineHeight: 20,
   },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+
+  // Reminder Cards Container
+  remindersContainer: {
+    gap: spacing['3'],
+    marginTop: spacing['2'],
+  },
+
+  // Swipeable Container
+  swipeableContainer: {
+    position: 'relative',
+    marginHorizontal: spacing['1'],
+  },
+  deleteBackground: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 80,
+    backgroundColor: '#ef4444',
+    borderRadius: 10,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: spacing['3'],
-    gap: spacing['4'],
   },
-  settingInfo: {
+  deleteButton: {
+    width: 80,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  // Individual Reminder Card
+  reminderCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4B5563',
+    borderRadius: 10,
+    padding: spacing['4'],
+    minHeight: 80,
+    ...shadows.components.card,
+  },
+  reminderIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#6B7280',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing['3'],
+  },
+  reminderContent: {
+    flex: 1,
+    marginRight: spacing['3'],
+  },
+  reminderLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: spacing['0.5'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+  },
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing['0.5'],
+  },
+  timeDisplay: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+  },
+  reminderDescription: {
+    fontSize: 11,
+    color: '#D1D5DB',
+    lineHeight: 14,
+  },
+
+  // Custom Toggle
+  customToggleTrack: {
+    width: 52,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  customToggleTrackInactive: {
+    backgroundColor: '#374151',
+  },
+  customToggleTrackActive: {
+    backgroundColor: '#5BA3B8',
+  },
+  customToggleThumb: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#4B5563',
+    position: 'absolute',
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+
+  // Add Reminder Card
+  addReminderCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#6B7280',
+    borderRadius: 10,
+    padding: spacing['4'],
+    minHeight: 70,
+    marginTop: spacing['2'],
+    marginHorizontal: spacing['1'],
+    ...shadows.components.card,
+  },
+  addIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#5BA3B8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing['3'],
+  },
+  addContent: {
     flex: 1,
   },
-  settingLabel: {
-    ...typography.body.medium,
-    color: colors.text.primary,
+  addLabel: {
+    fontSize: 13,
     fontWeight: '600',
+    color: '#FFFFFF',
     marginBottom: spacing['1'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
   },
-  settingDescription: {
-    ...typography.body.small,
-    color: colors.text.secondary,
+  addDescription: {
+    fontSize: 11,
+    color: '#D1D5DB',
+    lineHeight: 14,
   },
+
+  // Info Section
   infoSection: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: '#D8E9E9',
     padding: spacing['4'],
-    margin: spacing['4'],
+    marginHorizontal: spacing['5'],
+    marginTop: spacing['5'],
+    marginBottom: spacing['3'],
     borderRadius: 12,
   },
   infoText: {
     ...typography.body.small,
-    color: colors.text.secondary,
-    lineHeight: 20,
+    color: '#1F2937',
+    lineHeight: 18,
+    fontSize: 12,
   },
+
+  // Footer
   footer: {
-    padding: spacing['5'],
+    paddingHorizontal: spacing['5'],
+    paddingTop: spacing['5'],
+    paddingBottom: spacing['8'],
+    backgroundColor: '#EDF8F8',
     borderTopWidth: 1,
-    borderTopColor: colors.border.light,
-    backgroundColor: '#ffffff',
+    borderTopColor: '#D1D5DB',
   },
   saveButton: {
-    backgroundColor: '#36657D',
-    paddingVertical: spacing['5'],
+    backgroundColor: '#5BA3B8',
+    paddingVertical: spacing['4'],
+    marginHorizontal: spacing['2'],
     borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 52,
     ...shadows.small,
   },
   saveButtonText: {
-    fontFamily: 'Ubuntu-Medium',
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
     color: '#ffffff',
+    fontFamily: typography.fontFamily.alanSansSemiBold,
   },
 
-  timeDisplay: {
-    ...typography.body.medium,
-    color: '#36657D',
-    fontWeight: typography.fontWeight.semibold,
-  },
-
+  // Time Picker Modal
   timePickerOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: spacing['5'],
   },
   timePickerContainer: {
     backgroundColor: '#ffffff',
-    borderRadius: spacing[4],
-    padding: spacing[5],
-    width: '85%',
+    borderRadius: spacing['5'],
+    padding: spacing['6'],
+    paddingTop: spacing['6'],
+    paddingBottom: spacing['6'],
+    width: '100%',
+    maxWidth: 380,
     alignItems: 'center',
     ...shadows.medium,
   },
   timePickerTitle: {
-    ...typography.heading.h4,
-    color: colors.text.primary,
-    marginBottom: spacing[4],
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: spacing['4'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
   },
   timePickerActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginTop: spacing[5],
-    gap: spacing[3],
+    marginTop: spacing['5'],
+    gap: spacing['3'],
   },
   timePickerButton: {
     flex: 1,
-    paddingVertical: spacing[3],
-    borderRadius: spacing[3],
+    paddingVertical: spacing['4'],
+    paddingHorizontal: spacing['8'],
+    borderRadius: spacing['3'],
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.gray[200],
+    minWidth: 120,
+    minHeight: 48,
   },
   timePickerButtonText: {
-    ...typography.body.mediumBold,
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.text.secondary,
+    fontFamily: typography.fontFamily.alanSansSemiBold,
   },
   timePickerSaveButton: {
-    backgroundColor: '#36657D',
+    backgroundColor: '#5BA3B8',
   },
   timePickerSaveButtonText: {
     color: '#ffffff',
+    fontWeight: '600',
+  },
+
+  // Custom Input Modal (Android-compatible)
+  customInputOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing['5'],
+  },
+  customInputContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: spacing['4'],
+    padding: spacing['6'],
+    width: '100%',
+    maxWidth: 400,
+    ...shadows.medium,
+  },
+  customInputTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: spacing['2'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+    textAlign: 'center',
+  },
+  customInputDescription: {
+    ...typography.body.medium,
+    color: '#6B7280',
+    marginBottom: spacing['5'],
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  customInput: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: spacing['3'],
+    paddingHorizontal: spacing['4'],
+    paddingVertical: spacing['3'],
+    fontSize: 16,
+    color: '#1F2937',
+    marginBottom: spacing['5'],
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+  },
+  customInputActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    gap: spacing['3'],
+  },
+  customInputButton: {
+    flex: 1,
+    paddingVertical: spacing['4'],
+    paddingHorizontal: spacing['8'],
+    borderRadius: spacing['3'],
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.gray[200],
+    minWidth: 120,
+    minHeight: 48,
+  },
+  customInputButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    fontFamily: typography.fontFamily.alanSansSemiBold,
+  },
+  customInputAddButton: {
+    backgroundColor: '#5BA3B8',
+  },
+  customInputAddButtonText: {
+    color: '#ffffff',
+  },
+  customInputButtonDisabled: {
+    backgroundColor: colors.gray[300],
+    opacity: 0.5,
   },
 });

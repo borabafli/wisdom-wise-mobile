@@ -31,21 +31,23 @@ export const focusAreasStyles = StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: spacing[8],
+    flexGrow: 1, // Makes content container expand to fill space - required for marginTop: 'auto' to work
+    paddingBottom: spacing[32], // Increased from 8 to 32 (64px) for better spacing
+    minHeight: '100%', // Ensure content takes full height so button is always visible
   },
 
   // Content Section
   contentContainer: {
+    flex: 1, // Changed from minHeight: '100%' for natural flow
     paddingHorizontal: spacing[24],
     paddingVertical: spacing[24],
-    minHeight: '100%',
-    justifyContent: 'center',
+    // Removed justifyContent: 'center' to prevent content jumping
   },
 
   // Header
   headerContainer: {
     paddingHorizontal: spacing[12], // 24px - reduced horizontal padding for headings
-    marginBottom: spacing[20], // 40px - standardized spacing to content
+    marginBottom: spacing[12], // Reduced from 40px to 24px for tighter spacing
     marginTop: spacing[8], // 16px - standardized top margin
   },
 
@@ -71,8 +73,8 @@ export const focusAreasStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing[16],
-    paddingBottom: spacing[16],
-    gap: spacing[4], // Reduced from spacing[8] (16px) to spacing[4] (8px) to bring buttons closer
+    paddingBottom: spacing[8], // Reduced from 16px to 8px
+    gap: spacing[2], // Reduced from 8px to 4px to bring buttons even closer
   },
 
   // Focus Area Chips
@@ -84,9 +86,9 @@ export const focusAreasStyles = StyleSheet.create({
     borderWidth: 0, // No border
     borderRadius: 12, // Reduced from 24 to make corners less rounded
     paddingHorizontal: 20,
-    paddingVertical: 12, // Consistent with personal values
+    paddingVertical: 10, // Reduced from 12px to 10px for more compact chips
     width: width * 0.75, // Consistent width for all chips (75% of screen width)
-    minHeight: 44, // Consistent height for all chips
+    minHeight: 42, // Reduced from 44px to 42px for slightly smaller chips
     // Remove all shadows to prevent fade-in artifacts
   },
 
@@ -115,7 +117,8 @@ export const focusAreasStyles = StyleSheet.create({
   actionContainer: {
     alignItems: 'center',
     paddingBottom: 30, // Standardized across all personalization screens
-    marginTop: spacing[12], // 24px - standardized spacing from content to button
+    paddingTop: spacing[8], // 16px top padding
+    marginTop: 'auto', // Pushes button to bottom for consistent positioning across all screens
     zIndex: 1000, // Absolute foreground
     position: 'relative',
   },
@@ -124,11 +127,11 @@ export const focusAreasStyles = StyleSheet.create({
     paddingHorizontal: 48, // Standard padding to match other onboarding buttons
     minWidth: 240, // Standard width to match other onboarding buttons
     height: 48,
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.teal[500],
+    shadowColor: '#5BA3B8',
     shadowOffset: {
       width: 0,
       height: 4,
@@ -136,6 +139,7 @@ export const focusAreasStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 6,
+    marginBottom: spacing[8], // 8px - matches other onboarding screens
   },
 
   continueButtonText: {

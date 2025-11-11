@@ -1,10 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Animated, Dimensions, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Video, ResizeMode } from 'expo-av';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { onboardingValuePropStyles as styles } from '../../styles/components/onboarding/OnboardingValueProp.styles';
+import { spacing } from '../../styles/tokens/spacing';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,38 +18,13 @@ interface OnboardingPage {
   isMainPage?: boolean;
 }
 
-const onboardingPages: OnboardingPage[] = [
-  {
-    id: 1,
-    icon: require('../../../assets/images/onboarding/calm-icon-1.png'),
-    title: 'Think Clearer, Feel Better',
-    description: 'Learn to spot unhelpful thoughts and reframe them with science-backed CBT techniques',
-  },
-  {
-    id: 2,
-    icon: require('../../../assets/images/onboarding/understand-icon-2.png'),
-    title: 'Understand yourself better',
-    description: 'Discover patterns in your thoughts and feelings. Insights help you understand yourself—and how to grow.',
-  },
-  {
-    id: 3,
-    icon: require('../../../assets/images/onboarding/guided-icon-4.png'),
-    title: 'Guided Growth, Made Simple',
-    description: 'Anu always know the next step and suggests exercises designed just for you.',
-  },
-  {
-    id: 4,
-    icon: require('../../../assets/images/onboarding/growth-icon-3.png'),
-    title: 'Your Progress, Made Visible',
-    description: 'See your journey unfold with saved exercises, insights, and milestones.',
-  },
-];
-
 interface OnboardingValuePropScreenProps {
   onContinue: () => void;
 }
 
 const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ onContinue }) => {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [currentPage, setCurrentPage] = useState(0);
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [showVideo, setShowVideo] = useState(false);
@@ -56,6 +33,40 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   const slideAnim = useRef(new Animated.Value(30)).current;
   const overlayFadeAnim = useRef(new Animated.Value(1)).current;
   const buttonFadeAnim = useRef(new Animated.Value(0)).current;
+
+  // Responsive style selection based on screen height
+  const isSmallScreen = height <= 700;
+  const isXSmallScreen = height <= 600;
+  // Ensure proper top padding accounting for safe area and status bar
+  const topPadding = Math.max(insets.top + spacing[12], spacing[16]);
+  // Bottom padding is handled by actionContainer (paddingBottom: 30) to match other screens
+
+  const onboardingPages: OnboardingPage[] = [
+    {
+      id: 1,
+      icon: require('../../../assets/images/onboarding/calm-icon-1.png'),
+      title: t('onboarding.valueProp.pages.page1.title'),
+      description: t('onboarding.valueProp.pages.page1.description'),
+    },
+    {
+      id: 2,
+      icon: require('../../../assets/images/onboarding/understand-icon-2.png'),
+      title: t('onboarding.valueProp.pages.page2.title'),
+      description: t('onboarding.valueProp.pages.page2.description'),
+    },
+    {
+      id: 3,
+      icon: require('../../../assets/images/onboarding/guided-icon-4.png'),
+      title: t('onboarding.valueProp.pages.page3.title'),
+      description: t('onboarding.valueProp.pages.page3.description'),
+    },
+    {
+      id: 4,
+      icon: require('../../../assets/images/onboarding/growth-icon-3.png'),
+      title: t('onboarding.valueProp.pages.page4.title'),
+      description: t('onboarding.valueProp.pages.page4.description'),
+    },
+  ];
 
   useEffect(() => {
     // Set Android navigation bar color to match background
@@ -120,10 +131,18 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
 
 
   const renderPage = (page: OnboardingPage) => (
-    <View key={page.id} style={styles.pageContainer}>
+    <View key={page.id} style={[
+      styles.pageContainer,
+      isXSmallScreen && styles.pageContainerXSmall,
+      isSmallScreen && !isXSmallScreen && styles.pageContainerSmall,
+    ]}>
       {/* Text Content with Icon */}
       <View style={styles.textContent}>
-        <Text style={styles.pageTitle}>
+        <Text style={[
+          styles.pageTitle,
+          isXSmallScreen && styles.pageTitleXSmall,
+          isSmallScreen && !isXSmallScreen && styles.pageTitleSmall,
+        ]}>
           {page.title}
         </Text>
         {/* Icon between heading and subtext */}
@@ -132,7 +151,11 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
           style={styles.pageIcon}
           resizeMode="contain"
         />
-        <Text style={styles.pageDescription}>
+        <Text style={[
+          styles.pageDescription,
+          isXSmallScreen && styles.pageDescriptionXSmall,
+          isSmallScreen && !isXSmallScreen && styles.pageDescriptionSmall,
+        ]}>
           {page.description}
         </Text>
       </View>
@@ -142,93 +165,114 @@ const OnboardingValuePropScreen: React.FC<OnboardingValuePropScreenProps> = ({ o
   return (
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
-      <SafeAreaView style={styles.safeArea}>
-        <Animated.View 
+      <SafeAreaView
+        edges={['top', 'left', 'right', 'bottom']}
+        style={styles.safeArea}
+      >
+        <Animated.View
           style={[
             styles.contentContainer,
             {
               opacity: fadeAnim,
               transform: [{ translateY: slideAnim }],
+              paddingTop: topPadding,
+              // Bottom padding handled by actionContainer to match other onboarding screens
             }
           ]}
         >
-          {/* Swipable Text Content */}
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            style={styles.swipeContainer}
-          >
-            {/* All Pages */}
-            {onboardingPages.map((page) => renderPage(page))}
-          </ScrollView>
+          {/* Top Content Container - Can shrink if needed */}
+          <View style={styles.topContentContainer}>
+            {/* Swipable Text Content */}
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              style={[
+                styles.swipeContainer,
+                isXSmallScreen && styles.swipeContainerXSmall,
+                isSmallScreen && !isXSmallScreen && styles.swipeContainerSmall,
+              ]}
+              contentContainerStyle={styles.swipeContent}
+            >
+              {/* All Pages */}
+              {onboardingPages.map((page) => renderPage(page))}
+            </ScrollView>
 
-          {/* Page Indicators - Above video */}
-          <View style={styles.pageIndicators}>
-            {onboardingPages.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.pageIndicator,
-                  currentPage === index && styles.activePageIndicator
-                ]}
-              />
-            ))}
-          </View>
-
-          {/* Static Anu Video - With overlay */}
-          <View style={styles.staticAnuContainer}>
-            <View style={styles.videoContainer}>
-              {/* Static overlay that only animates when fading out */}
-              {overlayVisible && (
-                <Animated.View
+            {/* Page Indicators - Above video */}
+            <View style={styles.pageIndicators}>
+              {onboardingPages.map((_, index) => (
+                <View
+                  key={index}
                   style={[
-                    styles.backgroundOverlay,
-                    {
-                      opacity: overlayFadeAnim,
-                    }
+                    styles.pageIndicator,
+                    currentPage === index && styles.activePageIndicator
                   ]}
                 />
-              )}
-              {/* Video - only render after 0.5s delay */}
-              {showVideo && (
-                <Video
-                  source={require('../../../assets/images/onboarding/videos/meditating-turtle.mp4')}
-                  style={styles.staticAnuImage}
-                  resizeMode={ResizeMode.CONTAIN}
-                  shouldPlay={true}
-                  isLooping={true}
-                  isMuted={true}
-                  useNativeControls={false}
-                  onLoad={handleVideoLoad}
-                />
-              )}
+              ))}
+            </View>
+
+            {/* Static Anu Video - With overlay */}
+            <View style={[
+              styles.staticAnuContainer,
+              isXSmallScreen && styles.staticAnuContainerXSmall,
+              isSmallScreen && !isXSmallScreen && styles.staticAnuContainerSmall,
+            ]}>
+              <View style={styles.videoContainer}>
+                {/* Static overlay that only animates when fading out */}
+                {overlayVisible && (
+                  <Animated.View
+                    style={[
+                      styles.backgroundOverlay,
+                      {
+                        opacity: overlayFadeAnim,
+                      }
+                    ]}
+                  />
+                )}
+                {/* Video - only render after 0.5s delay */}
+                {showVideo && (
+                  <Video
+                    source={require('../../../assets/images/onboarding/videos/meditating-turtle.mp4')}
+                    style={[
+                      styles.staticAnuImage,
+                      isXSmallScreen && styles.staticAnuImageXSmall,
+                      isSmallScreen && !isXSmallScreen && styles.staticAnuImageSmall,
+                    ]}
+                    resizeMode={ResizeMode.CONTAIN}
+                    shouldPlay={true}
+                    isLooping={true}
+                    isMuted={true}
+                    useNativeControls={false}
+                    onLoad={handleVideoLoad}
+                  />
+                )}
+              </View>
             </View>
           </View>
 
-        </Animated.View>
-
-        {/* Action Button - OUTSIDE animated container with smooth fade */}
-        <Animated.View
-          style={[
-            styles.actionContainer,
-            {
-              opacity: buttonFadeAnim,
-            }
-          ]}
-        >
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={onContinue}
-            activeOpacity={0.8}
+          {/* Action Button - Pushed to bottom with marginTop: auto */}
+          <Animated.View
+            style={[
+              styles.actionContainer,
+              {
+                opacity: buttonFadeAnim,
+                marginTop: 'auto', // Push button to bottom
+              }
+            ]}
           >
-            <Text style={styles.primaryButtonText}>
-              {currentPage === onboardingPages.length - 1 ? "Let's begin" : "Continue"}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={onContinue}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.primaryButtonText}>
+                {currentPage === onboardingPages.length - 1 ? t('onboarding.valueProp.letsBegin') : t('onboarding.common.continueButton')}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </Animated.View>
       </SafeAreaView>
     </View>

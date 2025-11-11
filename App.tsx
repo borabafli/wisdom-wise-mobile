@@ -9,10 +9,12 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
 import * as NavigationBar from 'expo-navigation-bar';
 import { loadFonts } from './src/config/fonts';
+import { PostHogProvider } from 'posthog-react-native';
 
 // Components and contexts
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { AppProvider, AuthProvider, LocalizationProvider } from './src/contexts';
+import { SubscriptionProvider } from './src/contexts/SubscriptionContext';
 import { AppContent } from './src/components/AppContent';
 import { NotificationPrompt } from './src/components/NotificationPrompt';
 
@@ -54,8 +56,8 @@ export default function App() {
           await NavigationBar.setButtonStyleAsync('dark');
 
            // 🔧 Add these:
-  await NavigationBar.setBehaviorAsync('inset-swipe'); // content gets inset by system bar
-  await NavigationBar.setVisibilityAsync('visible');   // make sure it’s not overlay-hidden
+          await NavigationBar.setBehaviorAsync('inset-swipe'); // content gets inset by system bar
+          await NavigationBar.setVisibilityAsync('visible');   // make sure it’s not overlay-hidden
         
           console.log('✅ [APP] Step 2: Android navigation bar configured');
         }
@@ -65,10 +67,12 @@ export default function App() {
         await notificationService.initialize();
         console.log('✅ [APP] Step 3: Notification service initialized');
 
-        // Register background notification task
+        // Register background notification task (non-blocking)
         console.log('📝 [APP] Step 4: Registering background notification task...');
-        await registerBackgroundNotificationTask();
-        console.log('✅ [APP] Step 4: Background notification task registered');
+        registerBackgroundNotificationTask()
+          .then(() => console.log('✅ [APP] Step 4: Background notification task registered'))
+          .catch((err) => console.error('⚠️ [APP] Step 4: Failed to register background task (non-critical):', err));
+        console.log('✅ [APP] Step 4: Background notification task registration initiated');
       } catch (e) {
         console.error('❌ [APP] FATAL ERROR in prepare function:', e);
         console.error('❌ [APP] Error stack:', e.stack);
@@ -99,19 +103,30 @@ export default function App() {
   console.log('Fonts loaded, rendering main app');
 
   return (
-    <SafeAreaProvider>
-      <ErrorBoundary>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <LocalizationProvider>
-            <AuthProvider>
-              <AppProvider>
-                <AppContent />
-                <NotificationPrompt />
-              </AppProvider>
-            </AuthProvider>
-          </LocalizationProvider>
-        </GestureHandlerRootView>
-      </ErrorBoundary>
-    </SafeAreaProvider>
+    <PostHogProvider
+      apiKey="phc_DWyIcrWUIUW7wShwLuOzxB2wA08vl8CBpFzBHPxFvGe"
+      options={{
+        host: 'https://us.i.posthog.com',
+        enableSessionReplay: true,
+      }}
+      autocapture
+    >
+      <SafeAreaProvider>
+        <ErrorBoundary>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <LocalizationProvider>
+              <AuthProvider>
+                <SubscriptionProvider>
+                  <AppProvider>
+                    <AppContent />
+                    <NotificationPrompt />
+                  </AppProvider>
+                </SubscriptionProvider>
+              </AuthProvider>
+            </LocalizationProvider>
+          </GestureHandlerRootView>
+        </ErrorBoundary>
+      </SafeAreaProvider>
+    </PostHogProvider>
   );
 }

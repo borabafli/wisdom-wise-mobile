@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Settings, Leaf, Target, ChevronLeft } from 'lucide-react-native';
+import { Settings, Leaf, Target } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { onboardingFinalStyles as styles } from '../../styles/components/onboarding/OnboardingFinal.styles';
 
 const { height } = Dimensions.get('window');
@@ -22,6 +23,7 @@ interface OnboardingFinalScreenProps {
 }
 
 const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplete, onBack }) => {
+  const { t } = useTranslation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -142,19 +144,19 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
   const features = [
     {
       icon: Settings,
-      title: "Preparing personalized exercises & reflections",
+      title: t('onboarding.final.features.analyzing.title'),
       description: "",
       hasCheckmark: false,
     },
     {
       icon: Leaf,
-      title: "Designing your personal plan",
+      title: t('onboarding.final.features.creating.title'),
       description: "",
       hasArrow: false,
     },
     {
       icon: Target,
-      title: "Getting your first activity ready",
+      title: t('onboarding.final.features.preparing.title'),
       description: "",
       hasArrow: false,
     },
@@ -165,17 +167,6 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        {/* Back Button */}
-        {onBack && (
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={onBack}
-            activeOpacity={0.7}
-          >
-            <ChevronLeft size={24} color="#36657d" />
-          </TouchableOpacity>
-        )}
-
         <Animated.View
           style={[
             styles.contentContainer,
@@ -187,9 +178,9 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
         >
           {/* Header */}
           <View style={styles.headerContainer}>
-            <Text style={styles.mainTitle}>We're preparing your personal path forward...</Text>
+            <Text style={styles.mainTitle}>{t('onboarding.final.mainTitle')}</Text>
             <Text style={styles.subtitle}>
-              Your plan is being tailored to help you thrive.
+              {t('onboarding.final.subtitle')}
             </Text>
           </View>
 
@@ -238,7 +229,7 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
                       }}
                     >
                       <IconComponent
-                        size={24}
+                        size={28}
                         color="#36657d"
                         strokeWidth={2}
                       />
@@ -290,9 +281,9 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
 
 
           {/* Bottom section with turtle */}
-          <View style={styles.bottomSection}>
+          <View style={styles.bottomSection} pointerEvents="box-none">
             {/* Turtle Image */}
-            <View style={styles.mainTurtleContainer}>
+            <View style={styles.mainTurtleContainer} pointerEvents="none">
               <Image
                 source={require('../../../assets/images/onboarding/turtle-welcome-calm-sitting.png')}
                 style={styles.mainTurtleImage}
@@ -302,9 +293,9 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
           </View>
 
           {/* Bottom area with button only */}
-          <View style={styles.bottomFixedArea}>
+          <View style={styles.bottomFixedArea} pointerEvents="box-none">
             {/* Action Button */}
-            <View style={styles.actionContainer}>
+            <View style={styles.actionContainer} pointerEvents="auto">
               <TouchableOpacity
                 style={[styles.primaryButton, !isButtonEnabled && styles.disabledButton]}
                 onPress={isButtonEnabled ? handleContinue : undefined}
@@ -312,7 +303,7 @@ const OnboardingFinalScreen: React.FC<OnboardingFinalScreenProps> = ({ onComplet
                 disabled={!isButtonEnabled}
               >
                 <Text style={[styles.primaryButtonText, !isButtonEnabled && styles.disabledButtonText]}>
-                  Start Your Journey
+                  {t('onboarding.final.continueButton')}
                 </Text>
               </TouchableOpacity>
             </View>

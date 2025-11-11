@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -36,6 +37,7 @@ class NotificationService {
   private readonly PERSONALIZED_CONFIG_KEY = 'personalized_notification_config';
   private readonly USER_CONTEXT_KEY = 'user_notification_context';
   private readonly LAST_NOTIFICATION_KEY = 'last_notification_sent';
+  private personalizedConfigExists = false;
 
   // Default reminder times
   private defaultReminderTimes: JournalReminderTime[] = [
@@ -336,9 +338,12 @@ class NotificationService {
    */
   async scheduleReminders(): Promise<void> {
     try {
+      console.log('📅 [NotificationService] Starting to schedule reminders...');
+
       const personalizedConfig = await this.getPersonalizedConfig();
       if (this.hasActivePersonalizedConfig(personalizedConfig)) {
-        console.log('Personalized reminders enabled; skipping standard reminder scheduling to avoid duplicates.');
+        console.log('⚠️ [NotificationService] Personalized reminders enabled; delegating to personalized scheduler.');
+        await this.schedulePersonalizedNotifications({ allowFallbackToStandard: false });
         return;
       }
 
@@ -348,13 +353,15 @@ class NotificationService {
       const settings = await this.getReminderSettings();
       const enabledReminders = settings.filter(reminder => reminder.enabled);
 
+      console.log(`📋 [NotificationService] Found ${enabledReminders.length} enabled reminders out of ${settings.length} total`);
+
       for (const reminder of enabledReminders) {
         await this.scheduleReminderNotification(reminder);
       }
 
-      console.log(`Scheduled ${enabledReminders.length} journal reminders`);
+      console.log(`✅ [NotificationService] Successfully scheduled ${enabledReminders.length} daily journal reminders`);
     } catch (error) {
-      console.error('Error scheduling reminders:', error);
+      console.error('❌ [NotificationService] Error scheduling reminders:', error);
     }
   }
 
@@ -365,10 +372,15 @@ class NotificationService {
     try {
       const [hours, minutes] = reminder.time.split(':').map(Number);
 
+      const isCustomReminder = reminder.id.startsWith('custom-');
+      const body = isCustomReminder
+        ? `Time for ${reminder.label}? Anu is here to support you.`
+        : `${reminder.description}. Anu is here to support you.`;
+
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "Time for mindful reflection",
-          body: `${reminder.description}. Anu is here to support you.`,
+          body,
           sound: 'default',
           data: {
             type: 'journal-reminder',
@@ -376,14 +388,15 @@ class NotificationService {
           },
         },
         trigger: {
+          type: SchedulableTriggerInputTypes.DAILY,
           channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
-          repeats: true,
           hour: hours,
           minute: minutes,
         },
       });
+      console.log(`✅ Scheduled daily notification for ${reminder.label} at ${hours}:${minutes}`);
     } catch (error) {
-      console.error(`Error scheduling notification for ${reminder.id}:`, error);
+      console.error(`❌ Error scheduling notification for ${reminder.id}:`, error);
     }
   }
 
@@ -398,11 +411,15 @@ class NotificationService {
         return data?.type === 'journal-reminder';
       });
 
+      console.log(`🗑️ [NotificationService] Canceling ${journalReminders.length} existing journal reminders (out of ${scheduled.length} total scheduled notifications)`);
+
       for (const notification of journalReminders) {
         await Notifications.cancelScheduledNotificationAsync(notification.identifier);
       }
+
+      console.log(`✅ [NotificationService] Canceled all journal reminders`);
     } catch (error) {
-      console.error('Error canceling reminders:', error);
+      console.error('❌ [NotificationService] Error canceling reminders:', error);
     }
   }
 
@@ -529,6 +546,7 @@ class NotificationService {
   async savePersonalizedConfig(config: PersonalizedNotificationConfig): Promise<void> {
     try {
       await AsyncStorage.setItem(this.PERSONALIZED_CONFIG_KEY, JSON.stringify(config));
+      this.personalizedConfigExists = true;
     } catch (error) {
       console.error('Error saving personalized config:', error);
     }
@@ -540,6 +558,7 @@ class NotificationService {
   async getPersonalizedConfig(): Promise<PersonalizedNotificationConfig> {
     try {
       const stored = await AsyncStorage.getItem(this.PERSONALIZED_CONFIG_KEY);
+      this.personalizedConfigExists = Boolean(stored);
       if (stored) {
         return JSON.parse(stored);
       }
@@ -547,12 +566,13 @@ class NotificationService {
         morningTime: '08:00',
         middayTime: '14:00',
         eveningTime: '20:00',
-        streakRemindersEnabled: true,
-        insightRemindersEnabled: true,
-        goalRemindersEnabled: true,
+        streakRemindersEnabled: false,
+        insightRemindersEnabled: false,
+        goalRemindersEnabled: false,
       };
     } catch (error) {
       console.error('Error getting personalized config:', error);
+      this.personalizedConfigExists = false;
       return {};
     }
   }
@@ -749,14 +769,18 @@ class NotificationService {
   /**
    * Schedule intelligent personalized notifications
    */
-  async schedulePersonalizedNotifications(): Promise<void> {
+  async schedulePersonalizedNotifications(options: { allowFallbackToStandard?: boolean } = {}): Promise<void> {
+    const { allowFallbackToStandard = true } = options;
+
     try {
       const config = await this.getPersonalizedConfig();
       const personalizedEnabled = this.hasActivePersonalizedConfig(config);
       if (!personalizedEnabled) {
         console.log('Personalized reminders disabled. Falling back to standard reminders.');
         await this.cancelPersonalizedNotifications();
-        await this.scheduleReminders();
+        if (allowFallbackToStandard) {
+          await this.scheduleReminders();
+        }
         return;
       }
 
@@ -813,8 +837,8 @@ class NotificationService {
               },
             },
             trigger: {
+              type: SchedulableTriggerInputTypes.DAILY,
               channelId: Platform.OS === 'android' ? 'journal-reminders' : undefined,
-              repeats: false, // Changed to false, background task will re-schedule with fresh content
               hour: hours,
               minute: minutes,
             },
@@ -848,7 +872,7 @@ class NotificationService {
   }
 
   private hasActivePersonalizedConfig(config: PersonalizedNotificationConfig | null): boolean {
-    if (!config) {
+    if (!config || !this.personalizedConfigExists) {
       return false;
     }
 

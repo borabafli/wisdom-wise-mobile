@@ -298,6 +298,20 @@ ${insights.map(insight => `- ${insight}`).join('\n')}`;
       throw error;
     }
   }
+
+  /**
+   * Delete all entries (alias for clearAllEntries)
+   * Used by dataManagementService for bulk deletion
+   */
+  static async deleteAllEntries(): Promise<void> {
+    return this.clearAllEntries();
+  }
 }
+
+// Export instance methods for compatibility with dataManagementService
+export const journalStorageService = {
+  getAllJournalEntries: () => JournalStorageService.getAllJournalEntries(),
+  deleteAllEntries: () => JournalStorageService.deleteAllEntries()
+};
 
 export default JournalStorageService;

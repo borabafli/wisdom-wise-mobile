@@ -1,6 +1,10 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { usePostHog } from 'posthog-react-native';
 import { authService } from '../services/authService';
 import { storageService } from '../services/storageService';
+import { firstActionTracker } from '../services/firstActionTracker';
+import { subscriptionService } from '../services/subscriptionService';
+import { profileSyncService } from '../services/profileSyncService';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -23,6 +27,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const posthog = usePostHog();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Start as true to check initial session
   const [user, setUser] = useState(null);
@@ -57,6 +62,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAnonymous(false);
 
         try {
+          // 🔄 Load profile from Supabase for authenticated users
+          console.log('[AuthProvider] Loading profile from Supabase...');
+          const supabaseProfile = await profileSyncService.loadFromSupabase(session.user.id);
+
+          // Get display name with priority (Supabase profile > auth metadata > email)
           const displayName = await storageService.getDisplayNameWithPriority(session.user);
           const [firstName, ...lastNameParts] = displayName.split(' ');
           const lastName = lastNameParts.join(' ');
@@ -66,9 +76,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             last_name: lastName || '',
             created_at: session.user.created_at
           });
-          console.log('[AuthProvider] Profile set successfully');
+
+          // 🎯 Identify user in PostHog
+          posthog?.identify(session.user.id, {
+            email: session.user.email || '',
+            firstName: firstName || 'Friend',
+            lastName: lastName || '',
+            isAnonymous: false,
+            accountCreatedAt: session.user.created_at || new Date().toISOString(),
+          });
+
+          console.log('[AuthProvider] Profile loaded and set successfully');
         } catch (profileError) {
-          console.error('[AuthProvider] Error setting profile:', profileError);
+          console.error('[AuthProvider] Error loading profile:', profileError);
           // Set default profile if storage fails
           setProfile({
             first_name: 'Friend',
@@ -113,6 +133,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('[AuthProvider] checkInitialSession: FATAL ERROR', error);
     } finally {
+      // Initialize RevenueCat with user ID (if authenticated)
+      try {
+        console.log('[AuthProvider] Initializing RevenueCat...');
+        // Use actual user ID or let RevenueCat generate anonymous ID (don't pass 'anonymous' string - it's blocked)
+        const userId = user?.id;
+        await subscriptionService.initialize(userId);
+        console.log('[AuthProvider] RevenueCat initialized successfully');
+      } catch (rcError) {
+        console.error('[AuthProvider] RevenueCat initialization failed:', rcError);
+        // Non-blocking - app continues even if RevenueCat fails
+      }
+
       console.log('[AuthProvider] checkInitialSession: COMPLETE, setting isLoading=false');
       setIsLoading(false);
     }
@@ -192,6 +224,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await authService.signIn(email, password);
+
+      // 🎯 Identify user in PostHog
+      if (data?.user) {
+        posthog?.identify(data.user.id, {
+          email: data.user.email || '',
+          isAnonymous: false,
+        });
+        posthog?.capture('user_signed_in', {
+          method: 'email',
+        });
+      }
+
       console.log('Sign in successful');
     } catch (error: any) {
       console.error('Sign in error');
@@ -205,6 +249,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await authService.signInWithGoogle();
+
+      // 🎯 Identify user in PostHog
+      if (data?.user) {
+        posthog?.identify(data.user.id, {
+          email: data.user.email || '',
+          isAnonymous: false,
+        });
+        posthog?.capture('user_signed_in', {
+          method: 'google',
+        });
+      }
+
       console.log('Google sign in successful');
     } catch (error: any) {
       console.error('Google sign in error');
@@ -218,6 +274,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await authService.signUp(email, password, firstName, lastName);
+
+      // 🎯 Identify user in PostHog
+      if (data?.user) {
+        posthog?.identify(data.user.id, {
+          email: data.user.email || '',
+          firstName,
+          lastName,
+          isAnonymous: false,
+          accountCreatedAt: new Date().toISOString(),
+        });
+        posthog?.capture('user_signed_up', {
+          method: 'email',
+        });
+      }
+
       console.log('Sign up successful');
     } catch (error: any) {
       console.error('Sign up error');
@@ -230,6 +301,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     setIsLoading(true);
     try {
+      // 🎯 Track sign out and reset PostHog
+      posthog?.capture('user_signed_out');
+      posthog?.reset(); // Clears user identity
+
+      // 🎯 Reset first action tracking
+      await firstActionTracker.reset();
+
       await authService.signOut();
       // Clear anonymous mode
       await authService.clearAnonymousMode();
@@ -250,17 +328,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(true);
     setIsAnonymous(true);
     setUser(null);
-    
+
     // For anonymous users, check if they have an onboarding name
     const displayName = await storageService.getDisplayNameWithPriority();
     const [firstName, ...lastNameParts] = displayName.split(' ');
     const lastName = lastNameParts.join(' ');
-    
-    setProfile({ 
-      first_name: firstName || 'Friend', 
-      last_name: lastName || '', 
-      created_at: new Date().toISOString() 
+
+    setProfile({
+      first_name: firstName || 'Friend',
+      last_name: lastName || '',
+      created_at: new Date().toISOString()
     });
+
+    // 🎯 Set anonymous flag in PostHog
+    posthog?.capture('anonymous_mode_enabled', {
+      isAnonymous: true,
+      firstName: firstName || 'Friend',
+    });
+
     authService.setAnonymousMode();
   };
 

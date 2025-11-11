@@ -171,12 +171,12 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
                   resizeMode="contain"
                 />
               </Animated.View>
-              <Text style={styles.title}>Tell me about yourself</Text>
+              <Text style={styles.title}>💭 Tell me about yourself</Text>
             </View>
 
             {/* Values Section */}
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>What's important to you?</Text>
+              <Text style={styles.sectionTitle}>❤️ What's important to you?</Text>
               <Text style={styles.sectionDescription}>Select the values that resonate with you most</Text>
               <View style={styles.optionsContainer}>
                 {COMMON_VALUES.map((value) => (
@@ -202,7 +202,7 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
 
             {/* Challenges Section */}
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Current challenges</Text>
+              <Text style={styles.sectionTitle}>🌧️ Current challenges</Text>
               <View style={styles.optionsContainer}>
                 {COMMON_CHALLENGES.map((challenge) => (
                   <TouchableOpacity
@@ -227,7 +227,7 @@ const OnboardingCurrentStateScreen: React.FC<OnboardingCurrentStateScreenProps> 
 
             {/* Goals Section */}
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>What would you like to work on?</Text>
+              <Text style={styles.sectionTitle}>🎯 What would you like to work on?</Text>
               <View style={styles.optionsContainer}>
                 {COMMON_GOALS.map((goal) => (
                   <TouchableOpacity

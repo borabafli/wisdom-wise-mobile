@@ -40,7 +40,7 @@ export const PreExerciseMoodCard: React.FC<PreExerciseMoodCardProps> = ({
         style={styles.gradientBackground}
       />
       <Text style={styles.title}>Before we start...</Text>
-      <Text style={styles.subtitle}>How do you fee right now?</Text>
+      <Text style={styles.subtitle}>How do you feel right now?</Text>
       
       <MoodSlider
         title=""

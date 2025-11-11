@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useTranslation } from 'react-i18next';
 import { focusAreasStyles as styles } from '../../styles/components/onboarding/FocusAreas.styles';
 
 interface FocusArea {
@@ -11,29 +12,27 @@ interface FocusArea {
   name: string;
 }
 
-const focusAreas: FocusArea[] = [
-  { id: '1', name: 'Feel Calmer (reduce anxiety)' },
-  { id: '2', name: 'Handle Stress' },
-  { id: '3', name: 'Sleep Better' },
-  { id: '4', name: 'Brighter Mood' },
-  { id: '5', name: 'Focus & Drive' },
-  { id: '6', name: 'Confidence & Self-Worth' },
-  { id: '7', name: 'Relationships & Communication' },
-  { id: '8', name: 'Clarity & Decisions' },
-  { id: '9', name: 'Something else…' },
-];
-
 interface FocusAreasScreenProps {
   onContinue: (selectedAreas: string[]) => void;
   onBack?: () => void;
 }
 
 const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack }) => {
+  const { t } = useTranslation();
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
-  const buttonFadeAnim = useRef(new Animated.Value(0)).current;
-  const buttonSlideAnim = useRef(new Animated.Value(30)).current;
+
+  const focusAreas: FocusArea[] = [
+    { id: '1', name: t('onboarding.focusAreas.areas.feelCalmer') },
+    { id: '2', name: t('onboarding.focusAreas.areas.handleStress') },
+    { id: '3', name: t('onboarding.focusAreas.areas.sleepBetter') },
+    { id: '4', name: t('onboarding.focusAreas.areas.brighterMood') },
+    { id: '5', name: t('onboarding.focusAreas.areas.focusDrive') },
+    { id: '6', name: t('onboarding.focusAreas.areas.confidenceSelfWorth') },
+    { id: '7', name: t('onboarding.focusAreas.areas.relationshipsCommunication') },
+    { id: '8', name: t('onboarding.focusAreas.areas.somethingElse') },
+  ];
 
   useEffect(() => {
     // Set Android navigation bar color to match background
@@ -52,22 +51,7 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
         useNativeDriver: true,
       }),
     ]).start();
-
-    // Button appears later with delay
-    setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(buttonFadeAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(buttonSlideAnim, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, 1400); // Increased delay to make button appear later (was immediate)
+    // Button is visible immediately - no animation delay
   }, []);
 
   const handleAreaToggle = (areaId: string) => {
@@ -116,12 +100,13 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
     <View style={styles.container}>
       <StatusBar style="dark" backgroundColor="#EDF8F8" translucent={false} />
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
           {/* Back Button */}
           {onBack && (
             <TouchableOpacity
@@ -145,9 +130,9 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
           >
             {/* Header Text */}
             <View style={styles.headerContainer}>
-              <Text style={styles.headline}>What do you want to focus on right now?</Text>
+              <Text style={styles.headline}>{t('onboarding.focusAreas.headline')}</Text>
               <Text style={styles.promptText}>
-                Pick a few. You can change this anytime.
+                {t('onboarding.focusAreas.promptText')}
               </Text>
             </View>
 
@@ -156,28 +141,22 @@ const FocusAreasScreen: React.FC<FocusAreasScreenProps> = ({ onContinue, onBack 
               {focusAreas.map(renderAreaChip)}
             </View>
 
-            {/* Continue Button */}
-            <Animated.View
-              style={[
-                styles.actionContainer,
-                {
-                  opacity: buttonFadeAnim,
-                  transform: [{ translateY: buttonSlideAnim }],
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={styles.continueButton}
-                onPress={handleContinue}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.continueButtonText}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
           </Animated.View>
         </ScrollView>
+
+        {/* Fixed Footer Button - Visible immediately */}
+        <View style={styles.actionContainer}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={handleContinue}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.continueButtonText}>
+              {t('onboarding.common.continueButton')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        </View>
       </SafeAreaView>
     </View>
   );

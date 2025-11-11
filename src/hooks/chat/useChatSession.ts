@@ -3,6 +3,7 @@ import { Message, storageService } from '../../services/storageService';
 import { contextService } from '../../services/contextService';
 import { apiService } from '../../services/apiService';
 import { rateLimitService } from '../../services/rateLimitService';
+import { entitlementService } from '../../services/entitlementService';
 import { ttsService } from '../../services/ttsService';
 import { useSessionManagement, ExerciseContext } from '../useSessionManagement';
 import { EXERCISE_KEYWORDS, getExerciseLibraryData, getExercisesArray } from '../../data/exerciseLibrary';
@@ -54,32 +55,34 @@ export const useChatSession = (
   const [showExerciseCard, _setShowExerciseCard] = useState<any>(null);
 
   const setShowExerciseCard = (exercise: any) => {
-    console.log('SHOW_EXERCISE_CARD_STATE:', JSON.stringify(exercise, null, 2));
     _setShowExerciseCard(exercise);
   };
   const [currentExerciseStep, setCurrentExerciseStep] = useState<number | null>(null);
   const [exerciseFlow, setExerciseFlow] = useState<any>(null);
 
-  const { isLoading, initializeSession, handleEndSession: sessionEndHandler } = useSessionManagement();
+  const {
+    isLoading,
+    initializeSession,
+    handleEndSession: sessionEndHandler,
+    showExitConfirmation,
+    confirmExit,
+    cancelExit,
+  } = useSessionManagement();
 
   const initializeChatSession = useCallback(async () => {
     try {
       const rateLimitStatus = await rateLimitService.getRateLimitStatus();
       setRateLimitStatus(rateLimitStatus);
 
-      console.log('=== CHAT INITIALIZATION ===');
 
       if (currentExercise) {
-        console.log('Exercise detected - delegating to handleStartExercise:', currentExercise.type);
         await handleStartExercise(currentExercise);
         return;
       } else {
-        console.log('Starting fresh chat session with AI-powered first message');
         const sessionData = await initializeSession();
 
         setMessages(sessionData.messages);
         setSuggestions(sessionData.suggestions); // AI-generated contextual chips
-        console.log('✅ Chat initialized with personalized greeting and', sessionData.suggestions.length, 'suggestion chips');
       }
     } catch (error) {
       console.error('Error initializing chat session:', error);
@@ -133,7 +136,6 @@ export const useChatSession = (
       
       let context;
       if (exerciseFlow && currentExerciseStep) {
-        console.log(`🎯 In exercise mode: Step ${currentExerciseStep}, using exercise context`);
         context = await contextService.assembleExerciseContext(
           recentMessages,
           exerciseFlow,
@@ -142,27 +144,27 @@ export const useChatSession = (
           false
         );
       } else {
-        console.log('🎯 In regular chat mode, using chat context');
         context = await contextService.assembleContext(recentMessages);
       }
 
       const response = await apiService.getChatCompletionWithContext(context);
-      console.log('API response:', response);
-      console.log('🔍 Exercise card debug - nextAction:', response.nextAction);
-      console.log('🔍 Exercise card debug - exerciseData:', response.exerciseData);
       
       if (response.nextAction !== undefined) {
-        console.log('✅ AI is now providing nextAction field:', response.nextAction);
       } else {
-        console.log('❌ AI still not providing nextAction field');
       }
 
       setIsTyping(false);
 
       if (response.success && response.message) {
         await rateLimitService.recordRequest();
+        await entitlementService.incrementMessageCount();
         const newRateLimitStatus = await rateLimitService.getRateLimitStatus();
         setRateLimitStatus(newRateLimitStatus);
+
+        // Debug logging (only in development)
+        if (__DEV__) {
+          console.log('[useChatSession] Message recorded, new rate limit status:', newRateLimitStatus);
+        }
 
         let aiResponse: Message;
         if (exerciseFlow && currentExerciseStep) {
@@ -418,6 +420,10 @@ const handleConfirmExerciseTransition = async (exercise: any) => {
     handleExerciseSendMessage,
     handleStartExercise,
     handleConfirmExerciseTransition,
+    // Exit confirmation state and handlers
+    showExitConfirmation,
+    confirmExit,
+    cancelExit,
   };
 };
 

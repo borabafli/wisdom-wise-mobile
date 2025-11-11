@@ -34,8 +34,8 @@ export const wheelTimePickerStyles = StyleSheet.create({
   focusBand: {
     position: 'absolute',
     top: ITEM_HEIGHT * 1, // Center position for 3 visible items (middle item)
-    left: 20, // Narrower width - more inset from sides
-    right: 20, // Narrower width - more inset from sides
+    left: -40, // Extend beyond container to left
+    right: -40, // Extend beyond container to right
     height: ITEM_HEIGHT,
     backgroundColor: 'rgba(91, 163, 184, 0.15)', // More subtle opacity
     borderRadius: 8,

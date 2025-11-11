@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { usePostHog } from 'posthog-react-native';
 import OnboardingWelcomeScreen from '../screens/onboarding/OnboardingWelcomeScreen';
 import OnboardingValuePropScreen from '../screens/onboarding/OnboardingValuePropScreen';
 import PersonalValuesScreen from '../screens/onboarding/PersonalValuesScreen';
@@ -7,6 +8,7 @@ import OnboardingPersonalizationScreen from '../screens/onboarding/OnboardingPer
 import FocusAreasScreen from '../screens/onboarding/FocusAreasScreen';
 import OnboardingFinalScreen from '../screens/onboarding/OnboardingFinalScreen';
 import NotificationPermissionScreen from '../screens/onboarding/NotificationPermissionScreen';
+import OnboardingPaywallScreen from '../screens/OnboardingPaywallScreen';
 import { OnboardingService } from '../services/onboardingService';
 import { storageService } from '../services/storageService';
 
@@ -15,36 +17,73 @@ interface OnboardingNavigatorProps {
 }
 
 export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComplete }) => {
+  const posthog = usePostHog();
   const [currentStep, setCurrentStep] = useState(1);
   const [userProfile, setUserProfile] = useState<{ name?: string; values?: string[]; ageGroup?: string; focusAreas?: string[] }>({});
 
+  // Helper to get step name
+  const getStepName = (step: number) => {
+    const steps = ['welcome', 'value_prop', 'personal_values', 'focus_areas', 'age_group', 'personalization', 'final', 'notifications', 'paywall'];
+    return steps[step - 1] || 'unknown';
+  };
+
+  // 🎯 Track onboarding step viewed
+  useEffect(() => {
+    posthog?.capture('onboarding_step_viewed', {
+      step: getStepName(currentStep),
+      stepNumber: currentStep,
+    });
+  }, [currentStep, posthog]);
+
   const handleContinueFromWelcome = () => {
+    posthog?.capture('onboarding_step_completed', { step: 'welcome', stepNumber: 1 });
     setCurrentStep(2); // Go to value proposition screen
   };
 
   const handleContinueFromValueProp = () => {
+    posthog?.capture('onboarding_step_completed', { step: 'value_prop', stepNumber: 2 });
     setCurrentStep(3); // Go to personal values screen
   };
 
   const handleContinueFromPersonalValues = async (selectedValues: string[]) => {
+    posthog?.capture('onboarding_step_completed', {
+      step: 'personal_values',
+      stepNumber: 3,
+      valuesSelected: selectedValues.length
+    });
     // Save selected values and move to focus areas screen
     setUserProfile(prev => ({ ...prev, values: selectedValues }));
     setCurrentStep(4); // Go to focus areas screen
   };
 
   const handleContinueFromFocusAreas = async (selectedAreas: string[]) => {
+    posthog?.capture('onboarding_step_completed', {
+      step: 'focus_areas',
+      stepNumber: 4,
+      areasSelected: selectedAreas.length
+    });
     // Save selected focus areas and move to age group screen
     setUserProfile(prev => ({ ...prev, focusAreas: selectedAreas }));
     setCurrentStep(5); // Go to age group screen
   };
 
   const handleContinueFromAgeGroup = async (selectedAge: string) => {
+    posthog?.capture('onboarding_step_completed', {
+      step: 'age_group',
+      stepNumber: 5,
+      ageGroup: selectedAge
+    });
     // Save selected age group and move to name screen
     setUserProfile(prev => ({ ...prev, ageGroup: selectedAge }));
     setCurrentStep(6); // Go to name screen
   };
 
   const handleContinueFromPersonalization = async (name: string) => {
+    posthog?.capture('onboarding_step_completed', {
+      step: 'personalization',
+      stepNumber: 6,
+      nameProvided: true
+    });
     // Save name and move to final screen
     try {
       await storageService.updateUserProfile({
@@ -67,10 +106,17 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
   };
 
   const handleSkipPersonalization = () => {
+    posthog?.capture('onboarding_step_completed', {
+      step: 'personalization',
+      stepNumber: 6,
+      nameProvided: false,
+      skipped: true
+    });
     setCurrentStep(7); // Go to final screen without saving name
   };
 
   const handleContinueFromFinal = () => {
+    posthog?.capture('onboarding_step_completed', { step: 'final', stepNumber: 7 });
     setCurrentStep(8); // Go to notification permission screen
   };
 
@@ -78,7 +124,35 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     setCurrentStep(prev => Math.max(1, prev - 1));
   };
 
-  const handleCompleteOnboarding = async () => {
+  const handleContinueFromNotifications = async (notificationsEnabled?: boolean) => {
+    posthog?.capture('onboarding_step_completed', {
+      step: 'notifications',
+      stepNumber: 8,
+      notificationsEnabled: notificationsEnabled || false
+    });
+    setCurrentStep(9); // Go to paywall screen
+  };
+
+  const handleCompletePaywall = async () => {
+    posthog?.capture('onboarding_completed', {
+      step: 'paywall',
+      stepNumber: 9,
+      totalSteps: 9,
+      purchasedPremium: true
+    });
+    // Complete onboarding
+    await OnboardingService.completeOnboarding();
+    onComplete();
+  };
+
+  const handleSkipPaywall = async () => {
+    posthog?.capture('onboarding_completed', {
+      step: 'paywall',
+      stepNumber: 9,
+      totalSteps: 9,
+      purchasedPremium: false,
+      skipped: true
+    });
     // Complete onboarding
     await OnboardingService.completeOnboarding();
     onComplete();
@@ -143,11 +217,19 @@ export const OnboardingNavigator: React.FC<OnboardingNavigatorProps> = ({ onComp
     case 8:
       return (
         <NotificationPermissionScreen
-          onContinue={handleCompleteOnboarding}
+          onContinue={handleContinueFromNotifications}
           onBack={currentStep > 1 ? handleBack : undefined}
         />
       );
-    
+
+    case 9:
+      return (
+        <OnboardingPaywallScreen
+          onComplete={handleCompletePaywall}
+          onSkip={handleSkipPaywall}
+        />
+      );
+
     default:
       return <OnboardingWelcomeScreen onContinue={handleContinueFromWelcome} />;
   }

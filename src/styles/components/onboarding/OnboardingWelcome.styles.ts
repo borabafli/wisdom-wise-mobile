@@ -21,7 +21,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: spacing.large, // 24px
+    // paddingVertical removed - handled dynamically in component for safe area
   },
 
   // Anu Image Container - Takes most of the screen
@@ -109,8 +109,8 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingHorizontal: spacing.large,
-    paddingBottom: 30,
-    marginTop: -spacing[16], // Restored to reasonable negative margin
+    paddingBottom: 0, // Bottom padding handled by contentContainer paddingBottom
+    marginTop: spacing[8], // Positive margin for separation
     zIndex: 1000, // Absolute foreground
     position: 'relative',
   },
@@ -120,7 +120,7 @@ export const onboardingWelcomeStyles = StyleSheet.create({
     paddingHorizontal: 32, // Standard button padding
     minWidth: 200, // Minimum width for button
     height: 48, // Design principles height
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { MoodSlider } from './MoodSlider';
 import { moodRatingService, MoodRating } from '../../services/moodRatingService';
 import { moodRatingCardStyles as styles } from '../../styles/components/MoodRatingCard.styles';
@@ -20,25 +21,33 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
   onComplete,
   onSkip
 }) => {
+  const { t } = useTranslation();
   const [moodRating, setMoodRating] = useState<number>(2.5);
   const [helpfulnessRating, setHelpfulnessRating] = useState<number>(2.5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSlider, setCurrentSlider] = useState<'mood' | 'helpfulness'>('mood');
   const [showTestSlider, setShowTestSlider] = useState(false);
+  const submittingRef = React.useRef(false); // Ref-based guard for async reliability
 
   const handleMoodComplete = (rating: number) => {
+    if (isSubmitting) return; // Prevent any action if already submitting
     setMoodRating(rating);
     setCurrentSlider('helpfulness');
   };
 
   const handleHelpfulnessComplete = async (rating: number) => {
+    if (isSubmitting || submittingRef.current) return; // Guard against double-calls
     setHelpfulnessRating(rating);
     await submitRating(rating);
   };
 
   const submitRating = async (finalHelpfulnessRating?: number) => {
-    if (isSubmitting) return;
-    
+    if (isSubmitting || submittingRef.current) {
+      console.log('Already submitting mood rating, ignoring duplicate call');
+      return;
+    }
+
+    submittingRef.current = true; // Set ref immediately for synchronous guard
     setIsSubmitting(true);
     
     try {
@@ -79,6 +88,7 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
       onComplete(rating);
     } finally {
       setIsSubmitting(false);
+      submittingRef.current = false; // Reset ref guard
     }
   };
 
@@ -96,31 +106,37 @@ export const MoodRatingCard: React.FC<MoodRatingCardProps> = ({
         end={{ x: 1, y: 1 }}
         style={styles.gradientBackground}
       />
-      <Text style={styles.title}>Before we finish...</Text>
-      
+      <Text style={styles.title}>{t('chat.moodRatingCard.title')}</Text>
+
       {currentSlider === 'mood' && (
-        <MoodSlider
-          title=""
-          subtitle=""
-          initialValue={moodRating}
-          type="mood"
-          onRatingChange={setMoodRating}
-          onComplete={handleMoodComplete}
-          onSkip={onSkip ? handleSkip : undefined}
-        />
+        <View style={styles.questionSection}>
+          <Text style={styles.questionText}>{t('chat.moodRatingCard.howDoYouFeelNow')}</Text>
+          <MoodSlider
+            title=""
+            subtitle=""
+            initialValue={moodRating}
+            type="mood"
+            onRatingChange={setMoodRating}
+            onComplete={handleMoodComplete}
+            onSkip={onSkip ? handleSkip : undefined}
+          />
+        </View>
       )}
-      
+
       {currentSlider === 'helpfulness' && (
-        <MoodSlider
-          title=""
-          subtitle=""
-          initialValue={helpfulnessRating}
-          type="helpfulness"
-          variant="test"
-          onRatingChange={setHelpfulnessRating}
-          onComplete={handleHelpfulnessComplete}
-          onSkip={onSkip ? handleSkip : undefined}
-        />
+        <View style={styles.questionSection}>
+          <Text style={styles.questionText}>{t('chat.moodRatingCard.howHelpfulWasThis')}</Text>
+          <MoodSlider
+            title=""
+            subtitle=""
+            initialValue={helpfulnessRating}
+            type="helpfulness"
+            variant="test"
+            onRatingChange={setHelpfulnessRating}
+            onComplete={handleHelpfulnessComplete}
+            onSkip={onSkip ? handleSkip : undefined}
+          />
+        </View>
       )}
     </View>
   );

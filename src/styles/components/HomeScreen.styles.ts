@@ -164,7 +164,7 @@ export const homeScreenStyles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing[32], // Increased width
+    width: width * 0.80, // Fixed width matching exercise cards (85% of screen width)
     paddingVertical: spacing[8], // Reduced height
     alignSelf: 'center', // Center the button
     borderRadius: 12,
@@ -183,6 +183,8 @@ export const homeScreenStyles = StyleSheet.create({
     fontWeight: '500',
     color: '#2B475E', // Darker color to match title
     fontFamily: 'IBMPlexSans-Medium',
+    textAlign: 'center', // Center align text
+    maxWidth: '100%', // Ensure text doesn't overflow
   },
   checkInButtonIcons: {
     flexDirection: 'row',

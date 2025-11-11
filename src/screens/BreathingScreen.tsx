@@ -87,6 +87,17 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
     style: 'dark'
   });
 
+  // Debug logging to understand the difference between quick actions and exercises
+  useEffect(() => {
+    console.log('BreathingScreen mounted with exercise:', {
+      hasExercise: !!exercise,
+      exerciseType: exercise?.type,
+      exerciseId: exercise?.id,
+      exerciseSlug: exercise?.slug,
+      exerciseName: exercise?.name,
+    });
+  }, [exercise]);
+
   // Map exercise ID to preset ID
   const getPresetFromExercise = (exerciseData: any): BreathingPreset => {
     if (!exerciseData) {
@@ -119,6 +130,7 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [showCustomModal, setShowCustomModal] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [customSettings, setCustomSettings] = useState({
     inhale: 4,
     hold: 4,
@@ -137,15 +149,34 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
   const cycleCountRef = useRef(0);
   const isPlayingRef = useRef(false);
 
-  // Load user preferences on mount
+  // Initialize audio and load user preferences on mount
   useEffect(() => {
+    const initializeAudio = async () => {
+      try {
+        // Configure audio mode for proper playback on iOS devices
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          playsInSilentModeIOS: true,
+          staysActiveInBackground: false,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: false,
+        });
+        console.log('Audio mode configured successfully');
+      } catch (error) {
+        console.log('Error configuring audio mode:', error);
+        // Continue without audio if configuration fails
+      }
+    };
+
+    initializeAudio();
     loadUserPreferences();
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
       if (soundRef.current) {
-        soundRef.current.unloadAsync();
+        soundRef.current.unloadAsync().catch(console.log);
       }
     };
   }, []);
@@ -182,8 +213,6 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
     if (!soundEnabled) return;
 
     try {
-      const sound = new Audio.Sound();
-      
       // Load the appropriate sound file based on phase
       let soundFile;
       switch (phase) {
@@ -200,23 +229,35 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
         default:
           return; // No sound for unknown phases
       }
-      
-      await sound.loadAsync(soundFile);
-      await sound.setVolumeAsync(0.8); // Increased from 0.3 to 0.8 (80% volume)
+
+      // Create and configure sound with better error handling
+      const sound = new Audio.Sound();
+
+      // Set audio options before loading
+      await sound.loadAsync(soundFile, {
+        shouldPlay: false,
+        volume: 0.8,
+        isLooping: false,
+      });
+
+      // Play the sound
       await sound.playAsync();
-      
-      // Clean up after playing
+
+      // Clean up after playing with more robust cleanup
       setTimeout(async () => {
         try {
-          await sound.unloadAsync();
+          const status = await sound.getStatusAsync();
+          if (status.isLoaded) {
+            await sound.unloadAsync();
+          }
         } catch (cleanupError) {
-          console.log('Sound cleanup error:', cleanupError);
+          console.log('Sound cleanup error (safe to ignore):', cleanupError);
         }
-      }, 3000);
-      
+      }, 5000); // Increased timeout to ensure sound completes
+
     } catch (error) {
-      console.log('Sound files not found, using haptic feedback fallback:', error);
-      // Graceful fallback to haptics when sound files are missing
+      console.log('Audio playback failed, using haptic feedback fallback:', error);
+      // Graceful fallback to haptics when audio fails
       const hapticType = phase === 'exhale' ? 'medium' : phase === 'inhale' ? 'light' : 'heavy';
       triggerHaptics(hapticType);
     }
@@ -343,7 +384,23 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
               setIsPlaying(false);
               isPlayingRef.current = false;
               setIsPaused(false);
+              setIsCompleted(true);
               triggerHaptics('heavy');
+
+              // Animate to a completion state
+              Animated.parallel([
+                Animated.spring(scaleAnimation, {
+                  toValue: 0.85,
+                  useNativeDriver: false,
+                  friction: 8,
+                }),
+                Animated.timing(opacityAnimation, {
+                  toValue: 1,
+                  duration: 500,
+                  useNativeDriver: false,
+                }),
+              ]).start();
+
               return;
             }
           }
@@ -391,15 +448,16 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
     setCyclesCompleted(0);
     setCurrentPhase('inhale');
     setTimeRemaining(0);
-    
+    setIsCompleted(false);
+
     // Reset refs
     phaseIndexRef.current = 0;
     cycleCountRef.current = 0;
-    
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-    
+
     // Reset animations
     Animated.parallel([
       Animated.timing(scaleAnimation, {
@@ -603,9 +661,18 @@ const BreathingScreen: React.FC<BreathingScreenProps> = ({ onBack, exercise }) =
                 colors={getPhaseColor()}
                 style={styles.breathingGradient}
               >
-                <Text style={[styles.phaseText, { color: getPhaseTextColor() }]}>{getPhaseText()}</Text>
-                {timeRemaining > 0 && (
-                  <Text style={[styles.timerText, { color: getPhaseTextColor() }]}>{timeRemaining}</Text>
+                {isCompleted ? (
+                  <>
+                    <Text style={[styles.completionText, { color: getPhaseTextColor() }]}>Well Done!</Text>
+                    <Text style={[styles.completionSubtext, { color: getPhaseTextColor() }]}>Session Complete</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={[styles.phaseText, { color: getPhaseTextColor() }]}>{getPhaseText()}</Text>
+                    {timeRemaining > 0 && (
+                      <Text style={[styles.timerText, { color: getPhaseTextColor() }]}>{timeRemaining}</Text>
+                    )}
+                  </>
                 )}
               </LinearGradient>
             </Animated.View>
@@ -1019,6 +1086,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.white,
     textAlign: 'center',
+  },
+  completionText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.white,
+    textAlign: 'center',
+    marginBottom: spacing.therapy.xs,
+  },
+  completionSubtext: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.white,
+    textAlign: 'center',
+    opacity: 0.9,
   },
 
   // Progress

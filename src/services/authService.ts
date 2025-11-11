@@ -2,6 +2,10 @@ import { supabase, isSupabaseAvailable, supabaseInitError } from '../config/supa
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+// Required so Android custom tabs can hand the OAuth redirect back to the app.
+WebBrowser.maybeCompleteAuthSession();
 
 export class AuthService {
   // Check if Supabase is available before operations
@@ -17,8 +21,8 @@ export class AuthService {
       // This works for all developers without needing to change IPs
       return `exp://localhost:19000/--${path}`;
     }
-    // Production: use custom scheme
-    return `wisdomwise:${path}`;
+    // Production: use custom scheme (must match app.json scheme)
+    return `zenmind:${path}`;
   }
 
   // Sign up with email and password
@@ -71,16 +75,22 @@ export class AuthService {
   // Sign in with Google OAuth
   async signInWithGoogle() {
     try {
-      // Configure the redirect URL for your app scheme
-      const redirectUrl = AuthSession.makeRedirectUri({
-        scheme: 'wisdomwise',
-        path: '/auth/verify'
-      });
+      this.checkSupabaseAvailable();
+
+      const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+      // Configure the redirect URL for the current runtime (Expo Go vs standalone)
+      const redirectUrl = isExpoGo
+        ? AuthSession.getDefaultReturnUrl('auth/verify')
+        : AuthSession.makeRedirectUri({
+            scheme: 'zenmind',
+            path: 'auth/verify',
+          });
 
       console.log('OAuth redirect URL:', redirectUrl);
 
       // Start the OAuth session with Supabase
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase!.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
@@ -135,7 +145,7 @@ export class AuthService {
       }
 
       // Set the session manually with the extracted tokens
-      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+      const { data: sessionData, error: sessionError } = await supabase!.auth.setSession({
         access_token: accessToken,
         refresh_token: refreshToken || ''
       });
@@ -158,7 +168,8 @@ export class AuthService {
   // Sign out
   async signOut() {
     try {
-      const { error } = await supabase.auth.signOut();
+      this.checkSupabaseAvailable();
+      const { error } = await supabase!.auth.signOut();
       
       if (error) {
         throw new Error(error.message);
@@ -190,7 +201,8 @@ export class AuthService {
   // Get current user
   async getCurrentUser() {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      this.checkSupabaseAvailable();
+      const { data: { user }, error } = await supabase!.auth.getUser();
       
       if (error) {
         throw new Error(error.message);
@@ -226,7 +238,8 @@ export class AuthService {
   // Reset password
   async resetPassword(email: string) {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      this.checkSupabaseAvailable();
+      const { error } = await supabase!.auth.resetPasswordForEmail(email);
       
       if (error) {
         throw new Error(error.message);
@@ -240,7 +253,8 @@ export class AuthService {
   // Resend verification email
   async resendVerification(email: string) {
     try {
-      const { error } = await supabase.auth.resend({
+      this.checkSupabaseAvailable();
+      const { error } = await supabase!.auth.resend({
         type: 'signup',
         email: email,
         options: {
@@ -260,7 +274,8 @@ export class AuthService {
   // Verify email with token (if manually handling verification)
   async verifyEmail(token: string, email: string) {
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
+      this.checkSupabaseAvailable();
+      const { data, error } = await supabase!.auth.verifyOtp({
         token,
         type: 'signup',
         email,

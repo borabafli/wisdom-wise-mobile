@@ -222,6 +222,8 @@ ${context}
 
 For the user's latest reflection: "${userResponse}"
 
+IMPORTANT: Generate the question in ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}. The user's language is ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}, so the question must be in that language.
+
 Generate one powerful follow-up question that invites deeper insight and meaningful reflection - a question ideal for inspiring guided journaling. 
 This is ${stepNumber === 0 ? 'the first' : 'the second'} follow-up question. 
 
@@ -235,7 +237,7 @@ The question should:
 - Return only the question, no explanations or extra text.
 - A single question, not multiple questions
 
-Return only the question, no additional text.`;
+Return only the question in ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}, no additional text.`;
 
     try {
       const response = await chatService.sendMessage(prompt, []);
@@ -243,13 +245,40 @@ Return only the question, no additional text.`;
     } catch (error) {
       console.error('Error generating follow-up question:', error);
 
-      // Fallback questions based on step
-      const fallbackQuestions = [
-        "What emotions came up for you as you wrote that? How do those feelings connect to your daily experience?",
-        "Looking deeper at what you shared, what patterns or themes do you notice? What might this reveal about what's important to you right now?"
-      ];
+      // Fallback questions based on step (translated for each language)
+      const fallbackQuestions: { [key: string]: string[] } = {
+        tr: [
+          "Bunu yazarken hangi duygular ortaya çıktı? Bu duygular günlük deneyiminizle nasıl bağlantılı?",
+          "Paylaştıklarınıza daha derin baktığınızda, hangi kalıpları veya temaları fark ediyorsunuz? Bu, şu anda sizin için neyin önemli olduğu hakkında ne ortaya koyabilir?"
+        ],
+        en: [
+          "What emotions came up for you as you wrote that? How do those feelings connect to your daily experience?",
+          "Looking deeper at what you shared, what patterns or themes do you notice? What might this reveal about what's important to you right now?"
+        ],
+        de: [
+          "Welche Emotionen kamen hoch, als Sie das geschrieben haben? Wie verbinden sich diese Gefühle mit Ihrer täglichen Erfahrung?",
+          "Wenn Sie tiefer schauen, welche Muster oder Themen bemerken Sie? Was könnte dies darüber verraten, was Ihnen gerade wichtig ist?"
+        ],
+        es: [
+          "¿Qué emociones surgieron mientras escribías eso? ¿Cómo se conectan esos sentimientos con tu experiencia diaria?",
+          "Mirando más profundamente lo que compartiste, ¿qué patrones o temas notas? ¿Qué podría revelar esto sobre lo que es importante para ti ahora?"
+        ],
+        fr: [
+          "Quelles émotions ont émergé lorsque vous avez écrit cela? Comment ces sentiments se connectent-ils à votre expérience quotidienne?",
+          "En regardant plus profondément ce que vous avez partagé, quels motifs ou thèmes remarquez-vous? Qu'est-ce que cela pourrait révéler sur ce qui est important pour vous maintenant?"
+        ],
+        pt: [
+          "Que emoções surgiram enquanto você escrevia isso? Como esses sentimentos se conectam com sua experiência diária?",
+          "Olhando mais profundamente o que você compartilhou, quais padrões ou temas você nota? O que isso pode revelar sobre o que é importante para você agora?"
+        ]
+      };
 
-      return fallbackQuestions[stepNumber] || "What else would you like to explore about this topic?";
+      const currentLangQuestions = fallbackQuestions[i18n.language] || fallbackQuestions.en;
+      const defaultQuestion = i18n.language === 'tr' 
+        ? "Bu konu hakkında daha fazla ne keşfetmek istersiniz?"
+        : "What else would you like to explore about this topic?";
+        
+      return currentLangQuestions[stepNumber] || defaultQuestion;
     }
   };
 

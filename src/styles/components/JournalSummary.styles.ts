@@ -1,7 +1,5 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { spacing } from '../tokens';
-
-const { width } = Dimensions.get('window');
 
 export const journalSummaryStyles = StyleSheet.create({
   container: {

@@ -22,6 +22,9 @@ export interface ExerciseContext {
  */
 export const useSessionManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
+  const [pendingExitCallback, setPendingExitCallback] = useState<(() => void) | null>(null);
+  const [pendingExerciseContext, setPendingExerciseContext] = useState<ExerciseContext | undefined>(undefined);
 
   const initializeSession = useCallback(async (): Promise<{ messages: Message[], suggestions: string[] }> => {
     try {
@@ -74,43 +77,70 @@ export const useSessionManagement = () => {
   }, []);
 
   const handleEndSession = useCallback((onBack: () => void, messages: Message[], exerciseContext?: ExerciseContext) => {
-    console.log('handleEndSession called, messages length:', messages.length);
-    console.log('Exercise context:', exerciseContext);
-    
+    console.log('🔍 [SESSION MANAGEMENT DEBUG] handleEndSession called');
+    console.log('  - messages length:', messages.length);
+    console.log('  - exerciseContext:', JSON.stringify(exerciseContext, null, 2));
+
     // Check if we have any user messages (real conversation)
     const userMessages = messages.filter(msg => msg.type === 'user');
     console.log('User messages count:', userMessages.length);
-    
+
     if (userMessages.length > 0) {
-      console.log('Showing save dialog');
-      // For now, let's proceed as if user chose to save.
-      extractInsightsAndSaveSession(onBack, exerciseContext);
+      console.log('User has messages - showing exit confirmation dialog');
+      // Show confirmation dialog
+      setPendingExitCallback(() => onBack);
+      setPendingExerciseContext(exerciseContext);
+      setShowExitConfirmation(true);
     } else {
       console.log('No user messages, going back directly');
       onBack();
     }
   }, []);
 
+  // User confirmed exit - proceed with save
+  const confirmExit = useCallback((skipInsights: boolean = false) => {
+    console.log('User confirmed exit - proceeding with save', { skipInsights });
+    setShowExitConfirmation(false);
+    if (pendingExitCallback) {
+      extractInsightsAndSaveSession(pendingExitCallback, pendingExerciseContext, skipInsights);
+      setPendingExitCallback(null);
+      setPendingExerciseContext(undefined);
+    }
+  }, [pendingExitCallback, pendingExerciseContext]);
+
+  // User cancelled exit - stay in chat
+  const cancelExit = useCallback(() => {
+    console.log('User cancelled exit - staying in chat');
+    setShowExitConfirmation(false);
+    setPendingExitCallback(null);
+    setPendingExerciseContext(undefined);
+  }, []);
+
   // Extract insights and save session - BACKGROUND PROCESSING
-  const extractInsightsAndSaveSession = useCallback(async (onBack: () => void, exerciseContext?: ExerciseContext) => {
+  const extractInsightsAndSaveSession = useCallback(async (onBack: () => void, exerciseContext?: ExerciseContext, skipInsightExtraction: boolean = false) => {
     try {
-      console.log('Starting background session save and insight extraction...');
-      
+      console.log('Starting background session save and insight extraction...', { skipInsightExtraction });
+
       // IMMEDIATELY return to main app - don't block the user!
       onBack();
-      
+
       // Continue processing in background
       await storageService.saveToHistory();
       await storageService.clearCurrentSession();
       console.log('Session saved to history and cleared');
-      
+
       // Process insights and memory in background (slow AI operations)
       setTimeout(async () => {
         try {
           const currentSession = await storageService.getChatHistory();
           const lastSession = currentSession[0]; // Most recent session
-          
+
           if (lastSession && lastSession.messages) {
+            // ⏭️ SKIP ALL INSIGHT EXTRACTION IF USER OPTED OUT
+            if (skipInsightExtraction) {
+              console.log('⏭️ Skipping all insight extraction as per user request');
+              return; // Exit early, skip everything below
+            }
             // Check if this was the Automatic Thoughts exercise
             const isAutomaticThoughtsExercise = exerciseContext?.exerciseType === 'automatic-thoughts';
 
@@ -125,6 +155,43 @@ export const useSessionManagement = () => {
               }
             } else {
               console.log(`⏭️ Skipping CBT thought pattern extraction - not Automatic Thoughts exercise`);
+            }
+
+            // Extract and save values after Values Clarification exercise
+            const isValuesExercise = exerciseContext?.exerciseType === 'values-clarification';
+            if (isValuesExercise) {
+              console.log('💎 Values Clarification exercise completed - extracting core values');
+              try {
+                const valuesResult = await contextService.generateSummaryWithDirectAPI(
+                  'extract_values',
+                  lastSession.messages.map(msg => ({
+                    role: msg.type === 'user' ? 'user' : 'assistant',
+                    content: msg.content || msg.text || ''
+                  })),
+                  lastSession.id  // Pass sessionId for extract-insights endpoint
+                );
+
+                if (valuesResult.success && valuesResult.values && valuesResult.values.length > 0) {
+                  // Save each extracted value using valuesService
+                  const { valuesService } = await import('../services/valuesService');
+
+                  for (const extractedValue of valuesResult.values) {
+                    await valuesService.saveValue({
+                      name: extractedValue.name,
+                      userDescription: extractedValue.userDescription,
+                      importance: extractedValue.importance,
+                      tags: extractedValue.tags || [],
+                      sourceSessionId: lastSession.id
+                    });
+                  }
+
+                  console.log(`✅ Background: Extracted and saved ${valuesResult.values.length} core values`);
+                } else {
+                  console.log(`ℹ️ No clear values found in this session`);
+                }
+              } catch (error) {
+                console.error('Error extracting values:', error);
+              }
             }
 
             // Exercise-specific insight extraction based on context
@@ -227,6 +294,43 @@ export const useSessionManagement = () => {
             } else {
               console.log(`ℹ️ No clear thought patterns with distortions found (conversation not saved)`);
             }
+          }
+
+          // Extract and save values after Values Clarification exercise
+          const isValuesExercise = exerciseContext?.exerciseType === 'values-clarification';
+          if (isValuesExercise) {
+            console.log('💎 Values Clarification exercise completed - extracting core values (conversation not saved)');
+            try {
+              const valuesResult = await contextService.generateSummaryWithDirectAPI(
+                'extract_values',
+                currentMessages.map(msg => ({
+                  role: msg.type === 'user' ? 'user' : 'assistant',
+                  content: msg.content || msg.text || ''
+                })),
+                'unsaved_session_' + Date.now()  // Pass temporary sessionId for extract-insights endpoint
+              );
+
+              if (valuesResult.success && valuesResult.values && valuesResult.values.length > 0) {
+                // Save each extracted value using valuesService
+                const { valuesService } = await import('../services/valuesService');
+
+                for (const extractedValue of valuesResult.values) {
+                  await valuesService.saveValue({
+                    name: extractedValue.name,
+                    userDescription: extractedValue.userDescription,
+                    importance: extractedValue.importance,
+                    tags: extractedValue.tags || [],
+                    sourceSessionId: 'unsaved_session'
+                  });
+                }
+
+                console.log(`✅ Background: Extracted and saved ${valuesResult.values.length} core values (conversation not saved)`);
+              } else {
+                console.log(`ℹ️ No clear values found in this session (conversation not saved)`);
+              }
+            } catch (error) {
+              console.error('Error extracting values:', error);
+            }
           } else {
             console.log(`⏭️ Skipping CBT thought pattern extraction - not Automatic Thoughts exercise (conversation not saved)`);
           }
@@ -286,7 +390,11 @@ export const useSessionManagement = () => {
     initializeSession,
     handleEndSession,
     extractInsightsAndSaveSession,
-    extractInsightsAndEnd
+    extractInsightsAndEnd,
+    // Exit confirmation state and handlers
+    showExitConfirmation,
+    confirmExit,
+    cancelExit,
   };
 };
 

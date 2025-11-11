@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
-import { X, TrendingUp, Calendar, MessageCircle, ArrowRight, Filter, Trash2 } from 'lucide-react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { X, TrendingUp, Calendar, MessageCircle, ShieldCheck, Sparkles, Clock, Layers, Trash2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { memoryService, Summary } from '../services/memoryService';
+import { storageService } from '../services/storageService';
 import { sessionSummariesStyles as styles } from '../styles/components/SessionSummaries.styles';
 
 interface SessionSummariesModalProps {
@@ -20,9 +22,11 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
   totalCount = 0,
   onDelete
 }) => {
+  const { t } = useTranslation();
   const [summaries, setSummaries] = useState<Summary[]>(initialSummaries);
   const [filter, setFilter] = useState<'all' | 'session' | 'consolidated'>('all');
   const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstName] = useState('');
 
   useEffect(() => {
     if (visible && initialSummaries.length === 0) {
@@ -31,6 +35,31 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
       setSummaries(initialSummaries);
     }
   }, [visible, initialSummaries]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchName = async () => {
+      try {
+        const name = await storageService.getFirstName();
+        if (isMounted) {
+          setFirstName(name);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setFirstName('Friend');
+        }
+      }
+    };
+
+    if (visible) {
+      fetchName();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [visible]);
 
   const loadAllSummaries = async () => {
     setIsLoading(true);
@@ -50,6 +79,22 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
     return summary.type === filter;
   });
 
+  const sessionSummariesCount = useMemo(
+    () => summaries.filter(summary => summary.type === 'session').length,
+    [summaries]
+  );
+
+  const consolidatedSummariesCount = useMemo(
+    () => summaries.filter(summary => summary.type === 'consolidated').length,
+    [summaries]
+  );
+
+  const sessionOrderMap = useMemo(() => {
+    const sessionOnly = summaries.filter(summary => summary.type === 'session');
+    const reversed = [...sessionOnly].reverse();
+    return new Map(reversed.map((summary, index) => [summary.id, index + 1]));
+  }, [summaries]);
+
   const renderHeader = () => (
     <LinearGradient
       colors={['#A8D5E8', '#5BA3B8']} // Primary light to primary blue-teal
@@ -67,12 +112,57 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
 
       <View style={styles.headerContent}>
         <TrendingUp size={32} color="#FFFFFF" />
-        <Text style={styles.headerTitle}>Session Summaries</Text>
+        <Text style={styles.headerTitle}>{t('insights.sessionSummaries.title')}</Text>
         <Text style={styles.headerSubtitle}>
-          {totalCount || summaries.length} sessions analyzed
+          {t('insights.sessionSummaries.analyzedCount', {
+            count: totalCount || summaries.length
+          })}
         </Text>
       </View>
     </LinearGradient>
+  );
+
+  const renderInfoSection = () => (
+    <View style={styles.infoContainer}>
+      <View style={styles.infoHeader}>
+        <ShieldCheck size={18} color="#1E3A5F" />
+        <Text style={styles.infoTitle}>{t('insights.sessionSummaries.infoCard.title')}</Text>
+      </View>
+
+      <Text style={styles.infoDescription}>
+        {t('insights.sessionSummaries.infoCard.body', {
+          name: firstName || 'Friend'
+        })}
+      </Text>
+
+      <View style={styles.infoMetaRow}>
+        <View style={styles.infoMetaPill}>
+          <Clock size={14} color="#1E3A5F" />
+          <Text style={styles.infoMetaText}>
+            {t('insights.sessionSummaries.infoCard.meta.timing')}
+          </Text>
+        </View>
+        <View style={styles.infoMetaPill}>
+          <ShieldCheck size={14} color="#1E3A5F" />
+          <Text style={styles.infoMetaText}>
+            {t('insights.sessionSummaries.infoCard.meta.storage')}
+          </Text>
+        </View>
+        <View style={styles.infoMetaPill}>
+          <Layers size={14} color="#1E3A5F" />
+          <Text style={styles.infoMetaText}>
+            {t('insights.sessionSummaries.infoCard.meta.consolidated')}
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.infoFooter}>
+        <Sparkles size={14} color="#C2410C" />
+        <Text style={styles.infoFooterText}>
+          {t('insights.sessionSummaries.infoCard.highlight')}
+        </Text>
+      </View>
+    </View>
   );
 
   const renderFilterBar = () => (
@@ -82,28 +172,37 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
         onPress={() => setFilter('all')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
-          All ({summaries.length})
+        <Text
+          style={[styles.filterText, filter === 'all' && styles.filterTextActive]}
+          numberOfLines={1}
+        >
+          {t('insights.sessionSummaries.filters.all', { count: summaries.length })}
         </Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity
         style={[styles.filterButton, filter === 'session' && styles.filterButtonActive]}
         onPress={() => setFilter('session')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.filterText, filter === 'session' && styles.filterTextActive]}>
-          Individual ({summaries.filter(s => s.type === 'session').length})
+        <Text
+          style={[styles.filterText, filter === 'session' && styles.filterTextActive]}
+          numberOfLines={1}
+        >
+          {t('insights.sessionSummaries.filters.sessions', { count: sessionSummariesCount })}
         </Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity
         style={[styles.filterButton, filter === 'consolidated' && styles.filterButtonActive]}
         onPress={() => setFilter('consolidated')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.filterText, filter === 'consolidated' && styles.filterTextActive]}>
-          Themes ({summaries.filter(s => s.type === 'consolidated').length})
+        <Text
+          style={[styles.filterText, filter === 'consolidated' && styles.filterTextActive]}
+          numberOfLines={1}
+        >
+          {t('insights.sessionSummaries.filters.themes', { count: consolidatedSummariesCount })}
         </Text>
       </TouchableOpacity>
     </View>
@@ -121,14 +220,18 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
               styles.typeBadgeText,
               summary.type === 'consolidated' ? styles.typeBadgeTextConsolidated : styles.typeBadgeTextSession
             ]}>
-              {summary.type === 'consolidated' ? 'Consolidated' : 'Session'}
+              {summary.type === 'consolidated'
+                ? t('insights.sessionSummaries.badges.consolidated')
+                : t('insights.sessionSummaries.badges.session')}
             </Text>
           </View>
 
           <Text style={styles.summaryTitle}>
             {summary.type === 'consolidated'
-              ? 'Therapeutic Themes'
-              : `Session ${summaries.filter(s => s.type === 'session').length - index}`
+              ? t('insights.sessionSummaries.themesTitle')
+              : t('insights.sessionSummaries.sessionTitle', {
+                  number: sessionOrderMap.get(summary.id) || Math.max(sessionSummariesCount - index, 1)
+                })
             }
           </Text>
         </View>
@@ -171,7 +274,9 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
       {summary.type === 'consolidated' && summary.sessionIds && (
         <View style={styles.consolidatedInfo}>
           <Text style={styles.consolidatedInfoText}>
-            Based on {summary.sessionIds.length} sessions
+            {t('insights.sessionSummaries.consolidatedInfo', {
+              count: summary.sessionIds.length
+            })}
           </Text>
         </View>
       )}
@@ -181,9 +286,9 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <TrendingUp size={48} color="#9ca3af" />
-      <Text style={styles.emptyStateTitle}>No Session Summaries</Text>
+      <Text style={styles.emptyStateTitle}>{t('insights.sessionSummaries.emptyState.title')}</Text>
       <Text style={styles.emptyStateText}>
-        Continue having conversations and summaries will appear here to track your therapeutic journey.
+        {t('insights.sessionSummaries.emptyState.description')}
       </Text>
     </View>
   );
@@ -192,7 +297,8 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
     if (isLoading) {
       return (
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading summaries...</Text>
+          <ActivityIndicator size="small" color="#357A8A" />
+          <Text style={styles.loadingText}>{t('insights.sessionSummaries.loading')}</Text>
         </View>
       );
     }
@@ -217,6 +323,7 @@ export const SessionSummariesModal: React.FC<SessionSummariesModalProps> = ({
     >
       <View style={styles.container}>
         {renderHeader()}
+        {renderInfoSection()}
         {renderFilterBar()}
         {renderContent()}
       </View>

@@ -18,28 +18,44 @@ export const onboardingValuePropStyles = StyleSheet.create({
   // Main Content Layout
   contentContainer: {
     flex: 1,
+    // Use column layout to stack elements vertically
+    flexDirection: 'column',
+  },
+
+  // Top Content Container - Wraps scrollable content, indicators, and video
+  topContentContainer: {
+    flex: 1, // Take available space
+    flexShrink: 1, // Allow shrinking on smaller screens
   },
 
   // Swipable Container - Only for text
   swipeContainer: {
-    height: height * 0.25, // Reduced height for text area
-    marginTop: spacing[16], // 16px - closer to top
+    flexShrink: 0, // Don't shrink the text container
+    minHeight: height * 0.25, // Allow content to grow beyond base height
+    marginTop: spacing[8], // Reduced margin since paddingTop is handled in component
+  },
+
+  swipeContent: {
+    paddingBottom: spacing[12],
+    alignItems: 'center',
   },
 
   // Page Container - Only contains text
   pageContainer: {
     width: width,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Align to top instead of center
     alignItems: 'center',
     paddingHorizontal: spacing[20], // 20px - reduced padding from edges
-    height: '100%',
+    paddingTop: spacing[4], // Minimal top padding
+    paddingBottom: spacing[12],
+    minHeight: height * 0.25,
   },
 
   // Text Content Container
   textContent: {
     alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
+    justifyContent: 'flex-start', // Align content to top
+    width: '100%',
   },
 
   pageTitle: {
@@ -47,10 +63,11 @@ export const onboardingValuePropStyles = StyleSheet.create({
     fontFamily: typography.fontFamily.ubuntuBold,
     color: '#1F2937', // Match notification screen heading color
     textAlign: 'center',
-    lineHeight: 34,
+    lineHeight: 36, // Increased line height to prevent cutoff
     letterSpacing: -0.5,
     marginBottom: spacing[16], // 16px
     paddingHorizontal: spacing[16], // 16px - reduced padding
+    paddingTop: 0, // Removed padding since it's handled by container
   },
 
   pageIcon: {
@@ -74,10 +91,11 @@ export const onboardingValuePropStyles = StyleSheet.create({
   staticAnuContainer: {
     alignItems: 'center', // Center the image
     justifyContent: 'center',
-    flex: 1,
-    paddingTop: 0,
-    paddingBottom: spacing[48], // More space from button to move video higher
-    marginTop: -spacing[24], // Move container up slightly
+    flexShrink: 1, // Allow shrinking if needed
+    height: height * 0.33, // Slightly reduced to free up space for text
+    paddingTop: spacing[4],
+    paddingBottom: spacing[18],
+    marginTop: spacing[18],
   },
 
   videoContainer: {
@@ -120,10 +138,11 @@ export const onboardingValuePropStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: spacing[12], // Reduced from 24px to 12px to bring dots closer to text
-    paddingBottom: spacing[48], // 48px from Anu - increased spacing from image
+    paddingBottom: spacing[24], // Reduced to 24px for tighter spacing
     gap: spacing[8], // 8px
     position: 'relative',
     zIndex: 10, // Ensure dots appear above video
+    flexShrink: 0, // Don't shrink indicators
   },
 
   pageIndicator: {
@@ -135,89 +154,113 @@ export const onboardingValuePropStyles = StyleSheet.create({
   },
 
   activePageIndicator: {
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide color
     opacity: 1,
   },
 
-  // Action Button Container - positioned at bottom
+  // Action Button Container - consistent with other onboarding screens
   actionContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     alignItems: 'center',
-    paddingHorizontal: spacing[24], // 24px
-    paddingBottom: 30, // Match other onboarding pages exactly
+    paddingBottom: 30, // Standardized across all personalization screens
+    paddingTop: spacing[8], // 16px top padding - matches other onboarding screens
     backgroundColor: 'transparent',
     zIndex: 1000, // Absolute foreground
+    position: 'relative', // Changed from absolute to relative for consistency
   },
 
   // Primary Button - Following design principles
   primaryButton: {
-    paddingHorizontal: 48, // Larger padding for prominence
-    minWidth: 240, // Wider button
+    paddingHorizontal: 48, // Standard padding to match other onboarding buttons
+    minWidth: 240, // Standard width to match other onboarding buttons
     height: 48, // Design principles height
-    backgroundColor: '#36657d', // Match notification screen button color
+    backgroundColor: '#5BA3B8', // Consistent app-wide button color
     borderRadius: 18, // Slightly less rounded
     alignItems: 'center',
     justifyContent: 'center',
-    // No shadow to avoid white bar during animation
-    zIndex: 1001, // Even higher z-index for button
-    position: 'relative',
+    shadowColor: '#5BA3B8',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
 
   primaryButtonText: {
     fontSize: 16, // Button text size from design principles
-    fontFamily: typography.fontFamily.ubuntuMedium,
+    fontFamily: typography.fontFamily.ubuntuBold, // Match selection buttons bold font
     color: '#FFFFFF', // Match notification screen button text color
     letterSpacing: 0.2,
   },
 
-  // Responsive adjustments for smaller screens
-  '@media (max-height: 700)': {
-    swipeContainer: {
-      height: height * 0.22,
-    },
-    
-    pageTitle: {
-      fontSize: 24,
-      lineHeight: 30,
-    },
-    
-    pageDescription: {
-      fontSize: 16, // Increased from 15 to 16
-      lineHeight: 24, // Increased from 22 to 24
-    },
-    
-    staticAnuImage: {
-      width: Math.min(width * 0.55, 240), // Reduced proportionally
-      height: Math.min(width * 0.55, 240), // Reduced proportionally
-      maxWidth: 240,
-      maxHeight: 240,
-    },
+  // Responsive adjustments for smaller screens (applied conditionally)
+  swipeContainerSmall: {
+    height: height * 0.22,
+    marginTop: spacing[4], // Reduced margin since paddingTop is handled in component
   },
 
-  // Very small screens
-  '@media (max-height: 600)': {
-    swipeContainer: {
-      height: height * 0.2,
-    },
-    
-    pageTitle: {
-      fontSize: 22,
-      lineHeight: 28,
-    },
-    
-    pageDescription: {
-      fontSize: 15, // Increased from 14 to 15
-      lineHeight: 22, // Increased from 20 to 22
-    },
-    
-    staticAnuImage: {
-      width: Math.min(width * 0.5, 200), // Reduced proportionally
-      height: Math.min(width * 0.5, 200), // Reduced proportionally
-      maxWidth: 200,
-      maxHeight: 200,
-    },
+  pageContainerSmall: {
+    paddingTop: spacing[6], // Reduce top padding on smaller screens
+  },
+
+  staticAnuContainerSmall: {
+    height: height * 0.28, // Reduced for smaller screens to free space
+    marginTop: spacing[12],
+    paddingBottom: spacing[16],
+  },
+
+  pageTitleSmall: {
+    fontSize: 24,
+    lineHeight: 32, // Ensure adequate line height
+    marginBottom: spacing[12], // Reduce bottom margin slightly
+    paddingTop: spacing[2], // Minimal top padding
+  },
+
+  pageDescriptionSmall: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+
+  staticAnuImageSmall: {
+    width: Math.min(width * 0.5, 220), // Reduced proportionally
+    height: Math.min(width * 0.5, 220), // Reduced proportionally
+    maxWidth: 220,
+    maxHeight: 220,
+  },
+
+  // Very small screens (applied conditionally)
+  swipeContainerXSmall: {
+    height: height * 0.2,
+    marginTop: spacing[2], // Reduced margin since paddingTop is handled in component
+  },
+
+  pageContainerXSmall: {
+    paddingTop: spacing[4], // Minimal top padding for very small screens
+  },
+
+  staticAnuContainerXSmall: {
+    height: height * 0.23, // Further reduced for very small screens
+    marginTop: spacing[8],
+    paddingBottom: spacing[14],
+  },
+
+  pageTitleXSmall: {
+    fontSize: 22,
+    lineHeight: 30, // Ensure adequate line height
+    marginBottom: spacing[8], // Reduce bottom margin for very small screens
+    paddingTop: spacing[2], // Minimal top padding
+  },
+
+  pageDescriptionXSmall: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+
+  staticAnuImageXSmall: {
+    width: Math.min(width * 0.45, 180), // Reduced proportionally
+    height: Math.min(width * 0.45, 180), // Reduced proportionally
+    maxWidth: 180,
+    maxHeight: 180,
   },
 });

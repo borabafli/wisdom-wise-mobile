@@ -53,6 +53,25 @@ const CORE_VALUE_SUGGESTIONS = [
 ];
 
 class ValuesService {
+  private listeners = new Set<() => void>();
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notifyListeners() {
+    this.listeners.forEach(listener => {
+      try {
+        listener();
+      } catch (error) {
+        console.error('ValuesService listener error:', error);
+      }
+    });
+  }
+
   async saveValue(value: Omit<UserValue, 'id' | 'createdDate' | 'updatedDate'>): Promise<UserValue> {
     try {
       const newValue: UserValue = {
@@ -88,6 +107,7 @@ class ValuesService {
       await AsyncStorage.setItem(STORAGE_KEYS.VALUES, JSON.stringify(updatedValues));
       
       console.log('Value saved:', newValue);
+      this.notifyListeners();
       return newValue;
     } catch (error) {
       console.error('Failed to save value:', error);
@@ -123,6 +143,7 @@ class ValuesService {
       );
 
       await AsyncStorage.setItem(STORAGE_KEYS.VALUES, JSON.stringify(updatedValues));
+      this.notifyListeners();
     } catch (error) {
       console.error('Failed to update value:', error);
       throw error;
@@ -134,6 +155,7 @@ class ValuesService {
       const allValues = await this.getAllValues();
       const filteredValues = allValues.filter(value => value.id !== valueId);
       await AsyncStorage.setItem(STORAGE_KEYS.VALUES, JSON.stringify(filteredValues));
+      this.notifyListeners();
     } catch (error) {
       console.error('Failed to delete value:', error);
       throw error;
@@ -290,8 +312,32 @@ class ValuesService {
     try {
       await AsyncStorage.multiRemove([STORAGE_KEYS.VALUES, STORAGE_KEYS.VALUE_INSIGHTS]);
       console.log('All values data cleared');
+      this.notifyListeners();
     } catch (error) {
       console.error('Failed to clear values:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete all values (alias for clearAllValues)
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllValues(): Promise<void> {
+    return this.clearAllValues();
+  }
+
+  /**
+   * Delete all reflections
+   * Used by dataManagementService for bulk deletion
+   */
+  async deleteAllReflections(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.VALUE_REFLECTIONS);
+      console.log('All value reflections cleared');
+      this.notifyListeners();
+    } catch (error) {
+      console.error('Failed to clear value reflections:', error);
       throw error;
     }
   }
@@ -320,6 +366,7 @@ class ValuesService {
       const updatedSummaries = [...existingSummaries, newSummary];
       
       await AsyncStorage.setItem(STORAGE_KEYS.VALUE_REFLECTIONS, JSON.stringify(updatedSummaries));
+      this.notifyListeners();
       return newSummary;
     } catch (error) {
       console.error('Error saving reflection summary:', error);
@@ -354,6 +401,7 @@ class ValuesService {
       const existingSummaries = await this.getReflectionSummaries();
       const updatedSummaries = existingSummaries.filter(s => s.id !== summaryId);
       await AsyncStorage.setItem(STORAGE_KEYS.VALUE_REFLECTIONS, JSON.stringify(updatedSummaries));
+      this.notifyListeners();
     } catch (error) {
       console.error('Error deleting reflection summary:', error);
       throw error;

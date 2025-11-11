@@ -1,5 +1,6 @@
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { API_CONFIG } from '../config/constants';
 import { apiService } from './apiService';
 
@@ -507,6 +508,14 @@ class STTService {
       }
       this.isRecording = true;
       this.recordingUnloaded = false;
+
+      // Activate keep-awake as safety net at service level
+      try {
+        await activateKeepAwakeAsync('stt-service-recording');
+        console.log('✅ Keep-awake activated at STT service level');
+      } catch (error) {
+        console.warn('⚠️ Failed to activate keep-awake at service level:', error);
+      }
 
       console.log('✅ Mobile audio recording started successfully');
 
@@ -1320,9 +1329,23 @@ class STTService {
       // DON'T call onEnd callback during cancellation - it interferes with state management
       // The useVoiceRecording handles UI state directly
 
+      // Deactivate keep-awake when cancelling
+      try {
+        await deactivateKeepAwake('stt-service-recording');
+        console.log('✅ Keep-awake deactivated at STT service level after cancel');
+      } catch (error) {
+        console.warn('⚠️ Failed to deactivate keep-awake at service level after cancel:', error);
+      }
+
       console.log('✅✅✅ Recording cancelled successfully in sttService ✅✅✅');
     } catch (error) {
       console.error('❌ Error cancelling recording:', error);
+      // Ensure keep-awake is deactivated even on error
+      try {
+        await deactivateKeepAwake('stt-service-recording');
+      } catch (err) {
+        console.warn('⚠️ Failed to deactivate keep-awake on cancel error:', err);
+      }
     } finally {
       // Reset state
       this.isCancelled = false;
@@ -1386,9 +1409,24 @@ class STTService {
       }
       
       this.isRecording = false;
+
+      // Deactivate keep-awake at service level
+      try {
+        await deactivateKeepAwake('stt-service-recording');
+        console.log('✅ Keep-awake deactivated at STT service level');
+      } catch (error) {
+        console.warn('⚠️ Failed to deactivate keep-awake at service level:', error);
+      }
+
       console.log('✅ Recording stopped and cleaned up');
     } catch (error) {
       console.error('Error stopping STT:', error);
+      // Ensure keep-awake is deactivated even on error
+      try {
+        await deactivateKeepAwake('stt-service-recording');
+      } catch (err) {
+        console.warn('⚠️ Failed to deactivate keep-awake on error:', err);
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, ImageBackground, Keyboard, TouchableWithoutFeedback, StatusBar, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -12,15 +12,17 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 
 // Import new components and hooks
-import { 
-  MessageItem, 
-  AnimatedTypingCursor, 
+import {
+  MessageItem,
+  AnimatedTypingCursor,
   AnimatedTypingDots,
   TranscribingIndicator,
-  SuggestionChips, 
-  ChatInput, 
-  ExerciseCard 
+  SuggestionChips,
+  ChatInput,
+  ExerciseCard
 } from '../components/chat';
+import { ExitConfirmationDialog } from '../components/ExitConfirmationDialog';
+import { PaywallModal } from '../components/PaywallModal';
 import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
@@ -98,8 +100,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Basic state
   const [inputText, setInputText] = useState('');
+  const [showPaywallModal, setShowPaywallModal] = useState(false);
+  const hasShownLimitPaywallRef = useRef(false);
+  const prevLimitReachedRef = useRef(false);
+  const prevUsedCountRef = useRef<number | null>(null);
   const textBeforeVoiceRef = useRef(''); // Store text that was typed before voice recording
-  
+
   // Animation refs
   const backgroundAnimation = useRef(new Animated.Value(0)).current;
   const headerAnimation = useRef(new Animated.Value(0)).current;
@@ -128,6 +134,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     showPreExerciseMoodSlider,
     isValueReflection,
     isThinkingPatternReflection,
+    isVisionReflection,
     showValueReflectionSummary,
     valueReflectionSummary,
     showThinkingPatternSummary,
@@ -150,6 +157,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     endThinkingPatternReflection,
     saveThinkingPatternSummary,
     cancelThinkingPatternSummary,
+    startVisionReflection,
+    handleVisionReflectionResponse,
+    endVisionReflection,
     saveVisionSummary,
     cancelVisionSummary,
     saveTherapyGoalSummary,
@@ -187,6 +197,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           chatSession.setIsTyping,
           chatSession.setSuggestions
         );
+      } else if (currentExercise.type === 'vision_reflection') {
+        console.log('Starting vision reflection with context:', currentExercise.context);
+        startVisionReflection(
+          currentExercise.context,
+          chatSession.setMessages,
+          chatSession.setIsTyping,
+          chatSession.setSuggestions
+        );
       } else {
         enterExerciseMode();
         startDynamicAIGuidedExercise(
@@ -204,6 +222,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     chatSession.initializeChatSession();
     setIsInitialized(true);
   }, [currentExercise]);
+
+  // Handle Android hardware back button
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // Trigger the same confirmation flow as the visual back button
+      console.log('🔍 [BACK BUTTON DEBUG] Creating exercise context:');
+      console.log('  - exerciseMode:', exerciseMode);
+      console.log('  - exerciseData.currentExercise:', exerciseData.currentExercise);
+      console.log('  - exerciseData.currentExercise?.type:', exerciseData.currentExercise?.type);
+      console.log('  - isValueReflection:', isValueReflection);
+      console.log('  - isThinkingPatternReflection:', isThinkingPatternReflection);
+
+      const exerciseContext = {
+        exerciseMode,
+        exerciseType: exerciseData.currentExercise?.type,
+        isValueReflection,
+        isThinkingPatternReflection,
+        isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
+      };
+      console.log('🔍 [BACK BUTTON DEBUG] Final exerciseContext:', JSON.stringify(exerciseContext, null, 2));
+      chatSession.handleEndSession(onBack, exerciseContext);
+      return true; // Prevent default behavior
+    });
+
+    return () => backHandler.remove();
+  }, [exerciseMode, exerciseData.currentExercise, isValueReflection, isThinkingPatternReflection, showVisionSummary, chatSession, onBack]);
 
   // Handle initial message from notification
   useEffect(() => {
@@ -227,6 +273,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Handle sending messages
   const handleSend = async (text = inputText) => {
     if (!text.trim()) return;
+
+    // Determine if this is a check-in/reflection session (no exercise, started from home)
+    const isReflectionSession = !currentExercise && chatSession.messages.length > 0;
+
+    // Check rate limit before sending (only for normal standalone chat, not reflections/exercises/check-ins)
+    if (!isValueReflection && !isThinkingPatternReflection && !isVisionReflection && !exerciseMode && !isReflectionSession) {
+      const rateLimit = await import('../services/rateLimitService').then(m => m.rateLimitService.canMakeRequest());
+      if (rateLimit.isLimitReached) {
+        setShowPaywallModal(true);
+        return;
+      }
+    }
+
     setInputText('');
 
     if (isValueReflection) {
@@ -241,6 +300,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     if (isThinkingPatternReflection) {
       await handleThinkingPatternReflectionResponse(
+        text,
+        chatSession.setMessages,
+        chatSession.setIsTyping,
+        chatSession.setSuggestions
+      );
+      return;
+    }
+
+    if (isVisionReflection) {
+      await handleVisionReflectionResponse(
         text,
         chatSession.setMessages,
         chatSession.setIsTyping,
@@ -339,6 +408,34 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       else stopExerciseAnimations();
     }, [exerciseMode, exerciseData]);
 
+    useEffect(() => {
+      const totalMessages = chatSession.rateLimitStatus?.total ?? 0;
+      const usedMessages = chatSession.rateLimitStatus?.used ?? 0;
+      const isLimitReached = totalMessages > 0 && usedMessages >= totalMessages;
+      const isInExercise = !!currentExercise || exerciseMode;
+      const previousUsed = prevUsedCountRef.current;
+      const hasNewUsage = previousUsed !== null && usedMessages > previousUsed;
+      const isFirstCheck = previousUsed === null;
+
+      prevUsedCountRef.current = usedMessages;
+
+      if (isInExercise) {
+        prevLimitReachedRef.current = isLimitReached;
+        return;
+      }
+
+      if (isLimitReached && !hasShownLimitPaywallRef.current && (isFirstCheck || hasNewUsage)) {
+        hasShownLimitPaywallRef.current = true;
+        setShowPaywallModal(true);
+      }
+
+      if (!isLimitReached) {
+        hasShownLimitPaywallRef.current = false;
+      }
+
+      prevLimitReachedRef.current = isLimitReached;
+    }, [chatSession.rateLimitStatus, currentExercise, exerciseMode]);
+
     // Animate end reflection button
     useEffect(() => {
       if (canEndReflection) {
@@ -355,6 +452,18 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
     const normalGradient = ['rgba(255, 255, 254, 0.9)', '#FFFFFE']; // Even closer to white
     const exerciseGradient = ['rgba(255, 255, 254, 0.9)', '#FFFFFE']; // Same subtle gradient for exercises
+
+    const rateLimitTotal = chatSession.rateLimitStatus?.total ?? 0;
+    const rateLimitUsed = chatSession.rateLimitStatus?.used ?? 0;
+    const remainingMessages = Math.max(0, rateLimitTotal - rateLimitUsed);
+    const rateLimitPercentage = chatSession.rateLimitStatus?.percentage ?? 0;
+    const showRateLimitWarning = !currentExercise && typeof chatSession.rateLimitStatus?.percentage === 'number' && chatSession.rateLimitStatus.percentage >= 80;
+    const hasReachedLimit = rateLimitTotal > 0 && remainingMessages === 0;
+    const limitBannerText = hasReachedLimit
+      ? t('chat.limitReachedBanner')
+      : rateLimitPercentage >= 90
+        ? t('chat.almostAtLimit', { remaining: remainingMessages })
+        : t('chat.limitUsed', { percentage: rateLimitPercentage });
 
     const renderMessage = (message: Message) => (
       <MessageItem
@@ -378,10 +487,14 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
     <>
       <StatusBar
         barStyle={statusBarStyle}
-        backgroundColor="#ffffff"
+        backgroundColor="#FFFFFE"
         translucent={false}
       />
-      <SafeAreaWrapper style={styles.container} edges={['top', 'left', 'right']}>
+      <SafeAreaWrapper
+        style={styles.container}
+        edges={['top', 'left', 'right']}
+        backgroundColor="#FFFFFE"
+      >
       <View style={styles.backgroundImage}>
         <LinearGradient
           colors={['rgba(255, 255, 254, 0.9)', 'rgba(255, 255, 254, 1.0)']}
@@ -407,7 +520,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
         <KeyboardAvoidingView
           style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-
+          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
         >
           {/* Header */}
           <Animated.View style={[
@@ -416,8 +529,16 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
           ]}>
             <View style={styles.headerContent}>
               <View style={styles.headerLeft}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => {
+                    console.log('🔍 [VISUAL BACK BUTTON DEBUG] Creating exercise context:');
+                    console.log('  - exerciseMode:', exerciseMode);
+                    console.log('  - exerciseData:', exerciseData);
+                    console.log('  - exerciseData.currentExercise:', exerciseData.currentExercise);
+                    console.log('  - exerciseData.currentExercise?.type:', exerciseData.currentExercise?.type);
+                    console.log('  - isValueReflection:', isValueReflection);
+                    console.log('  - isThinkingPatternReflection:', isThinkingPatternReflection);
+
                     const exerciseContext = {
                       exerciseMode,
                       exerciseType: exerciseData.currentExercise?.type,
@@ -425,6 +546,7 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                       isThinkingPatternReflection,
                       isVisionExercise: showVisionSummary || exerciseData.currentExercise?.type === 'vision-of-future'
                     };
+                    console.log('🔍 [VISUAL BACK BUTTON DEBUG] Final exerciseContext:', JSON.stringify(exerciseContext, null, 2));
                     chatSession.handleEndSession(onBack, exerciseContext);
                   }}
                   style={styles.backButton}
@@ -455,14 +577,10 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                             : t('chat.safeSpace')}
                     </Text>
                     
-                    {!currentExercise && typeof chatSession.rateLimitStatus?.percentage === 'number' && chatSession.rateLimitStatus.percentage >= 80 && (
+                    {showRateLimitWarning && (
                       <View style={styles.warningContainer}>
-                        <AlertCircle size={14} color="#f59e0b" />
-                        <Text style={styles.warningText}>
-                          {chatSession.rateLimitStatus.percentage >= 90 
-                            ? t('chat.almostAtLimit', { remaining: Math.max(0, (chatSession.rateLimitStatus.total || 0) - (chatSession.rateLimitStatus.used || 0)) })
-                            : t('chat.limitUsed', { percentage: chatSession.rateLimitStatus.percentage })}
-                        </Text>
+                        <AlertCircle size={14} color="#2C5F6F" />
+                        <Text style={styles.warningText}>{limitBannerText}</Text>
                       </View>
                     )}
                   </View>
@@ -577,7 +695,6 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               />
             )}
           </ScrollView>
-          <View>
 
           {/* Suggestion Chips */}
           <SuggestionChips
@@ -673,10 +790,24 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
               currentExercise?.type === 'daily-reflection'
             }
           />
-</View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaWrapper>
+
+    {/* Paywall Modal - Shown when rate limit is reached */}
+    <PaywallModal
+      visible={showPaywallModal}
+      onClose={() => setShowPaywallModal(false)}
+      trigger="message_limit"
+    />
+
+    {/* Exit Confirmation Dialog */}
+    <ExitConfirmationDialog
+      visible={chatSession.showExitConfirmation}
+      onConfirmExit={chatSession.confirmExit}
+      onCancel={chatSession.cancelExit}
+      isExerciseSession={exerciseMode || !!currentExercise}
+    />
     </>
   );
 };

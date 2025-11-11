@@ -12,7 +12,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   // Container & Layout - White bottom with blue gradient upward
   container: {
     flex: 1,
-    backgroundColor: colors.appBackground,
+    backgroundColor: '#FFFFFE', // Match chat interface white background
   },
   backgroundImage: {
     flex: 1,
@@ -115,18 +115,22 @@ export const chatInterfaceStyles = StyleSheet.create({
     marginTop: spacing[2],
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[2],
-    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+    backgroundColor: 'rgba(44, 95, 111, 0.12)',
     borderRadius: spacing.radius.sm,
     borderWidth: 1,
-    borderColor: 'rgba(251, 191, 36, 0.2)',
+    borderColor: 'rgba(44, 95, 111, 0.24)',
+    flexWrap: 'wrap',
+    alignSelf: 'flex-start',
+    maxWidth: '100%',
   },
   warningText: {
     fontSize: 14,
     fontFamily: 'System',
     fontWeight: '500',
-    color: colors.semantic.warning,
+    color: '#2C5F6F',
     flex: 1,
     letterSpacing: 0.1,
+    flexShrink: 1,
   },
 
   // Messages Area
@@ -525,7 +529,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   inputContainer: {
     paddingHorizontal: spacing.layout.screenPadding - 4, // Keep original width
     paddingTop: 8, // Standard top padding
-    paddingBottom: Platform.OS === 'ios' ? 34 : 8, // iOS safe area built-in, Android base padding
+    paddingBottom: Platform.OS === 'ios' ? 12 : 8, // Minimal padding for iOS, KeyboardAvoidingView handles rest
     backgroundColor: '#FFFFFF', // Clean white background
     borderTopWidth: 0.5,
     borderTopColor: 'rgba(0, 0, 0, 0.08)', // Subtle separator like WhatsApp
@@ -627,16 +631,16 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 17, // Standard iOS/Android text size
-    fontFamily: 'Inter-Regular',
+    fontSize: 16, // Slightly reduced from 17px to match message size
+    fontFamily: 'Ubuntu-Regular', // Match the message font
     fontWeight: '400',
     color: '#000000', // Standard black text like WhatsApp/iMessage
     minHeight: 32, // Standard single-line height
-    maxHeight: 100, // Standard ~5 lines max like WhatsApp
+    maxHeight: 120, // Slightly expanded from 100 to ~6 lines
     paddingVertical: 0, // No extra vertical padding
     paddingHorizontal: 0, // No horizontal padding (card handles it)
     backgroundColor: 'transparent',
-    lineHeight: 22, // Standard line height for 17px text
+    lineHeight: 24, // Match message line height (24px)
     textAlignVertical: 'center',
     includeFontPadding: false,
   },

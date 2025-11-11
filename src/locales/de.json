@@ -100,7 +100,27 @@
     "stepNumber": "Schritt {{number}}",
     "stepsCount": "{{count}} Schritt",
     "stepsCount_other": "{{count}} Schritte",
-    "steps": "Schritte"
+    "steps": "Schritte",
+    "filters": {
+      "all": "Alle",
+      "durations": {
+        "1-5": "1-5 Min",
+        "5-15": "5-15 Min",
+        "15-30": "15-30 Min",
+        "30+": "30+ Min"
+      },
+      "benefits": {
+        "anxiety": "Angst",
+        "depressionMood": "Depression / Stimmung",
+        "selfDiscovery": "Selbstentdeckung",
+        "mentalClarity": "Mentale Klarheit",
+        "stressRelief": "Stressabbau",
+        "focus": "Fokus",
+        "emotionalBalance": "Emotionale Balance",
+        "breathing": "Atmung",
+        "withoutBreathing": "Ohne Atmung"
+      }
+    }
   },
   "insights": {
     "title": "Einsichten",
@@ -112,9 +132,21 @@
     "patterns": "Muster",
     "goals": "Ziele",
     "memoryInsights": "Langzeit-Erkenntnisse",
+    "noMemoryInsights": "Noch keine Gedächtnis-Erkenntnisse",
     "longTermPatterns": "Langfristige Muster & Themen",
     "deeperInsights": {
-      "title": "Tiefere Einsichten"
+      "title": "Tiefere Einsichten",
+      "emptyState": {
+        "description": "Wenn Sie Ihre Sitzungen fortsetzen, werden hier langfristige Muster und Themen in Kategorien wie diesen generiert:",
+        "seeExample": "Beispiel ansehen",
+        "startSession": "Sitzung starten"
+      },
+      "exampleModal": {
+        "title": "Beispiele für tiefere Einsichten",
+        "badge": "BEISPIEL",
+        "description": "Während Sie mit Anu durch Chat-Sitzungen interagieren, werden diese langfristigen Muster und Themen automatisch für Sie identifiziert und organisiert.",
+        "action": "Sitzung mit Anu starten"
+      }
     },
     "deleteConfirm": {
       "title": "Erkenntnis löschen?",
@@ -140,6 +172,29 @@
       "pagination": "{{current}} von {{total}}",
       "swipeToExplore": "Wischen zum Erkunden",
       "reflectionPrompt": "Denke darüber nach",
+      "deleteValue": "Wert löschen",
+      "deleteReflection": "Reflexion löschen",
+      "loading": "Lade deine Werte...",
+      "discover": "Entdecke deine Grundwerte",
+      "completeExercise": "Absolviere die Werte-Erkundungsübung, um herauszufinden, was dir wirklich wichtig ist",
+      "startExercise": "Übung starten",
+      "generateSample": "Beispiel generieren",
+      "reflections": "Reflexionen",
+      "viewReflectionSingle": "Reflexion ansehen",
+      "viewReflections": "{{count}} Reflexionen ansehen",
+      "prompt": "Aufforderung",
+      "keyInsights": "Wichtige Erkenntnisse",
+      "emptyState": {
+        "title": "Entdecke deine Grundwerte",
+        "description": "Absolviere die Werte-Erkundungsübung, um herauszufinden, was dir wirklich wichtig ist",
+        "seeExample": "Beispiel ansehen",
+        "startExercise": "Übung starten"
+      },
+      "exampleModal": {
+        "badge": "BEISPIEL",
+        "infoMessage": "Dies ist ein Beispiel dafür, was du nach Abschluss der Werte-Erkundungsübung sehen wirst. Deine persönlichen Werte werden hier identifiziert und angezeigt.",
+        "startButton": "Werte-Übung starten"
+      },
       "prompts": {
         "liveToday": "Wie hast du diesen Wert heute gelebt?",
         "feltAligned": "Wann hast du dich kürzlich am meisten mit diesem Wert im Einklang gefühlt?",
@@ -154,7 +209,35 @@
     },
     "sessionSummaries": {
       "title": "Sitzungszusammenfassungen",
-      "subtitle": "Sitzungen analysiert"
+      "subtitle": "Überprüfe deine Gespräche",
+      "analyzedCount": "{{count}} Sitzungen analysiert",
+      "filters": {
+        "all": "Alle ({{count}})",
+        "sessions": "Sitzungen ({{count}})",
+        "themes": "Muster ({{count}})"
+      },
+      "infoCard": {
+        "title": "So funktionieren deine Zusammenfassungen",
+        "body": "Hallo {{name}}, wenn du ein Gespräch speicherst (außer Vision-Übungen), erstellt Anu eine Zusammenfassung der letzten 30 Nachrichten. Nur die Zusammenfassung, das Datum und die Nachrichtenanzahl bleiben auf deinem Gerät—jederzeit löschbar.",
+        "meta": {
+          "timing": "Nach dem Speichern erstellt",
+          "storage": "Privat gespeichert",
+          "consolidated": "Muster nach 10+"
+        },
+        "highlight": "Zehn Zusammenfassungen schalten eine Musterübersicht frei."
+      },
+      "badges": {
+        "session": "Sitzung",
+        "consolidated": "Konsolidiert"
+      },
+      "sessionTitle": "Sitzung {{number}}",
+      "themesTitle": "Musterübersicht",
+      "consolidatedInfo": "Basierend auf {{count}} Sitzungen",
+      "emptyState": {
+        "title": "Noch keine Zusammenfassungen",
+        "description": "Beende ein gespeichertes Gespräch mit Anu und deine personalisierte Zusammenfassung erscheint hier."
+      },
+      "loading": "Lade Zusammenfassungen..."
     },
     "therapyGoals": {
       "title": "Therapieziele",
@@ -190,7 +273,8 @@
       "completedSessions": "Du hast abgeschlossen",
       "guidedSessions": "geführte Sitzungen!",
       "nextUp": "Als nächstes:",
-      "recentAchievements": "Kürzliche Erfolge"
+      "recentAchievements": "Kürzliche Erfolge",
+      "recentHighlights": "Neueste Highlights"
     },
     "actions": {
       "reflectOnStrengths": "Über Stärken reflektieren",
@@ -201,7 +285,8 @@
     "prompts": {
       "visionReflection": "Ich sehe, dass du eine wunderbare Vision deines zukünftigen Selbst geschaffen hast. Du hast dein zukünftiges Selbst als verkörpernd beschrieben mit Eigenschaften wie: {{qualities}}. Deine Vision war: \"{{description}}\"\n\nIch würde gerne diese Vision mit dir erkunden. Welche Aspekte dieses zukünftigen Selbst fühlen sich für dich gerade am inspirierendsten an? Und welchen kleinen Schritt könntest du heute machen, um ein wenig mehr von diesen Eigenschaften zu verkörpern?",
       "strengthReflection": "Mir ist aus deinen Langzeit-Erkenntnissen aufgefallen, dass du einige Stärken und positive Muster hast. Lass uns einen Moment nehmen, um über diese Stärken zu reflektieren: \"{{content}}\"\n\nWas denkst du, macht diese Stärken besonders bedeutungsvoll für dich? Wie könntest du dich mehr auf diese Stärken in deinem täglichen Leben stützen?",
-      "emotionReflection": "Ich sehe, dass du einige tiefe emotionale Einsichten aus unseren Gesprächen hast: \"{{content}}\"\n\nManchmal ist es wertvoll, Zeit mit unseren Emotionen zu verbringen und zu verstehen, was sie uns sagen. Welche Emotionen kommen in dir auf, wenn du diese Einsicht liest? Was könnten diese Emotionen versuchen, dir zu kommunizieren?"
+      "emotionReflection": "Ich sehe, dass du einige tiefe emotionale Einsichten aus unseren Gesprächen hast: \"{{content}}\"\n\nManchmal ist es wertvoll, Zeit mit unseren Emotionen zu verbringen und zu verstehen, was sie uns sagen. Welche Emotionen kommen in dir auf, wenn du diese Einsicht liest? Was könnten diese Emotionen versuchen, dir zu kommunizieren?",
+      "deeperInsightReflection": "Mir ist ein wichtiges Muster in unseren Gesprächen über {{category}} aufgefallen:\n\n\"{{content}}\"\n\nDas ist eine bedeutungsvolle Einsicht über dich. Ich würde das gerne tiefer mit dir erkunden. Was resoniert mit dir an diesem Muster? Wie zeigt es sich in deinem täglichen Leben und was möchtest du tiefer darüber verstehen?"
     },
     "thinkingPatterns": {
       "allOrNothing": "Schwarz-Weiß-Denken",
@@ -262,6 +347,18 @@
       "moreBalanced": "Ausgewogener",
       "reflectOnThis": "Darüber nachdenken",
       "analyzingPatterns": "Analysiere deine Stimmungsmuster...",
+      "lastWeek": "Letzte Woche",
+      "thisWeek": "Diese Woche",
+      "noMoodData": "Keine Stimmungsdaten verfügbar",
+      "trackMoodPrompt": "Verfolge deine Stimmung, um hier Einsichten zu sehen",
+      "moodLabels": {
+        "great": "Großartig",
+        "positive": "Positiv",
+        "okay": "Okay",
+        "challenging": "Herausfordernd",
+        "difficult": "Schwierig",
+        "noData": "Keine Daten"
+      },
       "weeklyTrend": {
         "improving": "↗ Verbesserung",
         "steady": "↔ Stabil",
@@ -291,6 +388,19 @@
         "fallback": {
           "title": "Überprüfe deine Daten... ✨"
         }
+      },
+      "exampleModal": {
+        "badge": "BEISPIEL",
+        "title": "Stimmungsverfolgung Beispiel",
+        "description": "Dieses Beispiel zeigt, wie die Stimmungsverfolgung hilft, Muster im Laufe der Zeit zu erkennen. Beachte die Höhen und Tiefen während der Woche und wie sich deine Stimmung zum Ende hin verbessert.",
+        "action": "Verstanden, Tracking starten"
+      },
+      "thoughtPatterns": {
+        "emptyStateTitle": "Probieren Sie die Übung 'Automatische Gedanken' aus",
+        "emptyStateDescription": "Sprechen Sie mit Anu über einen bestimmten Gedanken, der Sie beschäftigt, und wir helfen Ihnen, verzerrte Denkmuster zu erkennen und ausgewogene Perspektiven zu finden",
+        "seeExample": "Beispiel ansehen",
+        "startExercise": "Übung starten",
+        "exampleModalInfo": "So sieht ein Denkmuster aus. Probieren Sie die Übung 'Automatische Gedanken' aus, um Ihr eigenes zu erstellen!"
       }
     },
     "priorityExercises": {
@@ -329,15 +439,28 @@
     "memberSince": "Dabei seit",
     "anonymousGuest": "Anonymer Gast",
     "stats": {
-      "sessions": "Sitzungen",
-      "streak": "Serie",
-      "insights": "Einsichten",
-      "exercises": "Übungen",
-      "daysStreak": "7 Tage"
+      "sessions": "Unterhaltungen",
+      "streak": "Tages-Serie",
+      "insights": "Denkmuster",
+      "exercises": "Abgeschlossene Übungen",
+      "daysStreak": "7 Tage",
+      "days": "{{count}} Tag",
+      "days_plural": "{{count}} Tage"
     },
     "fallbackName": "Freund",
-    "welcomeMessage": "Willkommen bei WisdomWise",
+    "welcomeMessage": "Willkommen bei ZenMind",
     "premiumMember": "Premium-Mitglied",
+    "planStatus": {
+      "premium": "✨ Premium-Mitglied",
+      "free": "🆓 Kostenloser Plan",
+      "guest": "Gast • Kostenloser Plan"
+    },
+    "freePlanCard": {
+      "title": "Greife auf alle Selbstentdeckungstools und angeleitete Übungen zu",
+      "subtitle": "Steige auf Mind Wise Premium um, um über dein tägliches Nachrichtenlimit hinauszugehen und die vollständige Bibliothek zu nutzen.",
+      "cta": "Abonnieren",
+      "tag": "Kostenlose Stufe"
+    },
     "yourProgress": "Dein Fortschritt",
     "menu": {
       "editProfile": "Profil bearbeiten",
@@ -346,9 +469,13 @@
       "restartOnboarding": "Einführung neu starten",
       "notifications": "Benachrichtigungen",
       "privacy": "Datenschutz & Sicherheit",
+      "dataPrivacy": "Ihre Daten & Datenschutz",
       "darkMode": "Dunkler Modus",
       "help": "Hilfe & Support",
-      "signOut": "Abmelden"
+      "signOut": "Abmelden",
+      "language": "Sprache",
+      "createAccount": "Konto erstellen",
+      "featureRequest": "Funktion anfordern"
     },
     "menuSubtitles": {
       "editProfile": "Informationen aktualisieren",
@@ -357,9 +484,13 @@
       "restartOnboarding": "Einführung erneut ansehen",
       "notifications": "Benachrichtigungen verwalten",
       "privacy": "Daten kontrollieren",
+      "dataPrivacy": "Wie wir Ihre Daten schützen und verarbeiten",
       "darkMode": "Dunkles Theme umschalten",
       "help": "Hilfe erhalten",
       "signOut": "Konto verlassen",
+      "language": "App-Sprache ändern",
+      "createAccount": "Fortschritt speichern und auf alle Funktionen zugreifen",
+      "featureRequest": "Teilen Sie uns Ihre Ideen mit",
       "default": "Zum Zugriff tippen"
     },
     "restartOnboarding": {
@@ -367,8 +498,90 @@
       "message": "Dies bringt Sie zurück zu den Einführungsbildschirmen. Ihre Daten werden nicht beeinträchtigt.",
       "confirm": "Neu starten"
     },
+    "alerts": {
+      "createAccount": {
+        "title": "Konto erstellen",
+        "message": "Registrieren Sie sich, um Ihren Fortschritt zu speichern und auf alle Funktionen zuzugreifen!",
+        "confirm": "Registrieren",
+        "cancel": "Vielleicht später"
+      },
+      "notificationPermission": {
+        "title": "Berechtigung erforderlich",
+        "message": "Test-Benachrichtigungen erfordern aktivierte Benachrichtigungsberechtigungen.",
+        "messageSettings": "Bitte aktivieren Sie Benachrichtigungen in Ihren Geräteeinstellungen, um Test-Benachrichtigungen zu sehen.",
+        "openSettings": "Einstellungen öffnen",
+        "notNow": "Jetzt nicht"
+      },
+      "signOut": {
+        "title": "Abmelden",
+        "message": "Bist du sicher, dass du dich abmelden möchtest?"
+      },
+      "deleteSession": {
+        "title": "Sitzung löschen",
+        "message": "Bist du sicher, dass du diese Sitzung löschen möchtest?"
+      },
+      "resetProgress": {
+        "title": "Fortschritt zurücksetzen",
+        "message": "Dies wird deinen gesamten Fortschritt zurücksetzen. Diese Aktion kann nicht rückgängig gemacht werden."
+      },
+      "promptsGenerated": {
+        "title": "Reflexionsfragen erstellt!",
+        "message": "{{count}} neue Reflexionsfragen basierend auf deinen Einsichten wurden erstellt. Schaue im Journal-Bereich nach den neuen Fragen."
+      },
+      "clearHistory": {
+        "title": "Gesamten Verlauf löschen",
+        "message": "Bist du sicher, dass du deinen gesamten Chat-Verlauf löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
+      },
+      "goalStatus": {
+        "title": "Zielstatus aktualisiert",
+        "message": "Ziel als {{status}} markiert!"
+      },
+      "progressSaved": {
+        "title": "Großartig!",
+        "message": "Dein Fortschritt wurde aufgezeichnet."
+      },
+      "checkIn": {
+        "title": "Check-in abgeschlossen",
+        "message": "Danke, dass du deinen Fortschritt geteilt hast!"
+      }
+    },
     "version": "Version 1.0.0",
     "madeWith": "Mit 💙 für dein Wohlbefinden gemacht"
+  },
+  "featureRequest": {
+    "title": "Funktion anfordern",
+    "description": "Wir würden gerne Ihre Ideen hören! Teilen Sie uns mit, welche Funktionen oder Verbesserungen Sie in ZenMind sehen möchten.",
+    "placeholder": "Teilen Sie uns Ihre Funktionsidee mit...",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "characterCount": "{{count}}/500 Zeichen",
+    "successTitle": "Vielen Dank!",
+    "successMessage": "Ihre Funktionsanfrage wurde eingereicht. Wir schätzen Ihr Feedback!",
+    "errorTitle": "Übermittlung fehlgeschlagen",
+    "errorMessage": "Ihre Anfrage konnte nicht übermittelt werden. Bitte versuchen Sie es später erneut.",
+    "tooShort": "Bitte schreiben Sie mindestens 10 Zeichen",
+    "tooLong": "Bitte halten Sie Ihre Anfrage unter 500 Zeichen",
+    "infoText": "Ihr Feedback hilft uns, ZenMind zu verbessern. Wir prüfen alle Funktionsanfragen und priorisieren sie basierend auf Benutzerbedürfnissen.",
+    "discardTitle": "Anfrage verwerfen?",
+    "discardMessage": "Sie haben nicht gespeicherte Änderungen. Möchten Sie Ihre Funktionsanfrage wirklich verwerfen?",
+    "discard": "Verwerfen"
+  },
+  "helpSupport": {
+    "title": "Hilfe & Support",
+    "description": "Brauchen Sie Hilfe oder haben Sie Fragen? Teilen Sie uns Ihre Anliegen mit, melden Sie Probleme oder fordern Sie Unterstützung an. Wir sind für Sie da!",
+    "placeholder": "Beschreiben Sie Ihr Problem oder Ihre Frage...",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "characterCount": "{{count}}/500 Zeichen",
+    "successTitle": "Nachricht erhalten!",
+    "successMessage": "Ihre Support-Anfrage wurde eingereicht. Wir werden uns bald bei Ihnen melden!",
+    "errorTitle": "Übermittlung fehlgeschlagen",
+    "errorMessage": "Ihre Anfrage konnte nicht übermittelt werden. Bitte versuchen Sie es später erneut.",
+    "tooShort": "Bitte schreiben Sie mindestens 10 Zeichen",
+    "tooLong": "Bitte halten Sie Ihre Nachricht unter 500 Zeichen",
+    "discardTitle": "Nachricht verwerfen?",
+    "discardMessage": "Sie haben nicht gespeicherte Änderungen. Möchten Sie Ihre Nachricht wirklich verwerfen?",
+    "discard": "Verwerfen"
   },
   "chat": {
     "title": "Gespräch mit Anu",
@@ -390,6 +603,7 @@
     "safeSpace": "Dein sicherer Ort für Reflexion",
     "almostAtLimit": "Fast am Tageslimit! Noch {{remaining}} übrig.",
     "limitUsed": "{{percentage}}% des Tageslimits verwendet.",
+    "limitReachedBanner": "Tageslimit erreicht. Nachrichten werden um Mitternacht zurückgesetzt.",
     "endReflection": "Reflexion beenden",
     "typeOrSpeak": "Schreiben oder sprechen...",
     "composeMessage": "Nachricht verfassen",
@@ -432,6 +646,15 @@
       "keyInsights": "Wichtige Erkenntnisse",
       "continueGoals": "Ziele fortsetzen",
       "saveGoals": "Ziele speichern"
+    },
+    "exitConfirmation": {
+      "title": "Sitzung speichern?",
+      "message": "Dein Gespräch wird privat auf deinem Gerät gespeichert.",
+      "exerciseTitle": "Übung vorzeitig beenden?",
+      "exerciseMessage": "Dein Fortschritt wird gespeichert und du kannst jederzeit fortfahren.",
+      "confirmButton": "Speichern & Beenden",
+      "cancelButton": "Weiter chatten",
+      "allowInsightsLabel": "Lass Anu über diese Sitzung nachdenken, um dein Wachstum zu unterstützen"
     }
   },
   "mood": {
@@ -526,6 +749,62 @@
       "tr": "Türkçe",
       "es": "Español",
       "pt": "Português"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Erstelle dein Konto",
+      "subtitle": "Beginne deine achtsame Wellness-Reise mit Anu",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "firstNamePlaceholder": "Vorname",
+      "lastNamePlaceholder": "Nachname",
+      "email": "E-Mail",
+      "emailPlaceholder": "E-Mail-Adresse eingeben",
+      "password": "Passwort",
+      "passwordPlaceholder": "Passwort erstellen",
+      "confirmPassword": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Passwort bestätigen",
+      "passwordStrength": "Passwortstärke: {{strength}}",
+      "passwordStrengthWeak": "Schwach",
+      "passwordStrengthMedium": "Mittel",
+      "passwordStrengthStrong": "Stark",
+      "privacyAccept": "Ich akzeptiere die",
+      "privacyPolicy": "Datenschutzerklärung",
+      "and": "und",
+      "termsOfService": "Nutzungsbedingungen",
+      "createAccountButton": "Konto erstellen",
+      "creatingAccount": "Konto wird erstellt...",
+      "orDivider": "oder",
+      "googleButton": "Mit Google fortfahren",
+      "alreadyHaveAccount": "Bereits ein Konto? Anmelden",
+      "failedToOpenPrivacy": "Datenschutzerklärung konnte nicht geöffnet werden. Bitte versuche es später erneut.",
+      "failedToOpenTerms": "Nutzungsbedingungen konnten nicht geöffnet werden. Bitte versuche es später erneut."
+    },
+    "signIn": {
+      "title": "Willkommen zurück bei WisdomWise",
+      "subtitle": "Setze deine achtsame Wellness-Reise fort",
+      "email": "E-Mail",
+      "emailPlaceholder": "E-Mail-Adresse eingeben",
+      "password": "Passwort",
+      "passwordPlaceholder": "Passwort eingeben",
+      "forgotPassword": "Passwort vergessen?",
+      "signInButton": "Anmelden",
+      "signingIn": "Anmeldung läuft...",
+      "orDivider": "oder",
+      "googleButton": "Mit Google fortfahren",
+      "noAccount": "Noch kein Konto? Registrieren"
+    },
+    "verification": {
+      "title": "Überprüfe deine E-Mail",
+      "subtitle": "Wir haben einen Bestätigungslink gesendet an",
+      "instructions": "Bitte überprüfe deinen Posteingang und klicke auf den Bestätigungslink, um dein Konto zu aktivieren.",
+      "subInstructions": "Der Link läuft in 24 Stunden ab. Nicht gefunden? Überprüfe deinen Spam-Ordner.",
+      "resendButton": "Bestätigungs-E-Mail erneut senden",
+      "resending": "Wird gesendet...",
+      "checkStatusButton": "Ich habe bestätigt, fortfahren",
+      "checking": "Überprüfung läuft...",
+      "backToSignIn": "Zurück zur Anmeldung"
     }
   },
   "errors": {
@@ -851,6 +1130,28 @@
           "instruction": "Leiten Sie den Benutzer an, seine identifizierten Stärken mit seiner gegenwärtigen Situation zu verbinden. Bitten Sie ihn zu überlegen, wie diese gleichen Eigenschaften ihn bei aktuellen Herausforderungen oder Zielen unterstützen können. Ermutigen Sie eine spezifische Art, wie er diese Stärken voranbringen kann."
         }
       },
+      "visionOfFuture": {
+        "step1": {
+          "title": "Verstehen Sie, warum Vision wichtig ist",
+          "description": "Eine klare Vision gibt Richtung und Motivation.",
+          "instruction": "Erklären Sie dem Benutzer, dass das Vorstellen ihrer Zukunft wie das Setzen eines Kompasses ist. Es hilft, Entscheidungen zu leiten, stärkt die Motivation und hilft uns zu wissen, wohin wir gehen und wie wir als Person sein wollen. Ermutigen Sie sie, diese Übung mit Offenheit anzugehen und sich nicht zurückzuhalten. Dies ist eine ideale Vision. Sie können eine reflektierende Frage stellen oder eine schnelle Skala/Überprüfung anbieten, wie klar ihre Vision im Moment ist."
+        },
+        "step2": {
+          "title": "Stellen Sie sich Ihr zukünftiges Leben vor",
+          "description": "Stellen Sie sich Ihr Leben in ein paar Jahren in seinen wichtigen Bereichen vor.",
+          "instruction": "Führen Sie den Benutzer dazu, sich vorzustellen, wie das Leben aussieht, wenn sich die Dinge richtig anfühlen. Fordern Sie ihn auf, wichtige Bereiche durchzugehen: Beziehungen (Familie, Freunde, Partner), Arbeit oder Studium, Gesundheit und Wohlbefinden, Persönliches Wachstum und Lernen, Lebensstil und tägliche Routinen. Ermutigen Sie ihn zu beschreiben, wie jeder dieser Bereiche in seiner Zukunftsvision aussieht."
+        },
+        "step3": {
+          "title": "Bemerken Sie, was wichtig ist",
+          "description": "Reflektieren Sie über die Werte und Prioritäten in Ihrer Vision.",
+          "instruction": "Bitten Sie den Benutzer, die Hauptwerte zu identifizieren, die durch seine Vision scheinen – zum Beispiel Verbindung, Gleichgewicht, Freiheit, Freundlichkeit, Wachstum. Ermutigen Sie ihn, ein oder zwei zu benennen, die sich im Moment am zentralsten anfühlen."
+        },
+        "step4": {
+          "title": "Verbinden Sie sich mit Ihrer Vision",
+          "description": "Stellen Sie es sich vollständig vor und verknüpfen Sie es mit Ihrem heutigen Leben.",
+          "instruction": "Ermutigen Sie den Benutzer, innezuhalten und sich wirklich vorzustellen, in dieser Zukunft zu sein – wie fühlt es sich an, welche Emotionen kommen auf? Bitten Sie ihn dann, eine kleine Art zu beschreiben, wie er heute mit dieser Vision verbunden bleiben kann, sei es durch eine Handlung, eine Erinnerung oder einfach das Gefühl im Kopf zu behalten."
+        }
+      },
       "morningMindfulness": {
         "step1": {
           "title": "Bemerken Sie Ihr Erwachen",
@@ -866,28 +1167,6 @@
           "title": "Drei achtsame Atemzüge nehmen",
           "description": "Erden Sie sich mit drei bewussten Atemzügen, bevor Sie Ihren Tag beginnen.",
           "instruction": "Führen Sie den Benutzer durch drei langsame, bewusste Atemzüge. Laden Sie ihn ein, sich auf das Gefühl des Atmens zu konzentrieren – zu spüren, wie die Luft in seinen Körper ein- und austritt. Dies dient als Ankerpunkt, zu dem er den ganzen Tag über zurückkehren kann."
-        }
-      },
-      "visionOfFuture": {
-        "step1": {
-          "title": "Verstehe, warum Vision wichtig ist",
-          "description": "Eine klare Vision gibt Richtung und Motivation.",
-          "instruction": "Erkläre dem Nutzer, dass das Vorstellen ihrer Zukunft wie das Setzen eines Kompasses ist. Es hilft, Entscheidungen zu leiten, stärkt die Motivation und hilft uns zu wissen, wohin wir uns bewegen und wie wir als Person sein wollen. Ermutige sie, diese Übung mit Offenheit anzugehen und sich nicht zurückzuhalten. Dies ist eine ideale Vision. Du kannst eine reflektierende Frage stellen oder eine schnelle Skala/Check-in anbieten, wie klar ihre Vision im Moment ist."
-        },
-        "step2": {
-          "title": "Stelle dir dein zukünftiges Leben vor",
-          "description": "Stelle dir dein Leben in ein paar Jahren in seinen wichtigen Bereichen vor.",
-          "instruction": "Führe den Nutzer dazu, sich vorzustellen, wie das Leben aussieht, wenn sich die Dinge richtig anfühlen. Bitte sie, wichtige Bereiche durchzugehen: Beziehungen (Familie, Freunde, Partner), Arbeit oder Studium, Gesundheit und Wohlbefinden, Persönliches Wachstum und Lernen, Lebensstil und tägliche Routinen. Ermutige sie zu beschreiben, wie jeder dieser Bereiche in ihrer Zukunftsvision aussieht."
-        },
-        "step3": {
-          "title": "Bemerke, was wichtig ist",
-          "description": "Reflektiere über die Werte und Prioritäten in deiner Vision.",
-          "instruction": "Bitte den Nutzer, die Hauptwerte zu identifizieren, die durch ihre Vision hindurchscheinen — zum Beispiel Verbindung, Balance, Freiheit, Freundlichkeit, Wachstum. Ermutige sie, einen oder zwei zu nennen, die sich gerade am wichtigsten anfühlen."
-        },
-        "step4": {
-          "title": "Verbinde dich mit deiner Vision",
-          "description": "Stelle sie dir vollständig vor und verknüpfe sie mit deinem heutigen Leben.",
-          "instruction": "Ermutige den Nutzer, innezuhalten und sich wirklich vorzustellen, in dieser Zukunft zu sein — wie fühlt es sich an, welche Emotionen kommen auf? Dann bitte sie zu beschreiben, wie sie auf eine kleine Weise mit dieser Vision heute in Verbindung bleiben können, sei es durch eine Handlung, eine Erinnerung oder einfach das Gefühl im Kopf zu behalten."
         }
       }
     }
@@ -949,40 +1228,6 @@
       "description": "Durchsuche alle Übungen"
     }
   },
-  "alerts": {
-    "signOut": {
-      "title": "Abmelden",
-      "message": "Bist du sicher, dass du dich abmelden möchtest?"
-    },
-    "deleteSession": {
-      "title": "Sitzung löschen",
-      "message": "Bist du sicher, dass du diese Sitzung löschen möchtest?"
-    },
-    "resetProgress": {
-      "title": "Fortschritt zurücksetzen",
-      "message": "Dies wird deinen gesamten Fortschritt zurücksetzen. Diese Aktion kann nicht rückgängig gemacht werden."
-    },
-    "promptsGenerated": {
-      "title": "Reflexionsfragen erstellt!",
-      "message": "{{count}} neue Reflexionsfragen basierend auf deinen Einsichten wurden erstellt. Schaue im Journal-Bereich nach den neuen Fragen."
-    },
-    "clearHistory": {
-      "title": "Gesamten Verlauf löschen",
-      "message": "Bist du sicher, dass du deinen gesamten Chat-Verlauf löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
-    },
-    "goalStatus": {
-      "title": "Zielstatus aktualisiert",
-      "message": "Ziel als {{status}} markiert!"
-    },
-    "progressSaved": {
-      "title": "Großartig!",
-      "message": "Dein Fortschritt wurde aufgezeichnet."
-    },
-    "checkIn": {
-      "title": "Check-in abgeschlossen",
-      "message": "Danke, dass du deinen Fortschritt geteilt hast!"
-    }
-  },
   "visionDetails": {
     "title": "Vision von mir",
     "visionsCreated": "{{count}} Vision{{plural}} erstellt",
@@ -1040,25 +1285,54 @@
     "valueProp": {
       "title": "Deine Reise zum Wohlbefinden beginnt hier",
       "description": "Entdecke personalisierte Werkzeuge und sanfte Führung zur Unterstützung deiner psychischen Gesundheit.",
-      "continueButton": "Loslegen"
+      "continueButton": "Loslegen",
+      "pages": {
+        "page1": {
+          "title": "Klarer denken, besser fühlen",
+          "description": "Erkenne unhilfreiche Gedanken und formuliere sie mit wissenschaftlich fundierten CBT-Techniken neu."
+        },
+        "page2": {
+          "title": "Dich selbst besser verstehen",
+          "description": "Entdecke bedeutungsvolle Muster in deinen Gedanken und Gefühlen, um zu wissen, worauf du deinen Fokus legen kannst."
+        },
+        "page3": {
+          "title": "Geführtes Wachstum, jederzeit bereit",
+          "description": "Anu kennt deinen nächsten besten Schritt und empfiehlt Übungen, die nur für dich gestaltet sind."
+        },
+        "page4": {
+          "title": "Fortschritte, die du sehen kannst",
+          "description": "Verfolge deinen Weg mit gespeicherten Übungen, Einsichten und Meilensteinen an einem ruhigen Ort."
+        }
+      },
+      "letsBegin": "Lass uns beginnen"
     },
     "personalValues": {
       "headline": "Lass uns deine Erfahrung mit Anu personalisieren.",
       "promptText": "Welche Werte sind dir am wichtigsten? Wähle die aus, die sich richtig anfühlen.",
-      "continueButton": "Weiter"
+      "continueButton": "Weiter",
+      "values": {
+        "healthVitality": "Gesundheit & Vitalität",
+        "closeRelationships": "Enge Beziehungen",
+        "growthLearning": "Wachstum & Lernen",
+        "peaceBalance": "Frieden & Balance",
+        "freedomIndependence": "Freiheit & Unabhängigkeit",
+        "purposeMeaning": "Sinn & Bedeutung",
+        "creativityPlay": "Kreativität & Spiel",
+        "achievementProgress": "Erfolg & Fortschritt"
+      }
     },
     "focusAreas": {
       "headline": "Worauf möchtest du dich konzentrieren?",
       "promptText": "Wähle die Bereiche, in denen du Unterstützung möchtest. Du kannst diese später jederzeit ändern.",
       "areas": {
-        "anxiety": "Angst",
-        "stress": "Stress",
-        "sleepIssues": "Schlafprobleme",
-        "lowMood": "Niedergeschlagenheit",
-        "focusProblems": "Konzentrationsprobleme",
-        "relationshipIssues": "Beziehungsprobleme",
-        "workPressure": "Arbeitsdruck",
-        "selfConfidence": "Selbstvertrauen"
+        "feelCalmer": "Ruhiger fühlen",
+        "handleStress": "Stress besser bewältigen",
+        "sleepBetter": "Besser schlafen",
+        "brighterMood": "Meine Stimmung aufhellen",
+        "focusDrive": "Fokus & Antrieb stärken",
+        "confidenceSelfWorth": "Selbstvertrauen & Selbstwert stärken",
+        "relationshipsCommunication": "Beziehungen & Kommunikation verbessern",
+        "somethingElse": "Etwas anderes"
       },
       "continueButton": "Weiter"
     },
@@ -1130,7 +1404,7 @@
           "description": "Richte personalisierte Ressourcen ein"
         }
       },
-      "continueButton": "WisdomWise betreten"
+      "continueButton": "ZenMind betreten"
     },
     "notifications": {
       "mainTitle": "Wohlbefinden wächst durch kleine, tägliche Schritte.",
@@ -1141,7 +1415,7 @@
           "label": "Morgenreflexion",
           "description": "Mit Absicht beginnen"
         },
-        "afternoon": {
+        "daytime": {
           "label": "Mittags-Check-in",
           "description": "Pause und atmen"
         },
@@ -1152,6 +1426,7 @@
       },
       "timePickerTitle": "Zeit auswählen",
       "enableButton": "Erinnerungen aktivieren",
+      "continueButton": "Weiter",
       "skipButton": "Vorerst überspringen",
       "saveButton": "Speichern",
       "cancelButton": "Abbrechen",
@@ -1164,13 +1439,13 @@
             "step1": "1. Tippe unten auf \"Einstellungen öffnen\"",
             "step2": "2. Schalte \"Mitteilungen erlauben\" ein",
             "step3": "3. Wähle deinen bevorzugten Benachrichtigungsstil",
-            "step4": "4. Kehre zu WisdomWise zurück, wenn du fertig bist"
+            "step4": "4. Kehre zu ZenMind zurück, wenn du fertig bist"
           },
           "android": {
             "step1": "1. Tippe unten auf \"Einstellungen öffnen\"",
             "step2": "2. Schalte \"Benachrichtigungen anzeigen\" ein",
             "step3": "3. Wähle deine Benachrichtigungseinstellungen",
-            "step4": "4. Drücke zurück, um zu WisdomWise zurückzukehren"
+            "step4": "4. Drücke zurück, um zu ZenMind zurückzukehren"
           }
         },
         "buttons": {
@@ -1179,6 +1454,34 @@
           "openSettings": "Einstellungen öffnen",
           "notNow": "Nicht jetzt"
         }
+      },
+      "settings": {
+        "title": "Benachrichtigungseinstellungen",
+        "loadingSettings": "Einstellungen werden geladen...",
+        "enableNotifications": "Benachrichtigungen aktivieren, um achtsame Erinnerungen zu erhalten",
+        "enable": "Aktivieren",
+        "dailyReminders": "Tägliche Erinnerungen",
+        "dailyRemindersDescription": "Wähle die Zeiten, die am besten für deine tägliche Wohlfühlpraxis geeignet sind.",
+        "addCustomReminder": "Benutzerdefinierte Erinnerung hinzufügen",
+        "createCustomReminder": "Erstelle deine eigene Erinnerungszeit",
+        "infoText": "Du kannst diese Erinnerungen jederzeit anpassen. Halte benutzerdefinierte Erinnerungen gedrückt, um sie zu löschen. Benachrichtigungen helfen dabei, die Konsistenz in deiner Achtsamkeitspraxis aufrechtzuerhalten.",
+        "saveChanges": "Änderungen speichern",
+        "settingsSaved": "Einstellungen gespeichert",
+        "preferencesUpdated": "Deine Benachrichtigungseinstellungen wurden aktualisiert.",
+        "enableToReceive": "Benachrichtigungen aktivieren, um Erinnerungen zu erhalten.",
+        "failedToSave": "Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.",
+        "notificationsEnabled": "Benachrichtigungen aktiviert",
+        "willReceiveReminders": "Du wirst jetzt achtsame Erinnerungen erhalten.",
+        "failedToEnable": "Benachrichtigungen konnten nicht aktiviert werden. Bitte versuche es erneut.",
+        "error": "Fehler",
+        "deleteReminder": "Erinnerung löschen",
+        "deleteReminderConfirm": "Möchtest du diese Erinnerung wirklich löschen?",
+        "delete": "Löschen",
+        "failedToAdd": "Benutzerdefinierte Erinnerung konnte nicht hinzugefügt werden.",
+        "failedToDelete": "Erinnerung konnte nicht gelöscht werden.",
+        "customReminderLabel": "Gib eine Bezeichnung für deine benutzerdefinierte Erinnerung ein",
+        "customReminderPlaceholder": "z.B. Vor dem Schlafengehen, Nach dem Mittagessen",
+        "add": "Hinzufügen"
       }
     },
     "common": {

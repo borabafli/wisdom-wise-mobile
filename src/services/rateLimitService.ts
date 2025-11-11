@@ -1,4 +1,6 @@
 import { storageService } from './storageService';
+import { entitlementService } from './entitlementService';
+import { FEATURE_LIMITS } from '../config/revenueCat';
 
 export interface RateLimit {
   dailyRequestCount: number;
@@ -9,18 +11,26 @@ export interface RateLimit {
 }
 
 class RateLimitService {
-  private defaultLimit = 50; // 50 requests per day for free tier
-
   // Check if user can make a request
   async canMakeRequest(): Promise<RateLimit> {
+    // Get subscription-aware limit
+    const limits = await entitlementService.getFeatureLimits();
+    const defaultLimit = limits.MESSAGES_PER_DAY;
     try {
       const settings = await storageService.getUserSettings();
       const today = new Date().toDateString();
-      
+
       // Reset counter if it's a new day
       if (settings.lastRequestDate !== today) {
         settings.dailyRequestCount = 0;
         settings.lastRequestDate = today;
+        settings.dailyRequestLimit = defaultLimit; // Update limit based on subscription
+        await storageService.saveUserSettings(settings);
+      }
+
+      // Ensure limit matches current subscription tier
+      if (settings.dailyRequestLimit !== defaultLimit) {
+        settings.dailyRequestLimit = defaultLimit;
         await storageService.saveUserSettings(settings);
       }
 
@@ -39,10 +49,10 @@ class RateLimitService {
       // Fallback to allow request on error
       return {
         dailyRequestCount: 0,
-        dailyRequestLimit: this.defaultLimit,
+        dailyRequestLimit: defaultLimit,
         lastRequestDate: null,
         isLimitReached: false,
-        requestsRemaining: this.defaultLimit
+        requestsRemaining: defaultLimit
       };
     }
   }
@@ -77,7 +87,7 @@ class RateLimitService {
       return `${rateLimit.requestsRemaining} messages remaining today`;
     }
 
-    return `You've reached your daily limit of ${rateLimit.dailyRequestLimit} messages. Your messages will reset tomorrow at midnight. 🌙\n\nTake this as a gentle reminder to pause and reflect on our conversations today. 🌿`;
+    return `You've reached your daily limit of ${rateLimit.dailyRequestLimit} messages. Your messages will reset tomorrow at midnight. 🌙\n\nTake this as an opportunity to pause and reflect on our conversations today. 🌿`;
   }
 
   // Get rate limit status for UI display

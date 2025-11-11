@@ -213,19 +213,25 @@
             }));
           }
 
-          // Define the system prompt for journaling and call the AI
-          const systemPromptForJournaling = `You are a generating journaling prompts. You are having the deepest wisdom and the deepest truths about life, with all the life wisdom, sharp and direct but still empathetic like a therapist. You help people to reflect and find those deepest truths of their personal life. You MUST output EXACTLY 3 questions and nothing else.
+          // Get user's language for generating prompts in their language
+          const currentLanguage = await getCurrentLanguage();
+          const languageName = getLanguageName(currentLanguage);
+          
+          // Define the system prompt for journaling and call the AI
+          const systemPromptForJournaling = `You are a generating journaling prompts. You are having the deepest wisdom and the deepest truths about life, with all the life wisdom, sharp and direct but still empathetic like a therapist. You help people to reflect and find those deepest truths of their personal life. You MUST output EXACTLY 3 questions and nothing else.
+
+IMPORTANT: Generate the questions in ${languageName}. The user's language is ${languageName}, so all questions must be in ${languageName}.
 
 Guidelines:
 - Build on what the user shared but don't hesitate to open new perspectives
 - They must feel easy to write about open, imaginative, and emotionally engaging.
 - They should be easy to understand and not too long or complicated, simple but thought-provocing
 - They should inspire the deepest self-reflection about any deep truth of their life
-- They can be loosely inspired by the user’s values, thought patterns, or goals — but don't force to reference them too much.
+- They can be loosely inspired by the user's values, thought patterns, or goals — but don't force to reference them too much.
 - Each question should feel important and natural, as if it could appear in an inspiring journal.
 
 Rules:
-- Output ONLY 3 questions, one per line
+- Output ONLY 3 questions, one per line, in ${languageName}
 - No explanations, no introductions, no extra text
 - Each question must end with a question mark
 - Do not include phrases like "Here are", "Questions:", or any conversational language
@@ -253,23 +259,27 @@ Rules:
         return prompts;
       }
 
-      // Generate prompts using AI based on user's insights
-      private static async generateAIPrompts(insightsData: any, systemMessage: string): Promise<string[]> {
-        try {
-          const prompt = `Based on the user's Insights give me only 3 question to reflect as journaling prompt. Output should be 3 questions and nothing else.
+      // Generate prompts using AI based on user's insights
+      private static async generateAIPrompts(insightsData: any, systemMessage: string): Promise<string[]> {
+        try {
+          // Get user's language
+          const currentLanguage = await getCurrentLanguage();
+          const languageName = getLanguageName(currentLanguage);
+          
+          const prompt = `Based on the user's Insights give me only 3 question to reflect as journaling prompt. Output should be 3 questions and nothing else.
 
-
+IMPORTANT: Generate the questions in ${languageName}. All questions must be in ${languageName}.
 
     User insights:
     ${JSON.stringify(insightsData, null, 2)}
 
     **TASK: GENERATE JOURNALING QUESTIONS**
     **INSTRUCTIONS:**
-    1.  Generate **EXACTLY** three personalized journaling questions.
+    1.  Generate **EXACTLY** three personalized journaling questions in ${languageName}.
     2.  The questions must be based on the provided insights.
     3.  Each question must be on a new line.
     4.  Each question must end with a question mark.
-    5.  **CRITICAL:** Do not add any extra text, comments, or conversational phrases before or after the questions. Your entire response must be ONLY the three questions.
+    5.  **CRITICAL:** Do not add any extra text, comments, or conversational phrases before or after the questions. Your entire response must be ONLY the three questions in ${languageName}.
 
     **OUTPUT:**`;
 
