@@ -25,27 +25,27 @@ export const FeatureList: React.FC<FeatureListProps> = ({ compact = false }) => 
 
   const features: Feature[] = [
     {
-      icon: <Sparkles size={20} color="#8B7FD9" strokeWidth={2.5} />,
+      icon: <Sparkles size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.unlimited_conversations'),
     },
     {
-      icon: <Mic size={20} color="#8B7FD9" strokeWidth={2.5} />,
+      icon: <Mic size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.unlimited_voice'),
     },
     {
-      icon: <Heart size={20} color="#8B7FD9" strokeWidth={2.5} />,
+      icon: <Heart size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.full_exercises'),
     },
     {
-      icon: <Brain size={20} color="#8B7FD9" strokeWidth={2.5} />,
+      icon: <Brain size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.advanced_insights'),
     },
     {
-      icon: <BookOpen size={20} color="#8B7FD9" strokeWidth={2.5} />,
+      icon: <BookOpen size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.unlimited_journaling'),
     },
     {
-      icon: <Clock size={20} color="#8B7FD9" strokeWidth={2.5} />,
+      icon: <Clock size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.full_history'),
     },
   ];

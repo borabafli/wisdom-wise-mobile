@@ -24,10 +24,10 @@ export const featureListStyles = StyleSheet.create({
   },
   featureText: {
     flex: 1,
-    fontFamily: typography.fontFamily.body,
+    fontFamily: typography.fontFamily.ubuntu,
     fontSize: 15,
     lineHeight: 22,
-    color: '#2D2644',
+    color: '#1F2937',
   },
 });
 

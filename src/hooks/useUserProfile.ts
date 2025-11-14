@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { storageService, UserProfile } from '../services/storageService';
 import { profileSyncService } from '../services/profileSyncService';
-import { useAuth } from '../contexts';
+import { useAuth } from '../contexts/AuthContext';
 
 interface UseUserProfileReturn {
   profile: UserProfile | null;

@@ -16,16 +16,16 @@ export const pricingCardStyles = StyleSheet.create({
     padding: spacing['5'],
     borderWidth: 2,
     borderColor: 'transparent',
-    ...shadows.medium,
+    ...shadows.md,
   },
   cardSelected: {
-    borderColor: '#8B7FD9', // Calming purple
+    borderColor: '#5BA3B8', // Therapeutic teal - matches onboarding
     backgroundColor: '#FFFFFF',
-    ...shadows.large,
+    ...shadows.lg,
     transform: [{ scale: 1.02 }],
   },
   cardBestValue: {
-    borderColor: '#6EC1B8', // Therapeutic teal
+    borderColor: '#5BA3B8', // Therapeutic teal
   },
 
   // Best Value Badge
@@ -33,17 +33,17 @@ export const pricingCardStyles = StyleSheet.create({
     position: 'absolute',
     top: -10,
     right: spacing['4'],
-    backgroundColor: '#FFD700', // Gold
+    backgroundColor: '#4ADE80', // Soft green for success
     paddingHorizontal: spacing['3'],
     paddingVertical: spacing['1'],
     borderRadius: 12,
-    ...shadows.small,
+    ...shadows.sm,
   },
   bestValueText: {
-    fontFamily: typography.fontFamily.display,
+    fontFamily: typography.fontFamily.ubuntuBold,
     fontSize: 11,
-    fontWeight: '600',
-    color: '#2D2644',
+    fontWeight: '700',
+    color: '#1F2937',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
@@ -53,10 +53,10 @@ export const pricingCardStyles = StyleSheet.create({
     alignItems: 'center',
   },
   planName: {
-    fontFamily: typography.fontFamily.display,
+    fontFamily: typography.fontFamily.ubuntuBold,
     fontSize: 16,
-    fontWeight: '600',
-    color: '#2D2644',
+    fontWeight: '700',
+    color: '#1F2937',
     marginBottom: spacing['2'],
   },
   priceContainer: {
@@ -64,40 +64,40 @@ export const pricingCardStyles = StyleSheet.create({
     marginBottom: spacing['3'],
   },
   price: {
-    fontFamily: typography.fontFamily.display,
+    fontFamily: typography.fontFamily.ubuntuBold,
     fontSize: 32,
     fontWeight: '700',
-    color: '#8B7FD9', // Calming purple
+    color: '#5BA3B8', // Therapeutic teal - matches onboarding
     lineHeight: 38,
   },
   pricePeriod: {
-    fontFamily: typography.fontFamily.body,
+    fontFamily: typography.fontFamily.ubuntu,
     fontSize: 14,
-    color: '#6B6B8A',
+    color: '#6B7280',
   },
   trialBadge: {
-    backgroundColor: '#F0EEFF',
+    backgroundColor: '#D4E8E4', // Soft teal background
     paddingHorizontal: spacing['3'],
     paddingVertical: spacing['1'],
     borderRadius: 8,
     marginBottom: spacing['2'],
   },
   trialText: {
-    fontFamily: typography.fontFamily.body,
+    fontFamily: typography.fontFamily.ubuntuMedium,
     fontSize: 13,
-    color: '#8B7FD9',
+    color: '#5BA3B8',
   },
   savingsText: {
-    fontFamily: typography.fontFamily.display,
+    fontFamily: typography.fontFamily.ubuntuBold,
     fontSize: 13,
-    fontWeight: '600',
-    color: '#6EC1B8', // Therapeutic teal
+    fontWeight: '700',
+    color: '#4ADE80', // Soft green for savings
     marginTop: spacing['1'],
   },
   monthlyEquivalent: {
-    fontFamily: typography.fontFamily.body,
+    fontFamily: typography.fontFamily.ubuntu,
     fontSize: 12,
-    color: '#9B9BAA',
+    color: '#6B7280',
     marginTop: spacing['1'],
   },
 

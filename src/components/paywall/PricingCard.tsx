@@ -100,7 +100,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
         {isLoading && (
           <ActivityIndicator
             size="small"
-            color="#8B7FD9"
+            color="#5BA3B8"
             style={styles.loadingIndicator}
           />
         )}

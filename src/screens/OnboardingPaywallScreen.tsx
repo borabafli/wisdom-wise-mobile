@@ -16,6 +16,8 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { X } from 'lucide-react-native';
 import { PurchasesPackage } from 'react-native-purchases';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { PricingCard } from '../components/paywall/PricingCard';
@@ -35,10 +37,12 @@ export const OnboardingPaywallScreen: React.FC<OnboardingPaywallScreenProps> = (
 }) => {
   const { t } = useTranslation();
   const posthog = usePostHog();
+  const insets = useSafeAreaInsets();
   const {
     isLoading: contextLoading,
     currentOffering,
     purchasePackage,
+    restorePurchases,
   } = useSubscription();
 
   const [selectedPackage, setSelectedPackage] = useState<PurchasesPackage | null>(null);
@@ -85,10 +89,30 @@ export const OnboardingPaywallScreen: React.FC<OnboardingPaywallScreenProps> = (
 
   const handleSkip = () => {
     posthog?.capture('paywall_dismissed', {
-      action: 'continue_free',
+      action: 'close_button',
       trigger: 'onboarding',
     });
     onSkip();
+  };
+
+  const handleRestore = async () => {
+    try {
+      setIsPurchasing(true);
+      posthog?.capture('paywall_restore_attempted', {
+        trigger: 'onboarding',
+      });
+
+      // Call the actual restore purchases function from SubscriptionContext
+      await restorePurchases();
+
+      // If restore was successful and user now has premium, complete onboarding
+      // Note: The restorePurchases function handles showing success/error alerts
+
+    } catch (error) {
+      console.error('[OnboardingPaywall] Restore error:', error);
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   // Loading state - only show loading spinner while RevenueCat is initializing
@@ -99,7 +123,7 @@ export const OnboardingPaywallScreen: React.FC<OnboardingPaywallScreenProps> = (
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.loadingOverlay}>
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#8B7FD9" />
+              <ActivityIndicator size="large" color="#5BA3B8" />
               <Text style={styles.loadingText}>
                 {t('paywall.loading')}
               </Text>
@@ -125,9 +149,29 @@ export const OnboardingPaywallScreen: React.FC<OnboardingPaywallScreenProps> = (
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+        {/* Close Button - Top Right with proper safe area */}
+        <TouchableOpacity
+          style={[
+            styles.closeButton,
+            {
+              top: Math.max(insets.top + 8, 24), // Ensure it's below status bar/notch with minimum 24px
+              right: 16,
+            }
+          ]}
+          onPress={handleSkip}
+          disabled={isPurchasing}
+          activeOpacity={0.6}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} // Increase touch area
+        >
+          <X size={24} color="#6B7280" strokeWidth={2} />
+        </TouchableOpacity>
+
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingTop: Math.max(insets.top + 56, 72) }, // Add top padding for close button
+          ]}
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
@@ -213,15 +257,15 @@ export const OnboardingPaywallScreen: React.FC<OnboardingPaywallScreenProps> = (
               )}
             </TouchableOpacity>
 
-            {/* Secondary CTA - Continue with Free */}
+            {/* Restore Purchases Link - Required by Apple */}
             <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={handleSkip}
+              style={styles.restoreButton}
+              onPress={handleRestore}
               disabled={isPurchasing}
               activeOpacity={0.6}
             >
-              <Text style={styles.secondaryButtonText}>
-                {t('paywall.cta_secondary')}
+              <Text style={styles.restoreButtonText}>
+                {t('paywall.subscription_management.restore')}
               </Text>
             </TouchableOpacity>
 
@@ -236,7 +280,7 @@ export const OnboardingPaywallScreen: React.FC<OnboardingPaywallScreenProps> = (
         {isPurchasing && (
           <View style={styles.loadingOverlay}>
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#8B7FD9" />
+              <ActivityIndicator size="large" color="#5BA3B8" />
               <Text style={styles.loadingText}>
                 {t('paywall.processing')}
               </Text>

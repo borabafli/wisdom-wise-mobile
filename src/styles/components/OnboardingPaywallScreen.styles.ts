@@ -6,17 +6,29 @@
  */
 
 import { StyleSheet, Dimensions } from 'react-native';
-import { colors, spacing, typography, shadows } from '../tokens';
+import { spacing, typography, shadows } from '../tokens';
 
 const { width, height } = Dimensions.get('window');
 
 export const onboardingPaywallStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F5FF', // Soft lavender background
+    backgroundColor: '#EDF8F8', // Soft teal background - matches onboarding
   },
   safeArea: {
     flex: 1,
+  },
+  closeButton: {
+    position: 'absolute',
+    // top and right are set dynamically in component for safe area
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    ...shadows.sm,
   },
   scrollView: {
     flex: 1,
@@ -43,24 +55,26 @@ export const onboardingPaywallStyles = StyleSheet.create({
   illustration: {
     width: 100,
     height: 100,
-    tintColor: '#8B7FD9', // Calming purple
+    tintColor: '#5BA3B8', // Therapeutic teal
   },
   title: {
-    fontFamily: typography.fontFamily.display,
-    fontSize: 28,
-    lineHeight: 36,
-    fontWeight: '600',
-    color: '#2D2644', // Deep purple-gray
+    fontFamily: typography.fontFamily.ubuntuBold,
+    fontSize: 32,
+    lineHeight: 38,
+    fontWeight: '700',
+    color: '#1F2937', // Deep charcoal - matches onboarding
     textAlign: 'center',
     marginBottom: spacing['3'],
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontFamily: typography.fontFamily.body,
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#6B6B8A', // Muted purple
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    fontSize: 20,
+    lineHeight: 28,
+    color: '#1F2937', // Match title color
     textAlign: 'center',
     paddingHorizontal: spacing['4'],
+    opacity: 0.9,
   },
 
   // Pricing Section
@@ -79,10 +93,10 @@ export const onboardingPaywallStyles = StyleSheet.create({
     paddingHorizontal: spacing['2'],
   },
   featuresTitle: {
-    fontFamily: typography.fontFamily.display,
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#2D2644',
+    fontFamily: typography.fontFamily.ubuntuBold,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
     marginBottom: spacing['4'],
     textAlign: 'center',
   },
@@ -93,44 +107,49 @@ export const onboardingPaywallStyles = StyleSheet.create({
     paddingTop: spacing['6'],
   },
   primaryButton: {
-    backgroundColor: '#8B7FD9', // Calming purple
-    borderRadius: 16,
+    backgroundColor: '#5BA3B8', // Therapeutic teal - matches onboarding
+    borderRadius: 18,
     paddingVertical: spacing['4'],
     paddingHorizontal: spacing['6'],
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.medium,
+    height: 48,
+    ...shadows.md,
   },
   primaryButtonDisabled: {
     opacity: 0.6,
   },
   primaryButtonText: {
-    fontFamily: typography.fontFamily.display,
-    fontSize: 18,
-    fontWeight: '600',
+    fontFamily: typography.fontFamily.ubuntuMedium,
+    fontSize: 16,
+    fontWeight: '500',
     color: '#FFFFFF',
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
   },
-  secondaryButton: {
+
+  // Restore Purchases Button - Required by Apple
+  restoreButton: {
     marginTop: spacing['4'],
-    paddingVertical: spacing['3'],
+    paddingVertical: spacing['2'],
     alignItems: 'center',
   },
-  secondaryButtonText: {
-    fontFamily: typography.fontFamily.secondary,
-    fontSize: 16,
-    color: '#6B6B8A',
+  restoreButtonText: {
+    fontFamily: typography.fontFamily.ubuntu,
+    fontSize: 14,
+    color: '#6B7280',
+    textDecorationLine: 'underline',
   },
 
   // Legal Text
   legalText: {
-    fontFamily: typography.fontFamily.body,
+    fontFamily: typography.fontFamily.ubuntu,
     fontSize: 12,
     lineHeight: 18,
-    color: '#9B9BAA',
+    color: '#6B7280',
     textAlign: 'center',
     marginTop: spacing['4'],
     paddingHorizontal: spacing['4'],
+    opacity: 0.8,
   },
 
   // Loading Overlay
@@ -145,12 +164,12 @@ export const onboardingPaywallStyles = StyleSheet.create({
     borderRadius: 16,
     padding: spacing['6'],
     alignItems: 'center',
-    ...shadows.large,
+    ...shadows.lg,
   },
   loadingText: {
-    fontFamily: typography.fontFamily.secondary,
+    fontFamily: typography.fontFamily.ubuntuMedium,
     fontSize: 16,
-    color: '#2D2644',
+    color: '#1F2937',
     marginTop: spacing['4'],
   },
 });
