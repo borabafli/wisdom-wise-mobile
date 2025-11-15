@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, Modal, Keyboard, Animated } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform, Keyboard, Animated } from 'react-native';
 import { SafeAreaWrapper } from '../components/SafeAreaWrapper';
 import { Check, ArrowLeft, Mic, MicOff, Volume2, VolumeX, X } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -10,6 +10,7 @@ import JournalStorageService from '../services/journalStorageService';
 import { useVoiceRecording } from '../hooks/chat/useVoiceRecording';
 import { useTTSControls } from '../hooks/chat/useTTSControls';
 import { RecordingWave } from '../components/RecordingWave';
+import { TranscribingIndicator } from '../components/chat/TranscribingIndicator';
 import { useTranslation } from 'react-i18next';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Image } from 'expo-image';
@@ -40,7 +41,6 @@ const GuidedJournalScreen: React.FC<GuidedJournalScreenProps> = ({ route, naviga
   ]);
   const [currentResponse, setCurrentResponse] = useState('');
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
-  const [showSaveModal, setShowSaveModal] = useState(false);
   const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
   const [sessionPhrases, setSessionPhrases] = useState<string[]>([]);
   const gradientAnim = useRef(new Animated.Value(0)).current;
@@ -224,8 +224,16 @@ For the user's latest reflection: "${userResponse}"
 
 IMPORTANT: Generate the question in ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}. The user's language is ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}, so the question must be in that language.
 
-Generate one powerful follow-up question that invites deeper insight and meaningful reflection - a question ideal for inspiring guided journaling. 
-This is ${stepNumber === 0 ? 'the first' : 'the second'} follow-up question. 
+Generate one powerful follow-up question that invites deeper insight and meaningful reflection - a question ideal for inspiring guided journaling.
+This is ${stepNumber === 0 ? 'the first' : 'the second'} follow-up question.
+
+CRITICAL FORMAT REQUIREMENT:
+- Return ONLY the question itself - nothing before or after it
+- NO introductory phrases like "I wonder", "Perhaps", "Maybe", "Have you considered"
+- NO context setup like "That's interesting..." or "Building on that..."
+- Start DIRECTLY with the question
+- Example of what NOT to do: "That's deep, but I wonder: What would really happen if...?"
+- Example of what TO do: "What would really happen if...?"
 
 The question should:
 - Be like coming from the person with the deepest wisdom and the deepest truths about life, with all the life wisdom, sharp and direct but still empathetic like a therapist
@@ -233,11 +241,10 @@ The question should:
 - Encourage deep reflection, questioning, self-discovery, clarity, or new perspective
 - Stay open-ended (no yes/no questions)
 - Spark genuine introspection — something the user would *want* to think about
-- You don't need much words and you are to the point.
-- Return only the question, no explanations or extra text.
+- Be concise and to the point
 - A single question, not multiple questions
 
-Return only the question in ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}, no additional text.`;
+Return ONLY the question in ${i18n.language === 'tr' ? 'Turkish' : i18n.language === 'de' ? 'German' : i18n.language === 'fr' ? 'French' : i18n.language === 'es' ? 'Spanish' : i18n.language === 'pt' ? 'Portuguese' : 'English'}. No preamble, no additional text, just the question.`;
 
     try {
       const response = await chatService.sendMessage(prompt, []);
@@ -565,50 +572,29 @@ Respond with JSON only.`;
   };
 
   const handleBackPress = () => {
-    // Check if there's any content to save
+    // Check if there's any content
     const hasContent = entries.some(entry => entry.response.trim() !== '') || currentResponse.trim() !== '';
 
     if (hasContent) {
-      setShowSaveModal(true);
+      // Show discard confirmation
+      Alert.alert(
+        t('journal.leaveJournaling', 'Leave journaling?'),
+        t('journal.discardWarning', 'Your entry will be lost if you leave now.'),
+        [
+          {
+            text: t('journal.stay', 'Stay'),
+            style: 'cancel'
+          },
+          {
+            text: t('journal.leaveAndDiscard', 'Leave & Discard Entry'),
+            style: 'destructive',
+            onPress: () => navigation.goBack()
+          }
+        ]
+      );
     } else {
       navigation.goBack();
     }
-  };
-
-  const handleSaveAndExit = async () => {
-    setShowSaveModal(false);
-    try {
-      // Create a simple summary for incomplete sessions
-      const completedEntries = entries.filter(entry => entry.response.trim() !== '');
-      if (currentResponse.trim() !== '') {
-        completedEntries[currentStep] = {
-          ...completedEntries[currentStep],
-          response: currentResponse
-        };
-      }
-
-      const simpleSummary = completedEntries.length > 0
-        ? `Partial journal entry: ${completedEntries.map(e => e.response).join(' ').substring(0, 200)}...`
-        : 'Draft journal entry';
-
-      await JournalStorageService.saveJournalEntry(
-        initialPrompt,
-        completedEntries,
-        simpleSummary,
-        ['Incomplete session - saved as draft'],
-        false
-      );
-
-      navigation.goBack();
-    } catch (error) {
-      console.error('Error saving draft:', error);
-      Alert.alert(t('common.error'), t('journal.failedToSaveDraft'));
-    }
-  };
-
-  const handleDontSaveAndExit = () => {
-    setShowSaveModal(false);
-    navigation.goBack();
   };
 
   return (
@@ -646,20 +632,26 @@ Respond with JSON only.`;
 
           {/* Text Input - Exactly like chat */}
           <View style={styles.inputContainer}>
+            {/* Transcribing indicator - centered above input */}
+            {isTranscribing && (
+              <View style={styles.transcribingContainer}>
+                <TranscribingIndicator isVisible={isTranscribing} />
+              </View>
+            )}
+
             <View style={styles.inputRow}>
-              {!isRecording ? (
+              {!isRecording && !isTranscribing ? (
                 <TextInput
                   value={currentResponse}
                   onChangeText={setCurrentResponse}
-                  placeholder={isTranscribing ? t('journal.transcribing') : t('journal.typeOrSpeak')}
+                  placeholder={t('journal.typeOrSpeak')}
                   placeholderTextColor="rgba(43, 71, 94, 0.5)"
                   multiline
                   style={styles.textInput}
-                  editable={!isGeneratingQuestion && !isTranscribing}
+                  editable={!isGeneratingQuestion}
                   textAlignVertical="top"
-                  textAlign={isTranscribing ? 'center' : 'left'}
                 />
-              ) : (
+              ) : isTranscribing ? null : (
                 /* Recording Interface: X button - Wave with Timer - Check button */
                 <View style={styles.recordingInterfaceWithTimer}>
                   {/* Cancel Button (X) - Left side */}
@@ -794,43 +786,6 @@ Respond with JSON only.`;
         </KeyboardAvoidingView>
       </SafeAreaWrapper>
 
-      {/* Save Session Modal */}
-      <Modal
-        visible={showSaveModal}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={() => setShowSaveModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.saveModal}>
-            <Text style={styles.saveModalTitle}>{t('journal.saveModalTitle')}</Text>
-
-            <TouchableOpacity
-              style={styles.saveModalButton}
-              onPress={handleSaveAndExit}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.saveModalButtonText}>{t('journal.save')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.saveModalButton, styles.dontSaveButton]}
-              onPress={handleDontSaveAndExit}
-              activeOpacity={0.8}
-            >
-              <Text style={[styles.saveModalButtonText, styles.dontSaveButtonText]}>{t('journal.dontSaveButton')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setShowSaveModal(false)}
-              style={styles.cancelButton}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </>
   );
 };

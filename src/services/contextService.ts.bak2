@@ -3,7 +3,6 @@ import { Message, storageService } from './storageService';
 import { generateFirstMessageSuggestions } from '../utils/suggestionGenerator';
 import { memoryService, MemoryContext } from './memoryService';
 import { goalService, TherapyGoal } from './goalService';
-import { therapyGoalsService } from './therapyGoalsService';
 import { apiService } from './apiService';
 import { API_CONFIG } from '../config/constants';
 import { getExercisesArray } from '../data/exerciseLibrary';
@@ -226,17 +225,10 @@ Final check: Output must be a single valid JSON object, nothing else.`
     
     const memoryContextString = memoryService.formatMemoryForContext(memoryContext);
     const goalContextString = this.formatGoalsForContext(activeGoals);
-    
-    // Get therapy goals (user's therapeutic focus areas)
-    const therapyGoalsContext = await therapyGoalsService.getTherapyGoalsContext();
-    const therapyGoalsString = therapyGoalsContext ? `
-
-**THERAPY GOALS**
-${therapyGoalsContext}` : '';
     
     
     // Combine system prompt with memory and goal context
-    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString + therapyGoalsString;
+    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString;
     
     const context = [{
       role: 'system',
@@ -365,7 +357,6 @@ ${therapyGoalsContext}` : '';
     **EDGE CASES**  
     - Very short replies (“idk”, “…”, “not sure”): validate gently and offer a small next step.  
     - If user expresses self-harm or intent to harm others: respond with empathy and encourage immediate professional help or emergency services. Safety comes first.  
-    - **Abstract questions that confuse users**: If user responds vaguely or says "I'm not sure what you mean" / "I don't know", offer 2-3 concrete examples. For instance, if asking "What values matter to you?", follow up with "For example: family connection, creative expression, helping others, personal growth. Which resonate, or is it something different?" Make examples specific while leaving room for their own answer.
     
     ---
     

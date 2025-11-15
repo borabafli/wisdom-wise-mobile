@@ -563,7 +563,11 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
                           ? currentExercise.name
                           : t('chat.reflectionSpace')}
                     </Text>
-                    <Text style={styles.sessionSubtitle}>
+                    <Text
+                      style={styles.sessionSubtitle}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {exerciseMode && exerciseData.dynamicFlow
                         ? t('chat.exerciseProgress', {
                             current: exerciseStep + 1,

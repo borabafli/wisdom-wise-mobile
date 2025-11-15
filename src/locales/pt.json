@@ -564,7 +564,7 @@
     "speakResponse": "Falar Resposta",
     "exercise": "Exercício",
     "reflectionSpace": "💭 Espaço de Reflexão",
-    "exerciseProgress": "Passo {{current}} de {{total}} • {{title}}",
+    "exerciseProgress": "Passo {{current}}/{{total}} • {{title}}",
     "inProgress": "Em Progresso",
     "therapeuticExercise": "{{duration}} • Exercício Terapêutico",
     "loadingSpace": "Preparando seu espaço seguro...",
@@ -826,7 +826,7 @@
         "step2": {
           "title": "Note seu pensamento",
           "description": "Qual foi o primeiro pensamento que veio à sua mente naquele momento?",
-          "instruction": "Encoraje o usuário a escrever o pensamento automático que teve naquela situação. Se se sentirem travados, ofereça exemplos suaves ('Vou falhar', 'Eles não gostam de mim', 'Não consigo lidar com isso'), mas mantenha o foco nas próprias palavras deles."
+          "instruction": "Encoraje o usuário a compartilhar o pensamento automático que teve. Se se sentirem travados, ofereça exemplos suaves ('Vou falhar', 'Eles não gostam de mim', 'Não consigo lidar com isso'). Se o pensamento for vago (como 'Estraguei tudo' ou 'tudo está errado'), ajude-o a ser um pouco mais específico com UMA pergunta gentil: 'O que exatamente aconteceu naquele momento?' ou 'Qual parte da situação está te incomodando?' Não exija perfeição—assim que tiver algo concreto o suficiente para examinar padrões (Passo 3), avance. Aceite a linguagem deles e confie que o passo de reformulação permitirá mais refinamento."
         },
         "step3": {
           "title": "Identifique o padrão de pensamento",

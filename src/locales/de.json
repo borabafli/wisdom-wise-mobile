@@ -596,7 +596,7 @@
     "speakResponse": "Antwort sprechen",
     "exercise": "Übung",
     "reflectionSpace": "💭 Reflexionsraum",
-    "exerciseProgress": "Schritt {{current}} von {{total}} • {{title}}",
+    "exerciseProgress": "Schritt {{current}}/{{total}} • {{title}}",
     "inProgress": "In Bearbeitung",
     "therapeuticExercise": "{{duration}} • Therapeutische Übung",
     "loadingSpace": "Dein sicherer Raum wird vorbereitet...",
@@ -924,7 +924,7 @@
         "step2": {
           "title": "Bemerke deinen Gedanken",
           "description": "Was war der erste Gedanke, der dir in diesem Moment kam?",
-          "instruction": "Ermutige den Nutzer, den automatischen Gedanken aufzuschreiben, den er in dieser Situation hatte. Falls er sich schwertut, biete sanfte Beispiele ('Ich werde versagen', 'Sie mögen mich nicht', 'Ich kann das nicht schaffen'), aber behalte den Fokus auf ihren eigenen Worten."
+          "instruction": "Ermutige den Nutzer, den automatischen Gedanken zu teilen, den er hatte. Falls er sich schwertut, biete sanfte Beispiele ('Ich werde versagen', 'Sie mögen mich nicht', 'Ich kann das nicht schaffen'). Wenn der Gedanke vage ist (wie 'Ich habe versagt' oder 'alles ist falsch'), hilf ihm mit EINER sanften Frage etwas spezifischer zu werden: 'Was genau fühlte sich falsch an?' oder 'Welcher Teil der Situation beschäftigt dich?' Verlange keine Perfektion—sobald du etwas Konkretes hast, das du auf Muster untersuchen kannst (Schritt 3), gehe weiter. Akzeptiere ihre Sprache und vertraue darauf, dass der Umformulierungsschritt weitere Verfeinerung ermöglicht."
         },
         "step3": {
           "title": "Erkenne das Denkmuster",

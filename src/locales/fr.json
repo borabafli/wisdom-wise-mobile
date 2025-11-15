@@ -564,7 +564,7 @@
     "speakResponse": "Prononcer la réponse",
     "exercise": "Exercice",
     "reflectionSpace": "💭 Espace de réflexion",
-    "exerciseProgress": "Étape {{current}} sur {{total}} • {{title}}",
+    "exerciseProgress": "Étape {{current}}/{{total}} • {{title}}",
     "inProgress": "En cours",
     "therapeuticExercise": "{{duration}} • Exercice thérapeutique",
     "loadingSpace": "Préparation de votre espace sûr...",
@@ -859,7 +859,7 @@
         "step2": {
           "title": "Remarquez votre pensée",
           "description": "Quelle était la première pensée qui vous est venue à l'esprit à ce moment-là ?",
-          "instruction": "Encouragez l'utilisateur à écrire la pensée automatique qu'il a eue dans cette situation. S'il se sent bloqué, offrez des exemples doux ('Je vais échouer', 'Ils ne m'aiment pas', 'Je ne peux pas gérer cela'), mais gardez l'accent sur leurs propres mots."
+          "instruction": "Encouragez l'utilisateur à partager la pensée automatique qu'il a eue. S'il se sent bloqué, offrez des exemples doux ('Je vais échouer', 'Ils ne m'aiment pas', 'Je ne peux pas gérer cela'). Si sa pensée est vague (comme 'J'ai gâché' ou 'tout va mal'), aidez-le à être un peu plus précis avec UNE question douce : 'Qu'est-ce qui vous a semblé aller mal exactement ?' ou 'Quelle partie de la situation vous préoccupe ?' N'exigez pas la perfection—une fois que vous avez quelque chose d'assez concret pour examiner les schémas (Étape 3), avancez. Acceptez leur langage et ayez confiance que l'étape de recadrage permettra plus de raffinement."
         },
         "step3": {
           "title": "Repérez le schéma de pensée",

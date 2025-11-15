@@ -114,6 +114,12 @@ export const guidedJournalStyles = StyleSheet.create({
     marginHorizontal: spacing[4],
   },
 
+  transcribingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: spacing[12],
+  },
+
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
