@@ -447,6 +447,7 @@ Deno.serve(async (req: Request) => {
         response = {
           success: true,
           summary,
+          message: summary, // Also include as 'message' for contextService compatibility
           processingTime: Math.round(performance.now() - startTime)
         };
         break;

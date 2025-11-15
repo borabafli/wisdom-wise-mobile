@@ -442,6 +442,7 @@
     "priorityExercises": {
       "names": {
         "tellStory": "Tell Your Story",
+        "goalSetting": "Set Your Goals",
         "personalMilestones": "Personal Milestones",
         "therapyGoals": "Therapy Goals",
         "visionFuture": "Vision of the Future",
@@ -453,6 +454,7 @@
       },
       "descriptions": {
         "tellStory": "Share your personal journey",
+        "goalSetting": "Set and achieve meaningful goals",
         "personalMilestones": "Set and achieve meaningful goals",
         "therapyGoals": "Define what you want to work on",
         "visionFuture": "Imagine your ideal future self",
@@ -1534,14 +1536,18 @@
     "legal": "Cancel anytime. Subscription renews automatically after trial.",
     "limit_reached": {
       "title": "You've reached your daily limit",
+      "title_weekly": "You've reached your weekly limit",
       "subtitle": "Upgrade to continue your journey without limits",
       "messages": "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access.",
+      "messages_weekly": "You've used all {{limit}} messages for this week. Your limit resets next Monday.",
       "voice": "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access.",
       "exercises": "You've completed your daily exercise. Upgrade for unlimited exercises.",
       "journal_prompts": "You've used your daily journal prompt. Upgrade for unlimited prompts.",
       "cta": "Unlock Premium",
       "dismiss": "Not Now",
-      "reset_info": "Your free limit resets tomorrow"
+      "reset_info": "Your free limit resets tomorrow",
+      "reset_info_weekly": "Your limit resets next Monday",
+      "reset_info_premium_weekly": "Your premium weekly limit resets next Monday"
     },
     "feature_locked": {
       "title": "Premium Feature",
@@ -1563,5 +1569,21 @@
       "restore": "Restore Purchases",
       "restoring": "Restoring..."
     }
+  },
+  "premium_limit": {
+    "title": "Weekly Limit Reached",
+    "subtitle": "You've used all your messages for this week. Your limit will reset next Monday.",
+    "messages_used": "Messages Used",
+    "weekly_limit": "Weekly Limit",
+    "explanation": "As a premium member, you have access to 2,000 messages per week. This limit helps us maintain quality service for all our premium users.",
+    "resets_on": "Resets on {{date}}",
+    "default_reset": "next Monday",
+    "benefits_title": "Your Premium Benefits Continue:",
+    "benefit_exercises": "Unlimited guided exercises",
+    "benefit_voice": "Extended voice journaling",
+    "benefit_insights": "Advanced insights & analytics",
+    "benefit_history": "Full conversation history",
+    "cta": "Got It",
+    "support_text": "Need help? Contact our support team"
   }
 }

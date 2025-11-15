@@ -41,9 +41,9 @@ export const getCoreExercises = (t: TranslationFunction): Exercise[] => [
   },
   {
     id: 'goal-setting',
-    type: 'goal-setting',
+    type: 'personal-milestones',
     name: t('insights.priorityExercises.names.goalSetting'),
-    duration: '20 min',
+    duration: '5 min',
     description: t('insights.priorityExercises.descriptions.goalSetting'),
     isCompleted: false,
     iconSource: require('../../assets/images/10.jpeg'),

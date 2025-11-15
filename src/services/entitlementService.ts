@@ -23,11 +23,13 @@ import {
  */
 const USAGE_STORAGE_KEYS = {
   DAILY_MESSAGES: 'usage_daily_messages',
+  WEEKLY_MESSAGES: 'usage_weekly_messages',
   DAILY_VOICE_MINUTES: 'usage_daily_voice_minutes',
   DAILY_EXERCISES: 'usage_daily_exercises',
   DAILY_JOURNAL_PROMPTS: 'usage_daily_journal_prompts',
   THINKING_PATTERNS_COUNT: 'usage_thinking_patterns_count',
   LAST_RESET_DATE: 'usage_last_reset_date',
+  LAST_WEEKLY_RESET_DATE: 'usage_last_weekly_reset_date',
 } as const;
 
 /**
@@ -55,6 +57,7 @@ class EntitlementService {
    */
   private async initializeDailyReset(): Promise<void> {
     await this.checkAndResetDailyUsage();
+    await this.checkAndResetWeeklyUsage();
   }
 
   /**
@@ -83,6 +86,39 @@ class EntitlementService {
       }
     } catch (error) {
       console.error('[EntitlementService] Failed to reset daily usage:', error);
+    }
+  }
+
+  /**
+   * Check and reset weekly usage if needed
+   */
+  private async checkAndResetWeeklyUsage(): Promise<void> {
+    try {
+      const lastWeeklyResetStr = await AsyncStorage.getItem(USAGE_STORAGE_KEYS.LAST_WEEKLY_RESET_DATE);
+      const now = new Date();
+
+      // Get start of current week (Monday)
+      const startOfWeek = new Date(now);
+      const day = startOfWeek.getDay();
+      const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+      startOfWeek.setDate(diff);
+      startOfWeek.setHours(0, 0, 0, 0);
+      const weekKey = startOfWeek.toDateString();
+
+      if (__DEV__) {
+        console.log('[Entitlement] Last weekly reset:', lastWeeklyResetStr);
+        console.log('[Entitlement] Current week:', weekKey);
+      }
+
+      if (lastWeeklyResetStr !== weekKey) {
+        // Reset weekly counters
+        await AsyncStorage.setItem(USAGE_STORAGE_KEYS.WEEKLY_MESSAGES, '0');
+        await AsyncStorage.setItem(USAGE_STORAGE_KEYS.LAST_WEEKLY_RESET_DATE, weekKey);
+
+        console.log('[EntitlementService] ✅ Weekly usage reset');
+      }
+    } catch (error) {
+      console.error('[EntitlementService] Failed to reset weekly usage:', error);
     }
   }
 
@@ -129,6 +165,7 @@ class EntitlementService {
    */
   async canSendMessage(): Promise<EntitlementCheckResult> {
     await this.checkAndResetDailyUsage();
+    await this.checkAndResetWeeklyUsage();
 
     const tier = await this.getSubscriptionTier();
     const limits = await this.getFeatureLimits();
@@ -139,18 +176,33 @@ class EntitlementService {
       console.log('[Entitlement] Subscription tier:', tier);
     }
 
-    // Premium users have soft cap, not hard limit for messages
+    // Premium users: check weekly hard cap first, then soft daily cap
     if (tier === 'premium') {
+      const weeklyMessages = await this.getWeeklyMessageCount();
       const dailyMessages = await this.getDailyMessageCount();
 
       if (__DEV__) {
+        console.log('[Entitlement] Premium user - Weekly messages:', weeklyMessages, '/', limits.MESSAGES_PER_WEEK);
         console.log('[Entitlement] Premium user - Daily messages:', dailyMessages, '/', limits.MESSAGES_PER_DAY);
-        console.log('[Entitlement] ✅ Access granted (premium, no hard limit)');
       }
 
-      // Soft warning at limit, but still allow
+      // Hard cap: weekly message limit to prevent abuse
+      if (weeklyMessages >= limits.MESSAGES_PER_WEEK) {
+        if (__DEV__) {
+          console.log('[Entitlement] ❌ Premium weekly limit reached');
+        }
+
+        return {
+          hasAccess: false,
+          reason: 'limit_reached',
+          suggestedAction: 'wait_for_reset',
+          resetsAt: this.getNextMondayDate(),
+        };
+      }
+
+      // Soft warning at daily limit, but still allow
       if (dailyMessages >= limits.MESSAGES_PER_DAY) {
-        console.warn('[EntitlementService] Premium user exceeding soft message limit');
+        console.warn('[EntitlementService] Premium user exceeding soft daily message limit');
       }
 
       return {
@@ -190,16 +242,22 @@ class EntitlementService {
   }
 
   /**
-   * Increment message count
+   * Increment message count (both daily and weekly)
    */
   async incrementMessageCount(): Promise<void> {
-    const current = await this.getDailyMessageCount();
-    const newCount = current + 1;
-    await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES, String(newCount));
+    // Increment daily count
+    const currentDaily = await this.getDailyMessageCount();
+    const newDailyCount = currentDaily + 1;
+    await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES, String(newDailyCount));
+
+    // Increment weekly count
+    const currentWeekly = await this.getWeeklyMessageCount();
+    const newWeeklyCount = currentWeekly + 1;
+    await AsyncStorage.setItem(USAGE_STORAGE_KEYS.WEEKLY_MESSAGES, String(newWeeklyCount));
 
     // Debug logging (only in development)
     if (__DEV__) {
-      console.log('[Entitlement] Message count incremented:', newCount);
+      console.log('[Entitlement] Message counts incremented - Daily:', newDailyCount, 'Weekly:', newWeeklyCount);
     }
   }
 
@@ -208,6 +266,14 @@ class EntitlementService {
    */
   async getDailyMessageCount(): Promise<number> {
     const count = await AsyncStorage.getItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES);
+    return count ? parseInt(count, 10) : 0;
+  }
+
+  /**
+   * Get weekly message count
+   */
+  async getWeeklyMessageCount(): Promise<number> {
+    const count = await AsyncStorage.getItem(USAGE_STORAGE_KEYS.WEEKLY_MESSAGES);
     return count ? parseInt(count, 10) : 0;
   }
 
@@ -516,10 +582,28 @@ class EntitlementService {
   }
 
   /**
+   * Get next Monday's date for weekly reset time
+   */
+  private getNextMondayDate(): Date {
+    const now = new Date();
+    const nextMonday = new Date(now);
+
+    // Calculate days until next Monday
+    const currentDay = now.getDay();
+    const daysUntilMonday = currentDay === 0 ? 1 : (8 - currentDay); // 0 = Sunday
+
+    nextMonday.setDate(now.getDate() + daysUntilMonday);
+    nextMonday.setHours(0, 0, 0, 0);
+
+    return nextMonday;
+  }
+
+  /**
    * Reset all usage counters (for testing)
    */
   async resetAllUsage(): Promise<void> {
     await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_MESSAGES, '0');
+    await AsyncStorage.setItem(USAGE_STORAGE_KEYS.WEEKLY_MESSAGES, '0');
     await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_VOICE_MINUTES, '0');
     await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_EXERCISES, '0');
     await AsyncStorage.setItem(USAGE_STORAGE_KEYS.DAILY_JOURNAL_PROMPTS, '0');

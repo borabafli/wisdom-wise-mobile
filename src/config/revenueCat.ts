@@ -79,11 +79,11 @@ export const SUBSCRIPTION_TIERS = {
  */
 export const FEATURE_LIMITS = {
   FREE: {
-    MESSAGES_PER_DAY: 15,
-    MESSAGES_PER_WEEK: 75,
+    MESSAGES_PER_DAY: 50,
+    MESSAGES_PER_WEEK: 350,
     VOICE_MINUTES_PER_DAY: 5,
     VOICE_MINUTES_PER_WEEK: 20,
-    EXERCISES_PER_DAY: 1,
+    EXERCISES_PER_DAY: 2,
     UNLOCKED_EXERCISES: 4,
     JOURNAL_PROMPTS_PER_DAY: 1,
     MAX_THINKING_PATTERNS: 2,
@@ -91,7 +91,7 @@ export const FEATURE_LIMITS = {
   },
   PREMIUM: {
     MESSAGES_PER_DAY: 100, // Soft cap for cost management
-    MESSAGES_PER_WEEK: 1000, // Hard cap
+    MESSAGES_PER_WEEK: 2000, // Hard cap to prevent abuse
     VOICE_MINUTES_PER_DAY: 30, // Soft cap
     VOICE_MINUTES_PER_WEEK: 90, // Soft cap
     EXERCISES_PER_DAY: -1, // -1 = unlimited

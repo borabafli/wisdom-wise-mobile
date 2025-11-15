@@ -1151,12 +1151,21 @@ Generate only the completion message text (no JSON, no formatting, just the mess
 
       const result = await this.generateSummaryWithDirectAPI('generate_summary', messages);
 
+      console.log('🔍 [COMPLETION DEBUG] Raw result from API:', JSON.stringify(result, null, 2));
+
       // Extract the message from the result
       let completionMessage = '';
+
       if (typeof result === 'string') {
         completionMessage = result;
       } else if (result && typeof result === 'object') {
-        completionMessage = result.summary || result.message || result.content || '';
+        // Check for success response format first
+        if (result.success && result.message) {
+          completionMessage = result.message;
+        } else {
+          // Fallback to other possible properties
+          completionMessage = result.summary || result.content || result.message || '';
+        }
       }
 
       // Clean up any JSON artifacts or extra formatting
@@ -1165,8 +1174,11 @@ Generate only the completion message text (no JSON, no formatting, just the mess
         .replace(/\\n/g, '\n') // Handle escaped newlines
         .trim();
 
+      console.log('📝 Extracted completion message:', completionMessage);
+
       // Fallback if we don't get a good message
       if (!completionMessage || completionMessage.length < 20) {
+        console.warn('⚠️ Generated message too short, using fallback. Length:', completionMessage.length);
         throw new Error('Generated message too short or empty');
       }
 

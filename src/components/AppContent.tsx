@@ -45,20 +45,6 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const TAB_ROUTE_ORDER: Array<keyof RootTabParamList> = ['Home', 'Exercises', 'Journal', 'Insights', 'Profile'];
 
-// Custom navigation theme matching app colors
-const customTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: '#e9eff1', // Match homescreen background
-    card: colors.white, // Pure white tab bar
-    text: colors.text.primary, // Primary text color
-    primary: '#3BB4F5', // Light sky blue accent - matches turtle theme
-    border: colors.gray[200], // Visible subtle border
-    notification: '#3BB4F5', // Sky blue for notifications
-  },
-};
-
 // Import onboarding context
 import { OnboardingContext, OnboardingContextType } from '../hooks/useOnboardingControl';
 
@@ -68,6 +54,20 @@ export const AppContent: React.FC = () => {
   const posthog = usePostHog();
 
   const { isAuthenticated, isLoading, user, isAnonymous } = useAuth();
+
+  // Custom navigation theme matching app colors - memoized to prevent re-creation
+  const customTheme = useMemo(() => ({
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: '#e9eff1', // Match homescreen background
+      card: colors.white, // Pure white tab bar
+      text: colors.text.primary, // Primary text color
+      primary: '#3BB4F5', // Light sky blue accent - matches turtle theme
+      border: colors.gray[200], // Visible subtle border
+      notification: '#3BB4F5', // Sky blue for notifications
+    },
+  }), []);
 
   // Onboarding state management
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);

@@ -18,6 +18,7 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
   const [stepMessageCount, setStepMessageCount] = useState<Record<number, number>>({});
   const [showPreExerciseMoodSlider, setShowPreExerciseMoodSlider] = useState(false);
   const [showMoodRating, setShowMoodRating] = useState(false);
+  const [exerciseCompleted, setExerciseCompleted] = useState(false);
   const [isValueReflection, setIsValueReflection] = useState(false);
   const [isThinkingPatternReflection, setIsThinkingPatternReflection] = useState(false);
   const [isVisionReflection, setIsVisionReflection] = useState(false);
@@ -115,7 +116,10 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
         if (shouldAdvance && exerciseStep < flow.steps.length - 1) {
           setExerciseStep(prev => prev + 1);
           setStepMessageCount(prev => ({ ...prev, [exerciseStep + 1]: 1 }));
-        } else if (shouldAdvance && exerciseStep >= flow.steps.length - 1) {
+        } else if (shouldAdvance && exerciseStep >= flow.steps.length - 1 && !exerciseCompleted) {
+          // Mark as completed to prevent duplicate completion messages
+          setExerciseCompleted(true);
+
           // Generate contextual completion message with AI
           const recentMessages = await storageService.getLastMessages(15);
           const userLanguage = getCurrentLanguage();
@@ -171,10 +175,12 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
               setShowMoodRating(true);
             }
           } else {
-            // Show mood rating for other exercises
-            setShowMoodRating(true);
+            // Show mood rating after a delay so user can see the completion message
+            setTimeout(() => {
+              setShowMoodRating(true);
+            }, 2000); // 2 second delay to let user read the completion message
           }
-          
+
           setExerciseMode(false);
           setSuggestions([]);
           
@@ -274,6 +280,7 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
     setExerciseMode(true);
     setExerciseStep(0);
     setStepMessageCount({ 0: 1 });
+    setExerciseCompleted(false); // Reset completion flag for new exercise
 
     const currentStep = flow.steps[0];
     const exerciseContext = await contextService.assembleExerciseContext([], flow, 1, [], true);
@@ -318,7 +325,8 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
       
       setIsValueReflection(true);
       setExerciseData({ valueContext });
-      
+      setExerciseCompleted(false); // Reset completion flag
+
       // Initialize reflection tracking
       setReflectionMessageCount(0);
       setReflectionStartTime(Date.now());
@@ -823,6 +831,7 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
       setIsThinkingPatternReflection(true);
       setThinkingPatternContext(patternContext);
       setExerciseData({ patternContext });
+      setExerciseCompleted(false); // Reset completion flag
       console.log('✅ Thinking pattern context set:', patternContext);
       
       // Initialize reflection tracking

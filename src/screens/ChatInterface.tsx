@@ -23,6 +23,7 @@ import {
 } from '../components/chat';
 import { ExitConfirmationDialog } from '../components/ExitConfirmationDialog';
 import { PaywallModal } from '../components/PaywallModal';
+import { PremiumLimitModal } from '../components/PremiumLimitModal';
 import { MoodRatingCard } from '../components/chat/MoodRatingCard';
 import { PreExerciseMoodCard } from '../components/chat/PreExerciseMoodCard';
 import { ValueReflectionSummaryCard } from '../components/chat/ValueReflectionSummaryCard';
@@ -101,6 +102,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Basic state
   const [inputText, setInputText] = useState('');
   const [showPaywallModal, setShowPaywallModal] = useState(false);
+  const [showPremiumLimitModal, setShowPremiumLimitModal] = useState(false);
+  const [premiumLimitResetDate, setPremiumLimitResetDate] = useState<Date | undefined>();
   const hasShownLimitPaywallRef = useRef(false);
   const prevLimitReachedRef = useRef(false);
   const prevUsedCountRef = useRef<number | null>(null);
@@ -279,9 +282,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     // Check rate limit before sending (only for normal standalone chat, not reflections/exercises/check-ins)
     if (!isValueReflection && !isThinkingPatternReflection && !isVisionReflection && !exerciseMode && !isReflectionSession) {
-      const rateLimit = await import('../services/rateLimitService').then(m => m.rateLimitService.canMakeRequest());
-      if (rateLimit.isLimitReached) {
-        setShowPaywallModal(true);
+      const entitlementService = await import('../services/entitlementService').then(m => m.entitlementService);
+      const canSend = await entitlementService.canSendMessage();
+
+      if (!canSend.hasAccess) {
+        const isPremium = await entitlementService.isPremium();
+
+        if (isPremium && canSend.suggestedAction === 'wait_for_reset') {
+          // Premium user hit weekly limit
+          setPremiumLimitResetDate(canSend.resetsAt);
+          setShowPremiumLimitModal(true);
+        } else {
+          // Free user hit daily limit or other case
+          setShowPaywallModal(true);
+        }
         return;
       }
     }
@@ -426,7 +440,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
 
       if (isLimitReached && !hasShownLimitPaywallRef.current && (isFirstCheck || hasNewUsage)) {
         hasShownLimitPaywallRef.current = true;
-        setShowPaywallModal(true);
+
+        // Check if premium user hitting weekly limit
+        (async () => {
+          const entitlementService = await import('../services/entitlementService').then(m => m.entitlementService);
+          const canSend = await entitlementService.canSendMessage();
+          const isPremium = await entitlementService.isPremium();
+
+          if (isPremium && !canSend.hasAccess && canSend.suggestedAction === 'wait_for_reset') {
+            setPremiumLimitResetDate(canSend.resetsAt);
+            setShowPremiumLimitModal(true);
+          } else {
+            setShowPaywallModal(true);
+          }
+        })();
       }
 
       if (!isLimitReached) {
@@ -798,11 +825,20 @@ const handleExerciseCardStart = (exerciseInfo: any) => {
       </View>
     </SafeAreaWrapper>
 
-    {/* Paywall Modal - Shown when rate limit is reached */}
+    {/* Paywall Modal - Shown when free user hits daily limit */}
     <PaywallModal
       visible={showPaywallModal}
       onClose={() => setShowPaywallModal(false)}
       trigger="message_limit"
+    />
+
+    {/* Premium Limit Modal - Shown when premium user hits weekly limit */}
+    <PremiumLimitModal
+      visible={showPremiumLimitModal}
+      onClose={() => setShowPremiumLimitModal(false)}
+      resetDate={premiumLimitResetDate}
+      weeklyUsed={2000}
+      weeklyLimit={2000}
     />
 
     {/* Exit Confirmation Dialog */}
