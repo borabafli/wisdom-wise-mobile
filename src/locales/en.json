@@ -442,7 +442,8 @@
     "priorityExercises": {
       "names": {
         "tellStory": "Tell Your Story",
-        "goalSetting": "Therapy Goal-Setting",
+        "personalMilestones": "Personal Milestones",
+        "therapyGoals": "Therapy Goals",
         "visionFuture": "Vision of the Future",
         "reframingThoughts": "Reframing Thoughts",
         "livingValues": "My Core Values",
@@ -452,7 +453,8 @@
       },
       "descriptions": {
         "tellStory": "Share your personal journey",
-        "goalSetting": "Define your goals",
+        "personalMilestones": "Set and achieve meaningful goals",
+        "therapyGoals": "Define what you want to work on",
         "visionFuture": "Imagine your ideal future self",
         "reframingThoughts": "Transform negative thoughts",
         "livingValues": "Align actions with core values",
@@ -615,7 +617,7 @@
     "speakResponse": "Speak Response",
     "exercise": "Exercise",
     "reflectionSpace": "💭 Reflection Space",
-    "exerciseProgress": "Step {{current}} of {{total}} • {{title}}",
+    "exerciseProgress": "Step {{current}}/{{total}} • {{title}}",
     "inProgress": "In Progress",
     "therapeuticExercise": "{{duration}} • Therapeutic Exercise",
     "loadingSpace": "Preparing your safe space...",
@@ -747,7 +749,11 @@
     "entrySaved": "Your journal entry has been saved!",
     "failedToSave": "Failed to save your journal entry. Please try again.",
     "failedToLoad": "Failed to load journal data. Please try again.",
-    "failedToDelete": "Failed to delete entry. Please try again."
+    "failedToDelete": "Failed to delete entry. Please try again.",
+    "leaveJournaling": "Leave journaling?",
+    "discardWarning": "Your entry will be lost if you leave now.",
+    "stay": "Stay",
+    "leaveAndDiscard": "Leave & Discard Entry"
   },
   "breathing": {
     "title": "Breathing Exercise",
@@ -886,7 +892,8 @@
       "valuesClarity": "My Core Values",
       "futureSelfJournaling": "Future Self Journaling",
       "sortingThoughts": "Sorting Thoughts",
-      "goalSetting": "Therapy Goal-Setting",
+      "personalMilestones": "Personal Milestones",
+      "therapyGoals": "Therapy Goals",
       "tellYourStory": "Tell Me Your Story",
       "visionOfFuture": "Vision of the Future"
     },
@@ -903,7 +910,8 @@
       "valuesClarity": "Clarify values and align your daily actions",
       "futureSelfJournaling": "Gain clarity through future-focused reflection",
       "sortingThoughts": "Clear mental clutter and organize thoughts",
-      "goalSetting": "Set focused goals aligned with your values",
+      "personalMilestones": "Set and achieve meaningful personal goals",
+      "therapyGoals": "Identify what you want to work on in therapy",
       "tellYourStory": "Explore your journey and discover inner strengths",
       "visionOfFuture": "Create an inspiring vision to guide your path"
     },
@@ -920,7 +928,8 @@
       "valuesClarity": "Align your actions with what matters most.",
       "futureSelfJournaling": "Connect with your future self.",
       "sortingThoughts": "Organize and clarify your thoughts.",
-      "goalSetting": "Set meaningful goals for growth.",
+      "personalMilestones": "Turn aspirations into actionable steps.",
+      "therapyGoals": "Define your therapeutic focus areas.",
       "tellYourStory": "Share your story and find your strengths.",
       "visionOfFuture": "Envision your ideal future."
     },
@@ -948,7 +957,7 @@
         "step2": {
           "title": "Notice your thought",
           "description": "What was the first thought that came to mind in that moment?",
-          "instruction": "Encourage the user to write the automatic thought they had in that situation. If they feel stuck, offer gentle examples ('I'm going to fail,' 'They don't like me,' 'I can't handle this'), but keep the focus on their own words."
+          "instruction": "Encourage the user to share the automatic thought they had. If they feel stuck, offer gentle examples ('I'm going to fail,' 'They don't like me,' 'I can't handle this'). If their thought is vague (like 'I messed up' or 'everything is wrong'), help them get a bit more specific with ONE gentle question: 'What specifically felt like it went wrong?' or 'What part of the situation is bothering you?' Don't require perfection—once you have something concrete enough to examine for patterns (Step 3), move forward. Accept their language and trust the reframing step will allow more refinement."
         },
         "step3": {
           "title": "Spot the thinking pattern",
@@ -961,36 +970,38 @@
           "instruction": "Support the user to create a more realistic and kind thought. Ask them to consider: What evidence supports or challenges the original thought? What would they say to a friend in this situation? Is there a more balanced way of looking at it? Encourage them to write one reframed statement. Stay until they provide it."
         }
       },
-      "goalSetting": {
+      "personalMilestones": {
         "step1": {
-          "title": "Pick a goal",
-          "description": "Choose one thing you want to work toward.",
-          "instruction": "Ask the user to state one goal they want to work toward. Keep it concrete and realistic."
+          "title": "Choose your milestone",
+          "description": "What's one meaningful goal you want to achieve?",
+          "instruction": "Invite the user to share one personal goal or milestone they want to work toward. Keep it specific and achievable. Examples: 'exercise 3x/week,' 'learn to cook healthy meals,' 'build a morning routine.' Stay on this step until they articulate one clear goal."
         },
         "step2": {
-          "title": "Why does it matter?",
-          "description": "Connect the goal to what's meaningful to you.",
-          "instruction": "Encourage the user to share why this goal is meaningful to them. Ask what difference it would make in their life."
+          "title": "Connect to purpose",
+          "description": "Why does this goal matter to you?",
+          "instruction": "Ask the user to reflect on why this milestone is important. Encourage them to connect it to their values, wellbeing, or what they want their life to look like. Help them articulate the deeper meaning—not just 'I should,' but 'I want to because...'"
         },
         "step3": {
-          "title": "Break it down",
-          "description": "Turn a big goal into small, doable steps.",
-          "instruction": "Guide the user to split the big goal into smaller, doable steps. Encourage practicality."
+          "title": "First step forward",
+          "description": "What's one small action you can take this week?",
+          "instruction": "Guide the user to identify one specific, doable action they can take in the next few days toward this goal. Keep it simple and concrete—something they can actually do, not just think about. Examples: 'sign up for a class,' 'buy running shoes,' 'set a 10-minute morning alarm.' Acknowledge their commitment warmly."
+        }
+      },
+      "therapyGoals": {
+        "step1": {
+          "title": "Identify your focus",
+          "description": "What areas of your wellbeing would you like to work on?",
+          "instruction": "Invite the user to share 1-3 areas they'd like to focus on in therapy. Offer gentle examples if needed: managing anxiety, improving relationships, building self-esteem, processing grief, reducing stress, understanding emotions, overcoming negative thinking. Encourage them to use their own words and be as specific as they're comfortable with. Stay until they identify at least one clear area."
         },
-        "step4": {
-          "title": "What could get in the way?",
-          "description": "Think ahead about challenges you might face.",
-          "instruction": "Ask what might get in the way of reaching this goal. Encourage them to name at least one challenge."
+        "step2": {
+          "title": "Describe the change",
+          "description": "What would feel different if you made progress in these areas?",
+          "instruction": "Ask the user to envision what life might look like with positive changes in their focus areas. Encourage concrete, felt descriptions—not just 'feel better' but 'I'd wake up without dread,' 'I'd feel comfortable in social situations,' 'I'd trust my decisions more.' This helps clarify what they're working toward. Stay supportive and curious."
         },
-        "step5": {
-          "title": "Plan your way around",
-          "description": "Find strategies to handle those challenges.",
-          "instruction": "Help the user brainstorm strategies to overcome those obstacles. Stay flexible but supportive."
-        },
-        "step6": {
-          "title": "Take the first step",
-          "description": "Decide on one small action you can take soon.",
-          "instruction": "Invite the user to choose one small action they can take today or this week toward their goal. Help them be specific."
+        "step3": {
+          "title": "Your therapeutic roadmap",
+          "description": "Let's keep these goals as our foundation.",
+          "instruction": "Warmly acknowledge the user's clarity and courage. Summarize their therapy goals in 2-3 sentences, reflecting back what they shared. Then explain: 'I'll keep these goals in mind during our work together. In exercises like Reframe Thoughts or Values Clarity, we'll connect back to what matters most to you. Over time, we can track progress and adjust these together.' Finish with: 'Would you like to start working on one of these areas now, or save this as your roadmap for future sessions?'"
         }
       },
       "futureSelfJournaling": {
@@ -1018,33 +1029,6 @@
           "title": "One step today",
           "description": "Choose one action that brings you closer.",
           "instruction": "Invite the user to write down one small step they can take today (or this week) that moves them toward this future version of themselves. Keep it practical and doable."
-        }
-      },
-      "therapyGoalDefinition": {
-        "step1": {
-          "title": "Choose an area",
-          "description": "Pick one part of your life you'd like to improve (e.g., mood, stress, confidence, relationships).",
-          "instruction": "Invite the user to choose one main area of focus for therapy. Offer examples but keep it open-ended. Stay until they share one area."
-        },
-        "step2": {
-          "title": "Define the change you want",
-          "description": "What would you like to be different in this area?",
-          "instruction": "Ask the user to describe the kind of change they hope for (e.g., 'I want to feel calmer,' 'I want to trust myself more'). Encourage them to be clear but not too detailed."
-        },
-        "step3": {
-          "title": "Why is this important to you?",
-          "description": "Connect your goal to your values or what matters most.",
-          "instruction": "Invite the user to explain why this goal matters. Encourage them to link it to values, relationships, or personal wellbeing."
-        },
-        "step4": {
-          "title": "Imagine success",
-          "description": "How would life look if this goal was achieved?",
-          "instruction": "Ask the user to picture and describe what would be different if their goal was met. Encourage a short, positive vision."
-        },
-        "step5": {
-          "title": "Moving forward",
-          "description": "You've defined your therapy goals — now we'll use them as a foundation.",
-          "instruction": "Acknowledge the user's progress: 'You've clarified what matters to you and what you'd like to change.' Then explain how these goals will guide future work: We'll keep them in mind as a reference point. In other exercises (like Automatic Thoughts or Values Clarification), we'll connect the work back to these goals. Over time, we'll track progress and refine them together. Finish by asking: 'Would you like to start exploring one of your goals right now, or save them as your focus for upcoming sessions?'"
         }
       },
       "sortingThoughts": {

@@ -3,7 +3,6 @@ import { Message, storageService } from './storageService';
 import { generateFirstMessageSuggestions } from '../utils/suggestionGenerator';
 import { memoryService, MemoryContext } from './memoryService';
 import { goalService, TherapyGoal } from './goalService';
-import { therapyGoalsService } from './therapyGoalsService';
 import { apiService } from './apiService';
 import { API_CONFIG } from '../config/constants';
 import { getExercisesArray } from '../data/exerciseLibrary';
@@ -19,7 +18,7 @@ class ContextService {
   /**
    * Direct API call for summary generation that bypasses therapeutic response JSON schema
    */
-  async generateSummaryWithDirectAPI(action: string, messages: any[], sessionId?: string) {
+  async generateSummaryWithDirectAPI(action: string, messages: any[]) {
   try {
     // All insight-related actions handled by one endpoint
     const INSIGHT_ACTIONS = [
@@ -29,31 +28,12 @@ class ContextService {
       'consolidate_summaries',
       'generate_value_reflection_summary',
       'generate_thinking_pattern_reflection_summary',
-      'generate_vision_summary',
-      'extract_values'
+      'generate_vision_summary'
     ];
 
     const endpoint = INSIGHT_ACTIONS.includes(action)
       ? `${API_CONFIG.SUPABASE_URL}/functions/v1/extract-insights`
       : `${API_CONFIG.SUPABASE_URL}/functions/v1/ai-chat`;
-
-    const requestBody: any = {
-      action,
-      messages: messages.map(msg => ({
-        role: msg.role,
-        content: typeof msg.content === 'string'
-          ? msg.content
-          : JSON.stringify(msg.content)
-      })),
-      model: 'google/gemini-2.5-flash',
-      maxTokens: 500,
-      temperature: 0.3
-    };
-
-    // Add sessionId if provided (required for extract-insights endpoint)
-    if (sessionId) {
-      requestBody.sessionId = sessionId;
-    }
 
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -61,7 +41,18 @@ class ContextService {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_CONFIG.SUPABASE_ANON_KEY}`
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify({
+        action,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: typeof msg.content === 'string'
+            ? msg.content
+            : JSON.stringify(msg.content)
+        })),
+        model: 'google/gemini-2.5-flash',
+        maxTokens: 500,
+        temperature: 0.3
+      })
     });
 
     if (!response.ok) {
@@ -71,18 +62,11 @@ class ContextService {
 
     const data = await response.json();
 
-    // Handle different response formats based on action
-    if (data.success) {
-      if (action === 'extract_values' && data.values) {
-        return { success: true, values: data.values };
-      } else if (action === 'extract_patterns' && data.patterns) {
-        return { success: true, patterns: data.patterns };
-      } else if (data.message) {
-        return { success: true, message: data.message };
-      }
+    if (data.success && data.message) {
+      return { success: true, message: data.message };
+    } else {
+      return { success: false, error: data.error || 'Invalid response format from API' };
     }
-
-    return { success: false, error: data.error || 'Invalid response format from API' };
   } catch (error) {
     console.error('Summary generation API call failed:', error);
     return {
@@ -100,65 +84,39 @@ class ContextService {
 
   private config: ContextConfig = {
     maxTurns: 10,
-    systemPrompt: `(v4) You are **Anu**, a compassionate therapist.
+    systemPrompt: `(v3) You are **Anu**, a compassionate therapist.  
 CRITICAL: You must follow the exercise rules precisely. When the user confirms an exercise, you MUST set nextAction to 'showExerciseCard' and provide the exerciseData.
-Your purpose is to be an empathetic, collaborative guide who helps the user explore feelings and thoughts.
+Your purpose is to be an empathetic, collaborative guide who helps the user explore feelings and thoughts.  
 
 ---
 
-### — FORMAT —
-- Output MUST be a single valid JSON object (no extra text, no markdown, no code fences).
-- Fields:
-  • **message**: Your therapeutic reply (clear, warm, well structured).
-    - Use **bold** for key ideas/emotions.
-    - Use bullet points or short lists when helpful to make it more readable.
-    - For multiple paragraphs; use blank lines only when teaching multi-step instructions.
-  • **suggestions**: 2–4 short, natural client-style replies.
-    - Must always be from the CLIENT's perspective.
-    - Prefer statements; allow client-style questions only if natural (e.g., "What kind of exercise is that?").
-    - DO NOT use therapist-style prompts (e.g., "Describe the situation", "Tell me more…").
-    - DO NOT use fillers like "I don't know".
-  • **nextAction**: 'showExerciseCard' if the user confirms an exercise; otherwise 'none'.
-  • **exerciseData**: Required when nextAction = 'showExerciseCard' → { "type": "the-exercise-slug-from-the-list-in-parentheses", "name": "Exercise Name" }.
+### — FORMAT —  
+- Output MUST be a single valid JSON object (no extra text, no markdown, no code fences).  
+- Fields:  
+  • **message**: Your therapeutic reply (clear, warm, well structured).  
+    - Use **bold** for key ideas/emotions.  
+    - Use bullet points or short lists when helpful to make it more readable.  
+    - Use blank lines between short paragraphs.  
+  • **suggestions**: 2–4 short, natural client-style replies.  
+    - Must always be from the CLIENT’s perspective.  
+    - Prefer statements; allow client-style questions only if natural (e.g., “What kind of exercise is that?”).  
+    - Do NOT use therapist-style prompts (e.g., “Describe the situation”, “Tell me more…”).  
+    - Do NOT use fillers like “I don’t know”.  
+  • **nextAction**: 'showExerciseCard' if the user confirms an exercise; otherwise 'none'.  
+  • **exerciseData**: Required when nextAction = 'showExerciseCard' → { "type": "the-exercise-slug-from-the-list-in-parentheses", "name": "Exercise Name" }.  
 
 ---
 
-### — RESPONSE LENGTH —
-- Default: 2-3 sentences (get to your question quickly)
-- Opening message: 2-3 sentences 
-- Teaching a skill: 3-4 sentences (what + why + how + invite)
-
-When to expand:
-- Crisis/heavy moment: 2 sentences (brief acknowledgment + question)
-- Breakthrough insight: 2 sentences (validate the insight + deepen it)
-- Pushback/intervention: 2-3 sentences when you need to gently challenge or reframe
-
-Skip in most cases:
-- Repeating back what they just said
-- Multiple paragraphs (unless teaching)
-
-Remember: Your question shows you're listening. Validate when it's truly therapeutic, not routinely.
-
-### - YOUR MAIN GOALS -
-
-- Understand the user — listen actively, ask clarifying questions, and identify patterns or emotions behind what they say.
-- Provide a safe and supportive space — respond with empathy, validation, and calm tone. Avoid judgment or quick solutions.
-- Facilitate growth and change — help the user reflect, reframe unhelpful thoughts, and explore healthy coping or behavioral steps.
-
----
-
-### — CONVERSATION GUIDANCE —
+### — CONVERSATION GUIDANCE —  
 - Warm, human, reflective
-- Guide, ask questions, suggest next steps the same way a therapist would do
-- Validate briefly when truly needed (crisis, breakthrough, pushback); skip approval paragraphs
-- Add brief psychoeducation (1-2 sentences) only when teaching a specific skill
+- Guide, ask questions, suggest next steps the same way a therapist would do  
+- Validate/support first; add brief psychoeducation when useful (why/how) in plain language.  
 - Listen to the user, ask about them, how they feel and follow up like a therapist would ask  
 - Use emojis meaningfully and to structure things.  
 - Use the user’s name ({USER_NAME}) occasionally when it feels natural.  
 - At the beginning of a session, start with a gentle, open check-in.
 - Invite the user to share how they’re feeling today, what is on their mind, without pressure.
 - You can reference when relevant previous sessions with questions, you can when relevant connect to previous goals, themes, triggers, or past insights (e.g., “Last time you mentioned…”).
-- Do not echo or paraphrase the user's previous message extensively - the maximum is to do it cautiously in the same style a therapist would do it.
 - Keep the tone warm and collaborative, offering space for the user to set the focus of today’s conversation.
 - Reference these potentially when suggesting or guiding toward exercises:  
   - “This connects to your goal of feeling calmer in social settings.”  
@@ -219,24 +177,28 @@ Final check: Output must be a single valid JSON object, nothing else.`
     const personalizedPrompt = this.config.systemPrompt.replace('{USER_NAME}', await storageService.getFirstName().catch(() => 'friend')).replace('{EXERCISE_LIST}', exerciseList);
         
     // Get memory context for long-term continuity
+    console.log('🧠 [DEBUG] Getting memory context...');
     const memoryContext = await memoryService.getMemoryContext();
+    console.log('🧠 [DEBUG] Memory context retrieved:', {
+      insightCount: memoryContext.insights.length,
+      summaryCount: memoryContext.summaries.length,
+      hasConsolidated: !!memoryContext.consolidatedSummary
+    });
 
     // Get active goals for therapy direction
+    console.log('🎯 [DEBUG] Getting active goals...');
     const activeGoals = await goalService.getActiveGoals();
+    console.log('🎯 [DEBUG] Active goals retrieved:', activeGoals.length);
     
     const memoryContextString = memoryService.formatMemoryForContext(memoryContext);
     const goalContextString = this.formatGoalsForContext(activeGoals);
-    
-    // Get therapy goals (user's therapeutic focus areas)
-    const therapyGoalsContext = await therapyGoalsService.getTherapyGoalsContext();
-    const therapyGoalsString = therapyGoalsContext ? `
-
-**THERAPY GOALS**
-${therapyGoalsContext}` : '';
     
+    console.log('🧠 [DEBUG] Memory context string length:', memoryContextString.length);
+    console.log('🎯 [DEBUG] Goal context string length:', goalContextString.length);
     
     // Combine system prompt with memory and goal context
-    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString + therapyGoalsString;
+    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString;
+    console.log('🧠 [DEBUG] Enhanced prompt length:', enhancedPrompt.length);
     
     const context = [{
       role: 'system',
@@ -249,6 +211,7 @@ ${therapyGoalsContext}` : '';
       content: msg.text || msg.content || ''
     })));
 
+    console.log('📋 [CONTEXT] Complete context being sent to AI:', JSON.stringify(context, null, 2));
     return context;
   }
 
@@ -264,83 +227,73 @@ ${therapyGoalsContext}` : '';
     const totalSteps = exerciseFlow.steps.length;
     const currentStep = exerciseFlow.steps[currentStepNumber - 1];
 
-    // The single, powerful instruction for the current step
-    const stepInstruction = currentStep.instruction;
+    // The single, powerful instruction for the current step
+    const stepInstruction = currentStep.instruction;
 
-    // Build the dynamic system prompt
-    let exerciseSystemPrompt = `(v3-ex) You are Anu, a wise, compassionate therapist. You are currently guiding ${firstName} through the "${exerciseFlow.name}" exercise.
+    // Build the dynamic system prompt
+    let exerciseSystemPrompt = `(v2-ex) You are Anu, a wise, compassionate therapist. You are currently guiding ${firstName} through the "${exerciseFlow.name}" exercise.
 
-    ---
-    
-    **FORMAT RULES**
-    - Output MUST always be a single valid JSON object (no markdown, no extra text).
-    - Fields:
-      • **message**: Your therapeutic response.
-        - Use **bold** for key ideas/emotions.
-        - Use **bullet points** or numbered lists when helpful.
-        - Usually single paragraph; use blank lines only for step headings or multi-part instructions.
-        - Be clear, warm, and structured.
-      • **suggestions**: 2–4 short, natural client-style replies.
-        - Must be from the CLIENT's perspective.
-        - Prefer statements; allow client-style questions if natural.
-        - Provide variety: different angles (facts, feelings, thoughts, reactions, uncertainty).
-        - DO NOT include therapist-style prompts ("Describe the situation", "Tell me more…").
-        - DO NOT use generic fillers ("I don't know").
-      • **nextStep**: Boolean - IMPORTANT for exercise flow.
-        - true → user has meaningfully engaged with this step's goal and is ready to move forward
-        - false → stay in this step (user might benefit from a gentle prompt to go a bit deeper)
-        - Set to true when user has genuinely engaged with this step. Trust the conversation—this might be 1 exchange (rich answer) or 3-4 exchanges (needs gentle prompting). Don't artificially rush or prolong.
-    
-    ---
-    
-    **RESPONSE LENGTH**
-    - First message of Step 1: 3-4 sentences (heading + why/how + question)
-    - First message of other steps: 2-3 sentences (heading + what this is + question)
-    - All other messages: 1-2 sentences (just your guiding question)
-    
-    Skip validation paragraphs - your question shows you're engaged.
-    
-    ---
-    
-    **EXAMPLES**
-    Unfinished step (needs more exploration):
-    {
-      "message": "I hear how much that situation is weighing on you. **What was the exact thought that went through your mind in that moment?** Understanding that specific thought can help us work with it.",
-      "suggestions": ["I can't handle this", "Everyone is judging me", "I'm going to fail", "I'm not sure exactly"],
-      "nextStep": false
-    }
-    
-    Still exploring step:
-    {
-      "message": "That's such an important insight about feeling judged. **Where in your body do you notice that feeling when it comes up?** Sometimes our physical sensations tell us a lot.",
-      "suggestions": ["My chest gets tight", "My stomach knots up", "I feel tense all over", "I don't really notice physical feelings"],
-      "nextStep": false
-    }
-    
-    Ready to move forward:
-    {
-      "message": "You've shared something really meaningful about how that criticism affected you and where you feel it in your body. That awareness gives us a lot to work with. **Are you ready to explore what we can do with this pattern?**",
-      "suggestions": ["Yes, let's keep going", "I want to understand this better", "What would we do differently?", "I need a moment to process"],
-      "nextStep": true
-    }
-    
-    ---
-    
-    **CURRENT STEP INFO**
-    - **Step:** ${currentStepNumber}/${totalSteps}
-    - **Goal:** ${stepInstruction}
-    
-    ---
-    
-    **RESPONSE APPROACH**
-    - **Step 1 first message:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Give a brief 1-sentence explanation of **why this exercise helps and how it works** (psychoeducation) - they should be in bullet points and there Why it works and how it works text should be in bold. Introduction explanation/sentence should also only be 1-2 sentences.
-    - **First message of other steps:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Brief explanation to what this step is about and why it matters.
-    - **Every message should include a clear question or instruction to guide the user:**
-      - Ask specific, open-ended questions that help them explore the step's goal
-      - Don't just comment on what they said - ALWAYS include a question or next direction
-      - Ask your next question directly - skip mirroring what they said
-      - Do not echo or paraphrase the user's previous message. Do not start your response with "I understand that...", "I hear that...", "That makes sense that...", "It is a very common that...", or any other formulaic validation. Instead, jump directly into deeper exploration with a meaningful question or reflection that moves the conversation forward.
-      - Make the questions personally relevant to what they've shared
+    ---
+    
+    **FORMAT RULES**  
+    - Output MUST always be a single valid JSON object (no markdown, no extra text).  
+    - Fields:  
+      • **message**: Your therapeutic response.  
+        - Use **bold** for key ideas/emotions.  
+        - Use **bullet points** or numbered lists when helpful.  
+        - Use **blank lines** between paragraphs for readability.  
+        - Be clear, warm, and structured.  
+      • **suggestions**: 2–4 short, natural client-style replies.  
+        - Must be from the CLIENT’s perspective.  
+        - Prefer statements; allow client-style questions if natural.  
+        - Provide variety: different angles (facts, feelings, thoughts, reactions, uncertainty).  
+        - Do NOT include therapist-style prompts (“Describe the situation”, “Tell me more…”).  
+        - Do NOT use generic fillers (“I don’t know”).  
+      • **nextStep**: Boolean - IMPORTANT for exercise flow.  
+        - true → user has meaningfully engaged with this step's goal and is ready to move forward  
+        - false → stay in current step (they need to explore more, give more detail, or haven't fully engaged with the step goal)  
+        - Set to true after 2-3 meaningful exchanges where they've shared something substantial about the step topic  
+    
+    ---
+    
+    **EXAMPLES**  
+    Unfinished step (needs more exploration):  
+    {
+      "message": "I hear how much that situation is weighing on you. **What was the exact thought that went through your mind in that moment?** Understanding that specific thought can help us work with it.",
+      "suggestions": ["I can't handle this", "Everyone is judging me", "I'm going to fail", "I'm not sure exactly"],
+      "nextStep": false
+    }
+    
+    Still exploring step:  
+    {
+      "message": "That's such an important insight about feeling judged. **Where in your body do you notice that feeling when it comes up?** Sometimes our physical sensations tell us a lot.",
+      "suggestions": ["My chest gets tight", "My stomach knots up", "I feel tense all over", "I don't really notice physical feelings"],
+      "nextStep": false
+    }
+    
+    Ready to move forward:  
+    {
+      "message": "You've shared something really meaningful about how that criticism affected you and where you feel it in your body. That awareness gives us a lot to work with. **Are you ready to explore what we can do with this pattern?**",
+      "suggestions": ["Yes, let's keep going", "I want to understand this better", "What would we do differently?", "I need a moment to process"],
+      "nextStep": true
+    }
+    
+    ---
+    
+    **CURRENT STEP INFO**  
+    - **Step:** ${currentStepNumber}/${totalSteps}  
+    - **Goal:** ${stepInstruction}  
+    
+    ---
+    
+    **RESPONSE APPROACH**  
+    - **Step 1 first message:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Give a brief 1-sentence explanation of **why this exercise helps and how it works** (psychoeducation) - they should be in bullet points and there Why it works and how it works text should be in bold. Introduction explanation/sentence should also only be 1-2 sentences. 
+    - **First message of other steps:** Begin with a bold heading ("Step ${currentStepNumber}/${totalSteps}: ${currentStep.title}"). Brief explanation to what this step is about and why it matters.  
+    - **Every message should include a clear question or instruction to guide the user:**  
+      - Ask specific, open-ended questions that help them explore the step's goal
+      - Don't just comment on what they said - ALWAYS include a question or next direction
+      - Mirror and validate their response, THEN ask what comes next
+      - Make the questions personally relevant to what they've shared
     
     **CRITICAL: Every response must either ask a question or give a clear instruction for what to do next. Never just comment without giving direction.**  
     
@@ -353,19 +306,11 @@ ${therapyGoalsContext}` : '';
     - Allow flexibility in pacing: sometimes stay longer on a step, sometimes move forward.  
     - Before finishing the exercise: help the user **summarize and integrate** the learning.  
     
-    
-    ---
-    
-    **USER AUTONOMY:**
-    - If user says "I'd like to move on" or "Can we skip this?", honor their request warmly
-    - Respond: "Of course, let's continue" and set nextStep: true
-    - Never guilt or pressure them to stay on a step—their pace is valid
     ---
     
     **EDGE CASES**  
     - Very short replies (“idk”, “…”, “not sure”): validate gently and offer a small next step.  
     - If user expresses self-harm or intent to harm others: respond with empathy and encourage immediate professional help or emergency services. Safety comes first.  
-    - **Abstract questions that confuse users**: If user responds vaguely or says "I'm not sure what you mean" / "I don't know", offer 2-3 concrete examples. For instance, if asking "What values matter to you?", follow up with "For example: family connection, creative expression, helping others, personal growth. Which resonate, or is it something different?" Make examples specific while leaving room for their own answer.
     
     ---
     
@@ -379,6 +324,7 @@ ${therapyGoalsContext}` : '';
     }));
     context.push(...recentConvo);
 
+    console.log('📋 [EXERCISE CONTEXT] Complete exercise context being sent to AI:', JSON.stringify(context, null, 2));
     return context;
   }
 
@@ -549,7 +495,7 @@ The JSON object must have:
   try {
     if (typeof response.message === "string") {
       let jsonString = response.message.trim();
-      const jsonMatch = jsonString.match(/{[\s\S]*}/);
+      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
       }
@@ -650,7 +596,7 @@ The JSON object must have:
 
     if (typeof response.message === "string") {
       let jsonString = response.message.trim();
-      const jsonMatch = jsonString.match(/{[\s\S]*}/);
+      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
       }
@@ -754,69 +700,6 @@ ${patternContext.prompt}
     ];
   }
 
-  async assembleVisionReflectionContext(
-    visionContext: {
-      visionInsight: any;
-      prompt: string;
-      coreQualities: string[];
-      fullDescription: string;
-    }
-  ): Promise<any[]> {
-    const firstName = await storageService.getFirstName().catch(() => 'Friend');
-
-    const systemPrompt = `(v1-vision) You are **Anu**, a compassionate therapist specializing in helping clients explore their future vision and personal growth.
-
-**Current Context:**
-You're helping ${firstName} reflect on the vision they created for their future self.
-
-**Their Vision:**
-- **Core qualities they aspire to:** ${visionContext.coreQualities.join(', ')}
-- **Full vision description:** "${visionContext.fullDescription}"
-
-**Reflection Prompt:**
-${visionContext.prompt}
-
----
-
-**SESSION APPROACH:**
-- Start warmly by acknowledging the vision they've created and its significance
-- Use the reflection prompt as your opening invitation to explore
-- Help them connect with what inspired this vision - what makes it meaningful to them
-- Explore the gap between where they are now and where they want to be
-- Guide them to identify concrete, achievable first steps toward embodying these qualities
-- Ask questions that help them make their vision tangible and actionable
-- Be encouraging and help them see this vision as achievable, not overwhelming
-
-**CONVERSATION GOALS:**
-- Help them clarify what truly matters in their vision
-- Identify specific qualities or aspects that resonate most deeply
-- Explore barriers or challenges they might face
-- Discover small, concrete actions they can take today or this week
-- Build their confidence that this vision is achievable through gradual steps
-- Connect the vision to their daily life and choices
-
-**FORMAT RULES:**
-- Output MUST be a single valid JSON object (no markdown, no extra text)
-- Fields:
-  • **message**: Your therapeutic response (warm, inspiring, uses **bold** for emphasis)
-  • **suggestions**: 2-4 natural, client-style responses they might give
-  • **nextAction**: 'none' (no exercise cards for vision reflections)
-  • **exerciseData**: null
-
-**CONVERSATION STYLE:**
-- Warm and hopeful - help them see their vision as achievable
-- Use their name (${firstName}) occasionally when natural
-- Ask one meaningful question at a time
-- Validate their vision while helping them make it practical
-- Focus on small, concrete steps rather than overwhelming changes
-- Keep the tone encouraging and forward-looking
-- After 4-5 exchanges, offer to help them summarize their insights with: "We've explored your vision together. Would you like me to help you summarize the key insights and action steps from our reflection?"`;
-
-    return [
-      { role: 'system', content: systemPrompt }
-    ];
-  }
-
   async generateVisionSummary(messages: any[]): Promise<{ summary: string; keyInsights: string[] }> {
     const firstName = await storageService.getFirstName().catch(() => 'Friend');
     
@@ -858,7 +741,7 @@ The JSON object must have:
   try {
     if (typeof response.message === "string") {
       let jsonString = response.message.trim();
-      const jsonMatch = jsonString.match(/{[\s\S]*}/);
+      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
       }
@@ -887,103 +770,6 @@ The JSON object must have:
       };
     }
   }
-
-  async generateVisionReflectionSummary(
-    messages: any[],
-    visionContext: {
-      visionInsight: any;
-      prompt: string;
-      coreQualities: string[];
-      fullDescription: string;
-    }
-  ): Promise<{ summary: string; keyInsights: string[] }> {
-    const firstName = await storageService.getFirstName().catch(() => 'Friend');
-
-    const summaryPrompt = `You are helping ${firstName} summarize their reflection on the vision they created for their future self.
-
-**Vision Context:**
-- Core qualities: ${visionContext.coreQualities.join(', ')}
-- Vision description: "${visionContext.fullDescription}"
-- Reflection prompt: ${visionContext.prompt}
-
-**Your Task:**
-Review the conversation carefully and create a meaningful summary based on what ${firstName} actually shared during their reflection.
-
-**CRITICAL: You must respond with ONLY a valid JSON object. No other text, no explanations, no markdown. Just pure JSON.**
-
-The JSON object must have:
-- "summary": A personal, specific 2-3 sentence summary of their main realizations and discoveries from this vision reflection
-- "keyInsights": An array of 2-4 specific insights they discovered (NOT generic advice)
-
-**JSON Format Example:**
-{
-  "summary": "Through this reflection, I realized that my vision of becoming more confident and self-assured is deeply connected to learning to trust my own judgment. I recognized that I've been holding myself back by seeking constant external validation rather than believing in my own capabilities.",
-  "keyInsights": [
-    "I want to start trusting my own decisions more, especially in work situations where I currently second-guess myself",
-    "A concrete first step is to share my ideas in team meetings before asking for others' opinions",
-    "I realized that my fear of being wrong has been preventing me from taking meaningful action toward my goals",
-    "Embodying these qualities means being okay with making mistakes as part of the learning process"
-  ]
-}
-
-**Critical Requirements:**
-- Use ${firstName}'s actual words, examples, and specific situations they mentioned
-- Capture concrete realizations they had about their vision and how to work toward it
-- Include specific actions, first steps, or commitments they identified
-- Reference actual barriers, challenges, or insights they discovered
-- Avoid generic statements like "this helped clarify" or "reflection revealed"
-- Make each insight a specific, personal statement that ${firstName} could recognize as their own discovery
-
-**Examples of good vs bad insights:**
-❌ Bad: "This reflection helped me understand my vision better"
-✅ Good: "I realized that my fear of being wrong has been preventing me from taking meaningful action toward my goals"
-
-❌ Bad: "I learned about what matters to me"
-✅ Good: "A concrete first step is to share my ideas in team meetings before asking for others' opinions"`;
-
-    const context = [
-      { role: 'system', content: summaryPrompt },
-      ...messages.slice(-10) // Last 10 messages to avoid token limits
-    ];
-
-    try {
-      const response = await this.generateSummaryWithDirectAPI('generate_vision_reflection_summary', context);
-      if (response.success) {
-        try {
-          if (typeof response.message === "string") {
-            let jsonString = response.message.trim();
-            const jsonMatch = jsonString.match(/\{[\\s\\S]*\}/);
-            if (jsonMatch) {
-              jsonString = jsonMatch[0];
-            }
-            return JSON.parse(jsonString);
-          } else {
-            return response.message;
-          }
-        } catch (parseError) {
-          console.error("Vision reflection JSON parse error:", parseError);
-          console.error("Raw response:", response.message);
-          // Fall through to fallback
-        }
-      }
-
-      // Fallback summary - warm and personal when AI fails
-      return {
-        summary: `You spent meaningful time exploring your vision of ${visionContext.coreQualities.join(' and ')}. This kind of reflection helps you see more clearly what steps you can take to move toward the future you envision.`,
-        keyInsights: [
-          `You identified ${visionContext.coreQualities[0]} as an important quality you want to embody`,
-          `You explored concrete ways to start embodying these qualities in your daily life`,
-          `This reflection gave you a clearer picture of the gap between where you are and where you want to be`
-        ]
-      };
-    } catch (error) {
-      console.error('Error generating vision reflection summary:', error);
-      return {
-        summary: `You took time to think deeply about your future vision and what it means to you. This kind of personal reflection is valuable for understanding yourself better.`,
-        keyInsights: ["This reflection helped you explore your aspirations and identify actionable steps forward"]
-      };
-    }
-  }
   async generateTherapyGoalSummary(messages: any[]): Promise<{ summary: string; keyInsights: string[] }> {
     const firstName = await storageService.getFirstName().catch(() => 'Friend');
 
@@ -1034,7 +820,7 @@ The JSON object must have:
           // Handle different response formats
           if (typeof response.message === 'string') {
             // Try to extract JSON from the string if it contains extra text
-            const jsonMatch = response.message.match(/{[\s\S]*}/);
+            const jsonMatch = response.message.match(/\{[\s\S]*\}/);
             const jsonString = jsonMatch ? jsonMatch[0] : response.message;
             parsed = JSON.parse(jsonString);
           } else if (typeof response.message === 'object') {
@@ -1062,146 +848,6 @@ The JSON object must have:
         summary: `You took time to thoughtfully define your therapeutic goals and what you hope to achieve. This kind of intentional goal-setting provides direction and purpose for your healing journey.`,
         keyInsights: ["You clarified what you want to focus on in your therapeutic work", "You thought about what positive change would look like in your life"]
       };
-    }
-  }
-
-  /**
-   * Generates a contextual exercise completion message with insights storage location
-   * @param exerciseType - The type of exercise completed
-   * @param exerciseName - The name of the exercise
-   * @param recentMessages - Recent messages from the exercise session
-   * @param userLanguage - User's preferred language (default: 'en')
-   * @returns Promise<string> - Personalized completion message
-   */
-  async generateExerciseCompletionMessage(
-    exerciseType: string,
-    exerciseName: string,
-    recentMessages: Message[],
-    userLanguage: string = 'en'
-  ): Promise<string> {
-    try {
-      // Map exercise types to their Insights tab storage locations
-      const insightsLocationMap: { [key: string]: string } = {
-        'automatic-thoughts': 'Thinking Patterns',
-        'sorting-thoughts': 'Thinking Patterns',
-        'values-clarification': 'Values',
-        'vision-of-future': 'Vision of the Future',
-        'goal-setting': 'Your Therapy Goals',
-        'breathing': 'Mood Insights',
-        'box-breathing': 'Mood Insights',
-        'triangle-breathing': 'Mood Insights',
-        'coherent-breathing': 'Mood Insights',
-        'mindfulness': 'Mood Insights',
-        'morning-mindfulness': 'Mood Insights',
-        'gratitude': 'Mood Insights',
-        'self-compassion': 'Mood Insights',
-        'future-self-journaling': 'Deeper Insights',
-        'tell-your-story': 'Deeper Insights'
-      };
-
-      const insightsLocation = insightsLocationMap[exerciseType];
-
-      // Extract user's responses from recent messages (last 10 messages)
-      const userResponses = recentMessages
-        .filter(msg => msg.type === 'user')
-        .slice(-10)
-        .map(msg => msg.text || msg.content)
-        .join('\n');
-
-      // Build the prompt for AI to generate contextual completion message
-      const languageInstruction = getLanguageInstruction(userLanguage);
-
-      const completionPrompt = `You are Anu, congratulating the user on completing the "${exerciseName}" exercise.
-
-**Context about their experience:**
-Here's what they shared during the exercise:
-${userResponses}
-
-**Your task:**
-Generate a warm, personal completion message (2-4 sentences) that:
-
-1. **Acknowledges their specific work** - Reference something concrete they shared (a thought they explored, a value they identified, a goal they set, etc.). Make it feel like you were truly present with them.
-
-2. **Add a contextual tip, encouragement, or wisdom** - If appropriate, include a brief insight that relates to what they worked on. This could be:
-   - A reminder about the therapeutic benefit (e.g., "Each time you challenge automatic thoughts, you're building new mental pathways")
-   - Gentle encouragement (e.g., "This kind of clarity about your values helps guide daily choices")
-   - A small wisdom nugget (e.g., "Goals are most powerful when connected to your why")
-   Keep this natural and brief - don't force it if it doesn't fit.
-
-3. **Tell them where their data was saved** - ${insightsLocation ? `Mention that their work has been saved to the **${insightsLocation}** section in their Insights tab.` : 'Let them know their insights have been saved.'}
-
-4. **Set expectations** - Note that some deeper insights may take a few minutes to appear as they are being processed in the background.
-
-**Important guidelines:**
-- Be warm and genuine, not formulaic
-- Reference their actual experience (use specifics from what they shared)
-- Keep it concise (2-4 sentences)
-- Feel celebratory but not over-the-top
-- Make the tip/wisdom feel natural, not preachy
-${languageInstruction}
-
-Generate only the completion message text (no JSON, no formatting, just the message).`;
-
-      const messages = [
-        { role: 'system', content: completionPrompt },
-        { role: 'user', content: 'Please generate the completion message.' }
-      ];
-
-      console.log('🎉 Generating contextual completion message for:', exerciseType);
-
-      const result = await this.generateSummaryWithDirectAPI('generate_summary', messages);
-
-      // Extract the message from the result
-      let completionMessage = '';
-      if (typeof result === 'string') {
-        completionMessage = result;
-      } else if (result && typeof result === 'object') {
-        completionMessage = result.summary || result.message || result.content || '';
-      }
-
-      // Clean up any JSON artifacts or extra formatting
-      completionMessage = completionMessage
-        .replace(/^["']|["']$/g, '') // Remove quotes
-        .replace(/\\n/g, '\n') // Handle escaped newlines
-        .trim();
-
-      // Fallback if we don't get a good message
-      if (!completionMessage || completionMessage.length < 20) {
-        throw new Error('Generated message too short or empty');
-      }
-
-      console.log('✅ Generated contextual completion message:', completionMessage.substring(0, 100) + '...');
-      return completionMessage;
-
-    } catch (error) {
-      console.error('Error generating exercise completion message:', error);
-
-      // Fallback to generic but friendly message
-      const insightsLocationMap: { [key: string]: string } = {
-        'automatic-thoughts': 'Thinking Patterns',
-        'sorting-thoughts': 'Thinking Patterns',
-        'values-clarification': 'Values',
-        'vision-of-future': 'Vision of the Future',
-        'goal-setting': 'Your Therapy Goals',
-        'breathing': 'Mood Insights',
-        'box-breathing': 'Mood Insights',
-        'triangle-breathing': 'Mood Insights',
-        'coherent-breathing': 'Mood Insights',
-        'mindfulness': 'Mood Insights',
-        'morning-mindfulness': 'Mood Insights',
-        'gratitude': 'Mood Insights',
-        'self-compassion': 'Mood Insights',
-        'future-self-journaling': 'Deeper Insights',
-        'tell-your-story': 'Deeper Insights'
-      };
-
-      const insightsLocation = insightsLocationMap[exerciseType];
-
-      if (insightsLocation) {
-        return `Great work completing the ${exerciseName} exercise! Your insights have been saved to the **${insightsLocation}** section in your Insights tab. Some deeper patterns may take a few minutes to appear.`;
-      } else {
-        return `Great work completing the ${exerciseName} exercise! Your insights have been saved and will appear in your Insights tab shortly.`;
-      }
     }
   }
 }

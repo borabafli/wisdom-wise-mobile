@@ -564,7 +564,7 @@
     "speakResponse": "Pronunciar respuesta",
     "exercise": "Ejercicio",
     "reflectionSpace": "💭 Espacio de reflexión",
-    "exerciseProgress": "Paso {{current}} de {{total}} • {{title}}",
+    "exerciseProgress": "Paso {{current}}/{{total}} • {{title}}",
     "inProgress": "En progreso",
     "therapeuticExercise": "{{duration}} • Ejercicio terapéutico",
     "loadingSpace": "Preparando tu espacio seguro...",
@@ -826,7 +826,7 @@
         "step2": {
           "title": "Nota tu pensamiento",
           "description": "¿Cuál fue el primer pensamiento que te vino a la mente en ese momento?",
-          "instruction": "Anima al usuario a escribir el pensamiento automático que tuvo en esa situación. Si se siente atascado, ofrece ejemplos suaves ('Voy a fallar', 'No les gusto', 'No puedo manejar esto'), pero mantén el enfoque en sus propias palabras."
+          "instruction": "Anima al usuario a compartir el pensamiento automático que tuvo. Si se siente atascado, ofrece ejemplos suaves ('Voy a fallar', 'No les gusto', 'No puedo manejar esto'). Si su pensamiento es vago (como 'Lo arruiné' o 'todo está mal'), ayúdalo a ser un poco más específico con UNA pregunta suave: '¿Qué exactamente sintió que salió mal?' o '¿Qué parte de la situación te preocupa?' No exijas perfección—una vez que tengas algo lo suficientemente concreto para examinar patrones (Paso 3), avanza. Acepta su lenguaje y confía en que el paso de reformulación permitirá más refinamiento."
         },
         "step3": {
           "title": "Identifica el patrón de pensamiento",

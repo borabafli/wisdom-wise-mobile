@@ -185,19 +185,33 @@ export const getExerciseLibraryData = (t: (key: string) => string): Record<strin
     image: require('../../assets/images/8.jpeg'),
     keywords: ['future self', 'vision', 'future', 'goals', 'dreams', 'journaling', 'clarity'],
   },
-  'goal-setting': {
+  'personal-milestones': {
     id: 12,
-    type: 'goal-setting',
-    name: t('exerciseLibrary.names.goalSetting'),
-    duration: '8 min',
-    description: t('exerciseLibrary.descriptions.goalSetting'),
-    shortDescription: t('exerciseLibrary.shortDescriptions.goalSetting'),
+    type: 'personal-milestones',
+    name: t('exerciseLibrary.names.personalMilestones'),
+    duration: '5 min',
+    description: t('exerciseLibrary.descriptions.personalMilestones'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.personalMilestones'),
     category: t('exerciseLibrary.categories.selfGrowth'),
-    difficulty: t('exerciseLibrary.difficulties.intermediate'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
     icon: Star,
     color: ['#FBBF24', '#F59E0B'],
-    image: require('../../assets/images/10.jpeg'), // Reusing image for now
-    keywords: ['goals', 'goal setting', 'therapy goals', 'values', 'motivation', 'purpose', 'direction', 'achievement', 'progress'],
+    image: require('../../assets/images/10.jpeg'),
+    keywords: ['goals', 'milestones', 'achievement', 'motivation', 'purpose', 'personal growth', 'action'],
+  },
+  'therapy-goals': {
+    id: 15,
+    type: 'therapy-goals',
+    name: t('exerciseLibrary.names.therapyGoals'),
+    duration: '8 min',
+    description: t('exerciseLibrary.descriptions.therapyGoals'),
+    shortDescription: t('exerciseLibrary.shortDescriptions.therapyGoals'),
+    category: t('exerciseLibrary.categories.selfDiscovery'),
+    difficulty: t('exerciseLibrary.difficulties.beginner'),
+    icon: BookOpen,
+    color: ['#C084FC', '#A855F7'],
+    image: require('../../assets/images/8.jpeg'),
+    keywords: ['therapy', 'goals', 'focus', 'wellbeing', 'growth', 'direction', 'healing', 'change'],
   },
   'mindfulness': {
     id: 3,
@@ -462,47 +476,53 @@ export const getExerciseFlows = (t: (key: string) => string): Record<string, any
       }
     ]
   },
-  'goal-setting': {
-    name: t('exerciseLibrary.names.goalSetting'),
+  'personal-milestones': {
+    name: t('exerciseLibrary.names.personalMilestones'),
     color: 'yellow',
-    useAI: false, // This uses the custom GoalSettingExercise component
-    isCustomComponent: true,
+    useAI: true,
     steps: [
       {
-        title: t('exerciseLibrary.steps.goalSetting.step1.title'),
+        title: t('exerciseLibrary.steps.personalMilestones.step1.title'),
         stepNumber: 1,
-        description: t('exerciseLibrary.steps.goalSetting.step1.description'),
-        instruction: t('exerciseLibrary.steps.goalSetting.step1.instruction')
+        description: t('exerciseLibrary.steps.personalMilestones.step1.description'),
+        instruction: t('exerciseLibrary.steps.personalMilestones.step1.instruction')
       },
       {
-        title: t('exerciseLibrary.steps.goalSetting.step2.title'),
+        title: t('exerciseLibrary.steps.personalMilestones.step2.title'),
         stepNumber: 2,
-        description: t('exerciseLibrary.steps.goalSetting.step2.description'),
-        instruction: t('exerciseLibrary.steps.goalSetting.step2.instruction')
+        description: t('exerciseLibrary.steps.personalMilestones.step2.description'),
+        instruction: t('exerciseLibrary.steps.personalMilestones.step2.instruction')
       },
       {
-        title: t('exerciseLibrary.steps.goalSetting.step3.title'),
+        title: t('exerciseLibrary.steps.personalMilestones.step3.title'),
         stepNumber: 3,
-        description: t('exerciseLibrary.steps.goalSetting.step3.description'),
-        instruction: t('exerciseLibrary.steps.goalSetting.step3.instruction')
+        description: t('exerciseLibrary.steps.personalMilestones.step3.description'),
+        instruction: t('exerciseLibrary.steps.personalMilestones.step3.instruction')
+      }
+    ]
+  },
+  'therapy-goals': {
+    name: t('exerciseLibrary.names.therapyGoals'),
+    color: 'purple',
+    useAI: true,
+    steps: [
+      {
+        title: t('exerciseLibrary.steps.therapyGoals.step1.title'),
+        stepNumber: 1,
+        description: t('exerciseLibrary.steps.therapyGoals.step1.description'),
+        instruction: t('exerciseLibrary.steps.therapyGoals.step1.instruction')
       },
       {
-        title: t('exerciseLibrary.steps.goalSetting.step4.title'),
-        stepNumber: 4,
-        description: t('exerciseLibrary.steps.goalSetting.step4.description'),
-        instruction: t('exerciseLibrary.steps.goalSetting.step4.instruction')
+        title: t('exerciseLibrary.steps.therapyGoals.step2.title'),
+        stepNumber: 2,
+        description: t('exerciseLibrary.steps.therapyGoals.step2.description'),
+        instruction: t('exerciseLibrary.steps.therapyGoals.step2.instruction')
       },
       {
-        title: t('exerciseLibrary.steps.goalSetting.step5.title'),
-        stepNumber: 5,
-        description: t('exerciseLibrary.steps.goalSetting.step5.description'),
-        instruction: t('exerciseLibrary.steps.goalSetting.step5.instruction')
-      },
-      {
-        title: t('exerciseLibrary.steps.goalSetting.step6.title'),
-        stepNumber: 6,
-        description: t('exerciseLibrary.steps.goalSetting.step6.description'),
-        instruction: t('exerciseLibrary.steps.goalSetting.step6.instruction')
+        title: t('exerciseLibrary.steps.therapyGoals.step3.title'),
+        stepNumber: 3,
+        description: t('exerciseLibrary.steps.therapyGoals.step3.description'),
+        instruction: t('exerciseLibrary.steps.therapyGoals.step3.instruction')
       }
     ]
   },

@@ -326,20 +326,27 @@ export const journalScreenStyles = StyleSheet.create({
   },
 
   polishedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: spacing[8],
-    paddingVertical: spacing[4],
-    borderRadius: 8,
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: spacing[10],
+    paddingVertical: spacing[6],
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FDE047',
+    borderColor: '#E2E8F0',
+    gap: spacing[6],
+  },
+
+  polishedBadgeIcon: {
+    fontSize: 14,
   },
 
   polishedBadgeText: {
     fontFamily: 'Ubuntu-Medium',
-    fontSize: 11,
-    color: '#92400E',
-    fontWeight: '600',
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '500',
   },
 
   // Empty State

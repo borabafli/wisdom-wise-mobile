@@ -284,6 +284,17 @@ class MemoryService {
     return summaries.filter(summary => summary.type === 'consolidated');
   }
 
+  async getLastSessionSummary(): Promise<Summary | null> {
+    try {
+      const sessionSummaries = await this.getSessionSummaries();
+      // Return the most recent session summary (first item since they're sorted newest first)
+      return sessionSummaries.length > 0 ? sessionSummaries[0] : null;
+    } catch (error) {
+      console.error('Error getting last session summary:', error);
+      return null;
+    }
+  }
+
   // EXTRACTION LOGIC
 
   async shouldExtractInsights(messages: Message[]): Promise<boolean> {

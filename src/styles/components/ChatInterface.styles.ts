@@ -86,6 +86,7 @@ export const chatInterfaceStyles = StyleSheet.create({
   },
   sessionDetails: {
     flex: 1,
+    minWidth: 0, // Allows flex children to shrink below content size
   },
   sessionTitle: {
     fontSize: 17,
@@ -102,11 +103,13 @@ export const chatInterfaceStyles = StyleSheet.create({
     flexShrink: 1,
   },
   sessionSubtitle: {
-    fontSize: 15,
+    fontSize: 14, // Reduced from 15 to fit more text
     fontFamily: 'System',
     fontWeight: '400',
     color: '#9ca3af', // Even lighter gray for secondary text
     letterSpacing: 0.1,
+    flexShrink: 1, // Allow text to shrink to fit container
+    maxWidth: '100%', // Respect parent width
   },
   warningContainer: {
     flexDirection: 'row',

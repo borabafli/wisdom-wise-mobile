@@ -21,6 +21,10 @@ interface FirstMessageContext {
     date: string;
     hoursSince: number;
   };
+  lastSessionSummary?: {
+    text: string;
+    date: string;
+  } | null;
 }
 
 interface FirstMessageResponse {
@@ -34,6 +38,7 @@ type RoutingVariant =
   | 'values_check'
   | 'goal_check'
   | 'onboarding_reference'
+  | 'last_session_followup'
   | 'neutral_open';
 
 class FirstMessageService {
@@ -48,6 +53,7 @@ class FirstMessageService {
       const context = await this.gatherContext();
       console.log('📊 [FIRST MESSAGE] Context gathered:', {
         hasRecentReflections: context.recentReflections.length > 0,
+        hasLastSessionSummary: !!context.lastSessionSummary,
         insightCount: context.memory.insights.length,
         goalCount: context.goals.length,
         valueCount: context.topValues.length,
@@ -88,7 +94,8 @@ class FirstMessageService {
         recentReflections,
         topValues,
         profile,
-        lastSessionInfo
+        lastSessionInfo,
+        lastSessionSummary
       ] = await Promise.all([
         storageService.getFirstName().catch(() => 'friend'),
         memoryService.getMemoryContext().catch(() => ({ insights: [], summaries: [] })),
@@ -96,7 +103,8 @@ class FirstMessageService {
         thinkingPatternsService.getReflectionSummaries().catch(() => []),
         valuesService.getTopValues().catch(() => []),
         storageService.getUserProfile().catch(() => null),
-        this.getLastSessionInfo().catch(() => null)
+        this.getLastSessionInfo().catch(() => null),
+        memoryService.getLastSessionSummary().catch(() => null)
       ]);
 
       return {
@@ -110,7 +118,11 @@ class FirstMessageService {
           challenges: profile?.challenges || [],
           motivation: profile?.motivation
         },
-        lastSession: lastSessionInfo
+        lastSession: lastSessionInfo,
+        lastSessionSummary: lastSessionSummary ? {
+          text: lastSessionSummary.text,
+          date: lastSessionSummary.date
+        } : null
       };
     } catch (error) {
       console.error('Error gathering context:', error);
@@ -184,6 +196,14 @@ class FirstMessageService {
       options.push({
         variant: 'reframe_followup',
         weight: reframeWeight
+      });
+    }
+
+    // Last session followup (< 48h) - high continuity priority
+    if (context.lastSessionSummary && hoursSince < 48) {
+      options.push({
+        variant: 'last_session_followup',
+        weight: applyUsageDecay(50, 'last_session_followup')
       });
     }
 
@@ -345,6 +365,13 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
       formatted += `- Reframed thought: "${latest.reframedThought}"\n\n`;
     }
 
+    // Last session summary (for continuity)
+    if (context.lastSessionSummary) {
+      const daysAgo = this.getDaysAgo(context.lastSessionSummary.date);
+      formatted += `**Last Session Summary (${daysAgo}):**\n`;
+      formatted += `${context.lastSessionSummary.text}\n\n`;
+    }
+
     // Insights (patterns discovered)
     if (context.memory.insights.length > 0) {
       formatted += `**Known Patterns & Insights:**\n`;
@@ -457,6 +484,18 @@ Output ONLY valid JSON. No markdown, no code blocks, no explanations.`;
 - Always ask a meaningful first question that guides toward growth
 - Keep it open—they may want to talk about something completely different, use a second separate paragraph to ask about it.
 - Chips: That topic · Something else · Guide me · Quick exercise`,
+
+      last_session_followup: `**Last Session Followup:**
+- Reference a key theme or insight from their last session (use the summary provided)
+- Ask if they want to continue exploring it or if things have shifted
+- Use casual greetings: Hi, Hey, or Hello (not "Welcome")
+- Use "we talked about" or "we explored" language since this is from a previous session
+- Examples:
+  • "Hey ${context.firstName}. Last time we talked about [theme from summary]. How have things been with that?"
+  • "Hi. I remember we explored [topic]. Want to pick up where we left off, or is something else on your mind?"
+- Keep it open—use a second separate paragraph to ask if something else is on their mind
+- Don't force continuity if the summary is too generic - be flexible
+- Chips: Continue that · Something new · Update you · Guide me`,
 
       neutral_open: `**Neutral Open Focus:**
 - Simple, warm, welcoming - no specific agenda

@@ -838,7 +838,7 @@
         "step2": {
           "title": "Düşüncenizi fark edin",
           "description": "O anda aklınıza gelen ilk düşünce neydi?",
-          "instruction": "Kullanıcıyı sahip oldukları otomatik düşünceyi paylaşmaya teşvik edin. Takılıp kaldıklarını hissederlerse, nazik örnekler sunun ('Başarısız olacağım', 'Beni sevmiyorlar', 'Bununla başa çıkamam'). Düşünce belirsizse ('Mahvettim' veya 'her şey yanlış' gibi), TEK bir nazik soruyla biraz daha spesifik olmalarına yardımcı olun: 'Tam olarak ne yanlış gitti hissettiniz?' veya 'Durumun hangi kısmı sizi rahatsız ediyor?' Mükemmellik beklemeyin—kalıpları incelemek için yeterince somut bir şey elde ettiğinizde (Adım 3), ilerleyin. Dillerini kabul edin ve yeniden çerçeveleme adımının daha fazla iyileştirmeye izin vereceğine güvenin."
+          "instruction": "Kullanıcıyı o durumda sahip oldukları otomatik düşünceyi paylaşmaya teşvik edin. Takılıp kaldıklarını hissederlerse, nazik örnekler sunun ('Başarısız olacağım', 'Beni sevmiyorlar', 'Bununla başa çıkamam'), ama odağı kendi kelimelerinde tutun. ÖNEMLİ: Kullanıcı belirsiz veya aşırı genel bir düşünce sunarsa ('tamamen', 'tümüyle', 'her şey', 'hiçbir şey', 'her zaman', 'asla', '망쳤다', 'mahvettim', 'korkunç' gibi kelimeler içeren veya spesifik detay olmayan soyut ifadeler), ilerlemeden önce bunu netleştirmelerine nazikçe yardımcı olun. 'O anda tam olarak ne oldu?' 'Yaptığınız veya söylediğiniz belirli bir şeyi tarif edebilir misiniz?' 'Durumun hangi kısmı sizi en çok rahatsız ediyor?' gibi 2-3 spesifik netleştirici soru sorun. 'Tamamen mahvettim' gibi genel düşünceleri 'Sunumumda önemli istatistikleri unuttuğumda hata yaptım' gibi spesifik düşüncelere dönüştürmelerine yardımcı olun. nextStep'i true olarak yalnızca bilişsel çarpıtmalar için incelenebilecek net, spesifik bir düşünce ifade ettiklerinde ayarlayın."
         },
         "step3": {
           "title": "Düşünce kalıbını tespit edin",
@@ -1439,3 +1439,4 @@
     }
   }
 }
+

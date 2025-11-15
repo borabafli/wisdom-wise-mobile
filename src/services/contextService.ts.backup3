@@ -229,14 +229,11 @@ Final check: Output must be a single valid JSON object, nothing else.`
     
     // Get therapy goals (user's therapeutic focus areas)
     const therapyGoalsContext = await therapyGoalsService.getTherapyGoalsContext();
-    const therapyGoalsString = therapyGoalsContext ? `
-
-**THERAPY GOALS**
-${therapyGoalsContext}` : '';
+    const therapyGoalsString = therapyGoalsContext ?  : '';
     
     
     // Combine system prompt with memory and goal context
-    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString + therapyGoalsString;
+    const enhancedPrompt = personalizedPrompt + '\n\n' + memoryContextString + goalContextString;
     
     const context = [{
       role: 'system',

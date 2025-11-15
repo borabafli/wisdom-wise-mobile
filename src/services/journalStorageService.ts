@@ -30,7 +30,7 @@ class JournalStorageService {
   ): Promise<string> {
     try {
       const id = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const date = new Date().toISOString().split('T')[0];
+      const date = new Date().toISOString(); // Full ISO string with time
       const timestamp = Date.now();
       let polishedContent = '';
       if (shouldPolish) {
