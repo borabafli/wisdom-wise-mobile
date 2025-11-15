@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Sparkles, Mic, Heart, Brain, BookOpen, Clock } from 'lucide-react-native';
+import { Sparkles, Brain, Lightbulb, Heart, BookOpen, Pencil } from 'lucide-react-native';
 import { featureListStyles as styles } from '../../styles/components/FeatureList.styles';
 import { useTranslation } from 'react-i18next';
 
@@ -29,24 +29,24 @@ export const FeatureList: React.FC<FeatureListProps> = ({ compact = false }) => 
       text: t('paywall.features.unlimited_conversations'),
     },
     {
-      icon: <Mic size={20} color="#5BA3B8" strokeWidth={2.5} />,
-      text: t('paywall.features.unlimited_voice'),
+      icon: <Brain size={20} color="#5BA3B8" strokeWidth={2.5} />,
+      text: t('paywall.features.deep_analysis'),
+    },
+    {
+      icon: <Lightbulb size={20} color="#5BA3B8" strokeWidth={2.5} />,
+      text: t('paywall.features.distorted_thoughts'),
     },
     {
       icon: <Heart size={20} color="#5BA3B8" strokeWidth={2.5} />,
       text: t('paywall.features.full_exercises'),
     },
     {
-      icon: <Brain size={20} color="#5BA3B8" strokeWidth={2.5} />,
-      text: t('paywall.features.advanced_insights'),
-    },
-    {
       icon: <BookOpen size={20} color="#5BA3B8" strokeWidth={2.5} />,
-      text: t('paywall.features.unlimited_journaling'),
+      text: t('paywall.features.personal_insights'),
     },
     {
-      icon: <Clock size={20} color="#5BA3B8" strokeWidth={2.5} />,
-      text: t('paywall.features.full_history'),
+      icon: <Pencil size={20} color="#5BA3B8" strokeWidth={2.5} />,
+      text: t('paywall.features.unlimited_journaling'),
     },
   ];
 

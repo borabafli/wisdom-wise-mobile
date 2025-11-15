@@ -1538,12 +1538,12 @@
     "save_percent": "Save {{percent}}%",
     "monthly_equivalent": "Only {{price}}/month",
     "features": {
-      "unlimited_conversations": "Unlimited AI conversations",
-      "unlimited_voice": "Unlimited voice journaling",
+      "unlimited_conversations": "Unlimited conversations with Anu's memory",
+      "deep_analysis": "Deep personality & thought pattern analysis",
+      "distorted_thoughts": "Cognitive distortion detection from conversations",
       "full_exercises": "Full CBT exercise library",
-      "advanced_insights": "Advanced insights & patterns",
-      "unlimited_journaling": "Unlimited guided journaling",
-      "full_history": "Full chat history"
+      "personal_insights": "Personalized insights from your journey",
+      "unlimited_journaling": "Unlimited guided journaling"
     },
     "cta_primary": "Start 3-Day Free Trial",
     "cta_secondary": "Continue with Free",

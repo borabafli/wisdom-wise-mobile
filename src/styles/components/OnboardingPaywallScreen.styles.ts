@@ -42,8 +42,9 @@ export const onboardingPaywallStyles = StyleSheet.create({
   // Header Section
   header: {
     alignItems: 'center',
-    paddingTop: spacing['8'],
-    paddingBottom: spacing['6'],
+    paddingTop: spacing['6'],
+    paddingBottom: spacing['5'],
+    paddingHorizontal: spacing['4'], // Add horizontal padding for better margins
   },
   illustrationContainer: {
     width: 120,
@@ -59,22 +60,23 @@ export const onboardingPaywallStyles = StyleSheet.create({
   },
   title: {
     fontFamily: typography.fontFamily.ubuntuBold,
-    fontSize: 32,
-    lineHeight: 38,
+    fontSize: 28,
+    lineHeight: 34,
     fontWeight: '700',
     color: '#1F2937', // Deep charcoal - matches onboarding
     textAlign: 'center',
-    marginBottom: spacing['3'],
+    marginBottom: spacing['2'],
     letterSpacing: -0.5,
+    paddingHorizontal: spacing['6'], // Add side margins for better readability
   },
   subtitle: {
     fontFamily: typography.fontFamily.ubuntuMedium,
-    fontSize: 20,
-    lineHeight: 28,
+    fontSize: 18,
+    lineHeight: 26,
     color: '#1F2937', // Match title color
     textAlign: 'center',
-    paddingHorizontal: spacing['4'],
-    opacity: 0.9,
+    paddingHorizontal: spacing['6'], // Match title padding
+    opacity: 0.85,
   },
 
   // Pricing Section
@@ -89,16 +91,17 @@ export const onboardingPaywallStyles = StyleSheet.create({
 
   // Features Section
   featuresSection: {
-    marginVertical: spacing['4'],
-    paddingHorizontal: spacing['2'],
+    marginVertical: spacing['5'],
+    paddingHorizontal: spacing['3'],
   },
   featuresTitle: {
     fontFamily: typography.fontFamily.ubuntuBold,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#1F2937',
-    marginBottom: spacing['4'],
+    marginBottom: spacing['5'],
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
 
   // CTA Section
