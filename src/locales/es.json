@@ -839,6 +839,23 @@
           "instruction": "Apoya al usuario para crear un pensamiento más realista y amable. Pídele que considere: ¿Qué evidencia apoya o desafía el pensamiento original? ¿Qué le dirían a un amigo en esta situación? ¿Hay una manera más equilibrada de verlo? Anímalo a escribir una declaración replanteada. Quédate hasta que la proporcione."
         }
       },
+      "breathing": {
+        "step1": {
+          "title": "Ponte cómodo",
+          "description": "Encuentra un lugar tranquilo y acomódate.",
+          "instruction": "Invita al usuario a sentarse cómodamente y cerrar los ojos si lo desea."
+        },
+        "step2": {
+          "title": "Comienza el ritmo",
+          "description": "Inicia el patrón de respiración 4-7-8.",
+          "instruction": "Guíalos: Inhala por la nariz durante 4 tiempos, mantén durante 7, exhala lentamente por la boca durante 8."
+        },
+        "step3": {
+          "title": "Continúa y observa",
+          "description": "Completa algunos ciclos y nota cómo te sientes.",
+          "instruction": "Anímalos a repetir el patrón 3-4 veces, notando cualquier cambio en su cuerpo o mente."
+        }
+      },
       "goalSetting": {
         "step1": {
           "title": "Elige un objetivo",

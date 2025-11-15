@@ -279,7 +279,7 @@ const ProfileScreen: React.FC = () => {
   const handleOpenPrivacyPolicy = () => {
     Linking.openURL(LEGAL_URLS.PRIVACY_POLICY).catch((error) => {
       console.error('Error opening privacy policy:', error);
-      Alert.alert('Error', 'Failed to open privacy policy. Please try again later.');
+      Alert.alert(t('common.error'), t('auth.signUp.failedToOpenPrivacy'));
     });
   };
 
@@ -302,7 +302,7 @@ const ProfileScreen: React.FC = () => {
     { iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.menu.help'), action: () => setShowHelpSupport(true), subtitle: t('profile.menuSubtitles.help') },
     { iconImage: require('../../assets/images/New Icons/icon-12.png'), label: t('profile.menu.featureRequest'), action: () => setShowFeatureRequest(true), subtitle: t('profile.menuSubtitles.featureRequest') },
     ...(__DEV__
-      ? [{ iconImage: require('../../assets/images/New Icons/icon-16.png'), label: '🧪 Developer Tools', action: () => setShowDevMenu(true), subtitle: 'Testing utilities (DEV only)' }]
+      ? [{ iconImage: require('../../assets/images/New Icons/icon-16.png'), label: t('profile.devMenu.title'), action: () => setShowDevMenu(true), subtitle: t('profile.devMenu.subtitle') }]
       : []
     ),
     ...(isAnonymous
@@ -611,10 +611,10 @@ const ProfileScreen: React.FC = () => {
               {/* Header */}
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
                 <Text style={{ fontSize: 28, fontWeight: '700', color: '#2D2644', flex: 1 }}>
-                  🧪 Developer Tools
+                  {t('profile.devMenu.title')}
                 </Text>
                 <TouchableOpacity onPress={() => setShowDevMenu(false)}>
-                  <Text style={{ fontSize: 16, color: '#8B7FD9', fontWeight: '600' }}>Close</Text>
+                  <Text style={{ fontSize: 16, color: '#8B7FD9', fontWeight: '600' }}>{t('profile.devMenu.close')}</Text>
                 </TouchableOpacity>
               </View>
 
@@ -622,7 +622,7 @@ const ProfileScreen: React.FC = () => {
                 {/* Subscription Testing */}
                 <View style={{ marginBottom: 32 }}>
                   <Text style={{ fontSize: 18, fontWeight: '600', color: '#2D2644', marginBottom: 16 }}>
-                    Subscription Testing
+                    {t('profile.devMenu.sections.subscription')}
                   </Text>
 
                   <TouchableOpacity
@@ -631,20 +631,20 @@ const ProfileScreen: React.FC = () => {
                       try {
                         await subscriptionTestUtils.resetToFreeTier();
                         Alert.alert(
-                          'Reset Complete',
-                          'Subscription reset to free tier. Force quit and relaunch the app to see changes.',
-                          [{ text: 'OK' }]
+                          t('profile.devMenu.alerts.resetComplete'),
+                          t('profile.devMenu.alerts.resetCompleteMsg'),
+                          [{ text: t('common.ok') }]
                         );
                       } catch (error: any) {
-                        Alert.alert('Error', error.message);
+                        Alert.alert(t('profile.devMenu.alerts.error'), error.message);
                       }
                     }}
                   >
                     <Text style={{ fontSize: 16, fontWeight: '600', color: '#8B7FD9', marginBottom: 4 }}>
-                      Reset to Free Tier
+                      {t('profile.devMenu.actions.resetToFree')}
                     </Text>
                     <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
-                      Clear RevenueCat purchases and reset to free plan
+                      {t('profile.devMenu.actions.resetToFreeDesc')}
                     </Text>
                   </TouchableOpacity>
 
@@ -655,23 +655,25 @@ const ProfileScreen: React.FC = () => {
                         await printSubscriptionDebug();
                         const info = await subscriptionTestUtils.getDebugInfo();
                         Alert.alert(
-                          'Debug Info',
-                          `Tier: ${info.subscriptionStatus.tier}\n` +
-                          `Premium: ${info.subscriptionStatus.isPremium ? 'Yes' : 'No'}\n` +
-                          `Messages: ${info.dailyUsage.messages}/${info.featureLimits.MESSAGES_PER_DAY}\n` +
-                          `Check console for full details`,
-                          [{ text: 'OK' }]
+                          t('profile.devMenu.alerts.debugInfo'),
+                          t('profile.devMenu.alerts.debugInfoMsg', {
+                            tier: info.subscriptionStatus.tier,
+                            premium: info.subscriptionStatus.isPremium ? 'Yes' : 'No',
+                            messages: info.dailyUsage.messages,
+                            limit: info.featureLimits.MESSAGES_PER_DAY
+                          }),
+                          [{ text: t('common.ok') }]
                         );
                       } catch (error: any) {
-                        Alert.alert('Error', error.message);
+                        Alert.alert(t('profile.devMenu.alerts.error'), error.message);
                       }
                     }}
                   >
                     <Text style={{ fontSize: 16, fontWeight: '600', color: '#6EC1B8', marginBottom: 4 }}>
-                      Show Debug Info
+                      {t('profile.devMenu.actions.showDebug')}
                     </Text>
                     <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
-                      Print subscription status and usage to console
+                      {t('profile.devMenu.actions.showDebugDesc')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -679,7 +681,7 @@ const ProfileScreen: React.FC = () => {
                 {/* Usage Testing */}
                 <View style={{ marginBottom: 32 }}>
                   <Text style={{ fontSize: 18, fontWeight: '600', color: '#2D2644', marginBottom: 16 }}>
-                    Usage Testing
+                    {t('profile.devMenu.sections.usage')}
                   </Text>
 
                   <TouchableOpacity
@@ -688,20 +690,20 @@ const ProfileScreen: React.FC = () => {
                       try {
                         await subscriptionTestUtils.forceResetDailyUsage();
                         Alert.alert(
-                          'Usage Reset',
-                          'Daily usage counters reset to 0. You can now test hitting the daily limits.',
-                          [{ text: 'OK' }]
+                          t('profile.devMenu.alerts.usageReset'),
+                          t('profile.devMenu.alerts.usageResetMsg'),
+                          [{ text: t('common.ok') }]
                         );
                       } catch (error: any) {
-                        Alert.alert('Error', error.message);
+                        Alert.alert(t('profile.devMenu.alerts.error'), error.message);
                       }
                     }}
                   >
                     <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFB800', marginBottom: 4 }}>
-                      Reset Daily Usage
+                      {t('profile.devMenu.actions.resetUsage')}
                     </Text>
                     <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
-                      Reset message, voice, and exercise counters
+                      {t('profile.devMenu.actions.resetUsageDesc')}
                     </Text>
                   </TouchableOpacity>
 
@@ -711,23 +713,26 @@ const ProfileScreen: React.FC = () => {
                       try {
                         const result = await subscriptionTestUtils.checkMessageLimit();
                         Alert.alert(
-                          'Message Limit Check',
-                          `Can send: ${result.hasAccess ? 'Yes ✅' : 'No ❌'}\n` +
-                          `Current: ${result.currentCount}/${result.limit}\n` +
-                          `Tier: ${result.tier}\n` +
-                          (result.reason ? `Reason: ${result.reason}` : ''),
-                          [{ text: 'OK' }]
+                          t('profile.devMenu.alerts.messageLimitCheck'),
+                          t('profile.devMenu.alerts.messageLimitCheckMsg', {
+                            canSend: result.hasAccess ? 'Yes ✅' : 'No ❌',
+                            current: result.currentCount,
+                            limit: result.limit,
+                            tier: result.tier,
+                            reason: result.reason ? `\nReason: ${result.reason}` : ''
+                          }),
+                          [{ text: t('common.ok') }]
                         );
                       } catch (error: any) {
-                        Alert.alert('Error', error.message);
+                        Alert.alert(t('profile.devMenu.alerts.error'), error.message);
                       }
                     }}
                   >
                     <Text style={{ fontSize: 16, fontWeight: '600', color: '#9B7FD9', marginBottom: 4 }}>
-                      Check Message Limit
+                      {t('profile.devMenu.actions.checkLimit')}
                     </Text>
                     <Text style={{ fontSize: 14, color: '#6B6B8A' }}>
-                      Test if user can send messages
+                      {t('profile.devMenu.actions.checkLimitDesc')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -735,30 +740,30 @@ const ProfileScreen: React.FC = () => {
                 {/* Danger Zone */}
                 <View style={{ marginBottom: 32 }}>
                   <Text style={{ fontSize: 18, fontWeight: '600', color: '#D9534F', marginBottom: 16 }}>
-                    ⚠️ Danger Zone
+                    {t('profile.devMenu.sections.dangerZone')}
                   </Text>
 
                   <TouchableOpacity
                     style={{ backgroundColor: '#FFF5F5', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#FFE0E0' }}
                     onPress={() => {
                       Alert.alert(
-                        '⚠️ Clear All Data?',
-                        'This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.\n\nAre you sure?',
+                        t('profile.devMenu.alerts.clearAllData'),
+                        t('profile.devMenu.alerts.clearAllDataMsg'),
                         [
-                          { text: 'Cancel', style: 'cancel' },
+                          { text: t('common.cancel'), style: 'cancel' },
                           {
-                            text: 'Clear All Data',
+                            text: t('profile.devMenu.alerts.clearAllDataBtn'),
                             style: 'destructive',
                             onPress: async () => {
                               try {
                                 await subscriptionTestUtils.clearAllStorage();
                                 Alert.alert(
-                                  'All Data Cleared',
-                                  'Force quit and relaunch the app.',
-                                  [{ text: 'OK' }]
+                                  t('profile.devMenu.alerts.allDataCleared'),
+                                  t('profile.devMenu.alerts.allDataClearedMsg'),
+                                  [{ text: t('common.ok') }]
                                 );
                               } catch (error: any) {
-                                Alert.alert('Error', error.message);
+                                Alert.alert(t('profile.devMenu.alerts.error'), error.message);
                               }
                             }
                           }
@@ -767,10 +772,10 @@ const ProfileScreen: React.FC = () => {
                     }}
                   >
                     <Text style={{ fontSize: 16, fontWeight: '600', color: '#D9534F', marginBottom: 4 }}>
-                      Clear All Storage
+                      {t('profile.devMenu.actions.clearStorage')}
                     </Text>
                     <Text style={{ fontSize: 14, color: '#8B6B6B' }}>
-                      Delete all app data (DESTRUCTIVE)
+                      {t('profile.devMenu.actions.clearStorageDesc')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -778,7 +783,7 @@ const ProfileScreen: React.FC = () => {
                 {/* Info */}
                 <View style={{ backgroundColor: '#F0EEFF', padding: 16, borderRadius: 12, marginBottom: 20 }}>
                   <Text style={{ fontSize: 14, color: '#6B6B8A', lineHeight: 20 }}>
-                    💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects.
+                    {t('profile.devMenu.infoMessage')}
                   </Text>
                 </View>
               </ScrollView>

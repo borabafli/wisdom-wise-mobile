@@ -851,6 +851,23 @@
           "instruction": "Kullanıcının daha gerçekçi ve nazik bir düşünce oluşturmasını destekleyin. Düşünmelerini isteyin: Orijinal düşünceyi destekleyen veya ona meydan okuyan kanıtlar neler? Bu durumda bir arkadaşa ne derlerdi? Buna bakmanın daha dengeli bir yolu var mı? Yeniden çerçevelenmiş bir ifade yazmalarını teşvik edin. Sağlayana kadar kalın."
         }
       },
+      "breathing": {
+        "step1": {
+          "title": "Rahatla",
+          "description": "Sessiz bir yer bulun ve yerleşin.",
+          "instruction": "Kullanıcıyı rahatça oturmaya ve isterse gözlerini kapatmaya davet edin."
+        },
+        "step2": {
+          "title": "Ritme Başla",
+          "description": "4-7-8 nefes alma düzenini başlatın.",
+          "instruction": "Onlara rehberlik edin: Burnunuzdan 4 sayım boyunca nefes alın, 7 sayım tutun, ağzınızdan 8 sayım boyunca yavaşça nefes verin."
+        },
+        "step3": {
+          "title": "Devam Et ve Fark Et",
+          "description": "Birkaç döngü tamamlayın ve nasıl hissettiğinizi fark edin.",
+          "instruction": "Vücutlarında veya zihinlerinde herhangi bir değişiklik fark ederek, modeli 3-4 kez tekrarlamalarını teşvik edin."
+        }
+      },
       "goalSetting": {
         "step1": {
           "title": "Bir hedef seçin",

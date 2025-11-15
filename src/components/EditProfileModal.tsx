@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useUserProfile } from '../hooks';
 import { useAuth } from '../contexts';
+import { useLocalization } from '../contexts/LocalizationContext';
 import { editProfileModalStyles as styles } from '../styles/components/EditProfileModal.styles';
 
 interface EditProfileModalProps {
@@ -23,6 +24,7 @@ interface EditProfileModalProps {
 }
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, onProfileUpdated }) => {
+  const { t } = useLocalization();
   const { profile: userProfile, updateProfile, error } = useUserProfile();
   const { profile: authProfile, isAnonymous } = useAuth();
   const [firstName, setFirstName] = useState('');
@@ -56,11 +58,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
     if (value.length > 0 && value.length <= 50 && /^[a-zA-Z\s\-']+$/.test(value)) {
       // Valid
     } else if (value.length < 1) {
-      nextErrors.firstName = 'First name is required';
+      nextErrors.firstName = t('profile.editProfile.validation.required');
     } else if (value.length > 50) {
-      nextErrors.firstName = 'First name must be 50 characters or less';
+      nextErrors.firstName = t('profile.editProfile.validation.maxLength');
     } else {
-      nextErrors.firstName = 'Only letters, spaces, hyphens, and apostrophes are allowed';
+      nextErrors.firstName = t('profile.editProfile.validation.invalidCharacters');
     }
 
     setValidationErrors(nextErrors);
@@ -96,16 +98,16 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
           onProfileUpdated();
         }
         Alert.alert(
-          'Profile Updated',
-          `Your profile has been updated successfully! Anu will now address you as ${trimmedFirstName}.`,
-          [{ text: 'Great!', onPress: onClose }]
+          t('profile.editProfile.success.title'),
+          t('profile.editProfile.success.message', { name: trimmedFirstName }),
+          [{ text: t('profile.editProfile.success.button'), onPress: onClose }]
         );
       } else {
-        Alert.alert('Error', 'Failed to update profile. Please try again.');
+        Alert.alert(t('profile.editProfile.error.title'), t('profile.editProfile.error.message'));
       }
     } catch (err) {
       console.error('Error saving profile:', err);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      Alert.alert(t('profile.editProfile.error.title'), t('profile.editProfile.error.message'));
     } finally {
       setIsSaving(false);
     }
@@ -114,11 +116,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
   const handleCancel = () => {
     if (hasChanges) {
       Alert.alert(
-        'Discard Changes?',
-        'You have unsaved changes. Are you sure you want to close without saving?',
+        t('profile.editProfile.unsavedChanges.title'),
+        t('profile.editProfile.unsavedChanges.message'),
         [
-          { text: 'Keep Editing', style: 'cancel' },
-          { text: 'Discard', style: 'destructive', onPress: onClose }
+          { text: t('profile.editProfile.unsavedChanges.keep'), style: 'cancel' },
+          { text: t('profile.editProfile.unsavedChanges.discard'), style: 'destructive', onPress: onClose }
         ]
       );
     } else {
@@ -158,8 +160,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                     />
                   </View>
                   <View style={styles.headerTextGroup}>
-                    <Text style={styles.headerTitle}>Edit Profile</Text>
-                    <Text style={styles.headerSubtitle}>Refresh how Anu greets you across the app.</Text>
+                    <Text style={styles.headerTitle}>{t('profile.editProfile.title')}</Text>
+                    <Text style={styles.headerSubtitle}>{t('profile.editProfile.subtitle')}</Text>
                   </View>
                 </View>
 
@@ -167,8 +169,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
 
               <Text style={styles.description}>
                 {isAnonymous
-                  ? 'Customize your friendly alias so Anu can keep supporting you with a personal touch.'
-                  : 'Keep your details current so guidance, insights, and reminders feel tailored to you.'}
+                  ? t('profile.editProfile.descriptionAnon')
+                  : t('profile.editProfile.descriptionUser')}
               </Text>
 
               <ScrollView
@@ -178,7 +180,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                 showsVerticalScrollIndicator={false}
               >
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>First Name</Text>
+                  <Text style={styles.inputLabel}>{t('profile.editProfile.firstNameLabel')}</Text>
                   <View
                     style={[
                       styles.inputContainer,
@@ -189,7 +191,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                       style={styles.textInput}
                       value={firstName}
                       onChangeText={handleFirstNameChange}
-                      placeholder='Enter your first name'
+                      placeholder={t('profile.editProfile.firstNamePlaceholder')}
                       placeholderTextColor='#94a3b8'
                       autoCapitalize='words'
                       autoCorrect={false}
@@ -220,7 +222,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                   style={styles.cancelButton}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -236,11 +238,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose, o
                     style={styles.saveButtonGradient}
                   >
                     {isSaving ? (
-                      <Text style={styles.saveButtonText}>Saving...</Text>
+                      <Text style={styles.saveButtonText}>{t('common.saving')}</Text>
                     ) : (
                       <>
                         <Check size={18} color='white' />
-                        <Text style={styles.saveButtonText}>Save</Text>
+                        <Text style={styles.saveButtonText}>{t('common.save')}</Text>
                       </>
                     )}
                   </LinearGradient>

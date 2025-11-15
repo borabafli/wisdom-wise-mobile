@@ -404,8 +404,12 @@ export const MoodInsightsCard: React.FC<MoodInsightsCardProps> = ({
   // Sync FlatList with currentPatternIndex
   useEffect(() => {
     if (displayPatterns.length > 0 && flatListRef.current) {
+      // Ensure currentPatternIndex is within bounds
+      const validIndex = Math.min(currentPatternIndex, displayPatterns.length - 1);
+      const safeIndex = Math.max(0, validIndex);
+
       flatListRef.current.scrollToIndex({
-        index: currentPatternIndex,
+        index: safeIndex,
         animated: true,
       });
     }

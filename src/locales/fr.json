@@ -872,6 +872,23 @@
           "instruction": "Aidez l'utilisateur à créer une pensée plus réaliste et bienveillante. Demandez-lui de considérer : Quelles preuves soutiennent ou remettent en question la pensée originale ? Que diraient-ils à un ami dans cette situation ? Y a-t-il une façon plus équilibrée de voir cela ? Encouragez-le à écrire une déclaration recadrée. Restez jusqu'à ce qu'il la fournisse."
         }
       },
+      "breathing": {
+        "step1": {
+          "title": "Installez-vous confortablement",
+          "description": "Trouvez un endroit calme et installez-vous.",
+          "instruction": "Invitez l'utilisateur à s'asseoir confortablement et à fermer les yeux s'il le souhaite."
+        },
+        "step2": {
+          "title": "Commencez le rythme",
+          "description": "Commencez le schéma de respiration 4-7-8.",
+          "instruction": "Guidez-les : Inspirez par le nez pendant 4 temps, retenez pendant 7, expirez lentement par la bouche pendant 8."
+        },
+        "step3": {
+          "title": "Continuez et observez",
+          "description": "Complétez quelques cycles et remarquez comment vous vous sentez.",
+          "instruction": "Encouragez-les à répéter le schéma 3 à 4 fois, en remarquant les changements dans leur corps ou leur esprit."
+        }
+      },
       "goalSetting": {
         "step1": {
           "title": "Choisissez un objectif",

@@ -320,6 +320,7 @@
     "actions": {
       "reflectOnStrengths": "Reflect on Strengths",
       "spendTimeWithEmotions": "Spend Time with Emotions",
+      "reflectOnThis": "Reflect on This",
       "generateData": "Generate Data",
       "refresh": "Refresh"
     },
@@ -330,6 +331,7 @@
       "deeperInsightReflection": "I've noticed an important pattern emerging from our conversations about {{category}}:\n\n\"{{content}}\"\n\nThis is a meaningful insight about you. I'd love to explore this further with you. What resonates with you about this pattern? How does it show up in your daily life, and what would you like to understand more deeply about it?"
     },
     "moodInsights": {
+      "analyzingPatterns": "Analyzing your patterns...",
       "distortedThought": "Distorted Thought",
       "balancedThought": "Balanced Thought",
       "reflectOnThis": "Reflect on This",
@@ -376,7 +378,29 @@
         "greatJobTracking": "Great job tracking your mood! 📈",
         "niceProgress": "Nice progress with Anu! 💬",
         "keepBuilding": "Keep building your insights! ⭐",
-        "checkingData": "Checking your data... ✨"
+        "checkingData": "Checking your data... ✨",
+        "noData": {
+          "title": "Start your wellness journey! ✨",
+          "description": "Chat with Anu or track your mood after exercises to see personalized insights here",
+          "chatButton": "Chat with Anu",
+          "exerciseButton": "Try Exercise"
+        },
+        "moodOnly": {
+          "title": "Great job tracking your mood! 📈",
+          "description": "Nice to see you tracking your mood regularly! Chat with Anu to unlock deeper insights."
+        },
+        "sessionsOnly": {
+          "title": "Nice progress with Anu! 💬",
+          "description": "You've had {{count}} session with Anu. Track your mood after exercises to unlock deeper insights!",
+          "exerciseButton": "Try Mood Exercise"
+        },
+        "bothData": {
+          "title": "Keep building your insights! ⭐",
+          "description": "Your patterns are emerging. Keep up the great work!"
+        },
+        "fallback": {
+          "title": "Checking your data... ✨"
+        }
       },
       "thoughtPatterns": {
         "emptyStateTitle": "Try the Automatic Thoughts Exercise",
@@ -569,6 +593,73 @@
       "partialSuccessTitle": "Partial Deletion",
       "partialSuccessMessage": "Some data was deleted, but errors occurred:\n\n{{errors}}",
       "errorMessage": "Failed to delete data. Please try again."
+    },
+    "devMenu": {
+      "title": "🧪 Developer Tools",
+      "subtitle": "Testing utilities (DEV only)",
+      "close": "Close",
+      "sections": {
+        "subscription": "Subscription Testing",
+        "usage": "Usage Testing",
+        "dangerZone": "⚠️ Danger Zone"
+      },
+      "actions": {
+        "resetToFree": "Reset to Free Tier",
+        "resetToFreeDesc": "Clear RevenueCat purchases and reset to free plan",
+        "showDebug": "Show Debug Info",
+        "showDebugDesc": "Print subscription status and usage to console",
+        "resetUsage": "Reset Daily Usage",
+        "resetUsageDesc": "Reset message, voice, and exercise counters",
+        "checkLimit": "Check Message Limit",
+        "checkLimitDesc": "Test if user can send messages",
+        "clearStorage": "Clear All Storage",
+        "clearStorageDesc": "Delete all app data (DESTRUCTIVE)"
+      },
+      "alerts": {
+        "resetComplete": "Reset Complete",
+        "resetCompleteMsg": "Subscription reset to free tier. Force quit and relaunch the app to see changes.",
+        "debugInfo": "Debug Info",
+        "debugInfoMsg": "Tier: {{tier}}\nPremium: {{premium}}\nMessages: {{messages}}/{{limit}}\nCheck console for full details",
+        "usageReset": "Usage Reset",
+        "usageResetMsg": "Daily usage counters reset to 0. You can now test hitting the daily limits.",
+        "messageLimitCheck": "Message Limit Check",
+        "messageLimitCheckMsg": "Can send: {{canSend}}\nCurrent: {{current}}/{{limit}}\nTier: {{tier}}{{reason}}",
+        "clearAllData": "⚠️ Clear All Data?",
+        "clearAllDataMsg": "This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.\n\nAre you sure?",
+        "clearAllDataBtn": "Clear All Data",
+        "allDataCleared": "All Data Cleared",
+        "allDataClearedMsg": "Force quit and relaunch the app.",
+        "error": "Error"
+      },
+      "infoMessage": "💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects."
+    },
+    "editProfile": {
+      "title": "Edit Profile",
+      "subtitle": "Refresh how Anu greets you across the app.",
+      "descriptionAnon": "Customize your friendly alias so Anu can keep supporting you with a personal touch.",
+      "descriptionUser": "Keep your details current so guidance, insights, and reminders feel tailored to you.",
+      "firstNameLabel": "First Name",
+      "firstNamePlaceholder": "Enter your first name",
+      "validation": {
+        "required": "First name is required",
+        "maxLength": "First name must be 50 characters or less",
+        "invalidCharacters": "Only letters, spaces, hyphens, and apostrophes are allowed"
+      },
+      "success": {
+        "title": "Profile Updated",
+        "message": "Your profile has been updated successfully! Anu will now address you as {{name}}.",
+        "button": "Great!"
+      },
+      "error": {
+        "title": "Error",
+        "message": "Failed to update profile. Please try again."
+      },
+      "unsavedChanges": {
+        "title": "Discard Changes?",
+        "message": "You have unsaved changes. Are you sure you want to close without saving?",
+        "keep": "Keep Editing",
+        "discard": "Discard"
+      }
     }
   },
   "featureRequest": {
@@ -970,6 +1061,23 @@
           "title": "Reframe the thought",
           "description": "How could you see this in a more balanced way?",
           "instruction": "Support the user to create a more realistic and kind thought. Ask them to consider: What evidence supports or challenges the original thought? What would they say to a friend in this situation? Is there a more balanced way of looking at it? Encourage them to write one reframed statement. Stay until they provide it."
+        }
+      },
+      "breathing": {
+        "step1": {
+          "title": "Get Comfortable",
+          "description": "Find a quiet space and settle in.",
+          "instruction": "Invite the user to sit comfortably and close their eyes if they wish."
+        },
+        "step2": {
+          "title": "Begin the Rhythm",
+          "description": "Start the 4-7-8 breathing pattern.",
+          "instruction": "Guide them: Breathe in through your nose for 4 counts, hold for 7, exhale slowly through your mouth for 8."
+        },
+        "step3": {
+          "title": "Continue & Notice",
+          "description": "Complete a few cycles and notice how you feel.",
+          "instruction": "Encourage them to repeat the pattern 3-4 times, noticing any shifts in their body or mind."
         }
       },
       "personalMilestones": {

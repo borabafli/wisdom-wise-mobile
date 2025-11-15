@@ -937,6 +937,23 @@
           "instruction": "Unterstütze den Nutzer dabei, einen realistischeren und freundlicheren Gedanken zu schaffen. Bitte sie zu überlegen: Welche Beweise unterstützen oder widersprechen dem ursprünglichen Gedanken? Was würden sie einem Freund in dieser Situation sagen? Gibt es eine ausgewogenere Betrachtungsweise? Ermutige sie, eine umgeformte Aussage zu schreiben. Bleibe, bis sie eine liefern."
         }
       },
+      "breathing": {
+        "step1": {
+          "title": "Machen Sie es sich bequem",
+          "description": "Finden Sie einen ruhigen Ort und machen Sie es sich gemütlich.",
+          "instruction": "Laden Sie den Benutzer ein, sich bequem hinzusetzen und, wenn er möchte, die Augen zu schließen."
+        },
+        "step2": {
+          "title": "Beginnen Sie den Rhythmus",
+          "description": "Starten Sie das 4-7-8-Atemmuster.",
+          "instruction": "Führen Sie sie an: Atmen Sie 4 Sekunden lang durch die Nase ein, halten Sie 7 Sekunden lang an, atmen Sie 8 Sekunden lang langsam durch den Mund aus."
+        },
+        "step3": {
+          "title": "Fortsetzen und Wahrnehmen",
+          "description": "Führen Sie einige Zyklen durch und bemerken Sie, wie Sie sich fühlen.",
+          "instruction": "Ermutigen Sie sie, das Muster 3-4 Mal zu wiederholen und dabei Veränderungen in Körper oder Geist wahrzunehmen."
+        }
+      },
       "goalSetting": {
         "step1": {
           "title": "Wähle ein Ziel",

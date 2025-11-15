@@ -1,0 +1,2867 @@
+================================================================================
+TRANSLATION FILES COMPARISON REPORT
+================================================================================
+
+Total keys in en.json (master): 1190
+
+--------------------------------------------------------------------------------
+Language: DE
+--------------------------------------------------------------------------------
+Total keys present: 1057
+Completion: 88.82%
+Missing keys: 201
+Extra keys: 68
+
+📋 MISSING KEYS:
+  1. alerts.checkIn.message
+     EN value: "Thank you for sharing your progress!"
+  2. alerts.checkIn.title
+     EN value: "Check-in Complete"
+  3. alerts.clearAllHistory.clearAll
+     EN value: "Clear All"
+  4. alerts.clearAllHistory.message
+     EN value: "Are you sure you want to delete all saved conversations? This cannot be undone."
+  5. alerts.clearAllHistory.title
+     EN value: "Clear All History"
+  6. alerts.clearHistory.message
+     EN value: "Are you sure you want to clear all your chat history? This action cannot be undone."
+  7. alerts.clearHistory.title
+     EN value: "Clear All History"
+  8. alerts.clearHistoryError
+     EN value: "Failed to clear history. Please try again."
+  9. alerts.deleteSession.message
+     EN value: "Are you sure you want to delete this session?"
+  10. alerts.deleteSession.title
+     EN value: "Delete Session"
+  11. alerts.deleteSessionError
+     EN value: "Failed to delete session. Please try again."
+  12. alerts.goalStatus.message
+     EN value: "Goal marked as {{status}}!"
+  13. alerts.goalStatus.title
+     EN value: "Goal Status Updated"
+  14. alerts.progressSaved.message
+     EN value: "Your progress has been recorded."
+  15. alerts.progressSaved.title
+     EN value: "Great!"
+  16. alerts.promptsGenerated.message
+     EN value: "Generated {{count}} new writing prompts using your existing insights. Check the Journal tab to see all prompts in the "Writing Prompts" section."
+  17. alerts.promptsGenerated.title
+     EN value: "Prompts Generated!"
+  18. alerts.resetProgress.message
+     EN value: "This will reset all your progress. This action cannot be undone."
+  19. alerts.resetProgress.title
+     EN value: "Reset Progress"
+  20. alerts.signOut.message
+     EN value: "Are you sure you want to sign out?"
+  21. alerts.signOut.title
+     EN value: "Sign Out"
+  22. chat.moodRatingCard.howDoYouFeelNow
+     EN value: "How do you feel right now?"
+  23. chat.moodRatingCard.howHelpfulWasThis
+     EN value: "How helpful was this?"
+  24. chat.moodRatingCard.title
+     EN value: "Before we finish..."
+  25. exerciseLibrary.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful personal goals"
+  26. exerciseLibrary.descriptions.therapyGoals
+     EN value: "Identify what you want to work on in therapy"
+  27. exerciseLibrary.names.personalMilestones
+     EN value: "Personal Milestones"
+  28. exerciseLibrary.names.therapyGoals
+     EN value: "Therapy Goals"
+  29. exerciseLibrary.shortDescriptions.personalMilestones
+     EN value: "Turn aspirations into actionable steps."
+  30. exerciseLibrary.shortDescriptions.therapyGoals
+     EN value: "Define your therapeutic focus areas."
+  31. exerciseLibrary.steps.personalMilestones.step1.description
+     EN value: "What's one meaningful goal you want to achieve?"
+  32. exerciseLibrary.steps.personalMilestones.step1.instruction
+     EN value: "Invite the user to share one personal goal or milestone they want to work toward. Keep it specific and achievable. Examples: 'exercise 3x/week,' 'learn to cook healthy meals,' 'build a morning routine.' Stay on this step until they articulate one clear goal."
+  33. exerciseLibrary.steps.personalMilestones.step1.title
+     EN value: "Choose your milestone"
+  34. exerciseLibrary.steps.personalMilestones.step2.description
+     EN value: "Why does this goal matter to you?"
+  35. exerciseLibrary.steps.personalMilestones.step2.instruction
+     EN value: "Ask the user to reflect on why this milestone is important. Encourage them to connect it to their values, wellbeing, or what they want their life to look like. Help them articulate the deeper meaning—not just 'I should,' but 'I want to because...'"
+  36. exerciseLibrary.steps.personalMilestones.step2.title
+     EN value: "Connect to purpose"
+  37. exerciseLibrary.steps.personalMilestones.step3.description
+     EN value: "What's one small action you can take this week?"
+  38. exerciseLibrary.steps.personalMilestones.step3.instruction
+     EN value: "Guide the user to identify one specific, doable action they can take in the next few days toward this goal. Keep it simple and concrete—something they can actually do, not just think about. Examples: 'sign up for a class,' 'buy running shoes,' 'set a 10-minute morning alarm.' Acknowledge their commitment warmly."
+  39. exerciseLibrary.steps.personalMilestones.step3.title
+     EN value: "First step forward"
+  40. exerciseLibrary.steps.therapyGoals.step1.description
+     EN value: "What areas of your wellbeing would you like to work on?"
+  41. exerciseLibrary.steps.therapyGoals.step1.instruction
+     EN value: "Invite the user to share 1-3 areas they'd like to focus on in therapy. Offer gentle examples if needed: managing anxiety, improving relationships, building self-esteem, processing grief, reducing stress, understanding emotions, overcoming negative thinking. Encourage them to use their own words and be as specific as they're comfortable with. Stay until they identify at least one clear area."
+  42. exerciseLibrary.steps.therapyGoals.step1.title
+     EN value: "Identify your focus"
+  43. exerciseLibrary.steps.therapyGoals.step2.description
+     EN value: "What would feel different if you made progress in these areas?"
+  44. exerciseLibrary.steps.therapyGoals.step2.instruction
+     EN value: "Ask the user to envision what life might look like with positive changes in their focus areas. Encourage concrete, felt descriptions—not just 'feel better' but 'I'd wake up without dread,' 'I'd feel comfortable in social situations,' 'I'd trust my decisions more.' This helps clarify what they're working toward. Stay supportive and curious."
+  45. exerciseLibrary.steps.therapyGoals.step2.title
+     EN value: "Describe the change"
+  46. exerciseLibrary.steps.therapyGoals.step3.description
+     EN value: "Let's keep these goals as our foundation."
+  47. exerciseLibrary.steps.therapyGoals.step3.instruction
+     EN value: "Warmly acknowledge the user's clarity and courage. Summarize their therapy goals in 2-3 sentences, reflecting back what they shared. Then explain: 'I'll keep these goals in mind during our work together. In exercises like Reframe Thoughts or Values Clarity, we'll connect back to what matters most to you. Over time, we can track progress and adjust these together.' Finish with: 'Would you like to start working on one of these areas now, or save this as your roadmap for future sessions?'"
+  48. exerciseLibrary.steps.therapyGoals.step3.title
+     EN value: "Your therapeutic roadmap"
+  49. insights.actions.reflectOnThis
+     EN value: "Reflect on This"
+  50. insights.moodInsights.emptyState.encouragement
+     EN value: "Chat with Anu to see your mood patterns"
+  51. insights.moodInsights.emptyState.seeExample
+     EN value: "See Example"
+  52. insights.moodInsights.emptyState.startTracking
+     EN value: "Start Tracking"
+  53. insights.moodInsights.emptyState.trackProgress
+     EN value: "Your journey starts here"
+  54. insights.moodInsights.emptyStates.chatButton
+     EN value: "Chat with Anu"
+  55. insights.moodInsights.emptyStates.chatWithAnu
+     EN value: "Chat with Anu or track your mood after exercises to see personalized insights here"
+  56. insights.moodInsights.emptyStates.checkingData
+     EN value: "Checking your data... ✨"
+  57. insights.moodInsights.emptyStates.generateSample
+     EN value: "Generate Sample Data"
+  58. insights.moodInsights.emptyStates.greatJobTracking
+     EN value: "Great job tracking your mood! 📈"
+  59. insights.moodInsights.emptyStates.keepBuilding
+     EN value: "Keep building your insights! ⭐"
+  60. insights.moodInsights.emptyStates.niceProgress
+     EN value: "Nice progress with Anu! 💬"
+  61. insights.moodInsights.emptyStates.startJourney
+     EN value: "Start your wellness journey! ✨"
+  62. insights.moodInsights.emptyStates.tryExercise
+     EN value: "Try Exercise"
+  63. insights.moodInsights.noDataYet
+     EN value: "No mood data yet"
+  64. insights.priorityExercises.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful goals"
+  65. insights.priorityExercises.descriptions.therapyGoals
+     EN value: "Define what you want to work on"
+  66. insights.priorityExercises.names.personalMilestones
+     EN value: "Personal Milestones"
+  67. insights.priorityExercises.names.therapyGoals
+     EN value: "Therapy Goals"
+  68. insights.weeklyHighlights.subtitle
+     EN value: "Your progress this week"
+  69. insights.weeklyHighlights.title
+     EN value: "Weekly Highlights"
+  70. journal.discardWarning
+     EN value: "Your entry will be lost if you leave now."
+  71. journal.leaveAndDiscard
+     EN value: "Leave & Discard Entry"
+  72. journal.leaveJournaling
+     EN value: "Leave journaling?"
+  73. journal.stay
+     EN value: "Stay"
+  74. paywall.best_value
+     EN value: "Best Value"
+  75. paywall.cta_primary
+     EN value: "Start 3-Day Free Trial"
+  76. paywall.cta_secondary
+     EN value: "Continue with Free"
+  77. paywall.feature_locked.cta
+     EN value: "Upgrade to Premium"
+  78. paywall.feature_locked.exercise
+     EN value: "This exercise is available in premium. Upgrade to access the full library."
+  79. paywall.feature_locked.history
+     EN value: "Full chat history is available in premium. Upgrade to access all your past conversations."
+  80. paywall.feature_locked.insights
+     EN value: "Advanced insights are available in premium. Upgrade to unlock deeper analysis."
+  81. paywall.feature_locked.title
+     EN value: "Premium Feature"
+  82. paywall.features.deep_analysis
+     EN value: "Deep personality & thought pattern analysis"
+  83. paywall.features.distorted_thoughts
+     EN value: "Cognitive distortion detection from conversations"
+  84. paywall.features.full_exercises
+     EN value: "Full CBT exercise library"
+  85. paywall.features.personal_insights
+     EN value: "Personalized insights from your journey"
+  86. paywall.features.unlimited_conversations
+     EN value: "Unlimited conversations with Anu's memory"
+  87. paywall.features.unlimited_journaling
+     EN value: "Unlimited guided journaling"
+  88. paywall.features_title
+     EN value: "What You'll Unlock"
+  89. paywall.legal
+     EN value: "Cancel anytime. Subscription renews automatically after trial."
+  90. paywall.limit_reached.cta
+     EN value: "Unlock Premium"
+  91. paywall.limit_reached.dismiss
+     EN value: "Not Now"
+  92. paywall.limit_reached.exercises
+     EN value: "You've completed your daily exercise. Upgrade for unlimited exercises."
+  93. paywall.limit_reached.journal_prompts
+     EN value: "You've used your daily journal prompt. Upgrade for unlimited prompts."
+  94. paywall.limit_reached.messages
+     EN value: "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access."
+  95. paywall.limit_reached.messages_weekly
+     EN value: "You've used all {{limit}} messages for this week. Your limit resets next Monday."
+  96. paywall.limit_reached.reset_info
+     EN value: "Your free limit resets tomorrow"
+  97. paywall.limit_reached.reset_info_premium_weekly
+     EN value: "Your premium weekly limit resets next Monday"
+  98. paywall.limit_reached.reset_info_weekly
+     EN value: "Your limit resets next Monday"
+  99. paywall.limit_reached.subtitle
+     EN value: "Upgrade to continue your journey without limits"
+  100. paywall.limit_reached.title
+     EN value: "You've reached your daily limit"
+  101. paywall.limit_reached.title_weekly
+     EN value: "You've reached your weekly limit"
+  102. paywall.limit_reached.voice
+     EN value: "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access."
+  103. paywall.loading
+     EN value: "Loading subscription options..."
+  104. paywall.monthly_equivalent
+     EN value: "Only {{price}}/month"
+  105. paywall.per_period
+     EN value: "per {{period}}"
+  106. paywall.period.month
+     EN value: "month"
+  107. paywall.period.year
+     EN value: "year"
+  108. paywall.plan.annual
+     EN value: "Annual"
+  109. paywall.plan.monthly
+     EN value: "Monthly"
+  110. paywall.processing
+     EN value: "Processing your purchase..."
+  111. paywall.save_percent
+     EN value: "Save {{percent}}%"
+  112. paywall.subscription_management.current_plan
+     EN value: "Current Plan"
+  113. paywall.subscription_management.expired_on
+     EN value: "Expired on {{date}}"
+  114. paywall.subscription_management.expires_on
+     EN value: "Renews on {{date}}"
+  115. paywall.subscription_management.free_plan
+     EN value: "Free Plan"
+  116. paywall.subscription_management.manage
+     EN value: "Manage Subscription"
+  117. paywall.subscription_management.premium_plan
+     EN value: "Premium Plan"
+  118. paywall.subscription_management.restore
+     EN value: "Restore Purchases"
+  119. paywall.subscription_management.restoring
+     EN value: "Restoring..."
+  120. paywall.subscription_management.title
+     EN value: "Subscription"
+  121. paywall.subscription_management.trial_active
+     EN value: "Trial Active"
+  122. paywall.subscription_management.upgrade
+     EN value: "Upgrade to Premium"
+  123. paywall.subtitle
+     EN value: "Start with a 3-day free trial"
+  124. paywall.title
+     EN value: "Begin Your Healing Journey"
+  125. paywall.trial_days
+     EN value: "{{days}}-day free trial"
+  126. premium_limit.benefit_exercises
+     EN value: "Unlimited guided exercises"
+  127. premium_limit.benefit_history
+     EN value: "Full conversation history"
+  128. premium_limit.benefit_insights
+     EN value: "Advanced insights & analytics"
+  129. premium_limit.benefit_voice
+     EN value: "Extended voice journaling"
+  130. premium_limit.benefits_title
+     EN value: "Your Premium Benefits Continue:"
+  131. premium_limit.cta
+     EN value: "Got It"
+  132. premium_limit.default_reset
+     EN value: "next Monday"
+  133. premium_limit.explanation
+     EN value: "As a premium member, you have access to 2,000 messages per week. This limit helps us maintain quality service for all our premium users."
+  134. premium_limit.messages_used
+     EN value: "Messages Used"
+  135. premium_limit.resets_on
+     EN value: "Resets on {{date}}"
+  136. premium_limit.subtitle
+     EN value: "You've used all your messages for this week. Your limit will reset next Monday."
+  137. premium_limit.support_text
+     EN value: "Need help? Contact our support team"
+  138. premium_limit.title
+     EN value: "Weekly Limit Reached"
+  139. premium_limit.weekly_limit
+     EN value: "Weekly Limit"
+  140. profile.deleteData.confirmMessage
+     EN value: "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone."
+  141. profile.deleteData.confirmTitle
+     EN value: "Are You Sure?"
+  142. profile.deleteData.continue
+     EN value: "Continue"
+  143. profile.deleteData.deleteButton
+     EN value: "Delete Everything"
+  144. profile.deleteData.deleting
+     EN value: "Deleting Data"
+  145. profile.deleteData.errorMessage
+     EN value: "Failed to delete data. Please try again."
+  146. profile.deleteData.partialSuccessMessage
+     EN value: "Some data was deleted, but errors occurred:
+
+{{errors}}"
+  147. profile.deleteData.partialSuccessTitle
+     EN value: "Partial Deletion"
+  148. profile.deleteData.pleaseWait
+     EN value: "Please wait while we delete your data..."
+  149. profile.deleteData.successMessage
+     EN value: "Successfully deleted:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+
+Total: {{total}} items removed"
+  150. profile.deleteData.successTitle
+     EN value: "Data Deleted"
+  151. profile.deleteData.summaryMessage
+     EN value: "You're about to delete all your data:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+• {{goals}} goals
+• {{values}} values
+
+Total: {{total}} items
+
+This action cannot be undone."
+  152. profile.deleteData.title
+     EN value: "Delete My Data"
+  153. profile.devMenu.actions.checkLimit
+     EN value: "Check Message Limit"
+  154. profile.devMenu.actions.checkLimitDesc
+     EN value: "Test if user can send messages"
+  155. profile.devMenu.actions.clearStorage
+     EN value: "Clear All Storage"
+  156. profile.devMenu.actions.clearStorageDesc
+     EN value: "Delete all app data (DESTRUCTIVE)"
+  157. profile.devMenu.actions.resetToFree
+     EN value: "Reset to Free Tier"
+  158. profile.devMenu.actions.resetToFreeDesc
+     EN value: "Clear RevenueCat purchases and reset to free plan"
+  159. profile.devMenu.actions.resetUsage
+     EN value: "Reset Daily Usage"
+  160. profile.devMenu.actions.resetUsageDesc
+     EN value: "Reset message, voice, and exercise counters"
+  161. profile.devMenu.actions.showDebug
+     EN value: "Show Debug Info"
+  162. profile.devMenu.actions.showDebugDesc
+     EN value: "Print subscription status and usage to console"
+  163. profile.devMenu.alerts.allDataCleared
+     EN value: "All Data Cleared"
+  164. profile.devMenu.alerts.allDataClearedMsg
+     EN value: "Force quit and relaunch the app."
+  165. profile.devMenu.alerts.clearAllData
+     EN value: "⚠️ Clear All Data?"
+  166. profile.devMenu.alerts.clearAllDataBtn
+     EN value: "Clear All Data"
+  167. profile.devMenu.alerts.clearAllDataMsg
+     EN value: "This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.
+
+Are you sure?"
+  168. profile.devMenu.alerts.debugInfo
+     EN value: "Debug Info"
+  169. profile.devMenu.alerts.debugInfoMsg
+     EN value: "Tier: {{tier}}
+Premium: {{premium}}
+Messages: {{messages}}/{{limit}}
+Check console for full details"
+  170. profile.devMenu.alerts.error
+     EN value: "Error"
+  171. profile.devMenu.alerts.messageLimitCheck
+     EN value: "Message Limit Check"
+  172. profile.devMenu.alerts.messageLimitCheckMsg
+     EN value: "Can send: {{canSend}}
+Current: {{current}}/{{limit}}
+Tier: {{tier}}{{reason}}"
+  173. profile.devMenu.alerts.resetComplete
+     EN value: "Reset Complete"
+  174. profile.devMenu.alerts.resetCompleteMsg
+     EN value: "Subscription reset to free tier. Force quit and relaunch the app to see changes."
+  175. profile.devMenu.alerts.usageReset
+     EN value: "Usage Reset"
+  176. profile.devMenu.alerts.usageResetMsg
+     EN value: "Daily usage counters reset to 0. You can now test hitting the daily limits."
+  177. profile.devMenu.close
+     EN value: "Close"
+  178. profile.devMenu.infoMessage
+     EN value: "💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects."
+  179. profile.devMenu.sections.dangerZone
+     EN value: "⚠️ Danger Zone"
+  180. profile.devMenu.sections.subscription
+     EN value: "Subscription Testing"
+  181. profile.devMenu.sections.usage
+     EN value: "Usage Testing"
+  182. profile.devMenu.subtitle
+     EN value: "Testing utilities (DEV only)"
+  183. profile.devMenu.title
+     EN value: "🧪 Developer Tools"
+  184. profile.editProfile.descriptionAnon
+     EN value: "Customize your friendly alias so Anu can keep supporting you with a personal touch."
+  185. profile.editProfile.descriptionUser
+     EN value: "Keep your details current so guidance, insights, and reminders feel tailored to you."
+  186. profile.editProfile.error.message
+     EN value: "Failed to update profile. Please try again."
+  187. profile.editProfile.error.title
+     EN value: "Error"
+  188. profile.editProfile.firstNameLabel
+     EN value: "First Name"
+  189. profile.editProfile.firstNamePlaceholder
+     EN value: "Enter your first name"
+  190. profile.editProfile.subtitle
+     EN value: "Refresh how Anu greets you across the app."
+  191. profile.editProfile.success.button
+     EN value: "Great!"
+  192. profile.editProfile.success.message
+     EN value: "Your profile has been updated successfully! Anu will now address you as {{name}}."
+  193. profile.editProfile.success.title
+     EN value: "Profile Updated"
+  194. profile.editProfile.title
+     EN value: "Edit Profile"
+  195. profile.editProfile.unsavedChanges.discard
+     EN value: "Discard"
+  196. profile.editProfile.unsavedChanges.keep
+     EN value: "Keep Editing"
+  197. profile.editProfile.unsavedChanges.message
+     EN value: "You have unsaved changes. Are you sure you want to close without saving?"
+  198. profile.editProfile.unsavedChanges.title
+     EN value: "Discard Changes?"
+  199. profile.editProfile.validation.invalidCharacters
+     EN value: "Only letters, spaces, hyphens, and apostrophes are allowed"
+  200. profile.editProfile.validation.maxLength
+     EN value: "First name must be 50 characters or less"
+  201. profile.editProfile.validation.required
+     EN value: "First name is required"
+
+➕ EXTRA KEYS (not in en.json):
+  1. insights.moodInsights.moreBalanced
+  2. insights.moodInsights.analyzingPatterns
+  3. insights.moodInsights.emptyStates.noData.title
+  4. insights.moodInsights.emptyStates.noData.description
+  5. insights.moodInsights.emptyStates.noData.chatButton
+  6. insights.moodInsights.emptyStates.noData.exerciseButton
+  7. insights.moodInsights.emptyStates.noData.sampleButton
+  8. insights.moodInsights.emptyStates.moodOnly.title
+  9. insights.moodInsights.emptyStates.moodOnly.description
+  10. insights.moodInsights.emptyStates.sessionsOnly.title
+  11. insights.moodInsights.emptyStates.sessionsOnly.description
+  12. insights.moodInsights.emptyStates.sessionsOnly.exerciseButton
+  13. insights.moodInsights.emptyStates.bothData.title
+  14. insights.moodInsights.emptyStates.bothData.description
+  15. insights.moodInsights.emptyStates.fallback.title
+  16. profile.editProfile
+  17. profile.alerts.signOut.title
+  18. profile.alerts.signOut.message
+  19. profile.alerts.deleteSession.title
+  20. profile.alerts.deleteSession.message
+  21. profile.alerts.resetProgress.title
+  22. profile.alerts.resetProgress.message
+  23. profile.alerts.promptsGenerated.title
+  24. profile.alerts.promptsGenerated.message
+  25. profile.alerts.clearHistory.title
+  26. profile.alerts.clearHistory.message
+  27. profile.alerts.goalStatus.title
+  28. profile.alerts.goalStatus.message
+  29. profile.alerts.progressSaved.title
+  30. profile.alerts.progressSaved.message
+  31. profile.alerts.checkIn.title
+  32. profile.alerts.checkIn.message
+  33. exerciseLibrary.names.goalSetting
+  34. exerciseLibrary.descriptions.goalSetting
+  35. exerciseLibrary.shortDescriptions.goalSetting
+  36. exerciseLibrary.steps.goalSetting.step1.title
+  37. exerciseLibrary.steps.goalSetting.step1.description
+  38. exerciseLibrary.steps.goalSetting.step1.instruction
+  39. exerciseLibrary.steps.goalSetting.step2.title
+  40. exerciseLibrary.steps.goalSetting.step2.description
+  41. exerciseLibrary.steps.goalSetting.step2.instruction
+  42. exerciseLibrary.steps.goalSetting.step3.title
+  43. exerciseLibrary.steps.goalSetting.step3.description
+  44. exerciseLibrary.steps.goalSetting.step3.instruction
+  45. exerciseLibrary.steps.goalSetting.step4.title
+  46. exerciseLibrary.steps.goalSetting.step4.description
+  47. exerciseLibrary.steps.goalSetting.step4.instruction
+  48. exerciseLibrary.steps.goalSetting.step5.title
+  49. exerciseLibrary.steps.goalSetting.step5.description
+  50. exerciseLibrary.steps.goalSetting.step5.instruction
+  51. exerciseLibrary.steps.goalSetting.step6.title
+  52. exerciseLibrary.steps.goalSetting.step6.description
+  53. exerciseLibrary.steps.goalSetting.step6.instruction
+  54. exerciseLibrary.steps.therapyGoalDefinition.step1.title
+  55. exerciseLibrary.steps.therapyGoalDefinition.step1.description
+  56. exerciseLibrary.steps.therapyGoalDefinition.step1.instruction
+  57. exerciseLibrary.steps.therapyGoalDefinition.step2.title
+  58. exerciseLibrary.steps.therapyGoalDefinition.step2.description
+  59. exerciseLibrary.steps.therapyGoalDefinition.step2.instruction
+  60. exerciseLibrary.steps.therapyGoalDefinition.step3.title
+  61. exerciseLibrary.steps.therapyGoalDefinition.step3.description
+  62. exerciseLibrary.steps.therapyGoalDefinition.step3.instruction
+  63. exerciseLibrary.steps.therapyGoalDefinition.step4.title
+  64. exerciseLibrary.steps.therapyGoalDefinition.step4.description
+  65. exerciseLibrary.steps.therapyGoalDefinition.step4.instruction
+  66. exerciseLibrary.steps.therapyGoalDefinition.step5.title
+  67. exerciseLibrary.steps.therapyGoalDefinition.step5.description
+  68. exerciseLibrary.steps.therapyGoalDefinition.step5.instruction
+
+--------------------------------------------------------------------------------
+Language: FR
+--------------------------------------------------------------------------------
+Total keys present: 1019
+Completion: 85.63%
+Missing keys: 226
+Extra keys: 55
+
+📋 MISSING KEYS:
+  1. alerts.clearAllHistory.clearAll
+     EN value: "Clear All"
+  2. alerts.clearAllHistory.message
+     EN value: "Are you sure you want to delete all saved conversations? This cannot be undone."
+  3. alerts.clearAllHistory.title
+     EN value: "Clear All History"
+  4. alerts.clearHistoryError
+     EN value: "Failed to clear history. Please try again."
+  5. alerts.deleteSessionError
+     EN value: "Failed to delete session. Please try again."
+  6. chat.moodRatingCard.howDoYouFeelNow
+     EN value: "How do you feel right now?"
+  7. chat.moodRatingCard.howHelpfulWasThis
+     EN value: "How helpful was this?"
+  8. chat.moodRatingCard.title
+     EN value: "Before we finish..."
+  9. errors.acceptPrivacyPolicy
+     EN value: "Please accept the privacy policy to continue"
+  10. errors.checkEmailFirst
+     EN value: "Please check your email and click the verification link first."
+  11. errors.emailSent
+     EN value: "Email Sent"
+  12. errors.enterEmail
+     EN value: "Please enter your email"
+  13. errors.enterFirstName
+     EN value: "Please enter your first name"
+  14. errors.enterLastName
+     EN value: "Please enter your last name"
+  15. errors.enterValidEmail
+     EN value: "Please enter a valid email address"
+  16. errors.failedToClearHistory
+     EN value: "Failed to clear history. Please try again."
+  17. errors.failedToDeleteSession
+     EN value: "Failed to delete session. Please try again."
+  18. errors.failedToLoadGoals
+     EN value: "Failed to load your goals. Please try again."
+  19. errors.failedToLoadSummaries
+     EN value: "Failed to load session summaries."
+  20. errors.failedToSaveCheckIn
+     EN value: "Failed to save check-in. Please try again."
+  21. errors.failedToSaveGoal
+     EN value: "Failed to save your goal. Please try again."
+  22. errors.failedToSaveSettings
+     EN value: "Failed to save settings"
+  23. errors.failedToUpdateGoal
+     EN value: "Failed to update goal. Please try again."
+  24. errors.failedToUpdateGoalStatus
+     EN value: "Failed to update goal status."
+  25. errors.failedToUpdateProfile
+     EN value: "Failed to update profile. Please try again."
+  26. errors.fillAllFields
+     EN value: "Please fill in all fields"
+  27. errors.goalUpdatedSuccess
+     EN value: "Goal updated successfully!"
+  28. errors.googleSignInFailed
+     EN value: "Google Sign In Failed"
+  29. errors.missingInformation
+     EN value: "Missing Information"
+  30. errors.notVerified
+     EN value: "Not Verified"
+  31. errors.passwordTooShort
+     EN value: "Password must be at least 6 characters long"
+  32. errors.passwordsNoMatch
+     EN value: "Passwords do not match"
+  33. errors.pleaseAddReflection
+     EN value: "Please add a brief reflection on your progress."
+  34. errors.pleaseEnterValidGoal
+     EN value: "Please enter a valid goal."
+  35. errors.pleaseRateProgress
+     EN value: "Please rate your progress before submitting."
+  36. errors.progressRecorded
+     EN value: "Your progress has been recorded."
+  37. errors.resendVerificationFailed
+     EN value: "Failed to resend verification email"
+  38. errors.signInFailed
+     EN value: "Sign In Failed"
+  39. errors.signUpFailed
+     EN value: "Sign Up Failed"
+  40. errors.verificationCheckFailed
+     EN value: "Unable to check verification status. Please try again."
+  41. errors.verificationEmailSent
+     EN value: "Verification email has been sent again. Please check your inbox."
+  42. exerciseLibrary.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful personal goals"
+  43. exerciseLibrary.descriptions.therapyGoals
+     EN value: "Identify what you want to work on in therapy"
+  44. exerciseLibrary.names.personalMilestones
+     EN value: "Personal Milestones"
+  45. exerciseLibrary.names.therapyGoals
+     EN value: "Therapy Goals"
+  46. exerciseLibrary.shortDescriptions.personalMilestones
+     EN value: "Turn aspirations into actionable steps."
+  47. exerciseLibrary.shortDescriptions.therapyGoals
+     EN value: "Define your therapeutic focus areas."
+  48. exerciseLibrary.steps.personalMilestones.step1.description
+     EN value: "What's one meaningful goal you want to achieve?"
+  49. exerciseLibrary.steps.personalMilestones.step1.instruction
+     EN value: "Invite the user to share one personal goal or milestone they want to work toward. Keep it specific and achievable. Examples: 'exercise 3x/week,' 'learn to cook healthy meals,' 'build a morning routine.' Stay on this step until they articulate one clear goal."
+  50. exerciseLibrary.steps.personalMilestones.step1.title
+     EN value: "Choose your milestone"
+  51. exerciseLibrary.steps.personalMilestones.step2.description
+     EN value: "Why does this goal matter to you?"
+  52. exerciseLibrary.steps.personalMilestones.step2.instruction
+     EN value: "Ask the user to reflect on why this milestone is important. Encourage them to connect it to their values, wellbeing, or what they want their life to look like. Help them articulate the deeper meaning—not just 'I should,' but 'I want to because...'"
+  53. exerciseLibrary.steps.personalMilestones.step2.title
+     EN value: "Connect to purpose"
+  54. exerciseLibrary.steps.personalMilestones.step3.description
+     EN value: "What's one small action you can take this week?"
+  55. exerciseLibrary.steps.personalMilestones.step3.instruction
+     EN value: "Guide the user to identify one specific, doable action they can take in the next few days toward this goal. Keep it simple and concrete—something they can actually do, not just think about. Examples: 'sign up for a class,' 'buy running shoes,' 'set a 10-minute morning alarm.' Acknowledge their commitment warmly."
+  56. exerciseLibrary.steps.personalMilestones.step3.title
+     EN value: "First step forward"
+  57. exerciseLibrary.steps.therapyGoals.step1.description
+     EN value: "What areas of your wellbeing would you like to work on?"
+  58. exerciseLibrary.steps.therapyGoals.step1.instruction
+     EN value: "Invite the user to share 1-3 areas they'd like to focus on in therapy. Offer gentle examples if needed: managing anxiety, improving relationships, building self-esteem, processing grief, reducing stress, understanding emotions, overcoming negative thinking. Encourage them to use their own words and be as specific as they're comfortable with. Stay until they identify at least one clear area."
+  59. exerciseLibrary.steps.therapyGoals.step1.title
+     EN value: "Identify your focus"
+  60. exerciseLibrary.steps.therapyGoals.step2.description
+     EN value: "What would feel different if you made progress in these areas?"
+  61. exerciseLibrary.steps.therapyGoals.step2.instruction
+     EN value: "Ask the user to envision what life might look like with positive changes in their focus areas. Encourage concrete, felt descriptions—not just 'feel better' but 'I'd wake up without dread,' 'I'd feel comfortable in social situations,' 'I'd trust my decisions more.' This helps clarify what they're working toward. Stay supportive and curious."
+  62. exerciseLibrary.steps.therapyGoals.step2.title
+     EN value: "Describe the change"
+  63. exerciseLibrary.steps.therapyGoals.step3.description
+     EN value: "Let's keep these goals as our foundation."
+  64. exerciseLibrary.steps.therapyGoals.step3.instruction
+     EN value: "Warmly acknowledge the user's clarity and courage. Summarize their therapy goals in 2-3 sentences, reflecting back what they shared. Then explain: 'I'll keep these goals in mind during our work together. In exercises like Reframe Thoughts or Values Clarity, we'll connect back to what matters most to you. Over time, we can track progress and adjust these together.' Finish with: 'Would you like to start working on one of these areas now, or save this as your roadmap for future sessions?'"
+  65. exerciseLibrary.steps.therapyGoals.step3.title
+     EN value: "Your therapeutic roadmap"
+  66. insights.actions.reflectOnThis
+     EN value: "Reflect on This"
+  67. insights.moodInsights.emptyState.encouragement
+     EN value: "Chat with Anu to see your mood patterns"
+  68. insights.moodInsights.emptyState.seeExample
+     EN value: "See Example"
+  69. insights.moodInsights.emptyState.startTracking
+     EN value: "Start Tracking"
+  70. insights.moodInsights.emptyState.trackProgress
+     EN value: "Your journey starts here"
+  71. insights.moodInsights.emptyStates.chatButton
+     EN value: "Chat with Anu"
+  72. insights.moodInsights.emptyStates.chatWithAnu
+     EN value: "Chat with Anu or track your mood after exercises to see personalized insights here"
+  73. insights.moodInsights.emptyStates.checkingData
+     EN value: "Checking your data... ✨"
+  74. insights.moodInsights.emptyStates.generateSample
+     EN value: "Generate Sample Data"
+  75. insights.moodInsights.emptyStates.greatJobTracking
+     EN value: "Great job tracking your mood! 📈"
+  76. insights.moodInsights.emptyStates.keepBuilding
+     EN value: "Keep building your insights! ⭐"
+  77. insights.moodInsights.emptyStates.niceProgress
+     EN value: "Nice progress with Anu! 💬"
+  78. insights.moodInsights.emptyStates.startJourney
+     EN value: "Start your wellness journey! ✨"
+  79. insights.moodInsights.emptyStates.tryExercise
+     EN value: "Try Exercise"
+  80. insights.moodInsights.noDataYet
+     EN value: "No mood data yet"
+  81. insights.priorityExercises.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful goals"
+  82. insights.priorityExercises.descriptions.therapyGoals
+     EN value: "Define what you want to work on"
+  83. insights.priorityExercises.names.personalMilestones
+     EN value: "Personal Milestones"
+  84. insights.priorityExercises.names.therapyGoals
+     EN value: "Therapy Goals"
+  85. insights.weeklyHighlights.subtitle
+     EN value: "Your progress this week"
+  86. insights.weeklyHighlights.title
+     EN value: "Weekly Highlights"
+  87. journal.discardWarning
+     EN value: "Your entry will be lost if you leave now."
+  88. journal.leaveAndDiscard
+     EN value: "Leave & Discard Entry"
+  89. journal.leaveJournaling
+     EN value: "Leave journaling?"
+  90. journal.stay
+     EN value: "Stay"
+  91. paywall.best_value
+     EN value: "Best Value"
+  92. paywall.cta_primary
+     EN value: "Start 3-Day Free Trial"
+  93. paywall.cta_secondary
+     EN value: "Continue with Free"
+  94. paywall.feature_locked.cta
+     EN value: "Upgrade to Premium"
+  95. paywall.feature_locked.exercise
+     EN value: "This exercise is available in premium. Upgrade to access the full library."
+  96. paywall.feature_locked.history
+     EN value: "Full chat history is available in premium. Upgrade to access all your past conversations."
+  97. paywall.feature_locked.insights
+     EN value: "Advanced insights are available in premium. Upgrade to unlock deeper analysis."
+  98. paywall.feature_locked.title
+     EN value: "Premium Feature"
+  99. paywall.features.deep_analysis
+     EN value: "Deep personality & thought pattern analysis"
+  100. paywall.features.distorted_thoughts
+     EN value: "Cognitive distortion detection from conversations"
+  101. paywall.features.full_exercises
+     EN value: "Full CBT exercise library"
+  102. paywall.features.personal_insights
+     EN value: "Personalized insights from your journey"
+  103. paywall.features.unlimited_conversations
+     EN value: "Unlimited conversations with Anu's memory"
+  104. paywall.features.unlimited_journaling
+     EN value: "Unlimited guided journaling"
+  105. paywall.features_title
+     EN value: "What You'll Unlock"
+  106. paywall.legal
+     EN value: "Cancel anytime. Subscription renews automatically after trial."
+  107. paywall.limit_reached.cta
+     EN value: "Unlock Premium"
+  108. paywall.limit_reached.dismiss
+     EN value: "Not Now"
+  109. paywall.limit_reached.exercises
+     EN value: "You've completed your daily exercise. Upgrade for unlimited exercises."
+  110. paywall.limit_reached.journal_prompts
+     EN value: "You've used your daily journal prompt. Upgrade for unlimited prompts."
+  111. paywall.limit_reached.messages
+     EN value: "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access."
+  112. paywall.limit_reached.messages_weekly
+     EN value: "You've used all {{limit}} messages for this week. Your limit resets next Monday."
+  113. paywall.limit_reached.reset_info
+     EN value: "Your free limit resets tomorrow"
+  114. paywall.limit_reached.reset_info_premium_weekly
+     EN value: "Your premium weekly limit resets next Monday"
+  115. paywall.limit_reached.reset_info_weekly
+     EN value: "Your limit resets next Monday"
+  116. paywall.limit_reached.subtitle
+     EN value: "Upgrade to continue your journey without limits"
+  117. paywall.limit_reached.title
+     EN value: "You've reached your daily limit"
+  118. paywall.limit_reached.title_weekly
+     EN value: "You've reached your weekly limit"
+  119. paywall.limit_reached.voice
+     EN value: "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access."
+  120. paywall.loading
+     EN value: "Loading subscription options..."
+  121. paywall.monthly_equivalent
+     EN value: "Only {{price}}/month"
+  122. paywall.per_period
+     EN value: "per {{period}}"
+  123. paywall.period.month
+     EN value: "month"
+  124. paywall.period.year
+     EN value: "year"
+  125. paywall.plan.annual
+     EN value: "Annual"
+  126. paywall.plan.monthly
+     EN value: "Monthly"
+  127. paywall.processing
+     EN value: "Processing your purchase..."
+  128. paywall.save_percent
+     EN value: "Save {{percent}}%"
+  129. paywall.subscription_management.current_plan
+     EN value: "Current Plan"
+  130. paywall.subscription_management.expired_on
+     EN value: "Expired on {{date}}"
+  131. paywall.subscription_management.expires_on
+     EN value: "Renews on {{date}}"
+  132. paywall.subscription_management.free_plan
+     EN value: "Free Plan"
+  133. paywall.subscription_management.manage
+     EN value: "Manage Subscription"
+  134. paywall.subscription_management.premium_plan
+     EN value: "Premium Plan"
+  135. paywall.subscription_management.restore
+     EN value: "Restore Purchases"
+  136. paywall.subscription_management.restoring
+     EN value: "Restoring..."
+  137. paywall.subscription_management.title
+     EN value: "Subscription"
+  138. paywall.subscription_management.trial_active
+     EN value: "Trial Active"
+  139. paywall.subscription_management.upgrade
+     EN value: "Upgrade to Premium"
+  140. paywall.subtitle
+     EN value: "Start with a 3-day free trial"
+  141. paywall.title
+     EN value: "Begin Your Healing Journey"
+  142. paywall.trial_days
+     EN value: "{{days}}-day free trial"
+  143. premium_limit.benefit_exercises
+     EN value: "Unlimited guided exercises"
+  144. premium_limit.benefit_history
+     EN value: "Full conversation history"
+  145. premium_limit.benefit_insights
+     EN value: "Advanced insights & analytics"
+  146. premium_limit.benefit_voice
+     EN value: "Extended voice journaling"
+  147. premium_limit.benefits_title
+     EN value: "Your Premium Benefits Continue:"
+  148. premium_limit.cta
+     EN value: "Got It"
+  149. premium_limit.default_reset
+     EN value: "next Monday"
+  150. premium_limit.explanation
+     EN value: "As a premium member, you have access to 2,000 messages per week. This limit helps us maintain quality service for all our premium users."
+  151. premium_limit.messages_used
+     EN value: "Messages Used"
+  152. premium_limit.resets_on
+     EN value: "Resets on {{date}}"
+  153. premium_limit.subtitle
+     EN value: "You've used all your messages for this week. Your limit will reset next Monday."
+  154. premium_limit.support_text
+     EN value: "Need help? Contact our support team"
+  155. premium_limit.title
+     EN value: "Weekly Limit Reached"
+  156. premium_limit.weekly_limit
+     EN value: "Weekly Limit"
+  157. profile.deleteData.confirmMessage
+     EN value: "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone."
+  158. profile.deleteData.confirmTitle
+     EN value: "Are You Sure?"
+  159. profile.deleteData.continue
+     EN value: "Continue"
+  160. profile.deleteData.deleteButton
+     EN value: "Delete Everything"
+  161. profile.deleteData.deleting
+     EN value: "Deleting Data"
+  162. profile.deleteData.errorMessage
+     EN value: "Failed to delete data. Please try again."
+  163. profile.deleteData.partialSuccessMessage
+     EN value: "Some data was deleted, but errors occurred:
+
+{{errors}}"
+  164. profile.deleteData.partialSuccessTitle
+     EN value: "Partial Deletion"
+  165. profile.deleteData.pleaseWait
+     EN value: "Please wait while we delete your data..."
+  166. profile.deleteData.successMessage
+     EN value: "Successfully deleted:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+
+Total: {{total}} items removed"
+  167. profile.deleteData.successTitle
+     EN value: "Data Deleted"
+  168. profile.deleteData.summaryMessage
+     EN value: "You're about to delete all your data:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+• {{goals}} goals
+• {{values}} values
+
+Total: {{total}} items
+
+This action cannot be undone."
+  169. profile.deleteData.title
+     EN value: "Delete My Data"
+  170. profile.devMenu.actions.checkLimit
+     EN value: "Check Message Limit"
+  171. profile.devMenu.actions.checkLimitDesc
+     EN value: "Test if user can send messages"
+  172. profile.devMenu.actions.clearStorage
+     EN value: "Clear All Storage"
+  173. profile.devMenu.actions.clearStorageDesc
+     EN value: "Delete all app data (DESTRUCTIVE)"
+  174. profile.devMenu.actions.resetToFree
+     EN value: "Reset to Free Tier"
+  175. profile.devMenu.actions.resetToFreeDesc
+     EN value: "Clear RevenueCat purchases and reset to free plan"
+  176. profile.devMenu.actions.resetUsage
+     EN value: "Reset Daily Usage"
+  177. profile.devMenu.actions.resetUsageDesc
+     EN value: "Reset message, voice, and exercise counters"
+  178. profile.devMenu.actions.showDebug
+     EN value: "Show Debug Info"
+  179. profile.devMenu.actions.showDebugDesc
+     EN value: "Print subscription status and usage to console"
+  180. profile.devMenu.alerts.allDataCleared
+     EN value: "All Data Cleared"
+  181. profile.devMenu.alerts.allDataClearedMsg
+     EN value: "Force quit and relaunch the app."
+  182. profile.devMenu.alerts.clearAllData
+     EN value: "⚠️ Clear All Data?"
+  183. profile.devMenu.alerts.clearAllDataBtn
+     EN value: "Clear All Data"
+  184. profile.devMenu.alerts.clearAllDataMsg
+     EN value: "This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.
+
+Are you sure?"
+  185. profile.devMenu.alerts.debugInfo
+     EN value: "Debug Info"
+  186. profile.devMenu.alerts.debugInfoMsg
+     EN value: "Tier: {{tier}}
+Premium: {{premium}}
+Messages: {{messages}}/{{limit}}
+Check console for full details"
+  187. profile.devMenu.alerts.error
+     EN value: "Error"
+  188. profile.devMenu.alerts.messageLimitCheck
+     EN value: "Message Limit Check"
+  189. profile.devMenu.alerts.messageLimitCheckMsg
+     EN value: "Can send: {{canSend}}
+Current: {{current}}/{{limit}}
+Tier: {{tier}}{{reason}}"
+  190. profile.devMenu.alerts.resetComplete
+     EN value: "Reset Complete"
+  191. profile.devMenu.alerts.resetCompleteMsg
+     EN value: "Subscription reset to free tier. Force quit and relaunch the app to see changes."
+  192. profile.devMenu.alerts.usageReset
+     EN value: "Usage Reset"
+  193. profile.devMenu.alerts.usageResetMsg
+     EN value: "Daily usage counters reset to 0. You can now test hitting the daily limits."
+  194. profile.devMenu.close
+     EN value: "Close"
+  195. profile.devMenu.infoMessage
+     EN value: "💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects."
+  196. profile.devMenu.sections.dangerZone
+     EN value: "⚠️ Danger Zone"
+  197. profile.devMenu.sections.subscription
+     EN value: "Subscription Testing"
+  198. profile.devMenu.sections.usage
+     EN value: "Usage Testing"
+  199. profile.devMenu.subtitle
+     EN value: "Testing utilities (DEV only)"
+  200. profile.devMenu.title
+     EN value: "🧪 Developer Tools"
+  201. profile.editProfile.descriptionAnon
+     EN value: "Customize your friendly alias so Anu can keep supporting you with a personal touch."
+  202. profile.editProfile.descriptionUser
+     EN value: "Keep your details current so guidance, insights, and reminders feel tailored to you."
+  203. profile.editProfile.error.message
+     EN value: "Failed to update profile. Please try again."
+  204. profile.editProfile.error.title
+     EN value: "Error"
+  205. profile.editProfile.firstNameLabel
+     EN value: "First Name"
+  206. profile.editProfile.firstNamePlaceholder
+     EN value: "Enter your first name"
+  207. profile.editProfile.subtitle
+     EN value: "Refresh how Anu greets you across the app."
+  208. profile.editProfile.success.button
+     EN value: "Great!"
+  209. profile.editProfile.success.message
+     EN value: "Your profile has been updated successfully! Anu will now address you as {{name}}."
+  210. profile.editProfile.success.title
+     EN value: "Profile Updated"
+  211. profile.editProfile.title
+     EN value: "Edit Profile"
+  212. profile.editProfile.unsavedChanges.discard
+     EN value: "Discard"
+  213. profile.editProfile.unsavedChanges.keep
+     EN value: "Keep Editing"
+  214. profile.editProfile.unsavedChanges.message
+     EN value: "You have unsaved changes. Are you sure you want to close without saving?"
+  215. profile.editProfile.unsavedChanges.title
+     EN value: "Discard Changes?"
+  216. profile.editProfile.validation.invalidCharacters
+     EN value: "Only letters, spaces, hyphens, and apostrophes are allowed"
+  217. profile.editProfile.validation.maxLength
+     EN value: "First name must be 50 characters or less"
+  218. profile.editProfile.validation.required
+     EN value: "First name is required"
+  219. quickActions.deepBreathing
+     EN value: "Deep Breathing"
+  220. quickActions.recommended
+     EN value: "Recommended"
+  221. quickActions.startDescription
+     EN value: "Start with a calming breathing exercise to center yourself."
+  222. quickActions.startVoiceSession
+     EN value: "Start Voice Session"
+  223. quickActions.title
+     EN value: "Quick Actions"
+  224. quickActions.voiceSession.category
+     EN value: "Chat"
+  225. quickActions.voiceSession.description
+     EN value: "Talk with your AI companion"
+  226. quickActions.voiceSession.title
+     EN value: "Voice Session"
+
+➕ EXTRA KEYS (not in en.json):
+  1. insights.moodInsights.moreBalanced
+  2. insights.moodInsights.analyzingPatterns
+  3. insights.moodInsights.emptyStates.noData.title
+  4. insights.moodInsights.emptyStates.noData.description
+  5. insights.moodInsights.emptyStates.noData.chatButton
+  6. insights.moodInsights.emptyStates.noData.exerciseButton
+  7. insights.moodInsights.emptyStates.noData.sampleButton
+  8. insights.moodInsights.emptyStates.moodOnly.title
+  9. insights.moodInsights.emptyStates.moodOnly.description
+  10. insights.moodInsights.emptyStates.sessionsOnly.title
+  11. insights.moodInsights.emptyStates.sessionsOnly.description
+  12. insights.moodInsights.emptyStates.sessionsOnly.exerciseButton
+  13. insights.moodInsights.emptyStates.bothData.title
+  14. insights.moodInsights.emptyStates.bothData.description
+  15. insights.moodInsights.emptyStates.fallback.title
+  16. profile.editProfile
+  17. exerciseLibrary.names.goalSetting
+  18. exerciseLibrary.descriptions.goalSetting
+  19. exerciseLibrary.shortDescriptions.goalSetting
+  20. exerciseLibrary.steps.goalSetting.step1.title
+  21. exerciseLibrary.steps.goalSetting.step1.description
+  22. exerciseLibrary.steps.goalSetting.step1.instruction
+  23. exerciseLibrary.steps.goalSetting.step2.title
+  24. exerciseLibrary.steps.goalSetting.step2.description
+  25. exerciseLibrary.steps.goalSetting.step2.instruction
+  26. exerciseLibrary.steps.goalSetting.step3.title
+  27. exerciseLibrary.steps.goalSetting.step3.description
+  28. exerciseLibrary.steps.goalSetting.step3.instruction
+  29. exerciseLibrary.steps.goalSetting.step4.title
+  30. exerciseLibrary.steps.goalSetting.step4.description
+  31. exerciseLibrary.steps.goalSetting.step4.instruction
+  32. exerciseLibrary.steps.goalSetting.step5.title
+  33. exerciseLibrary.steps.goalSetting.step5.description
+  34. exerciseLibrary.steps.goalSetting.step5.instruction
+  35. exerciseLibrary.steps.goalSetting.step6.title
+  36. exerciseLibrary.steps.goalSetting.step6.description
+  37. exerciseLibrary.steps.goalSetting.step6.instruction
+  38. exerciseLibrary.steps.therapyGoalDefinition.step1.title
+  39. exerciseLibrary.steps.therapyGoalDefinition.step1.description
+  40. exerciseLibrary.steps.therapyGoalDefinition.step1.instruction
+  41. exerciseLibrary.steps.therapyGoalDefinition.step2.title
+  42. exerciseLibrary.steps.therapyGoalDefinition.step2.description
+  43. exerciseLibrary.steps.therapyGoalDefinition.step2.instruction
+  44. exerciseLibrary.steps.therapyGoalDefinition.step3.title
+  45. exerciseLibrary.steps.therapyGoalDefinition.step3.description
+  46. exerciseLibrary.steps.therapyGoalDefinition.step3.instruction
+  47. exerciseLibrary.steps.therapyGoalDefinition.step4.title
+  48. exerciseLibrary.steps.therapyGoalDefinition.step4.description
+  49. exerciseLibrary.steps.therapyGoalDefinition.step4.instruction
+  50. exerciseLibrary.steps.therapyGoalDefinition.step5.title
+  51. exerciseLibrary.steps.therapyGoalDefinition.step5.description
+  52. exerciseLibrary.steps.therapyGoalDefinition.step5.instruction
+  53. quickActions.voiceNote.title
+  54. quickActions.voiceNote.description
+  55. quickActions.voiceNote.category
+
+--------------------------------------------------------------------------------
+Language: TR
+--------------------------------------------------------------------------------
+Total keys present: 999
+Completion: 83.95%
+Missing keys: 247
+Extra keys: 56
+
+📋 MISSING KEYS:
+  1. alerts.clearAllHistory.clearAll
+     EN value: "Clear All"
+  2. alerts.clearAllHistory.message
+     EN value: "Are you sure you want to delete all saved conversations? This cannot be undone."
+  3. alerts.clearAllHistory.title
+     EN value: "Clear All History"
+  4. alerts.clearHistoryError
+     EN value: "Failed to clear history. Please try again."
+  5. alerts.deleteSessionError
+     EN value: "Failed to delete session. Please try again."
+  6. chat.moodRatingCard.howDoYouFeelNow
+     EN value: "How do you feel right now?"
+  7. chat.moodRatingCard.howHelpfulWasThis
+     EN value: "How helpful was this?"
+  8. chat.moodRatingCard.title
+     EN value: "Before we finish..."
+  9. errors.acceptPrivacyPolicy
+     EN value: "Please accept the privacy policy to continue"
+  10. errors.checkEmailFirst
+     EN value: "Please check your email and click the verification link first."
+  11. errors.emailSent
+     EN value: "Email Sent"
+  12. errors.enterEmail
+     EN value: "Please enter your email"
+  13. errors.enterFirstName
+     EN value: "Please enter your first name"
+  14. errors.enterLastName
+     EN value: "Please enter your last name"
+  15. errors.enterValidEmail
+     EN value: "Please enter a valid email address"
+  16. errors.failedToClearHistory
+     EN value: "Failed to clear history. Please try again."
+  17. errors.failedToDeleteSession
+     EN value: "Failed to delete session. Please try again."
+  18. errors.failedToLoadGoals
+     EN value: "Failed to load your goals. Please try again."
+  19. errors.failedToLoadSummaries
+     EN value: "Failed to load session summaries."
+  20. errors.failedToSaveCheckIn
+     EN value: "Failed to save check-in. Please try again."
+  21. errors.failedToSaveGoal
+     EN value: "Failed to save your goal. Please try again."
+  22. errors.failedToSaveSettings
+     EN value: "Failed to save settings"
+  23. errors.failedToUpdateGoal
+     EN value: "Failed to update goal. Please try again."
+  24. errors.failedToUpdateGoalStatus
+     EN value: "Failed to update goal status."
+  25. errors.failedToUpdateProfile
+     EN value: "Failed to update profile. Please try again."
+  26. errors.fillAllFields
+     EN value: "Please fill in all fields"
+  27. errors.goalUpdatedSuccess
+     EN value: "Goal updated successfully!"
+  28. errors.googleSignInFailed
+     EN value: "Google Sign In Failed"
+  29. errors.missingInformation
+     EN value: "Missing Information"
+  30. errors.notVerified
+     EN value: "Not Verified"
+  31. errors.passwordTooShort
+     EN value: "Password must be at least 6 characters long"
+  32. errors.passwordsNoMatch
+     EN value: "Passwords do not match"
+  33. errors.pleaseAddReflection
+     EN value: "Please add a brief reflection on your progress."
+  34. errors.pleaseEnterValidGoal
+     EN value: "Please enter a valid goal."
+  35. errors.pleaseRateProgress
+     EN value: "Please rate your progress before submitting."
+  36. errors.progressRecorded
+     EN value: "Your progress has been recorded."
+  37. errors.resendVerificationFailed
+     EN value: "Failed to resend verification email"
+  38. errors.signInFailed
+     EN value: "Sign In Failed"
+  39. errors.signUpFailed
+     EN value: "Sign Up Failed"
+  40. errors.verificationCheckFailed
+     EN value: "Unable to check verification status. Please try again."
+  41. errors.verificationEmailSent
+     EN value: "Verification email has been sent again. Please check your inbox."
+  42. exerciseLibrary.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful personal goals"
+  43. exerciseLibrary.descriptions.therapyGoals
+     EN value: "Identify what you want to work on in therapy"
+  44. exerciseLibrary.names.personalMilestones
+     EN value: "Personal Milestones"
+  45. exerciseLibrary.names.therapyGoals
+     EN value: "Therapy Goals"
+  46. exerciseLibrary.shortDescriptions.personalMilestones
+     EN value: "Turn aspirations into actionable steps."
+  47. exerciseLibrary.shortDescriptions.therapyGoals
+     EN value: "Define your therapeutic focus areas."
+  48. exerciseLibrary.steps.personalMilestones.step1.description
+     EN value: "What's one meaningful goal you want to achieve?"
+  49. exerciseLibrary.steps.personalMilestones.step1.instruction
+     EN value: "Invite the user to share one personal goal or milestone they want to work toward. Keep it specific and achievable. Examples: 'exercise 3x/week,' 'learn to cook healthy meals,' 'build a morning routine.' Stay on this step until they articulate one clear goal."
+  50. exerciseLibrary.steps.personalMilestones.step1.title
+     EN value: "Choose your milestone"
+  51. exerciseLibrary.steps.personalMilestones.step2.description
+     EN value: "Why does this goal matter to you?"
+  52. exerciseLibrary.steps.personalMilestones.step2.instruction
+     EN value: "Ask the user to reflect on why this milestone is important. Encourage them to connect it to their values, wellbeing, or what they want their life to look like. Help them articulate the deeper meaning—not just 'I should,' but 'I want to because...'"
+  53. exerciseLibrary.steps.personalMilestones.step2.title
+     EN value: "Connect to purpose"
+  54. exerciseLibrary.steps.personalMilestones.step3.description
+     EN value: "What's one small action you can take this week?"
+  55. exerciseLibrary.steps.personalMilestones.step3.instruction
+     EN value: "Guide the user to identify one specific, doable action they can take in the next few days toward this goal. Keep it simple and concrete—something they can actually do, not just think about. Examples: 'sign up for a class,' 'buy running shoes,' 'set a 10-minute morning alarm.' Acknowledge their commitment warmly."
+  56. exerciseLibrary.steps.personalMilestones.step3.title
+     EN value: "First step forward"
+  57. exerciseLibrary.steps.therapyGoals.step1.description
+     EN value: "What areas of your wellbeing would you like to work on?"
+  58. exerciseLibrary.steps.therapyGoals.step1.instruction
+     EN value: "Invite the user to share 1-3 areas they'd like to focus on in therapy. Offer gentle examples if needed: managing anxiety, improving relationships, building self-esteem, processing grief, reducing stress, understanding emotions, overcoming negative thinking. Encourage them to use their own words and be as specific as they're comfortable with. Stay until they identify at least one clear area."
+  59. exerciseLibrary.steps.therapyGoals.step1.title
+     EN value: "Identify your focus"
+  60. exerciseLibrary.steps.therapyGoals.step2.description
+     EN value: "What would feel different if you made progress in these areas?"
+  61. exerciseLibrary.steps.therapyGoals.step2.instruction
+     EN value: "Ask the user to envision what life might look like with positive changes in their focus areas. Encourage concrete, felt descriptions—not just 'feel better' but 'I'd wake up without dread,' 'I'd feel comfortable in social situations,' 'I'd trust my decisions more.' This helps clarify what they're working toward. Stay supportive and curious."
+  62. exerciseLibrary.steps.therapyGoals.step2.title
+     EN value: "Describe the change"
+  63. exerciseLibrary.steps.therapyGoals.step3.description
+     EN value: "Let's keep these goals as our foundation."
+  64. exerciseLibrary.steps.therapyGoals.step3.instruction
+     EN value: "Warmly acknowledge the user's clarity and courage. Summarize their therapy goals in 2-3 sentences, reflecting back what they shared. Then explain: 'I'll keep these goals in mind during our work together. In exercises like Reframe Thoughts or Values Clarity, we'll connect back to what matters most to you. Over time, we can track progress and adjust these together.' Finish with: 'Would you like to start working on one of these areas now, or save this as your roadmap for future sessions?'"
+  65. exerciseLibrary.steps.therapyGoals.step3.title
+     EN value: "Your therapeutic roadmap"
+  66. insights.actions.reflectOnThis
+     EN value: "Reflect on This"
+  67. insights.moodInsights.emptyState.encouragement
+     EN value: "Chat with Anu to see your mood patterns"
+  68. insights.moodInsights.emptyState.seeExample
+     EN value: "See Example"
+  69. insights.moodInsights.emptyState.startTracking
+     EN value: "Start Tracking"
+  70. insights.moodInsights.emptyState.trackProgress
+     EN value: "Your journey starts here"
+  71. insights.moodInsights.emptyStates.chatButton
+     EN value: "Chat with Anu"
+  72. insights.moodInsights.emptyStates.chatWithAnu
+     EN value: "Chat with Anu or track your mood after exercises to see personalized insights here"
+  73. insights.moodInsights.emptyStates.checkingData
+     EN value: "Checking your data... ✨"
+  74. insights.moodInsights.emptyStates.generateSample
+     EN value: "Generate Sample Data"
+  75. insights.moodInsights.emptyStates.greatJobTracking
+     EN value: "Great job tracking your mood! 📈"
+  76. insights.moodInsights.emptyStates.keepBuilding
+     EN value: "Keep building your insights! ⭐"
+  77. insights.moodInsights.emptyStates.niceProgress
+     EN value: "Nice progress with Anu! 💬"
+  78. insights.moodInsights.emptyStates.startJourney
+     EN value: "Start your wellness journey! ✨"
+  79. insights.moodInsights.emptyStates.tryExercise
+     EN value: "Try Exercise"
+  80. insights.moodInsights.noDataYet
+     EN value: "No mood data yet"
+  81. insights.priorityExercises.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful goals"
+  82. insights.priorityExercises.descriptions.therapyGoals
+     EN value: "Define what you want to work on"
+  83. insights.priorityExercises.names.personalMilestones
+     EN value: "Personal Milestones"
+  84. insights.priorityExercises.names.therapyGoals
+     EN value: "Therapy Goals"
+  85. insights.weeklyHighlights.subtitle
+     EN value: "Your progress this week"
+  86. insights.weeklyHighlights.title
+     EN value: "Weekly Highlights"
+  87. journal.deleteEntry
+     EN value: "Delete Entry"
+  88. journal.deleteEntryConfirm
+     EN value: "Are you sure you want to delete this journal entry? This action cannot be undone."
+  89. journal.discardWarning
+     EN value: "Your entry will be lost if you leave now."
+  90. journal.entrySaved
+     EN value: "Your journal entry has been saved!"
+  91. journal.entrySavedPolished
+     EN value: "Your entry has been saved and polished!"
+  92. journal.failedToDelete
+     EN value: "Failed to delete entry. Please try again."
+  93. journal.failedToLoad
+     EN value: "Failed to load journal data. Please try again."
+  94. journal.failedToSave
+     EN value: "Failed to save your journal entry. Please try again."
+  95. journal.initialPrompt
+     EN value: "Initial Prompt"
+  96. journal.journalEntry
+     EN value: "Journal Entry"
+  97. journal.journalSaved
+     EN value: "Journal Saved"
+  98. journal.keyInsights
+     EN value: "Key Insights:"
+  99. journal.keyInsightsTitle
+     EN value: "Key Insights"
+  100. journal.leaveAndDiscard
+     EN value: "Leave & Discard Entry"
+  101. journal.leaveJournaling
+     EN value: "Leave journaling?"
+  102. journal.loadingJournal
+     EN value: "Loading your journal..."
+  103. journal.noEntriesText
+     EN value: "Start your journaling journey by selecting a prompt above or create your own entry."
+  104. journal.noEntriesTitle
+     EN value: "No journal entries yet"
+  105. journal.polished
+     EN value: "✨ Polished"
+  106. journal.question
+     EN value: "Question"
+  107. journal.startWriting
+     EN value: "Start Writing"
+  108. journal.stay
+     EN value: "Stay"
+  109. journal.summary
+     EN value: "Summary"
+  110. journal.writingPrompts
+     EN value: "Writing Prompts"
+  111. journal.yourEntries
+     EN value: "Your Entries"
+  112. paywall.best_value
+     EN value: "Best Value"
+  113. paywall.cta_primary
+     EN value: "Start 3-Day Free Trial"
+  114. paywall.cta_secondary
+     EN value: "Continue with Free"
+  115. paywall.feature_locked.cta
+     EN value: "Upgrade to Premium"
+  116. paywall.feature_locked.exercise
+     EN value: "This exercise is available in premium. Upgrade to access the full library."
+  117. paywall.feature_locked.history
+     EN value: "Full chat history is available in premium. Upgrade to access all your past conversations."
+  118. paywall.feature_locked.insights
+     EN value: "Advanced insights are available in premium. Upgrade to unlock deeper analysis."
+  119. paywall.feature_locked.title
+     EN value: "Premium Feature"
+  120. paywall.features.deep_analysis
+     EN value: "Deep personality & thought pattern analysis"
+  121. paywall.features.distorted_thoughts
+     EN value: "Cognitive distortion detection from conversations"
+  122. paywall.features.full_exercises
+     EN value: "Full CBT exercise library"
+  123. paywall.features.personal_insights
+     EN value: "Personalized insights from your journey"
+  124. paywall.features.unlimited_conversations
+     EN value: "Unlimited conversations with Anu's memory"
+  125. paywall.features.unlimited_journaling
+     EN value: "Unlimited guided journaling"
+  126. paywall.features_title
+     EN value: "What You'll Unlock"
+  127. paywall.legal
+     EN value: "Cancel anytime. Subscription renews automatically after trial."
+  128. paywall.limit_reached.cta
+     EN value: "Unlock Premium"
+  129. paywall.limit_reached.dismiss
+     EN value: "Not Now"
+  130. paywall.limit_reached.exercises
+     EN value: "You've completed your daily exercise. Upgrade for unlimited exercises."
+  131. paywall.limit_reached.journal_prompts
+     EN value: "You've used your daily journal prompt. Upgrade for unlimited prompts."
+  132. paywall.limit_reached.messages
+     EN value: "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access."
+  133. paywall.limit_reached.messages_weekly
+     EN value: "You've used all {{limit}} messages for this week. Your limit resets next Monday."
+  134. paywall.limit_reached.reset_info
+     EN value: "Your free limit resets tomorrow"
+  135. paywall.limit_reached.reset_info_premium_weekly
+     EN value: "Your premium weekly limit resets next Monday"
+  136. paywall.limit_reached.reset_info_weekly
+     EN value: "Your limit resets next Monday"
+  137. paywall.limit_reached.subtitle
+     EN value: "Upgrade to continue your journey without limits"
+  138. paywall.limit_reached.title
+     EN value: "You've reached your daily limit"
+  139. paywall.limit_reached.title_weekly
+     EN value: "You've reached your weekly limit"
+  140. paywall.limit_reached.voice
+     EN value: "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access."
+  141. paywall.loading
+     EN value: "Loading subscription options..."
+  142. paywall.monthly_equivalent
+     EN value: "Only {{price}}/month"
+  143. paywall.per_period
+     EN value: "per {{period}}"
+  144. paywall.period.month
+     EN value: "month"
+  145. paywall.period.year
+     EN value: "year"
+  146. paywall.plan.annual
+     EN value: "Annual"
+  147. paywall.plan.monthly
+     EN value: "Monthly"
+  148. paywall.processing
+     EN value: "Processing your purchase..."
+  149. paywall.save_percent
+     EN value: "Save {{percent}}%"
+  150. paywall.subscription_management.current_plan
+     EN value: "Current Plan"
+  151. paywall.subscription_management.expired_on
+     EN value: "Expired on {{date}}"
+  152. paywall.subscription_management.expires_on
+     EN value: "Renews on {{date}}"
+  153. paywall.subscription_management.free_plan
+     EN value: "Free Plan"
+  154. paywall.subscription_management.manage
+     EN value: "Manage Subscription"
+  155. paywall.subscription_management.premium_plan
+     EN value: "Premium Plan"
+  156. paywall.subscription_management.restore
+     EN value: "Restore Purchases"
+  157. paywall.subscription_management.restoring
+     EN value: "Restoring..."
+  158. paywall.subscription_management.title
+     EN value: "Subscription"
+  159. paywall.subscription_management.trial_active
+     EN value: "Trial Active"
+  160. paywall.subscription_management.upgrade
+     EN value: "Upgrade to Premium"
+  161. paywall.subtitle
+     EN value: "Start with a 3-day free trial"
+  162. paywall.title
+     EN value: "Begin Your Healing Journey"
+  163. paywall.trial_days
+     EN value: "{{days}}-day free trial"
+  164. premium_limit.benefit_exercises
+     EN value: "Unlimited guided exercises"
+  165. premium_limit.benefit_history
+     EN value: "Full conversation history"
+  166. premium_limit.benefit_insights
+     EN value: "Advanced insights & analytics"
+  167. premium_limit.benefit_voice
+     EN value: "Extended voice journaling"
+  168. premium_limit.benefits_title
+     EN value: "Your Premium Benefits Continue:"
+  169. premium_limit.cta
+     EN value: "Got It"
+  170. premium_limit.default_reset
+     EN value: "next Monday"
+  171. premium_limit.explanation
+     EN value: "As a premium member, you have access to 2,000 messages per week. This limit helps us maintain quality service for all our premium users."
+  172. premium_limit.messages_used
+     EN value: "Messages Used"
+  173. premium_limit.resets_on
+     EN value: "Resets on {{date}}"
+  174. premium_limit.subtitle
+     EN value: "You've used all your messages for this week. Your limit will reset next Monday."
+  175. premium_limit.support_text
+     EN value: "Need help? Contact our support team"
+  176. premium_limit.title
+     EN value: "Weekly Limit Reached"
+  177. premium_limit.weekly_limit
+     EN value: "Weekly Limit"
+  178. profile.deleteData.confirmMessage
+     EN value: "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone."
+  179. profile.deleteData.confirmTitle
+     EN value: "Are You Sure?"
+  180. profile.deleteData.continue
+     EN value: "Continue"
+  181. profile.deleteData.deleteButton
+     EN value: "Delete Everything"
+  182. profile.deleteData.deleting
+     EN value: "Deleting Data"
+  183. profile.deleteData.errorMessage
+     EN value: "Failed to delete data. Please try again."
+  184. profile.deleteData.partialSuccessMessage
+     EN value: "Some data was deleted, but errors occurred:
+
+{{errors}}"
+  185. profile.deleteData.partialSuccessTitle
+     EN value: "Partial Deletion"
+  186. profile.deleteData.pleaseWait
+     EN value: "Please wait while we delete your data..."
+  187. profile.deleteData.successMessage
+     EN value: "Successfully deleted:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+
+Total: {{total}} items removed"
+  188. profile.deleteData.successTitle
+     EN value: "Data Deleted"
+  189. profile.deleteData.summaryMessage
+     EN value: "You're about to delete all your data:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+• {{goals}} goals
+• {{values}} values
+
+Total: {{total}} items
+
+This action cannot be undone."
+  190. profile.deleteData.title
+     EN value: "Delete My Data"
+  191. profile.devMenu.actions.checkLimit
+     EN value: "Check Message Limit"
+  192. profile.devMenu.actions.checkLimitDesc
+     EN value: "Test if user can send messages"
+  193. profile.devMenu.actions.clearStorage
+     EN value: "Clear All Storage"
+  194. profile.devMenu.actions.clearStorageDesc
+     EN value: "Delete all app data (DESTRUCTIVE)"
+  195. profile.devMenu.actions.resetToFree
+     EN value: "Reset to Free Tier"
+  196. profile.devMenu.actions.resetToFreeDesc
+     EN value: "Clear RevenueCat purchases and reset to free plan"
+  197. profile.devMenu.actions.resetUsage
+     EN value: "Reset Daily Usage"
+  198. profile.devMenu.actions.resetUsageDesc
+     EN value: "Reset message, voice, and exercise counters"
+  199. profile.devMenu.actions.showDebug
+     EN value: "Show Debug Info"
+  200. profile.devMenu.actions.showDebugDesc
+     EN value: "Print subscription status and usage to console"
+  201. profile.devMenu.alerts.allDataCleared
+     EN value: "All Data Cleared"
+  202. profile.devMenu.alerts.allDataClearedMsg
+     EN value: "Force quit and relaunch the app."
+  203. profile.devMenu.alerts.clearAllData
+     EN value: "⚠️ Clear All Data?"
+  204. profile.devMenu.alerts.clearAllDataBtn
+     EN value: "Clear All Data"
+  205. profile.devMenu.alerts.clearAllDataMsg
+     EN value: "This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.
+
+Are you sure?"
+  206. profile.devMenu.alerts.debugInfo
+     EN value: "Debug Info"
+  207. profile.devMenu.alerts.debugInfoMsg
+     EN value: "Tier: {{tier}}
+Premium: {{premium}}
+Messages: {{messages}}/{{limit}}
+Check console for full details"
+  208. profile.devMenu.alerts.error
+     EN value: "Error"
+  209. profile.devMenu.alerts.messageLimitCheck
+     EN value: "Message Limit Check"
+  210. profile.devMenu.alerts.messageLimitCheckMsg
+     EN value: "Can send: {{canSend}}
+Current: {{current}}/{{limit}}
+Tier: {{tier}}{{reason}}"
+  211. profile.devMenu.alerts.resetComplete
+     EN value: "Reset Complete"
+  212. profile.devMenu.alerts.resetCompleteMsg
+     EN value: "Subscription reset to free tier. Force quit and relaunch the app to see changes."
+  213. profile.devMenu.alerts.usageReset
+     EN value: "Usage Reset"
+  214. profile.devMenu.alerts.usageResetMsg
+     EN value: "Daily usage counters reset to 0. You can now test hitting the daily limits."
+  215. profile.devMenu.close
+     EN value: "Close"
+  216. profile.devMenu.infoMessage
+     EN value: "💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects."
+  217. profile.devMenu.sections.dangerZone
+     EN value: "⚠️ Danger Zone"
+  218. profile.devMenu.sections.subscription
+     EN value: "Subscription Testing"
+  219. profile.devMenu.sections.usage
+     EN value: "Usage Testing"
+  220. profile.devMenu.subtitle
+     EN value: "Testing utilities (DEV only)"
+  221. profile.devMenu.title
+     EN value: "🧪 Developer Tools"
+  222. profile.editProfile.descriptionAnon
+     EN value: "Customize your friendly alias so Anu can keep supporting you with a personal touch."
+  223. profile.editProfile.descriptionUser
+     EN value: "Keep your details current so guidance, insights, and reminders feel tailored to you."
+  224. profile.editProfile.error.message
+     EN value: "Failed to update profile. Please try again."
+  225. profile.editProfile.error.title
+     EN value: "Error"
+  226. profile.editProfile.firstNameLabel
+     EN value: "First Name"
+  227. profile.editProfile.firstNamePlaceholder
+     EN value: "Enter your first name"
+  228. profile.editProfile.subtitle
+     EN value: "Refresh how Anu greets you across the app."
+  229. profile.editProfile.success.button
+     EN value: "Great!"
+  230. profile.editProfile.success.message
+     EN value: "Your profile has been updated successfully! Anu will now address you as {{name}}."
+  231. profile.editProfile.success.title
+     EN value: "Profile Updated"
+  232. profile.editProfile.title
+     EN value: "Edit Profile"
+  233. profile.editProfile.unsavedChanges.discard
+     EN value: "Discard"
+  234. profile.editProfile.unsavedChanges.keep
+     EN value: "Keep Editing"
+  235. profile.editProfile.unsavedChanges.message
+     EN value: "You have unsaved changes. Are you sure you want to close without saving?"
+  236. profile.editProfile.unsavedChanges.title
+     EN value: "Discard Changes?"
+  237. profile.editProfile.validation.invalidCharacters
+     EN value: "Only letters, spaces, hyphens, and apostrophes are allowed"
+  238. profile.editProfile.validation.maxLength
+     EN value: "First name must be 50 characters or less"
+  239. profile.editProfile.validation.required
+     EN value: "First name is required"
+  240. quickActions.deepBreathing
+     EN value: "Deep Breathing"
+  241. quickActions.recommended
+     EN value: "Recommended"
+  242. quickActions.startDescription
+     EN value: "Start with a calming breathing exercise to center yourself."
+  243. quickActions.startVoiceSession
+     EN value: "Start Voice Session"
+  244. quickActions.title
+     EN value: "Quick Actions"
+  245. quickActions.voiceSession.category
+     EN value: "Chat"
+  246. quickActions.voiceSession.description
+     EN value: "Talk with your AI companion"
+  247. quickActions.voiceSession.title
+     EN value: "Voice Session"
+
+➕ EXTRA KEYS (not in en.json):
+  1. insights.moodInsights.moreBalanced
+  2. insights.moodInsights.analyzingPatterns
+  3. insights.moodInsights.emptyStates.noData.title
+  4. insights.moodInsights.emptyStates.noData.description
+  5. insights.moodInsights.emptyStates.noData.chatButton
+  6. insights.moodInsights.emptyStates.noData.exerciseButton
+  7. insights.moodInsights.emptyStates.noData.sampleButton
+  8. insights.moodInsights.emptyStates.moodOnly.title
+  9. insights.moodInsights.emptyStates.moodOnly.description
+  10. insights.moodInsights.emptyStates.sessionsOnly.title
+  11. insights.moodInsights.emptyStates.sessionsOnly.description
+  12. insights.moodInsights.emptyStates.sessionsOnly.exerciseButton
+  13. insights.moodInsights.emptyStates.bothData.title
+  14. insights.moodInsights.emptyStates.bothData.description
+  15. insights.moodInsights.emptyStates.fallback.title
+  16. profile.editProfile
+  17. exerciseLibrary.names.goalSetting
+  18. exerciseLibrary.descriptions.goalSetting
+  19. exerciseLibrary.shortDescriptions.goalSetting
+  20. exerciseLibrary.steps.goalSetting.step1.title
+  21. exerciseLibrary.steps.goalSetting.step1.description
+  22. exerciseLibrary.steps.goalSetting.step1.instruction
+  23. exerciseLibrary.steps.goalSetting.step2.title
+  24. exerciseLibrary.steps.goalSetting.step2.description
+  25. exerciseLibrary.steps.goalSetting.step2.instruction
+  26. exerciseLibrary.steps.goalSetting.step3.title
+  27. exerciseLibrary.steps.goalSetting.step3.description
+  28. exerciseLibrary.steps.goalSetting.step3.instruction
+  29. exerciseLibrary.steps.goalSetting.step4.title
+  30. exerciseLibrary.steps.goalSetting.step4.description
+  31. exerciseLibrary.steps.goalSetting.step4.instruction
+  32. exerciseLibrary.steps.goalSetting.step5.title
+  33. exerciseLibrary.steps.goalSetting.step5.description
+  34. exerciseLibrary.steps.goalSetting.step5.instruction
+  35. exerciseLibrary.steps.goalSetting.step6.title
+  36. exerciseLibrary.steps.goalSetting.step6.description
+  37. exerciseLibrary.steps.goalSetting.step6.instruction
+  38. exerciseLibrary.steps.therapyGoalDefinition.step1.title
+  39. exerciseLibrary.steps.therapyGoalDefinition.step1.description
+  40. exerciseLibrary.steps.therapyGoalDefinition.step1.instruction
+  41. exerciseLibrary.steps.therapyGoalDefinition.step2.title
+  42. exerciseLibrary.steps.therapyGoalDefinition.step2.description
+  43. exerciseLibrary.steps.therapyGoalDefinition.step2.instruction
+  44. exerciseLibrary.steps.therapyGoalDefinition.step3.title
+  45. exerciseLibrary.steps.therapyGoalDefinition.step3.description
+  46. exerciseLibrary.steps.therapyGoalDefinition.step3.instruction
+  47. exerciseLibrary.steps.therapyGoalDefinition.step4.title
+  48. exerciseLibrary.steps.therapyGoalDefinition.step4.description
+  49. exerciseLibrary.steps.therapyGoalDefinition.step4.instruction
+  50. exerciseLibrary.steps.therapyGoalDefinition.step5.title
+  51. exerciseLibrary.steps.therapyGoalDefinition.step5.description
+  52. exerciseLibrary.steps.therapyGoalDefinition.step5.instruction
+  53. quickActions.voiceNote.title
+  54. quickActions.voiceNote.description
+  55. quickActions.voiceNote.category
+  56. onboarding.notifications.selectTime
+
+--------------------------------------------------------------------------------
+Language: ES
+--------------------------------------------------------------------------------
+Total keys present: 986
+Completion: 82.86%
+Missing keys: 259
+Extra keys: 55
+
+📋 MISSING KEYS:
+  1. alerts.clearAllHistory.clearAll
+     EN value: "Clear All"
+  2. alerts.clearAllHistory.message
+     EN value: "Are you sure you want to delete all saved conversations? This cannot be undone."
+  3. alerts.clearAllHistory.title
+     EN value: "Clear All History"
+  4. alerts.clearHistoryError
+     EN value: "Failed to clear history. Please try again."
+  5. alerts.deleteSessionError
+     EN value: "Failed to delete session. Please try again."
+  6. chat.moodRatingCard.howDoYouFeelNow
+     EN value: "How do you feel right now?"
+  7. chat.moodRatingCard.howHelpfulWasThis
+     EN value: "How helpful was this?"
+  8. chat.moodRatingCard.title
+     EN value: "Before we finish..."
+  9. errors.acceptPrivacyPolicy
+     EN value: "Please accept the privacy policy to continue"
+  10. errors.checkEmailFirst
+     EN value: "Please check your email and click the verification link first."
+  11. errors.emailSent
+     EN value: "Email Sent"
+  12. errors.enterEmail
+     EN value: "Please enter your email"
+  13. errors.enterFirstName
+     EN value: "Please enter your first name"
+  14. errors.enterLastName
+     EN value: "Please enter your last name"
+  15. errors.enterValidEmail
+     EN value: "Please enter a valid email address"
+  16. errors.failedToClearHistory
+     EN value: "Failed to clear history. Please try again."
+  17. errors.failedToDeleteSession
+     EN value: "Failed to delete session. Please try again."
+  18. errors.failedToLoadGoals
+     EN value: "Failed to load your goals. Please try again."
+  19. errors.failedToLoadSummaries
+     EN value: "Failed to load session summaries."
+  20. errors.failedToSaveCheckIn
+     EN value: "Failed to save check-in. Please try again."
+  21. errors.failedToSaveGoal
+     EN value: "Failed to save your goal. Please try again."
+  22. errors.failedToSaveSettings
+     EN value: "Failed to save settings"
+  23. errors.failedToUpdateGoal
+     EN value: "Failed to update goal. Please try again."
+  24. errors.failedToUpdateGoalStatus
+     EN value: "Failed to update goal status."
+  25. errors.failedToUpdateProfile
+     EN value: "Failed to update profile. Please try again."
+  26. errors.fillAllFields
+     EN value: "Please fill in all fields"
+  27. errors.goalUpdatedSuccess
+     EN value: "Goal updated successfully!"
+  28. errors.googleSignInFailed
+     EN value: "Google Sign In Failed"
+  29. errors.missingInformation
+     EN value: "Missing Information"
+  30. errors.notVerified
+     EN value: "Not Verified"
+  31. errors.passwordTooShort
+     EN value: "Password must be at least 6 characters long"
+  32. errors.passwordsNoMatch
+     EN value: "Passwords do not match"
+  33. errors.pleaseAddReflection
+     EN value: "Please add a brief reflection on your progress."
+  34. errors.pleaseEnterValidGoal
+     EN value: "Please enter a valid goal."
+  35. errors.pleaseRateProgress
+     EN value: "Please rate your progress before submitting."
+  36. errors.progressRecorded
+     EN value: "Your progress has been recorded."
+  37. errors.resendVerificationFailed
+     EN value: "Failed to resend verification email"
+  38. errors.signInFailed
+     EN value: "Sign In Failed"
+  39. errors.signUpFailed
+     EN value: "Sign Up Failed"
+  40. errors.verificationCheckFailed
+     EN value: "Unable to check verification status. Please try again."
+  41. errors.verificationEmailSent
+     EN value: "Verification email has been sent again. Please check your inbox."
+  42. exerciseLibrary.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful personal goals"
+  43. exerciseLibrary.descriptions.therapyGoals
+     EN value: "Identify what you want to work on in therapy"
+  44. exerciseLibrary.names.personalMilestones
+     EN value: "Personal Milestones"
+  45. exerciseLibrary.names.therapyGoals
+     EN value: "Therapy Goals"
+  46. exerciseLibrary.shortDescriptions.personalMilestones
+     EN value: "Turn aspirations into actionable steps."
+  47. exerciseLibrary.shortDescriptions.therapyGoals
+     EN value: "Define your therapeutic focus areas."
+  48. exerciseLibrary.steps.personalMilestones.step1.description
+     EN value: "What's one meaningful goal you want to achieve?"
+  49. exerciseLibrary.steps.personalMilestones.step1.instruction
+     EN value: "Invite the user to share one personal goal or milestone they want to work toward. Keep it specific and achievable. Examples: 'exercise 3x/week,' 'learn to cook healthy meals,' 'build a morning routine.' Stay on this step until they articulate one clear goal."
+  50. exerciseLibrary.steps.personalMilestones.step1.title
+     EN value: "Choose your milestone"
+  51. exerciseLibrary.steps.personalMilestones.step2.description
+     EN value: "Why does this goal matter to you?"
+  52. exerciseLibrary.steps.personalMilestones.step2.instruction
+     EN value: "Ask the user to reflect on why this milestone is important. Encourage them to connect it to their values, wellbeing, or what they want their life to look like. Help them articulate the deeper meaning—not just 'I should,' but 'I want to because...'"
+  53. exerciseLibrary.steps.personalMilestones.step2.title
+     EN value: "Connect to purpose"
+  54. exerciseLibrary.steps.personalMilestones.step3.description
+     EN value: "What's one small action you can take this week?"
+  55. exerciseLibrary.steps.personalMilestones.step3.instruction
+     EN value: "Guide the user to identify one specific, doable action they can take in the next few days toward this goal. Keep it simple and concrete—something they can actually do, not just think about. Examples: 'sign up for a class,' 'buy running shoes,' 'set a 10-minute morning alarm.' Acknowledge their commitment warmly."
+  56. exerciseLibrary.steps.personalMilestones.step3.title
+     EN value: "First step forward"
+  57. exerciseLibrary.steps.therapyGoals.step1.description
+     EN value: "What areas of your wellbeing would you like to work on?"
+  58. exerciseLibrary.steps.therapyGoals.step1.instruction
+     EN value: "Invite the user to share 1-3 areas they'd like to focus on in therapy. Offer gentle examples if needed: managing anxiety, improving relationships, building self-esteem, processing grief, reducing stress, understanding emotions, overcoming negative thinking. Encourage them to use their own words and be as specific as they're comfortable with. Stay until they identify at least one clear area."
+  59. exerciseLibrary.steps.therapyGoals.step1.title
+     EN value: "Identify your focus"
+  60. exerciseLibrary.steps.therapyGoals.step2.description
+     EN value: "What would feel different if you made progress in these areas?"
+  61. exerciseLibrary.steps.therapyGoals.step2.instruction
+     EN value: "Ask the user to envision what life might look like with positive changes in their focus areas. Encourage concrete, felt descriptions—not just 'feel better' but 'I'd wake up without dread,' 'I'd feel comfortable in social situations,' 'I'd trust my decisions more.' This helps clarify what they're working toward. Stay supportive and curious."
+  62. exerciseLibrary.steps.therapyGoals.step2.title
+     EN value: "Describe the change"
+  63. exerciseLibrary.steps.therapyGoals.step3.description
+     EN value: "Let's keep these goals as our foundation."
+  64. exerciseLibrary.steps.therapyGoals.step3.instruction
+     EN value: "Warmly acknowledge the user's clarity and courage. Summarize their therapy goals in 2-3 sentences, reflecting back what they shared. Then explain: 'I'll keep these goals in mind during our work together. In exercises like Reframe Thoughts or Values Clarity, we'll connect back to what matters most to you. Over time, we can track progress and adjust these together.' Finish with: 'Would you like to start working on one of these areas now, or save this as your roadmap for future sessions?'"
+  65. exerciseLibrary.steps.therapyGoals.step3.title
+     EN value: "Your therapeutic roadmap"
+  66. insights.actions.reflectOnThis
+     EN value: "Reflect on This"
+  67. insights.moodInsights.emptyState.encouragement
+     EN value: "Chat with Anu to see your mood patterns"
+  68. insights.moodInsights.emptyState.seeExample
+     EN value: "See Example"
+  69. insights.moodInsights.emptyState.startTracking
+     EN value: "Start Tracking"
+  70. insights.moodInsights.emptyState.trackProgress
+     EN value: "Your journey starts here"
+  71. insights.moodInsights.emptyStates.chatButton
+     EN value: "Chat with Anu"
+  72. insights.moodInsights.emptyStates.chatWithAnu
+     EN value: "Chat with Anu or track your mood after exercises to see personalized insights here"
+  73. insights.moodInsights.emptyStates.checkingData
+     EN value: "Checking your data... ✨"
+  74. insights.moodInsights.emptyStates.generateSample
+     EN value: "Generate Sample Data"
+  75. insights.moodInsights.emptyStates.greatJobTracking
+     EN value: "Great job tracking your mood! 📈"
+  76. insights.moodInsights.emptyStates.keepBuilding
+     EN value: "Keep building your insights! ⭐"
+  77. insights.moodInsights.emptyStates.niceProgress
+     EN value: "Nice progress with Anu! 💬"
+  78. insights.moodInsights.emptyStates.startJourney
+     EN value: "Start your wellness journey! ✨"
+  79. insights.moodInsights.emptyStates.tryExercise
+     EN value: "Try Exercise"
+  80. insights.moodInsights.noDataYet
+     EN value: "No mood data yet"
+  81. insights.priorityExercises.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful goals"
+  82. insights.priorityExercises.descriptions.therapyGoals
+     EN value: "Define what you want to work on"
+  83. insights.priorityExercises.names.personalMilestones
+     EN value: "Personal Milestones"
+  84. insights.priorityExercises.names.therapyGoals
+     EN value: "Therapy Goals"
+  85. insights.weeklyHighlights.subtitle
+     EN value: "Your progress this week"
+  86. insights.weeklyHighlights.title
+     EN value: "Weekly Highlights"
+  87. journal.continue
+     EN value: "Continue"
+  88. journal.deleteEntry
+     EN value: "Delete Entry"
+  89. journal.deleteEntryConfirm
+     EN value: "Are you sure you want to delete this journal entry? This action cannot be undone."
+  90. journal.discardWarning
+     EN value: "Your entry will be lost if you leave now."
+  91. journal.dontSaveButton
+     EN value: "Don't Save"
+  92. journal.entryCannotBeEmpty
+     EN value: "Your journal entry cannot be empty."
+  93. journal.entrySaved
+     EN value: "Your journal entry has been saved!"
+  94. journal.entrySavedPolished
+     EN value: "Your entry has been saved and polished!"
+  95. journal.failedNextQuestion
+     EN value: "Failed to generate next question. Please try again."
+  96. journal.failedToDelete
+     EN value: "Failed to delete entry. Please try again."
+  97. journal.failedToLoad
+     EN value: "Failed to load journal data. Please try again."
+  98. journal.failedToSave
+     EN value: "Failed to save your journal entry. Please try again."
+  99. journal.failedToSaveDraft
+     EN value: "Failed to save draft."
+  100. journal.initialPrompt
+     EN value: "Initial Prompt"
+  101. journal.journalEntry
+     EN value: "Journal Entry"
+  102. journal.journalSaved
+     EN value: "Journal Saved"
+  103. journal.keyInsights
+     EN value: "Key Insights:"
+  104. journal.keyInsightsTitle
+     EN value: "Key Insights"
+  105. journal.leaveAndDiscard
+     EN value: "Leave & Discard Entry"
+  106. journal.leaveJournaling
+     EN value: "Leave journaling?"
+  107. journal.loadingJournal
+     EN value: "Loading your journal..."
+  108. journal.noEntriesText
+     EN value: "Start your journaling journey by selecting a prompt above or create your own entry."
+  109. journal.noEntriesTitle
+     EN value: "No journal entries yet"
+  110. journal.pleaseWriteSomething
+     EN value: "Please write something"
+  111. journal.polished
+     EN value: "✨ Polished"
+  112. journal.previousReflections
+     EN value: "Your Previous Reflections:"
+  113. journal.question
+     EN value: "Question"
+  114. journal.save
+     EN value: "Save"
+  115. journal.saveModalTitle
+     EN value: "Save your session?"
+  116. journal.startWriting
+     EN value: "Start Writing"
+  117. journal.stay
+     EN value: "Stay"
+  118. journal.stepIndicator
+     EN value: "{{current}}/{{total}}"
+  119. journal.summary
+     EN value: "Summary"
+  120. journal.transcribing
+     EN value: "Transcribing..."
+  121. journal.typeOrSpeak
+     EN value: "Type or speak your thoughts..."
+  122. journal.writingPrompts
+     EN value: "Writing Prompts"
+  123. journal.yourEntries
+     EN value: "Your Entries"
+  124. paywall.best_value
+     EN value: "Best Value"
+  125. paywall.cta_primary
+     EN value: "Start 3-Day Free Trial"
+  126. paywall.cta_secondary
+     EN value: "Continue with Free"
+  127. paywall.feature_locked.cta
+     EN value: "Upgrade to Premium"
+  128. paywall.feature_locked.exercise
+     EN value: "This exercise is available in premium. Upgrade to access the full library."
+  129. paywall.feature_locked.history
+     EN value: "Full chat history is available in premium. Upgrade to access all your past conversations."
+  130. paywall.feature_locked.insights
+     EN value: "Advanced insights are available in premium. Upgrade to unlock deeper analysis."
+  131. paywall.feature_locked.title
+     EN value: "Premium Feature"
+  132. paywall.features.deep_analysis
+     EN value: "Deep personality & thought pattern analysis"
+  133. paywall.features.distorted_thoughts
+     EN value: "Cognitive distortion detection from conversations"
+  134. paywall.features.full_exercises
+     EN value: "Full CBT exercise library"
+  135. paywall.features.personal_insights
+     EN value: "Personalized insights from your journey"
+  136. paywall.features.unlimited_conversations
+     EN value: "Unlimited conversations with Anu's memory"
+  137. paywall.features.unlimited_journaling
+     EN value: "Unlimited guided journaling"
+  138. paywall.features_title
+     EN value: "What You'll Unlock"
+  139. paywall.legal
+     EN value: "Cancel anytime. Subscription renews automatically after trial."
+  140. paywall.limit_reached.cta
+     EN value: "Unlock Premium"
+  141. paywall.limit_reached.dismiss
+     EN value: "Not Now"
+  142. paywall.limit_reached.exercises
+     EN value: "You've completed your daily exercise. Upgrade for unlimited exercises."
+  143. paywall.limit_reached.journal_prompts
+     EN value: "You've used your daily journal prompt. Upgrade for unlimited prompts."
+  144. paywall.limit_reached.messages
+     EN value: "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access."
+  145. paywall.limit_reached.messages_weekly
+     EN value: "You've used all {{limit}} messages for this week. Your limit resets next Monday."
+  146. paywall.limit_reached.reset_info
+     EN value: "Your free limit resets tomorrow"
+  147. paywall.limit_reached.reset_info_premium_weekly
+     EN value: "Your premium weekly limit resets next Monday"
+  148. paywall.limit_reached.reset_info_weekly
+     EN value: "Your limit resets next Monday"
+  149. paywall.limit_reached.subtitle
+     EN value: "Upgrade to continue your journey without limits"
+  150. paywall.limit_reached.title
+     EN value: "You've reached your daily limit"
+  151. paywall.limit_reached.title_weekly
+     EN value: "You've reached your weekly limit"
+  152. paywall.limit_reached.voice
+     EN value: "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access."
+  153. paywall.loading
+     EN value: "Loading subscription options..."
+  154. paywall.monthly_equivalent
+     EN value: "Only {{price}}/month"
+  155. paywall.per_period
+     EN value: "per {{period}}"
+  156. paywall.period.month
+     EN value: "month"
+  157. paywall.period.year
+     EN value: "year"
+  158. paywall.plan.annual
+     EN value: "Annual"
+  159. paywall.plan.monthly
+     EN value: "Monthly"
+  160. paywall.processing
+     EN value: "Processing your purchase..."
+  161. paywall.save_percent
+     EN value: "Save {{percent}}%"
+  162. paywall.subscription_management.current_plan
+     EN value: "Current Plan"
+  163. paywall.subscription_management.expired_on
+     EN value: "Expired on {{date}}"
+  164. paywall.subscription_management.expires_on
+     EN value: "Renews on {{date}}"
+  165. paywall.subscription_management.free_plan
+     EN value: "Free Plan"
+  166. paywall.subscription_management.manage
+     EN value: "Manage Subscription"
+  167. paywall.subscription_management.premium_plan
+     EN value: "Premium Plan"
+  168. paywall.subscription_management.restore
+     EN value: "Restore Purchases"
+  169. paywall.subscription_management.restoring
+     EN value: "Restoring..."
+  170. paywall.subscription_management.title
+     EN value: "Subscription"
+  171. paywall.subscription_management.trial_active
+     EN value: "Trial Active"
+  172. paywall.subscription_management.upgrade
+     EN value: "Upgrade to Premium"
+  173. paywall.subtitle
+     EN value: "Start with a 3-day free trial"
+  174. paywall.title
+     EN value: "Begin Your Healing Journey"
+  175. paywall.trial_days
+     EN value: "{{days}}-day free trial"
+  176. premium_limit.benefit_exercises
+     EN value: "Unlimited guided exercises"
+  177. premium_limit.benefit_history
+     EN value: "Full conversation history"
+  178. premium_limit.benefit_insights
+     EN value: "Advanced insights & analytics"
+  179. premium_limit.benefit_voice
+     EN value: "Extended voice journaling"
+  180. premium_limit.benefits_title
+     EN value: "Your Premium Benefits Continue:"
+  181. premium_limit.cta
+     EN value: "Got It"
+  182. premium_limit.default_reset
+     EN value: "next Monday"
+  183. premium_limit.explanation
+     EN value: "As a premium member, you have access to 2,000 messages per week. This limit helps us maintain quality service for all our premium users."
+  184. premium_limit.messages_used
+     EN value: "Messages Used"
+  185. premium_limit.resets_on
+     EN value: "Resets on {{date}}"
+  186. premium_limit.subtitle
+     EN value: "You've used all your messages for this week. Your limit will reset next Monday."
+  187. premium_limit.support_text
+     EN value: "Need help? Contact our support team"
+  188. premium_limit.title
+     EN value: "Weekly Limit Reached"
+  189. premium_limit.weekly_limit
+     EN value: "Weekly Limit"
+  190. profile.deleteData.confirmMessage
+     EN value: "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone."
+  191. profile.deleteData.confirmTitle
+     EN value: "Are You Sure?"
+  192. profile.deleteData.continue
+     EN value: "Continue"
+  193. profile.deleteData.deleteButton
+     EN value: "Delete Everything"
+  194. profile.deleteData.deleting
+     EN value: "Deleting Data"
+  195. profile.deleteData.errorMessage
+     EN value: "Failed to delete data. Please try again."
+  196. profile.deleteData.partialSuccessMessage
+     EN value: "Some data was deleted, but errors occurred:
+
+{{errors}}"
+  197. profile.deleteData.partialSuccessTitle
+     EN value: "Partial Deletion"
+  198. profile.deleteData.pleaseWait
+     EN value: "Please wait while we delete your data..."
+  199. profile.deleteData.successMessage
+     EN value: "Successfully deleted:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+
+Total: {{total}} items removed"
+  200. profile.deleteData.successTitle
+     EN value: "Data Deleted"
+  201. profile.deleteData.summaryMessage
+     EN value: "You're about to delete all your data:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+• {{goals}} goals
+• {{values}} values
+
+Total: {{total}} items
+
+This action cannot be undone."
+  202. profile.deleteData.title
+     EN value: "Delete My Data"
+  203. profile.devMenu.actions.checkLimit
+     EN value: "Check Message Limit"
+  204. profile.devMenu.actions.checkLimitDesc
+     EN value: "Test if user can send messages"
+  205. profile.devMenu.actions.clearStorage
+     EN value: "Clear All Storage"
+  206. profile.devMenu.actions.clearStorageDesc
+     EN value: "Delete all app data (DESTRUCTIVE)"
+  207. profile.devMenu.actions.resetToFree
+     EN value: "Reset to Free Tier"
+  208. profile.devMenu.actions.resetToFreeDesc
+     EN value: "Clear RevenueCat purchases and reset to free plan"
+  209. profile.devMenu.actions.resetUsage
+     EN value: "Reset Daily Usage"
+  210. profile.devMenu.actions.resetUsageDesc
+     EN value: "Reset message, voice, and exercise counters"
+  211. profile.devMenu.actions.showDebug
+     EN value: "Show Debug Info"
+  212. profile.devMenu.actions.showDebugDesc
+     EN value: "Print subscription status and usage to console"
+  213. profile.devMenu.alerts.allDataCleared
+     EN value: "All Data Cleared"
+  214. profile.devMenu.alerts.allDataClearedMsg
+     EN value: "Force quit and relaunch the app."
+  215. profile.devMenu.alerts.clearAllData
+     EN value: "⚠️ Clear All Data?"
+  216. profile.devMenu.alerts.clearAllDataBtn
+     EN value: "Clear All Data"
+  217. profile.devMenu.alerts.clearAllDataMsg
+     EN value: "This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.
+
+Are you sure?"
+  218. profile.devMenu.alerts.debugInfo
+     EN value: "Debug Info"
+  219. profile.devMenu.alerts.debugInfoMsg
+     EN value: "Tier: {{tier}}
+Premium: {{premium}}
+Messages: {{messages}}/{{limit}}
+Check console for full details"
+  220. profile.devMenu.alerts.error
+     EN value: "Error"
+  221. profile.devMenu.alerts.messageLimitCheck
+     EN value: "Message Limit Check"
+  222. profile.devMenu.alerts.messageLimitCheckMsg
+     EN value: "Can send: {{canSend}}
+Current: {{current}}/{{limit}}
+Tier: {{tier}}{{reason}}"
+  223. profile.devMenu.alerts.resetComplete
+     EN value: "Reset Complete"
+  224. profile.devMenu.alerts.resetCompleteMsg
+     EN value: "Subscription reset to free tier. Force quit and relaunch the app to see changes."
+  225. profile.devMenu.alerts.usageReset
+     EN value: "Usage Reset"
+  226. profile.devMenu.alerts.usageResetMsg
+     EN value: "Daily usage counters reset to 0. You can now test hitting the daily limits."
+  227. profile.devMenu.close
+     EN value: "Close"
+  228. profile.devMenu.infoMessage
+     EN value: "💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects."
+  229. profile.devMenu.sections.dangerZone
+     EN value: "⚠️ Danger Zone"
+  230. profile.devMenu.sections.subscription
+     EN value: "Subscription Testing"
+  231. profile.devMenu.sections.usage
+     EN value: "Usage Testing"
+  232. profile.devMenu.subtitle
+     EN value: "Testing utilities (DEV only)"
+  233. profile.devMenu.title
+     EN value: "🧪 Developer Tools"
+  234. profile.editProfile.descriptionAnon
+     EN value: "Customize your friendly alias so Anu can keep supporting you with a personal touch."
+  235. profile.editProfile.descriptionUser
+     EN value: "Keep your details current so guidance, insights, and reminders feel tailored to you."
+  236. profile.editProfile.error.message
+     EN value: "Failed to update profile. Please try again."
+  237. profile.editProfile.error.title
+     EN value: "Error"
+  238. profile.editProfile.firstNameLabel
+     EN value: "First Name"
+  239. profile.editProfile.firstNamePlaceholder
+     EN value: "Enter your first name"
+  240. profile.editProfile.subtitle
+     EN value: "Refresh how Anu greets you across the app."
+  241. profile.editProfile.success.button
+     EN value: "Great!"
+  242. profile.editProfile.success.message
+     EN value: "Your profile has been updated successfully! Anu will now address you as {{name}}."
+  243. profile.editProfile.success.title
+     EN value: "Profile Updated"
+  244. profile.editProfile.title
+     EN value: "Edit Profile"
+  245. profile.editProfile.unsavedChanges.discard
+     EN value: "Discard"
+  246. profile.editProfile.unsavedChanges.keep
+     EN value: "Keep Editing"
+  247. profile.editProfile.unsavedChanges.message
+     EN value: "You have unsaved changes. Are you sure you want to close without saving?"
+  248. profile.editProfile.unsavedChanges.title
+     EN value: "Discard Changes?"
+  249. profile.editProfile.validation.invalidCharacters
+     EN value: "Only letters, spaces, hyphens, and apostrophes are allowed"
+  250. profile.editProfile.validation.maxLength
+     EN value: "First name must be 50 characters or less"
+  251. profile.editProfile.validation.required
+     EN value: "First name is required"
+  252. quickActions.deepBreathing
+     EN value: "Deep Breathing"
+  253. quickActions.recommended
+     EN value: "Recommended"
+  254. quickActions.startDescription
+     EN value: "Start with a calming breathing exercise to center yourself."
+  255. quickActions.startVoiceSession
+     EN value: "Start Voice Session"
+  256. quickActions.title
+     EN value: "Quick Actions"
+  257. quickActions.voiceSession.category
+     EN value: "Chat"
+  258. quickActions.voiceSession.description
+     EN value: "Talk with your AI companion"
+  259. quickActions.voiceSession.title
+     EN value: "Voice Session"
+
+➕ EXTRA KEYS (not in en.json):
+  1. insights.moodInsights.moreBalanced
+  2. insights.moodInsights.analyzingPatterns
+  3. insights.moodInsights.emptyStates.noData.title
+  4. insights.moodInsights.emptyStates.noData.description
+  5. insights.moodInsights.emptyStates.noData.chatButton
+  6. insights.moodInsights.emptyStates.noData.exerciseButton
+  7. insights.moodInsights.emptyStates.noData.sampleButton
+  8. insights.moodInsights.emptyStates.moodOnly.title
+  9. insights.moodInsights.emptyStates.moodOnly.description
+  10. insights.moodInsights.emptyStates.sessionsOnly.title
+  11. insights.moodInsights.emptyStates.sessionsOnly.description
+  12. insights.moodInsights.emptyStates.sessionsOnly.exerciseButton
+  13. insights.moodInsights.emptyStates.bothData.title
+  14. insights.moodInsights.emptyStates.bothData.description
+  15. insights.moodInsights.emptyStates.fallback.title
+  16. profile.editProfile
+  17. exerciseLibrary.names.goalSetting
+  18. exerciseLibrary.descriptions.goalSetting
+  19. exerciseLibrary.shortDescriptions.goalSetting
+  20. exerciseLibrary.steps.goalSetting.step1.title
+  21. exerciseLibrary.steps.goalSetting.step1.description
+  22. exerciseLibrary.steps.goalSetting.step1.instruction
+  23. exerciseLibrary.steps.goalSetting.step2.title
+  24. exerciseLibrary.steps.goalSetting.step2.description
+  25. exerciseLibrary.steps.goalSetting.step2.instruction
+  26. exerciseLibrary.steps.goalSetting.step3.title
+  27. exerciseLibrary.steps.goalSetting.step3.description
+  28. exerciseLibrary.steps.goalSetting.step3.instruction
+  29. exerciseLibrary.steps.goalSetting.step4.title
+  30. exerciseLibrary.steps.goalSetting.step4.description
+  31. exerciseLibrary.steps.goalSetting.step4.instruction
+  32. exerciseLibrary.steps.goalSetting.step5.title
+  33. exerciseLibrary.steps.goalSetting.step5.description
+  34. exerciseLibrary.steps.goalSetting.step5.instruction
+  35. exerciseLibrary.steps.goalSetting.step6.title
+  36. exerciseLibrary.steps.goalSetting.step6.description
+  37. exerciseLibrary.steps.goalSetting.step6.instruction
+  38. exerciseLibrary.steps.therapyGoalDefinition.step1.title
+  39. exerciseLibrary.steps.therapyGoalDefinition.step1.description
+  40. exerciseLibrary.steps.therapyGoalDefinition.step1.instruction
+  41. exerciseLibrary.steps.therapyGoalDefinition.step2.title
+  42. exerciseLibrary.steps.therapyGoalDefinition.step2.description
+  43. exerciseLibrary.steps.therapyGoalDefinition.step2.instruction
+  44. exerciseLibrary.steps.therapyGoalDefinition.step3.title
+  45. exerciseLibrary.steps.therapyGoalDefinition.step3.description
+  46. exerciseLibrary.steps.therapyGoalDefinition.step3.instruction
+  47. exerciseLibrary.steps.therapyGoalDefinition.step4.title
+  48. exerciseLibrary.steps.therapyGoalDefinition.step4.description
+  49. exerciseLibrary.steps.therapyGoalDefinition.step4.instruction
+  50. exerciseLibrary.steps.therapyGoalDefinition.step5.title
+  51. exerciseLibrary.steps.therapyGoalDefinition.step5.description
+  52. exerciseLibrary.steps.therapyGoalDefinition.step5.instruction
+  53. quickActions.voiceNote.title
+  54. quickActions.voiceNote.description
+  55. quickActions.voiceNote.category
+
+--------------------------------------------------------------------------------
+Language: PT
+--------------------------------------------------------------------------------
+Total keys present: 986
+Completion: 82.86%
+Missing keys: 259
+Extra keys: 55
+
+📋 MISSING KEYS:
+  1. alerts.clearAllHistory.clearAll
+     EN value: "Clear All"
+  2. alerts.clearAllHistory.message
+     EN value: "Are you sure you want to delete all saved conversations? This cannot be undone."
+  3. alerts.clearAllHistory.title
+     EN value: "Clear All History"
+  4. alerts.clearHistoryError
+     EN value: "Failed to clear history. Please try again."
+  5. alerts.deleteSessionError
+     EN value: "Failed to delete session. Please try again."
+  6. chat.moodRatingCard.howDoYouFeelNow
+     EN value: "How do you feel right now?"
+  7. chat.moodRatingCard.howHelpfulWasThis
+     EN value: "How helpful was this?"
+  8. chat.moodRatingCard.title
+     EN value: "Before we finish..."
+  9. errors.acceptPrivacyPolicy
+     EN value: "Please accept the privacy policy to continue"
+  10. errors.checkEmailFirst
+     EN value: "Please check your email and click the verification link first."
+  11. errors.emailSent
+     EN value: "Email Sent"
+  12. errors.enterEmail
+     EN value: "Please enter your email"
+  13. errors.enterFirstName
+     EN value: "Please enter your first name"
+  14. errors.enterLastName
+     EN value: "Please enter your last name"
+  15. errors.enterValidEmail
+     EN value: "Please enter a valid email address"
+  16. errors.failedToClearHistory
+     EN value: "Failed to clear history. Please try again."
+  17. errors.failedToDeleteSession
+     EN value: "Failed to delete session. Please try again."
+  18. errors.failedToLoadGoals
+     EN value: "Failed to load your goals. Please try again."
+  19. errors.failedToLoadSummaries
+     EN value: "Failed to load session summaries."
+  20. errors.failedToSaveCheckIn
+     EN value: "Failed to save check-in. Please try again."
+  21. errors.failedToSaveGoal
+     EN value: "Failed to save your goal. Please try again."
+  22. errors.failedToSaveSettings
+     EN value: "Failed to save settings"
+  23. errors.failedToUpdateGoal
+     EN value: "Failed to update goal. Please try again."
+  24. errors.failedToUpdateGoalStatus
+     EN value: "Failed to update goal status."
+  25. errors.failedToUpdateProfile
+     EN value: "Failed to update profile. Please try again."
+  26. errors.fillAllFields
+     EN value: "Please fill in all fields"
+  27. errors.goalUpdatedSuccess
+     EN value: "Goal updated successfully!"
+  28. errors.googleSignInFailed
+     EN value: "Google Sign In Failed"
+  29. errors.missingInformation
+     EN value: "Missing Information"
+  30. errors.notVerified
+     EN value: "Not Verified"
+  31. errors.passwordTooShort
+     EN value: "Password must be at least 6 characters long"
+  32. errors.passwordsNoMatch
+     EN value: "Passwords do not match"
+  33. errors.pleaseAddReflection
+     EN value: "Please add a brief reflection on your progress."
+  34. errors.pleaseEnterValidGoal
+     EN value: "Please enter a valid goal."
+  35. errors.pleaseRateProgress
+     EN value: "Please rate your progress before submitting."
+  36. errors.progressRecorded
+     EN value: "Your progress has been recorded."
+  37. errors.resendVerificationFailed
+     EN value: "Failed to resend verification email"
+  38. errors.signInFailed
+     EN value: "Sign In Failed"
+  39. errors.signUpFailed
+     EN value: "Sign Up Failed"
+  40. errors.verificationCheckFailed
+     EN value: "Unable to check verification status. Please try again."
+  41. errors.verificationEmailSent
+     EN value: "Verification email has been sent again. Please check your inbox."
+  42. exerciseLibrary.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful personal goals"
+  43. exerciseLibrary.descriptions.therapyGoals
+     EN value: "Identify what you want to work on in therapy"
+  44. exerciseLibrary.names.personalMilestones
+     EN value: "Personal Milestones"
+  45. exerciseLibrary.names.therapyGoals
+     EN value: "Therapy Goals"
+  46. exerciseLibrary.shortDescriptions.personalMilestones
+     EN value: "Turn aspirations into actionable steps."
+  47. exerciseLibrary.shortDescriptions.therapyGoals
+     EN value: "Define your therapeutic focus areas."
+  48. exerciseLibrary.steps.personalMilestones.step1.description
+     EN value: "What's one meaningful goal you want to achieve?"
+  49. exerciseLibrary.steps.personalMilestones.step1.instruction
+     EN value: "Invite the user to share one personal goal or milestone they want to work toward. Keep it specific and achievable. Examples: 'exercise 3x/week,' 'learn to cook healthy meals,' 'build a morning routine.' Stay on this step until they articulate one clear goal."
+  50. exerciseLibrary.steps.personalMilestones.step1.title
+     EN value: "Choose your milestone"
+  51. exerciseLibrary.steps.personalMilestones.step2.description
+     EN value: "Why does this goal matter to you?"
+  52. exerciseLibrary.steps.personalMilestones.step2.instruction
+     EN value: "Ask the user to reflect on why this milestone is important. Encourage them to connect it to their values, wellbeing, or what they want their life to look like. Help them articulate the deeper meaning—not just 'I should,' but 'I want to because...'"
+  53. exerciseLibrary.steps.personalMilestones.step2.title
+     EN value: "Connect to purpose"
+  54. exerciseLibrary.steps.personalMilestones.step3.description
+     EN value: "What's one small action you can take this week?"
+  55. exerciseLibrary.steps.personalMilestones.step3.instruction
+     EN value: "Guide the user to identify one specific, doable action they can take in the next few days toward this goal. Keep it simple and concrete—something they can actually do, not just think about. Examples: 'sign up for a class,' 'buy running shoes,' 'set a 10-minute morning alarm.' Acknowledge their commitment warmly."
+  56. exerciseLibrary.steps.personalMilestones.step3.title
+     EN value: "First step forward"
+  57. exerciseLibrary.steps.therapyGoals.step1.description
+     EN value: "What areas of your wellbeing would you like to work on?"
+  58. exerciseLibrary.steps.therapyGoals.step1.instruction
+     EN value: "Invite the user to share 1-3 areas they'd like to focus on in therapy. Offer gentle examples if needed: managing anxiety, improving relationships, building self-esteem, processing grief, reducing stress, understanding emotions, overcoming negative thinking. Encourage them to use their own words and be as specific as they're comfortable with. Stay until they identify at least one clear area."
+  59. exerciseLibrary.steps.therapyGoals.step1.title
+     EN value: "Identify your focus"
+  60. exerciseLibrary.steps.therapyGoals.step2.description
+     EN value: "What would feel different if you made progress in these areas?"
+  61. exerciseLibrary.steps.therapyGoals.step2.instruction
+     EN value: "Ask the user to envision what life might look like with positive changes in their focus areas. Encourage concrete, felt descriptions—not just 'feel better' but 'I'd wake up without dread,' 'I'd feel comfortable in social situations,' 'I'd trust my decisions more.' This helps clarify what they're working toward. Stay supportive and curious."
+  62. exerciseLibrary.steps.therapyGoals.step2.title
+     EN value: "Describe the change"
+  63. exerciseLibrary.steps.therapyGoals.step3.description
+     EN value: "Let's keep these goals as our foundation."
+  64. exerciseLibrary.steps.therapyGoals.step3.instruction
+     EN value: "Warmly acknowledge the user's clarity and courage. Summarize their therapy goals in 2-3 sentences, reflecting back what they shared. Then explain: 'I'll keep these goals in mind during our work together. In exercises like Reframe Thoughts or Values Clarity, we'll connect back to what matters most to you. Over time, we can track progress and adjust these together.' Finish with: 'Would you like to start working on one of these areas now, or save this as your roadmap for future sessions?'"
+  65. exerciseLibrary.steps.therapyGoals.step3.title
+     EN value: "Your therapeutic roadmap"
+  66. insights.actions.reflectOnThis
+     EN value: "Reflect on This"
+  67. insights.moodInsights.emptyState.encouragement
+     EN value: "Chat with Anu to see your mood patterns"
+  68. insights.moodInsights.emptyState.seeExample
+     EN value: "See Example"
+  69. insights.moodInsights.emptyState.startTracking
+     EN value: "Start Tracking"
+  70. insights.moodInsights.emptyState.trackProgress
+     EN value: "Your journey starts here"
+  71. insights.moodInsights.emptyStates.chatButton
+     EN value: "Chat with Anu"
+  72. insights.moodInsights.emptyStates.chatWithAnu
+     EN value: "Chat with Anu or track your mood after exercises to see personalized insights here"
+  73. insights.moodInsights.emptyStates.checkingData
+     EN value: "Checking your data... ✨"
+  74. insights.moodInsights.emptyStates.generateSample
+     EN value: "Generate Sample Data"
+  75. insights.moodInsights.emptyStates.greatJobTracking
+     EN value: "Great job tracking your mood! 📈"
+  76. insights.moodInsights.emptyStates.keepBuilding
+     EN value: "Keep building your insights! ⭐"
+  77. insights.moodInsights.emptyStates.niceProgress
+     EN value: "Nice progress with Anu! 💬"
+  78. insights.moodInsights.emptyStates.startJourney
+     EN value: "Start your wellness journey! ✨"
+  79. insights.moodInsights.emptyStates.tryExercise
+     EN value: "Try Exercise"
+  80. insights.moodInsights.noDataYet
+     EN value: "No mood data yet"
+  81. insights.priorityExercises.descriptions.personalMilestones
+     EN value: "Set and achieve meaningful goals"
+  82. insights.priorityExercises.descriptions.therapyGoals
+     EN value: "Define what you want to work on"
+  83. insights.priorityExercises.names.personalMilestones
+     EN value: "Personal Milestones"
+  84. insights.priorityExercises.names.therapyGoals
+     EN value: "Therapy Goals"
+  85. insights.weeklyHighlights.subtitle
+     EN value: "Your progress this week"
+  86. insights.weeklyHighlights.title
+     EN value: "Weekly Highlights"
+  87. journal.continue
+     EN value: "Continue"
+  88. journal.deleteEntry
+     EN value: "Delete Entry"
+  89. journal.deleteEntryConfirm
+     EN value: "Are you sure you want to delete this journal entry? This action cannot be undone."
+  90. journal.discardWarning
+     EN value: "Your entry will be lost if you leave now."
+  91. journal.dontSaveButton
+     EN value: "Don't Save"
+  92. journal.entryCannotBeEmpty
+     EN value: "Your journal entry cannot be empty."
+  93. journal.entrySaved
+     EN value: "Your journal entry has been saved!"
+  94. journal.entrySavedPolished
+     EN value: "Your entry has been saved and polished!"
+  95. journal.failedNextQuestion
+     EN value: "Failed to generate next question. Please try again."
+  96. journal.failedToDelete
+     EN value: "Failed to delete entry. Please try again."
+  97. journal.failedToLoad
+     EN value: "Failed to load journal data. Please try again."
+  98. journal.failedToSave
+     EN value: "Failed to save your journal entry. Please try again."
+  99. journal.failedToSaveDraft
+     EN value: "Failed to save draft."
+  100. journal.initialPrompt
+     EN value: "Initial Prompt"
+  101. journal.journalEntry
+     EN value: "Journal Entry"
+  102. journal.journalSaved
+     EN value: "Journal Saved"
+  103. journal.keyInsights
+     EN value: "Key Insights:"
+  104. journal.keyInsightsTitle
+     EN value: "Key Insights"
+  105. journal.leaveAndDiscard
+     EN value: "Leave & Discard Entry"
+  106. journal.leaveJournaling
+     EN value: "Leave journaling?"
+  107. journal.loadingJournal
+     EN value: "Loading your journal..."
+  108. journal.noEntriesText
+     EN value: "Start your journaling journey by selecting a prompt above or create your own entry."
+  109. journal.noEntriesTitle
+     EN value: "No journal entries yet"
+  110. journal.pleaseWriteSomething
+     EN value: "Please write something"
+  111. journal.polished
+     EN value: "✨ Polished"
+  112. journal.previousReflections
+     EN value: "Your Previous Reflections:"
+  113. journal.question
+     EN value: "Question"
+  114. journal.save
+     EN value: "Save"
+  115. journal.saveModalTitle
+     EN value: "Save your session?"
+  116. journal.startWriting
+     EN value: "Start Writing"
+  117. journal.stay
+     EN value: "Stay"
+  118. journal.stepIndicator
+     EN value: "{{current}}/{{total}}"
+  119. journal.summary
+     EN value: "Summary"
+  120. journal.transcribing
+     EN value: "Transcribing..."
+  121. journal.typeOrSpeak
+     EN value: "Type or speak your thoughts..."
+  122. journal.writingPrompts
+     EN value: "Writing Prompts"
+  123. journal.yourEntries
+     EN value: "Your Entries"
+  124. paywall.best_value
+     EN value: "Best Value"
+  125. paywall.cta_primary
+     EN value: "Start 3-Day Free Trial"
+  126. paywall.cta_secondary
+     EN value: "Continue with Free"
+  127. paywall.feature_locked.cta
+     EN value: "Upgrade to Premium"
+  128. paywall.feature_locked.exercise
+     EN value: "This exercise is available in premium. Upgrade to access the full library."
+  129. paywall.feature_locked.history
+     EN value: "Full chat history is available in premium. Upgrade to access all your past conversations."
+  130. paywall.feature_locked.insights
+     EN value: "Advanced insights are available in premium. Upgrade to unlock deeper analysis."
+  131. paywall.feature_locked.title
+     EN value: "Premium Feature"
+  132. paywall.features.deep_analysis
+     EN value: "Deep personality & thought pattern analysis"
+  133. paywall.features.distorted_thoughts
+     EN value: "Cognitive distortion detection from conversations"
+  134. paywall.features.full_exercises
+     EN value: "Full CBT exercise library"
+  135. paywall.features.personal_insights
+     EN value: "Personalized insights from your journey"
+  136. paywall.features.unlimited_conversations
+     EN value: "Unlimited conversations with Anu's memory"
+  137. paywall.features.unlimited_journaling
+     EN value: "Unlimited guided journaling"
+  138. paywall.features_title
+     EN value: "What You'll Unlock"
+  139. paywall.legal
+     EN value: "Cancel anytime. Subscription renews automatically after trial."
+  140. paywall.limit_reached.cta
+     EN value: "Unlock Premium"
+  141. paywall.limit_reached.dismiss
+     EN value: "Not Now"
+  142. paywall.limit_reached.exercises
+     EN value: "You've completed your daily exercise. Upgrade for unlimited exercises."
+  143. paywall.limit_reached.journal_prompts
+     EN value: "You've used your daily journal prompt. Upgrade for unlimited prompts."
+  144. paywall.limit_reached.messages
+     EN value: "You've used all {{limit}} messages for today. Come back tomorrow or upgrade for unlimited access."
+  145. paywall.limit_reached.messages_weekly
+     EN value: "You've used all {{limit}} messages for this week. Your limit resets next Monday."
+  146. paywall.limit_reached.reset_info
+     EN value: "Your free limit resets tomorrow"
+  147. paywall.limit_reached.reset_info_premium_weekly
+     EN value: "Your premium weekly limit resets next Monday"
+  148. paywall.limit_reached.reset_info_weekly
+     EN value: "Your limit resets next Monday"
+  149. paywall.limit_reached.subtitle
+     EN value: "Upgrade to continue your journey without limits"
+  150. paywall.limit_reached.title
+     EN value: "You've reached your daily limit"
+  151. paywall.limit_reached.title_weekly
+     EN value: "You've reached your weekly limit"
+  152. paywall.limit_reached.voice
+     EN value: "You've used all {{limit}} minutes of voice journaling today. Upgrade for unlimited voice access."
+  153. paywall.loading
+     EN value: "Loading subscription options..."
+  154. paywall.monthly_equivalent
+     EN value: "Only {{price}}/month"
+  155. paywall.per_period
+     EN value: "per {{period}}"
+  156. paywall.period.month
+     EN value: "month"
+  157. paywall.period.year
+     EN value: "year"
+  158. paywall.plan.annual
+     EN value: "Annual"
+  159. paywall.plan.monthly
+     EN value: "Monthly"
+  160. paywall.processing
+     EN value: "Processing your purchase..."
+  161. paywall.save_percent
+     EN value: "Save {{percent}}%"
+  162. paywall.subscription_management.current_plan
+     EN value: "Current Plan"
+  163. paywall.subscription_management.expired_on
+     EN value: "Expired on {{date}}"
+  164. paywall.subscription_management.expires_on
+     EN value: "Renews on {{date}}"
+  165. paywall.subscription_management.free_plan
+     EN value: "Free Plan"
+  166. paywall.subscription_management.manage
+     EN value: "Manage Subscription"
+  167. paywall.subscription_management.premium_plan
+     EN value: "Premium Plan"
+  168. paywall.subscription_management.restore
+     EN value: "Restore Purchases"
+  169. paywall.subscription_management.restoring
+     EN value: "Restoring..."
+  170. paywall.subscription_management.title
+     EN value: "Subscription"
+  171. paywall.subscription_management.trial_active
+     EN value: "Trial Active"
+  172. paywall.subscription_management.upgrade
+     EN value: "Upgrade to Premium"
+  173. paywall.subtitle
+     EN value: "Start with a 3-day free trial"
+  174. paywall.title
+     EN value: "Begin Your Healing Journey"
+  175. paywall.trial_days
+     EN value: "{{days}}-day free trial"
+  176. premium_limit.benefit_exercises
+     EN value: "Unlimited guided exercises"
+  177. premium_limit.benefit_history
+     EN value: "Full conversation history"
+  178. premium_limit.benefit_insights
+     EN value: "Advanced insights & analytics"
+  179. premium_limit.benefit_voice
+     EN value: "Extended voice journaling"
+  180. premium_limit.benefits_title
+     EN value: "Your Premium Benefits Continue:"
+  181. premium_limit.cta
+     EN value: "Got It"
+  182. premium_limit.default_reset
+     EN value: "next Monday"
+  183. premium_limit.explanation
+     EN value: "As a premium member, you have access to 2,000 messages per week. This limit helps us maintain quality service for all our premium users."
+  184. premium_limit.messages_used
+     EN value: "Messages Used"
+  185. premium_limit.resets_on
+     EN value: "Resets on {{date}}"
+  186. premium_limit.subtitle
+     EN value: "You've used all your messages for this week. Your limit will reset next Monday."
+  187. premium_limit.support_text
+     EN value: "Need help? Contact our support team"
+  188. premium_limit.title
+     EN value: "Weekly Limit Reached"
+  189. premium_limit.weekly_limit
+     EN value: "Weekly Limit"
+  190. profile.deleteData.confirmMessage
+     EN value: "This will permanently delete all your insights, moods, goals, and chat history. This cannot be undone."
+  191. profile.deleteData.confirmTitle
+     EN value: "Are You Sure?"
+  192. profile.deleteData.continue
+     EN value: "Continue"
+  193. profile.deleteData.deleteButton
+     EN value: "Delete Everything"
+  194. profile.deleteData.deleting
+     EN value: "Deleting Data"
+  195. profile.deleteData.errorMessage
+     EN value: "Failed to delete data. Please try again."
+  196. profile.deleteData.partialSuccessMessage
+     EN value: "Some data was deleted, but errors occurred:
+
+{{errors}}"
+  197. profile.deleteData.partialSuccessTitle
+     EN value: "Partial Deletion"
+  198. profile.deleteData.pleaseWait
+     EN value: "Please wait while we delete your data..."
+  199. profile.deleteData.successMessage
+     EN value: "Successfully deleted:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+
+Total: {{total}} items removed"
+  200. profile.deleteData.successTitle
+     EN value: "Data Deleted"
+  201. profile.deleteData.summaryMessage
+     EN value: "You're about to delete all your data:
+
+• {{sessions}} chat sessions
+• {{thoughts}} thought patterns
+• {{moods}} mood ratings
+• {{goals}} goals
+• {{values}} values
+
+Total: {{total}} items
+
+This action cannot be undone."
+  202. profile.deleteData.title
+     EN value: "Delete My Data"
+  203. profile.devMenu.actions.checkLimit
+     EN value: "Check Message Limit"
+  204. profile.devMenu.actions.checkLimitDesc
+     EN value: "Test if user can send messages"
+  205. profile.devMenu.actions.clearStorage
+     EN value: "Clear All Storage"
+  206. profile.devMenu.actions.clearStorageDesc
+     EN value: "Delete all app data (DESTRUCTIVE)"
+  207. profile.devMenu.actions.resetToFree
+     EN value: "Reset to Free Tier"
+  208. profile.devMenu.actions.resetToFreeDesc
+     EN value: "Clear RevenueCat purchases and reset to free plan"
+  209. profile.devMenu.actions.resetUsage
+     EN value: "Reset Daily Usage"
+  210. profile.devMenu.actions.resetUsageDesc
+     EN value: "Reset message, voice, and exercise counters"
+  211. profile.devMenu.actions.showDebug
+     EN value: "Show Debug Info"
+  212. profile.devMenu.actions.showDebugDesc
+     EN value: "Print subscription status and usage to console"
+  213. profile.devMenu.alerts.allDataCleared
+     EN value: "All Data Cleared"
+  214. profile.devMenu.alerts.allDataClearedMsg
+     EN value: "Force quit and relaunch the app."
+  215. profile.devMenu.alerts.clearAllData
+     EN value: "⚠️ Clear All Data?"
+  216. profile.devMenu.alerts.clearAllDataBtn
+     EN value: "Clear All Data"
+  217. profile.devMenu.alerts.clearAllDataMsg
+     EN value: "This will delete ALL app data including chat history, user profile, and settings. The app will be like a fresh install.
+
+Are you sure?"
+  218. profile.devMenu.alerts.debugInfo
+     EN value: "Debug Info"
+  219. profile.devMenu.alerts.debugInfoMsg
+     EN value: "Tier: {{tier}}
+Premium: {{premium}}
+Messages: {{messages}}/{{limit}}
+Check console for full details"
+  220. profile.devMenu.alerts.error
+     EN value: "Error"
+  221. profile.devMenu.alerts.messageLimitCheck
+     EN value: "Message Limit Check"
+  222. profile.devMenu.alerts.messageLimitCheckMsg
+     EN value: "Can send: {{canSend}}
+Current: {{current}}/{{limit}}
+Tier: {{tier}}{{reason}}"
+  223. profile.devMenu.alerts.resetComplete
+     EN value: "Reset Complete"
+  224. profile.devMenu.alerts.resetCompleteMsg
+     EN value: "Subscription reset to free tier. Force quit and relaunch the app to see changes."
+  225. profile.devMenu.alerts.usageReset
+     EN value: "Usage Reset"
+  226. profile.devMenu.alerts.usageResetMsg
+     EN value: "Daily usage counters reset to 0. You can now test hitting the daily limits."
+  227. profile.devMenu.close
+     EN value: "Close"
+  228. profile.devMenu.infoMessage
+     EN value: "💡 These tools are only available in development mode. After making changes, you may need to force quit and relaunch the app to see the effects."
+  229. profile.devMenu.sections.dangerZone
+     EN value: "⚠️ Danger Zone"
+  230. profile.devMenu.sections.subscription
+     EN value: "Subscription Testing"
+  231. profile.devMenu.sections.usage
+     EN value: "Usage Testing"
+  232. profile.devMenu.subtitle
+     EN value: "Testing utilities (DEV only)"
+  233. profile.devMenu.title
+     EN value: "🧪 Developer Tools"
+  234. profile.editProfile.descriptionAnon
+     EN value: "Customize your friendly alias so Anu can keep supporting you with a personal touch."
+  235. profile.editProfile.descriptionUser
+     EN value: "Keep your details current so guidance, insights, and reminders feel tailored to you."
+  236. profile.editProfile.error.message
+     EN value: "Failed to update profile. Please try again."
+  237. profile.editProfile.error.title
+     EN value: "Error"
+  238. profile.editProfile.firstNameLabel
+     EN value: "First Name"
+  239. profile.editProfile.firstNamePlaceholder
+     EN value: "Enter your first name"
+  240. profile.editProfile.subtitle
+     EN value: "Refresh how Anu greets you across the app."
+  241. profile.editProfile.success.button
+     EN value: "Great!"
+  242. profile.editProfile.success.message
+     EN value: "Your profile has been updated successfully! Anu will now address you as {{name}}."
+  243. profile.editProfile.success.title
+     EN value: "Profile Updated"
+  244. profile.editProfile.title
+     EN value: "Edit Profile"
+  245. profile.editProfile.unsavedChanges.discard
+     EN value: "Discard"
+  246. profile.editProfile.unsavedChanges.keep
+     EN value: "Keep Editing"
+  247. profile.editProfile.unsavedChanges.message
+     EN value: "You have unsaved changes. Are you sure you want to close without saving?"
+  248. profile.editProfile.unsavedChanges.title
+     EN value: "Discard Changes?"
+  249. profile.editProfile.validation.invalidCharacters
+     EN value: "Only letters, spaces, hyphens, and apostrophes are allowed"
+  250. profile.editProfile.validation.maxLength
+     EN value: "First name must be 50 characters or less"
+  251. profile.editProfile.validation.required
+     EN value: "First name is required"
+  252. quickActions.deepBreathing
+     EN value: "Deep Breathing"
+  253. quickActions.recommended
+     EN value: "Recommended"
+  254. quickActions.startDescription
+     EN value: "Start with a calming breathing exercise to center yourself."
+  255. quickActions.startVoiceSession
+     EN value: "Start Voice Session"
+  256. quickActions.title
+     EN value: "Quick Actions"
+  257. quickActions.voiceSession.category
+     EN value: "Chat"
+  258. quickActions.voiceSession.description
+     EN value: "Talk with your AI companion"
+  259. quickActions.voiceSession.title
+     EN value: "Voice Session"
+
+➕ EXTRA KEYS (not in en.json):
+  1. insights.moodInsights.moreBalanced
+  2. insights.moodInsights.analyzingPatterns
+  3. insights.moodInsights.emptyStates.noData.title
+  4. insights.moodInsights.emptyStates.noData.description
+  5. insights.moodInsights.emptyStates.noData.chatButton
+  6. insights.moodInsights.emptyStates.noData.exerciseButton
+  7. insights.moodInsights.emptyStates.noData.sampleButton
+  8. insights.moodInsights.emptyStates.moodOnly.title
+  9. insights.moodInsights.emptyStates.moodOnly.description
+  10. insights.moodInsights.emptyStates.sessionsOnly.title
+  11. insights.moodInsights.emptyStates.sessionsOnly.description
+  12. insights.moodInsights.emptyStates.sessionsOnly.exerciseButton
+  13. insights.moodInsights.emptyStates.bothData.title
+  14. insights.moodInsights.emptyStates.bothData.description
+  15. insights.moodInsights.emptyStates.fallback.title
+  16. profile.editProfile
+  17. exerciseLibrary.names.goalSetting
+  18. exerciseLibrary.descriptions.goalSetting
+  19. exerciseLibrary.shortDescriptions.goalSetting
+  20. exerciseLibrary.steps.goalSetting.step1.title
+  21. exerciseLibrary.steps.goalSetting.step1.description
+  22. exerciseLibrary.steps.goalSetting.step1.instruction
+  23. exerciseLibrary.steps.goalSetting.step2.title
+  24. exerciseLibrary.steps.goalSetting.step2.description
+  25. exerciseLibrary.steps.goalSetting.step2.instruction
+  26. exerciseLibrary.steps.goalSetting.step3.title
+  27. exerciseLibrary.steps.goalSetting.step3.description
+  28. exerciseLibrary.steps.goalSetting.step3.instruction
+  29. exerciseLibrary.steps.goalSetting.step4.title
+  30. exerciseLibrary.steps.goalSetting.step4.description
+  31. exerciseLibrary.steps.goalSetting.step4.instruction
+  32. exerciseLibrary.steps.goalSetting.step5.title
+  33. exerciseLibrary.steps.goalSetting.step5.description
+  34. exerciseLibrary.steps.goalSetting.step5.instruction
+  35. exerciseLibrary.steps.goalSetting.step6.title
+  36. exerciseLibrary.steps.goalSetting.step6.description
+  37. exerciseLibrary.steps.goalSetting.step6.instruction
+  38. exerciseLibrary.steps.therapyGoalDefinition.step1.title
+  39. exerciseLibrary.steps.therapyGoalDefinition.step1.description
+  40. exerciseLibrary.steps.therapyGoalDefinition.step1.instruction
+  41. exerciseLibrary.steps.therapyGoalDefinition.step2.title
+  42. exerciseLibrary.steps.therapyGoalDefinition.step2.description
+  43. exerciseLibrary.steps.therapyGoalDefinition.step2.instruction
+  44. exerciseLibrary.steps.therapyGoalDefinition.step3.title
+  45. exerciseLibrary.steps.therapyGoalDefinition.step3.description
+  46. exerciseLibrary.steps.therapyGoalDefinition.step3.instruction
+  47. exerciseLibrary.steps.therapyGoalDefinition.step4.title
+  48. exerciseLibrary.steps.therapyGoalDefinition.step4.description
+  49. exerciseLibrary.steps.therapyGoalDefinition.step4.instruction
+  50. exerciseLibrary.steps.therapyGoalDefinition.step5.title
+  51. exerciseLibrary.steps.therapyGoalDefinition.step5.description
+  52. exerciseLibrary.steps.therapyGoalDefinition.step5.instruction
+  53. quickActions.voiceNote.title
+  54. quickActions.voiceNote.description
+  55. quickActions.voiceNote.category
+
+================================================================================
+END OF REPORT
+================================================================================

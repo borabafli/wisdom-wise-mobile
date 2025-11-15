@@ -372,6 +372,15 @@ const InsightsDashboard: React.FC<InsightsDashboardProps> = ({ onInsightClick, o
   const displayPatterns = thinkingPatterns;
   console.log('[InsightsDashboard] Display patterns:', displayPatterns.length, displayPatterns);
 
+  // Reset currentPatternIndex if it's out of bounds when patterns change
+  useEffect(() => {
+    if (currentPatternIndex >= displayPatterns.length && displayPatterns.length > 0) {
+      setCurrentPatternIndex(displayPatterns.length - 1);
+    } else if (displayPatterns.length === 0) {
+      setCurrentPatternIndex(0);
+    }
+  }, [displayPatterns.length]);
+
   const handlePatternSwipeLeft = () => {
     if (currentPatternIndex < displayPatterns.length - 1) {
       setCurrentPatternIndex(currentPatternIndex + 1);

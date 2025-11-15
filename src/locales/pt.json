@@ -839,6 +839,23 @@
           "instruction": "Apoie o usuário para criar um pensamento mais realista e gentil. Peça-lhes para considerar: Que evidência apoia ou desafia o pensamento original? O que diriam a um amigo nesta situação? Há uma maneira mais equilibrada de ver isso? Encoraje-os a escrever uma declaração reformulada. Permaneça até que a forneçam."
         }
       },
+      "breathing": {
+        "step1": {
+          "title": "Fique confortável",
+          "description": "Encontre um lugar tranquilo e acomode-se.",
+          "instruction": "Convide o usuário a sentar-se confortavelmente e fechar os olhos se desejar."
+        },
+        "step2": {
+          "title": "Comece o ritmo",
+          "description": "Inicie o padrão de respiração 4-7-8.",
+          "instruction": "Guie-os: Inspire pelo nariz por 4 contagens, segure por 7, expire lentamente pela boca por 8."
+        },
+        "step3": {
+          "title": "Continue e observe",
+          "description": "Complete alguns ciclos e note como você se sente.",
+          "instruction": "Encoraje-os a repetir o padrão 3-4 vezes, notando quaisquer mudanças em seu corpo ou mente."
+        }
+      },
       "goalSetting": {
         "step1": {
           "title": "Escolha um objetivo",
