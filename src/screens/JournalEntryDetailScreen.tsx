@@ -297,7 +297,7 @@ const JournalEntryDetailScreen: React.FC<JournalEntryDetailScreenProps> = ({ rou
             color: '#EF4444',
             fontWeight: '600',
           }}>
-            {t('common.deleteEntry')}
+            {t('journal.deleteEntry')}
           </Text>
         </TouchableOpacity>
       </ScrollView>

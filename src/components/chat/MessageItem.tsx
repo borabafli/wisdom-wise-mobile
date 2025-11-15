@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useFonts, Caveat_400Regular } from '@expo-google-fonts/caveat';
-import { Volume2, VolumeX, Copy } from 'lucide-react-native';
+import { Copy } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Message } from '../../services/storageService';
@@ -16,11 +16,7 @@ interface MessageItemProps {
   isTypewriting: boolean;
   currentTypewriterMessage: Message | null;
   typewriterText: string;
-  playingMessageId: string | null;
-  ttsStatus: { isSpeaking: boolean; isPaused: boolean; currentSpeechId: string | null };
   onSkipTypewriter: () => void;
-  onPlayTTS: (messageId: string, text: string) => void;
-  onStopTTS: () => void;
   onCopyMessage: (content: string) => void;
   onPromptSuggestion: (text: string) => void;
   AnimatedTypingCursor: React.ComponentType;
@@ -31,11 +27,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   isTypewriting,
   currentTypewriterMessage,
   typewriterText,
-  playingMessageId,
-  ttsStatus,
   onSkipTypewriter,
-  onPlayTTS,
-  onStopTTS,
   onCopyMessage,
   onPromptSuggestion,
   AnimatedTypingCursor,
@@ -155,24 +147,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         {/* Message Action Buttons - Only show for non-welcome messages */}
         {!isWelcomeMessage && (
           <View style={styles.messageActions}>
-            {playingMessageId === message.id && ttsStatus.isSpeaking ? (
-              <TouchableOpacity
-                onPress={onStopTTS}
-                style={styles.iconButton}
-                activeOpacity={0.7}
-              >
-                <VolumeX size={16} color="#6b7280" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={() => onPlayTTS(message.id, message.content || message.text || '')}
-                style={styles.iconButton}
-                activeOpacity={0.7}
-              >
-                <Volume2 size={16} color="#6b7280" />
-              </TouchableOpacity>
-            )}
-            
             <TouchableOpacity
               onPress={() => onCopyMessage(message.content || message.text || '')}
               style={styles.iconButton}

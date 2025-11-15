@@ -9,6 +9,7 @@ import { moodRatingService } from '../services/moodRatingService';
 import type { MoodRating } from '../services/moodRatingService';
 import { valuesService } from '../services/valuesService';
 import { thinkingPatternsService } from '../services/thinkingPatternsService';
+import { getCurrentLanguage } from '../services/i18nService';
 
 export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => string) => {
   const [exerciseMode, setExerciseMode] = useState(false);
@@ -115,11 +116,29 @@ export const useExerciseFlow = (initialExercise?: any, t?: (key: string) => stri
           setExerciseStep(prev => prev + 1);
           setStepMessageCount(prev => ({ ...prev, [exerciseStep + 1]: 1 }));
         } else if (shouldAdvance && exerciseStep >= flow.steps.length - 1) {
+          // Generate contextual completion message with AI
+          const recentMessages = await storageService.getLastMessages(15);
+          const userLanguage = getCurrentLanguage();
+
+          let completionContent = `Great work finishing the ${currentExercise.name} exercise! 🌟`;
+
+          try {
+            completionContent = await contextService.generateExerciseCompletionMessage(
+              currentExercise.type,
+              currentExercise.name,
+              recentMessages,
+              userLanguage
+            );
+          } catch (error) {
+            console.error('Error generating contextual completion message, using fallback:', error);
+            // completionContent already has the fallback message
+          }
+
           const completion: Message = {
             id: Date.now().toString(),
             type: 'exercise',
             title: '🎉 Exercise Complete!',
-            content: `Great work finishing the ${currentExercise.name} exercise! 🌟`,
+            content: completionContent,
             exerciseType: currentExercise.type,
             color: flow.color,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),

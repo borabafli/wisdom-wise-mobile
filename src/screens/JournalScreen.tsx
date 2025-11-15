@@ -44,6 +44,22 @@ const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onProm
   const cardWidth = width - (sideMargin * 2); // Card width minus margins only
   const totalCardWidth = cardWidth + cardSpacing; // Total width including spacing
 
+  // Dynamic font size based on text length (same as DailyPromptCard in HomeScreen)
+  const getDynamicFontSize = (text: string) => {
+    const baseSize = 18; // Increased from 16 to 18
+    const length = text.length;
+
+    if (length < 50) {
+      return baseSize + 4; // 22px for very short text
+    } else if (length < 100) {
+      return baseSize + 2; // 20px for short text
+    } else if (length < 150) {
+      return baseSize; // 18px for medium text
+    } else {
+      return baseSize - 2; // 16px for longer text
+    }
+  };
+
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / totalCardWidth);
@@ -78,7 +94,7 @@ const SwipablePromptCard: React.FC<SwipablePromptCardProps> = ({ prompts, onProm
               >
                 <View style={styles.promptCardContent}>
                   <View style={styles.promptTextContainer}>
-                    <Text style={styles.promptCardText}>{prompt}</Text>
+                    <Text style={[styles.promptCardText, { fontSize: getDynamicFontSize(prompt) }]}>{prompt}</Text>
                   </View>
 
                   <TouchableOpacity
@@ -175,7 +191,8 @@ const JournalEntryCard: React.FC<JournalEntryCardProps> = ({ entry, onPress, onD
 
       {entry.isPolished && (
         <View style={styles.polishedBadge}>
-          <Text style={styles.polishedBadgeText}>{t('journal.polished')}</Text>
+          <Text style={styles.polishedBadgeIcon}>✨</Text>
+          <Text style={styles.polishedBadgeText}>Polished</Text>
         </View>
       )}
     </TouchableOpacity>

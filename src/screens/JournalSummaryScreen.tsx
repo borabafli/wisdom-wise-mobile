@@ -40,7 +40,10 @@ export const JournalSummaryScreen: React.FC<JournalSummaryScreenProps> = ({
         [
           {
             text: t('common.ok'),
-            onPress: () => navigation.popToTop(),
+            onPress: () => {
+              // Navigate to JournalHome (the main journal screen with entries list)
+              navigation.navigate('JournalHome');
+            },
           },
         ]
       );

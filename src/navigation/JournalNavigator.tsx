@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { JournalStackParamList } from '../types/navigation';
 import { smoothSlideTransition } from './transitions';
@@ -29,12 +30,19 @@ export const JournalNavigator: React.FC = () => {
         component={GuidedJournalScreen}
         options={{
           presentation: 'modal',
-          ...TransitionPresets.ModalSlideFromBottomIOS,
+          ...(Platform.OS === 'ios'
+            ? TransitionPresets.ModalSlideFromBottomIOS
+            : TransitionPresets.DefaultTransition),
         }}
       />
       <Stack.Screen
         name="JournalSummary"
         component={JournalSummaryScreen}
+        options={{
+          // Ensure JournalSummary is a regular screen (not modal) for proper navigation
+          presentation: 'card',
+          ...smoothSlideTransition,
+        }}
       />
     </Stack.Navigator>
   );
